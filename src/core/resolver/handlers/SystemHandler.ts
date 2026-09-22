@@ -41,12 +41,7 @@ import { distanceBucket } from "@/core/race/beyer";
 import { getReputationTier, createReputationEvent, type ReputationSource } from "@/core/reputation";
 import { addReservedName } from "@/core/horse/naming/reservedNames";
 import { trackRecordKey } from "@/core/history/historyTypes";
-
-type ImpactHandlerFunction = (
-  draft: WritableDraft<GameState>,
-  impact: AnyImpact,
-  lookupMaps?: LookupMaps,
-) => void;
+import type { ImpactHandlerFunction } from "./types";
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   log: (draft, impact) => {
