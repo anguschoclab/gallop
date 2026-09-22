@@ -267,9 +267,7 @@ export function createRaceEntryActions(
             },
           });
         }
-      } catch {
-        // Fall back to day-advance application if live resolution fails.
-      }
+      } catch (e) { console.error("liveRaceImpacts error", e); /* fall back to day advance */ }
     },
 
     submitClaim: (raceId: string, horseId: string) => {
