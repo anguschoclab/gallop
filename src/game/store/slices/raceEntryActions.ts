@@ -248,7 +248,6 @@ export function createRaceEntryActions(
             narrativeArcs: state.narrativeArcs,
           });
           const liveImpacts = raceImpacts.filter(isLivePlayerImpact);
-          console.error("rep", JSON.stringify({ before: state.reputation?.score, after: applied.state.reputation?.score }));
           const applied = applyImpacts({
             state,
             intents: [],
@@ -268,7 +267,9 @@ export function createRaceEntryActions(
             },
           });
         }
-      } catch (e) { console.error("liveRaceImpacts error", e); /* fall back to day advance */ }
+      } catch {
+        // Fall back to day-advance application if live resolution fails.
+      }
     },
 
     submitClaim: (raceId: string, horseId: string) => {
