@@ -7,6 +7,7 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import type { Transaction } from "@/core/transactions/transactionTypes";
 import { getCareerStats } from "@/core/horse/stats";
+import { analyzeStableTrends } from "@/core/analytics/stableTrends";
 import {
   ANALYTICS_CASH_LOOKBACK_DAYS,
   ANALYTICS_RECENT_RACES_COUNT,
@@ -124,6 +125,8 @@ export function useAnalyticsData() {
     });
     const rankedRoi = [...horseRoi].sort((a, b) => b.net - a.net);
 
+    const stableTrends = analyzeStableTrends(owned, 5);
+
     return {
       day,
       cash,
@@ -137,6 +140,7 @@ export function useAnalyticsData() {
       topSire,
       topSireTrend,
       rankedRoi,
+      stableTrends,
       sireLeaderboards,
       sireTrendHistory,
     };

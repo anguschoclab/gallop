@@ -465,6 +465,36 @@ export const detectDistanceVersatility: InsightDetector = (horse) => {
   return null;
 };
 
+// 3.95 Check for Earnings Milestones
+export const detectEarningsMilestone: InsightDetector = (horse) => {
+  const earnings = horse.lifetimeEarnings ?? 0;
+
+  // High to low so we match the highest applicable milestone first
+  const milestones = [
+    { target: 10000000, threshold: 100000 },
+    { target: 5000000, threshold: 50000 },
+    { target: 2000000, threshold: 50000 },
+    { target: 1000000, threshold: 50000 },
+    { target: 500000, threshold: 25000 },
+    { target: 100000, threshold: 10000 },
+  ];
+
+  for (const { target, threshold } of milestones) {
+    if (earnings >= target - threshold && earnings < target) {
+      const remaining = target - earnings;
+      const formattedTarget = target >= 1000000 ? `${target / 1000000}M` : `${target / 1000}k`;
+      return {
+        label: "Milestone Watch",
+        value: `Approaching $${formattedTarget}`,
+        context: `Just $${remaining.toLocaleString()} away from reaching $${target.toLocaleString()} in career earnings`,
+        type: "neutral",
+      };
+    }
+  }
+
+  return null;
+};
+
 // 4. Check for Gate/Draw Preference
 export const detectGateAffinity: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -539,4 +569,5 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectSurfaceAffinity,
   detectDistanceVersatility,
   detectGateAffinity,
+  detectEarningsMilestone,
 ];
