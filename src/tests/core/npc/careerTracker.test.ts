@@ -9,7 +9,7 @@ import {
   REAL_START_COOLDOWN_DAYS,
 } from "@/core/npc/careerTracker";
 import { createRng } from "@/core/common/rng";
-import { createTestHorse } from "@/tests/helpers/testHorse";
+import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Horse } from "@/game/types";
 
 function horse(overrides: Partial<Horse> = {}): Horse {
