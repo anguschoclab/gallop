@@ -74,6 +74,7 @@ describe("Live race finish applies player impacts immediately", () => {
       transactions: [],
       pendingIntents: [],
       runEnded: false,
+      reputation: { score: 0, tier: "unknown", events: [], gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 }, totalWins: 0, yearsActive: 0 },
     });
   });
 
@@ -89,7 +90,7 @@ describe("Live race finish applies player impacts immediately", () => {
     expect(s.reputation?.totalWins).toBe(1);
     expect(s.races["r1"].livePlayerImpactsApplied).toBe(true);
     expect(
-      s.transactions.filter((t) => t.category === "prize_money").length,
+      s.transactions.filter((t) => t.subcategory === "prize_money").length,
     ).toBe(1);
   });
 
@@ -107,7 +108,7 @@ describe("Live race finish applies player impacts immediately", () => {
 
     expect(nextState.races["r1"].resolved).toBe(true);
     const prizeTxns = (nextState.transactions ?? []).filter(
-      (t) => t.category === "prize_money",
+      (t) => t.subcategory === "prize_money",
     );
     expect(prizeTxns.length).toBe(1);
     const winEvents = (nextState.reputation?.events ?? []).filter(
