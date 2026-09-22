@@ -152,7 +152,7 @@ function InboxPage() {
           size="sm"
           onClick={() => setFilter("market")}
         >
-          Market
+          Market Alerts
           {inbox.some((m) => m.category === "market" && !m.readAt) && (
             <Badge className={cn("ml-2", "bg-amber-500/20 text-amber-400 border-amber-500/30")}>
               {inbox.filter((m) => m.category === "market" && !m.readAt).length}
