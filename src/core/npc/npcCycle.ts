@@ -48,7 +48,7 @@ export interface NpcCycleResult {
  * This orchestrates:
  * 1. NPC Training (handled via Intent pipeline)
  * 2. NPC Race Entry (handled via Intent pipeline)
- * 3. Horse Fame Updates for yesterday's races
+ * 3. Horse Fame Updates for today's resolved races
  * 4. AI state management and pruning
  *
  * @param npcStables - Array of NPC stables
@@ -105,11 +105,11 @@ export function runNpcCycle(
       }
     }
 
-    // 3. Calculate fame gains for horses in yesterday's races (do not mutate horses here).
-    const yesterdayRaces = races.filter((r) => r.day === currentDay && r.resolved && r.result);
+    // 3. Calculate fame gains for horses in today's resolved races (do not mutate horses here).
+    const todaysResolvedRaces = races.filter((r) => r.day === currentDay && r.resolved && r.result);
 
-    if (yesterdayRaces.length > 0) {
-      const fameGains = calculateFameGainsForRaces(yesterdayRaces);
+    if (todaysResolvedRaces.length > 0) {
+      const fameGains = calculateFameGainsForRaces(todaysResolvedRaces);
       if (fameGains.size > 0) {
         fameChanges = Array.from(fameGains.entries()).map(([horseId, delta]) => ({
           horseId,
@@ -117,7 +117,7 @@ export function runNpcCycle(
         }));
       }
 
-      const fanGains = calculateFanGainsForRaces(yesterdayRaces);
+      const fanGains = calculateFanGainsForRaces(todaysResolvedRaces);
       if (fanGains.size > 0) {
         fanChanges = Array.from(fanGains.entries()).map(([horseId, delta]) => ({
           horseId,
@@ -138,7 +138,7 @@ export function runNpcCycle(
 
     // Regional dominance & friction decay
     const dominanceResult = resolveRegionalDominance(
-      yesterdayRaces,
+      todaysResolvedRaces,
       horses,
       npcStables,
       updatedAiManager,
