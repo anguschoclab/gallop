@@ -1,1 +1,1 @@
-- [ ] Portfolio live updates on race finish: cash, syndicate stakes, prestige refresh automatically
+- [x] Portfolio live updates on race finish: cash, syndicate stakes, prestige refresh automatically
