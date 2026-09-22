@@ -6,6 +6,7 @@ import { NumericValue } from "@/components/horse/HorseBits";
 import { PERSONALITY_CONFIG } from "@/services/stable/stableFacade";
 import { cn } from "@/lib/cn";
 import { NpcStableCharts } from "@/components/stable/NpcStableCharts";
+import { NpcCareerTrackerPanel } from "@/components/stable/NpcCareerTrackerPanel";
 import { CashPressureTrend } from "@/components/stable/CashPressureTrend";
 import { getRivalryStatusLabel, getRivalryBadgeColor } from "@/hooks/stable/useNpcStableDetail";
 import type { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
@@ -27,6 +28,7 @@ export function NpcStableOverviewTab({ stableId, pageData }: NpcStableOverviewTa
     headToHead,
     grudgeMatches,
     awards,
+    day,
   } = pageData;
 
   if (!stable) return null;
@@ -98,6 +100,15 @@ export function NpcStableOverviewTab({ stableId, pageData }: NpcStableOverviewTa
       </Card>
 
       <NpcStableCharts horses={stableHorses} headToHead={headToHead} />
+
+      <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
+        <CardContent className="p-6 space-y-4">
+          <h3 className="text-sm font-bold uppercase tracking-widest text-cream/60">
+            Career Tracker
+          </h3>
+          <NpcCareerTrackerPanel horses={stableHorses} day={day} />
+        </CardContent>
+      </Card>
 
       {friction >= 40 && (
         <Card className="bg-slate-950/50 border border-white/5 rounded-none shadow-xl">
