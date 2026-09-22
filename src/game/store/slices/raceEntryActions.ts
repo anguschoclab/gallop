@@ -248,6 +248,7 @@ export function createRaceEntryActions(
             narrativeArcs: state.narrativeArcs,
           });
           const liveImpacts = raceImpacts.filter(isLivePlayerImpact);
+          console.error("liveImpacts", JSON.stringify(liveImpacts.map((i) => [i.type, (i as any).source, (i as any).amount, (i as any).delta])));
           const applied = applyImpacts({
             state,
             intents: [],
