@@ -137,6 +137,11 @@ function addConditionalRaceFlavor(
           `Total Annihilation: ${winner.name} Romps in ${race.name}`,
           `A League of Their Own: ${winner.name} Dominates ${race.name}`,
           `${winner.name} Wins by a Mile in the ${race.name}`,
+          `No Contest: ${winner.name} Runs Away With ${race.name}`,
+          `${winner.name} Stages an Exhibition in ${race.name}`,
+          `Total Domination by ${winner.name} in ${race.name}`,
+          `${winner.name} Untouchable in ${race.name} Romp`,
+          `A Masterclass in Speed: ${winner.name} Takes ${race.name}`,
         );
         bodies.push(
           `It was an absolute romp! ${winner.name} destroyed the field by a massive margin to take the ${race.name}.`,
@@ -145,6 +150,10 @@ function addConditionalRaceFlavor(
           `You could have driven a truck through the gap between ${winner.name} and the runner-up in today's ${race.name}.`,
           `A breathtaking show of superiority. ${winner.name} toyed with the opposition before drawing away by a street.`,
           `It wasn't a race, it was a procession. ${winner.name} was in a completely different class today.`,
+          `Spectators could hardly believe their eyes as ${winner.name} powered clear, putting on an absolute clinic in the ${race.name}.`,
+          `The jockey had time to pose for the cameras before the wire as ${winner.name} coasted to an incredibly easy victory.`,
+          `It was men against boys out there. ${winner.name} demolished the field and proved they are operating on another level entirely.`,
+          `They may as well have handed out the trophy at the top of the stretch. ${winner.name} was simply untouchable today.`,
         );
       } else if (margin < PHOTO_FINISH_THRESHOLD_SECONDS) {
         headlines.push(
@@ -152,6 +161,10 @@ function addConditionalRaceFlavor(
           `Photo Finish Drama: ${winner.name} Takes the ${race.name}`,
           `By a Whisker! ${winner.name} Survives ${race.name} Thriller`,
           `Down to the Wire: ${winner.name} Wins the ${race.name}`,
+          `Inches Decide It: ${winner.name} Takes the ${race.name}`,
+          `A Race for the Ages: ${winner.name} Prevails in Epic Finish`,
+          `Too Close to Call: ${winner.name} Given the Nod in ${race.name}`,
+          `Heartbreak for Rivals as ${winner.name} Noses Out a Win`,
         );
         bodies.push(
           `In a thrilling photo finish, ${winner.name} just managed to stick their nose in front to steal the ${race.name}.`,
@@ -160,6 +173,10 @@ function addConditionalRaceFlavor(
           `It was a blanket finish, but ${winner.name} dug deepest in the final strides to secure a heart-stopping victory.`,
           `A bobbing head was the only difference at the wire, as ${winner.name} bravely held off a vicious late challenge.`,
           `The crowd held its collective breath as the runners hit the line together, with ${winner.name} ultimately prevailing in a thriller.`,
+          `You couldn't slide a piece of paper between them at the line, but ${winner.name} was judged the winner of this epic duel.`,
+          `The grandstand erupted as the final strides became a dead heat, with ${winner.name} just managing to find the wire first.`,
+          `It was a race that had everything, climaxing in a frantic lunge for the line that saw ${winner.name} snatch victory from the jaws of defeat.`,
+          `Both sets of connections were sweating on the official print, which ultimately confirmed ${winner.name} had held on for a famous win.`,
         );
       }
     }
@@ -232,6 +249,16 @@ export function generateRaceNews(
     `${winner.name} Stamps Authority on the ${race.name}.`,
     `A Deserved ${race.name} Win for ${winner.name}.`,
     `${winner.name} Too Strong for ${race.name} Field.`,
+    `Pure Magic from ${winner.name} in the ${race.name}.`,
+    `The ${race.name} is Conquered by ${winner.name}.`,
+    `${winner.name} Dazzles the Competition at ${race.name}.`,
+    `A Masterful Ride Secures ${race.name} for ${winner.name}.`,
+    `${winner.name} Delivers on the Big Stage in ${race.name}.`,
+    `The Spotlight Shines on ${winner.name} at ${race.name}.`,
+    `${winner.name} Rises to the Occasion in the ${race.name}.`,
+    `An Unforgettable ${race.name} Win for ${winner.name}.`,
+    `Supreme Performance by ${winner.name} to take ${race.name}.`,
+    `${winner.name} Showcases Immense Talent in ${race.name}.`,
   ];
 
   const bodies = [
@@ -263,6 +290,16 @@ export function generateRaceNews(
     `Nobody could lay a glove on ${winner.name}, who romped home to win the ${race.name} in fine style.`,
     `A brilliant tactical ride allowed ${winner.name} to find the gaps and secure the ${race.name}.`,
     `${winner.name} made it look easy in the ${race.name}, pulling clear for an emphatic victory.`,
+    `Displaying an incredible burst of speed, ${winner.name} seized control of the ${race.name} when it mattered most.`,
+    `The training staff's confidence was fully justified as ${winner.name} executed a flawless race in the ${race.name}.`,
+    `It was a textbook run by ${winner.name}, stalking the pace before pouncing to secure a stylish win in the ${race.name}.`,
+    `Racing fans will be talking about this one for a while; ${winner.name} was simply sensational taking the ${race.name}.`,
+    `Every move was timed to perfection, allowing ${winner.name} to glide past the leaders and claim the ${race.name}.`,
+    `Overcoming a difficult trip, ${winner.name} showed incredible grit to find the winner's circle in the ${race.name}.`,
+    `The competition brought their best, but it wasn't enough to stop ${winner.name} from a commanding ${race.name} triumph.`,
+    `A wave of applause rolled through the grandstand as ${winner.name} delivered a masterclass in the ${race.name}.`,
+    `Putting all the pieces together on race day, ${winner.name} stamped their name in the history books with this ${race.name} win.`,
+    `They came, they saw, they conquered. ${winner.name} left no doubts about their superiority in today's ${race.name}.`,
   ];
 
   addConditionalRaceFlavor(race, winner, headlines, bodies);
