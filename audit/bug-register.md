@@ -283,3 +283,57 @@ All bugs discovered during the Phase 1 file-by-file audit. Prioritized by severi
 | **Total** | **33** |
 
 **Test failures accounted for:** 19 failing tests = BUG-001 (3) + BUG-003 (2) + BUG-025 (1) + BUG-026 (1) + BUG-027 (8) + BUG-028 (3) + BUG-029 (1) + BUG-030 (1) = 20 (1 pending investigation may overlap).
+
+---
+
+# V3 Reverification (2026-09-22, Devin)
+
+All 33 V1-era entries verified against `main` @ `5d3dd0e0`. **Suite is green (9,128 passed)** — all test-failure bugs resolved.
+
+| Status | Entries |
+|---|---|
+| FIXED | BUG-001–006, 007, 008–016, 019–025, 027–033 (30 entries — code-verified) |
+| FIXED-BY-CONVENTION | BUG-017 — 30-day months are now the codified convention (`dateFormatting.test.ts` asserts day 31 → Feb 1) |
+| STILL-OPEN (downgraded) | BUG-018 — `yesterdayRaces` name lies but behavior is correct: `PHASE_ORDER_NPC_CYCLE=80` runs after `RACE_RESOLUTION=70` same-day. Cosmetic rename only. |
+| STILL-OPEN (latent) | BUG-026 — `orphan-audit.ts` still uses regex extraction; test currently passes but fragility persists. |
+
+## New V3 findings
+
+### BUG-V3-001: `initialization.test.ts` pathological runtime (~90 min)
+
+- **Severity:** HIGH (CI/dev-loop damage)
+- **File:** `src/tests/game/initialization.test.ts` — `produces 160 NPC stables with worldSize: large` ran **4,206,850ms**; whole file 5,439,507ms of a 5,639s suite. V1 baseline was ~412s total.
+- **Fix sketch:** investigate world-gen scaling (likely O(N²)+ in stable/horse generation); split the `large` case into a `describe.skip`+benchmark or cap world size in tests; profile first.
+
+### BUG-V3-002: Native dialogs remain outside AlertDialog migration
+
+- **Severity:** LOW (UX/a11y inconsistency)
+- **Files:** `src/hooks/shared/useSaveSlots.ts:57,79` (2× `window.confirm` for destructive save ops); `alert()` sites in `StallionsTab.tsx:97,119`, `FacilitiesPanel.tsx:96`, `ClaimingStep.tsx:64,66`, `EligibleHorseRow.tsx:96,99`, `useRaceEntry.ts:106,123`, `useNewGameWizard.ts:99`.
+- **Fix sketch:** route destructive confirms through AlertDialog (Groom pattern); `alert()`s → toast/inline errors.
+
+### BUG-V3-003: ~15+ components still use native `title=` tooltips
+
+- **Severity:** LOW (a11y — no keyboard/touch access, no styling)
+- **Files:** `analytics/*Tab.tsx` (5), `breeding/*` (5+), `dashboard/*`, `history/TrackRecordsTable.tsx`, `horse/HorseCareerCharts.tsx`, others.
+- **Fix sketch:** mechanical Tooltip migration (Palette pattern). Not blocking consolidation; log as follow-up sweep.
+
+### BUG-V3-004: `.jules/`, `plan_*.md`, lockfile rewrites keep entering PR diffs
+
+- **Severity:** PROCESS — every Jules PR carries artifact commits; integration must always extract authored hunks rather than merge branches.
+- **Action:** none to code; codified in consolidation runbook (this audit).
+
+### BUG-V3-005: `useGameSelector.ts` doc claims casts remain that don't exist
+
+- **Severity:** TRIVIAL (comment accuracy)
+- **File:** `src/hooks/shared/useGameSelector.ts:6` — "Replaces (useGame as any) casts throughout the codebase" — census shows 0 such casts remain.
+- **Fix:** none required; noted for completeness.
+
+## V3 Summary
+
+| Severity | Count |
+|---|---|
+| CRITICAL | 0 |
+| HIGH | 1 (V3-001 test-suite runtime) |
+| MEDIUM | 0 |
+| LOW | 4 (V3-002/003/004 + BUG-018 rename, BUG-026 latent) |
+| Prior register | 31 FIXED, 2 open (downgraded) |

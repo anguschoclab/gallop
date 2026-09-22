@@ -109,9 +109,30 @@ describe("perf-shape: buildFieldContext is hoisted outside runner map in Track (
     expect(ctx).toHaveProperty("liveCount");
     expect(ctx).toHaveProperty("sortedLive");
     expect(ctx).toHaveProperty("velocityRank");
+    expect(ctx).toHaveProperty("liveRank");
     expect(ctx.liveCount).toBe(2);
     expect(ctx.leaderPos).toBe(110);
     expect(ctx.fastestVelocity).toBe(16);
+  });
+
+  it("liveRank maps horseId to rank within sortedLive", () => {
+    const runners: Runner[] = [
+      { horseId: "h1", position: 100, velocity: 15, lane: 1, finishTime: null } as any,
+      { horseId: "h2", position: 110, velocity: 16, lane: 2, finishTime: null } as any,
+      { horseId: "h3", position: 105, velocity: 14, lane: 3, finishTime: null } as any,
+      { horseId: "h4", position: 120, velocity: 17, lane: 4, finishTime: 60 } as any,
+    ];
+    const ctx = buildFieldContext(runners);
+    // Structural access — FieldContext gains liveRank in the consolidation impl stage;
+    // this test is expected to fail until that lands.
+    const liveRank = (ctx as { liveRank?: Map<string, number> }).liveRank;
+    expect(liveRank).toBeInstanceOf(Map);
+    // h4 finished → excluded from liveRank; h2 leads, then h3, then h1
+    expect(liveRank!.get("h2")).toBe(0);
+    expect(liveRank!.get("h3")).toBe(1);
+    expect(liveRank!.get("h1")).toBe(2);
+    expect(liveRank!.has("h4")).toBe(false);
+    expect(ctx.sortedLive[liveRank!.get("h1")!].horseId).toBe("h1");
   });
 
   it("buildFieldContext can be called once and reused for multiple runners", () => {
