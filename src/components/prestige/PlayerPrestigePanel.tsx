@@ -19,6 +19,7 @@ import {
   type PrestigeLadderEntry,
 } from "@/services/prestige/prestigeFacade";
 import { cn } from "@/lib/cn";
+import { Hint } from "@/components/ui/Hint";
 
 /** Tier band boundaries used to draw ticks on the meter (ascending, excluding provincial at 0). */
 const TIER_MARKS: { at: number; label: string }[] = [...PRESTIGE_TIER_BOUNDARIES]
@@ -99,12 +100,13 @@ export function PlayerPrestigePanel() {
               style={{ width: `${standing.prestige}%` }}
             />
             {TIER_MARKS.map((mark) => (
-              <span
-                key={mark.label}
-                title={`${mark.label} tier from ${mark.at}`}
-                className="absolute inset-y-0 w-px bg-cream/25"
-                style={{ left: `${mark.at}%` }}
-              />
+              <Hint content={`${mark.label} tier from ${mark.at}`}>
+                <span
+                  key={mark.label}
+                  className="absolute inset-y-0 w-px bg-cream/25"
+                  style={{ left: `${mark.at}%` }}
+                />
+              </Hint>
             ))}
           </div>
 

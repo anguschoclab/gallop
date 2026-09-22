@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
+import { toast } from "sonner";
 import type { NewGameOptions } from "@/game/store/state";
 import { generateSilk } from "@/core/jockey/generator";
 import { SILK_PATTERNS } from "@/data/jockeys";
@@ -96,7 +97,7 @@ export function useNewGameWizard() {
   const handleStart = useCallback(async () => {
     if (!selectedBackstory) return;
     if (!silkValid) {
-      alert("Invalid silks data. Please check your silks configuration before starting.");
+      toast.error("Invalid silks data. Please check your silks configuration before starting.");
       return;
     }
 

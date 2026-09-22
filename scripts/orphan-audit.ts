@@ -229,6 +229,73 @@ export function scanDormantAiFunctions(srcRoot: string): DormantAiReport {
   };
 }
 
+/**
+ * Returns the substring enclosed by the balanced `open`/`close` pair that
+ * starts at `startIdx` (which must point at `open`). Quote- and
+ * line-comment-aware so `}`/`;` inside strings or comments don't truncate.
+ */
+function extractBalanced(
+  text: string,
+  startIdx: number,
+  open: string,
+  close: string,
+): string | null {
+  if (text[startIdx] !== open) return null;
+  let depth = 0;
+  let i = startIdx;
+  while (i < text.length) {
+    const c = text[i];
+    if (c === '"' || c === "'" || c === "`") {
+      const end = text.indexOf(c, i + 1);
+      if (end === -1) return null;
+      i = end + 1;
+      continue;
+    }
+    if (c === "/" && text[i + 1] === "/") {
+      const eol = text.indexOf("\n", i);
+      i = eol === -1 ? text.length : eol + 1;
+      continue;
+    }
+    if (c === open) depth++;
+    else if (c === close) {
+      depth--;
+      if (depth === 0) return text.slice(startIdx + 1, i);
+    }
+    i++;
+  }
+  return null;
+}
+
+/**
+ * Returns the text between `=` and the statement-terminating `;` for
+ * `export type X = ...;`. Quote/comment-aware so `;` inside literals or
+ * comments doesn't truncate the capture.
+ */
+function extractTypeUnionBody(text: string, exportName: string): string {
+  const declIdx = text.indexOf(`export type ${exportName}`);
+  if (declIdx === -1) return "";
+  const eqIdx = text.indexOf("=", declIdx);
+  if (eqIdx === -1) return "";
+  let i = eqIdx + 1;
+  while (i < text.length) {
+    const c = text[i];
+    if (c === '"' || c === "'" || c === "`") {
+      const end = text.indexOf(c, i + 1);
+      if (end === -1) break;
+      i = end + 1;
+      continue;
+    }
+    if (c === "/" && text[i + 1] === "/") {
+      const eol = text.indexOf("\n", i);
+      i = eol === -1 ? text.length : eol + 1;
+      continue;
+    }
+    if (c === ";") return text.slice(eqIdx + 1, i);
+    i++;
+  }
+  return text.slice(eqIdx + 1);
+}
+
 export function scanFacilityTypeParity(srcRoot: string): FacilityParityReport {
   const facilityTypesPath = join(srcRoot, "core", "facilities", "facilityTypes.ts");
   const outpostTypesPath = join(srcRoot, "core", "facilities", "outpostTypes.ts");
@@ -236,13 +303,18 @@ export function scanFacilityTypeParity(srcRoot: string): FacilityParityReport {
   const facilityTypesContent = readFileSafe(facilityTypesPath);
   const outpostTypesContent = readFileSafe(outpostTypesPath);
 
-  // Extract facility types from `FacilityType` enum/union
-  const facilityTypeMatches =
-    facilityTypesContent.match(/export type FacilityType\s*=\s*([^;]+);/s)?.[1] || "";
+  // Extract facility types from `FacilityType` union (quote/comment-aware)
+  const facilityTypeMatches = extractTypeUnionBody(facilityTypesContent, "FacilityType");
   const facilityTypes = Array.from(facilityTypeMatches.matchAll(/"([^"]+)"/g)).map((m) => m[1]);
 
-  // Extract keys from SLOT_FOOTPRINTS
-  const slotFootprintsMatch = outpostTypesContent.match(/SLOT_FOOTPRINTS:\s*{([^}]+)}/s)?.[1] || "";
+  // Extract keys from SLOT_FOOTPRINTS (brace-balanced, tolerates nested objects)
+  const footprintsKeyIdx = outpostTypesContent.indexOf("SLOT_FOOTPRINTS");
+  let slotFootprintsMatch = "";
+  if (footprintsKeyIdx !== -1) {
+    const braceIdx = outpostTypesContent.indexOf("{", footprintsKeyIdx);
+    slotFootprintsMatch =
+      (braceIdx !== -1 && extractBalanced(outpostTypesContent, braceIdx, "{", "}")) || "";
+  }
   const outpostFootprints = Array.from(slotFootprintsMatch.matchAll(/([a-z_]+)\s*:/g)).map(
     (m) => m[1],
   );

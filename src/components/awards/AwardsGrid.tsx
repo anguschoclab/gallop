@@ -6,6 +6,7 @@ import type { RegionalAward } from "@/services/awards/awardsFacade";
 import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/services/awards/awardsFacade";
 import { getRegionFlag, getRegionCountryLabel } from "@/services/common/commonFacade";
 import { AWARD_COMPACT_THRESHOLD } from "@/constants/awardsConstants";
+import { Hint } from "@/components/ui/Hint";
 
 interface AwardsGridProps {
   awards: RegionalAward[];
@@ -55,9 +56,9 @@ export function AwardsGrid({ awards }: AwardsGridProps) {
                   {CATEGORY_DESCRIPTIONS[sample.category]}
                 </div>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                  <span title={getRegionCountryLabel(sample.region)}>
-                    {getRegionFlag(sample.region)}
-                  </span>
+                  <Hint content={getRegionCountryLabel(sample.region)}>
+                    <span>{getRegionFlag(sample.region)}</span>
+                  </Hint>
                   <span>{getRegionCountryLabel(sample.region)}</span>
                   <span className="tabular-nums">
                     · Y{first}–Y{last}
@@ -71,7 +72,9 @@ export function AwardsGrid({ awards }: AwardsGridProps) {
           <div key={award.id} className="space-y-1">
             <AwardBadge award={award} variant="card" showRegion />
             <div className="text-[10px] text-muted-foreground flex items-center gap-1 pl-3">
-              <span title={getRegionCountryLabel(award.region)}>{getRegionFlag(award.region)}</span>
+              <Hint content={getRegionCountryLabel(award.region)}>
+                <span>{getRegionFlag(award.region)}</span>
+              </Hint>
               <span>{getRegionCountryLabel(award.region)}</span>
               <span className="tabular-nums">· Y{award.year}</span>
             </div>

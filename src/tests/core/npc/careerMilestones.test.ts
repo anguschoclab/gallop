@@ -19,10 +19,7 @@ describe("rival career milestones", () => {
   });
 
   it("reports a debut for a horse with a first start", () => {
-    const m = detectRivalMilestones(
-      horse({ age: 2, fame: 30, raceHistory: [start(10, 4)] }),
-      [],
-    );
+    const m = detectRivalMilestones(horse({ age: 2, fame: 30, raceHistory: [start(10, 4)] }), []);
     expect(m.map((x) => x.kind)).toContain("debut");
   });
 

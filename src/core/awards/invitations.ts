@@ -12,15 +12,9 @@
 import type { Horse } from "@/core/horse/types";
 import type { Race } from "@/core/race/types";
 import type { AwardRegion } from "./types";
-import { getTrackContinent, type Continent } from "@/core/data/gradedRacesAccessor";
+import { CONTINENT_TO_REGION } from "./types";
+import { getTrackContinent } from "@/core/data/gradedRacesAccessor";
 import { DAYS_PER_YEAR } from "@/constants";
-
-const CONTINENT_TO_REGION: Record<Continent, AwardRegion> = {
-  north_america: "north_america",
-  europe: "europe",
-  asia_pacific: "asia_pacific",
-  south_america: "south_america",
-};
 
 /** Days before a ceremony that invitations are issued. */
 export const CEREMONY_INVITE_LEAD_DAYS = 14;

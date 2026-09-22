@@ -14,6 +14,7 @@
 
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
+import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
 import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/constants";
 import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
@@ -103,9 +104,12 @@ export function runNpcRaceEntry(
     console.error("runNpcRaceEntry called with non-array races:", races);
     return [];
   }
-  // Index horses and jockeys for fast lookup
-
-  const horseMap = new Map(horses.map((h) => [h.id, h]));
+  // Index horses and jockeys for fast lookup.
+  // Resolve phenotypes once up front — shouldEnterHorse calls
+  // ensurePhenotypeResolved per (race, stable, horse) evaluation, and the
+  // resolved copy is otherwise discarded, making deferred-resolution horses
+  // O(races × stables × horses) phenotype resolves.
+  const horseMap = new Map(horses.map((h) => [h.id, ensurePhenotypeResolved(h)]));
   const jockeyMap = new Map(jockeys.map((j) => [j.id, j]));
   const stableMap = new Map(stables.map((s) => [s.id, s]));
   const stableJockeyMap = new Map(jockeys.filter((j) => j.stableId).map((j) => [j.stableId!, j]));
@@ -234,6 +238,5 @@ export function runNpcRaceEntry(
       }
     }
   }
-
   return updatedRaces;
 }

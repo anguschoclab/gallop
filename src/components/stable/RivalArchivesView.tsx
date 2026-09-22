@@ -17,6 +17,7 @@ import type { NpcAIManager } from "@/services/ai/aiFacade";
 import { Search, X, ExternalLink, Flame, Handshake, BookOpen } from "lucide-react";
 import { BankruptcyHistoryPanel } from "./BankruptcyHistoryPanel";
 import type { NewsItem } from "@/services/narrative/newsTypes";
+import { Hint } from "@/components/ui/Hint";
 
 type NavigateFn = (opts: {
   search?: Record<string, unknown> | ((prev: Record<string, unknown>) => Record<string, unknown>);
@@ -209,22 +210,23 @@ export function RivalArchivesView({
                           {alliances.map((a) => {
                             const otherName = stableMap.get(a.stableId)?.name ?? a.stableId;
                             return (
-                              <span
-                                key={a.stableId}
-                                className={cn(
-                                  "text-[8px] font-bold uppercase tracking-wide px-1.5 py-0.5 border rounded-none",
-                                  a.type === "economic_cartel"
-                                    ? "border-amber-500/30 text-amber-400/70 bg-amber-500/5"
-                                    : a.type === "racing_coalition"
-                                      ? "border-blue-500/30 text-blue-400/70 bg-blue-500/5"
-                                      : a.type === "breeding_partnership"
-                                        ? "border-emerald-500/30 text-emerald-400/70 bg-emerald-500/5"
-                                        : "border-white/10 text-cream/40 bg-white/5",
-                                )}
-                                title={`${a.type.replace(/_/g, " ")} with ${otherName}`}
-                              >
-                                {a.type.replace(/_/g, " ").split(" ")[0]} · {otherName}
-                              </span>
+                              <Hint content={`${a.type.replace(/_/g, " ")} with ${otherName}`}>
+                                <span
+                                  key={a.stableId}
+                                  className={cn(
+                                    "text-[8px] font-bold uppercase tracking-wide px-1.5 py-0.5 border rounded-none",
+                                    a.type === "economic_cartel"
+                                      ? "border-amber-500/30 text-amber-400/70 bg-amber-500/5"
+                                      : a.type === "racing_coalition"
+                                        ? "border-blue-500/30 text-blue-400/70 bg-blue-500/5"
+                                        : a.type === "breeding_partnership"
+                                          ? "border-emerald-500/30 text-emerald-400/70 bg-emerald-500/5"
+                                          : "border-white/10 text-cream/40 bg-white/5",
+                                  )}
+                                >
+                                  {a.type.replace(/_/g, " ").split(" ")[0]} · {otherName}
+                                </span>
+                              </Hint>
                             );
                           })}
                         </div>

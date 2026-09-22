@@ -93,10 +93,10 @@ export function EligibleHorseRow({
               e.stopPropagation();
               const res = onWithdrawRace(race.id, horse.id);
               if (res.ok) {
-                alert(`${horse.name} withdrawn from ${race.name}`);
+                toast.success(`${horse.name} withdrawn from ${race.name}`);
                 onClose();
               } else {
-                alert(`Withdrawal failed: ${res.reason}`);
+                toast.error(`Withdrawal failed: ${res.reason}`);
               }
             }}
           >

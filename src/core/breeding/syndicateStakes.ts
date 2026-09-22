@@ -144,8 +144,7 @@ export function derivePlayerSyndicateStakes(
   const results: PlayerSyndicateStake[] = [];
 
   for (const syn of Object.values(syndicates || {})) {
-    const shares =
-      syn.shareHolders?.[playerKey] ?? (syn.shareHolders as any)?.[playerStableId] ?? 0;
+    const shares = syn.shareHolders?.[playerKey] ?? 0;
     if (shares <= 0) continue;
 
     const totalShares = Math.max(1, syn.totalShares || 40);
@@ -171,7 +170,7 @@ export function derivePlayerSyndicateStakes(
     if (satRecord && Object.keys(satRecord).length > 0) {
       const scores = Object.values(satRecord);
       averageSatisfaction = Math.round(scores.reduce((sum, val) => sum + val, 0) / scores.length);
-      playerSatisfaction = satRecord[playerKey] ?? (satRecord as any)[playerStableId] ?? 50;
+      playerSatisfaction = satRecord[playerKey] ?? 50;
     }
 
     // Investor sentiment

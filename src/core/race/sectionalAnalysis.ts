@@ -66,27 +66,27 @@ function computeSegmentAverages(
     result.set(id, segs);
   }
 
-  for (const snap of snapshots) {
-    const horseMap = new Map(snap.horses.map((h) => [h.horseId, h]));
-    for (const id of horseIds) {
-      const h = horseMap.get(id);
-      if (!h) continue;
+  for (let i = 0; i < snapshots.length; i++) {
+    const snap = snapshots[i];
+    for (let j = 0; j < snap.horses.length; j++) {
+      const h = snap.horses[j];
       const pos = h.position;
       if (pos <= 0 || pos > raceDistanceMeters) continue;
 
+      const acc = result.get(h.horseId);
+      if (!acc) continue; // Horse not tracked in horseIds
+
       // Determine segment index
       let segIdx = -1;
-      for (let i = 0; i < markers.length; i++) {
-        if (pos < markers[i]) {
-          segIdx = i;
+      for (let m = 0; m < markers.length; m++) {
+        if (pos < markers[m]) {
+          segIdx = m;
           break;
         }
       }
       // If pos >= last marker, assign to last segment
       if (segIdx === -1) segIdx = markers.length - 1;
 
-      const acc = result.get(id);
-      if (!acc) continue;
       acc[segIdx].seekSum += h.seekContribution ?? 0;
       acc[segIdx].spurtSum += h.spurtContribution ?? 0;
       acc[segIdx].count++;

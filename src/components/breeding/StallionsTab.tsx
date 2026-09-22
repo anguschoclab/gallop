@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useStallionFilters } from "@/hooks/stable/useStallionFilters";
+import { toast } from "sonner";
 import { MyStallionCard } from "@/components/breeding/MyStallionCard";
 import { StallionCard } from "@/components/breeding/StallionCard";
 import { calculateRecommendedStudFee } from "@/services/breeding/breedingFacade";
@@ -94,7 +95,7 @@ export function StallionsTab() {
               onBook={() => {
                 if (!selectedMare) return;
                 const result = breed(stallion.id, selectedMare.id, false);
-                if (!result.ok) alert(result.reason);
+                if (!result.ok) toast.error(result.reason);
               }}
             />
           ))}
@@ -116,7 +117,7 @@ export function StallionsTab() {
               recommendedFee={calculateRecommendedStudFee(stallion)}
               onUpdateFee={(fee) => {
                 const result = updateStudFee(stallion.id, fee);
-                if (!result.ok) alert(result.reason);
+                if (!result.ok) toast.error(result.reason);
               }}
             />
           ))}

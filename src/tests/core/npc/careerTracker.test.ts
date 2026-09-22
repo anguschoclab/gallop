@@ -97,4 +97,44 @@ describe("npc career tracker", () => {
     const b = simulateOffscreenStart(h, 300, "elite", createRng(42));
     expect(a.entry).toEqual(b.entry);
   });
+
+  it("does not simulate starts for injured horses", () => {
+    const h = horse({
+      age: 3,
+      activeInjury: { onsetDay: 90, type: "Soreness", severity: "minor", recoveryDays: 10 },
+    });
+    expect(isDueForOffscreenStart(h, 100, "mid", createRng(1))).toBe(false);
+  });
+
+  it("summarizes mixed real and offscreen records accurately", () => {
+    const h = horse({
+      age: 4,
+      raceHistory: [
+        { raceId: "r1", raceName: "Real Race", position: 1, purseEarned: 10000, day: 50 },
+        {
+          raceId: "r2",
+          raceName: "Sim Race",
+          position: 2,
+          purseEarned: 5000,
+          day: 80,
+          offscreen: true,
+        },
+      ],
+      careerTracker: {
+        lastOffscreenDay: 80,
+        offscreenStarts: 1,
+        offscreenWins: 0,
+        offscreenEarnings: 5000,
+      } as Horse["careerTracker"],
+    });
+
+    const summary = summarizeNpcCareer(h, 100);
+    expect(summary.starts).toBe(2);
+    expect(summary.wins).toBe(1);
+    expect(summary.earnings).toBe(15000);
+    expect(summary.winRate).toBe(0.5);
+    expect(summary.offscreenStarts).toBe(1);
+    expect(summary.lastStartDay).toBe(80);
+    expect(summary.daysSinceStart).toBe(20);
+  });
 });

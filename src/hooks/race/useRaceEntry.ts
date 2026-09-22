@@ -103,7 +103,7 @@ export function useRaceEntry(race: Race) {
         if (wantToClaim && race.claimingPrice && !isNewClaimingRace) {
           const claimRes = submitClaim(race.id, selectedHorseId);
           if (!claimRes.ok) {
-            alert(`Claim failed: ${claimRes.reason}`);
+            toast.error(`Claim failed: ${claimRes.reason}`);
             return;
           }
         }
@@ -120,7 +120,7 @@ export function useRaceEntry(race: Race) {
 
         onClose();
       } else {
-        alert(res.reason);
+        toast.error(res.reason);
       }
     }
   };

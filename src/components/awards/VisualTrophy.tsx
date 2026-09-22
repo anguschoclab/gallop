@@ -1,4 +1,5 @@
 import { cn } from "@/lib/cn";
+import { Hint } from "@/components/ui/Hint";
 
 /**
  * VisualTrophy — a stylised SVG trophy cup used to celebrate
@@ -46,94 +47,95 @@ export function VisualTrophy({
   const rimId = `vt-${tone}-rim`;
 
   return (
-    <div
-      className={cn("inline-flex flex-col items-center select-none", className)}
-      style={{ width: size }}
-      title={title}
-    >
-      <svg
-        viewBox="0 0 64 80"
-        width={size}
-        height={size}
-        className={cn("drop-shadow-md", shine && "trophy-shine")}
-        aria-hidden="true"
+    <Hint content={title}>
+      <div
+        className={cn("inline-flex flex-col items-center select-none", className)}
+        style={{ width: size }}
       >
-        <defs>
-          <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={c.top} />
-            <stop offset="45%" stopColor={c.mid} />
-            <stop offset="100%" stopColor={c.low} />
-          </linearGradient>
-          <linearGradient id={rimId} x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor={c.mid} />
-            <stop offset="100%" stopColor={c.rim} />
-          </linearGradient>
-        </defs>
+        <svg
+          viewBox="0 0 64 80"
+          width={size}
+          height={size}
+          className={cn("drop-shadow-md", shine && "trophy-shine")}
+          aria-hidden="true"
+        >
+          <defs>
+            <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={c.top} />
+              <stop offset="45%" stopColor={c.mid} />
+              <stop offset="100%" stopColor={c.low} />
+            </linearGradient>
+            <linearGradient id={rimId} x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor={c.mid} />
+              <stop offset="100%" stopColor={c.rim} />
+            </linearGradient>
+          </defs>
 
-        {/* Handles */}
-        <path
-          d="M14 20 Q4 24 8 38 Q10 46 18 46"
-          fill="none"
-          stroke={`url(#${rimId})`}
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
-        <path
-          d="M50 20 Q60 24 56 38 Q54 46 46 46"
-          fill="none"
-          stroke={`url(#${rimId})`}
-          strokeWidth="3"
-          strokeLinecap="round"
-        />
+          {/* Handles */}
+          <path
+            d="M14 20 Q4 24 8 38 Q10 46 18 46"
+            fill="none"
+            stroke={`url(#${rimId})`}
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
+          <path
+            d="M50 20 Q60 24 56 38 Q54 46 46 46"
+            fill="none"
+            stroke={`url(#${rimId})`}
+            strokeWidth="3"
+            strokeLinecap="round"
+          />
 
-        {/* Cup body */}
-        <path
-          d="M14 16 H50 V32 Q50 50 32 52 Q14 50 14 32 Z"
-          fill={`url(#${gradId})`}
-          stroke={c.rim}
-          strokeWidth="1"
-        />
-        {/* Rim */}
-        <rect x="12" y="14" width="40" height="4" rx="1.5" fill={`url(#${rimId})`} />
+          {/* Cup body */}
+          <path
+            d="M14 16 H50 V32 Q50 50 32 52 Q14 50 14 32 Z"
+            fill={`url(#${gradId})`}
+            stroke={c.rim}
+            strokeWidth="1"
+          />
+          {/* Rim */}
+          <rect x="12" y="14" width="40" height="4" rx="1.5" fill={`url(#${rimId})`} />
 
-        {/* Shine highlight */}
-        <path
-          d="M20 22 Q22 34 26 44"
-          stroke={c.top}
-          strokeWidth="2"
-          strokeLinecap="round"
-          fill="none"
-          opacity="0.55"
-        />
+          {/* Shine highlight */}
+          <path
+            d="M20 22 Q22 34 26 44"
+            stroke={c.top}
+            strokeWidth="2"
+            strokeLinecap="round"
+            fill="none"
+            opacity="0.55"
+          />
 
-        {/* Stem */}
-        <rect x="29" y="52" width="6" height="8" fill={`url(#${rimId})`} />
-        {/* Base */}
-        <rect x="20" y="60" width="24" height="5" rx="1.5" fill={`url(#${rimId})`} />
-        <rect x="16" y="65" width="32" height="6" rx="2" fill={c.rim} />
+          {/* Stem */}
+          <rect x="29" y="52" width="6" height="8" fill={`url(#${rimId})`} />
+          {/* Base */}
+          <rect x="20" y="60" width="24" height="5" rx="1.5" fill={`url(#${rimId})`} />
+          <rect x="16" y="65" width="32" height="6" rx="2" fill={c.rim} />
 
-        {/* Plaque */}
-        {(label || sublabel) && (
-          <g>
-            <rect x="20" y="66" width="24" height="4" rx="0.5" fill="#1a1109" opacity="0.5" />
-          </g>
+          {/* Plaque */}
+          {(label || sublabel) && (
+            <g>
+              <rect x="20" y="66" width="24" height="4" rx="0.5" fill="#1a1109" opacity="0.5" />
+            </g>
+          )}
+        </svg>
+
+        {(label || sublabel || flag) && (
+          <div className="-mt-1.5 text-center leading-tight">
+            {label && (
+              <div className="text-[10px] font-bold tracking-wide text-foreground/90 flex items-center justify-center gap-1">
+                {flag && <span>{flag}</span>}
+                <span>{label}</span>
+              </div>
+            )}
+            {sublabel && (
+              <div className="text-[9px] text-muted-foreground tabular-nums">{sublabel}</div>
+            )}
+          </div>
         )}
-      </svg>
-
-      {(label || sublabel || flag) && (
-        <div className="-mt-1.5 text-center leading-tight">
-          {label && (
-            <div className="text-[10px] font-bold tracking-wide text-foreground/90 flex items-center justify-center gap-1">
-              {flag && <span>{flag}</span>}
-              <span>{label}</span>
-            </div>
-          )}
-          {sublabel && (
-            <div className="text-[9px] text-muted-foreground tabular-nums">{sublabel}</div>
-          )}
-        </div>
-      )}
-    </div>
+      </div>
+    </Hint>
   );
 }
 

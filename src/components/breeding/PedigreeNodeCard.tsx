@@ -6,6 +6,7 @@ import { getCoatColor } from "@/services/breeding/breedingFacade";
 import { cn } from "@/lib/cn";
 import { genderSymbol } from "@/services/breeding/breedingFacade";
 import type { PedigreeFlowNode } from "@/services/breeding/breedingFacade";
+import { Hint } from "@/components/ui/Hint";
 
 export const PedigreeNodeCard = memo(function PedigreeNodeCard({
   data,
@@ -42,15 +43,16 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({
           ) : (
             <div className="w-4 h-4 rounded-full bg-white/10 shrink-0" />
           )}
-          <span
-            className={cn(
-              "text-[10px] font-black truncate text-cream leading-tight uppercase tracking-tight",
-              !data.isReal && "italic font-normal opacity-60",
-            )}
-            title={data.name}
-          >
-            {data.name}
-          </span>
+          <Hint content={data.name}>
+            <span
+              className={cn(
+                "text-[10px] font-black truncate text-cream leading-tight uppercase tracking-tight",
+                !data.isReal && "italic font-normal opacity-60",
+              )}
+            >
+              {data.name}
+            </span>
+          </Hint>
         </div>
 
         <div className="flex items-center justify-between gap-1 mt-auto">

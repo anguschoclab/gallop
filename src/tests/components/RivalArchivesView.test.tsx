@@ -115,7 +115,9 @@ describe("RivalArchivesView", () => {
     );
 
     // Alliance badge should contain the resolved stable name "Beta Stable"
-    const allianceBadge = container.querySelector('[title*="Beta Stable"]');
+    const allianceBadge = Array.from(container.querySelectorAll("span")).find((el) =>
+      el.textContent?.includes("Beta Stable"),
+    );
     expect(allianceBadge).toBeTruthy();
     expect(allianceBadge!.textContent).toContain("Beta Stable");
   });
@@ -155,7 +157,9 @@ describe("RivalArchivesView", () => {
     );
 
     // Should fall back to raw ID "sX" since no stable with that ID exists
-    const allianceBadge = container.querySelector('[title*="sX"]');
+    const allianceBadge = Array.from(container.querySelectorAll("span")).find((el) =>
+      el.textContent?.includes("sX"),
+    );
     expect(allianceBadge).toBeTruthy();
     expect(allianceBadge!.textContent).toContain("sX");
   });

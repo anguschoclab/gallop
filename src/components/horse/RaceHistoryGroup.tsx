@@ -3,6 +3,7 @@ import { gradeColor } from "@/services/common/commonFacade";
 import { getOrdinalSuffix } from "@/services/common/commonFacade";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { getCountryFlag } from "@/services/common/commonFacade";
+import { Hint } from "@/components/ui/Hint";
 
 interface GradedHistoryEntry {
   raceId?: string;
@@ -44,9 +45,9 @@ export function RaceHistoryGroup({ entries, countryFor, yearFor }: RaceHistoryGr
                 <div className="truncate">{r.raceName}</div>
                 <div className="text-xs text-cream-muted flex items-center gap-1.5">
                   {flag && (
-                    <span title={country ?? "Unknown country"} className="text-sm leading-none">
-                      {flag}
-                    </span>
+                    <Hint content={country ?? "Unknown country"}>
+                      <span className="text-sm leading-none">{flag}</span>
+                    </Hint>
                   )}
                   {r.grade === "G1" && <span className="tabular-nums">Y{yearFor(r.day)}</span>}
                   {r.distance ? <span>· {r.distance}m</span> : null}

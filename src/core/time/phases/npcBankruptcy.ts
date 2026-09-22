@@ -21,6 +21,7 @@ import type {
 } from "@/core/resolver/impacts/index";
 import type { AuctionSale } from "@/game/types";
 import type { Horse } from "@/game/types";
+import type { Syndicate } from "@/core/breeding/types";
 import { generateUUID } from "@/core/uuid";
 import { horsePrice } from "@/core/horse/pricing";
 import { calculateSharePrice } from "@/core/ai/syndicationAI";
@@ -55,6 +56,19 @@ export const npcBankruptcyPhase = {
     if (bankruptStables.length === 0) return context;
 
     let npcStables = [...state.npcStables];
+    // Syndicates may arrive frozen (created inside immer drafts); clone the
+    // record and each touched syndicate instead of mutating shareHolders.
+    let syndicates = state.syndicates ? { ...state.syndicates } : state.syndicates;
+    const removeShareholder = (syndicateId: string, holderKey: string): Syndicate | undefined => {
+      const syn = syndicates?.[syndicateId];
+      if (!syn) return undefined;
+      const shareHolders = { ...syn.shareHolders };
+      delete shareHolders[holderKey as keyof typeof shareHolders];
+      const next = { ...syn, shareHolders };
+      syndicates = { ...syndicates, [syn.id]: next };
+      state.syndicates = syndicates;
+      return next;
+    };
     let npcAIManager = state.npcAIManager;
     if (npcAIManager) {
       npcAIManager = {
@@ -72,8 +86,8 @@ export const npcBankruptcyPhase = {
     for (const stable of bankruptStables) {
       // 1. Syndicate buyout: buy out player shares in syndicates where the
       //    stallion is owned by the bankrupt stable.
-      if (state.syndicates) {
-        for (const syndicate of Object.values(state.syndicates)) {
+      if (syndicates) {
+        for (const syndicate of Object.values(syndicates)) {
           const stallion = horseMap.get(syndicate.stallionId) || state.horses[syndicate.stallionId];
           if (!stallion) continue;
           if (stallion.ownership?.type !== "npc" || stallion.ownership.stableId !== stable.id)
@@ -112,18 +126,18 @@ export const npcBankruptcyPhase = {
               },
             } as InboxImpact);
 
-            delete syndicate.shareHolders["player"];
+            removeShareholder(syndicate.id, "player");
           }
         }
       }
 
       // 2. Dissolve bankrupt stable's syndicate shares in all syndicates.
-      if (state.syndicates) {
-        for (const syndicate of Object.values(state.syndicates)) {
+      if (syndicates) {
+        for (const syndicate of Object.values(syndicates)) {
           const stableShares = syndicate.shareHolders[stable.id] || 0;
           if (stableShares <= 0) continue;
 
-          delete syndicate.shareHolders[stable.id];
+          const updatedSyndicate = removeShareholder(syndicate.id, stable.id) ?? syndicate;
 
           // Check devolution: if the stallion was owned by the bankrupt stable,
           // transfer ownership to the new majority holder if one exists.
@@ -134,14 +148,17 @@ export const npcBankruptcyPhase = {
             stallion.ownership.stableId === stable.id
           ) {
             const devolutionResult = findMajorityOwner(
-              syndicate.shareHolders,
-              syndicate.totalShares,
+              updatedSyndicate.shareHolders,
+              updatedSyndicate.totalShares,
               stable.id,
             );
             if (devolutionResult.wouldDevolve && devolutionResult.newOwner) {
               const newOwner = devolutionResult.newOwner;
-              stallion.ownership =
+              const ownership =
                 newOwner === "player" ? makePlayerOwned() : makeNpcOwned(asNpcStableId(newOwner));
+              const updatedStallion = { ...stallion, ownership };
+              state.horses = { ...state.horses, [stallion.id]: updatedStallion };
+              horseMap.set(stallion.id, updatedStallion);
             }
           }
         }
@@ -270,6 +287,7 @@ export const npcBankruptcyPhase = {
         ...state,
         npcStables,
         npcAIManager,
+        syndicates,
       },
       impacts: [...impacts, ...newImpacts],
     };

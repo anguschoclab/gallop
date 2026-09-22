@@ -16,6 +16,7 @@ import { generateProceduralHorseName } from "@/services/breeding/breedingFacade"
 import { validateHorseName } from "@/services/breeding/breedingFacade";
 import { createRng } from "@/services/breeding/breedingFacade";
 import { genderLabel } from "@/services/breeding/breedingFacade";
+import { Hint } from "@/components/ui/Hint";
 
 interface FoalNamingDialogProps {
   foalId: string;
@@ -125,15 +126,16 @@ export const FoalNamingDialog: React.FC<FoalNamingDialogProps> = ({ foalId, isOp
                 placeholder="Enter horse name..."
                 maxLength={18}
               />
-              <button
-                type="button"
-                onClick={generateSuggestion}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-amber-500 transition-colors"
-                title="Generate random name"
-                aria-label={`Generate random name for ${foal.name}`}
-              >
-                <RefreshCw className="w-4 h-4" />
-              </button>
+              <Hint content={"Generate random name"}>
+                <button
+                  type="button"
+                  onClick={generateSuggestion}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-amber-500 transition-colors"
+                  aria-label={`Generate random name for ${foal.name}`}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              </Hint>
             </div>
             {!validation.valid && (
               <p className="text-rose-500 text-xs flex items-center gap-1">

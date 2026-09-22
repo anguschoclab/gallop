@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import type { Horse, Race } from "@/game/types";
 import { formatCurrency } from "@/services/race/raceFacade";
+import { toast } from "sonner";
 
 interface Props {
   race: Race;
@@ -61,9 +62,9 @@ export function ClaimingStep({
           onClick={() => {
             const res = onWithdrawClaim(race.id, selectedHorse.id);
             if (res.ok) {
-              alert("Horse withdrawn from claiming (entry fee forfeited)");
+              toast.success("Horse withdrawn from claiming (entry fee forfeited)");
             } else {
-              alert(`Withdrawal failed: ${res.reason}`);
+              toast.error(`Withdrawal failed: ${res.reason}`);
             }
           }}
           className="w-full uppercase font-black tracking-wide text-[10px]"

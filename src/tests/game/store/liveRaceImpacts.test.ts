@@ -74,7 +74,14 @@ describe("Live race finish applies player impacts immediately", () => {
       transactions: [],
       pendingIntents: [],
       runEnded: false,
-      reputation: { score: 0, tier: "unknown", events: [], gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 }, totalWins: 0, yearsActive: 0 },
+      reputation: {
+        score: 0,
+        tier: "unknown",
+        events: [],
+        gradedWins: { G1: 0, G2: 0, G3: 0, Listed: 0 },
+        totalWins: 0,
+        yearsActive: 0,
+      },
     });
   });
 
@@ -89,9 +96,7 @@ describe("Live race finish applies player impacts immediately", () => {
     expect(s.reputation?.score).toBeGreaterThan(0);
     expect(s.reputation?.totalWins).toBe(1);
     expect(s.races["r1"].livePlayerImpactsApplied).toBe(true);
-    expect(
-      s.transactions.filter((t) => t.subcategory === "prize_money").length,
-    ).toBe(1);
+    expect(s.transactions.filter((t) => t.subcategory === "prize_money").length).toBe(1);
   });
 
   it("day advance does not double-apply prize money or prestige", () => {
@@ -107,13 +112,9 @@ describe("Live race finish applies player impacts immediately", () => {
     const { state: nextState } = runPipelineForDay(afterLive, 6);
 
     expect(nextState.races["r1"].resolved).toBe(true);
-    const prizeTxns = (nextState.transactions ?? []).filter(
-      (t) => t.subcategory === "prize_money",
-    );
+    const prizeTxns = (nextState.transactions ?? []).filter((t) => t.subcategory === "prize_money");
     expect(prizeTxns.length).toBe(1);
-    const winEvents = (nextState.reputation?.events ?? []).filter(
-      (e) => e.source === "race_win",
-    );
+    const winEvents = (nextState.reputation?.events ?? []).filter((e) => e.source === "race_win");
     expect(winEvents.length).toBe(1);
     // Cash may move for upkeep etc., but never by another prize payout.
     expect(nextState.cash).toBeLessThan(liveCash + 600);

@@ -21,6 +21,7 @@ import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import { formatCurrency } from "@/lib/formatting";
 import { getAuctionHouse } from "@/services/prestige/prestigeFacade";
 import { biddingHistorySummary, type PlayerBiddingRecord } from "@/services/auction/auctionFacade";
+import { Hint } from "@/components/ui/Hint";
 
 const OUTCOMES = ["all", "won", "outbid", "passed"] as const;
 type OutcomeFilter = (typeof OUTCOMES)[number];
@@ -117,9 +118,11 @@ export function BiddingHistoryTable({ history }: { history: PlayerBiddingRecord[
                     </Link>
                   </TableCell>
                   <TableCell className="text-right text-xs text-cream-muted">
-                    <span title={r.bids.map((b) => formatCurrency(b)).join(" → ")}>
-                      {r.bids.length} bid{r.bids.length === 1 ? "" : "s"}
-                    </span>
+                    <Hint content={r.bids.map((b) => formatCurrency(b)).join(" → ")}>
+                      <span>
+                        {r.bids.length} bid{r.bids.length === 1 ? "" : "s"}
+                      </span>
+                    </Hint>
                   </TableCell>
                   <TableCell className="text-right tabular-nums text-cream">
                     {formatCurrency(r.topBid)}

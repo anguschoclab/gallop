@@ -24,6 +24,7 @@ import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { CampaignRaceSlot } from "@/services/calendar/calendarFacade";
 import type { Race } from "@/game/types";
+import { Hint } from "@/components/ui/Hint";
 
 function getRaceTrackName(race: Race): string {
   if (race.graded?.track) return race.graded.track;
@@ -215,11 +216,12 @@ export function LiveAnnualTimeline({
             </div>
 
             {/* Current day cursor */}
-            <div
-              className="absolute top-0 bottom-0 w-1 bg-primary z-20 shadow-md"
-              style={{ left: `${currentDayPercent}%` }}
-              title={`Current Day: ${currentDay}`}
-            />
+            <Hint content={`Current Day: ${currentDay}`}>
+              <div
+                className="absolute top-0 bottom-0 w-1 bg-primary z-20 shadow-md"
+                style={{ left: `${currentDayPercent}%` }}
+              />
+            </Hint>
 
             {/* Slot tick marks on rail */}
             {sortedSlots.map((slot) => {
@@ -229,16 +231,19 @@ export function LiveAnnualTimeline({
               const isTarget = slot.role === "target";
 
               return (
-                <div
-                  key={`${slot.dayTarget}-${slot.raceId || "unassigned"}`}
-                  className={`absolute top-1 bottom-1 w-2.5 rounded-sm z-10 -ml-1 border ${
-                    isTarget ? "bg-amber-400 border-amber-300" : "bg-blue-400 border-blue-300"
-                  }`}
-                  style={{ left: `${pct}%` }}
-                  title={`${isTarget ? "Target" : "Prep"}: Day ${slotDay} ${
+                <Hint
+                  content={`${isTarget ? "Target" : "Prep"}: Day ${slotDay} ${
                     race?.name ? `(${race.name})` : ""
                   }`}
-                />
+                >
+                  <div
+                    key={`${slot.dayTarget}-${slot.raceId || "unassigned"}`}
+                    className={`absolute top-1 bottom-1 w-2.5 rounded-sm z-10 -ml-1 border ${
+                      isTarget ? "bg-amber-400 border-amber-300" : "bg-blue-400 border-blue-300"
+                    }`}
+                    style={{ left: `${pct}%` }}
+                  />
+                </Hint>
               );
             })}
           </div>

@@ -7,6 +7,7 @@ import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/services/staff/staffFaca
 import { isOffended, offendedDaysRemaining } from "@/services/staff/staffFacade";
 import { UserPlus, Zap, Activity, Info } from "lucide-react";
 import { formatStaffTrait } from "@/services/common/commonFacade";
+import { Hint } from "@/components/ui/Hint";
 
 interface PoolMember {
   id: string;
@@ -126,17 +127,18 @@ export function RecruitmentPool({
                 staff as unknown as import("@/core/staff/staffTypes").StaffMember,
                 day,
               ) ? (
-                <div
-                  className="w-full h-10 flex items-center justify-center gap-2 border border-destructive/20 bg-destructive/5 text-destructive/60 text-[9px] font-mono uppercase tracking-wide"
-                  title={`Offended — willing to talk again in ${offendedDaysRemaining(staff as unknown as import("@/core/staff/staffTypes").StaffMember, day)} day(s)`}
+                <Hint
+                  content={`Offended — willing to talk again in ${offendedDaysRemaining(staff as unknown as import("@/core/staff/staffTypes").StaffMember, day)} day(s)`}
                 >
-                  Not interested ·{" "}
-                  {offendedDaysRemaining(
-                    staff as unknown as import("@/core/staff/staffTypes").StaffMember,
-                    day,
-                  )}
-                  d
-                </div>
+                  <div className="w-full h-10 flex items-center justify-center gap-2 border border-destructive/20 bg-destructive/5 text-destructive/60 text-[9px] font-mono uppercase tracking-wide">
+                    Not interested ·{" "}
+                    {offendedDaysRemaining(
+                      staff as unknown as import("@/core/staff/staffTypes").StaffMember,
+                      day,
+                    )}
+                    d
+                  </div>
+                </Hint>
               ) : (
                 <Button
                   size="sm"

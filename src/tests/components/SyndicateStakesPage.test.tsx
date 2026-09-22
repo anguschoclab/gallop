@@ -157,9 +157,7 @@ describe("SyndicateStakesPage", () => {
     });
     fireEvent.click(toggleButton);
 
-    expect(
-      screen.getByText(/historical reputation events · northern dancer/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(/historical reputation events · northern dancer/i)).toBeInTheDocument();
     expect(
       screen.getByText("Underwrote 25% of the Northern Dancer syndicate."),
     ).toBeInTheDocument();
