@@ -27,6 +27,7 @@ vi.mock("@/game/store/storage", () => ({
   hydrationComplete: { value: true },
   saveExists: { value: false },
   persistenceEnabled: { value: false },
+  createRehydrateStore: () => vi.fn().mockResolvedValue(undefined),
 }));
 
 import { useGame } from "@/game/store";
