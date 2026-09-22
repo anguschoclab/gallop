@@ -248,7 +248,7 @@ export function createRaceEntryActions(
             narrativeArcs: state.narrativeArcs,
           });
           const liveImpacts = raceImpacts.filter(isLivePlayerImpact);
-          console.error("liveImpacts", JSON.stringify(liveImpacts.map((i) => [i.type, (i as any).source, (i as any).amount, (i as any).delta])));
+          console.error("rep", JSON.stringify({ before: state.reputation?.score, after: applied.state.reputation?.score }));
           const applied = applyImpacts({
             state,
             intents: [],
