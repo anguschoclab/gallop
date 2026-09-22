@@ -261,4 +261,7 @@ export type Horse = {
 
   /** Off-screen career progress (NPC horses only). */
   careerTracker?: NpcCareerProgress;
+
+  /** Career milestone keys already announced to the player (NPC horses only). */
+  careerMilestonesAnnounced?: string[];
 };
