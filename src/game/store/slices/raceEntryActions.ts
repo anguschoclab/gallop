@@ -7,6 +7,11 @@ import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet } from "../types";
 import type { CoreSlice } from "./coreSlice";
 import { isPlayerOwned } from "@/core/horse/ownership";
+import { simulateRace } from "@/services/race/raceFacade";
+import { generateRaceImpacts } from "@/core/race/raceImpactGenerator";
+import { applyImpacts } from "@/core/resolver/resolver";
+import { rngForRace } from "@/core/race/rngForRace";
+import { isLivePlayerImpact } from "@/core/race/liveRaceImpacts";
 
 export function createRaceEntryActions(
   set: StoreSet,
@@ -199,6 +204,72 @@ export function createRaceEntryActions(
         factorLedgers,
         snapshots,
       });
+
+      // Apply player-facing impacts immediately so cash, prestige and
+      // syndicate stakes update the moment a watched race finishes; the
+      // day-advance pipeline skips re-applying them (livePlayerImpactsApplied).
+      try {
+        const state = get();
+        const race = state.races[raceId];
+        if (race && !race.resolved && !race.livePlayerImpactsApplied && result.length > 0) {
+          const npcAIManager = state.npcAIManager
+            ? {
+                ...state.npcAIManager,
+                stableStates: Object.fromEntries(
+                  Object.entries(state.npcAIManager.stableStates).map(([id, st]) => [
+                    id,
+                    { ...st },
+                  ]),
+                ),
+              }
+            : undefined;
+          const { runners: impactRunners } = simulateRace(
+            race,
+            Object.values(state.horses),
+            state.jockeys ?? [],
+            state.hiredStaff ?? [],
+            state.npcStables ?? [],
+            npcAIManager,
+            state.day,
+          );
+          const raceImpacts = generateRaceImpacts({
+            race,
+            result,
+            runners: impactRunners,
+            horses: Object.values(state.horses),
+            jockeys: state.jockeys ?? [],
+            newDay: state.day,
+            hiredStaff: state.hiredStaff ?? [],
+            rng: rngForRace(race),
+            snapshots: [],
+            calibratedPars: state.calibratedPars || {},
+            raceWeatherState: undefined,
+            syndicates: state.syndicates,
+            narrativeArcs: state.narrativeArcs,
+          });
+          const liveImpacts = raceImpacts.filter(isLivePlayerImpact);
+          const applied = applyImpacts({
+            state,
+            intents: [],
+            impacts: liveImpacts,
+            impactLog: [],
+            day: state.day,
+          });
+          const newState = applied.state;
+          set({
+            ...newState,
+            races: {
+              ...newState.races,
+              [raceId]: {
+                ...newState.races[raceId],
+                livePlayerImpactsApplied: true,
+              },
+            },
+          });
+        }
+      } catch {
+        // Fall back to day-advance application if live resolution fails.
+      }
     },
 
     submitClaim: (raceId: string, horseId: string) => {

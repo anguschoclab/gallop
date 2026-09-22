@@ -17,6 +17,7 @@ import type { WeatherState } from "@/core/weather/weatherTypes";
 import type { ClaimingIntent, RaceResolutionIntent } from "@/core/resolver/intents";
 import { resolveRacePort } from "@/core/time/pipelinePorts";
 import { recordNpcAiOutcomes } from "./raceResolutionHelpers";
+import { isLivePlayerImpact } from "@/core/race/liveRaceImpacts";
 import { generatePostRaceImpacts } from "./postRaceImpacts";
 
 /**
@@ -118,6 +119,9 @@ export const raceResolutionPhase: PipelinePhase = {
         });
 
         for (const impact of raceImpacts) {
+          // Player-facing impacts were already applied the moment the race
+          // finished live — skip them here to avoid double-counting.
+          if (race.livePlayerImpactsApplied && isLivePlayerImpact(impact)) continue;
           impacts.push(impact);
         }
 

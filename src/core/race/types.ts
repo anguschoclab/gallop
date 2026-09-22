@@ -79,6 +79,8 @@ export type Race = {
   entries: RaceEntry[];
   inquiries?: StewardsInquiry[];
   resolved: boolean;
+  /** Player cash/prestige/syndicate impacts already applied at live finish — day advance skips re-applying them. */
+  livePlayerImpactsApplied?: boolean;
   cancelled?: boolean;
   cancelledReason?: string;
   result?: RaceResult[];
