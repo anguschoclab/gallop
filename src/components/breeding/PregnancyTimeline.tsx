@@ -1,5 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Hint } from "@/components/ui/Hint";
 
 interface PregnancyTimelineProps {
   conceivedDay: number;
@@ -49,26 +50,27 @@ export function PregnancyTimeline({
                   const isFuture = dayNumber > currentDay;
 
                   return (
-                    <div
-                      key={dayOffset}
-                      className="flex-1 flex flex-col items-center justify-center"
-                      title={`Day ${dayNumber}`}
-                    >
-                      {/* Marker dot */}
+                    <Hint content={`Day ${dayNumber}`}>
                       <div
-                        className={`w-2 h-2 rounded-full ${
-                          isConceived
-                            ? "bg-success ring-2 ring-success/50"
-                            : isDue
-                              ? "bg-destructive ring-2 ring-destructive/50"
-                              : isCurrent
-                                ? "bg-white ring-2 ring-white/50"
-                                : isPast
-                                  ? "bg-primary/60"
-                                  : "bg-muted-foreground/40"
-                        }`}
-                      />
-                    </div>
+                        key={dayOffset}
+                        className="flex-1 flex flex-col items-center justify-center"
+                      >
+                        {/* Marker dot */}
+                        <div
+                          className={`w-2 h-2 rounded-full ${
+                            isConceived
+                              ? "bg-success ring-2 ring-success/50"
+                              : isDue
+                                ? "bg-destructive ring-2 ring-destructive/50"
+                                : isCurrent
+                                  ? "bg-white ring-2 ring-white/50"
+                                  : isPast
+                                    ? "bg-primary/60"
+                                    : "bg-muted-foreground/40"
+                          }`}
+                        />
+                      </div>
+                    </Hint>
                   );
                 })}
               </div>

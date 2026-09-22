@@ -2,6 +2,7 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import { FacilityCategory } from "./FacilityCategory";
 import { Dumbbell, ShieldCheck, Activity, Package } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
+import { toast } from "sonner";
 import {
   FACILITY_BONUSES,
   FACILITY_MAINTENANCE_COSTS,
@@ -93,7 +94,7 @@ export function FacilitiesPanel() {
   const handleUpgrade = (facilityType: FacilityType) => {
     const result = upgradeFacility(facilityType);
     if (!result.ok) {
-      alert(result.reason);
+      toast.error(result.reason);
     }
   };
 

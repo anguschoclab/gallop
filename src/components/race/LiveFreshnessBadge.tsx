@@ -1,6 +1,7 @@
 import { useLiveFreshness } from "@/hooks/shared/useLiveFreshness";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/cn";
+import { Hint } from "@/components/ui/Hint";
 
 interface LiveFreshnessBadgeProps {
   /** Wall-clock ms when the widget was last updated. */
@@ -65,16 +66,17 @@ export function LiveFreshnessBadge({ lastUpdatedAt, context, className }: LiveFr
               )}
             />
             <span className="text-[8px] font-bold uppercase tracking-tighter">{styles.label}</span>
-            <span
-              data-testid="live-freshness-seconds"
-              className={cn(
-                "text-[8px] tabular-nums font-mono",
-                level === "stale" ? "opacity-90 font-bold" : "text-muted-foreground/80 lowercase",
-              )}
-              title={`Last updated ${exactSecondsAgo}`}
-            >
-              {exactSecondsAgo}
-            </span>
+            <Hint content={`Last updated ${exactSecondsAgo}`}>
+              <span
+                data-testid="live-freshness-seconds"
+                className={cn(
+                  "text-[8px] tabular-nums font-mono",
+                  level === "stale" ? "opacity-90 font-bold" : "text-muted-foreground/80 lowercase",
+                )}
+              >
+                {exactSecondsAgo}
+              </span>
+            </Hint>
           </div>
         </TooltipTrigger>
         <TooltipContent side="bottom" className="max-w-xs">

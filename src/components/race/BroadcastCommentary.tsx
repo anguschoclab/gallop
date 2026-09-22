@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Mic2 } from "lucide-react";
 import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
 import { LiveFreshnessBadge } from "@/components/race/LiveFreshnessBadge";
+import { Hint } from "@/components/ui/Hint";
 
 interface BroadcastCommentaryProps {
   commentary: CommentaryLine[];
@@ -66,16 +67,17 @@ export function BroadcastCommentary({ commentary, lastUpdatedAt }: BroadcastComm
                   {line.timestamp.toFixed(1)}s
                 </span>
                 {receivedTimeStr && (
-                  <span
-                    data-testid="pbp-received-time"
-                    aria-label={`PBP tick received at ${receivedTimeStr}`}
-                    title={`PBP tick received at ${receivedTimeStr}`}
-                    className={`text-[8px] tabular-nums font-mono leading-tight tracking-tight ${
-                      isLatest ? "text-broadcast-accent/70" : "text-muted-foreground/40"
-                    }`}
-                  >
-                    {receivedTimeStr}
-                  </span>
+                  <Hint content={`PBP tick received at ${receivedTimeStr}`}>
+                    <span
+                      data-testid="pbp-received-time"
+                      aria-label={`PBP tick received at ${receivedTimeStr}`}
+                      className={`text-[8px] tabular-nums font-mono leading-tight tracking-tight ${
+                        isLatest ? "text-broadcast-accent/70" : "text-muted-foreground/40"
+                      }`}
+                    >
+                      {receivedTimeStr}
+                    </span>
+                  </Hint>
                 )}
               </div>
               <div className="flex-1 leading-relaxed relative">

@@ -14,6 +14,7 @@ import {
   REGION_AWARD_NAMES,
 } from "@/services/awards/awardsFacade";
 import { AWARD_BADGE_INLINE_MAX_WIDTH } from "@/constants/awardsConstants";
+import { Hint } from "@/components/ui/Hint";
 
 interface AwardBadgeProps {
   award: RegionalAward;
@@ -200,26 +201,27 @@ export function AwardListItem({ award, showIcon = true, onClick, className }: Aw
   }
 
   return (
-    <button
-      onClick={onClick}
-      title={description}
-      className={cn(
-        "w-full flex items-center gap-3 p-2 rounded-md text-left",
-        "hover:bg-accent transition-colors",
-        "cursor-pointer",
-        className,
-      )}
-    >
-      {showIcon && <AwardIcon region={award.region} category={award.category} size="tiny" />}
-      <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium truncate">{categoryName}</div>
-        <div className="text-xs text-muted-foreground">
-          {award.year} • {award.points} pts
+    <Hint content={description}>
+      <button
+        onClick={onClick}
+        className={cn(
+          "w-full flex items-center gap-3 p-2 rounded-md text-left",
+          "hover:bg-accent transition-colors",
+          "cursor-pointer",
+          className,
+        )}
+      >
+        {showIcon && <AwardIcon region={award.region} category={award.category} size="tiny" />}
+        <div className="flex-1 min-w-0">
+          <div className="text-sm font-medium truncate">{categoryName}</div>
+          <div className="text-xs text-muted-foreground">
+            {award.year} • {award.points} pts
+          </div>
         </div>
-      </div>
-      {award.isHistoric && (
-        <span className="text-xs bg-fame/20 text-fame px-1.5 py-0.5 rounded">Historic</span>
-      )}
-    </button>
+        {award.isHistoric && (
+          <span className="text-xs bg-fame/20 text-fame px-1.5 py-0.5 rounded">Historic</span>
+        )}
+      </button>
+    </Hint>
   );
 }

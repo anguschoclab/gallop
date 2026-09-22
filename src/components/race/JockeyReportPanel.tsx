@@ -23,6 +23,7 @@ import {
   Trophy,
   ChevronRight,
 } from "lucide-react";
+import { Hint } from "@/components/ui/Hint";
 
 interface JockeyReportPanelProps {
   runners: Runner[];
@@ -189,15 +190,16 @@ export function JockeyReportPanel({
                     </div>
                   </div>
                 </div>
-                <span
-                  className={cn(
-                    "shrink-0 px-2 py-0.5 border font-mono text-[10px] uppercase tracking-wide font-black tabular-nums",
-                    jockeyGradeColorClass(facet.grade),
-                  )}
-                  title={`${facet.score.toFixed(0)} / 100`}
-                >
-                  {facet.grade}
-                </span>
+                <Hint content={`${facet.score.toFixed(0)} / 100`}>
+                  <span
+                    className={cn(
+                      "shrink-0 px-2 py-0.5 border font-mono text-[10px] uppercase tracking-wide font-black tabular-nums",
+                      jockeyGradeColorClass(facet.grade),
+                    )}
+                  >
+                    {facet.grade}
+                  </span>
+                </Hint>
               </div>
 
               {/* Progress bar */}

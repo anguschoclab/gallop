@@ -37,6 +37,7 @@ import {
   type SectionalSplit,
   type RunnerFactorLedger,
 } from "@/services/race/raceResultService";
+import { Hint } from "@/components/ui/Hint";
 
 /**
  * Props for the ResultOverlay component.
@@ -128,13 +129,14 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
               {race.name}
             </h2>
             {venueUpliftPct !== 0 && (
-              <div
-                className="font-mono text-[10px] uppercase tracking-wide text-cream/40"
-                title="Payouts are scaled by the prestige of the racecourse staging this race."
+              <Hint
+                content={"Payouts are scaled by the prestige of the racecourse staging this race."}
               >
-                Course prestige {venueUpliftPct > 0 ? "+" : ""}
-                {venueUpliftPct}% on earnings
-              </div>
+                <div className="font-mono text-[10px] uppercase tracking-wide text-cream/40">
+                  Course prestige {venueUpliftPct > 0 ? "+" : ""}
+                  {venueUpliftPct}% on earnings
+                </div>
+              </Hint>
             )}
           </div>
           <Trophy className="h-8 w-8 text-gold opacity-20" />

@@ -13,6 +13,10 @@ export function useSaveSlots(initialTab: "save" | "load") {
   const [newSaveName, setNewSaveName] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingAction, setPendingAction] = useState<{
+    kind: "load" | "delete";
+    slotId: string;
+  } | null>(null);
 
   const manualSave = useGame((s) => s.manualSave);
   const loadSlot = useGame((s) => s.loadSlot);
@@ -51,16 +55,8 @@ export function useSaveSlots(initialTab: "save" | "load") {
     [newSaveName, manualSave, refreshSaves],
   );
 
-  const handleLoad = useCallback(
+  const performLoad = useCallback(
     async (slotId: string) => {
-      if (
-        !window.confirm(
-          "CONFIRM Load: Current live state will be overwritten by this ledger entry.",
-        )
-      ) {
-        return;
-      }
-
       setIsLoading(true);
       try {
         await loadSlot(slotId);
@@ -73,13 +69,8 @@ export function useSaveSlots(initialTab: "save" | "load") {
     [loadSlot],
   );
 
-  const handleDelete = useCallback(
-    async (slotId: string, e: React.MouseEvent) => {
-      e.stopPropagation();
-      if (!window.confirm("CONFIRM PURGE: Permanent deletion of archive entry.")) {
-        return;
-      }
-
+  const performDelete = useCallback(
+    async (slotId: string) => {
       try {
         await deleteSaveSlot(slotId);
         await refreshSaves();
@@ -90,6 +81,27 @@ export function useSaveSlots(initialTab: "save" | "load") {
     },
     [refreshSaves],
   );
+
+  // Destructive actions go through a pending-confirmation state that the
+  // consuming component renders as an AlertDialog (no window.confirm).
+  const handleLoad = useCallback((slotId: string) => {
+    setPendingAction({ kind: "load", slotId });
+  }, []);
+
+  const handleDelete = useCallback((slotId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setPendingAction({ kind: "delete", slotId });
+  }, []);
+
+  const confirmPendingAction = useCallback(async () => {
+    const pending = pendingAction;
+    setPendingAction(null);
+    if (!pending) return;
+    if (pending.kind === "load") await performLoad(pending.slotId);
+    else await performDelete(pending.slotId);
+  }, [pendingAction, performLoad, performDelete]);
+
+  const cancelPendingAction = useCallback(() => setPendingAction(null), []);
 
   return {
     activeTab,
@@ -102,5 +114,8 @@ export function useSaveSlots(initialTab: "save" | "load") {
     handleManualSave,
     handleLoad,
     handleDelete,
+    pendingAction,
+    confirmPendingAction,
+    cancelPendingAction,
   };
 }

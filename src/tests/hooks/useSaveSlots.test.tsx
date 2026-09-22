@@ -65,19 +65,23 @@ describe("useSaveSlots", () => {
     it("calls console.error and resets isLoading when loadSlot rejects", async () => {
       setupStore({ loadSlot: vi.fn().mockRejectedValue(new Error("slot corrupt")) });
       const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-      const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
 
       const { result } = renderHook(() => useSaveSlots("load"));
 
+      act(() => {
+        result.current.handleLoad("slot1");
+      });
+      expect(result.current.pendingAction).toEqual({ kind: "load", slotId: "slot1" });
+
       await act(async () => {
-        await result.current.handleLoad("slot1");
+        await result.current.confirmPendingAction();
       });
 
       expect(consoleErrorSpy).toHaveBeenCalledWith("Recall failed:", expect.any(Error));
       expect(result.current.isLoading).toBe(false);
+      expect(result.current.pendingAction).toBeNull();
 
       consoleErrorSpy.mockRestore();
-      confirmSpy.mockRestore();
     });
   });
 
@@ -95,39 +99,44 @@ describe("useSaveSlots", () => {
   });
 
   describe("handleLoad success path", () => {
-    it("calls loadSlot with the provided slotId", async () => {
-      const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+    it("calls loadSlot with the provided slotId after confirmation", async () => {
       const loadSlot = vi.fn().mockResolvedValue(undefined);
       setupStore({ loadSlot });
 
       const { result } = renderHook(() => useSaveSlots("load"));
 
+      act(() => {
+        result.current.handleLoad("slot1");
+      });
+      expect(loadSlot).not.toHaveBeenCalled();
+
       await act(async () => {
-        await result.current.handleLoad("slot1");
+        await result.current.confirmPendingAction();
       });
 
       expect(loadSlot).toHaveBeenCalledWith("slot1");
-
-      confirmSpy.mockRestore();
     });
   });
 
   describe("handleLoad guard", () => {
-    it("early-returns when window.confirm is false", async () => {
-      const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+    it("does not call loadSlot when the pending action is cancelled", async () => {
       const loadSlot = vi.fn().mockResolvedValue(undefined);
       setupStore({ loadSlot });
 
       const { result } = renderHook(() => useSaveSlots("load"));
 
-      await act(async () => {
-        await result.current.handleLoad("slot1");
+      act(() => {
+        result.current.handleLoad("slot1");
+      });
+      expect(result.current.pendingAction).toEqual({ kind: "load", slotId: "slot1" });
+
+      act(() => {
+        result.current.cancelPendingAction();
       });
 
+      expect(result.current.pendingAction).toBeNull();
       expect(loadSlot).not.toHaveBeenCalled();
       expect(result.current.isLoading).toBe(false);
-
-      confirmSpy.mockRestore();
     });
   });
 
@@ -209,12 +218,16 @@ describe("useSaveSlots", () => {
     it("calls console.error and toast.error when deleteSaveSlot rejects", async () => {
       (deleteSaveSlot as any).mockRejectedValue(new Error("permission denied"));
       const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-      const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
 
       const { result } = renderHook(() => useSaveSlots("save"));
 
+      act(() => {
+        result.current.handleDelete("slot1", { stopPropagation: vi.fn() } as any);
+      });
+      expect(result.current.pendingAction).toEqual({ kind: "delete", slotId: "slot1" });
+
       await act(async () => {
-        await result.current.handleDelete("slot1", { stopPropagation: vi.fn() } as any);
+        await result.current.confirmPendingAction();
       });
 
       expect(consoleErrorSpy).toHaveBeenCalledWith(
@@ -222,25 +235,27 @@ describe("useSaveSlots", () => {
         expect.any(Error),
       );
       expect(toast.error).toHaveBeenCalledWith("Failed to delete save");
+      expect(result.current.pendingAction).toBeNull();
 
       consoleErrorSpy.mockRestore();
-      confirmSpy.mockRestore();
     });
   });
 
   describe("handleDelete guard", () => {
-    it("early-returns when window.confirm is false", async () => {
-      const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
-
+    it("does not call deleteSaveSlot when the pending action is cancelled", async () => {
       const { result } = renderHook(() => useSaveSlots("save"));
 
-      await act(async () => {
-        await result.current.handleDelete("slot1", { stopPropagation: vi.fn() } as any);
+      act(() => {
+        result.current.handleDelete("slot1", { stopPropagation: vi.fn() } as any);
+      });
+      expect(result.current.pendingAction).toEqual({ kind: "delete", slotId: "slot1" });
+
+      act(() => {
+        result.current.cancelPendingAction();
       });
 
+      expect(result.current.pendingAction).toBeNull();
       expect(deleteSaveSlot).not.toHaveBeenCalled();
-
-      confirmSpy.mockRestore();
     });
   });
 });

@@ -12,6 +12,7 @@ import { getRegionFlag, getRegionCountryLabel } from "@/services/common/commonFa
 import { Trophy, Award, Star } from "lucide-react";
 import { VisualTrophy, TrophyShelf } from "./VisualTrophy";
 import { AWARD_COMPACT_THRESHOLD, HOTY_TROPHY_SIZE } from "@/constants/awardsConstants";
+import { Hint } from "@/components/ui/Hint";
 
 interface HorseAwardsPanelProps {
   horse: Horse;
@@ -37,9 +38,9 @@ function renderCompactCategory(category: RegionalAwardCategory, sorted: Regional
             {CATEGORY_DESCRIPTIONS[category]}
           </div>
           <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-            <span title={getRegionCountryLabel(sorted[0].region)}>
-              {getRegionFlag(sorted[0].region)}
-            </span>
+            <Hint content={getRegionCountryLabel(sorted[0].region)}>
+              <span>{getRegionFlag(sorted[0].region)}</span>
+            </Hint>
             <span>
               Y{first}–Y{last}
             </span>
@@ -57,13 +58,12 @@ function renderExpandedAwards(sorted: RegionalAward[]) {
   return sorted.map((award) => (
     <div key={award.id} className="flex items-center justify-between gap-2">
       <AwardBadge award={award} variant="inline" showYear linkToCategory />
-      <span
-        className="text-xs text-muted-foreground flex items-center gap-1 shrink-0"
-        title={getRegionCountryLabel(award.region)}
-      >
-        <span>{getRegionFlag(award.region)}</span>
-        <span className="hidden sm:inline">{getRegionCountryLabel(award.region)}</span>
-      </span>
+      <Hint content={getRegionCountryLabel(award.region)}>
+        <span className="text-xs text-muted-foreground flex items-center gap-1 shrink-0">
+          <span>{getRegionFlag(award.region)}</span>
+          <span className="hidden sm:inline">{getRegionCountryLabel(award.region)}</span>
+        </span>
+      </Hint>
     </div>
   ));
 }

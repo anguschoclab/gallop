@@ -2,6 +2,7 @@ import type { SectionalSplit } from "@/services/race/raceFacade";
 import { SilkDot } from "@/components/SilkDot";
 import { cn } from "@/lib/cn";
 import { useMemo } from "react";
+import { Hint } from "@/components/ui/Hint";
 
 interface SectionalTimingTableProps {
   splits: SectionalSplit[];
@@ -76,18 +77,19 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
                     {sortedEntries.slice(0, 12).map((entry) => {
                       const runner = runnerMap.get(entry.horseId);
                       return (
-                        <div
-                          key={entry.horseId}
-                          className={cn(
-                            "h-5 w-5 rounded-full flex items-center justify-center text-[8px] font-black border transition-all shadow-sm",
-                            runner?.owned
-                              ? "border-broadcast-accent bg-broadcast-accent/20 text-broadcast-accent scale-110 z-10"
-                              : "border-white/10 bg-white/5 text-muted-foreground group-hover:border-white/20",
-                          )}
-                          title={`${runner?.name || "Unknown"} (Pos: ${entry.rank})`}
-                        >
-                          {entry.rank}
-                        </div>
+                        <Hint content={`${runner?.name || "Unknown"} (Pos: ${entry.rank})`}>
+                          <div
+                            key={entry.horseId}
+                            className={cn(
+                              "h-5 w-5 rounded-full flex items-center justify-center text-[8px] font-black border transition-all shadow-sm",
+                              runner?.owned
+                                ? "border-broadcast-accent bg-broadcast-accent/20 text-broadcast-accent scale-110 z-10"
+                                : "border-white/10 bg-white/5 text-muted-foreground group-hover:border-white/20",
+                            )}
+                          >
+                            {entry.rank}
+                          </div>
+                        </Hint>
                       );
                     })}
                     {sortedEntries.length > 12 && (

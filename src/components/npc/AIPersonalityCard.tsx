@@ -5,6 +5,7 @@ import type { StableAIState } from "@/services/ai/aiFacade";
 import { formatCurrency } from "@/lib/formatting";
 import { getStrategyInsights } from "@/services/ai/aiFacade";
 import { getSuccessRate } from "@/services/ai/aiFacade";
+import { Hint } from "@/components/ui/Hint";
 
 interface AIPersonalityCardProps {
   stableAI: StableAIState;
@@ -117,12 +118,9 @@ function BudgetAllocationView({
         {categories.map((cat) => {
           const pct = budget.total > 0 ? (budget[cat.key] as number) / budget.total : 0;
           return pct > 0 ? (
-            <div
-              key={cat.key}
-              className={cat.color}
-              style={{ width: `${pct * 100}%` }}
-              title={`${cat.label}: ${formatCurrency(budget[cat.key] as number)}`}
-            />
+            <Hint content={`${cat.label}: ${formatCurrency(budget[cat.key] as number)}`}>
+              <div key={cat.key} className={cat.color} style={{ width: `${pct * 100}%` }} />
+            </Hint>
           ) : null;
         })}
       </div>

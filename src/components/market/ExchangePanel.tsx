@@ -24,6 +24,7 @@ import {
 import { HorseOrderBook } from "@/components/market/HorseOrderBook";
 import { TradeTape } from "@/components/market/TradeTape";
 import { StatCard } from "@/components/common/StatCard";
+import { Hint } from "@/components/ui/Hint";
 
 export function ExchangePanel() {
   const day = useGame((s: GameState) => s.day);
@@ -161,12 +162,13 @@ export function ExchangePanel() {
             </h4>
             <div className="flex h-12 items-end gap-0.5">
               {series.map((s) => (
-                <div
-                  key={s.day}
-                  className="flex-1 rounded-t bg-primary/60"
-                  style={{ height: `${Math.max(2, (s.volume / maxVolume) * 100)}%` }}
-                  title={`Day ${s.day}: ${s.volume} trades · ${formatCurrency(s.turnover)}`}
-                />
+                <Hint content={`Day ${s.day}: ${s.volume} trades · ${formatCurrency(s.turnover)}`}>
+                  <div
+                    key={s.day}
+                    className="flex-1 rounded-t bg-primary/60"
+                    style={{ height: `${Math.max(2, (s.volume / maxVolume) * 100)}%` }}
+                  />
+                </Hint>
               ))}
             </div>
           </div>
@@ -305,12 +307,11 @@ export function ExchangePanel() {
                         const info = sellerInfo.get(a.sellerId);
                         if (!info) return null;
                         return (
-                          <span
-                            className="block truncate text-[10px] text-cream-muted/70"
-                            title={`${info.boxes} boxes · ${info.count} horses owned`}
-                          >
-                            {info.yard} · {info.roster}
-                          </span>
+                          <Hint content={`${info.boxes} boxes · ${info.count} horses owned`}>
+                            <span className="block truncate text-[10px] text-cream-muted/70">
+                              {info.yard} · {info.roster}
+                            </span>
+                          </Hint>
                         );
                       })()}
                     </span>

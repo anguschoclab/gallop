@@ -24,6 +24,7 @@ import { cn } from "@/lib/cn";
 import { formatJockeyTrait } from "@/services/common/commonFacade";
 import { getJockeyInsight } from "@/services/jockey/jockeyFacade";
 import { Lightbulb } from "lucide-react";
+import { Hint } from "@/components/ui/Hint";
 
 interface JockeyCardProps {
   jockey: Jockey;
@@ -97,17 +98,18 @@ export function JockeyCard({
             <div className="relative shrink-0">
               <JockeyAvatar jockey={jockey} size="md" />
               {isRetained && (
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    rerollJockeySilk(jockey.id);
-                  }}
-                  className="absolute -top-1 -right-1 bg-slate-950 border border-white/10 text-cream rounded-full p-1 shadow-xl hover:text-gold transition-colors z-20"
-                  title="Reroll Silks"
-                  aria-label={`Reroll Silks for ${jockey.name}`}
-                >
-                  <RefreshCw size={10} />
-                </button>
+                <Hint content={"Reroll Silks"}>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      rerollJockeySilk(jockey.id);
+                    }}
+                    className="absolute -top-1 -right-1 bg-slate-950 border border-white/10 text-cream rounded-full p-1 shadow-xl hover:text-gold transition-colors z-20"
+                    aria-label={`Reroll Silks for ${jockey.name}`}
+                  >
+                    <RefreshCw size={10} />
+                  </button>
+                </Hint>
               )}
             </div>
             <div className="space-y-0.5 min-w-0">

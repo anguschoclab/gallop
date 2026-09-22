@@ -11,6 +11,7 @@ import { useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import { Flag, Play } from "lucide-react";
 import type { TrackCondition } from "@/game/types";
+import { Hint } from "@/components/ui/Hint";
 
 interface RacePreShowProps {
   race: {
@@ -95,16 +96,17 @@ export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowP
               {(() => {
                 const best = bestPace.get(r.horseId);
                 return (
-                  <span
-                    className="text-right font-mono tabular-nums text-cream-muted text-xs"
-                    title={
+                  <Hint
+                    content={
                       best
                         ? `Best per-mile pace: ${formatClockTime(best.perMile)} · ${formatClockTime(best.seconds)} over ${best.distance}m in ${best.raceName}`
                         : "No recorded times yet"
                     }
                   >
-                    {best ? formatClockTime(best.perMile, 2, true) : "—"}
-                  </span>
+                    <span className="text-right font-mono tabular-nums text-cream-muted text-xs">
+                      {best ? formatClockTime(best.perMile, 2, true) : "—"}
+                    </span>
+                  </Hint>
                 );
               })()}
               <span className="text-right font-mono text-cream tabular-nums">{r.oddsLabel}</span>

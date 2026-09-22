@@ -13,6 +13,7 @@ import { Activity, ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/formatting";
 import type { ExchangeTrade } from "@/services/market/marketFacade";
+import { Hint } from "@/components/ui/Hint";
 
 export function TradeTape({
   trades,
@@ -48,31 +49,36 @@ export function TradeTape({
               t.buyerId === "player" ? "bought" : t.sellerId === "player" ? "sold" : null;
             const takenByBuyer = t.initiatedBy === "ask";
             return (
-              <li
-                key={t.id}
-                className="flex items-center justify-between gap-2 rounded border border-white/5 bg-slate-950/50 px-3 py-1.5 text-xs"
-                title={`Day ${t.day} · commission ${formatCurrency(t.commission)} · ${
+              <Hint
+                content={`Day ${t.day} · commission ${formatCurrency(t.commission)} · ${
                   takenByBuyer ? "buyer took the ask" : "seller hit the bid"
                 }`}
               >
-                <span className="flex min-w-0 items-center gap-1.5">
-                  {takenByBuyer ? (
-                    <ArrowUpRight className="h-3 w-3 shrink-0 text-destructive" aria-hidden />
-                  ) : (
-                    <ArrowDownRight className="h-3 w-3 shrink-0 text-success" aria-hidden />
-                  )}
-                  <span className="truncate text-cream">{t.horseName}</span>
-                  {playerSide && (
-                    <Badge variant="outline" className="shrink-0 text-[9px] uppercase">
-                      You {playerSide}
-                    </Badge>
-                  )}
-                </span>
-                <span className="min-w-0 truncate text-[10px] text-cream-muted">
-                  {t.sellerName} → {t.buyerName} · D{t.day}
-                </span>
-                <span className="shrink-0 tabular-nums text-cream">{formatCurrency(t.price)}</span>
-              </li>
+                <li
+                  key={t.id}
+                  className="flex items-center justify-between gap-2 rounded border border-white/5 bg-slate-950/50 px-3 py-1.5 text-xs"
+                >
+                  <span className="flex min-w-0 items-center gap-1.5">
+                    {takenByBuyer ? (
+                      <ArrowUpRight className="h-3 w-3 shrink-0 text-destructive" aria-hidden />
+                    ) : (
+                      <ArrowDownRight className="h-3 w-3 shrink-0 text-success" aria-hidden />
+                    )}
+                    <span className="truncate text-cream">{t.horseName}</span>
+                    {playerSide && (
+                      <Badge variant="outline" className="shrink-0 text-[9px] uppercase">
+                        You {playerSide}
+                      </Badge>
+                    )}
+                  </span>
+                  <span className="min-w-0 truncate text-[10px] text-cream-muted">
+                    {t.sellerName} → {t.buyerName} · D{t.day}
+                  </span>
+                  <span className="shrink-0 tabular-nums text-cream">
+                    {formatCurrency(t.price)}
+                  </span>
+                </li>
+              </Hint>
             );
           })}
         </ul>

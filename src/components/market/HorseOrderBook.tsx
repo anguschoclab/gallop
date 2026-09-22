@@ -6,6 +6,7 @@ import { netProceeds, type HorseOrderBook as Book } from "@/services/market/mark
 import { sellerStandingBidFactor } from "@/services/market/marketFacade";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { formatYard, resolveStableYard } from "@/services/stable/stableFacade";
+import { Hint } from "@/components/ui/Hint";
 
 export function HorseOrderBook({
   book,
@@ -88,19 +89,20 @@ export function HorseOrderBook({
                   style={{ width: `${(a.price / maxSize) * 100}%` }}
                   aria-hidden
                 />
-                <span
-                  className="relative min-w-0 truncate text-cream-muted"
-                  title={
+                <Hint
+                  content={
                     [yardLabel(a.sellerId), a.standingNote].filter(Boolean).join(" — ") || undefined
                   }
                 >
-                  {a.sellerName}
-                  {a.sellerTier && (
-                    <span className="ml-1 text-[9px] uppercase tracking-wide text-gold/60">
-                      {a.sellerTier}
-                    </span>
-                  )}
-                </span>
+                  <span className="relative min-w-0 truncate text-cream-muted">
+                    {a.sellerName}
+                    {a.sellerTier && (
+                      <span className="ml-1 text-[9px] uppercase tracking-wide text-gold/60">
+                        {a.sellerTier}
+                      </span>
+                    )}
+                  </span>
+                </Hint>
                 <span className="relative flex items-center gap-2">
                   <span className="tabular-nums text-cream">{formatCurrency(a.price)}</span>
                   {a.sellerId === "player" ? (
@@ -140,26 +142,27 @@ export function HorseOrderBook({
                   style={{ width: `${(b.price / maxSize) * 100}%` }}
                   aria-hidden
                 />
-                <span
-                  className="relative min-w-0 truncate text-cream-muted"
-                  title={`${b.rationale}${b.bidderTier ? ` · ${b.bidderTier} yard` : ""}${b.intent ? ` · ${b.intent}` : ""}${
+                <Hint
+                  content={`${b.rationale}${b.bidderTier ? ` · ${b.bidderTier} yard` : ""}${b.intent ? ` · ${b.intent}` : ""}${
                     b.conviction !== undefined
                       ? ` · conviction ${Math.round(b.conviction * 100)}%`
                       : ""
                   }`}
                 >
-                  {b.bidderName}
-                  {b.bidderTier && (
-                    <span className="ml-1 text-[9px] uppercase tracking-wide text-gold/60">
-                      {b.bidderTier}
-                    </span>
-                  )}
-                  {b.intent && (
-                    <span className="ml-1 text-[9px] uppercase tracking-wide text-cream-muted/70">
-                      {b.intent}
-                    </span>
-                  )}
-                </span>
+                  <span className="relative min-w-0 truncate text-cream-muted">
+                    {b.bidderName}
+                    {b.bidderTier && (
+                      <span className="ml-1 text-[9px] uppercase tracking-wide text-gold/60">
+                        {b.bidderTier}
+                      </span>
+                    )}
+                    {b.intent && (
+                      <span className="ml-1 text-[9px] uppercase tracking-wide text-cream-muted/70">
+                        {b.intent}
+                      </span>
+                    )}
+                  </span>
+                </Hint>
                 <span className="relative flex items-center gap-2">
                   <span className="tabular-nums text-cream">{formatCurrency(b.price)}</span>
                   {book.isPlayerOwned && (
