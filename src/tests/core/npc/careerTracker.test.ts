@@ -8,7 +8,7 @@ import {
   summarizeNpcCareer,
   REAL_START_COOLDOWN_DAYS,
 } from "@/core/npc/careerTracker";
-import { makeRng } from "@/core/common/rng";
+import { createRng } from "@/core/common/rng";
 import { createTestHorse } from "@/tests/helpers/testHorse";
 import type { Horse } from "@/game/types";
 
@@ -38,14 +38,14 @@ describe("npc career tracker", () => {
       peakAge: 5,
       raceHistory: [{ raceId: "r1", raceName: "Real Race", position: 2, day: 100 }],
     });
-    const rng = makeRng(1);
+    const rng = createRng(1);
     for (let day = 100; day < 100 + REAL_START_COOLDOWN_DAYS; day++) {
       expect(isDueForOffscreenStart(h, day, "mid", rng)).toBe(false);
     }
   });
 
   it("does not simulate starts for foals or horses at stud", () => {
-    const rng = makeRng(2);
+    const rng = createRng(2);
     expect(isDueForOffscreenStart(horse({ age: 1 }), 500, "mid", rng)).toBe(false);
     expect(
       isDueForOffscreenStart(
@@ -59,7 +59,7 @@ describe("npc career tracker", () => {
 
   it("produces a plausible off-screen start and advances the career record", () => {
     const h = horse({ age: 4, peakAge: 5, lifetimeEarnings: 0, careerStarts: 0, careerWins: 0 });
-    const outcome = simulateOffscreenStart(h, 400, "mid", makeRng(7));
+    const outcome = simulateOffscreenStart(h, 400, "mid", createRng(7));
 
     expect(outcome.entry.offscreen).toBe(true);
     expect(outcome.entry.day).toBe(400);
@@ -78,7 +78,7 @@ describe("npc career tracker", () => {
 
   it("accumulates a real record over several seasons", () => {
     let h = horse({ age: 3, peakAge: 5 });
-    const rng = makeRng(11);
+    const rng = createRng(11);
     for (let day = 0; day < 720; day++) {
       if (day % 365 === 0 && day > 0) h = { ...h, age: h.age + 1 };
       if (isDueForOffscreenStart(h, day, "mid", rng)) {
@@ -93,8 +93,8 @@ describe("npc career tracker", () => {
 
   it("is deterministic for the same seed", () => {
     const h = horse({ age: 4, peakAge: 5 });
-    const a = simulateOffscreenStart(h, 300, "elite", makeRng(42));
-    const b = simulateOffscreenStart(h, 300, "elite", makeRng(42));
+    const a = simulateOffscreenStart(h, 300, "elite", createRng(42));
+    const b = simulateOffscreenStart(h, 300, "elite", createRng(42));
     expect(a.entry).toEqual(b.entry);
   });
 });
