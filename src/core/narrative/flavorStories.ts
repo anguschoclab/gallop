@@ -12,6 +12,16 @@ export type FlavorStoryTheme =
 export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   track: [
     {
+      headline: "Starting Gate Malfunction Causes Delay",
+      body: "A minor mechanical issue with the starting gate caused a brief delay before the feature race, ratcheting up the tension in the grandstand.",
+      category: "flavor",
+    },
+    {
+      headline: "Infield Goose Refuses to Move",
+      body: "A particularly stubborn goose set up camp on the main track during morning works, forcing outriders into a comical standoff before it finally flew off.",
+      category: "flavor",
+    },
+    {
       headline: "Fox Spotted on the Turf Course",
       body: "A bold red fox trotted out onto the turf course during morning workouts, bringing training to a brief halt before darting back into the infield brush.",
       category: "flavor",
@@ -203,6 +213,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   jockeys: [
+    {
+      headline: "Jockey Room Prank War Escalates",
+      body: "Tensions remain surprisingly lighthearted on the backstretch as a series of elaborate practical jokes between rival riders continues to entertain the colony.",
+      category: "flavor",
+    },
+    {
+      headline: "Veteran Rider Mentors New Apprentice",
+      body: "Paddock observers noted a seasoned journeyman pulling aside a young bug boy after a rough trip, offering quiet advice away from the cameras.",
+      category: "flavor",
+    },
     {
       headline: "Local Jockey Debuts Signature Silks",
       body: "A popular journeyman jockey turned heads in the paddock today by debuting a flashy new set of custom silks, sparking conversations about personal branding among riders.",
@@ -451,6 +471,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   breeding: [
     {
+      headline: "Surprise Bidding War at Yearling Sale",
+      body: "An unassuming colt sparked an unexpected frenzy in the sales ring today, hammering for more than five times his initial estimate after two rival owners locked horns.",
+      category: "flavor",
+    },
+    {
+      headline: "Retired Champion Settles into Stud Duty",
+      body: "Recent photos from the farm show last year's standout runner looking thoroughly relaxed in his new paddock, smoothly transitioning to his second career.",
+      category: "flavor",
+    },
+    {
       headline: "First Foals from Champion Sire Turn Heads",
       body: "The first crop of yearlings by a recently retired Horse of the Year are hitting the sales grounds, and bloodstock agents are raving about their conformation and scope.",
       category: "flavor",
@@ -617,6 +647,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   weather: [
+    {
+      headline: "Perfect Twilight Racing Conditions",
+      body: "A spectacular sunset and dropping temperatures provided a picture-perfect backdrop for the evening card, drawing glowing reviews from attendees.",
+      category: "flavor",
+    },
+    {
+      headline: "Sudden Crosswind Challenges Riders",
+      body: "Jockeys reported fighting a stiff, unexpected crosswind down the backstretch today, forcing them to carefully manage their mounts' energy.",
+      category: "flavor",
+    },
     {
       headline: "Unseasonal Heat Wave Tests Horses",
       body: "Soaring temperatures have forced trainers to adjust their morning routines, sending horses out before dawn to beat the oppressive midday heat.",
@@ -789,6 +829,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   community: [
+    {
+      headline: "Local Bakery Honors Track Mascot",
+      body: "A popular bakery in town has debuted a line of cookies shaped like the beloved track pony, with proceeds going to equine charity.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Announcer Celebrates Anniversary",
+      body: "The grandstand erupted in applause today as the track formally recognized the booming voice of their caller on his twentieth anniversary in the booth.",
+      category: "flavor",
+    },
     {
       headline: "Local Pub Sponsors Allowance Race",
       body: "A beloved watering hole just outside the track gates has stepped up to sponsor today's feature, bringing a massive, rowdy cheering section to the apron.",
@@ -976,6 +1026,16 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   industry: [
+    {
+      headline: "New Ownership Syndicate Demographics Shifting",
+      body: "A recent industry report highlighted a massive surge in younger fans joining micro-share syndicates, pointing to a potential demographic shift for the sport.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Management Unveils Grandstand Renovation",
+      body: "Following months of speculation, executives finally revealed blueprints for a massive modernization of the historic clubhouse, promising luxury amenities for fans.",
+      category: "flavor",
+    },
     {
       headline: "Bloodstock Agencies Announce Merger",
       body: "Two of the region's largest bloodstock firms have joined forces, promising to bring unprecedented buying power to the upcoming yearling sales.",
