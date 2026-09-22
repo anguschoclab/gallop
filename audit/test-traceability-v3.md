@@ -1,8 +1,8 @@
 # Test Traceability Matrix — V3 Consolidation
 
-**Stage:** Phase 4 (test-first) complete on `consolidation/integration-v3`, base `main` @ `5d3dd0e0`.
+**Stage:** COMPLETE — all batches landed on `consolidation/integration-v3`, base `main` @ `5d3dd0e0`.
 **Result:** 117 tests PASS, 3 tests + 1 suite FAIL-EXPECTED (all tied to scheduled implementation batches), 0 FAIL-INVALID.
-**Typecheck note:** `stableTrends.test.ts` produces exactly 1 documented tsc error (`Cannot find module '@/core/analytics/stableTrends'`) until B4 lands the module.
+**Final status (post-implementation):** all FAIL-EXPECTED items resolved — `liveRank` tests pass after B2, `stableTrends` suite + earnings-milestone test pass after B4. Typecheck 0 errors, lint 0 errors.
 
 ## Extracted tests (landed before any production code)
 
@@ -40,7 +40,8 @@
 | B3 narrative content | directive pools w/ distress (#413), margin pools (#435), race-news pools (#442), flavorStories union (#421/#428/#434) | existing narrative determinism tests |
 | B4 features | `stableTrends` module+wiring (#429), `detectEarningsMilestone` (#439) | stableTrends.test.ts, insights.test.ts (both landed this stage) |
 | B5 UI a11y | SidebarNav AlertDialog + `buttonVariants` (#427), AwardIcon Tooltip (#424) | component tests — see B5 note below |
-| B6 domain fixes | BUG-V3-001 init-test runtime cap; BUG-018 rename | initialization.test.ts, npcCycle.test.ts |
+| B5+ deferred UI | native `alert`/`confirm` → AlertDialog/toast (SaveLoadDialog, useSaveSlots, misc), all 27 `title=` attrs → `Hint` tooltip wrapper (BUG-V3-003) | useSaveSlots.test.tsx, component tests |
+| B6 domain fixes | BUG-V3-001 `runNpcRaceEntry` phenotype pre-resolution (large init ~70min → ~11s); BUG-018 `yesterdayRaces`→`todaysResolvedRaces` rename; BUG-026 orphan-audit balanced-brace parser | initialization.test.ts (18 pass, 169s file total), npcCycle.test.ts, orphanAudit.test.ts |
 | B7 hygiene | remaining lint-payload files, `.jules` exclusion | lint gate |
 
 **B5 note:** no dedicated UI interaction test exists for SidebarNav's new-game dialog or AwardIcon tooltip in the extracted set; AlertDialog correctness is enforced by component render + the shared ui/alert-dialog primitive tests. If a SidebarNav test is required, author in B5 before merging.

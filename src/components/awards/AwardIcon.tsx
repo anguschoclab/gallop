@@ -55,9 +55,7 @@ export function AwardIcon({
   return (
     <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
       <Tooltip>
-        <TooltipTrigger asChild>
-          {content}
-        </TooltipTrigger>
+        <TooltipTrigger asChild>{content}</TooltipTrigger>
         <TooltipContent>{getTooltipText(region, category, year)}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
