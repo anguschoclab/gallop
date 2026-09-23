@@ -262,7 +262,10 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
         // Surface preference drift: racing on a surface nudges that aptitude up,
         // and the other surfaces drift slightly down. Bigger boost on strong finishes.
         const surface = (race.surface || raceHistoryEntry.surface) as
-          "Turf" | "Dirt" | "Synthetic" | undefined;
+          | "Turf"
+          | "Dirt"
+          | "Synthetic"
+          | undefined;
         if (surface && horse.surfaceAptitude && horse.surfaceAptitude[surface] !== undefined) {
           const pos = raceHistoryEntry.position ?? 99;
           const performanceBoost = pos === 1 ? 0.012 : pos <= 3 ? 0.008 : pos <= 6 ? 0.005 : 0.003;

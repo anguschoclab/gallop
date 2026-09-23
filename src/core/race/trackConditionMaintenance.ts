@@ -50,7 +50,13 @@ export const DAILY_RECOVERY_RATES: Record<TrackCondition, number> = {
 };
 
 export type MaintenanceAction =
-  "harrow" | "water" | "roll" | "seal" | "turf_cutter" | "rail_move" | "rest_day";
+  | "harrow"
+  | "water"
+  | "roll"
+  | "seal"
+  | "turf_cutter"
+  | "rail_move"
+  | "rest_day";
 
 export interface MaintenanceConfig {
   action: MaintenanceAction;

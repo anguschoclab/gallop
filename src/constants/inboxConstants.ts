@@ -1,7 +1,15 @@
 import type { InboxPriority } from "@/core/inbox/inboxTypes";
 
 export type InboxFilter =
-  "all" | "unread" | "action" | "ai_activity" | "market" | "critical" | "urgent" | "low" | "info";
+  | "all"
+  | "unread"
+  | "action"
+  | "ai_activity"
+  | "market"
+  | "critical"
+  | "urgent"
+  | "low"
+  | "info";
 
 export const DEFAULT_INBOX_FILTER: InboxFilter = "all";
 

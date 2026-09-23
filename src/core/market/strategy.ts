@@ -40,7 +40,8 @@ export const DEFAULT_MARKET_STRATEGY: MarketStrategy = {
 };
 
 export type StrategySource =
-  { kind: "exchange" } | { kind: "house"; houseId: string; houseName: string };
+  | { kind: "exchange" }
+  | { kind: "house"; houseId: string; houseName: string };
 
 export type StrategyCandidate = {
   horseId: string;

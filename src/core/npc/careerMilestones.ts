@@ -16,7 +16,11 @@ import { careerStage } from "./careerTracker";
 import { formatCurrency } from "@/core/common/formatting";
 
 export type RivalMilestoneKind =
-  "debut" | "breakthrough_win" | "earnings" | "peak_transition" | "retirement";
+  | "debut"
+  | "breakthrough_win"
+  | "earnings"
+  | "peak_transition"
+  | "retirement";
 
 export interface RivalMilestone {
   /** Stable key used to avoid re-announcing the same milestone. */

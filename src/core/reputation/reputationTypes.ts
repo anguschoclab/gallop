@@ -6,7 +6,13 @@ import { generateUUID } from "@/core/uuid";
  * Reputation level tiers
  */
 export type ReputationTier =
-  "unknown" | "local" | "regional" | "national" | "international" | "world_class" | "legendary";
+  | "unknown"
+  | "local"
+  | "regional"
+  | "national"
+  | "international"
+  | "world_class"
+  | "legendary";
 
 /**
  * Reputation source categories

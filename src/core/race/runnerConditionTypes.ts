@@ -12,7 +12,14 @@ export const METRES_PER_LENGTH = 2.4;
 export type ConditionTone = "positive" | "caution" | "negative" | "neutral";
 
 export type RunnerConditionId =
-  "flying" | "battling" | "boxed" | "grinding" | "flagging" | "distressed" | "ailing" | "settled";
+  | "flying"
+  | "battling"
+  | "boxed"
+  | "grinding"
+  | "flagging"
+  | "distressed"
+  | "ailing"
+  | "settled";
 
 export interface RunnerCondition {
   id: RunnerConditionId;

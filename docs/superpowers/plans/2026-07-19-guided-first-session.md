@@ -157,7 +157,11 @@ export interface TutorialInput {
 }
 
 export type TutorialStepId =
-  "meet-stable" | "enter-race" | "watch-race" | "read-result" | "advance-day";
+  | "meet-stable"
+  | "enter-race"
+  | "watch-race"
+  | "read-result"
+  | "advance-day";
 
 export interface TutorialStep {
   id: TutorialStepId;

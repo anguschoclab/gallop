@@ -55,10 +55,7 @@ function TrackHistoryPage() {
 
   const activeId = selected ?? filtered[0]?.trackId ?? null;
   const active = summaries.find((s) => s.trackId === activeId);
-  const races = useMemo(
-    () => (activeId ? racesAtTrack(ledger, activeId) : []),
-    [ledger, activeId],
-  );
+  const races = useMemo(() => (activeId ? racesAtTrack(ledger, activeId) : []), [ledger, activeId]);
   const prestigeRows = useMemo(
     () => (activeId ? stablePrestigeAtTrack(ledger, activeId) : []),
     [ledger, activeId],

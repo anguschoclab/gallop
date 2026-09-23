@@ -23,7 +23,12 @@ export type InquiryStatus = "pending" | "reviewing" | "resolved" | "dismissed";
  * Inquiry outcome
  */
 export type InquiryOutcome =
-  "no_action" | "warning" | "fine" | "suspension" | "disqualification" | "dq_placed_last";
+  | "no_action"
+  | "warning"
+  | "fine"
+  | "suspension"
+  | "disqualification"
+  | "dq_placed_last";
 
 /**
  * Stewards inquiry

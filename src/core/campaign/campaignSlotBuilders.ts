@@ -114,7 +114,10 @@ export function buildPrepChain(
         role: "prep",
         constraintDistance: prep.distance,
         constraintSurface: (prep.graded?.surface ?? prep.surface) as
-          "Turf" | "Dirt" | "Synthetic" | undefined,
+          | "Turf"
+          | "Dirt"
+          | "Synthetic"
+          | undefined,
         status: "planned",
       });
     }

@@ -93,7 +93,10 @@ export interface NpcRelationship {
 }
 
 export type AllianceType =
-  "breeding_partnership" | "racing_coalition" | "economic_cartel" | "non_aggression_pact";
+  | "breeding_partnership"
+  | "racing_coalition"
+  | "economic_cartel"
+  | "non_aggression_pact";
 
 export interface DiplomaticEvent {
   day: number;

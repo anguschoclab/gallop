@@ -140,7 +140,8 @@ describe("gateDrawPhase", () => {
 
     const result = gateDrawPhase.execute(ctx);
     const inboxImpact = result.impacts.find((i) => i.type === "inbox_message") as
-      InboxImpact | undefined;
+      | InboxImpact
+      | undefined;
 
     expect(inboxImpact).toBeDefined();
     expect(inboxImpact!.message.body).toContain("Horse 1");
@@ -157,7 +158,8 @@ describe("gateDrawPhase", () => {
 
     const result = gateDrawPhase.execute(ctx);
     const inboxImpact = result.impacts.find((i) => i.type === "inbox_message") as
-      InboxImpact | undefined;
+      | InboxImpact
+      | undefined;
 
     expect(inboxImpact).toBeDefined();
     expect(inboxImpact!.message.cta).toBeDefined();

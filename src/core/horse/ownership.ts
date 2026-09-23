@@ -16,7 +16,9 @@ import { asNpcStableId, asPlayerOwnerId } from "@/core/types/branded";
 // --- Ownership discriminated union ---
 
 export type HorseOwnership =
-  { type: "player" } | { type: "npc"; stableId: NpcStableId } | { type: "unowned" };
+  | { type: "player" }
+  | { type: "npc"; stableId: NpcStableId }
+  | { type: "unowned" };
 
 // --- Constants ---
 

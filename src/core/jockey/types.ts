@@ -40,7 +40,15 @@ export type JockeyTrait =
   | "closer_instinct";
 
 export type JockeySilkPattern =
-  "solid" | "stripes" | "halves" | "quarters" | "chevron" | "diamond" | "star" | "sash" | "hoops";
+  | "solid"
+  | "stripes"
+  | "halves"
+  | "quarters"
+  | "chevron"
+  | "diamond"
+  | "star"
+  | "sash"
+  | "hoops";
 
 export type JockeySilk = {
   pattern: JockeySilkPattern;

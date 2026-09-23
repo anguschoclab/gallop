@@ -231,7 +231,11 @@ export function describeScoutingThresholds(t: ScoutingThresholds): string[] {
 
 /** Ordering used when the budget cannot cover every match. */
 export type ScoutingPriority =
-  "highestOverall" | "highestPotential" | "cheapest" | "lowestFame" | "youngest";
+  | "highestOverall"
+  | "highestPotential"
+  | "cheapest"
+  | "lowestFame"
+  | "youngest";
 
 export const SCOUTING_PRIORITIES: { value: ScoutingPriority; label: string }[] = [
   { value: "highestOverall", label: "Highest rating first" },
