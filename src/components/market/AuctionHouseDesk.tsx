@@ -25,6 +25,7 @@ import {
   isPlayerOwned,
 } from "@/services/market/auctionHouseService";
 import { MarketPriceChart } from "./MarketPriceChart";
+import { WorldRankingsPanel } from "./WorldRankingsPanel";
 
 export function AuctionHouseDesk() {
   const day = useGame((s: GameState) => s.day);
@@ -135,6 +136,7 @@ export function AuctionHouseDesk() {
       </Card>
 
       <MarketPriceChart trades={exchange.trades} day={day} />
+      <WorldRankingsPanel horses={horseList} day={day} />
 
       {/* Buy board */}
       <section className="space-y-3">

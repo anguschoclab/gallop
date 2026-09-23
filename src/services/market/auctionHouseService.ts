@@ -17,6 +17,7 @@ import { createDefaultExchangeState } from "@/core/market/exchange";
 import { AUCTION_HOUSES, type AuctionHouse } from "@/core/prestige/auctionHouses";
 import { buildHouseCatalogue, houseQuote } from "@/core/market/houseQuotes";
 import { sellerStandingBidFactor } from "@/core/market/exchangeAI";
+import { worldRankings } from "@/core/market/raceForm";
 import type { Horse } from "@/game/types";
 
 /** Re-export types and constants for component consumption. */
@@ -59,4 +60,15 @@ export function getHouseQuote(
  */
 export function getSellerStandingBidFactor(reputationScore: number) {
   return sellerStandingBidFactor(reputationScore);
+}
+
+/**
+ * World rankings from recent race results, with form price premium.
+ * @param horses - All horses.
+ * @param day - Current day.
+ * @param windowDays - Lookback window.
+ * @param limit - Max rows.
+ */
+export function getWorldRankings(horses: Horse[], day: number, windowDays = 365, limit = 25) {
+  return worldRankings(horses, day, windowDays, limit);
 }
