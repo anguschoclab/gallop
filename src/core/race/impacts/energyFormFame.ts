@@ -71,8 +71,13 @@ export function generateFameImpact(
   newDay: number,
   rng?: Rng,
   getId?: () => string,
+  grade?: string,
 ): FameImpact | null {
-  const fameDelta = position === 1 ? 2 : position <= 3 ? 0.5 : 0;
+  // Graded results carry far more reputation than ordinary wins.
+  const gradeMult =
+    grade === "G1" ? 4 : grade === "G2" ? 2.5 : grade === "G3" ? 1.75 : grade === "Listed" ? 1.35 : 1;
+  const baseDelta = position === 1 ? 2 : position <= 3 ? 0.5 : 0;
+  const fameDelta = Math.round(baseDelta * gradeMult * 100) / 100;
   if (fameDelta > 0) {
     return {
       id: getId ? getId() : generateUUID(rng),

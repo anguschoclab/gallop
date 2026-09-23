@@ -13,6 +13,7 @@
 
 import type { Horse, StableTier, Stable } from "@/game/types";
 import { calculateOverallRating } from "@/core/horse/stats";
+import { raceFormPremium } from "@/core/market/raceForm";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 import { SIRE_GENDERS, DAM_GENDERS } from "@/core/horse/gender";
 import {
@@ -225,7 +226,7 @@ export function estimateBreedingValue(h: Horse, allHorses: Horse[] = []): number
  * @param allHorses
  */
 export function horseMarketValue(h: Horse, allHorses: Horse[] = []): number {
-  const racing = horsePriceWithPedigree(h, allHorses);
+  const racing = Math.round(horsePriceWithPedigree(h, allHorses) * raceFormPremium(h));
   const breeding = estimateBreedingValue(h, allHorses);
 
   if (h.gender === "gelding" || h.gelded) return racing;
