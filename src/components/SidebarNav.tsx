@@ -91,6 +91,12 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/portfolio", label: "Portfolio", icon: Briefcase, exact: false },
       { to: "/auction", label: "Auctions", icon: Gavel, exact: false },
       { to: "/npc-stables", label: "Stables", icon: Map, exact: false },
+      {
+        to: "/npc-stables/rival-careers",
+        label: "Rival Careers",
+        icon: BarChart3,
+        exact: false,
+      },
     ],
   },
   {

@@ -15,3 +15,5 @@ export { StableCompareTable } from "./StableCompareTable";
 export { StableCompareDrawer } from "./StableCompareDrawer";
 export { StableCompareBar } from "./StableCompareBar";
 export { NpcCareerTrackerPanel } from "./NpcCareerTrackerPanel";
+
+export { RivalCareerCompareTable } from "./RivalCareerCompareTable";
