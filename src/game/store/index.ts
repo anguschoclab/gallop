@@ -122,6 +122,7 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "seasonRecords",
   "hallOfFame",
   "trackRecords",
+  "trackLedger" as keyof GameState,
   "horseLeaderboards",
   "founders",
   "lastFounderUpdateDay",

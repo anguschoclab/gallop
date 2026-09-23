@@ -113,6 +113,7 @@ const META_KEYS: (keyof GameState)[] = [
   "seasonRecords",
   "hallOfFame",
   "trackRecords",
+  "trackLedger",
   "horseLeaderboards",
   "founders",
   "lastFounderUpdateDay",

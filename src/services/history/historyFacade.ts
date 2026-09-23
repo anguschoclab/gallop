@@ -8,3 +8,4 @@ export * from "@/core/history/almanacInsights";
 export * from "@/core/history/almanacNewsFeed";
 export * from "@/core/history/historyService";
 export * from "@/core/history/lineageCrawler";
+export * from "@/core/history/trackLedger";

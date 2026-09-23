@@ -37,6 +37,7 @@ import {
   Activity,
   Film,
   Sparkles,
+  Landmark,
 } from "lucide-react";
 
 import { formatCurrency } from "@/lib/formatting";
@@ -85,6 +86,7 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/calendar", label: "Calendar", icon: Calendar, exact: false },
       { to: "/records", label: "Records", icon: BarChart3, exact: false },
       { to: "/almanac", label: "Almanac", icon: BookOpen, exact: false },
+      { to: "/track-history", label: "Course Histories", icon: Landmark, exact: false },
       { to: "/market", label: "Market", icon: Store, exact: false },
       { to: "/portfolio", label: "Portfolio", icon: Briefcase, exact: false },
       { to: "/auction", label: "Auctions", icon: Gavel, exact: false },

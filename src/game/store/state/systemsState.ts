@@ -38,6 +38,7 @@ import type { TransportRequest } from "@/core/transportation";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { TrackRecord, FounderRecord } from "@/core/history/historyTypes";
+import type { TrackLedgerEntry } from "@/core/history/trackLedger";
 import type { ReservedNameEntry } from "@/core/horse/naming/reservedNames";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import type { Outpost } from "@/core/facilities/outpostTypes";
@@ -156,6 +157,8 @@ export interface SystemsState {
   horseLeaderboards?: Record<string, ProgenyLeaderboard>;
   /** Multi-generational influence records */
   founders?: Record<string, FounderRecord>;
+  /** Course-by-course ledger of every resolved race (winner, time, prestige movement) */
+  trackLedger?: TrackLedgerEntry[];
   /** Day of last founder analysis update */
   lastFounderUpdateDay?: number;
   // Player profile (optional - set after completing new game wizard)
