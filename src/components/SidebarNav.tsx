@@ -37,6 +37,7 @@ import {
   Activity,
   Film,
   Sparkles,
+  Landmark,
 } from "lucide-react";
 
 import { formatCurrency } from "@/lib/formatting";
