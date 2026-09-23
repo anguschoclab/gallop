@@ -244,6 +244,17 @@ export const raceResolutionPhase: PipelinePhase = {
       impacts.push(...postImpacts);
     }
 
+    // Course-by-course ledger: one durable entry per race resolved this pass.
+    const overdueIds = new Set(overdueRaces.map((r) => r.id));
+    const playerStableName = state.playerProfile?.stableName ?? "Your Stable";
+    const ledgerEntries = Object.values(updatedRaces)
+      .filter((r) => overdueIds.has(r.id) && r.resolved && (r.result?.length ?? 0) > 0)
+      .map((r) =>
+        buildTrackLedgerEntry(r, r.result!, horseMap, npcStableMap, playerStableName, r.day),
+      )
+      .filter((e): e is NonNullable<typeof e> => e !== null);
+    const trackLedger = appendTrackLedger(state.trackLedger, ledgerEntries);
+
     // Cleanup
     const prunedRaces = Object.fromEntries(
       Object.values(updatedRaces)
