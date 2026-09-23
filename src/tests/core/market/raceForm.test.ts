@@ -21,7 +21,7 @@ describe("raceForm", () => {
     const a = createTestHorse({ id: asHorseId("a"), raceHistory: [win(5, "G1")] });
     const b = createTestHorse({ id: asHorseId("b"), raceHistory: [win(5)] });
     const rows = worldRankings([b, a], 10);
-    expect(rows.map((r) => r.horseId)).toEqual(["a", "b"]);
+    expect(rows.map((r: { horseId: string }) => r.horseId)).toEqual(["a", "b"]);
     expect(rows[0].gradedWins).toBe(1);
   });
 });
