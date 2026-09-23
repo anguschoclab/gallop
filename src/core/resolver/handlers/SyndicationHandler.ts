@@ -19,18 +19,13 @@ import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
 import { syndicationStakeReputation } from "@/core/reputation/commerceReputation";
 import { applyReputationEvents } from "@/core/reputation/reputationEvents";
+import type { ImpactHandlerFunction } from "./types";
 import type {
   SyndicateCreationImpact,
   ShareTransactionImpact,
   SyndicateFeeDistributionImpact,
   SyndicateSatisfactionImpact,
 } from "../impacts/breedingImpacts";
-
-type ImpactHandlerFunction = (
-  draft: WritableDraft<GameState>,
-  impact: AnyImpact,
-  lookupMaps?: LookupMaps,
-) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   syndicate_creation: (draft, impact, lookupMaps) => {

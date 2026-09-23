@@ -43,6 +43,15 @@ export interface LookupMaps {
 /**
  * Base interface for impact handlers
  */
+export type ImpactHandlerFunction = (
+  draft: WritableDraft<GameState>,
+  impact: AnyImpact,
+  lookupMaps?: LookupMaps,
+) => void;
+
+/**
+ * Base interface for impact handlers
+ */
 export interface ImpactHandler {
   /**
    * Handle an impact by mutating the draft state
