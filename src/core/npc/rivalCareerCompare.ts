@@ -12,6 +12,7 @@
 
 import type { Horse, NpcCareerStage } from "@/core/horse/types";
 import { careerStage, careerStageLabel, summarizeNpcCareer } from "./careerTracker";
+import { getStableId } from "@/core/horse/ownership";
 import { detectRivalMilestones, type RivalMilestoneKind } from "./careerMilestones";
 
 export interface RivalMilestoneRecord {
@@ -58,7 +59,7 @@ export function buildRivalCareerProfile(horse: Horse, day: number): RivalCareerP
   return {
     id: horse.id,
     name: horse.name,
-    stableId: horse.stableId,
+    stableId: getStableId(horse) ?? undefined,
     age: Math.floor(horse.age),
     starts: career.starts,
     wins: career.wins,
