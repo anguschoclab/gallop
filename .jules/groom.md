@@ -1,0 +1,3 @@
+## 2024-05-18 - Use DisabledTooltipWrapper instead of manual Tooltips for disabled buttons
+**Learning:** I found numerous instances where `cursor-not-allowed` was manually applied to a `span` wrapping a disabled `Button` inside a manual `Tooltip` composition to explain why the button is disabled. The codebase already provides a custom `<DisabledTooltipWrapper>` for exactly this purpose which is much cleaner.
+**Action:** When providing tooltip explanations for disabled interactive elements, always use the `<DisabledTooltipWrapper>` component instead of manually constructing `<TooltipProvider>`, `<Tooltip>`, `<TooltipTrigger>`, and `<TooltipContent>` with custom `cursor-not-allowed` styles.

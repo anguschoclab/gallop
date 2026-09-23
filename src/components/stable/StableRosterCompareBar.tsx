@@ -7,6 +7,7 @@
 import { TOOLTIP_DELAY_MS, MAX_COMPARE_HORSES } from "@/constants";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import type { Horse } from "@/game/types";
 import { GitCompare, X, ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -83,27 +84,16 @@ export function StableRosterCompareBar({
         })}
       </div>
       {selectedIds.length < 2 ? (
-        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span
-                tabIndex={0}
-                className="inline-block cursor-not-allowed"
-                aria-label="Select at least 2 horses to compare"
-              >
-                <Button
-                  size="sm"
-                  className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-wide pointer-events-none"
-                  disabled
-                >
-                  <GitCompare className="h-3.5 w-3.5" />
-                  Compare
-                </Button>
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>Select at least 2 horses to compare</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <DisabledTooltipWrapper reason="Select at least 2 horses to compare">
+          <Button
+            size="sm"
+            className="gap-2 bg-gold text-slate-950 hover:bg-gold/90 font-bold uppercase text-[10px] tracking-wide pointer-events-none"
+            disabled
+          >
+            <GitCompare className="h-3.5 w-3.5" />
+            Compare
+          </Button>
+        </DisabledTooltipWrapper>
       ) : (
         <Button
           size="sm"
