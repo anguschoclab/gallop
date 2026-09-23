@@ -7,10 +7,12 @@ export function DisabledTooltipWrapper({
   reason,
   children,
   wrapperClassName,
+  "aria-label": ariaLabel,
 }: {
   reason?: string | false;
   children: React.ReactNode;
   wrapperClassName?: string;
+  "aria-label"?: string;
 }) {
   if (!reason) return <>{children}</>;
 
@@ -18,7 +20,11 @@ export function DisabledTooltipWrapper({
     <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
       <Tooltip>
         <TooltipTrigger asChild>
-          <span tabIndex={0} className={cn("inline-block cursor-not-allowed", wrapperClassName)}>
+          <span
+            tabIndex={0}
+            className={cn("inline-block cursor-not-allowed", wrapperClassName)}
+            aria-label={ariaLabel}
+          >
             {children}
           </span>
         </TooltipTrigger>

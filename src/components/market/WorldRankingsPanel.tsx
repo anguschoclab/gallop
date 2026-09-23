@@ -25,7 +25,10 @@ export function WorldRankingsPanel({ horses, day }: { horses: Horse[]; day: numb
       ) : (
         <div className="divide-y divide-white/5 border border-white/5 bg-slate-900/40">
           {rows.map((r, i) => (
-            <div key={r.horseId} className="flex flex-wrap items-center gap-3 p-2.5 text-[11px] font-mono">
+            <div
+              key={r.horseId}
+              className="flex flex-wrap items-center gap-3 p-2.5 text-[11px] font-mono"
+            >
               <span className="w-6 text-right tabular-nums font-black text-primary">{i + 1}</span>
               <span className="flex-1 min-w-[140px] font-sans font-bold text-cream">{r.name}</span>
               <span className="text-cream/40 truncate max-w-[220px]">
@@ -37,7 +40,9 @@ export function WorldRankingsPanel({ horses, day }: { horses: Horse[]; day: numb
                 {r.wins}/{r.starts}
                 {r.gradedWins > 0 ? ` · ${r.gradedWins} graded` : ""}
               </span>
-              <span className="tabular-nums font-bold text-cream w-14 text-right">{r.points} pts</span>
+              <span className="tabular-nums font-bold text-cream w-14 text-right">
+                {r.points} pts
+              </span>
               <Badge variant="outline" className="text-[9px] text-success border-success/40">
                 +{Math.round((r.premium - 1) * 100)}% value
               </Badge>
