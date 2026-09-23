@@ -99,17 +99,17 @@ describe("trackLedger", () => {
   it("returns null without a track or a winner", () => {
     const { horses, stables, result } = fixture();
     expect(
+      buildTrackLedgerEntry(race({ trackId: undefined }), result, horses, stables, "My Stable", 40),
+    ).toBeNull();
+    expect(
       buildTrackLedgerEntry(
-        race({ trackId: undefined }),
-        result,
+        race(),
+        [{ horseId: "h2", position: 2, time: 95 }],
         horses,
         stables,
         "My Stable",
         40,
       ),
-    ).toBeNull();
-    expect(
-      buildTrackLedgerEntry(race(), [{ horseId: "h2", position: 2, time: 95 }], horses, stables, "My Stable", 40),
     ).toBeNull();
   });
 
