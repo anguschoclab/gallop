@@ -38,6 +38,7 @@ export function HQOpsWidget() {
                 <Button
                   size="icon"
                   variant="ghost"
+                  aria-label="Go to H.Q. Ops financial report"
                   className="h-8 w-8 text-cream-muted hover:text-gold group-hover:translate-x-0.5 transition-transform"
                 >
                   <ChevronRight className="h-4 w-4" />

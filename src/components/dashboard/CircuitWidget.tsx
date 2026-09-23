@@ -50,6 +50,7 @@ export function CircuitWidget() {
                 <Button
                   size="icon"
                   variant="ghost"
+                  aria-label="Go to The Circuit races"
                   className="h-8 w-8 text-cream-muted hover:text-success group-hover:translate-x-0.5 transition-transform"
                 >
                   <ChevronRight className="h-4 w-4" />
