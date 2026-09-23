@@ -19,6 +19,7 @@ import { resolveRacePort } from "@/core/time/pipelinePorts";
 import { recordNpcAiOutcomes } from "./raceResolutionHelpers";
 import { isLivePlayerImpact } from "@/core/race/liveRaceImpacts";
 import { generatePostRaceImpacts } from "./postRaceImpacts";
+import { appendTrackLedger, buildTrackLedgerEntry } from "@/core/history/trackLedger";
 
 /**
  * Race Resolution Phase (Order 70)
@@ -270,6 +271,7 @@ export const raceResolutionPhase: PipelinePhase = {
       state: {
         ...state,
         races: prunedRaces,
+        trackLedger,
         ...(npcAIManager && { npcAIManager }),
       },
       impacts: [...(context.impacts || []), ...impacts],
