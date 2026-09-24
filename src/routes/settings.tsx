@@ -9,6 +9,7 @@ import { GameplaySettingsCard } from "@/components/settings/GameplaySettingsCard
 import { NotificationSettingsCard } from "@/components/settings/NotificationSettingsCard";
 import { AudioSettingsCard } from "@/components/settings/AudioSettingsCard";
 import { DataManagementCard } from "@/components/settings/DataManagementCard";
+import { RealWorldDataCard } from "@/components/settings/RealWorldDataCard";
 import { GlossaryPanel } from "@/components/settings/GlossaryPanel";
 import { TutorialSettingsCard } from "@/components/settings/TutorialSettingsCard";
 
@@ -60,6 +61,7 @@ function SettingsPage() {
           onUpdate={updateNotificationSettings}
         />
         <AudioSettingsCard settings={audio ?? {}} onUpdate={updateAudioSettings} />
+        <RealWorldDataCard />
         <DataManagementCard
           lastModifiedDay={userSettings?.lastModified}
           version={undefined}
