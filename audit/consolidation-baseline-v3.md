@@ -6,12 +6,12 @@
 
 ## Measurements
 
-| Check                  | Command                    | Result                                                                                          |
-| ---------------------- | -------------------------- | ----------------------------------------------------------------------------------------------- |
-| Typecheck (structured) | `bun run typecheck:errors` | **PASS** — 0 errors, 0 warnings                                                                  |
+| Check                  | Command                    | Result                                                                                                      |
+| ---------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Typecheck (structured) | `bun run typecheck:errors` | **PASS** — 0 errors, 0 warnings                                                                             |
 | Lint                   | `bun run lint`             | **FAIL** — 19 errors, 0 warnings (17 auto-fixable `prettier/prettier`, 8 `jsdoc/require-param`… see detail) |
-| Tests                  | `bun run test`             | **PASS** — 9,128 passed, 1 skipped, 0 failed (844 files). **Duration 5,639s — pathological**      |
-| Build                  | `bun run build`            | **PASS** — clean nitro compile ~15s                                                              |
+| Tests                  | `bun run test`             | **PASS** — 9,128 passed, 1 skipped, 0 failed (844 files). **Duration 5,639s — pathological**                |
+| Build                  | `bun run build`            | **PASS** — clean nitro compile ~15s                                                                         |
 
 ## Lint detail (19 errors on main — none introduced by consolidation)
 
@@ -21,7 +21,7 @@
 - `src/core/horse/types.ts`, `src/core/npc/careerMilestones.ts` — 3× `prettier/prettier` (multi-line unions).
 - `src/tests/components/SyndicateStakesPage.test.tsx`, `src/tests/core/npc/careerMilestones.test.ts`, `src/tests/game/store/liveRaceImpacts.test.ts` — 6× `prettier/prettier`.
 
-**Key consequence:** these exact files appear in ~13–23 open PR diffs — every Jules bot independently committed the same lint fixes. The shared "payload" is therefore a *duplicate fix set*, not a feature. Land once on the consolidation branch (canonical = #449's approach), then all other copies are moot.
+**Key consequence:** these exact files appear in ~13–23 open PR diffs — every Jules bot independently committed the same lint fixes. The shared "payload" is therefore a _duplicate fix set_, not a feature. Land once on the consolidation branch (canonical = #449's approach), then all other copies are moot.
 
 ## Test-suite runtime anomaly
 
@@ -37,20 +37,20 @@ All 37 branches sit on stale merge-bases (3 cohorts by stale-deletion count vs m
 
 ## Authored-diff file-overlap matrix (top)
 
-| File | # PRs | Nature |
-|---|---|---|
-| `src/tests/components/SyndicateStakesPage.test.tsx` | 23 | shared prettier lint fix (payload) |
-| `src/core/stable/raceWinsBreakdown.ts` | 18 | shared jsdoc lint fix (payload) |
-| `src/core/npc/careerTracker.ts` | 13 | shared jsdoc lint fix (payload) |
-| `src/core/horse/types.ts` | 13 | shared prettier fix (payload) |
-| `src/components/stable/NpcCareerTrackerPanel.tsx` | 13 | layering fix (payload; #449 canonical) |
-| `src/services/npc/npcFacade.ts` | 12 | facade re-export add (payload) |
-| `src/core/breeding/syndicateStakes.ts` | 8 | Anvil `as any` cluster |
-| `src/core/race/runnerCondition{Derivation,Types}.ts` | 4 | Bolt O(N²) cluster |
-| `src/components/SidebarNav.tsx` | 3 | Palette AlertDialog cluster |
-| `src/core/narrative/flavorStories.ts` | 3 | Herald flavor cluster |
-| `src/core/narrative/{newsGenerator,directiveNewsGenerator}.ts` | 2 each | Herald news clusters |
-| `bun.lockb` | 3 | artifact — always strip |
+| File                                                           | # PRs  | Nature                                 |
+| -------------------------------------------------------------- | ------ | -------------------------------------- |
+| `src/tests/components/SyndicateStakesPage.test.tsx`            | 23     | shared prettier lint fix (payload)     |
+| `src/core/stable/raceWinsBreakdown.ts`                         | 18     | shared jsdoc lint fix (payload)        |
+| `src/core/npc/careerTracker.ts`                                | 13     | shared jsdoc lint fix (payload)        |
+| `src/core/horse/types.ts`                                      | 13     | shared prettier fix (payload)          |
+| `src/components/stable/NpcCareerTrackerPanel.tsx`              | 13     | layering fix (payload; #449 canonical) |
+| `src/services/npc/npcFacade.ts`                                | 12     | facade re-export add (payload)         |
+| `src/core/breeding/syndicateStakes.ts`                         | 8      | Anvil `as any` cluster                 |
+| `src/core/race/runnerCondition{Derivation,Types}.ts`           | 4      | Bolt O(N²) cluster                     |
+| `src/components/SidebarNav.tsx`                                | 3      | Palette AlertDialog cluster            |
+| `src/core/narrative/flavorStories.ts`                          | 3      | Herald flavor cluster                  |
+| `src/core/narrative/{newsGenerator,directiveNewsGenerator}.ts` | 2 each | Herald news clusters                   |
+| `bun.lockb`                                                    | 3      | artifact — always strip                |
 
 ## Artifacts that must not enter main
 
