@@ -68,6 +68,7 @@ export function getSellerStandingBidFactor(reputationScore: number) {
  * @param day - Current day.
  * @param windowDays - Lookback window.
  * @param limit - Max rows.
+ * @returns The top-ranked horses by race form premium.
  */
 export function getWorldRankings(horses: Horse[], day: number, windowDays = 365, limit = 25) {
   return worldRankings(horses, day, windowDays, limit);
