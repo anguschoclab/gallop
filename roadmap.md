@@ -1,1 +1,2 @@
 - [x] Portfolio live updates on race finish: cash, syndicate stakes, prestige refresh automatically
+- [x] Visual milestone timelines in rival career comparison

@@ -49,6 +49,29 @@ describe("rival career comparison", () => {
     expect(kinds).toContain("earnings");
     expect(p.milestones.find((m) => m.key === "debut")?.announced).toBe(true);
     expect(p.milestones.find((m) => m.key === "breakthrough_win")?.announced).toBe(false);
+    expect(p.milestones.find((m) => m.key === "debut")?.day).toBe(10);
+    expect(p.milestones.find((m) => m.key === "breakthrough_win")?.day).toBe(10);
+    expect(p.milestones.find((m) => m.key === "earnings_250000")?.day).toBe(10);
+  });
+
+  it("dates and chronologically orders career-stage and retirement milestones", () => {
+    const p = buildRivalCareerProfile(
+      horse({
+        age: 8,
+        peakAge: 4,
+        birthDay: 20,
+        fame: 60,
+        lifecycleStatus: "retired",
+        retiredOnDay: 2_950,
+        raceHistory: [start(800, 4), start(900, 1, "G3", 300_000)],
+      }),
+      3_000,
+    );
+
+    expect(p.milestones.find((m) => m.key === "retirement")?.day).toBe(2_950);
+    expect(p.milestones.map((m) => m.day)).toEqual(
+      [...p.milestones.map((m) => m.day)].sort((a, b) => (a ?? Infinity) - (b ?? Infinity)),
+    );
   });
 
   it("sorts profiles by earnings", () => {
