@@ -39,14 +39,14 @@ import type {
   DistanceAptitudeImpact,
 } from "../impacts/horseImpacts";
 
-type ImpactHandlerFunction = (
+type HorseImpactHandlerFunction = (
   draft: WritableDraft<GameState>,
   impact: AnyImpact,
   horse: WritableDraft<Horse> | undefined,
   lookupMaps?: LookupMaps,
 ) => void;
 
-const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
+const IMPACT_HANDLERS: Record<string, HorseImpactHandlerFunction> = {
   horse_creation: (draft, impact, horse, lookupMaps) => {
     const { horse: horseData } = impact as HorseCreationImpact;
     if (horseData) {
