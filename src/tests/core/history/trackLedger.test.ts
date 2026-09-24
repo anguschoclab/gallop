@@ -2,9 +2,11 @@ import { describe, it, expect } from "vitest";
 import {
   appendTrackLedger,
   buildTrackLedgerEntry,
+  filterTrackLedger,
   racesAtTrack,
   stablePrestigeAtTrack,
   summarizeTrackLedger,
+  trackLedgerStableOptions,
   PLAYER_LEDGER_STABLE_ID,
   type TrackLedgerEntry,
 } from "@/core/history/trackLedger";
@@ -142,5 +144,50 @@ describe("trackLedger", () => {
     expect(rows[0]!.stableId).toBe(PLAYER_LEDGER_STABLE_ID);
     expect(rows[0]!.races).toBe(2);
     expect(rows[0]!.wins).toBe(2);
+  });
+
+  it("filters by day range, race type and participating stable together", () => {
+    const { horses, stables, result } = fixture();
+    const maiden = buildTrackLedgerEntry(
+      race({ id: "maiden", day: 20, raceClass: "Maiden" }),
+      result,
+      horses,
+      stables,
+      "My Stable",
+      20,
+    )!;
+    const allowance = buildTrackLedgerEntry(
+      race({ id: "allowance", day: 60, raceClass: "Allowance" }),
+      result,
+      horses,
+      stables,
+      "My Stable",
+      60,
+    )!;
+    const rivalOnly = {
+      ...allowance,
+      raceId: "rival-only",
+      day: 70,
+      prestigeDeltas: allowance.prestigeDeltas.filter((delta) => !delta.isPlayer),
+    };
+
+    expect(
+      filterTrackLedger([maiden, allowance, rivalOnly], {
+        fromDay: 40,
+        toDay: 65,
+        raceType: "Allowance",
+        stableId: PLAYER_LEDGER_STABLE_ID,
+      }).map((entry) => entry.raceId),
+    ).toEqual(["allowance"]);
+  });
+
+  it("lists represented stables with the player first and no duplicates", () => {
+    const { horses, stables, result, r } = fixture();
+    const entry = buildTrackLedgerEntry(r, result, horses, stables, "My Stable", r.day)!;
+
+    expect(trackLedgerStableOptions([entry, entry])).toEqual([
+      { stableId: PLAYER_LEDGER_STABLE_ID, stableName: "My Stable", isPlayer: true },
+      { stableId, stableName: "Rival Yard", isPlayer: false },
+    ]);
   });
 });

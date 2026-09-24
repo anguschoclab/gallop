@@ -24,13 +24,19 @@ function PrestigeChip({ label, delta, isPlayer }: { label: string; delta: number
   );
 }
 
-export function TrackLedgerRaces({ races }: { races: TrackLedgerEntry[] }) {
+export function TrackLedgerRaces({
+  races,
+  emptyMessage = "No races recorded at this course yet.",
+}: {
+  races: TrackLedgerEntry[];
+  emptyMessage?: string;
+}) {
   if (races.length === 0) {
     return (
       <Card className="border-white/5 bg-slate-900/40">
         <CardContent className="p-6 text-sm text-cream-muted flex items-center gap-2">
           <Timer className="h-4 w-4" />
-          No races recorded at this course yet.
+          {emptyMessage}
         </CardContent>
       </Card>
     );

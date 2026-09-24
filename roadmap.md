@@ -1,2 +1,3 @@
 - [x] Portfolio live updates on race finish: cash, syndicate stakes, prestige refresh automatically
 - [x] Visual milestone timelines in rival career comparison
+- [x] Track history filters for game-day range, race type, and stable
