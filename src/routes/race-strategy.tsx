@@ -79,7 +79,7 @@ function RaceStrategyPage() {
     day: s.day,
   }));
   const myHorses = useMemo(
-    () => Object.values(horses).filter((h) => isPlayerOwned(h) && !h.retired),
+    () => Object.values(horses).filter((h) => isPlayerOwned(h)),
     [horses],
   );
   const upcoming = useMemo(
