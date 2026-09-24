@@ -9,7 +9,7 @@
  * Track names correspond directly to canonical track names in tracks.json.
  */
 
-export type RealWorldRecordSource = "curated" | "track_record";
+export type RealWorldRecordSource = "curated" | "track_record" | "imported";
 
 export type TripCategory = "sprint" | "mile" | "route" | "staying";
 
