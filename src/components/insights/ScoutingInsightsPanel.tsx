@@ -341,7 +341,7 @@ export function ScoutingInsightsPanel() {
                 onClick={() => {
                   const created = addAssignment?.(
                     `Threshold order ${new Date().toLocaleTimeString()}`,
-                    { ...thresholds, pool: pool === "mine" ? "npc" : pool },
+                    { ...thresholds, pool: pool === "mine" || pool === "real" ? "npc" : pool },
                   );
                   if (created) toast.success(`Saved standing assignment "${created.name}"`);
                 }}
