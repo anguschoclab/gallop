@@ -153,6 +153,40 @@ const scoreClaimingHistory: SuitabilityScorer = ({ horse, race }) => {
   return hasClaimingHistory ? SCORING_CONSTANTS.CLAIMING_HISTORY_BONUS : 0;
 };
 
+/** Max points (±) past results can add. */
+export const PAST_RESULTS_MAX_BONUS = 12;
+
+/**
+ * Past-results scorer: rewards horses that have finished well in races similar
+ * to this one (distance within 200m, same surface, same class/grade) and
+ * penalises repeated poor runs in those conditions. Recent starts weigh more.
+ */
+export const scorePastResults: SuitabilityScorer = ({ horse, race }) => {
+  const history = horse.raceHistory ?? [];
+  if (history.length === 0) return 0;
+  const surface = race.surface || race.graded?.surface;
+  const grade = race.graded?.grade;
+  const recent = history.slice(-20);
+  let total = 0;
+  let weightSum = 0;
+  recent.forEach((r, i) => {
+    let similarity = 0;
+    if (r.distance !== undefined && Math.abs(r.distance - race.distance) <= 200) similarity += 1;
+    if (surface && r.surface === surface) similarity += 1;
+    if ((grade && r.grade === grade) || (!grade && r.raceClass && r.raceClass === race.raceClass))
+      similarity += 1;
+    if (similarity === 0) return;
+    const recency = 0.5 + (0.5 * (i + 1)) / recent.length;
+    const w = similarity * recency;
+    const outcome = r.position === 1 ? 1 : r.position <= 3 ? 0.5 : r.position <= 5 ? 0 : -0.5;
+    total += outcome * w;
+    weightSum += w;
+  });
+  if (weightSum === 0) return 0;
+  const confidence = Math.min(1, weightSum / 6);
+  return Math.round((total / weightSum) * PAST_RESULTS_MAX_BONUS * confidence * 10) / 10;
+};
+
 /** Ordered registry of scorers — sum in order to get total suitability. */
 export const SUITABILITY_SCORERS: SuitabilityScorer[] = [
   scoreClass,
@@ -168,6 +202,7 @@ export const SUITABILITY_SCORERS: SuitabilityScorer[] = [
   scoreGraded,
   scoreClaiming,
   scoreClaimingHistory,
+  scorePastResults,
 ];
 
 /**

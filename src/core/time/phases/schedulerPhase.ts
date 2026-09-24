@@ -25,10 +25,70 @@ import { runAutoEntries, reconcileSlotStatuses } from "@/core/campaign/autoEntry
 import type { AnyImpact, RaceEntryImpact } from "@/core/resolver/impacts/index";
 import type { InboxImpact } from "@/core/resolver/impacts/inboxImpacts";
 import { generateUUID } from "@/core/uuid";
+import { calculateAutoRegisterEntries } from "@/core/campaign/autoRegister";
 
 export const schedulerPhase = {
   name: "scheduler",
   order: PHASE_ORDER_SCHEDULER,
+  execute: (context: PipelineContext): PipelineContext =>
+    runDailyAutoEntry(runCampaignScheduler(context)),
+};
+
+/**
+ * Daily auto-entry for the player stable (opt-in via gameplay settings).
+ * Horses on an auto-managed campaign are left to the campaign planner.
+ */
+function runDailyAutoEntry(context: PipelineContext): PipelineContext {
+  const { state, newDay } = context;
+  if (!state.userSettings?.gameplay?.autoEnterRaces) return context;
+
+  const campaignHorseIds = new Set(
+    (state.campaigns ?? []).filter((c) => c.autoManaged).map((c) => c.horseId),
+  );
+  const pendingSpend = context.impacts.reduce(
+    (sum, imp) => (imp.type === "race_entry" ? sum + ((imp as RaceEntryImpact).entryFee ?? 0) : sum),
+    0,
+  );
+  const pendingHorseIds = new Set(
+    context.impacts
+      .filter((imp) => imp.type === "race_entry")
+      .map((imp) => (imp as RaceEntryImpact).horseId),
+  );
+  const horses = Object.values(state.horses).filter(
+    (h) => !campaignHorseIds.has(h.id) && !pendingHorseIds.has(h.id),
+  );
+  const result = calculateAutoRegisterEntries(
+    horses,
+    Object.values(state.races),
+    state.jockeys ?? [],
+    state.cash - pendingSpend,
+    newDay,
+  );
+  if (result.entries.length === 0) return context;
+
+  const impacts: AnyImpact[] = result.entries.map(
+    (entry) =>
+      ({
+        id: generateUUID(),
+        intentId: "",
+        day: newDay,
+        phase: "scheduler",
+        logLevel: "always",
+        type: "race_entry",
+        raceId: entry.raceId,
+        horseId: entry.horseId,
+        entryFee: entry.entryFee,
+        reason: `Daily auto-entry for ${entry.horseName}`,
+      }) as RaceEntryImpact,
+  );
+  const logs = result.entries.map((e) => ({
+    day: newDay,
+    text: `Auto-entered ${e.horseName} in ${e.raceName} (Day ${e.raceDay}).`,
+  }));
+  return { ...context, logs: [...logs, ...context.logs], impacts: [...context.impacts, ...impacts] };
+}
+
+const campaignSchedulerImpl = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
 
@@ -214,3 +274,7 @@ export const schedulerPhase = {
     };
   },
 };
+
+function runCampaignScheduler(context: PipelineContext): PipelineContext {
+  return campaignSchedulerImpl.execute(context);
+}
