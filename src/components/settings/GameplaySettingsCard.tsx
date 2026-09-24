@@ -8,6 +8,7 @@ import { Gamepad2 } from "lucide-react";
 interface GameplaySettings {
   autoSimEnabled?: boolean;
   suggestRaceEntries?: boolean;
+  autoEnterRaces?: boolean;
   showDailyEarnings?: boolean;
   pauseOnEvents?: boolean;
   parentNameBlendingEnabled?: boolean;
@@ -50,6 +51,21 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
             id="suggest-entries"
             checked={settings?.suggestRaceEntries ?? true}
             onCheckedChange={(checked) => onUpdate({ suggestRaceEntries: checked })}
+          />
+        </div>
+        <Separator />
+        <div className="flex items-center justify-between">
+          <div className="space-y-0.5">
+            <Label htmlFor="auto-enter">Daily Auto-Entry</Label>
+            <p className="text-xs text-cream-muted">
+              Each day, enter idle horses in their best race by stats, past results, class,
+              distance and surface
+            </p>
+          </div>
+          <Switch
+            id="auto-enter"
+            checked={settings?.autoEnterRaces ?? false}
+            onCheckedChange={(checked) => onUpdate({ autoEnterRaces: checked })}
           />
         </div>
         <Separator />

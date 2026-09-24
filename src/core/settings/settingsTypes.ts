@@ -41,6 +41,8 @@ export interface GameplaySettings {
   skipLowStakesConfirm: boolean;
   /** Auto-enter eligible horses in suitable races */
   suggestRaceEntries: boolean;
+  /** Automatically enter idle player horses into their best-suited races each day */
+  autoEnterRaces?: boolean;
   /** Show earnings summary after each race day */
   showDailyEarnings: boolean;
   /** Pause on significant events (awards, Triple Crown races) */
