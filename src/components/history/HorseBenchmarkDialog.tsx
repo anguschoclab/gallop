@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
 import { REAL_WORLD_RECORDS, getTripCategory, type TripCategory } from "@/data/realWorldRecords";
+import { useImportedRealWorld } from "@/data/importedRealWorld";
 import {
   runsForHorse,
   computeHorseBenchmarkStanding,
@@ -49,7 +50,15 @@ export function HorseBenchmarkDialog({
 
   const runs = useMemo(() => runsForHorse(raceList, horseId), [raceList, horseId]);
 
-  const standing = useMemo(() => computeHorseBenchmarkStanding(runs), [runs]);
+  const imported = useImportedRealWorld();
+  const benchmarks = useMemo(
+    () => [...REAL_WORLD_RECORDS, ...imported.records],
+    [imported.records],
+  );
+  const standing = useMemo(
+    () => computeHorseBenchmarkStanding(runs, benchmarks),
+    [runs, benchmarks],
+  );
   const best = runs[0];
 
   const compareHorse = compareId ? horsesRecord[compareId] : undefined;
@@ -59,8 +68,8 @@ export function HorseBenchmarkDialog({
     [raceList, compareId],
   );
   const compareStanding = useMemo(
-    () => (compareRuns.length > 0 ? computeHorseBenchmarkStanding(compareRuns) : null),
-    [compareRuns],
+    () => (compareRuns.length > 0 ? computeHorseBenchmarkStanding(compareRuns, benchmarks) : null),
+    [compareRuns, benchmarks],
   );
   const compareRowsByBenchmark = useMemo(() => {
     const map = new Map<string, BenchmarkMatchupRow>();
@@ -86,8 +95,8 @@ export function HorseBenchmarkDialog({
     }
     if (sortBy === "curated") {
       return [...list].sort((a, b) => {
-        const ia = REAL_WORLD_RECORDS.findIndex((x) => x.id === a.benchmark.id);
-        const ib = REAL_WORLD_RECORDS.findIndex((x) => x.id === b.benchmark.id);
+        const ia = benchmarks.findIndex((x) => x.id === a.benchmark.id);
+        const ib = benchmarks.findIndex((x) => x.id === b.benchmark.id);
         return ia - ib;
       });
     }
@@ -96,7 +105,7 @@ export function HorseBenchmarkDialog({
     }
     // Default: rank (best delta advantage first)
     return [...list].sort((a, b) => a.rank - b.rank);
-  }, [standing.rows, surfaceFilter, tripFilter, sortBy]);
+  }, [standing.rows, surfaceFilter, tripFilter, sortBy, benchmarks]);
 
   const tierBadgeClass = useMemo(() => {
     switch (standing.tier.variant) {

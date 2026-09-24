@@ -10,14 +10,20 @@ import {
   type RealWorldRecordSource,
   type TripCategory,
   getTripCategory,
+  ALL_REAL_WORLD_BENCHMARKS,
 } from "@/data/realWorldRecords";
+import { useImportedRealWorld } from "@/data/importedRealWorld";
 import type { TrackRecord } from "@/services/history/historyFacade";
 import { cn } from "@/lib/cn";
 
 type MatchFilter = "all" | "outpaced" | "matched" | "uncontested";
 
 export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
-  const comparisons = useMemo(() => compareToRealWorld(records), [records]);
+  const imported = useImportedRealWorld();
+  const comparisons = useMemo(
+    () => compareToRealWorld(records, 120, [...ALL_REAL_WORLD_BENCHMARKS, ...imported.records]),
+    [records, imported.records],
+  );
   const [selected, setSelected] = useState<{ id: string; name: string } | null>(null);
 
   // Filter states
@@ -31,14 +37,17 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
   const counts = useMemo(() => {
     let curated = 0;
     let trackRecord = 0;
+    let importedCount = 0;
     for (const c of comparisons) {
       if (c.benchmark.source === "curated") curated += 1;
       else if (c.benchmark.source === "track_record") trackRecord += 1;
+      else if (c.benchmark.source === "imported") importedCount += 1;
     }
     return {
       all: comparisons.length,
       curated,
       track_record: trackRecord,
+      imported: importedCount,
     };
   }, [comparisons]);
 
