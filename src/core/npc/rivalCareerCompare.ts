@@ -10,7 +10,7 @@
  *   src/routes/npc-stables.rival-careers.tsx
  */
 
-import type { Horse, NpcCareerStage } from "@/core/horse/types";
+import type { Horse, HorseRaceHistoryEntry, NpcCareerStage } from "@/core/horse/types";
 import { careerStage, careerStageLabel, summarizeNpcCareer } from "./careerTracker";
 import { getStableId } from "@/core/horse/ownership";
 import { detectRivalMilestones, type RivalMilestoneKind } from "./careerMilestones";
@@ -19,6 +19,8 @@ export interface RivalMilestoneRecord {
   key: string;
   kind: RivalMilestoneKind;
   title: string;
+  /** Best available absolute game day for plotting this milestone. */
+  day: number | null;
   /** True when the player has already been alerted about this milestone. */
   announced: boolean;
 }
@@ -39,6 +41,41 @@ export interface RivalCareerProfile {
   milestones: RivalMilestoneRecord[];
 }
 
+function orderedHistory(horse: Horse): HorseRaceHistoryEntry[] {
+  return [...(horse.raceHistory ?? [])].sort((a, b) => a.day - b.day);
+}
+
+function earningsMilestoneDay(history: HorseRaceHistoryEntry[], threshold: number): number | null {
+  let total = 0;
+  for (const start of history) {
+    total += start.purseEarned ?? 0;
+    if (total >= threshold) return start.day;
+  }
+  return null;
+}
+
+function milestoneDay(horse: Horse, key: string, currentDay: number): number | null {
+  const history = orderedHistory(horse);
+  if (key === "debut") return history[0]?.day ?? null;
+  if (key === "breakthrough_win") {
+    return history.find((start) => start.position === 1 && !!start.grade)?.day ?? null;
+  }
+  if (key.startsWith("earnings_")) {
+    const threshold = Number(key.slice("earnings_".length));
+    return Number.isFinite(threshold) ? earningsMilestoneDay(history, threshold) : null;
+  }
+  if (key === "stage_prime") {
+    return Math.min(currentDay, horse.birthDay + Math.max(2, horse.peakAge) * 365);
+  }
+  if (key === "stage_declining") {
+    return Math.min(currentDay, horse.birthDay + (Math.max(2, horse.peakAge) + 2) * 365);
+  }
+  if (key === "retirement") {
+    return horse.retiredOnDay ?? history.at(-1)?.day ?? currentDay;
+  }
+  return null;
+}
+
 /**
  * Build a comparable career profile for a single rival horse.
  *
@@ -53,8 +90,9 @@ export function buildRivalCareerProfile(horse: Horse, day: number): RivalCareerP
     key: m.key,
     kind: m.kind,
     title: m.title,
+    day: milestoneDay(horse, m.key, day),
     announced: announced.has(m.key),
-  }));
+  })).sort((a, b) => (a.day ?? Number.MAX_SAFE_INTEGER) - (b.day ?? Number.MAX_SAFE_INTEGER));
 
   return {
     id: horse.id,

@@ -11,6 +11,7 @@
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/formatting";
 import type { RivalCareerProfile } from "@/core/npc/rivalCareerCompare";
+import { RivalCareerMilestoneTimeline } from "./RivalCareerMilestoneTimeline";
 
 interface RivalCareerCompareTableProps {
   profiles: RivalCareerProfile[];
@@ -18,7 +19,7 @@ interface RivalCareerCompareTableProps {
 }
 
 const ROW_LABEL_CLASS = "text-xs text-cream-muted font-medium py-2 pr-3 text-right align-top";
-const CELL_CLASS = "text-xs text-cream py-2 px-3 text-center min-w-[140px] align-top";
+const CELL_CLASS = "text-xs text-cream py-2 px-3 text-center min-w-[190px] align-top";
 
 function bestIndex(values: number[]): number {
   let best = 0;
@@ -118,17 +119,7 @@ export function RivalCareerCompareTable({ profiles, stableNames }: RivalCareerCo
             <td className={ROW_LABEL_CLASS}>Milestones</td>
             {profiles.map((p) => (
               <td key={p.id} className={`${CELL_CLASS} text-left`}>
-                {p.milestones.length === 0 ? (
-                  <span className="text-cream-muted">No milestones yet</span>
-                ) : (
-                  <ul className="space-y-1">
-                    {p.milestones.map((m) => (
-                      <li key={m.key} className="leading-snug">
-                        <span className={m.announced ? "text-cream" : "text-gold"}>{m.title}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
+                <RivalCareerMilestoneTimeline milestones={p.milestones} />
               </td>
             ))}
           </tr>
