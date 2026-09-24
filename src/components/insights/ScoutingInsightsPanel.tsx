@@ -27,6 +27,8 @@ import {
 import { HorseScatterPlot } from "./HorseScatterPlot";
 import { InsightsCompareDialog } from "./InsightsCompareDialog";
 import { ScoutingThresholdControls } from "./ScoutingThresholdControls";
+import { useImportedRealWorld } from "@/data/importedRealWorld";
+import { buildRealCareerInsightRow } from "@/core/horse/insightMetrics";
 import { useBookmarks } from "@/hooks/shared/useBookmarks";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
@@ -59,13 +61,14 @@ import {
   X,
 } from "lucide-react";
 
-type PoolKey = "npc" | "market" | "all" | "mine";
+type PoolKey = "npc" | "market" | "all" | "mine" | "real";
 
 const POOLS: { value: PoolKey; label: string }[] = [
   { value: "npc", label: "Rival stables" },
   { value: "market", label: "Open market" },
   { value: "all", label: "All horses" },
   { value: "mine", label: "My stable" },
+  { value: "real", label: "Real world (uploaded)" },
 ];
 
 export function ScoutingInsightsPanel() {
@@ -102,7 +105,12 @@ export function ScoutingInsightsPanel() {
     return map;
   }, [npcStables]);
 
+  const imported = useImportedRealWorld();
   const allRows = useMemo<InsightRow[]>(() => {
+    if (pool === "real") {
+      const year = new Date().getFullYear();
+      return imported.careers.map((c) => buildRealCareerInsightRow(c, year));
+    }
     const pooled = allHorses.filter((h) => {
       if (h.lifecycleStatus === "deceased") return false;
       // Pedigree ancestors are stored as horses too; keep the plot to runners.
@@ -124,7 +132,7 @@ export function ScoutingInsightsPanel() {
           : "Open market";
       return buildInsightRow(h, allHorses, ownerLabel, ownerId);
     });
-  }, [allHorses, pool, stableNames]);
+  }, [allHorses, pool, stableNames, imported.careers]);
 
   /** Most recent report day per horse, for the "stale report" threshold. */
   const lastScoutDay = useMemo(() => lastScoutDayByHorse(scoutReports), [scoutReports]);
@@ -333,7 +341,7 @@ export function ScoutingInsightsPanel() {
                 onClick={() => {
                   const created = addAssignment?.(
                     `Threshold order ${new Date().toLocaleTimeString()}`,
-                    { ...thresholds, pool: pool === "mine" ? "npc" : pool },
+                    { ...thresholds, pool: pool === "mine" || pool === "real" ? "npc" : pool },
                   );
                   if (created) toast.success(`Saved standing assignment "${created.name}"`);
                 }}

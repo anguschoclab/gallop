@@ -154,3 +154,42 @@ export function metricExtent(rows: InsightRow[], key: InsightMetricKey): [number
   const pad = (max - min) * 0.05;
   return [min - pad, max + pad];
 }
+
+/** Real-world career uploaded by the player, plotted alongside game horses. */
+export interface RealCareerInput {
+  id: string;
+  horse: string;
+  gender: string;
+  foaled?: number;
+  starts: number;
+  wins: number;
+  earnings: number;
+}
+
+/**
+ * Flatten an uploaded real-world career into an InsightRow. Only career metrics
+ * (starts, wins, win rate, earnings, age) carry values; ratings are zero.
+ *
+ * @param c - Imported career
+ * @param currentYear - Calendar year used to derive age
+ */
+export function buildRealCareerInsightRow(c: RealCareerInput, currentYear: number): InsightRow {
+  const metrics = Object.fromEntries(INSIGHT_METRICS.map((m) => [m.key, 0])) as Record<
+    InsightMetricKey,
+    number
+  >;
+  metrics.starts = c.starts;
+  metrics.wins = c.wins;
+  metrics.winRate = c.starts > 0 ? (c.wins / c.starts) * 100 : 0;
+  metrics.earnings = c.earnings;
+  metrics.age = c.foaled ? Math.max(0, currentYear - c.foaled) : 0;
+  return {
+    id: c.id,
+    name: c.horse,
+    gender: c.gender,
+    ownerLabel: "Real world",
+    ownerId: null,
+    scouted: true,
+    metrics,
+  };
+}

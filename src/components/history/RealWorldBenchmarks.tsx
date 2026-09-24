@@ -10,14 +10,20 @@ import {
   type RealWorldRecordSource,
   type TripCategory,
   getTripCategory,
+  ALL_REAL_WORLD_BENCHMARKS,
 } from "@/data/realWorldRecords";
+import { useImportedRealWorld } from "@/data/importedRealWorld";
 import type { TrackRecord } from "@/services/history/historyFacade";
 import { cn } from "@/lib/cn";
 
 type MatchFilter = "all" | "outpaced" | "matched" | "uncontested";
 
 export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
-  const comparisons = useMemo(() => compareToRealWorld(records), [records]);
+  const imported = useImportedRealWorld();
+  const comparisons = useMemo(
+    () => compareToRealWorld(records, 120, [...ALL_REAL_WORLD_BENCHMARKS, ...imported.records]),
+    [records, imported.records],
+  );
   const [selected, setSelected] = useState<{ id: string; name: string } | null>(null);
 
   // Filter states
@@ -31,14 +37,17 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
   const counts = useMemo(() => {
     let curated = 0;
     let trackRecord = 0;
+    let importedCount = 0;
     for (const c of comparisons) {
       if (c.benchmark.source === "curated") curated += 1;
       else if (c.benchmark.source === "track_record") trackRecord += 1;
+      else if (c.benchmark.source === "imported") importedCount += 1;
     }
     return {
       all: comparisons.length,
       curated,
       track_record: trackRecord,
+      imported: importedCount,
     };
   }, [comparisons]);
 
@@ -188,6 +197,22 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
               Track Records
               <span className="ml-2 opacity-60 tabular-nums">{counts.track_record}</span>
             </button>
+            {counts.imported > 0 && (
+              <button
+                type="button"
+                onClick={() => setSourceFilter("imported")}
+                aria-pressed={sourceFilter === "imported"}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-colors",
+                  sourceFilter === "imported"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 text-cream-muted hover:text-cream",
+                )}
+              >
+                Your Data
+                <span className="ml-2 opacity-60 tabular-nums">{counts.imported}</span>
+              </button>
+            )}
           </div>
 
           {/* Search bar & Category filters */}
@@ -276,7 +301,11 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                             : "bg-blue-500/10 text-blue-300 border-blue-500/30",
                         )}
                       >
-                        {benchmark.source === "curated" ? "Curated" : "Track Record"}
+                        {benchmark.source === "curated"
+                          ? "Curated"
+                          : benchmark.source === "imported"
+                            ? "Your Data"
+                            : "Track Record"}
                       </Badge>
                     </div>
                     <p className="text-[11px] text-cream-muted truncate">
