@@ -197,6 +197,22 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
               Track Records
               <span className="ml-2 opacity-60 tabular-nums">{counts.track_record}</span>
             </button>
+            {counts.imported > 0 && (
+              <button
+                type="button"
+                onClick={() => setSourceFilter("imported")}
+                aria-pressed={sourceFilter === "imported"}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-colors",
+                  sourceFilter === "imported"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted/50 text-cream-muted hover:text-cream",
+                )}
+              >
+                Your Data
+                <span className="ml-2 opacity-60 tabular-nums">{counts.imported}</span>
+              </button>
+            )}
           </div>
 
           {/* Search bar & Category filters */}
@@ -285,7 +301,11 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                             : "bg-blue-500/10 text-blue-300 border-blue-500/30",
                         )}
                       >
-                        {benchmark.source === "curated" ? "Curated" : "Track Record"}
+                        {benchmark.source === "curated"
+                          ? "Curated"
+                          : benchmark.source === "imported"
+                            ? "Your Data"
+                            : "Track Record"}
                       </Badge>
                     </div>
                     <p className="text-[11px] text-cream-muted truncate">
