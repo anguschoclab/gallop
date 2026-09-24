@@ -1,17 +1,27 @@
 import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Landmark, MapPin } from "lucide-react";
+import { FilterX, Landmark, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useGameWithShallow } from "@/game/store";
 import { TrackLedgerRaces } from "@/components/history/TrackLedgerRaces";
 import { TrackLedgerPrestigeTable } from "@/components/history/TrackLedgerPrestigeTable";
 import { formatCurrency } from "@/lib/formatting";
 import {
+  filterTrackLedger,
   racesAtTrack,
   stablePrestigeAtTrack,
   summarizeTrackLedger,
+  trackLedgerStableOptions,
   type TrackLedgerEntry,
 } from "@/services/history/historyFacade";
 
@@ -43,6 +53,10 @@ function TrackHistoryPage() {
   const ledger = useGameWithShallow((s) => s.trackLedger ?? EMPTY_LEDGER) as TrackLedgerEntry[];
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState<string | null>(null);
+  const [fromDay, setFromDay] = useState("");
+  const [toDay, setToDay] = useState("");
+  const [raceType, setRaceType] = useState("all");
+  const [stableId, setStableId] = useState("all");
 
   const summaries = useMemo(() => summarizeTrackLedger(ledger), [ledger]);
   const filtered = useMemo(() => {
@@ -55,14 +69,44 @@ function TrackHistoryPage() {
 
   const activeId = selected ?? filtered[0]?.trackId ?? null;
   const active = summaries.find((s) => s.trackId === activeId);
-  const races = useMemo(
+  const courseLedger = useMemo(
     () => (activeId ? racesAtTrack(ledger, activeId) : []),
     [ledger, activeId],
   );
-  const prestigeRows = useMemo(
-    () => (activeId ? stablePrestigeAtTrack(ledger, activeId) : []),
-    [ledger, activeId],
+  const raceTypes = useMemo(
+    () =>
+      Array.from(
+        new Set(courseLedger.map((entry) => entry.raceClass).filter((value): value is string => Boolean(value))),
+      ).sort((a, b) => a.localeCompare(b)),
+    [courseLedger],
   );
+  const stableOptions = useMemo(() => trackLedgerStableOptions(courseLedger), [courseLedger]);
+  const filteredLedger = useMemo(
+    () =>
+      filterTrackLedger(courseLedger, {
+        fromDay: fromDay === "" ? undefined : Number(fromDay),
+        toDay: toDay === "" ? undefined : Number(toDay),
+        raceType: raceType === "all" ? undefined : raceType,
+        stableId: stableId === "all" ? undefined : stableId,
+      }),
+    [courseLedger, fromDay, toDay, raceType, stableId],
+  );
+  const races = filteredLedger;
+  const prestigeRows = useMemo(
+    () =>
+      stablePrestigeAtTrack(filteredLedger).filter(
+        (row) => stableId === "all" || row.stableId === stableId,
+      ),
+    [filteredLedger, stableId],
+  );
+  const filtersActive = fromDay !== "" || toDay !== "" || raceType !== "all" || stableId !== "all";
+
+  const resetFilters = () => {
+    setFromDay("");
+    setToDay("");
+    setRaceType("all");
+    setStableId("all");
+  };
 
   return (
     <div className="space-y-6">
@@ -144,8 +188,86 @@ function TrackHistoryPage() {
               </Card>
             )}
 
+            <Card className="border-white/5 bg-slate-900/40">
+              <CardContent className="p-4">
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[8rem_8rem_minmax(10rem,1fr)_minmax(12rem,1fr)_auto] xl:items-end">
+                  <label className="space-y-1 text-[11px] font-semibold uppercase text-cream-muted">
+                    From day
+                    <Input
+                      type="number"
+                      min={1}
+                      value={fromDay}
+                      onChange={(event) => setFromDay(event.target.value)}
+                      placeholder="First"
+                      aria-label="From game day"
+                    />
+                  </label>
+                  <label className="space-y-1 text-[11px] font-semibold uppercase text-cream-muted">
+                    To day
+                    <Input
+                      type="number"
+                      min={1}
+                      value={toDay}
+                      onChange={(event) => setToDay(event.target.value)}
+                      placeholder="Latest"
+                      aria-label="To game day"
+                    />
+                  </label>
+                  <label className="space-y-1 text-[11px] font-semibold uppercase text-cream-muted">
+                    Race type
+                    <Select value={raceType} onValueChange={setRaceType}>
+                      <SelectTrigger aria-label="Race type">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All race types</SelectItem>
+                        {raceTypes.map((type) => (
+                          <SelectItem key={type} value={type}>
+                            {type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </label>
+                  <label className="space-y-1 text-[11px] font-semibold uppercase text-cream-muted">
+                    Stable
+                    <Select value={stableId} onValueChange={setStableId}>
+                      <SelectTrigger aria-label="Stable">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All stables</SelectItem>
+                        {stableOptions.map((stable) => (
+                          <SelectItem key={stable.stableId} value={stable.stableId}>
+                            {stable.isPlayer ? `${stable.stableName} (You)` : stable.stableName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    disabled={!filtersActive}
+                    onClick={resetFilters}
+                    className="sm:col-span-2 xl:col-span-1"
+                  >
+                    <FilterX />
+                    Clear filters
+                  </Button>
+                </div>
+                <p className="mt-3 text-xs text-cream-muted" aria-live="polite">
+                  Showing {races.length} of {courseLedger.length} races
+                </p>
+              </CardContent>
+            </Card>
+
             <TrackLedgerPrestigeTable rows={prestigeRows} />
-            <TrackLedgerRaces races={races} />
+            <TrackLedgerRaces
+              races={races}
+              emptyMessage={filtersActive ? "No races match these filters." : undefined}
+            />
           </div>
         </div>
       )}

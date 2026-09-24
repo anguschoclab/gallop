@@ -63,6 +63,19 @@ export interface TrackLedgerEntry {
   prestigeDeltas: StablePrestigeDelta[];
 }
 
+export interface TrackLedgerFilters {
+  fromDay?: number;
+  toDay?: number;
+  raceType?: string;
+  stableId?: string;
+}
+
+export interface TrackLedgerStableOption {
+  stableId: string;
+  stableName: string;
+  isPlayer: boolean;
+}
+
 function gradeKey(race: Race): GradeKey {
   return race.graded?.grade ?? "ungraded";
 }
@@ -239,6 +252,47 @@ export function summarizeTrackLedger(ledger: TrackLedgerEntry[]): TrackLedgerSum
   }
   return Array.from(map.values()).sort(
     (a, b) => b.raceCount - a.raceCount || a.trackName.localeCompare(b.trackName),
+  );
+}
+
+/** Filter ledger rows by game-day range, race class and represented stable. */
+export function filterTrackLedger(
+  ledger: TrackLedgerEntry[],
+  filters: TrackLedgerFilters,
+): TrackLedgerEntry[] {
+  const fromDay = Number.isFinite(filters.fromDay) ? filters.fromDay : undefined;
+  const toDay = Number.isFinite(filters.toDay) ? filters.toDay : undefined;
+
+  return ledger.filter((entry) => {
+    if (fromDay !== undefined && entry.day < fromDay) return false;
+    if (toDay !== undefined && entry.day > toDay) return false;
+    if (filters.raceType && entry.raceClass !== filters.raceType) return false;
+    if (
+      filters.stableId &&
+      !entry.prestigeDeltas.some((delta) => delta.stableId === filters.stableId)
+    ) {
+      return false;
+    }
+    return true;
+  });
+}
+
+/** Stable choices represented in the supplied ledger, player first then alphabetical. */
+export function trackLedgerStableOptions(ledger: TrackLedgerEntry[]): TrackLedgerStableOption[] {
+  const options = new Map<string, TrackLedgerStableOption>();
+  for (const entry of ledger) {
+    for (const delta of entry.prestigeDeltas) {
+      if (!options.has(delta.stableId)) {
+        options.set(delta.stableId, {
+          stableId: delta.stableId,
+          stableName: delta.stableName,
+          isPlayer: delta.isPlayer,
+        });
+      }
+    }
+  }
+  return Array.from(options.values()).sort(
+    (a, b) => Number(b.isPlayer) - Number(a.isPlayer) || a.stableName.localeCompare(b.stableName),
   );
 }
 
