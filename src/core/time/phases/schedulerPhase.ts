@@ -56,10 +56,7 @@ export const schedulerPhase = {
         const race = raceMap.get(slot.raceId);
         if (!race) continue;
         const surf = (race.graded?.surface ?? race.surface) as
-          | "Turf"
-          | "Dirt"
-          | "Synthetic"
-          | undefined;
+          "Turf" | "Dirt" | "Synthetic" | undefined;
         if (surf) {
           updated = {
             ...updated,

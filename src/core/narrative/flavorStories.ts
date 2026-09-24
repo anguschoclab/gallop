@@ -7,12 +7,7 @@ export interface FlavorStory {
 }
 
 export type FlavorStoryTheme =
-  | "track"
-  | "jockeys"
-  | "breeding"
-  | "weather"
-  | "community"
-  | "industry";
+  "track" | "jockeys" | "breeding" | "weather" | "community" | "industry";
 
 export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   track: [

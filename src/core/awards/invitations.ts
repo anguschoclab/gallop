@@ -41,11 +41,7 @@ export const RSVP_REMINDER_MARKS = [5, 2, 0];
 
 /** Kinds of auditable events on an invitation. */
 export type InvitationAuditKind =
-  | "invited"
-  | "rsvp_change"
-  | "reminder_sent"
-  | "deadline_lapsed"
-  | "ceremony_held";
+  "invited" | "rsvp_change" | "reminder_sent" | "deadline_lapsed" | "ceremony_held";
 
 /** A single audit entry recording an invitation status change. */
 export interface InvitationAuditEntry {

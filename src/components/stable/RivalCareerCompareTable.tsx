@@ -10,7 +10,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/formatting";
-import type { RivalCareerProfile } from "@/core/npc/rivalCareerCompare";
+import type { RivalCareerProfile } from "@/services/stable/rivalCareerCompareFacade";
 
 interface RivalCareerCompareTableProps {
   profiles: RivalCareerProfile[];

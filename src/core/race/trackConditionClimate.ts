@@ -10,13 +10,7 @@ import type { TrackCondition } from "@/game/types";
 import type { KoppenCode } from "@/core/weather/koppenTypes";
 
 export type ClimateZone =
-  | "arid"
-  | "temperate"
-  | "humid"
-  | "tropical"
-  | "continental"
-  | "cool"
-  | "warm";
+  "arid" | "temperate" | "humid" | "tropical" | "continental" | "cool" | "warm";
 
 export const CLIMATE_CONDITION_BIAS: Record<ClimateZone, Record<TrackCondition, number>> = {
   arid: {

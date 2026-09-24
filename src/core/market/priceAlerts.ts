@@ -26,9 +26,7 @@ export { REAL_WORLD_BLEND_WEIGHT };
 
 /** Which slice of the market an alert watches. */
 export type PriceAlertScope =
-  | { kind: "market" }
-  | { kind: "grade"; value: string }
-  | { kind: "track"; value: string };
+  { kind: "market" } | { kind: "grade"; value: string } | { kind: "track"; value: string };
 
 /** Which direction of move should fire the alert. */
 export type PriceAlertDirection = "up" | "down" | "either";
