@@ -33,8 +33,8 @@ beforeEach(() => cleanup());
 afterEach(() => cleanup());
 
 describe("route mount smoke (real store)", () => {
-  it("discovers 53 component routes", () => {
-    expect(componentRouteCases.length).toBe(53);
+  it("discovers 54 component routes", () => {
+    expect(componentRouteCases.length).toBe(54);
   });
 
   it("discovers 16 redirect-only routes", () => {
