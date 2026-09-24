@@ -70,7 +70,6 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/syndicate-stakes", label: "Syndicate Stakes", icon: Sparkles, exact: false },
       { to: "/staff", label: "Staff", icon: Users, exact: false },
       { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
-      { to: "/race-strategy", label: "Strategy Advisor", icon: Activity, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
       { to: "/vet", label: "Vet Report", icon: Activity, exact: false },
       { to: "/stewards", label: "Stewards", icon: Scale, exact: false },
