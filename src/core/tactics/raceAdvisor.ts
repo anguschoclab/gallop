@@ -58,12 +58,18 @@ export function adviseRace(horse: Horse, race: Race, rivals: Horse[]): RaceAdvic
           : "closer";
   if (history.sample >= 3 && history.dominant) {
     const bestTendency = (["front", "mid", "off"] as const).reduce((a, b) =>
-      history.counts[b] && history.itm[b] / history.counts[b] > (history.counts[a] ? history.itm[a] / history.counts[a] : -1) ? b : a,
+      history.counts[b] &&
+      history.itm[b] / history.counts[b] >
+        (history.counts[a] ? history.itm[a] / history.counts[a] : -1)
+        ? b
+        : a,
     );
     const fromHistory: RidingStyle =
       bestTendency === "front" ? "front_runner" : bestTendency === "mid" ? "stalker" : "closer";
     if (fromHistory !== natural) {
-      reasons.push(`Form book shows its best placings when ridden ${bestTendency === "mid" ? "mid-pack" : bestTendency === "front" ? "on the pace" : "from behind"} (${history.sample} starts).`);
+      reasons.push(
+        `Form book shows its best placings when ridden ${bestTendency === "mid" ? "mid-pack" : bestTendency === "front" ? "on the pace" : "from behind"} (${history.sample} starts).`,
+      );
       natural = fromHistory;
     }
   }
@@ -71,12 +77,16 @@ export function adviseRace(horse: Horse, race: Race, rivals: Horse[]): RaceAdvic
   let style = natural;
   if (natural === "front_runner" && hotPace && s.stamina < 70) {
     style = "stalker";
-    reasons.push(`${fieldEarlySpeed} rivals want the lead — sit just off a likely speed duel instead of burning out.`);
+    reasons.push(
+      `${fieldEarlySpeed} rivals want the lead — sit just off a likely speed duel instead of burning out.`,
+    );
   } else if (lonePace && (natural === "stalker" || natural === "tactical") && s.speed >= 60) {
     style = "front_runner";
     reasons.push("No other early speed in the field — take the free lead and control the pace.");
   } else if (natural === "closer" && lonePace) {
-    risks.push("Slow pace expected — closers can find the leader gone clear. Don't leave it too late.");
+    risks.push(
+      "Slow pace expected — closers can find the leader gone clear. Don't leave it too late.",
+    );
   } else if (natural === "closer" && hotPace) {
     reasons.push("Contested early pace should set this up for a late run.");
   }
@@ -86,10 +96,14 @@ export function adviseRace(horse: Horse, race: Race, rivals: Horse[]): RaceAdvic
     risks.push(`Stamina (${Math.round(s.stamina)}) is light for ${dist}m — conserve early.`);
     if (style === "front_runner") style = "stalker";
   } else if (dist >= 2200 && s.stamina >= 75) {
-    reasons.push(`Strong stamina (${Math.round(s.stamina)}) suits the ${dist}m trip — can sustain a long run.`);
+    reasons.push(
+      `Strong stamina (${Math.round(s.stamina)}) suits the ${dist}m trip — can sustain a long run.`,
+    );
   }
   if (dist <= 1400 && s.acceleration >= 70) {
-    reasons.push(`Quick acceleration (${Math.round(s.acceleration)}) is a weapon in a ${dist}m sprint.`);
+    reasons.push(
+      `Quick acceleration (${Math.round(s.acceleration)}) is a weapon in a ${dist}m sprint.`,
+    );
   } else if (dist <= 1400 && style === "closer") {
     risks.push("Sprints give closers little time to make up ground.");
   }
@@ -98,38 +112,59 @@ export function adviseRace(horse: Horse, race: Race, rivals: Horse[]): RaceAdvic
   if (surface) {
     const apt = horse.surfaceAptitude?.[surface] ?? 50;
     if (apt >= 70) reasons.push(`Proven liking for ${surface} (aptitude ${Math.round(apt)}).`);
-    else if (apt < 45) risks.push(`${surface} is not its preferred surface (aptitude ${Math.round(apt)}).`);
+    else if (apt < 45)
+      risks.push(`${surface} is not its preferred surface (aptitude ${Math.round(apt)}).`);
   }
   if (wet) {
-    if (horse.weatherPreference === "wet" || horse.mudAptitude >= 65) reasons.push("Rain is forecast and this horse handles wet going.");
-    else if (horse.weatherPreference === "dry" || horse.mudAptitude < 40) risks.push("Wet going forecast — this horse prefers it dry and may lose focus.");
+    if (horse.weatherPreference === "wet" || horse.mudAptitude >= 65)
+      reasons.push("Rain is forecast and this horse handles wet going.");
+    else if (horse.weatherPreference === "dry" || horse.mudAptitude < 40)
+      risks.push("Wet going forecast — this horse prefers it dry and may lose focus.");
   } else if (race.weather && horse.weatherPreference === "wet") {
     risks.push("Dry conditions expected; it performs best with some cut in the ground.");
   }
   if (race.handedness && horse.trackPreference !== "balanced" && race.handedness !== "balanced") {
-    if (race.handedness === horse.trackPreference) reasons.push(`Suits the ${race.handedness}-handed track.`);
-    else risks.push(`Prefers ${horse.trackPreference}-handed tracks; this one turns ${race.handedness}.`);
+    if (race.handedness === horse.trackPreference)
+      reasons.push(`Suits the ${race.handedness}-handed track.`);
+    else
+      risks.push(
+        `Prefers ${horse.trackPreference}-handed tracks; this one turns ${race.handedness}.`,
+      );
   }
   if (s.temperament < 45) risks.push("Temperament is fragile — avoid a rough, crowded trip.");
 
   // Condition
   const fresh = horse.lastRaceDay != null ? race.day - horse.lastRaceDay : 99;
   if (fresh < 14) risks.push(`Only ${fresh} days since last run — may not be fully recovered.`);
-  if (horse.recoveryPoints < 60) risks.push(`Condition is ${Math.round(horse.recoveryPoints)}/100.`);
+  if (horse.recoveryPoints < 60)
+    risks.push(`Condition is ${Math.round(horse.recoveryPoints)}/100.`);
 
   // --- Field strength ---
   const mine = rating(horse);
   const rivalRatings = rivals.map(rating).sort((a, b) => b - a);
   const better = rivalRatings.filter((r) => r > mine + 2).length;
   const top = rivalRatings[0] ?? 0;
-  const outlook: RaceAdvice["outlook"] = better === 0 ? "strong" : better <= 2 ? "competitive" : "outsider";
+  const outlook: RaceAdvice["outlook"] =
+    better === 0 ? "strong" : better <= 2 ? "competitive" : "outsider";
   if (outlook === "strong") reasons.push("Rates as the best horse on paper in this field.");
-  else if (outlook === "outsider") risks.push(`${better} rivals rate higher on paper (top rival ~${Math.round(top)} vs ${Math.round(mine)}).`);
+  else if (outlook === "outsider")
+    risks.push(
+      `${better} rivals rate higher on paper (top rival ~${Math.round(top)} vs ${Math.round(mine)}).`,
+    );
 
   // --- Instructions ---
   const earlyPosition: EarlyPosition =
-    style === "front_runner" ? (hotPace ? "press" : "lead") : style === "stalker" ? "press" : style === "tactical" ? "midpack" : "drop_back";
-  let moveTiming: MoveTiming = style === "closer" ? "late" : style === "front_runner" ? "early" : "mid";
+    style === "front_runner"
+      ? hotPace
+        ? "press"
+        : "lead"
+      : style === "stalker"
+        ? "press"
+        : style === "tactical"
+          ? "midpack"
+          : "drop_back";
+  let moveTiming: MoveTiming =
+    style === "closer" ? "late" : style === "front_runner" ? "early" : "mid";
   if (dist >= 2200 && s.stamina >= 75 && style !== "front_runner") moveTiming = "mid";
   if (dist <= 1200 && style === "closer") moveTiming = "mid";
 
@@ -141,7 +176,16 @@ export function adviseRace(horse: Horse, race: Race, rivals: Horse[]): RaceAdvic
   if (dist >= 2400) aggressiveness -= 10;
   aggressiveness = clamp(Math.round(aggressiveness), 10, 90);
 
-  const confidence = clamp(Math.round(40 + reasons.length * 8 - risks.length * 7 + (outlook === "strong" ? 15 : outlook === "outsider" ? -10 : 0)), 5, 95);
+  const confidence = clamp(
+    Math.round(
+      40 +
+        reasons.length * 8 -
+        risks.length * 7 +
+        (outlook === "strong" ? 15 : outlook === "outsider" ? -10 : 0),
+    ),
+    5,
+    95,
+  );
 
   const posText: Record<EarlyPosition, string> = {
     lead: "Break sharply and take the lead",
@@ -156,10 +200,25 @@ export function adviseRace(horse: Horse, race: Race, rivals: Horse[]): RaceAdvic
   };
   const jockeyNotes = `${posText[earlyPosition]}; ${moveText[moveTiming]}.${wet && horse.mudAptitude < 40 ? " Keep it balanced on the soft ground." : ""}`;
 
-  return { ridingStyle: style, earlyPosition, moveTiming, aggressiveness, confidence, outlook, reasons, risks, jockeyNotes, fieldEarlySpeed };
+  return {
+    ridingStyle: style,
+    earlyPosition,
+    moveTiming,
+    aggressiveness,
+    confidence,
+    outlook,
+    reasons,
+    risks,
+    jockeyNotes,
+    fieldEarlySpeed,
+  };
 }
 
-export function adviceToInstructions(advice: RaceAdvice, horseId: string, raceId: string): JockeyInstructions {
+export function adviceToInstructions(
+  advice: RaceAdvice,
+  horseId: string,
+  raceId: string,
+): JockeyInstructions {
   return {
     horseId,
     raceId,

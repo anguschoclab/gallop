@@ -88,7 +88,10 @@ export function useImportedRealWorld(): ImportedDataset {
 
 // ---------------------------------------------------------------- parsing
 
-/** Minimal RFC-4180 CSV parser (quoted fields, escaped quotes, CRLF). */
+/**
+ * Minimal RFC-4180 CSV parser (quoted fields, escaped quotes, CRLF).
+ * @param text
+ */
 export function parseCsv(text: string): Record<string, string>[] {
   const rows: string[][] = [];
   let row: string[] = [];
@@ -120,7 +123,12 @@ export function parseCsv(text: string): Record<string, string>[] {
   }
   const nonEmpty = rows.filter((r) => r.some((v) => v.trim() !== ""));
   if (nonEmpty.length === 0) return [];
-  const header = nonEmpty[0].map((h) => h.trim().toLowerCase().replace(/[\s-]+/g, "_"));
+  const header = nonEmpty[0].map((h) =>
+    h
+      .trim()
+      .toLowerCase()
+      .replace(/[\s-]+/g, "_"),
+  );
   return nonEmpty.slice(1).map((r) => {
     const o: Record<string, string> = {};
     header.forEach((h, i) => (o[h] = (r[i] ?? "").trim()));
@@ -128,7 +136,10 @@ export function parseCsv(text: string): Record<string, string>[] {
   });
 }
 
-/** Parse "1:59.40", "2:20.6", "119.4" or "1.59.40" into seconds. */
+/**
+ * Parse "1:59.40", "2:20.6", "119.4" or "1.59.40" into seconds.
+ * @param value
+ */
 export function parseRaceTime(value: string): number | null {
   const v = value.trim();
   if (!v) return null;
@@ -145,7 +156,10 @@ export function parseRaceTime(value: string): number | null {
   return Number.isFinite(n) && n > 0 ? n : null;
 }
 
-/** Parse a distance: "2400", "2400m", "12f", "1.25mi". Returns metres. */
+/**
+ * Parse a distance: "2400", "2400m", "12f", "1.25mi". Returns metres.
+ * @param value
+ */
 export function parseDistance(value: string): number | null {
   const v = value.trim().toLowerCase();
   const n = parseFloat(v);
