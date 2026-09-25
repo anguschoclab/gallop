@@ -33,10 +33,7 @@ export function RivalCareerMilestoneTimeline({
       {milestones.map((milestone, index) => {
         const Icon = MILESTONE_ICON[milestone.kind];
         return (
-          <li
-            key={milestone.key}
-            className={index === milestones.length - 1 ? "relative" : "relative pb-3"}
-          >
+          <li key={milestone.key} className={index === milestones.length - 1 ? "relative" : "relative pb-3"}>
             <span
               className={`absolute -left-[25px] top-0 flex h-4 w-4 items-center justify-center rounded-full border bg-card ${
                 milestone.announced ? "border-border text-cream-muted" : "border-gold text-gold"
@@ -48,9 +45,7 @@ export function RivalCareerMilestoneTimeline({
             <div className="text-[10px] font-medium uppercase text-cream-muted">
               {MILESTONE_LABEL[milestone.kind]}
             </div>
-            <div
-              className={milestone.announced ? "leading-snug text-cream" : "leading-snug text-gold"}
-            >
+            <div className={milestone.announced ? "leading-snug text-cream" : "leading-snug text-gold"}>
               {milestone.title}
             </div>
             <div className="mt-0.5 font-mono text-[10px] tabular-nums text-cream-muted">

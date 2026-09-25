@@ -58,8 +58,8 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
           <div className="space-y-0.5">
             <Label htmlFor="auto-enter">Daily Auto-Entry</Label>
             <p className="text-xs text-cream-muted">
-              Each day, enter idle horses in their best race by stats, past results, class, distance
-              and surface
+              Each day, enter idle horses in their best race by stats, past results, class,
+              distance and surface
             </p>
           </div>
           <Switch

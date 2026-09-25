@@ -3,13 +3,7 @@ import { raceFormPremium, worldRankings, RACE_FORM_PREMIUM_CAP } from "@/core/ma
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { asHorseId } from "@/core/types/branded";
 
-const win = (day: number, grade?: string) => ({
-  raceId: `r${day}`,
-  raceName: `Race ${day}`,
-  position: 1,
-  day,
-  grade,
-});
+const win = (day: number, grade?: string) => ({ raceId: `r${day}`, raceName: `Race ${day}`, position: 1, day, grade });
 
 describe("raceForm", () => {
   it("unraced horse has no premium", () => {
@@ -20,10 +14,7 @@ describe("raceForm", () => {
     const plain = raceFormPremium({ raceHistory: [win(10)] }, 10);
     expect(g1).toBeGreaterThan(plain);
     expect(plain).toBeGreaterThan(1);
-    const many = raceFormPremium(
-      { raceHistory: Array.from({ length: 50 }, () => win(10, "G1")) },
-      10,
-    );
+    const many = raceFormPremium({ raceHistory: Array.from({ length: 50 }, () => win(10, "G1")) }, 10);
     expect(many).toBe(RACE_FORM_PREMIUM_CAP);
   });
   it("ranks by points deterministically", () => {

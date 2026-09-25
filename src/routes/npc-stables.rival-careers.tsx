@@ -54,7 +54,9 @@ export function NpcStablesRivalCareers() {
 
   const profiles = useMemo(() => {
     const byId = new Map(rivals.map((h) => [h.id, h]));
-    const picked = selected.map((id) => byId.get(id)).filter((h): h is Horse => h !== undefined);
+    const picked = selected
+      .map((id) => byId.get(id))
+      .filter((h): h is Horse => h !== undefined);
     return buildRivalCareerProfiles(picked, day);
   }, [selected, rivals, day]);
 
