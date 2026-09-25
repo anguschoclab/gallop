@@ -86,13 +86,15 @@ function milestoneDay(horse: Horse, key: string, currentDay: number): number | n
 export function buildRivalCareerProfile(horse: Horse, day: number): RivalCareerProfile {
   const career = summarizeNpcCareer(horse, day);
   const announced = new Set(horse.careerMilestonesAnnounced ?? []);
-  const milestones = detectRivalMilestones(horse, []).map((m) => ({
-    key: m.key,
-    kind: m.kind,
-    title: m.title,
-    day: milestoneDay(horse, m.key, day),
-    announced: announced.has(m.key),
-  })).sort((a, b) => (a.day ?? Number.MAX_SAFE_INTEGER) - (b.day ?? Number.MAX_SAFE_INTEGER));
+  const milestones = detectRivalMilestones(horse, [])
+    .map((m) => ({
+      key: m.key,
+      kind: m.kind,
+      title: m.title,
+      day: milestoneDay(horse, m.key, day),
+      announced: announced.has(m.key),
+    }))
+    .sort((a, b) => (a.day ?? Number.MAX_SAFE_INTEGER) - (b.day ?? Number.MAX_SAFE_INTEGER));
 
   return {
     id: horse.id,

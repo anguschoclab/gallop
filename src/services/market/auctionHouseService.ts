@@ -58,6 +58,11 @@ export function getHouseQuote(
  * @param reputationScore - Player's reputation score.
  * @returns The standing bid factor.
  */
+/**
+ * Gets the seller standing bid factor
+ * @param reputationScore The reputation score
+ * @returns The factor
+ */
 export function getSellerStandingBidFactor(reputationScore: number) {
   return sellerStandingBidFactor(reputationScore);
 }
@@ -68,6 +73,14 @@ export function getSellerStandingBidFactor(reputationScore: number) {
  * @param day - Current day.
  * @param windowDays - Lookback window.
  * @param limit - Max rows.
+ */
+/**
+ * Gets world rankings
+ * @param horses The horses
+ * @param day The day
+ * @param windowDays The window days
+ * @param limit The limit
+ * @returns The world rankings
  */
 export function getWorldRankings(horses: Horse[], day: number, windowDays = 365, limit = 25) {
   return worldRankings(horses, day, windowDays, limit);

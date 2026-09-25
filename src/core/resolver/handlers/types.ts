@@ -40,12 +40,6 @@ export interface LookupMaps {
   staffMap: Map<StaffId, WritableDraft<StaffMember>>;
 }
 
-export type ImpactHandlerFunction = (
-  draft: WritableDraft<GameState>,
-  impact: AnyImpact,
-  lookupMaps?: LookupMaps,
-) => void;
-
 /**
  * Base interface for impact handlers
  */

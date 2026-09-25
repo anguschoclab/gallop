@@ -93,7 +93,10 @@ function yearOf(day: number): number {
  */
 export function positionPrestige(race: Race, position: number, fieldSize: number): number {
   const key = gradeKey(race);
-  const venue = racecoursePrestigeMultiplier(race.trackId ?? race.graded?.trackId, race.graded?.track);
+  const venue = racecoursePrestigeMultiplier(
+    race.trackId ?? race.graded?.trackId,
+    race.graded?.track,
+  );
   if (position === 1) return Math.round(PRESTIGE_WIN[key] * venue);
   if (position <= 3) return Math.round(PRESTIGE_PLACED[key] * venue);
   if (race.graded && position > Math.ceil(fieldSize / 2)) return PRESTIGE_GRADED_FLOP;
@@ -255,7 +258,11 @@ export function summarizeTrackLedger(ledger: TrackLedgerEntry[]): TrackLedgerSum
   );
 }
 
-/** Filter ledger rows by game-day range, race class and represented stable. */
+/**
+ * Filter ledger rows by game-day range, race class and represented stable.
+ * @param ledger
+ * @param filters
+ */
 export function filterTrackLedger(
   ledger: TrackLedgerEntry[],
   filters: TrackLedgerFilters,
@@ -277,7 +284,10 @@ export function filterTrackLedger(
   });
 }
 
-/** Stable choices represented in the supplied ledger, player first then alphabetical. */
+/**
+ * Stable choices represented in the supplied ledger, player first then alphabetical.
+ * @param ledger
+ */
 export function trackLedgerStableOptions(ledger: TrackLedgerEntry[]): TrackLedgerStableOption[] {
   const options = new Map<string, TrackLedgerStableOption>();
   for (const entry of ledger) {

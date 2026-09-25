@@ -11,7 +11,7 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
-import type { ImpactHandler, LookupMaps, ImpactHandlerFunction } from "./types";
+import type { ImpactHandler, LookupMaps } from "./types";
 import type { FacilityType } from "@/core/facilities";
 import type { Outpost } from "@/core/facilities/outpostTypes";
 import type {
@@ -20,6 +20,12 @@ import type {
   TransportImpact,
   OutpostImpact,
 } from "../impacts/miscImpacts";
+
+type ImpactHandlerFunction = (
+  draft: WritableDraft<GameState>,
+  impact: AnyImpact,
+  lookupMaps?: LookupMaps,
+) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   facility_upgrade: (draft, impact, lookupMaps) => {
