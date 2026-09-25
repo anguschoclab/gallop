@@ -76,7 +76,11 @@ function TrackHistoryPage() {
   const raceTypes = useMemo(
     () =>
       Array.from(
-        new Set(courseLedger.map((entry) => entry.raceClass).filter((value): value is string => Boolean(value))),
+        new Set(
+          courseLedger
+            .map((entry) => entry.raceClass)
+            .filter((value): value is string => Boolean(value)),
+        ),
       ).sort((a, b) => a.localeCompare(b)),
     [courseLedger],
   );
