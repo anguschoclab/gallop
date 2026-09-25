@@ -11,14 +11,14 @@ per-test linkage in `audit/test-traceability-v3.md`; baseline in `audit/consolid
 
 ## 1. Gate results (branch head, pre-merge)
 
-| Gate | Command | Result |
-|---|---|---|
-| Typecheck | `bun run typecheck:errors` | **0 errors, 0 warnings** |
-| Lint | `bun run lint` | **0 errors** |
-| Architecture | layeringRules + namingConventions + dataImmutability | **12/12 pass** (via `verify.sh`) |
-| Unit tests | `bun run test` | 9,174 pass / 7 fail / 1 skip on first gate run — all 7 regressions fixed and re-verified green on the affected files + 766 related tests (phases/, breeding/) |
-| Build | `bun run build` | **clean** |
-| Full verify | `bash scripts/verify.sh` | **green** |
+| Gate         | Command                                              | Result                                                                                                                                                        |
+| ------------ | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Typecheck    | `bun run typecheck:errors`                           | **0 errors, 0 warnings**                                                                                                                                      |
+| Lint         | `bun run lint`                                       | **0 errors**                                                                                                                                                  |
+| Architecture | layeringRules + namingConventions + dataImmutability | **12/12 pass** (via `verify.sh`)                                                                                                                              |
+| Unit tests   | `bun run test`                                       | 9,174 pass / 7 fail / 1 skip on first gate run — all 7 regressions fixed and re-verified green on the affected files + 766 related tests (phases/, breeding/) |
+| Build        | `bun run build`                                      | **clean**                                                                                                                                                     |
+| Full verify  | `bash scripts/verify.sh`                             | **green**                                                                                                                                                     |
 
 Notable perf verification: `createInitialState({ worldSize: "large" })` — NPC-race-entry stage went from ~70 min → ~11 s (see BUG-V3-001). `initialization.test.ts` (18 tests) now completes in 169 s total.
 
@@ -32,22 +32,22 @@ Notable perf verification: `createInitialState({ worldSize: "large" })` — NPC-
 
 ### Approved & integrated (canonical winners)
 
-| PR | Content landed |
-|---|---|
-| #420 Anvil | `syndicateStakes.ts` — dead dual-key `as any` fallbacks removed; single branded `OwnerKey` lookup |
-| #433 Bolt | `FieldContext.liveRank` map — O(N²)→O(N) `nearestRival`/`isBlocked` |
-| #423 Bolt | `computeSegmentAverages` — per-snapshot `Map` allocation removed |
-| #415 Bolt (partial) | sire-analytics optional `horsesDict` param + callers (stripped audit-doc churn) |
-| #413 Herald | directive-news pools with distress-aware branching |
-| #435, #442 Herald | race-margin + winner-headline news pools |
-| #421, #428, #434 Herald | `flavorStories` union — track/jockey/community/industry entries deduped |
-| #427 Palette | `SidebarNav` start-new-game `AlertDialog` + `buttonVariants(destructive)` |
-| #424 Groom | `AwardIcon` `title=`→Tooltip |
-| #419 Mason | `CONTINENT_TO_REGION` dedup into `core/awards/types.ts` |
-| #449 Mason | `NpcCareerTrackerPanel`→facade layering + `npcFacade` re-export + shared lint payload |
-| #429 Tipster | `core/analytics/stableTrends.ts` + `AnalyticsRacingTab` + `useAnalyticsData` wiring |
-| #439 Tipster (partial) | `detectEarningsMilestone` detector + registry entry (stripped plan/payload) |
-| #416,#418,#422,#426,#432,#437,#443,#446 Probe | all approved test files extracted & landed in Phase 4 |
+| PR                                            | Content landed                                                                                    |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| #420 Anvil                                    | `syndicateStakes.ts` — dead dual-key `as any` fallbacks removed; single branded `OwnerKey` lookup |
+| #433 Bolt                                     | `FieldContext.liveRank` map — O(N²)→O(N) `nearestRival`/`isBlocked`                               |
+| #423 Bolt                                     | `computeSegmentAverages` — per-snapshot `Map` allocation removed                                  |
+| #415 Bolt (partial)                           | sire-analytics optional `horsesDict` param + callers (stripped audit-doc churn)                   |
+| #413 Herald                                   | directive-news pools with distress-aware branching                                                |
+| #435, #442 Herald                             | race-margin + winner-headline news pools                                                          |
+| #421, #428, #434 Herald                       | `flavorStories` union — track/jockey/community/industry entries deduped                           |
+| #427 Palette                                  | `SidebarNav` start-new-game `AlertDialog` + `buttonVariants(destructive)`                         |
+| #424 Groom                                    | `AwardIcon` `title=`→Tooltip                                                                      |
+| #419 Mason                                    | `CONTINENT_TO_REGION` dedup into `core/awards/types.ts`                                           |
+| #449 Mason                                    | `NpcCareerTrackerPanel`→facade layering + `npcFacade` re-export + shared lint payload             |
+| #429 Tipster                                  | `core/analytics/stableTrends.ts` + `AnalyticsRacingTab` + `useAnalyticsData` wiring               |
+| #439 Tipster (partial)                        | `detectEarningsMilestone` detector + registry entry (stripped plan/payload)                       |
+| #416,#418,#422,#426,#432,#437,#443,#446 Probe | all approved test files extracted & landed in Phase 4                                             |
 
 ### Disapproved (closed as duplicate/inferior)
 
@@ -59,15 +59,15 @@ All 97 closed-unmerged PRs re-examined — verdicts in `audit/pr-verdicts-v3-clo
 
 ## 5. Bug-register verdicts
 
-| ID | Verdict | Disposition |
-|---|---|---|
-| BUG-018 | **CONFIRMED & FIXED** | `yesterdayRaces`→`todaysResolvedRaces` rename + comment fix in `npcCycle.ts` (fame gains are same-day, not yesterday) |
-| BUG-026 | **CONFIRMED & FIXED** | `scripts/orphan-audit.ts` — regex extraction replaced with balanced-brace/quote-aware parser; 221 orphan-scan tests pass |
-| BUG-V3-001 | **CONFIRMED & FIXED** | `runNpcRaceEntry` called `ensurePhenotypeResolved` per (race × stable × horse) eval and discarded the result — ~5M redundant resolves at `large`. Horses now resolved once into `horseMap`. Large init ~70 min→~11 s; medium 29 s→2.7 s |
-| BUG-V3-002 (`title=` sweep) | **CONFIRMED & FIXED** | all 27 real `title=` attributes converted to `Hint` tooltip wrapper (new `components/ui/Hint.tsx`, asChild — zero DOM churn); 118 false-positive props/attrs excluded |
-| BUG-V3-003 (native dialogs) | **CONFIRMED & FIXED** | `useSaveSlots` `confirm()`→`AlertDialog` pending-action flow wired through `SaveLoadDialog`; all `alert()` sites → `toast.error` |
-| Frozen-shareHolders crash (new, found at Phase 6) | **CONFIRMED & FIXED** | `npcBankruptcy.ts` mutated `delete syndicate.shareHolders[id]` on immer-frozen records → `TypeError` in `economyInvariant` tests. Now clone-on-write (`removeShareholder`) + immutable stallion-ownership update |
-| Detector-registry order (new) | **RESOLVED** | `insightRegistry.test.ts` intentionally updated to 18 detectors incl. `detectEarningsMilestone` |
+| ID                                                | Verdict               | Disposition                                                                                                                                                                                                                             |
+| ------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BUG-018                                           | **CONFIRMED & FIXED** | `yesterdayRaces`→`todaysResolvedRaces` rename + comment fix in `npcCycle.ts` (fame gains are same-day, not yesterday)                                                                                                                   |
+| BUG-026                                           | **CONFIRMED & FIXED** | `scripts/orphan-audit.ts` — regex extraction replaced with balanced-brace/quote-aware parser; 221 orphan-scan tests pass                                                                                                                |
+| BUG-V3-001                                        | **CONFIRMED & FIXED** | `runNpcRaceEntry` called `ensurePhenotypeResolved` per (race × stable × horse) eval and discarded the result — ~5M redundant resolves at `large`. Horses now resolved once into `horseMap`. Large init ~70 min→~11 s; medium 29 s→2.7 s |
+| BUG-V3-002 (`title=` sweep)                       | **CONFIRMED & FIXED** | all 27 real `title=` attributes converted to `Hint` tooltip wrapper (new `components/ui/Hint.tsx`, asChild — zero DOM churn); 118 false-positive props/attrs excluded                                                                   |
+| BUG-V3-003 (native dialogs)                       | **CONFIRMED & FIXED** | `useSaveSlots` `confirm()`→`AlertDialog` pending-action flow wired through `SaveLoadDialog`; all `alert()` sites → `toast.error`                                                                                                        |
+| Frozen-shareHolders crash (new, found at Phase 6) | **CONFIRMED & FIXED** | `npcBankruptcy.ts` mutated `delete syndicate.shareHolders[id]` on immer-frozen records → `TypeError` in `economyInvariant` tests. Now clone-on-write (`removeShareholder`) + immutable stallion-ownership update                        |
+| Detector-registry order (new)                     | **RESOLVED**          | `insightRegistry.test.ts` intentionally updated to 18 detectors incl. `detectEarningsMilestone`                                                                                                                                         |
 
 All 33 prior bug-register entries re-verified in Phase 1 — spot-checks confirmed prior FIXED verdicts hold; full ledger in `audit/bug-register.md`.
 
@@ -84,15 +84,15 @@ Per instruction "implement all items including optional, deferred, or out-of-sco
 
 ## 7. Architectural-choice verdicts
 
-| Choice | Verdict |
-|---|---|
-| Facade-layer imports for components (`npcFacade`, `horseFacade`) | **APPROVED** — enforced via layeringRules test; violations reduced |
-| Branded `OwnerKey` indexing | **APPROVED** — `as any` dual-key fallback disproved as dead code and removed |
-| `liveRank` map in `FieldContext` | **APPROVED** — semantics preserved, all consumers use `buildFieldContext` |
-| Distress-aware directive news (Herald #413 over #448) | **APPROVED** — strictly more expressive |
-| `buttonVariants(destructive)` for destructive dialogs (Palette #427 over #430) | **APPROVED** — matches house style |
-| Discard-and-pre-resolve in `runNpcRaceEntry` | **APPROVED** — resolved horses were already the evaluation input; pre-resolution is semantics-preserving |
-| immer-frozen state objects reaching pipeline phases | **CONFIRMED as hazard** — phases must clone-on-write; `npcBankruptcy` now does |
+| Choice                                                                         | Verdict                                                                                                  |
+| ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| Facade-layer imports for components (`npcFacade`, `horseFacade`)               | **APPROVED** — enforced via layeringRules test; violations reduced                                       |
+| Branded `OwnerKey` indexing                                                    | **APPROVED** — `as any` dual-key fallback disproved as dead code and removed                             |
+| `liveRank` map in `FieldContext`                                               | **APPROVED** — semantics preserved, all consumers use `buildFieldContext`                                |
+| Distress-aware directive news (Herald #413 over #448)                          | **APPROVED** — strictly more expressive                                                                  |
+| `buttonVariants(destructive)` for destructive dialogs (Palette #427 over #430) | **APPROVED** — matches house style                                                                       |
+| Discard-and-pre-resolve in `runNpcRaceEntry`                                   | **APPROVED** — resolved horses were already the evaluation input; pre-resolution is semantics-preserving |
+| immer-frozen state objects reaching pipeline phases                            | **CONFIRMED as hazard** — phases must clone-on-write; `npcBankruptcy` now does                           |
 
 ## 8. Final disposition
 
