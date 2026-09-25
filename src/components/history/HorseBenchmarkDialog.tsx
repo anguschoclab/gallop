@@ -522,8 +522,9 @@ export function HorseBenchmarkDialog({
 
             <p className="text-[11px] italic text-cream-muted">
               Positive delta means {horseName} ran faster per mile than the benchmark. Field rank
-              reflects standing in a {benchmarks.length + 1}-runner field ({benchmarks.length} benchmarks + {horseName}). Where no
-              comparable trip and surface exists, the horse&apos;s career best pace is used.
+              reflects standing in a {benchmarks.length + 1}-runner field ({benchmarks.length}{" "}
+              benchmarks + {horseName}). Where no comparable trip and surface exists, the
+              horse&apos;s career best pace is used.
             </p>
           </div>
         )}
