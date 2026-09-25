@@ -40,7 +40,10 @@ describe("determineRegionalWinners - tiebreaker", () => {
 
     const race1 = mkRace("r1", "Churchill Downs", "Dirt", 2000, 100, "G1");
     const race2 = mkRace("r2", "Churchill Downs", "Dirt", 2000, 110, "G1");
-    const raceMap = new Map([[race1.id, race1], [race2.id, race2]]);
+    const raceMap = new Map([
+      [race1.id, race1],
+      [race2.id, race2],
+    ]);
 
     // Both have identical points (G1 Win + 115 Beyer = 16 points)
     const h1 = createTestHorse({
@@ -87,14 +90,14 @@ describe("determineRegionalWinners - tiebreaker", () => {
 
     // If we pass [h1, h2], h1 wins the tie.
     const winnersForward = determineRegionalWinners([h1, h2], 1, "north_america", raceMap);
-    const hotyForward = winnersForward.find(w => w.category === "horse_of_the_year");
+    const hotyForward = winnersForward.find((w) => w.category === "horse_of_the_year");
     expect(hotyForward?.points).toBe(16);
     expect(hotyForward?.runnerUpPoints).toBe(16);
     expect(hotyForward?.horseId).toBe("h1"); // Due to stable sort lacking a real tiebreaker
 
     // If we pass [h2, h1], h2 wins the tie.
     const winnersReverse = determineRegionalWinners([h2, h1], 1, "north_america", raceMap);
-    const hotyReverse = winnersReverse.find(w => w.category === "horse_of_the_year");
+    const hotyReverse = winnersReverse.find((w) => w.category === "horse_of_the_year");
     expect(hotyReverse?.points).toBe(16);
     expect(hotyReverse?.runnerUpPoints).toBe(16);
     expect(hotyReverse?.horseId).toBe("h2"); // Demonstrates the bug: non-deterministic relative to game state
