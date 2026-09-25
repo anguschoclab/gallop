@@ -1,0 +1,3 @@
+## 2024-03-14 - Awards Tie-breaking Bug
+**Learning:** `determineRegionalWinners` in `src/core/awards/scoring.ts` has no explicit tie-breaking logic for horses with identical award points. This causes the winner to be determined purely by array insertion order (due to stable sort), which could cause non-deterministic outcomes based on how horses are loaded/sorted upstream.
+**Action:** Always write tests that prove current behavior (even if flawed) rather than fixing it directly. Report the bug in the PR findings. Future implementations of sorting logic should ensure explicit multi-level tie-breaking (e.g. by total earnings or G1 wins) when ranks could tie.
