@@ -8,3 +8,4 @@ export * from "@/core/calendar/regions";
 export * from "@/core/calendar/campaignTypes";
 export * from "@/core/calendar/breedingCalendar";
 export * from "@/core/calendar/regionSpecialRaces";
+export { gameCalendarDate } from "@/core/calendar/dateFormatting";
