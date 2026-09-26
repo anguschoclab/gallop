@@ -4,6 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_MS } from "@/constants/uiConstants";
 
 export function StewardsDigestToast() {
   const stewardsInquiries = useGame((s) => s.stewardsInquiries);
@@ -33,15 +35,22 @@ export function StewardsDigestToast() {
             <h3 className="text-sm font-bold text-cream">Stewards' Inquiry</h3>
             <p className="text-xs text-cream-muted mt-1 line-clamp-2">{inquiry.description}</p>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Dismiss"
-            className="shrink-0"
-            onClick={() => setDismissed((prev) => [...prev, inquiry.id])}
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  aria-label="Dismiss"
+                  className="shrink-0"
+                  onClick={() => setDismissed((prev) => [...prev, inquiry.id])}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Dismiss</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </CardContent>
       </Card>
     </div>

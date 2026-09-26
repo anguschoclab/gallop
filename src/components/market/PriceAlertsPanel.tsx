@@ -14,6 +14,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_MS } from "@/constants/uiConstants";
 import {
   Select,
   SelectContent,
@@ -269,14 +271,21 @@ export function PriceAlertsPanel() {
                   <Button variant="outline" size="sm" onClick={() => toggleAlert(alert.id)}>
                     {alert.enabled ? "Pause" : "Resume"}
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label={`Delete alert for ${scopeLabel(alert.scope, trackName)}`}
-                    onClick={() => removeAlert(alert.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`Delete alert for ${scopeLabel(alert.scope, trackName)}`}
+                          onClick={() => removeAlert(alert.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Delete alert</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             ))
