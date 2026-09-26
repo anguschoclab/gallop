@@ -1,0 +1,3 @@
+## 2024-05-18 - Enriched Stable Directive News Variety
+**Learning:** The `directiveNewsGenerator.ts` only had 8 templates for headlines and bodies, which made news about NPC strategy shifts repetitive quickly. A pool of 8 variants gets stale fast. Expanding the template pool to 16 distinct templates per logical branch significantly reduces repetition and deepens the simulation's flavor without touching the core logic.
+**Action:** Always verify that narrative generators contain a minimum of 14 distinct templates per conditional path to prevent players from reading the same flavor text over long playthroughs.
