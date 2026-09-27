@@ -1,0 +1,3 @@
+## 2024-03-18 - Deduplicate ImpactHandlerFunction
+**Learning:** The codebase had many parallel modules in `src/core/resolver/handlers/` defining an identical `ImpactHandlerFunction` signature locally, with `HorseHandler` being the only outlier requiring a distinct signature (`HorseImpactHandlerFunction`).
+**Action:** Centralized identical type definitions into the shared `types.ts` module and imported them where needed. When deduplicating types across parallel handler modules, always check for signature variations before replacing, and rename local outlier signatures explicitly instead of attempting to centralize them.
