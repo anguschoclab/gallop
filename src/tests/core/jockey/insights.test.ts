@@ -51,6 +51,36 @@ describe("Tipster: Jockey Insights", () => {
     expect(insight?.context).toContain("Has won 3 races in 4 starts aboard this horse");
   });
 
+  it("returns Perfect Partnership insight when jockey elevates a horse significantly", () => {
+    const jockey = createMockJockey("j1");
+    // Horse has 8 starts, 3 wins total.
+    // j1: 4 starts, 3 wins (75%)
+    // others: 4 starts, 0 wins (0%)
+    const horses = {
+      h1: createMockHorse("h1", "Thunder", [
+        { jockeyId: "j1", position: 1 },
+        { jockeyId: "j1", position: 1 },
+        { jockeyId: "j1", position: 1 },
+        { jockeyId: "j1", position: 2 },
+        { jockeyId: "j2", position: 4 },
+        { jockeyId: "j2", position: 3 },
+        { jockeyId: "j3", position: 5 },
+        { jockeyId: "j4", position: 2 },
+      ]),
+      h2: createMockHorse("h2", "Lightning", [{ jockeyId: "j1", position: 4 }]),
+    };
+    horses.h1.careerStarts = 8;
+    horses.h1.careerWins = 3;
+
+    const insight = getJockeyInsight(jockey, horses);
+    expect(insight).toBeTruthy();
+    expect(insight?.label).toBe("Perfect Partnership");
+    expect(insight?.value).toBe("Elevates Thunder");
+    expect(insight?.context).toBe(
+      "Wins 75% of the time aboard this horse, compared to 0% for other riders",
+    );
+  });
+
   it("returns null if less than 5 races total", () => {
     const jockey = createMockJockey("j1");
     const horses = {
