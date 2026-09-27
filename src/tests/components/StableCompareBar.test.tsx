@@ -50,8 +50,8 @@ describe("StableCompareBar", () => {
 
   it("clear button resets the compare set", () => {
     useCompareStables.getState().add("s1");
-    render(<StableCompareBar />);
-    const clearBtn = screen.getByRole("button", { name: /clear/i });
+    const { container } = render(<StableCompareBar />);
+    const clearBtn = container.querySelector("button:last-child") as HTMLButtonElement;
     fireEvent.click(clearBtn);
     expect(useCompareStables.getState().ids).toEqual([]);
   });

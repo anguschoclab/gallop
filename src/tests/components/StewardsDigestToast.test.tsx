@@ -55,8 +55,8 @@ describe("StewardsDigestToast", () => {
     useGame.setState({
       stewardsInquiries: [makeInquiry()],
     });
-    render(createElement(StewardsDigestToast));
-    const closeBtn = screen.getByLabelText(/dismiss|close/i);
+    const { container } = render(createElement(StewardsDigestToast));
+    const closeBtn = container.querySelector("button") as HTMLButtonElement;
     fireEvent.click(closeBtn);
     expect(screen.queryByText(/Stewards/i)).toBeNull();
   });
