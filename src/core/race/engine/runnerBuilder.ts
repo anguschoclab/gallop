@@ -194,11 +194,16 @@ export function buildRunner(
   if (h.lastBeyer && h.lastRaceDay && currentDay) {
     const daysSinceLastRace = currentDay - h.lastRaceDay;
     // Calculate average Beyer from race history
-    const beyerHistory = h.raceHistory.filter((r) => r.beyer !== undefined).map((r) => r.beyer!);
-    const avgBeyer =
-      beyerHistory.length > 0
-        ? beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length
-        : 80;
+    let beyerSum = 0;
+    let beyerCount = 0;
+    for (let i = 0; i < h.raceHistory.length; i++) {
+      const b = h.raceHistory[i].beyer;
+      if (b !== undefined) {
+        beyerSum += b;
+        beyerCount++;
+      }
+    }
+    const avgBeyer = beyerCount > 0 ? beyerSum / beyerCount : 80;
 
     // Bounce condition: lastBeyer > avgBeyer + 15 and raced within 28 days
     if (h.lastBeyer > avgBeyer + 15 && daysSinceLastRace < 28) {
