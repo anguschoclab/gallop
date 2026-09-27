@@ -1,6 +1,6 @@
 import { CircleDollarSign, Flag, Gauge, Medal, Trophy } from "lucide-react";
-import { gameCalendarDate } from "@/core/calendar/dateFormatting";
-import type { RivalMilestoneRecord } from "@/core/npc/rivalCareerCompare";
+import { gameCalendarDate } from "@/services/calendar/calendarFacade";
+import type { RivalMilestoneRecord } from "@/services/npc/npcFacade";
 import type { LucideIcon } from "lucide-react";
 
 const MILESTONE_ICON: Record<RivalMilestoneRecord["kind"], LucideIcon> = {
