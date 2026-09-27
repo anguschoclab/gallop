@@ -1,0 +1,13 @@
+🧪 Probe: Added test coverage for awards/scoring
+
+💡 What:
+Added a new test file `src/tests/core/awards/scoring.test.ts` to test the regional awards scoring behavior, verifying correct point calculation, geographic boundaries (continent tracks), year filtering, distance-based category eligibility, and exclusion of unowned stock from awards.
+
+🎯 Why:
+This logic sits at the core of the seasonal awards mechanics but was completely untested. Without tests, any refactoring of track dictionaries, scoring weights, or ownership types could silently regress how end-of-year champions are chosen.
+
+🐛 Findings:
+None - current behavior works as intended when properties like `track` in mock races correctly align with dictionaries (`TRACK_TO_COUNTRY`).
+
+✅ Verification:
+- Unit tests run clean in Vitest (`bun run vitest run src/tests/core/awards/scoring.test.ts`).
