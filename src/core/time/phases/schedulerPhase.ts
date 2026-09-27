@@ -37,7 +37,6 @@ export const schedulerPhase = {
 /**
  * Daily auto-entry for the player stable (opt-in via gameplay settings).
  * Horses on an auto-managed campaign are left to the campaign planner.
- * @param context
  */
 function runDailyAutoEntry(context: PipelineContext): PipelineContext {
   const { state, newDay } = context;
