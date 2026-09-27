@@ -9,7 +9,9 @@
  */
 
 import { useState } from "react";
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { GitCompare, X } from "lucide-react";
 import { useCompareStables } from "@/hooks/stable/useCompareStables";
 import { StableCompareDrawer } from "./StableCompareDrawer";
@@ -39,15 +41,21 @@ export function StableCompareBar() {
           >
             Compare ({ids.length})
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6"
-            onClick={clear}
-            aria-label="Clear comparison"
-          >
-            <X className="h-3 w-3" />
-          </Button>
+          <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6"
+                  onClick={clear}
+                >
+                  <X className="h-3 w-3" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Clear comparison</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
       </div>
       <StableCompareDrawer open={open} onOpenChange={setOpen} />
