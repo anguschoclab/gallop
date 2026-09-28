@@ -8,7 +8,7 @@
  */
 
 import { useSyncExternalStore } from "react";
-import type { RealWorldRecord } from "./realWorldRecords";
+import type { RealWorldRecord } from "@/data/realWorldRecords";
 
 export interface ImportedCareer {
   id: string;
@@ -66,15 +66,26 @@ function commit(next: ImportedDataset) {
   listeners.forEach((l) => l());
 }
 
+/**
+ * Retrieves the currently loaded imported real-world dataset.
+ *
+ * @returns The current `ImportedDataset`, loading it from local storage if necessary.
+ */
 export function getImportedDataset(): ImportedDataset {
   return load();
 }
 
+/**
+ * Clears the currently imported real-world dataset from state and storage.
+ */
 export function clearImportedDataset() {
   commit(EMPTY);
 }
 
-/** React hook: current imported dataset (empty during SSR). */
+/**
+ * React hook: current imported dataset (empty during SSR).
+ * @returns The current ImportedDataset state.
+ */
 export function useImportedRealWorld(): ImportedDataset {
   return useSyncExternalStore(
     (cb) => {
@@ -88,7 +99,11 @@ export function useImportedRealWorld(): ImportedDataset {
 
 // ---------------------------------------------------------------- parsing
 
-/** Minimal RFC-4180 CSV parser (quoted fields, escaped quotes, CRLF). */
+/**
+ * Minimal RFC-4180 CSV parser (quoted fields, escaped quotes, CRLF).
+ * @param text - The raw CSV string to parse.
+ * @returns An array of row objects where keys are the lower_snake_case column headers.
+ */
 export function parseCsv(text: string): Record<string, string>[] {
   const rows: string[][] = [];
   let row: string[] = [];
@@ -120,7 +135,12 @@ export function parseCsv(text: string): Record<string, string>[] {
   }
   const nonEmpty = rows.filter((r) => r.some((v) => v.trim() !== ""));
   if (nonEmpty.length === 0) return [];
-  const header = nonEmpty[0].map((h) => h.trim().toLowerCase().replace(/[\s-]+/g, "_"));
+  const header = nonEmpty[0].map((h) =>
+    h
+      .trim()
+      .toLowerCase()
+      .replace(/[\s-]+/g, "_"),
+  );
   return nonEmpty.slice(1).map((r) => {
     const o: Record<string, string> = {};
     header.forEach((h, i) => (o[h] = (r[i] ?? "").trim()));
@@ -128,7 +148,11 @@ export function parseCsv(text: string): Record<string, string>[] {
   });
 }
 
-/** Parse "1:59.40", "2:20.6", "119.4" or "1.59.40" into seconds. */
+/**
+ * Parse "1:59.40", "2:20.6", "119.4" or "1.59.40" into seconds.
+ * @param value - The raw time string.
+ * @returns The parsed time in seconds as a number, or null if invalid.
+ */
 export function parseRaceTime(value: string): number | null {
   const v = value.trim();
   if (!v) return null;
@@ -145,7 +169,11 @@ export function parseRaceTime(value: string): number | null {
   return Number.isFinite(n) && n > 0 ? n : null;
 }
 
-/** Parse a distance: "2400", "2400m", "12f", "1.25mi". Returns metres. */
+/**
+ * Parse a distance: "2400", "2400m", "12f", "1.25mi". Returns metres.
+ * @param value - The raw distance string.
+ * @returns The parsed distance in meters as a number, or null if invalid.
+ */
 export function parseDistance(value: string): number | null {
   const v = value.trim().toLowerCase();
   const n = parseFloat(v);
@@ -195,6 +223,7 @@ function rowKind(r: Row): "result" | "record" | "career" | null {
  * Turn parsed rows into records and careers.
  *
  * @param rows - Flat rows (lower_snake_case keys)
+ * @returns An object containing the extracted records, careers, and any skipped row error messages.
  */
 export function rowsToDataset(rows: Row[]): {
   records: RealWorldRecord[];
@@ -258,6 +287,7 @@ export function rowsToDataset(rows: Row[]): {
  * @param text - File contents
  * @param fileName - Original file name
  * @param mode - "replace" existing uploads, or "merge" with them
+ * @returns The resulting ImportResult object representing the outcome of the import.
  */
 export function importRealWorldText(
   text: string,
