@@ -32,6 +32,14 @@ export { AUCTION_HOUSES, createDefaultExchangeState, formatCurrency, isPlayerOwn
  * @param args.horses
  * @returns The house catalogue.
  */
+/**
+ * Gets upcoming sales
+ * @param args - The arguments
+ * @param args.day - The day
+ * @param args.house - The auction house
+ * @param args.horses - The horses
+ * @returns The house catalogue
+ */
 export function getHouseCatalogue(args: { day: number; house: AuctionHouse; horses: Horse[] }) {
   return buildHouseCatalogue(args);
 }
@@ -68,6 +76,14 @@ export function getSellerStandingBidFactor(reputationScore: number) {
  * @param day - Current day.
  * @param windowDays - Lookback window.
  * @param limit - Max rows.
+ */
+/**
+ * Gets world rankings
+ * @param horses - The horses
+ * @param day - The day
+ * @param windowDays - The window days
+ * @param limit - The limit
+ * @returns The world rankings
  */
 export function getWorldRankings(horses: Horse[], day: number, windowDays = 365, limit = 25) {
   return worldRankings(horses, day, windowDays, limit);
