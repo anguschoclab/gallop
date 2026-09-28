@@ -1,0 +1,3 @@
+## 2025-02-28 - Optimizing high-frequency presentation loops
+**Learning:** Functions called per-frame during simulation (like `buildFieldContext`) can become significant performance bottlenecks if they rely heavily on chaining array methods (`.filter()`, `.reduce()`, `.map()`) or spreading arrays (`[...arr]`). These patterns cause excessive garbage collection due to intermediate object allocations.
+**Action:** When working on presentation layers or high-frequency game ticks, always collapse chained array operations into a single, imperative `for` loop to compute all required aggregate statistics (sums, maxes, filtered lists) in a single O(N) pass, completely eliminating intermediate allocations.
