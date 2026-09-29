@@ -65,13 +65,13 @@ describe("NewsContent", () => {
     expect(link?.getAttribute("data-params")).toBe(JSON.stringify({ jockeyId: "j1" }));
   });
 
-  it("renders stable name as a Link to /npc-stables/$stableId", () => {
+  it("renders stable name as a Link to /npcStables/$stableId", () => {
     const stable = createTestStable({ id: "npc1", name: "Godolphin" });
     seedStore({ ...createDefaultGameState(), npcStables: [stable] });
     const { container } = render(<NewsContent text="Godolphin entered three horses" />);
     const link = container.querySelector("a");
     expect(link).not.toBeNull();
-    expect(link?.getAttribute("to")).toBe("/npc-stables/$stableId");
+    expect(link?.getAttribute("to")).toBe("/npcStables/$stableId");
     expect(link?.getAttribute("data-params")).toBe(JSON.stringify({ stableId: "npc1" }));
   });
 

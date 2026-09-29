@@ -1,5 +1,5 @@
 import { createFileRoute, Outlet } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/npc-stables")({
+export const Route = createFileRoute("/npcStables")({
   component: () => <Outlet />,
 });

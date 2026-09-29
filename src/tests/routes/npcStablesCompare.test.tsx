@@ -67,7 +67,7 @@ vi.mock("@/components/stable/StableCompareBar", () => ({
   StableCompareBar: () => <div data-testid="compare-bar" />,
 }));
 
-import { Route } from "@/routes/npc-stables.compare";
+import { Route } from "@/routes/npcStables.compare";
 import { useCompareStables } from "@/hooks/stable/useCompareStables";
 
 const NpcStablesCompare = Route.options.component!;

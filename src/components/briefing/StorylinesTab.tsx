@@ -76,7 +76,7 @@ export function StorylinesTab() {
           <CardContent className="p-5 space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-cream font-[family-name:var(--font-display)]">
-                <Link to="/npc-stables/$stableId" params={{ stableId }}>
+                <Link to="/npcStables/$stableId" params={{ stableId }}>
                   {stableName}
                 </Link>
               </h3>

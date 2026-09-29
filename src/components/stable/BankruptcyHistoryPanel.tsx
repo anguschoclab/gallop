@@ -81,7 +81,7 @@ export const BankruptcyHistoryPanel = memo(function BankruptcyHistoryPanel({
                   <p className="text-[10px] text-cream/40 leading-relaxed">{event.body}</p>
                   {stableLink && (
                     <Link
-                      to="/npc-stables/$stableId"
+                      to="/npcStables/$stableId"
                       params={{ stableId: stableLink.id }}
                       className="text-[9px] font-mono text-blue-400/60 hover:text-blue-400 uppercase tracking-wide"
                     >

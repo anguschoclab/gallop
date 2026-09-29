@@ -140,7 +140,7 @@ export function RivalArchivesView({
                 className="bg-slate-900/20 border-white/5 hover:border-blue-500/40 transition-all duration-300 rounded-none group overflow-hidden"
               >
                 <Link
-                  to="/npc-stables/$stableId"
+                  to="/npcStables/$stableId"
                   params={{ stableId: stable.id }}
                   className="block p-5"
                 >
@@ -270,7 +270,7 @@ export function RivalArchivesView({
                   {(["roster", "staff", "history"] as const).map((t) => (
                     <Link
                       key={t}
-                      to="/npc-stables/$stableId"
+                      to="/npcStables/$stableId"
                       params={{ stableId: stable.id }}
                       search={{ tab: t }}
                       className="flex-1 py-2 text-center text-[9px] font-black uppercase tracking-tighter text-cream/30 hover:bg-blue-500/10 hover:text-blue-400 transition-all"

@@ -8,7 +8,7 @@
  */
 
 import { useSyncExternalStore } from "react";
-import type { RealWorldRecord } from "./realWorldRecords";
+import type { RealWorldRecord } from "@/data/realWorldRecords";
 
 export interface ImportedCareer {
   id: string;
@@ -66,15 +66,26 @@ function commit(next: ImportedDataset) {
   listeners.forEach((l) => l());
 }
 
+/**
+ * Gets imported dataset
+ * @returns The imported dataset
+ */
 export function getImportedDataset(): ImportedDataset {
   return load();
 }
 
+/**
+ * Clears imported dataset
+ */
 export function clearImportedDataset() {
   commit(EMPTY);
 }
 
 /** React hook: current imported dataset (empty during SSR). */
+/**
+ * Uses imported real world dataset
+ * @returns The imported real world dataset
+ */
 export function useImportedRealWorld(): ImportedDataset {
   return useSyncExternalStore(
     (cb) => {
@@ -88,7 +99,15 @@ export function useImportedRealWorld(): ImportedDataset {
 
 // ---------------------------------------------------------------- parsing
 
-/** Minimal RFC-4180 CSV parser (quoted fields, escaped quotes, CRLF). */
+/**
+ * Minimal RFC-4180 CSV parser (quoted fields, escaped quotes, CRLF).
+ * @param text
+ */
+/**
+ * Parses CSV text
+ * @param text - The text to parse
+ * @returns Parsed rows
+ */
 export function parseCsv(text: string): Record<string, string>[] {
   const rows: string[][] = [];
   let row: string[] = [];
@@ -120,7 +139,12 @@ export function parseCsv(text: string): Record<string, string>[] {
   }
   const nonEmpty = rows.filter((r) => r.some((v) => v.trim() !== ""));
   if (nonEmpty.length === 0) return [];
-  const header = nonEmpty[0].map((h) => h.trim().toLowerCase().replace(/[\s-]+/g, "_"));
+  const header = nonEmpty[0].map((h) =>
+    h
+      .trim()
+      .toLowerCase()
+      .replace(/[\s-]+/g, "_"),
+  );
   return nonEmpty.slice(1).map((r) => {
     const o: Record<string, string> = {};
     header.forEach((h, i) => (o[h] = (r[i] ?? "").trim()));
@@ -128,7 +152,15 @@ export function parseCsv(text: string): Record<string, string>[] {
   });
 }
 
-/** Parse "1:59.40", "2:20.6", "119.4" or "1.59.40" into seconds. */
+/**
+ * Parse "1:59.40", "2:20.6", "119.4" or "1.59.40" into seconds.
+ * @param value
+ */
+/**
+ * Parses race time
+ * @param value - The value to parse
+ * @returns The parsed race time or null
+ */
 export function parseRaceTime(value: string): number | null {
   const v = value.trim();
   if (!v) return null;
@@ -145,7 +177,15 @@ export function parseRaceTime(value: string): number | null {
   return Number.isFinite(n) && n > 0 ? n : null;
 }
 
-/** Parse a distance: "2400", "2400m", "12f", "1.25mi". Returns metres. */
+/**
+ * Parse a distance: "2400", "2400m", "12f", "1.25mi". Returns metres.
+ * @param value
+ */
+/**
+ * Parses race distance
+ * @param value - The value to parse
+ * @returns The parsed distance or null
+ */
 export function parseDistance(value: string): number | null {
   const v = value.trim().toLowerCase();
   const n = parseFloat(v);
@@ -195,6 +235,11 @@ function rowKind(r: Row): "result" | "record" | "career" | null {
  * Turn parsed rows into records and careers.
  *
  * @param rows - Flat rows (lower_snake_case keys)
+ */
+/**
+ * Converts rows to dataset
+ * @param rows - The rows to convert
+ * @returns The dataset
  */
 export function rowsToDataset(rows: Row[]): {
   records: RealWorldRecord[];
@@ -258,6 +303,14 @@ export function rowsToDataset(rows: Row[]): {
  * @param text - File contents
  * @param fileName - Original file name
  * @param mode - "replace" existing uploads, or "merge" with them
+ */
+/**
+ * Imports real world text
+ * @param text - The text to import
+ * @param format - The format of the text
+ * @param fileName
+ * @param mode
+ * @returns The import result
  */
 export function importRealWorldText(
   text: string,

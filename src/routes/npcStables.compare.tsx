@@ -112,6 +112,6 @@ export function NpcStablesCompare() {
   );
 }
 
-export const Route = createFileRoute("/npc-stables/compare")({
+export const Route = createFileRoute("/npcStables/compare")({
   component: NpcStablesCompare,
 });

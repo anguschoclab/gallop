@@ -19,12 +19,12 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 describe("KeyRivalsWidget — entity linking", () => {
-  it("renders rival stable name as a Link to /npc-stables/$stableId", () => {
+  it("renders rival stable name as a Link to /npcStables/$stableId", () => {
     const rivals = [{ stable: { id: "npc1", name: "Rival Stable" }, friction: 75 }];
     const { container } = renderWithStore(
       <KeyRivalsWidget rivals={rivals} calculateHeadToHead={() => ({ wins: 1, losses: 2 })} />,
     );
-    const link = container.querySelector("a[to='/npc-stables/$stableId']");
+    const link = container.querySelector("a[to='/npcStables/$stableId']");
     expect(link).not.toBeNull();
     expect(link?.textContent).toBe("Rival Stable");
     expect(link?.getAttribute("data-params")).toBe(JSON.stringify({ stableId: "npc1" }));
@@ -38,7 +38,7 @@ describe("KeyRivalsWidget — entity linking", () => {
     const { container } = renderWithStore(
       <KeyRivalsWidget rivals={rivals} calculateHeadToHead={() => ({ wins: 0, losses: 0 })} />,
     );
-    const links = container.querySelectorAll("a[to='/npc-stables/$stableId']");
+    const links = container.querySelectorAll("a[to='/npcStables/$stableId']");
     expect(links).toHaveLength(2);
   });
 });

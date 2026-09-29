@@ -70,7 +70,7 @@ describe("StableDetailsPanel — entity linking", () => {
     expect(screen.getByText("G3")).toBeTruthy();
   });
 
-  it("renders stable name as a Link to /npc-stables/$stableId", () => {
+  it("renders stable name as a Link to /npcStables/$stableId", () => {
     const entry: StandingEntry = {
       stableId: "npc1",
       name: "Rival Stable",
@@ -82,7 +82,7 @@ describe("StableDetailsPanel — entity linking", () => {
       recentResults: [],
     };
     const { container } = render(<StableDetailsPanel stable={entry} />);
-    const link = container.querySelector("a[to='/npc-stables/$stableId']");
+    const link = container.querySelector("a[to='/npcStables/$stableId']");
     expect(link).not.toBeNull();
     expect(link?.textContent).toBe("Rival Stable");
   });

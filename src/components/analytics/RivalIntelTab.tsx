@@ -170,7 +170,7 @@ function CartelsPanel({
                   {c.memberStableIds.map((sid: string) => (
                     <Link
                       key={sid}
-                      to="/npc-stables/$stableId"
+                      to="/npcStables/$stableId"
                       params={{ stableId: sid }}
                       className="text-[9px] font-mono text-blue-400/60 hover:text-blue-400 uppercase tracking-widest"
                     >
@@ -221,7 +221,7 @@ function NpcDistressMonitorPanel({
             <div key={d.id} className="space-y-1 text-xs">
               <div className="flex items-center justify-between">
                 <Link
-                  to="/npc-stables/$stableId"
+                  to="/npcStables/$stableId"
                   params={{ stableId: d.id }}
                   className="text-cream font-bold hover:text-gold"
                 >

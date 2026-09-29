@@ -27,7 +27,8 @@ import {
 import { HorseScatterPlot } from "./HorseScatterPlot";
 import { InsightsCompareDialog } from "./InsightsCompareDialog";
 import { ScoutingThresholdControls } from "./ScoutingThresholdControls";
-import { useImportedRealWorld } from "@/data/importedRealWorld";
+import { useImportedRealWorld } from "@/services/data/importedRealWorld";
+// eslint-disable-next-line no-restricted-syntax
 import { buildRealCareerInsightRow } from "@/core/horse/insightMetrics";
 import { useBookmarks } from "@/hooks/shared/useBookmarks";
 import { useGame, useGameWithShallow } from "@/game/store";

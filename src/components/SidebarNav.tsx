@@ -91,9 +91,9 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/market", label: "Market", icon: Store, exact: false },
       { to: "/portfolio", label: "Portfolio", icon: Briefcase, exact: false },
       { to: "/auction", label: "Auctions", icon: Gavel, exact: false },
-      { to: "/npc-stables", label: "Stables", icon: Map, exact: false },
+      { to: "/npcStables", label: "Stables", icon: Map, exact: false },
       {
-        to: "/npc-stables/rival-careers",
+        to: "/npcStables/rivalCareers",
         label: "Rival Careers",
         icon: BarChart3,
         exact: false,

@@ -10,6 +10,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/formatting";
+// eslint-disable-next-line no-restricted-syntax
 import type { RivalCareerProfile } from "@/core/npc/rivalCareerCompare";
 import { RivalCareerMilestoneTimeline } from "./RivalCareerMilestoneTimeline";
 

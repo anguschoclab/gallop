@@ -167,7 +167,7 @@ describe("Phase 1.4 — Verification: previously-unwired features now wired", ()
   });
 
   it("DiplomacyPanel is wired in NPC stable detail route", async () => {
-    const routeSrc = await import("@/routes/npc-stables.$stableId");
+    const routeSrc = await import("@/routes/npcStables.$stableId");
     expect(routeSrc).toBeDefined();
   });
 
@@ -232,7 +232,7 @@ describe("Phase 1.4 — Route completeness audit", () => {
     "records",
     "market",
     "auction.index",
-    "npc-stables.index",
+    "npcStables.index",
     "settings",
   ];
 

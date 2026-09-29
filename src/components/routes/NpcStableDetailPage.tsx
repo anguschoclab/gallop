@@ -22,9 +22,9 @@ import { FinancialDistressIndicator } from "@/components/npc/FinancialDistressIn
 import { BackLink } from "@/components/charts/BackLink";
 
 function NpcStableDetailPage() {
-  const { stableId } = useParams({ from: "/npc-stables/$stableId" });
-  const { tab } = useSearch({ from: "/npc-stables/$stableId" });
-  const navigate = useNavigate({ from: "/npc-stables/$stableId" });
+  const { stableId } = useParams({ from: "/npcStables/$stableId" });
+  const { tab } = useSearch({ from: "/npcStables/$stableId" });
+  const navigate = useNavigate({ from: "/npcStables/$stableId" });
   const pageData = useNpcStableDetail(stableId);
   const { stable, offerHorse, setOfferHorse, cash, horses } = pageData;
   const hiredStaff = useGame((s) => s.hiredStaff);

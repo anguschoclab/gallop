@@ -105,7 +105,7 @@ export function PortfolioTable({
                       <span className="font-semibold text-cream">{r.name}</span>
                     ) : (
                       <Link
-                        to="/npc-stables/$stableId"
+                        to="/npcStables/$stableId"
                         params={{ stableId: r.id }}
                         className="font-semibold text-cream hover:text-primary transition-colors"
                       >

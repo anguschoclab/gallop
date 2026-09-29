@@ -36,9 +36,9 @@ for (const vp of VIEWPORTS) {
 
     test("horse name and scout-status badge do not overlap", async ({ page }) => {
       // Navigate directly to NPC stables index to find stable links
-      await page.goto("/npc-stables");
+      await page.goto("/npcStables");
 
-      const stableLinks = page.locator('a[href*="/npc-stables/"]');
+      const stableLinks = page.locator('a[href*="/npcStables/"]');
       await expect(stableLinks.first())
         .toBeVisible({ timeout: 15_000 })
         .catch(() => {
@@ -96,9 +96,9 @@ for (const vp of VIEWPORTS) {
     });
 
     test("OFFER and SCOUT buttons do not overlap each other", async ({ page }) => {
-      await page.goto("/npc-stables");
+      await page.goto("/npcStables");
 
-      const stableLinks = page.locator('a[href*="/npc-stables/"]');
+      const stableLinks = page.locator('a[href*="/npcStables/"]');
       await expect(stableLinks.first())
         .toBeVisible({ timeout: 15_000 })
         .catch(() => {

@@ -27,7 +27,7 @@ import {
 
 const EMPTY_LEDGER: TrackLedgerEntry[] = [];
 
-export const Route = createFileRoute("/track-history")({
+export const Route = createFileRoute("/trackHistory")({
   head: () => ({
     meta: [
       { title: "Course Histories — Racecourse Records & Prestige" },
@@ -76,7 +76,11 @@ function TrackHistoryPage() {
   const raceTypes = useMemo(
     () =>
       Array.from(
-        new Set(courseLedger.map((entry) => entry.raceClass).filter((value): value is string => Boolean(value))),
+        new Set(
+          courseLedger
+            .map((entry) => entry.raceClass)
+            .filter((value): value is string => Boolean(value)),
+        ),
       ).sort((a, b) => a.localeCompare(b)),
     [courseLedger],
   );

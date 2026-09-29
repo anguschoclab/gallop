@@ -22,7 +22,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 describe("ShareActivityFeed — entity linking", () => {
-  it("renders NPC stable names as Links to /npc-stables/$stableId", () => {
+  it("renders NPC stable names as Links to /npcStables/$stableId", () => {
     const stable = createTestStable({ id: "npc1", name: "Rival Stables" });
     const item: ShareActivityFeedItem = {
       id: "sa1",
@@ -42,7 +42,7 @@ describe("ShareActivityFeed — entity linking", () => {
       npcStables: [stable],
       shareActivityFeed: [item],
     });
-    const link = container.querySelector("a[to='/npc-stables/$stableId']");
+    const link = container.querySelector("a[to='/npcStables/$stableId']");
     expect(link).not.toBeNull();
     expect(link?.textContent).toBe("Rival Stables");
     expect(link?.getAttribute("data-params")).toBe(JSON.stringify({ stableId: "npc1" }));
@@ -66,7 +66,7 @@ describe("ShareActivityFeed — entity linking", () => {
       ...createDefaultGameState(),
       shareActivityFeed: [item],
     });
-    const links = container.querySelectorAll("a[to='/npc-stables/$stableId']");
+    const links = container.querySelectorAll("a[to='/npcStables/$stableId']");
     expect(links).toHaveLength(0);
   });
 });

@@ -49,7 +49,7 @@ function entityHref(b: Bookmark): {
     case "jockey":
       return { to: "/jockey/$jockeyId", params: { jockeyId: b.id } };
     case "stable":
-      return { to: "/npc-stables/$stableId", params: { stableId: b.id } };
+      return { to: "/npcStables/$stableId", params: { stableId: b.id } };
     case "sire":
       return { to: "/sire-watch/$stallionId", params: { stallionId: b.id } };
     case "race":

@@ -99,7 +99,7 @@ const EntityLinkComponent: React.FC<{ link: EntityLink; className?: string }> = 
     case "stable":
       return (
         <Link
-          to="/npc-stables/$stableId"
+          to="/npcStables/$stableId"
           params={{ stableId: link.id }}
           className={cn(commonClasses, "text-success hover:text-success-dark")}
         >
