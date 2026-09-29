@@ -23,14 +23,7 @@ describe("applyJockeyEffects", () => {
     const runner = makeRunner();
     const dt = 0.1;
     const arcFactor = 1.1;
-    const { finalDs, staminaMul } = applyJockeyEffects(
-      runner,
-      0.5,
-      Infinity,
-      arcFactor,
-      dt,
-      1.0
-    );
+    const { finalDs, staminaMul } = applyJockeyEffects(runner, 0.5, Infinity, arcFactor, dt, 1.0);
     expect(finalDs).toBe((15 * dt) / arcFactor);
     expect(staminaMul).toBe(1.0);
   });
@@ -42,7 +35,14 @@ describe("applyJockeyEffects", () => {
       });
       const dt = 0.1;
       const arcFactor = 1.0;
-      applyJockeyEffects(runner, GATE_SKILL_PROGRESS_THRESHOLD - 0.01, Infinity, arcFactor, dt, 1.0);
+      applyJockeyEffects(
+        runner,
+        GATE_SKILL_PROGRESS_THRESHOLD - 0.01,
+        Infinity,
+        arcFactor,
+        dt,
+        1.0,
+      );
       expect(runner.velocity).toBeGreaterThan(15);
     });
 
@@ -77,7 +77,7 @@ describe("applyJockeyEffects", () => {
         Infinity,
         1.0,
         0.1,
-        0.8
+        0.8,
       );
 
       expect(staminaMul).toBeGreaterThan(0.8);
@@ -96,7 +96,7 @@ describe("applyJockeyEffects", () => {
         Infinity,
         1.0,
         0.1,
-        0.8
+        0.8,
       );
 
       expect(staminaMul).toBe(0.8);
