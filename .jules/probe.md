@@ -1,0 +1,3 @@
+## 2024-05-17 - Jockey Effects Testing
+**Learning:** `applyJockeyEffects` modifies several parameters on the `Runner` object based on dynamic inputs like the race phase and whether the runner matches the jockey's archetype. Since it modifies `runner.velocity` and `runner.jockeyStaminaBonus` inline and does not return full state (it returns `finalDs` and `staminaMul`), asserting on the mutated fields of the `Runner` object after execution is necessary for full coverage.
+**Action:** Always create explicitly initialized, detached mock objects for each test case instead of reusing one, to ensure mutations from one case do not pollute another when dealing with mutable argument functions in the engine.
