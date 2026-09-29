@@ -1,0 +1,3 @@
+## 2024-05-18 - Deduplicate ImpactHandlerFunction signature
+**Learning:** Found an identical `ImpactHandlerFunction` signature defined locally across 7 different parallel handler files in `src/core/resolver/handlers/`. An 8th handler (`HorseHandler`) had a slightly modified signature with the exact same type name, creating possible confusion for future structural refactors.
+**Action:** Centralized the common signature into `types.ts`, exported it, and updated the 7 compliant handlers to import it instead. Renamed the outlier in `HorseHandler` to `HorseImpactHandlerFunction` to explicitly capture its domain-specific deviation.
