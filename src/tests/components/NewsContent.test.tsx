@@ -65,7 +65,7 @@ describe("NewsContent", () => {
     expect(link?.getAttribute("data-params")).toBe(JSON.stringify({ jockeyId: "j1" }));
   });
 
-  it("renders stable name as a Link to /npc-stables/$stableId", () => {
+  it("renders stable name as a Link to /npcStables/$stableId", () => {
     const stable = createTestStable({ id: "npc1", name: "Godolphin" });
     seedStore({ ...createDefaultGameState(), npcStables: [stable] });
     const { container } = render(<NewsContent text="Godolphin entered three horses" />);

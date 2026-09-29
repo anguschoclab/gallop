@@ -111,7 +111,7 @@ describe("BankruptcyHistoryPanel", () => {
     render(<BankruptcyHistoryPanel news={news} />);
     const link = screen.getByText("View Records →");
     expect(link).toBeInTheDocument();
-    expect(link.getAttribute("to")).toContain("npc-stables");
+    expect(link.getAttribute("to")).toContain("npcStables");
   });
 
   it("does not render entity link when no stable link present", () => {

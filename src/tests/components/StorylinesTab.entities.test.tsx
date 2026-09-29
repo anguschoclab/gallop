@@ -22,7 +22,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 describe("StorylinesTab — entity linking", () => {
-  it("renders stable name as a Link to /npc-stables/$stableId", () => {
+  it("renders stable name as a Link to /npcStables/$stableId", () => {
     const stable = createTestStable({ id: "npc1", name: "Godolphin" });
     const narrative: NarrativeState = {
       activeArcs: [],
@@ -39,7 +39,7 @@ describe("StorylinesTab — entity linking", () => {
       npcStables: [stable],
       npcAIManager: manager as NpcAIManager,
     });
-    const link = container.querySelector("a[to='/npc-stables/$stableId']");
+    const link = container.querySelector("a[to='/npcStables/$stableId']");
     expect(link).not.toBeNull();
     expect(link?.textContent).toBe("Godolphin");
     expect(link?.getAttribute("data-params")).toBe(JSON.stringify({ stableId: "npc1" }));
@@ -63,7 +63,7 @@ describe("StorylinesTab — entity linking", () => {
       npcAIManager: manager as NpcAIManager,
     });
     // Stable name should be linked
-    const links = container.querySelectorAll("a[to='/npc-stables/$stableId']");
+    const links = container.querySelectorAll("a[to='/npcStables/$stableId']");
     expect(links.length).toBeGreaterThanOrEqual(1);
   });
 });

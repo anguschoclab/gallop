@@ -83,7 +83,7 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
     expect(screen.getByText("Thunder Ranch")).toBeTruthy();
   });
 
-  it("Wealth tab renders NPC stable names as Links to /npc-stables/$stableId", async () => {
+  it("Wealth tab renders NPC stable names as Links to /npcStables/$stableId", async () => {
     const stable = createTestStable({ id: "npc1", name: "Rival Stable", cash: 800000 });
     seedStore({
       ...createDefaultGameState(),
@@ -91,7 +91,7 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
     });
     const { container } = render(<SeasonStandingsWidget />);
     await clickTab("Wealth");
-    const link = container.querySelector("a[to='/npc-stables/$stableId']");
+    const link = container.querySelector("a[to='/npcStables/$stableId']");
     expect(link).not.toBeNull();
     expect(link?.textContent).toBe("Rival Stable");
   });

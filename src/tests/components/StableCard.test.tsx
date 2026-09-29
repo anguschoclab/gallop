@@ -104,7 +104,7 @@ describe("StableCard", () => {
     expect(repSpan).toBeInTheDocument();
   });
 
-  it("link targets /npc-stables/$stableId route", () => {
+  it("link targets /npcStables/$stableId route", () => {
     const { container } = render(<StableCard stable={mkStable({ id: "abc123" })} />);
     const link = container.querySelector('a[to*="/npcStables/"]');
     expect(link).toBeTruthy();
