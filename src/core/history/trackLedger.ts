@@ -258,7 +258,12 @@ export function summarizeTrackLedger(ledger: TrackLedgerEntry[]): TrackLedgerSum
   );
 }
 
-/** Filter ledger rows by game-day range, race class and represented stable. */
+/**
+ * Filter ledger rows by game-day range, race class and represented stable.
+ * @param ledger - the ledger
+ * @param filters - the filters
+ * @returns filtered ledger
+ */
 export function filterTrackLedger(
   ledger: TrackLedgerEntry[],
   filters: TrackLedgerFilters,
@@ -280,7 +285,11 @@ export function filterTrackLedger(
   });
 }
 
-/** Stable choices represented in the supplied ledger, player first then alphabetical. */
+/**
+ * Stable choices represented in the supplied ledger, player first then alphabetical.
+ * @param ledger - the ledger
+ * @returns stable choices
+ */
 export function trackLedgerStableOptions(ledger: TrackLedgerEntry[]): TrackLedgerStableOption[] {
   const options = new Map<string, TrackLedgerStableOption>();
   for (const entry of ledger) {
