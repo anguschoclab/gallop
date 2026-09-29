@@ -106,9 +106,9 @@ describe("StableCard", () => {
 
   it("link targets /npc-stables/$stableId route", () => {
     const { container } = render(<StableCard stable={mkStable({ id: "abc123" })} />);
-    const link = container.querySelector('a[to*="/npc-stables/"]');
+    const link = container.querySelector('a[to*="/npcStables/"]');
     expect(link).toBeTruthy();
-    expect(link!.getAttribute("to")).toBe("/npc-stables/$stableId");
+    expect(link!.getAttribute("to")).toBe("/npcStables/$stableId");
   });
 
   it("renders recommended max offer line with ratio text", () => {
@@ -170,9 +170,9 @@ describe("StableCard", () => {
     expect(mockToggle).toHaveBeenCalledWith("s1");
     // The link should not have been clicked — verify the href is still the
     // stable detail route (no navigation occurred)
-    const link = container.querySelector('a[to*="/npc-stables/"]');
+    const link = container.querySelector('a[to*="/npcStables/"]');
     expect(link).toBeTruthy();
-    expect(link!.getAttribute("to")).toBe("/npc-stables/$stableId");
+    expect(link!.getAttribute("to")).toBe("/npcStables/$stableId");
   });
 
   it("uses Radix TooltipProvider for Compare and Bookmark buttons (#373)", () => {

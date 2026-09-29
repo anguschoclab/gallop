@@ -89,7 +89,7 @@ export function StableCard({ stable }: { stable: Stable }) {
           subtitle={`${stable.country} · ${stable.tier}`}
         />
       </div>
-      <Link to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
+      <Link to="/npcStables/$stableId" params={{ stableId: stable.id }}>
         <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-gold-muted">
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">

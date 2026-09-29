@@ -29,7 +29,7 @@ function StableName({ id }: { id: string }) {
   }
   return (
     <Link
-      to="/npc-stables/$stableId"
+      to="/npcStables/$stableId"
       params={{ stableId: id }}
       className="text-cream-muted hover:text-gold hover:underline"
     >

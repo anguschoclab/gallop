@@ -37,7 +37,7 @@ function EntityName({ kind, row }: { kind: EntityKind; row: DrilldownEntity }) {
   }
 
   return (
-    <Link to="/npc-stables/$stableId" params={{ stableId: row.id }} className={className}>
+    <Link to="/npcStables/$stableId" params={{ stableId: row.id }} className={className}>
       {row.name}
     </Link>
   );

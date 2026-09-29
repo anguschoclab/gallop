@@ -71,7 +71,7 @@ describe("NewsContent", () => {
     const { container } = render(<NewsContent text="Godolphin entered three horses" />);
     const link = container.querySelector("a");
     expect(link).not.toBeNull();
-    expect(link?.getAttribute("to")).toBe("/npc-stables/$stableId");
+    expect(link?.getAttribute("to")).toBe("/npcStables/$stableId");
     expect(link?.getAttribute("data-params")).toBe(JSON.stringify({ stableId: "npc1" }));
   });
 

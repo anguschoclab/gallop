@@ -38,7 +38,7 @@ type NpcStablesSearch = {
   sort: string;
 };
 
-export const Route = createFileRoute("/npc-stables/")({
+export const Route = createFileRoute("/npcStables/")({
   validateSearch: (search: Record<string, unknown>): NpcStablesSearch => ({
     q: (search.q as string) || "",
     tier: (search.tier as string) || "all",

@@ -220,7 +220,7 @@ export function SeasonStandingsWidget() {
                                     s.name
                                   ) : (
                                     <Link
-                                      to="/npc-stables/$stableId"
+                                      to="/npcStables/$stableId"
                                       params={{ stableId: s.stableId }}
                                     >
                                       {s.name}
@@ -308,7 +308,7 @@ export function SeasonStandingsWidget() {
                                   s.name
                                 ) : (
                                   <Link
-                                    to="/npc-stables/$stableId"
+                                    to="/npcStables/$stableId"
                                     params={{ stableId: s.stableId }}
                                   >
                                     {s.name}

@@ -122,7 +122,7 @@ function MarketPage() {
           className="mt-0 animate-in fade-in slide-in-from-bottom-2 duration-300 space-y-8 focus-visible:outline-none"
         >
           <Link
-            to="/npc-stables"
+            to="/npcStables"
             search={{ q: "", tier: "all", pressure: "all", sort: "name" }}
             className="block group"
           >

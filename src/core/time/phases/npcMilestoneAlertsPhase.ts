@@ -63,7 +63,7 @@ export const npcMilestoneAlertsPhase: PipelinePhase = {
               ? {
                   cta: {
                     label: "View Rival Stable",
-                    route: "/npc-stables/$stableId",
+                    route: "/npcStables/$stableId",
                     params: { stableId: String(stableId) },
                   },
                 }

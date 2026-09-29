@@ -26,7 +26,7 @@ export function StableDetailsPanel({ stable }: { stable: StandingEntry | null })
                   {stable.isPlayer ? (
                     stable.name
                   ) : (
-                    <Link to="/npc-stables/$stableId" params={{ stableId: stable.stableId }}>
+                    <Link to="/npcStables/$stableId" params={{ stableId: stable.stableId }}>
                       {stable.name}
                     </Link>
                   )}
