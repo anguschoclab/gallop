@@ -40,7 +40,8 @@ function findNamingViolations(files: string[]): string[] {
     const isComponent = basename.endsWith(".tsx");
     // Allow kebab-case only for shadcn/ui components (components/ui/*)
     const isShadcnUi = file.includes("components/ui/");
-    if (stem.includes("-") && !isShadcnUi) {
+    const isRoute = file.startsWith("routes/") || file.startsWith("src/routes/");
+    if (stem.includes("-") && !isShadcnUi && !isRoute) {
       violations.push(`${file}: kebab-case not allowed; use camelCase`);
     }
     // Allow PascalCase for React component files (.tsx) and handler classes
