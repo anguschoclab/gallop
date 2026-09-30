@@ -22,6 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Bell, BellRing, Trash2, TrendingDown, TrendingUp } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_MS } from "@/constants/uiConstants";
 import { TRACKS } from "@/data/tracks";
 import {
   DEFAULT_ALERT_THRESHOLD_PCT,
@@ -269,14 +271,21 @@ export function PriceAlertsPanel() {
                   <Button variant="outline" size="sm" onClick={() => toggleAlert(alert.id)}>
                     {alert.enabled ? "Pause" : "Resume"}
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label={`Delete alert for ${scopeLabel(alert.scope, trackName)}`}
-                    onClick={() => removeAlert(alert.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          aria-label={`Delete alert for ${scopeLabel(alert.scope, trackName)}`}
+                          onClick={() => removeAlert(alert.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>Delete alert</TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             ))
