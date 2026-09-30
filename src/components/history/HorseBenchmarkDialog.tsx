@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Badge } from "@/components/ui/badge";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
 import { REAL_WORLD_RECORDS, getTripCategory, type TripCategory } from "@/data/realWorldRecords";
-import { useImportedRealWorld } from "@/data/importedRealWorld";
+import { useImportedRealWorld } from "@/services/data/importedRealWorldService";
 import {
   runsForHorse,
   computeHorseBenchmarkStanding,

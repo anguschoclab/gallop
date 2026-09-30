@@ -260,9 +260,8 @@ export function summarizeTrackLedger(ledger: TrackLedgerEntry[]): TrackLedgerSum
 
 /**
  * Filter ledger rows by game-day range, race class and represented stable.
- * @param ledger - the ledger
- * @param filters - the filters
- * @returns filtered ledger
+ * @param ledger
+ * @param filters
  */
 export function filterTrackLedger(
   ledger: TrackLedgerEntry[],
@@ -287,8 +286,7 @@ export function filterTrackLedger(
 
 /**
  * Stable choices represented in the supplied ledger, player first then alphabetical.
- * @param ledger - the ledger
- * @returns stable choices
+ * @param ledger
  */
 export function trackLedgerStableOptions(ledger: TrackLedgerEntry[]): TrackLedgerStableOption[] {
   const options = new Map<string, TrackLedgerStableOption>();
