@@ -41,6 +41,15 @@ export interface LookupMaps {
 }
 
 /**
+ * Common impact handler function signature used by most handler classes
+ */
+export type ImpactHandlerFunction = (
+  draft: WritableDraft<GameState>,
+  impact: AnyImpact,
+  lookupMaps?: LookupMaps,
+) => void;
+
+/**
  * Base interface for impact handlers
  */
 export interface ImpactHandler {
