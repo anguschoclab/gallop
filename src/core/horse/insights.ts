@@ -17,6 +17,7 @@ export type HorseInsight = {
   value: string;
   context: string;
   type: "positive" | "neutral" | "negative";
+  jockeyId?: string;
 };
 
 /**
