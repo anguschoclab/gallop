@@ -1,0 +1,3 @@
+## 2026-10-01 - Awards Scoring Determinism
+**Learning:** Regional awards scoring (`src/core/awards/scoring.ts`) relies heavily on precise property mappings from lookup dictionaries (like track continent to region) and ownership status. It correctly filters out world stock, ensuring they don't block players/NPCs from awards. Testing it requires properly mocked global definitions, demonstrating the importance of deterministic lookup dependencies.
+**Action:** When testing features driven by global lookup definitions, always mock the foundational object shapes precisely (like track names for geographic filters) to ensure the internal logic triggers correctly rather than failing silently due to missing keys.
