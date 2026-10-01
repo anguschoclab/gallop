@@ -99,7 +99,6 @@ export function generateDirectiveChangeNews(
         `${stable.name} Scrambles for Cash`,
         `Liquidity Crisis Strikes ${stable.name}`,
         `The Financial Squeeze is on for ${stable.name}`,
-
       ]
     : [
         `${stable.name} Shifts Strategy: ${newLabel}`,
@@ -117,7 +116,6 @@ export function generateDirectiveChangeNews(
         `${stable.name} Maps Out a New Future`,
         `Changing Tides at ${stable.name}`,
         `${stable.name} Commits to ${newLabel}`,
-
       ];
 
   const bodies = isDistressShift
@@ -137,7 +135,6 @@ export function generateDirectiveChangeNews(
         `${stable.name}'s bankroll has officially run dry. The stable is currently ${description}, leaving their previous ${oldLabel.toLowerCase()} strategy in ruins.`,
         `A devastating financial squeeze has forced ${stable.name} to dramatically alter course. Instead of ${oldLabel.toLowerCase()}, they are now ${description}.`,
         `The ledger is bleeding red for ${stable.name}. Any hopes of continuing their ${oldLabel.toLowerCase()} campaign are dead, as they are now ${description}.`,
-
       ]
     : [
         `${stable.name} has pivoted from ${oldLabel.toLowerCase()} to ${newLabel.toLowerCase()}, ${description}. The stable's racing operations may be affected by this strategic realignment.`,
@@ -155,7 +152,6 @@ export function generateDirectiveChangeNews(
         `A new chapter begins for ${stable.name}. By stepping away from ${oldLabel.toLowerCase()}, the organization is dedicating its resources to ${description}.`,
         `The strategy room at ${stable.name} has produced a new blueprint. They have pivoted from ${oldLabel.toLowerCase()} and are currently ${description}.`,
         `Competitors are re-evaluating ${stable.name} following a surprise strategic shift. The stable has abandoned ${oldLabel.toLowerCase()} and is now entirely ${description}.`,
-
       ];
 
   return {
