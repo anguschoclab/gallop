@@ -43,22 +43,16 @@ describe("calculateWindEffect", () => {
   };
 
   const mockCourse: CourseSpecification = {
-    id: "test",
     name: "Test Course",
-    trackId: "t1",
-    distance: 1200,
     surface: "Turf",
-    qualityType: "G1",
+    circumference: 1600,
     straightLength: 600, // > LONG_STRAIGHT_THRESHOLD (500)
     sections: [],
   };
 
   const mockSection: TrackSection = {
-    id: "s1",
     type: "straight",
     length: 600,
-    startPosition: 0,
-    endPosition: 600,
   };
 
   const mockGetSectionOrientation = vi.spyOn(trackGeometry, "getSectionOrientation");
@@ -151,12 +145,12 @@ describe("calculateWindEffect", () => {
       expect(result.speedMod).toBeCloseTo(expectedSpeedMod, 4);
     });
 
-    it("does not amplify for sprinters on curves", () => {
+    it("does not amplify for sprinters on turns", () => {
       mockGetSectionOrientation.mockReturnValue(90);
       const windKph = 20;
-      const curveSection = { ...mockSection, type: "curve" as const };
+      const turnSection = { ...mockSection, type: "turn" as const };
 
-      const result = calculateWindEffect(mockSprinter, mockCourse, windKph, 90, curveSection, 100);
+      const result = calculateWindEffect(mockSprinter, mockCourse, windKph, 90, turnSection, 100);
 
       const expectedSpeedMod = 1 - (windKph / WIND_EFFECT_SCALE);
       expect(result.speedMod).toBeCloseTo(expectedSpeedMod, 4);
