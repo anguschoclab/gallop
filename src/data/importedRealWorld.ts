@@ -120,12 +120,7 @@ export function parseCsv(text: string): Record<string, string>[] {
   }
   const nonEmpty = rows.filter((r) => r.some((v) => v.trim() !== ""));
   if (nonEmpty.length === 0) return [];
-  const header = nonEmpty[0].map((h) =>
-    h
-      .trim()
-      .toLowerCase()
-      .replace(/[\s-]+/g, "_"),
-  );
+  const header = nonEmpty[0].map((h) => h.trim().toLowerCase().replace(/[\s-]+/g, "_"));
   return nonEmpty.slice(1).map((r) => {
     const o: Record<string, string> = {};
     header.forEach((h, i) => (o[h] = (r[i] ?? "").trim()));
