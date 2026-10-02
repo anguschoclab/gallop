@@ -290,12 +290,12 @@ All bugs discovered during the Phase 1 file-by-file audit. Prioritized by severi
 
 All 33 V1-era entries verified against `main` @ `5d3dd0e0`. **Suite is green (9,128 passed)** — all test-failure bugs resolved.
 
-| Status | Entries |
-|---|---|
-| FIXED | BUG-001–006, 007, 008–016, 019–025, 027–033 (30 entries — code-verified) |
-| FIXED-BY-CONVENTION | BUG-017 — 30-day months are now the codified convention (`dateFormatting.test.ts` asserts day 31 → Feb 1) |
+| Status                  | Entries                                                                                                                                                  |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| FIXED                   | BUG-001–006, 007, 008–016, 019–025, 027–033 (30 entries — code-verified)                                                                                 |
+| FIXED-BY-CONVENTION     | BUG-017 — 30-day months are now the codified convention (`dateFormatting.test.ts` asserts day 31 → Feb 1)                                                |
 | STILL-OPEN (downgraded) | BUG-018 — `yesterdayRaces` name lies but behavior is correct: `PHASE_ORDER_NPC_CYCLE=80` runs after `RACE_RESOLUTION=70` same-day. Cosmetic rename only. |
-| STILL-OPEN (latent) | BUG-026 — `orphan-audit.ts` still uses regex extraction; test currently passes but fragility persists. |
+| STILL-OPEN (latent)     | BUG-026 — `orphan-audit.ts` still uses regex extraction; test currently passes but fragility persists.                                                   |
 
 ## New V3 findings
 
@@ -330,10 +330,10 @@ All 33 V1-era entries verified against `main` @ `5d3dd0e0`. **Suite is green (9,
 
 ## V3 Summary
 
-| Severity | Count |
-|---|---|
-| CRITICAL | 0 |
-| HIGH | 1 (V3-001 test-suite runtime) |
-| MEDIUM | 0 |
-| LOW | 4 (V3-002/003/004 + BUG-018 rename, BUG-026 latent) |
-| Prior register | 31 FIXED, 2 open (downgraded) |
+| Severity       | Count                                               |
+| -------------- | --------------------------------------------------- |
+| CRITICAL       | 0                                                   |
+| HIGH           | 1 (V3-001 test-suite runtime)                       |
+| MEDIUM         | 0                                                   |
+| LOW            | 4 (V3-002/003/004 + BUG-018 rename, BUG-026 latent) |
+| Prior register | 31 FIXED, 2 open (downgraded)                       |

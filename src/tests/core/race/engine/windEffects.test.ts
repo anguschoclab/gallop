@@ -62,7 +62,14 @@ describe("calculateWindEffect", () => {
   });
 
   it("returns neutral mods if wind params are missing", () => {
-    const result = calculateWindEffect(mockRunner, mockCourse, undefined, undefined, mockSection, 100);
+    const result = calculateWindEffect(
+      mockRunner,
+      mockCourse,
+      undefined,
+      undefined,
+      mockSection,
+      100,
+    );
     expect(result).toEqual({ speedMod: 1, staminaMod: 1 });
   });
 
@@ -88,7 +95,7 @@ describe("calculateWindEffect", () => {
       // windComponent = cos(0) = 1
       // speedMod = 1 - (20 / 1300) = 1 - 0.01538 = 0.9846
       // staminaMod = HEADWIND_STAMINA_PENALTY
-      expect(result.speedMod).toBeCloseTo(1 - (windKph / WIND_EFFECT_SCALE), 4);
+      expect(result.speedMod).toBeCloseTo(1 - windKph / WIND_EFFECT_SCALE, 4);
       expect(result.speedMod).toBeLessThan(1);
       expect(result.staminaMod).toBe(HEADWIND_STAMINA_PENALTY);
     });
@@ -102,7 +109,7 @@ describe("calculateWindEffect", () => {
 
       // windComponent = cos(180) = -1
       // speedMod = 1 - (20 / 1300) * -1 = 1 + 0.01538 = 1.0154
-      expect(result.speedMod).toBeCloseTo(1 + (windKph / WIND_EFFECT_SCALE), 4);
+      expect(result.speedMod).toBeCloseTo(1 + windKph / WIND_EFFECT_SCALE, 4);
       expect(result.speedMod).toBeGreaterThan(1);
       expect(result.staminaMod).toBe(TAILWIND_STAMINA_RELIEF);
     });
@@ -128,7 +135,7 @@ describe("calculateWindEffect", () => {
       const result = calculateWindEffect(mockSprinter, mockCourse, windKph, 90, mockSection, 100);
 
       const baseEffect = windKph / WIND_EFFECT_SCALE;
-      const expectedSpeedMod = 1 - (baseEffect * 1 * SPRINTER_WIND_MULTIPLIER);
+      const expectedSpeedMod = 1 - baseEffect * 1 * SPRINTER_WIND_MULTIPLIER;
 
       expect(result.speedMod).toBeCloseTo(expectedSpeedMod, 4);
       expect(result.speedMod).toBeLessThan(1 - baseEffect); // More penalty than non-sprinter
@@ -141,7 +148,7 @@ describe("calculateWindEffect", () => {
 
       const result = calculateWindEffect(mockSprinter, shortCourse, windKph, 90, mockSection, 100);
 
-      const expectedSpeedMod = 1 - (windKph / WIND_EFFECT_SCALE);
+      const expectedSpeedMod = 1 - windKph / WIND_EFFECT_SCALE;
       expect(result.speedMod).toBeCloseTo(expectedSpeedMod, 4);
     });
 
@@ -152,7 +159,7 @@ describe("calculateWindEffect", () => {
 
       const result = calculateWindEffect(mockSprinter, mockCourse, windKph, 90, turnSection, 100);
 
-      const expectedSpeedMod = 1 - (windKph / WIND_EFFECT_SCALE);
+      const expectedSpeedMod = 1 - windKph / WIND_EFFECT_SCALE;
       expect(result.speedMod).toBeCloseTo(expectedSpeedMod, 4);
     });
   });
@@ -163,7 +170,14 @@ describe("calculateWindEffect", () => {
       // Extreme tailwind
       const extremeWindKph = 200;
 
-      const result = calculateWindEffect(mockRunner, mockCourse, extremeWindKph, 270, mockSection, 100);
+      const result = calculateWindEffect(
+        mockRunner,
+        mockCourse,
+        extremeWindKph,
+        270,
+        mockSection,
+        100,
+      );
 
       expect(result.speedMod).toBe(MAX_WIND_SPEED_MOD);
     });
@@ -173,7 +187,14 @@ describe("calculateWindEffect", () => {
       // Extreme headwind
       const extremeWindKph = 200;
 
-      const result = calculateWindEffect(mockRunner, mockCourse, extremeWindKph, 90, mockSection, 100);
+      const result = calculateWindEffect(
+        mockRunner,
+        mockCourse,
+        extremeWindKph,
+        90,
+        mockSection,
+        100,
+      );
 
       expect(result.speedMod).toBe(MIN_WIND_SPEED_MOD);
     });
