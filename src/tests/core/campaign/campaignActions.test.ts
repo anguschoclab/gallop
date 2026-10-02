@@ -14,6 +14,7 @@ import { createTestHorse } from "@/tests/helpers/createTestHorse";
 describe("buildCampaignIntent", () => {
   it("builds an intent with the common envelope fields", () => {
     const intent = buildCampaignIntent({ horseId: "h1", day: 5 }, "campaign_creation", {
+      horseId: "h1",
       goalType: "chase_g1",
     });
     expect(intent.entityId).toBe("h1");
@@ -26,8 +27,9 @@ describe("buildCampaignIntent", () => {
 
   it("includes type-specific payload fields", () => {
     const intent = buildCampaignIntent({ horseId: "h1", day: 3 }, "campaign_slot", {
+      horseId: "h1",
       slotIndex: 0,
-      slot: { targetRaceKey: "race1" },
+      slot: { raceKey: "race1" },
     });
     expect(intent).toHaveProperty("slotIndex", 0);
     expect(intent).toHaveProperty("slot");
