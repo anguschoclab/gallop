@@ -11,8 +11,8 @@ import {
   type TripCategory,
   getTripCategory,
   ALL_REAL_WORLD_BENCHMARKS,
-} from "@/data/realWorldRecords";
-import { useImportedRealWorld } from "@/data/importedRealWorld";
+} from "@/services/data/realWorldRecords";
+import { useImportedRealWorld } from "@/services/data/importedRealWorld";
 import type { TrackRecord } from "@/services/history/historyFacade";
 import { cn } from "@/lib/cn";
 

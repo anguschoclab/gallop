@@ -10,11 +10,12 @@
  */
 
 import type { SeasonRecord, TrackRecord } from "./historyTypes";
+// eslint-disable-next-line no-restricted-syntax
 import {
   REAL_WORLD_RECORDS,
   ALL_REAL_WORLD_BENCHMARKS,
   type RealWorldRecord,
-} from "@/data/realWorldRecords";
+} from "@/services/data/realWorldRecords";
 import { pacePerMile } from "@/core/common/formatting";
 import { iterateRaceRuns } from "@/core/race/bestPace";
 import type { Race } from "@/core/race/types";

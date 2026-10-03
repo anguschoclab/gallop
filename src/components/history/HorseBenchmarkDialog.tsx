@@ -2,8 +2,12 @@ import { useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
-import { REAL_WORLD_RECORDS, getTripCategory, type TripCategory } from "@/data/realWorldRecords";
-import { useImportedRealWorld } from "@/data/importedRealWorld";
+import {
+  REAL_WORLD_RECORDS,
+  getTripCategory,
+  type TripCategory,
+} from "@/services/data/realWorldRecords";
+import { useImportedRealWorld } from "@/services/data/importedRealWorld";
 import {
   runsForHorse,
   computeHorseBenchmarkStanding,

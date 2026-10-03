@@ -27,7 +27,7 @@ import {
 
 const EMPTY_LEDGER: TrackLedgerEntry[] = [];
 
-export const Route = createFileRoute("/track-history")({
+export const Route = createFileRoute("/trackHistory")({
   head: () => ({
     meta: [
       { title: "Course Histories — Racecourse Records & Prestige" },

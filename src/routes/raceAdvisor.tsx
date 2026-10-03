@@ -16,7 +16,7 @@ import { isPlayerOwned } from "@/core/horse/ownership";
 import { adviseRace, adviceToInstructions } from "@/core/tactics/raceAdvisor";
 import type { Horse } from "@/game/types";
 
-export const Route = createFileRoute("/race-advisor")({
+export const Route = createFileRoute("/raceAdvisor")({
   head: () => ({
     meta: [
       { title: "Race Advisor — Stable Strategy" },

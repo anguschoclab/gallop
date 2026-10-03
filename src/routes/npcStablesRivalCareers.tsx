@@ -143,6 +143,6 @@ export function NpcStablesRivalCareers() {
   );
 }
 
-export const Route = createFileRoute("/npc-stables/rival-careers")({
+export const Route = createFileRoute("/npcStablesRivalCareers")({
   component: NpcStablesRivalCareers,
 });
