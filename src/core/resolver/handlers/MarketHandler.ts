@@ -11,7 +11,7 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
-import type { ImpactHandler, LookupMaps, ImpactHandlerFunction } from "./types";
+import type { ImpactHandler, LookupMaps } from "./types";
 import type {
   ScoutReportImpact,
   ConsignmentImpact,
@@ -20,6 +20,12 @@ import type {
 } from "../impacts/miscImpacts";
 import { generateUUID } from "@/core/uuid";
 import { makeUnowned } from "@/core/horse/ownership";
+
+type ImpactHandlerFunction = (
+  draft: WritableDraft<GameState>,
+  impact: AnyImpact,
+  lookupMaps?: LookupMaps,
+) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   scout_report: (draft, impact) => {

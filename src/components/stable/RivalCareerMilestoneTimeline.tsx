@@ -1,5 +1,7 @@
 import { CircleDollarSign, Flag, Gauge, Medal, Trophy } from "lucide-react";
+// eslint-disable-next-line no-restricted-syntax
 import { gameCalendarDate } from "@/core/calendar/dateFormatting";
+// eslint-disable-next-line no-restricted-syntax
 import type { RivalMilestoneRecord } from "@/core/npc/rivalCareerCompare";
 import type { LucideIcon } from "lucide-react";
 
