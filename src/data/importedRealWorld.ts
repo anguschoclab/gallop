@@ -66,15 +66,25 @@ function commit(next: ImportedDataset) {
   listeners.forEach((l) => l());
 }
 
+/**
+ * Get imported dataset
+ * @returns The dataset
+ */
 export function getImportedDataset(): ImportedDataset {
   return load();
 }
 
-export function clearImportedDataset() {
+/**
+ * Clear imported dataset
+ */
+export function clearImportedDataset(): void {
   commit(EMPTY);
 }
 
-/** React hook: current imported dataset (empty during SSR). */
+/**
+ * React hook: current imported dataset (empty during SSR).
+ * @returns The dataset
+ */
 export function useImportedRealWorld(): ImportedDataset {
   return useSyncExternalStore(
     (cb) => {
@@ -91,6 +101,7 @@ export function useImportedRealWorld(): ImportedDataset {
 /**
  * Minimal RFC-4180 CSV parser (quoted fields, escaped quotes, CRLF).
  * @param text
+ * @returns Parsed rows
  */
 export function parseCsv(text: string): Record<string, string>[] {
   const rows: string[][] = [];
@@ -139,6 +150,7 @@ export function parseCsv(text: string): Record<string, string>[] {
 /**
  * Parse "1:59.40", "2:20.6", "119.4" or "1.59.40" into seconds.
  * @param value
+ * @returns The parsed seconds
  */
 export function parseRaceTime(value: string): number | null {
   const v = value.trim();
@@ -159,6 +171,7 @@ export function parseRaceTime(value: string): number | null {
 /**
  * Parse a distance: "2400", "2400m", "12f", "1.25mi". Returns metres.
  * @param value
+ * @returns The distance in metres
  */
 export function parseDistance(value: string): number | null {
   const v = value.trim().toLowerCase();
@@ -207,6 +220,11 @@ function rowKind(r: Row): "result" | "record" | "career" | null {
 
 /**
  * Turn parsed rows into records and careers.
+ * @param horses
+ * @param stallions
+ * @param careers
+ * @param trace
+ * @returns The dataset
  *
  * @param rows - Flat rows (lower_snake_case keys)
  */
@@ -268,6 +286,8 @@ export function rowsToDataset(rows: Row[]): {
 
 /**
  * Parse an uploaded file's text (CSV or JSON) and store it.
+ * @param text
+ * @returns The parsed data
  *
  * @param text - File contents
  * @param fileName - Original file name
