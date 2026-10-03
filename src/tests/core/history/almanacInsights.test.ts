@@ -20,7 +20,7 @@ import {
   getTripCategory,
   getRealWorldRecords,
   type RealWorldRecord,
-} from "@/data/realWorldRecords";
+} from "@/services/data/realWorldRecords";
 import type { TrackRecord, SeasonRecord } from "@/core/history/historyTypes";
 
 function mkRecord(
