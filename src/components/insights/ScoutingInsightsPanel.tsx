@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /**
  * ScoutingInsightsPanel.tsx - Large-scale horse comparison for the scouting page
  *

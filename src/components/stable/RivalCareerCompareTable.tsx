@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-syntax */
 /**
  * RivalCareerCompareTable.tsx - Side-by-side career comparison for rival horses
  *

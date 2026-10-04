@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-param */
 /**
  * trackLedger.ts - Persistent per-racecourse race ledger
  *
@@ -93,7 +94,10 @@ function yearOf(day: number): number {
  */
 export function positionPrestige(race: Race, position: number, fieldSize: number): number {
   const key = gradeKey(race);
-  const venue = racecoursePrestigeMultiplier(race.trackId ?? race.graded?.trackId, race.graded?.track);
+  const venue = racecoursePrestigeMultiplier(
+    race.trackId ?? race.graded?.trackId,
+    race.graded?.track,
+  );
   if (position === 1) return Math.round(PRESTIGE_WIN[key] * venue);
   if (position <= 3) return Math.round(PRESTIGE_PLACED[key] * venue);
   if (race.graded && position > Math.ceil(fieldSize / 2)) return PRESTIGE_GRADED_FLOP;

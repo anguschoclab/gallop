@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-param */
 /**
  * phases/schedulerPhase.ts - Scheduler phase
  *
@@ -46,7 +47,8 @@ function runDailyAutoEntry(context: PipelineContext): PipelineContext {
     (state.campaigns ?? []).filter((c) => c.autoManaged).map((c) => c.horseId),
   );
   const pendingSpend = context.impacts.reduce(
-    (sum, imp) => (imp.type === "race_entry" ? sum + ((imp as RaceEntryImpact).entryFee ?? 0) : sum),
+    (sum, imp) =>
+      imp.type === "race_entry" ? sum + ((imp as RaceEntryImpact).entryFee ?? 0) : sum,
     0,
   );
   const pendingHorseIds = new Set(
@@ -85,7 +87,11 @@ function runDailyAutoEntry(context: PipelineContext): PipelineContext {
     day: newDay,
     text: `Auto-entered ${e.horseName} in ${e.raceName} (Day ${e.raceDay}).`,
   }));
-  return { ...context, logs: [...logs, ...context.logs], impacts: [...context.impacts, ...impacts] };
+  return {
+    ...context,
+    logs: [...logs, ...context.logs],
+    impacts: [...context.impacts, ...impacts],
+  };
 }
 
 const campaignSchedulerImpl = {

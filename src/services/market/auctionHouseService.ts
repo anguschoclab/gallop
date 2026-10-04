@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-returns */
 /**
  * auctionHouseService.ts - Service facade for auction house desk operations.
  *

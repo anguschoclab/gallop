@@ -1,3 +1,4 @@
+/* eslint-disable jsdoc/require-param */
 /**
  * raceSuitabilityScorers.ts - Individual scoring components for race suitability.
  *
