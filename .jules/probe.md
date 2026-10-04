@@ -1,0 +1,3 @@
+## 2025-02-26 - South American 2YO Awards Scoring Bug
+**Learning:** The awards scoring logic (`src/core/awards/scoring.ts`) contains a bug where the South American 2YO awards (`potrillo_del_ano` and `potranca_del_ano`) only check for `age === 2` without checking gender, causing fillies to win colt awards and colts to win filly awards.
+**Action:** When adding behavior tests for award distributions, explicitly assert that ineligible candidates (wrong gender, wrong age) receive 0 points, rather than just asserting the winner receives points. Do not fix the bug, document current behavior and flag in PR description.
