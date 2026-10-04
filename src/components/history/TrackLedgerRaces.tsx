@@ -6,9 +6,16 @@ import { gradeColor } from "@/services/common/commonFacade";
 import { formatCurrency } from "@/lib/formatting";
 import type { TrackLedgerEntry } from "@/services/history/historyFacade";
 
-function PrestigeChip({ label, delta, isPlayer }: { label: string; delta: number; isPlayer: boolean }) {
-  const tone =
-    delta > 0 ? "text-emerald-400" : delta < 0 ? "text-rose-400" : "text-cream-muted";
+function PrestigeChip({
+  label,
+  delta,
+  isPlayer,
+}: {
+  label: string;
+  delta: number;
+  isPlayer: boolean;
+}) {
+  const tone = delta > 0 ? "text-emerald-400" : delta < 0 ? "text-rose-400" : "text-cream-muted";
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] ${
