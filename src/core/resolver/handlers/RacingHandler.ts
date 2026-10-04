@@ -31,7 +31,7 @@ import type {
   JockeyAffinityImpact,
 } from "../impacts/jockeyImpacts";
 import type { TripleCrownProgressImpact } from "../impacts/campaignImpacts";
-import type { LookupMaps } from "./types";
+import type { LookupMaps, ImpactHandlerFunction } from "./types";
 import { awardTraitXp, checkTraitUnlock, checkTraitAtrophy } from "@/core/jockey/traitProgression";
 import type { JockeyTrait } from "@/core/jockey/types";
 import {
@@ -44,12 +44,6 @@ import {
 } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 import { createTransaction } from "@/core/transactions";
-
-type ImpactHandlerFunction = (
-  draft: WritableDraft<GameState>,
-  impact: AnyImpact,
-  lookupMaps?: LookupMaps,
-) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   race_entry: (draft, impact, lookupMaps) => {

@@ -54,3 +54,12 @@ export interface ImpactHandler {
    */
   canHandle(type: string): boolean;
 }
+
+/**
+ * Standard function signature for mapping impact types to their logic
+ */
+export type ImpactHandlerFunction = (
+  draft: WritableDraft<GameState>,
+  impact: AnyImpact,
+  lookupMaps?: LookupMaps,
+) => void;
