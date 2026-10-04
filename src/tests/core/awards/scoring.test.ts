@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { calculateAwardPoints } from "@/core/awards/scoring";
-import { Horse } from "@/core/types";
+import { Horse } from "@/core/horse/types";
 import { Race } from "@/core/race/types";
 import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 
@@ -43,6 +43,7 @@ describe("Awards Scoring", () => {
     const filly = createMockHorse("filly1", 2, "filly", [
       {
         raceId: "race1",
+        raceName: "Mock Race",
         day: 100,
         position: 1,
         grade: "G1",
@@ -55,6 +56,7 @@ describe("Awards Scoring", () => {
     const colt = createMockHorse("colt1", 2, "colt", [
       {
         raceId: "race1",
+        raceName: "Mock Race",
         day: 100,
         position: 1,
         grade: "G1",
