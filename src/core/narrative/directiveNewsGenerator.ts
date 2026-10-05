@@ -92,6 +92,14 @@ export function generateDirectiveChangeNews(
         `Economic Crisis at ${stable.name}`,
         `${stable.name} Forced into Financial Distress`,
         `Budget Shortfalls Threaten ${stable.name}`,
+        `Red Ink at ${stable.name}`,
+        `${stable.name} Hits the Financial Wall`,
+        `A Cash Crisis at ${stable.name}`,
+        `The Well Runs Dry for ${stable.name}`,
+        `Tough Decisions Ahead as ${stable.name} Falters`,
+        `Can ${stable.name} Survive Its Financial Woes?`,
+        `Emergency Measures Initiated at ${stable.name}`,
+        `Empty Coffers: The Plight of ${stable.name}`,
       ]
     : [
         `${stable.name} Shifts Strategy: ${newLabel}`,
@@ -102,6 +110,14 @@ export function generateDirectiveChangeNews(
         `Inside the Reorganization at ${stable.name}`,
         `A Change of Course: ${stable.name} Eyes ${newLabel}`,
         `${stable.name} Management Announces ${newLabel}`,
+        `A New Playbook for ${stable.name}: ${newLabel}`,
+        `${stable.name} Readjusts Focus to ${newLabel}`,
+        `The ${newLabel} Era Begins at ${stable.name}`,
+        `Strategic Shakeup: ${stable.name} Embraces ${newLabel}`,
+        `Behind ${stable.name}'s Move to ${newLabel}`,
+        `${stable.name} Refocuses on ${newLabel}`,
+        `Turning the Page: ${stable.name}'s ${newLabel} Pivot`,
+        `What the ${newLabel} Shift Means for ${stable.name}`,
       ];
 
   const bodies = isDistressShift
@@ -114,6 +130,14 @@ export function generateDirectiveChangeNews(
         `The money has dried up at ${stable.name}. Management is stepping away from ${oldLabel.toLowerCase()} as the stable is ${description}.`,
         `Things are looking bleak for ${stable.name}, who are ${description} after their ${oldLabel.toLowerCase()} plans failed to pan out.`,
         `${stable.name} is pulling the emergency brake. Shedding their ${oldLabel.toLowerCase()} directives, the operation is simply ${description}.`,
+        `${stable.name}'s ambitious ${oldLabel.toLowerCase()} strategy has collapsed under financial pressure. The operation is now simply ${description}.`,
+        `With funds critically low, ${stable.name} is abandoning ${oldLabel.toLowerCase()} and is currently ${description} in an attempt to stay afloat.`,
+        `The bill has come due for ${stable.name}. Stepping back from ${oldLabel.toLowerCase()}, the stable is ${description} as bankruptcy looms.`,
+        `An unfortunate reality has set in at ${stable.name}. Their ${oldLabel.toLowerCase()} efforts are suspended while the team is ${description}.`,
+        `Following a disastrous stretch, ${stable.name} has dropped its ${oldLabel.toLowerCase()} focus and is now entirely ${description}.`,
+        `Cash flow problems have forced ${stable.name} into a corner. They are ${description} after abruptly terminating their ${oldLabel.toLowerCase()} agenda.`,
+        `Whispers of insolvency at ${stable.name} appear true. The stable is ${description}, a stark contrast to their previous ${oldLabel.toLowerCase()} approach.`,
+        `Survival is now the only goal for ${stable.name}. The ${oldLabel.toLowerCase()} era is over, with management actively ${description}.`,
       ]
     : [
         `${stable.name} has pivoted from ${oldLabel.toLowerCase()} to ${newLabel.toLowerCase()}, ${description}. The stable's racing operations may be affected by this strategic realignment.`,
@@ -124,6 +148,14 @@ export function generateDirectiveChangeNews(
         `Competitors take note: ${stable.name} has officially changed tactics. By stepping away from ${oldLabel.toLowerCase()} and ${description}, the stable is charting a new course.`,
         `A noticeable shift is underway at ${stable.name}. The focus on ${oldLabel.toLowerCase()} has been replaced by ${newLabel.toLowerCase()}, with the team now ${description}.`,
         `Following internal reviews, ${stable.name} is taking a new path. They are ${description}, leaving their previous ${oldLabel.toLowerCase()} strategy in the rearview mirror.`,
+        `A strategic overhaul is underway as ${stable.name} drops ${oldLabel.toLowerCase()} in favor of ${newLabel.toLowerCase()}. Management is ${description}.`,
+        `The front office at ${stable.name} has signed off on a major change, moving from ${oldLabel.toLowerCase()} to ${newLabel.toLowerCase()} by ${description}.`,
+        `After re-evaluating their position, ${stable.name} is ${description}. This marks a definitive end to their ${oldLabel.toLowerCase()} phase.`,
+        `The shift to ${newLabel.toLowerCase()} represents a bold new chapter for ${stable.name}, who are ${description} instead of pursuing ${oldLabel.toLowerCase()}.`,
+        `Industry insiders are parsing ${stable.name}'s latest move: abandoning ${oldLabel.toLowerCase()} and ${description}.`,
+        `Expect a different look from ${stable.name} moving forward. The stable is officially ${description}, leaving ${oldLabel.toLowerCase()} behind.`,
+        `A calculated pivot by ${stable.name} sees the end of their ${oldLabel.toLowerCase()} campaign as the stable is now ${description}.`,
+        `The transition from ${oldLabel.toLowerCase()} to ${newLabel.toLowerCase()} is official at ${stable.name}. The organization is busy ${description}.`,
       ];
 
   return {
