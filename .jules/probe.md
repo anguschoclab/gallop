@@ -1,0 +1,3 @@
+## 2025-03-05 - Awards Scoring Logic
+**Learning:** The awards scoring logic (`calculateRacePoints` inside `calculateAwardPoints`) handles various edge cases with grade values and Beyer bonuses that were previously untested explicitly in terms of their raw mathematical accumulation. While eligibility, race maps, and qualifying races had distinct tests, the exact addition logic was uncovered for specific branch combinations (e.g. ungraded stakes win, G3 place with a Beyer 100 bonus, or placing 4th but still receiving a Beyer bonus).
+**Action:** When adding tests for accumulation logic in core game systems, write a targeted "edge cases" test file that covers the combinatorics of branch resolution to ensure points or state mutations are exactly as expected.
