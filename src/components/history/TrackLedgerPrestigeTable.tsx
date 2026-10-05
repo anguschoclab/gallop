@@ -42,11 +42,7 @@ export function TrackLedgerPrestigeTable({ rows }: { rows: Row[] }) {
               </div>
               <span
                 className={`w-12 text-right tabular-nums font-semibold ${
-                  row.delta > 0
-                    ? "text-emerald-400"
-                    : row.delta < 0
-                      ? "text-rose-400"
-                      : "text-cream-muted"
+                  row.delta > 0 ? "text-emerald-400" : row.delta < 0 ? "text-rose-400" : "text-cream-muted"
                 }`}
               >
                 {row.delta > 0 ? "+" : ""}

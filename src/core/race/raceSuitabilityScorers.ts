@@ -160,9 +160,6 @@ export const PAST_RESULTS_MAX_BONUS = 12;
  * Past-results scorer: rewards horses that have finished well in races similar
  * to this one (distance within 200m, same surface, same class/grade) and
  * penalises repeated poor runs in those conditions. Recent starts weigh more.
- * @param root0
- * @param root0.horse
- * @param root0.race
  */
 export const scorePastResults: SuitabilityScorer = ({ horse, race }) => {
   const history = horse.raceHistory ?? [];
