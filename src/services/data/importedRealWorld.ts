@@ -9,7 +9,7 @@
  */
 
 import { useSyncExternalStore } from "react";
-import type { RealWorldRecord } from "./realWorldRecords";
+import type { RealWorldRecord } from "@/data/realWorldRecords";
 
 export interface ImportedCareer {
   id: string;
