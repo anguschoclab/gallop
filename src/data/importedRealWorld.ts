@@ -66,15 +66,25 @@ function commit(next: ImportedDataset) {
   listeners.forEach((l) => l());
 }
 
+/**
+ * Get current dataset state.
+ * @returns The current dataset.
+ */
 export function getImportedDataset(): ImportedDataset {
   return load();
 }
 
+/**
+ * Clears the imported dataset.
+ */
 export function clearImportedDataset() {
   commit(EMPTY);
 }
 
 /** React hook: current imported dataset (empty during SSR). */
+/**
+ * @returns Imported real world dataset hook
+ */
 export function useImportedRealWorld(): ImportedDataset {
   return useSyncExternalStore(
     (cb) => {
@@ -89,6 +99,11 @@ export function useImportedRealWorld(): ImportedDataset {
 // ---------------------------------------------------------------- parsing
 
 /** Minimal RFC-4180 CSV parser (quoted fields, escaped quotes, CRLF). */
+/**
+ * Parses a CSV file string into objects.
+ * @param text - CSV text
+ * @returns The parsed records.
+ */
 export function parseCsv(text: string): Record<string, string>[] {
   const rows: string[][] = [];
   let row: string[] = [];
@@ -120,7 +135,12 @@ export function parseCsv(text: string): Record<string, string>[] {
   }
   const nonEmpty = rows.filter((r) => r.some((v) => v.trim() !== ""));
   if (nonEmpty.length === 0) return [];
-  const header = nonEmpty[0].map((h) => h.trim().toLowerCase().replace(/[\s-]+/g, "_"));
+  const header = nonEmpty[0].map((h) =>
+    h
+      .trim()
+      .toLowerCase()
+      .replace(/[\s-]+/g, "_"),
+  );
   return nonEmpty.slice(1).map((r) => {
     const o: Record<string, string> = {};
     header.forEach((h, i) => (o[h] = (r[i] ?? "").trim()));
@@ -129,6 +149,11 @@ export function parseCsv(text: string): Record<string, string>[] {
 }
 
 /** Parse "1:59.40", "2:20.6", "119.4" or "1.59.40" into seconds. */
+/**
+ * Parses a time string into a number of ticks.
+ * @param value - Time string
+ * @returns The parsed time.
+ */
 export function parseRaceTime(value: string): number | null {
   const v = value.trim();
   if (!v) return null;
@@ -146,6 +171,11 @@ export function parseRaceTime(value: string): number | null {
 }
 
 /** Parse a distance: "2400", "2400m", "12f", "1.25mi". Returns metres. */
+/**
+ * Parses a distance string into meters.
+ * @param value - Distance string
+ * @returns The parsed distance.
+ */
 export function parseDistance(value: string): number | null {
   const v = value.trim().toLowerCase();
   const n = parseFloat(v);
@@ -195,6 +225,11 @@ function rowKind(r: Row): "result" | "record" | "career" | null {
  * Turn parsed rows into records and careers.
  *
  * @param rows - Flat rows (lower_snake_case keys)
+ */
+/**
+ * Converts CSV rows to typed datasets.
+ * @param rows - The CSV rows
+ * @returns The categorized datasets.
  */
 export function rowsToDataset(rows: Row[]): {
   records: RealWorldRecord[];
@@ -258,6 +293,15 @@ export function rowsToDataset(rows: Row[]): {
  * @param text - File contents
  * @param fileName - Original file name
  * @param mode - "replace" existing uploads, or "merge" with them
+ */
+/**
+ * Imports real-world text content into the game state.
+ * @param horses - The game horses array.
+ * @param state - The game state.
+ * @param text - The CSV string to import.
+ * @param fileName - File name string.
+ * @param mode - Import mode.
+ * @returns Information about the import.
  */
 export function importRealWorldText(
   text: string,
