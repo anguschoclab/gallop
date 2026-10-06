@@ -23,6 +23,9 @@ export interface RivalMilestoneRecord {
   day: number | null;
   /** True when the player has already been alerted about this milestone. */
   announced: boolean;
+  /** Race this milestone happened in (debut, breakthrough, earnings mark, last start). */
+  raceId?: string;
+  raceName?: string;
 }
 
 export interface RivalCareerProfile {
@@ -52,6 +55,23 @@ function earningsMilestoneDay(history: HorseRaceHistoryEntry[], threshold: numbe
     if (total >= threshold) return start.day;
   }
   return null;
+}
+
+function milestoneRace(horse: Horse, key: string) {
+  const history = orderedHistory(horse);
+  if (key === "debut") return history[0];
+  if (key === "breakthrough_win") return history.find((s) => s.position === 1 && !!s.grade);
+  if (key.startsWith("earnings_")) {
+    const threshold = Number(key.slice("earnings_".length));
+    let total = 0;
+    for (const start of history) {
+      total += start.purseEarned ?? 0;
+      if (total >= threshold) return start;
+    }
+    return undefined;
+  }
+  if (key === "retirement") return history.at(-1);
+  return undefined;
 }
 
 function milestoneDay(horse: Horse, key: string, currentDay: number): number | null {
@@ -93,6 +113,8 @@ export function buildRivalCareerProfile(horse: Horse, day: number): RivalCareerP
       title: m.title,
       day: milestoneDay(horse, m.key, day),
       announced: announced.has(m.key),
+      raceId: milestoneRace(horse, m.key)?.raceId,
+      raceName: milestoneRace(horse, m.key)?.raceName,
     }))
     .sort((a, b) => (a.day ?? Number.MAX_SAFE_INTEGER) - (b.day ?? Number.MAX_SAFE_INTEGER));
 
