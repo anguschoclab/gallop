@@ -20,6 +20,7 @@ import {
 import { PHASE_ORDER_CASH_PRESSURE_HISTORY } from "@/constants";
 import { recordDailyProgress, type HorseDailyProgress } from "@/core/horse/dailyProgress";
 import type { Horse } from "@/core/horse/types";
+import { fillJournalOutcomes } from "@/core/tactics/strategyJournal";
 
 export const cashPressureHistoryPhase: PipelinePhase = {
   name: "cashPressureHistory",
@@ -32,8 +33,14 @@ export const cashPressureHistoryPhase: PipelinePhase = {
       Object.values(state.horses ?? {}) as Horse[],
       newDay,
     );
+    const strategyJournal = fillJournalOutcomes(
+      state.strategyJournal,
+      state.horses,
+      state.cash,
+      newDay,
+    );
     if (stables.length === 0) {
-      return { ...context, state: { ...state, horseDailyProgress } };
+      return { ...context, state: { ...state, horseDailyProgress, strategyJournal } };
     }
 
     // Start from existing history or lazily initialize
@@ -62,6 +69,7 @@ export const cashPressureHistoryPhase: PipelinePhase = {
         ...state,
         cashPressureHistory: history,
         horseDailyProgress,
+        strategyJournal,
       },
     };
   },
