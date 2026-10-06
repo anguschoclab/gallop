@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useGame } from "@/game/store";
+import { PlanEffectivenessCard } from "@/components/journal/PlanEffectivenessCard";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import {
   addJournalEntry,
@@ -180,6 +181,8 @@ function StrategyJournalPage() {
           " · By riding style: " +
             byStyle.map(([k, v]) => `${k} ${v.wins}/${v.runs}`).join(", ")}
       </p>
+
+      <PlanEffectivenessCard journal={journal} />
 
       <Card>
         <CardHeader>
