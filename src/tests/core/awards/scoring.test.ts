@@ -300,7 +300,7 @@ function createMockRace(id: string, track: string): Race {
 }
 
 describe("Awards Scoring (PR #503)", () => {
-  it("documents current behavior where South American 2YO awards ignore gender restrictions", () => {
+  it("enforces gender restrictions on South American 2YO awards", () => {
     const raceMap = new Map<string, Race>([
       ["race1", createMockRace("race1", "Hipódromo de San Isidro")], // South America (Argentina)
     ]);
@@ -372,8 +372,49 @@ describe("Awards Scoring (PR #503)", () => {
     expect(fillyPotrancaPoints).toBeGreaterThan(0);
     expect(coltPotrilloPoints).toBeGreaterThan(0);
 
-    // Documenting the bug: points are non-zero when they should be 0
-    expect(fillyPotrilloPoints).toBe(fillyPotrancaPoints); // They get the exact same points for the wrong gender
-    expect(coltPotrancaPoints).toBe(coltPotrilloPoints);
+    // Corrected behavior: wrong-gender categories yield 0 points
+    expect(fillyPotrilloPoints).toBe(0);
+    expect(coltPotrancaPoints).toBe(0);
+  });
+
+  it("enforces gender restrictions on sprint awards", () => {
+    const raceMap = new Map<string, Race>([
+      ["race1", createMockRace("race1", "Belmont Park")],
+    ]);
+    const colt = createMockHorse("colt1", 4, "colt", [
+      {
+        raceId: "race1",
+        raceName: "Sprint",
+        day: 100,
+        position: 1,
+        grade: "G1",
+        distance: 1200,
+        surface: "dirt",
+      },
+    ]);
+    const filly = createMockHorse("filly1", 4, "filly", [
+      {
+        raceId: "race1",
+        raceName: "Sprint",
+        day: 100,
+        position: 1,
+        grade: "G1",
+        distance: 1200,
+        surface: "dirt",
+      },
+    ]);
+
+    expect(
+      calculateAwardPoints(colt, 1, "north_america", "champion_sprint_male", raceMap),
+    ).toBeGreaterThan(0);
+    expect(
+      calculateAwardPoints(colt, 1, "north_america", "champion_sprint_female", raceMap),
+    ).toBe(0);
+    expect(
+      calculateAwardPoints(filly, 1, "north_america", "champion_sprint_female", raceMap),
+    ).toBeGreaterThan(0);
+    expect(
+      calculateAwardPoints(filly, 1, "north_america", "champion_sprint_male", raceMap),
+    ).toBe(0);
   });
 });
