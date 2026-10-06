@@ -12,6 +12,7 @@ import { generateRaceImpacts } from "@/core/race/raceImpactGenerator";
 import { applyImpacts } from "@/core/resolver/resolver";
 import { rngForRace } from "@/core/race/rngForRace";
 import { isLivePlayerImpact } from "@/core/race/liveRaceImpacts";
+import { fillJournalOutcomes } from "@/core/tactics/strategyJournal";
 
 export function createRaceEntryActions(
   set: StoreSet,
@@ -265,6 +266,12 @@ export function createRaceEntryActions(
                 livePlayerImpactsApplied: true,
               },
             },
+            strategyJournal: fillJournalOutcomes(
+              newState.strategyJournal,
+              newState.horses,
+              newState.cash,
+              newState.day,
+            ),
           });
         }
       } catch {

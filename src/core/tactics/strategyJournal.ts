@@ -21,6 +21,45 @@ export interface StrategyJournalEntry {
   confidence?: number;
   plan: string;
   reflection?: string;
+  /** Filled in automatically once the race is run. */
+  result?: {
+    position: number;
+    fieldSize?: number;
+    prizeMoney: number;
+    beyer?: number;
+    /** Stable cash balance right after the result landed. */
+    cashAfter: number;
+    filledDay: number;
+  };
+}
+
+/** Record actual results for any journal plans whose race has now been run. */
+export function fillJournalOutcomes(
+  list: StrategyJournalEntry[] | undefined,
+  horses: Record<string, { raceHistory?: HorseRaceHistoryEntry[] } | undefined>,
+  cash: number,
+  day: number,
+): StrategyJournalEntry[] | undefined {
+  if (!list?.length) return list;
+  let changed = false;
+  const next = list.map((e) => {
+    if (e.result || !e.raceId) return e;
+    const run = horses[e.horseId]?.raceHistory?.find((h) => h.raceId === e.raceId);
+    if (!run) return e;
+    changed = true;
+    return {
+      ...e,
+      result: {
+        position: run.position,
+        fieldSize: run.fieldSize,
+        prizeMoney: run.purseEarned ?? 0,
+        beyer: run.beyer,
+        cashAfter: Math.round(cash),
+        filledDay: day,
+      },
+    };
+  });
+  return changed ? next : list;
 }
 
 export type NewJournalEntry = Omit<StrategyJournalEntry, "id">;
@@ -57,6 +96,14 @@ export function journalOutcome(
   currentDay: number,
 ): JournalOutcome {
   if (!entry.raceId) return { status: "no-race" };
+  if (entry.result)
+    return {
+      status: "run",
+      position: entry.result.position,
+      fieldSize: entry.result.fieldSize,
+      earned: entry.result.prizeMoney,
+      beyer: entry.result.beyer,
+    };
   const run = history?.find((h) => h.raceId === entry.raceId);
   if (run)
     return {

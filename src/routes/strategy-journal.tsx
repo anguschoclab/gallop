@@ -292,6 +292,15 @@ function JournalCard({
           </div>
         )}
         <p className="text-sm">{e.plan}</p>
+        {e.result && (
+          <div className="rounded-md border border-border p-2 text-xs font-mono">
+            Result: {e.result.position === 1 ? "Won" : `finished ${e.result.position}`}
+            {e.result.fieldSize ? ` of ${e.result.fieldSize}` : ""} · prize money $
+            {Math.round(e.result.prizeMoney).toLocaleString()}
+            {e.result.beyer ? ` · speed figure ${e.result.beyer}` : ""} · cash after $
+            {e.result.cashAfter.toLocaleString()} · recorded day {e.result.filledDay}
+          </div>
+        )}
         <div className="text-xs text-muted-foreground">Written on day {e.createdDay}</div>
         <Input
           aria-label="Reflection"
