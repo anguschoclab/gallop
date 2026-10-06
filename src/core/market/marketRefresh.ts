@@ -59,8 +59,8 @@ export function refreshMarket(currentMarket: Horse[], rng: Rng): Horse[] {
   if (market.length > 3) market = market.slice(2);
   while (market.length < 5) {
     const r = rng.next();
-    const tier = r < 0.5 ? "budget" : r < 0.85 ? "mid" : "elite";
-    market.push(generateHorse({ tier: tier as never }, rng));
+    const tier: "budget" | "mid" | "elite" = r < 0.5 ? "budget" : r < 0.85 ? "mid" : "elite";
+    market.push(generateHorse({ tier }, rng));
   }
   return market;
 }

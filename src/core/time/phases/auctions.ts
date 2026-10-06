@@ -10,6 +10,7 @@
  */
 
 import type { PipelineContext } from "../pipeline";
+import type { HorseCreationImpact } from "@/core/resolver/impacts";
 import type { AuctionSale } from "@/game/types";
 import { generateAuctionLots } from "@/core/auction/engine";
 import { SALE_TRIGGERS } from "@/core/auction/data";
@@ -128,9 +129,9 @@ export const auctionsPhase = {
       // horses from earlier this turn (so the runner can find them).
       const horsesIncludingFresh = [
         ...Object.values(state.horses),
-        ...(impacts
+        ...impacts
           .filter((i) => i.type === "horse_creation")
-          .map((i) => (i as { horse: unknown }).horse) as never),
+          .map((i) => (i as HorseCreationImpact).horse),
       ];
       const runner = createAuctionRunner(sale, state.npcStables, horsesIncludingFresh);
       runner.runToCompletion();

@@ -191,12 +191,22 @@ export function detectPatternJump(
   horse: Horse,
   newBeyer: number,
 ): { jumped: boolean; margin: number } {
-  const beyerHistory = horse.raceHistory.filter((r) => r.beyer !== undefined).map((r) => r.beyer!);
+  let beyerSum = 0;
+  let beyerCount = 0;
+  let careerBest = -Infinity;
 
-  if (beyerHistory.length === 0) return { jumped: false, margin: 0 };
+  for (let i = 0; i < horse.raceHistory.length; i++) {
+    const b = horse.raceHistory[i].beyer;
+    if (b !== undefined) {
+      beyerSum += b;
+      beyerCount++;
+      if (b > careerBest) careerBest = b;
+    }
+  }
 
-  const avgBeyer = beyerHistory.reduce((sum, b) => sum + b, 0) / beyerHistory.length;
-  const careerBest = Math.max(...beyerHistory);
+  if (beyerCount === 0) return { jumped: false, margin: 0 };
+
+  const avgBeyer = beyerSum / beyerCount;
 
   const jumpOverAvg = newBeyer - avgBeyer;
   const jumpOverBest = newBeyer - careerBest;
@@ -204,7 +214,7 @@ export function detectPatternJump(
   // Pattern Jump logic: 15+ over average OR 10+ over career high (if established)
   if (
     jumpOverAvg >= PATTERN_JUMP_AVG_THRESHOLD ||
-    (beyerHistory.length >= PATTERN_JUMP_MIN_HISTORY && jumpOverBest >= PATTERN_JUMP_BEST_THRESHOLD)
+    (beyerCount >= PATTERN_JUMP_MIN_HISTORY && jumpOverBest >= PATTERN_JUMP_BEST_THRESHOLD)
   ) {
     return { jumped: true, margin: Math.max(jumpOverAvg, jumpOverBest) };
   }

@@ -110,9 +110,11 @@ function isEligibleForCategory(
     case "campeona_3yo_hembras":
       return age === 3 && DAM_GENDERS.includes(gender);
     case "champion_2yo":
-    case "potrillo_del_ano":
-    case "potranca_del_ano":
       return age === 2;
+    case "potrillo_del_ano":
+      return age === 2 && SIRE_GENDERS.includes(gender);
+    case "potranca_del_ano":
+      return age === 2 && DAM_GENDERS.includes(gender);
     case "champion_3yo":
       return age === 3;
 
@@ -127,7 +129,9 @@ function isEligibleForCategory(
 
     // Sprint categories
     case "champion_sprint_male":
+      return distance <= 1400 && SIRE_GENDERS.includes(gender);
     case "champion_sprint_female":
+      return distance <= 1400 && DAM_GENDERS.includes(gender);
     case "champion_sprinter_eu":
     case "champion_sprinter_apac":
     case "campeon_velocidad":

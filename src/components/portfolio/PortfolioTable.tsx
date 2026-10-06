@@ -91,9 +91,7 @@ export function PortfolioTable({
                     <input
                       type="checkbox"
                       checked={compare.ids.includes(r.id)}
-                      disabled={
-                        !compare.ids.includes(r.id) && compare.ids.length >= MAX_COMPARE
-                      }
+                      disabled={!compare.ids.includes(r.id) && compare.ids.length >= MAX_COMPARE}
                       onChange={() => compare.toggle(r.id)}
                       aria-label={`Select ${r.name} for comparison`}
                       className="h-3.5 w-3.5 rounded border-border accent-primary"

@@ -94,9 +94,9 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   // 2. Fill remaining spots with AI horses
   const tier = getTierForRaceClass(race.raceClass);
   while (entriesData.length < race.fieldSize) {
-    const aiHorse = generateHorse({ tier: tier as never }, rng);
+    const aiHorse = generateHorse({ tier }, rng);
     fillerHorses.push(aiHorse);
-    const jk = generateJockey({ tier: tier as never, rng });
+    const jk = generateJockey({ tier, rng });
     fillerJockeys.push(jk);
     const weight = calculateAssignedWeight(aiHorse, race);
     entriesData.push({ horseId: aiHorse.id, isPlayer: false, jockeyId: jk.id, weight });
@@ -105,9 +105,9 @@ export function buildRaceField(dependencies: RaceSimulationDependencies): RaceFi
   // Empty-field guard: always return at least 1 runner so downstream
   // simulation doesn't have to handle a completely empty field.
   if (entriesData.length === 0) {
-    const aiHorse = generateHorse({ tier: tier as never }, rng);
+    const aiHorse = generateHorse({ tier }, rng);
     fillerHorses.push(aiHorse);
-    const jk = generateJockey({ tier: tier as never, rng });
+    const jk = generateJockey({ tier, rng });
     fillerJockeys.push(jk);
     const weight = calculateAssignedWeight(aiHorse, race);
     entriesData.push({ horseId: aiHorse.id, isPlayer: false, jockeyId: jk.id, weight });
@@ -370,8 +370,8 @@ export function simulateStep(
  * @param raceClass - The classification of the race
  * @returns "elite", "mid", or "budget"
  */
-function getTierForRaceClass(raceClass: Race["raceClass"]): string {
-  const tierMap: Record<Race["raceClass"], string> = {
+function getTierForRaceClass(raceClass: Race["raceClass"]): "budget" | "mid" | "elite" {
+  const tierMap: Record<Race["raceClass"], "budget" | "mid" | "elite"> = {
     Group: "elite",
     Graded: "elite",
     Stakes: "mid",

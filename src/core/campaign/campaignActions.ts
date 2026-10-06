@@ -11,7 +11,7 @@
 
 import type { HorseCampaign } from "@/game/types";
 import type { CampaignGoalType, CampaignRaceSlot } from "@/core/calendar/campaignTypes";
-import type { AnyIntent } from "@/core/resolver/intents";
+import type { AnyIntent, Intent } from "@/core/resolver/intents";
 import { generateUUID } from "@/core/uuid";
 import { buildCampaignSlots } from "@/core/campaign/planner";
 import type { Horse } from "@/game/types";
@@ -32,11 +32,11 @@ interface CampaignIntentEnvelope {
  * @param payload - Type-specific intent fields.
  * @returns A complete AnyIntent ready for enqueueing.
  */
-export function buildCampaignIntent<T extends Record<string, unknown>>(
+export function buildCampaignIntent<TType extends AnyIntent["type"]>(
   envelope: CampaignIntentEnvelope,
-  type: string,
-  payload: T,
-): AnyIntent {
+  type: TType,
+  payload: Omit<Extract<AnyIntent, { type: TType }>, keyof Intent | "type">,
+): Extract<AnyIntent, { type: TType }> {
   return {
     id: generateUUID(),
     entityId: envelope.horseId,
@@ -45,7 +45,7 @@ export function buildCampaignIntent<T extends Record<string, unknown>>(
     priority: 100,
     type,
     ...payload,
-  } as unknown as AnyIntent;
+  } as unknown as Extract<AnyIntent, { type: TType }>;
 }
 
 /**

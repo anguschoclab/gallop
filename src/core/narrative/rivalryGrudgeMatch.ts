@@ -100,6 +100,12 @@ export function generateGrudgeMatchNews(
         `Tough Beat: ${playerHorse.name} Plays Second Fiddle to ${rivalHorse.name}`,
         `Rivals Rejoice: ${rivalHorse.name} Defeats ${playerHorse.name}`,
         `${rivalHorse.name} Turns the Tables on ${playerHorse.name}`,
+        `Swallowed Pride: ${playerHorse.name} Yields to ${rivalHorse.name}`,
+        `Outrun and Outclassed: ${rivalHorse.name} Humiliates ${playerHorse.name}`,
+        `Stung by a Rival: ${rivalHorse.name} Handles ${playerHorse.name}`,
+        `A Bitter Defeat: ${rivalHorse.name} Dispatches ${playerHorse.name}`,
+        `Grudge Match Heartbreak: ${playerHorse.name} Fails to Catch ${rivalHorse.name}`,
+        `Rivalry Update: ${rivalHorse.name} Establishes Dominance Over ${playerHorse.name}`,
       ];
 
   const bodies = playerWon

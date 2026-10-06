@@ -27,14 +27,17 @@ import {
 import { HorseScatterPlot } from "./HorseScatterPlot";
 import { InsightsCompareDialog } from "./InsightsCompareDialog";
 import { ScoutingThresholdControls } from "./ScoutingThresholdControls";
-import { useImportedRealWorld } from "@/data/importedRealWorld";
-import { buildRealCareerInsightRow } from "@/core/horse/insightMetrics";
+import { useImportedRealWorld } from "@/services/storage/importedRealWorldService";
 import { useBookmarks } from "@/hooks/shared/useBookmarks";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import type { Horse } from "@/services/horse/horseFacade";
-import { isNpcOwned, isPlayerOwned } from "@/services/horse/horseFacade";
-import { ensurePhenotypeResolved } from "@/services/horse/horseFacade";
+import {
+  buildRealCareerInsightRow,
+  ensurePhenotypeResolved,
+  isNpcOwned,
+  isPlayerOwned,
+} from "@/services/horse/horseFacade";
 import {
   createDefaultScoutingThresholds,
   lastScoutDayByHorse,

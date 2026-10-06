@@ -44,19 +44,37 @@ import {
  * @param runners - All runners in the race (live and finished).
  */
 export function buildFieldContext(runners: Runner[]): FieldContext {
-  const live = runners.filter((r) => r.finishTime === null);
-  const moving = live.filter((r) => r.velocity > 0);
-  const meanVelocity = moving.length
-    ? moving.reduce((s, r) => s + r.velocity, 0) / moving.length
-    : 0;
-  const fastestVelocity = moving.reduce((m, r) => Math.max(m, r.velocity), 0);
-  const leaderPos = runners.reduce((m, r) => Math.max(m, r.position), 0);
+  const live: Runner[] = [];
+  const moving: Runner[] = [];
+  let sumVelocity = 0;
+  let fastestVelocity = 0;
+  let leaderPos = 0;
+
+  for (let i = 0; i < runners.length; i++) {
+    const r = runners[i];
+    if (r.position > leaderPos) {
+      leaderPos = r.position;
+    }
+    if (r.finishTime === null) {
+      live.push(r);
+      if (r.velocity > 0) {
+        moving.push(r);
+        sumVelocity += r.velocity;
+        if (r.velocity > fastestVelocity) {
+          fastestVelocity = r.velocity;
+        }
+      }
+    }
+  }
+
+  const meanVelocity = moving.length > 0 ? sumVelocity / moving.length : 0;
+
   const velocityRank = new Map<string, number>();
-  [...moving]
+  moving
     .sort((a, b) => b.velocity - a.velocity || a.horseId.localeCompare(b.horseId))
     .forEach((r, i) => velocityRank.set(r.horseId, i + 1));
 
-  const sortedLive = [...live].sort((a, b) => a.position - b.position);
+  const sortedLive = live.sort((a, b) => a.position - b.position);
   const liveRank = new Map<string, number>();
   sortedLive.forEach((r, i) => liveRank.set(r.horseId, i));
 

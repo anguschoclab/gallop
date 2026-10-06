@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/formatting";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
+import { asOwnerKey } from "@/services/common/commonFacade";
 import { createDefaultExchangeState } from "@/services/market/marketFacade";
 
 const CARD = "bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4";
@@ -28,7 +29,7 @@ export function NpcStableTradingTab({ stableId }: { stableId: string }) {
     () =>
       Object.values(syndicates)
         .map((syn) => {
-          const shares = syn.shareHolders?.[stableId as never] ?? 0;
+          const shares = syn.shareHolders?.[asOwnerKey(stableId)] ?? 0;
           return {
             id: syn.id,
             stallionId: syn.stallionId,

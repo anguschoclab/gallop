@@ -6,6 +6,7 @@ import { DistanceAptitudeDrift } from "@/components/horse/DistanceAptitudeDrift"
 import { HorseCareerCharts } from "@/components/horse/HorseCareerCharts";
 import { getHorseInsight } from "@/services/horse/horseFacade";
 import type { Horse } from "@/game/types";
+import { useGame } from "@/game/store";
 
 interface HorseAnalyticsSectionProps {
   horse: Horse;
@@ -14,6 +15,18 @@ interface HorseAnalyticsSectionProps {
 
 export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyticsSectionProps) {
   const insight = getHorseInsight(horse);
+  const jockeys = useGame((s) => s.jockeys);
+
+  let displayValue = insight?.value;
+  let displayContext = insight?.context;
+
+  if (insight?.jockeyId) {
+    const jockey = jockeys?.find((j) => j.id === insight.jockeyId);
+    const jockeyName = jockey ? jockey.name : "Unknown Jockey";
+    displayValue = displayValue?.replace("{jockeyName}", jockeyName);
+    displayContext = displayContext?.replace("{jockeyName}", jockeyName);
+  }
+
   return (
     <section id="beyer" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
@@ -42,8 +55,8 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
                 <div className="text-[10px] font-black uppercase tracking-wide text-gold/80 mb-0.5">
                   Tipster Insight: {insight.label}
                 </div>
-                <div className="text-sm font-bold text-cream">{insight.value}</div>
-                <div className="text-[10px] font-mono text-cream/60 mt-1">{insight.context}</div>
+                <div className="text-sm font-bold text-cream">{displayValue}</div>
+                <div className="text-[10px] font-mono text-cream/60 mt-1">{displayContext}</div>
               </div>
             </div>
           )}

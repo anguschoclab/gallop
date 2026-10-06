@@ -425,3 +425,64 @@ describe("deriveRunnerMood — signals", () => {
     expect(MOOD_BASE_SCORE + sum).toBeCloseTo(mood.score, 0);
   });
 });
+
+describe("buildFieldContext (characterization)", () => {
+  it("sorts sortedLive by position ascending and liveRank maps horseId to that index", () => {
+    const back = runner({ horseId: "back", position: 300, velocity: 15 });
+    const mid = runner({ horseId: "mid", position: 700, velocity: 16 });
+    const front = runner({ horseId: "front", position: 900, velocity: 17 });
+    const field = buildFieldContext([back, mid, front]);
+    expect(field.sortedLive.map((r) => r.horseId)).toEqual(["back", "mid", "front"]);
+    expect(field.liveRank.get("back")).toBe(0);
+    expect(field.liveRank.get("mid")).toBe(1);
+    expect(field.liveRank.get("front")).toBe(2);
+    expect(field.liveCount).toBe(3);
+  });
+
+  it("excludes finished runners from live/sortedLive/ranks but still counts them for leaderPos", () => {
+    const done = runner({ horseId: "done", position: 1600, velocity: 0, finishTime: 95.5 });
+    const live = runner({ horseId: "live", position: 800, velocity: 16 });
+    const field = buildFieldContext([done, live]);
+    expect(field.liveCount).toBe(1);
+    expect(field.sortedLive.map((r) => r.horseId)).toEqual(["live"]);
+    expect(field.liveRank.has("done")).toBe(false);
+    expect(field.velocityRank.has("done")).toBe(false);
+    expect(field.leaderPos).toBe(1600);
+  });
+
+  it("reports zero meanVelocity and fastestVelocity when no live runner is moving", () => {
+    const stopped = runner({ horseId: "s1", position: 400, velocity: 0 });
+    const done = runner({ horseId: "s2", position: 1600, velocity: 9, finishTime: 96 });
+    const field = buildFieldContext([stopped, done]);
+    expect(field.meanVelocity).toBe(0);
+    expect(field.fastestVelocity).toBe(0);
+    expect(field.velocityRank.size).toBe(0);
+  });
+
+  it("ranks velocityRank descending and breaks ties by horseId ascending", () => {
+    const a = runner({ horseId: "a", velocity: 17, position: 500 });
+    const b = runner({ horseId: "b", velocity: 17, position: 600 });
+    const c = runner({ horseId: "c", velocity: 19, position: 400 });
+    const field = buildFieldContext([a, b, c]);
+    expect(field.velocityRank.get("c")).toBe(1);
+    expect(field.velocityRank.get("a")).toBe(2);
+    expect(field.velocityRank.get("b")).toBe(3);
+  });
+
+  it("does not mutate the input array order", () => {
+    const input = [
+      runner({ horseId: "z", position: 900, velocity: 18 }),
+      runner({ horseId: "a", position: 100, velocity: 10 }),
+    ];
+    buildFieldContext(input);
+    expect(input.map((r) => r.horseId)).toEqual(["z", "a"]);
+  });
+
+  it("uses leaderPos as the maximum position across all runners", () => {
+    const field = buildFieldContext([
+      runner({ horseId: "l", position: 1200, velocity: 15 }),
+      runner({ horseId: "t", position: 500, velocity: 16 }),
+    ]);
+    expect(field.leaderPos).toBe(1200);
+  });
+});

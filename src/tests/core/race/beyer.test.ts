@@ -163,6 +163,14 @@ describe("beyer.ts", () => {
       expect(detectPatternJump(horse, 110)).toEqual({ jumped: true, margin: 20 }); // jump over avg is 20, jump over best is 10. Max is 20.
     });
 
+    it("does not count best-jump when history is below PATTERN_JUMP_MIN_HISTORY", () => {
+      const horse = createTestHorse();
+      // Single entry: below MIN_HISTORY (2). avg=80, avg-threshold=95, best-threshold=90.
+      // 90 clears best+10 but not avg+15 -> must NOT jump.
+      horse.raceHistory = [{ beyer: 80 }] as any;
+      expect(detectPatternJump(horse, 90)).toEqual({ jumped: false, margin: 0 });
+    });
+
     it("ignores history without beyer values", () => {
       const horse = createTestHorse();
       horse.raceHistory = [{ beyer: undefined }, { beyer: undefined }] as any;

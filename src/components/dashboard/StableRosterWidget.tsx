@@ -41,6 +41,7 @@ export function StableRosterWidget() {
                 <Button
                   size="icon"
                   variant="ghost"
+                  aria-label="Go to Stable & Roster"
                   className="h-8 w-8 text-cream-muted hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"
                 >
                   <ChevronRight className="h-4 w-4" />

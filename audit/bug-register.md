@@ -337,3 +337,73 @@ All 33 V1-era entries verified against `main` @ `5d3dd0e0`. **Suite is green (9,
 | MEDIUM | 0 |
 | LOW | 4 (V3-002/003/004 + BUG-018 rename, BUG-026 latent) |
 | Prior register | 31 FIXED, 2 open (downgraded) |
+
+---
+
+# V4 Reverification (2026-10-06, Devin)
+
+Base `main` @ `93e3cd45`. Suite on clean main: 9,198 pass / 2 fail / 1 skip. Lint: 99 errors. The 2 failing tests and lint were NEW post-V3 breakage (78 commits since `5d3dd0e0`).
+
+## New V4 findings
+
+### BUG-V4-001: `main` lint gate red — 99 errors — CONFIRMED & FIXED
+
+- **Severity:** HIGH (gate broken on main)
+- **Description:** ~86 prettier errors + 4 `components→@/core` layering errors + ~9 JSDoc errors across post-V3 files.
+- **Fix:** eslint --fix for formatting; repointed `ScoutingInsightsPanel` (`buildRealCareerInsightRow`→horseFacade), `RivalCareerCompareTable`/`RivalCareerMilestoneTimeline` (rivalCareerCompare→npcFacade, dateFormatting→calendarFacade), `npc-stables.rival-careers.tsx` (ownership/horseFactory→horseFacade, careerMilestones/rivalCareerCompare→npcFacade; `isNotableRival` added to npcFacade); real JSDoc added to `trackLedger.ts`, `raceSuitabilityScorers.ts`, `schedulerPhase.ts`, `auctionHouseService.ts`, `importedRealWorldService.ts`. **Verdict: FIXED** (lint 0 errors).
+
+### BUG-V4-002: `importedRealWorld.ts` in `@/data` violates dataImmutability — CONFIRMED & FIXED
+
+- **Severity:** HIGH (architecture invariant broken, 1 test failure)
+- **Description:** `src/data/importedRealWorld.ts` contained `let` module state, `localStorage`, `new Date` — @/data must be immutable/side-effect-free.
+- **Fix:** Moved to `src/services/storage/importedRealWorldService.ts` (it is a storage-backed service); 4 component importers repointed; 14-test characterization file `tests/services/importedRealWorld.test.ts` landed BEFORE the move. **Verdict: FIXED** (dataImmutability test green).
+
+### BUG-V4-003: 3 new routes missing from naming baseline — CONFIRMED & FIXED
+
+- **Severity:** LOW (1 test failure)
+- **Files:** `routes/npc-stables.rival-careers.tsx`, `race-advisor.tsx`, `track-history.tsx` — kebab-case is correct for route URLs; they were simply not in `naming-violations.baseline.json`.
+- **Fix:** `bun run scripts/generate-naming-baseline.ts`. **Verdict: FIXED** (namingConventions test green).
+
+### FINDING-V4-004: `as never` structural casts — CONFIRMED (deferred to triage)
+
+- **Severity:** LOW (type-safety bypass, no runtime bug found)
+- **Sites:** `core/time/phases/auctions.ts:133` (PR #499 target), `data/pedigreeAccessor.ts:45,47,49`, `data/tracksAccessor.ts:41`, `market/marketRefresh.ts:63`, `race/raceSimulationService.ts:97,99,108,110` (`tier as never`), `game/store/slices/weatherSlice.ts:44`.
+- **Disposition:** `auctions.ts` covered by Anvil #499 (evaluate in triage). The `tier as never` pattern hides potential union drift — flagged for verdict doc.
+- **Note:** `newsGenerator.ts:269` grep hit is a false positive (the word "never" inside a template string).
+
+### FINDING-V4-005: native `confirm()`/`alert()` fully eliminated — CONFIRMED CLEAN
+
+Zero hits in production `src/` — the V3 sweep held.
+
+### FINDING-V4-006: remaining `title=` grep hits are false positives — CONFIRMED
+
+All sampled hits are `title=` **props on custom components** (KPI cards etc.), not native HTML title attributes. V3's Hint migration holds.
+
+### Phase-1 delta notes (78 commits since V3)
+
+- `trackLedger.ts` (new, 348 lines): clean, pure derivations, well-tested (`trackLedger.test.ts` 193 lines).
+- `raceAdvisor.ts` (new, 231 lines): deterministic rule-based advisor; sound.
+- `rivalCareerCompare.ts` (new): pure; milestone-day fallbacks reasonable.
+- `schedulerPhase.ts` +64 (`runDailyAutoEntry`): **verified safe** — `calculateAutoRegisterEntries` internally filters `ownership.type === "player"`; no BUG-002 regression.
+- `npcBankruptcy.ts` clone-on-write fix (V3) confirmed present.
+- `engine.ts`: BUG-011 fix confirmed — AI bid branch now applies `housePrestigeMultiplier`.
+- `insightDetectors.ts`/`insightMetrics.ts` additions: clean; `detectEarningsMilestone` registered.
+- Stale `routeTree.gen.ts` produces phantom `FileRoutesByPath` type errors — environmental gotcha; regenerate via `bun run build` before trusting typecheck output.
+
+### BUG-V4-007: Gender-restricted award categories ignored gender — CONFIRMED & FIXED
+
+- **Severity:** MEDIUM (wrong award winners)
+- **Description:** `potrillo_del_ano` (2YO colt), `potranca_del_ano` (2YO filly), `champion_sprint_male`, `champion_sprint_female` were gender-labeled but `isCategoryEligible` in `src/core/awards/scoring.ts` only checked age/distance — fillies could win colt awards. Surfaced by Probe #503's bug-documentation test (flipped to assert correct behavior) + expanded to the sprint pair during review.
+- **Fix:** Added `SIRE_GENDERS`/`DAM_GENDERS` checks matching sibling categories (`campeon_3yo_macho`, `champion_2yo_colt`, etc.). Test-first: 2 FAIL-EXPECTED assertions flipped green. **Verdict: FIXED.**
+
+### FINDING-V4-004 update: all production `as never` casts removed
+
+- `auctions.ts` via Anvil #499; `raceSimulationService.ts` + `marketRefresh.ts` via precise tier unions; `pedigreeAccessor.ts` (casts were noise — same Rng type; `era` param properly typed); `tracksAccessor.ts`/`dataPorts.ts`/`tracks.ts` (`Pick<Race,...>`); `weatherSlice.ts` (vestigial double-cast removed); `NpcStableTradingTab.tsx` (`asOwnerKey` via commonFacade). Test-file `as never` fixtures remain — accepted convention. **Verdict: FIXED.**
+
+## V4 verdict summary update
+
+| Severity | Count |
+|---|---|
+| HIGH | 2 FIXED (V4-001 lint, V4-002 data-immutability) |
+| MEDIUM | 1 FIXED (V4-007 award gender) |
+| LOW | 1 FIXED (V4-004 as-never), V4-003 FIXED (naming baseline) |

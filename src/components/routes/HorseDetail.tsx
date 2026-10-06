@@ -1,6 +1,6 @@
 import { Link, notFound, useParams, useRouter } from "@tanstack/react-router";
 import { type ComponentType, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -166,7 +166,10 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => detail.retireToStud(horse.id)}>
+                      <AlertDialogAction
+                        className={buttonVariants({ variant: "destructive" })}
+                        onClick={() => detail.retireToStud(horse.id)}
+                      >
                         Retire to Stud
                       </AlertDialogAction>
                     </AlertDialogFooter>
