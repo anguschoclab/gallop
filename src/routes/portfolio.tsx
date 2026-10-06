@@ -27,6 +27,9 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useCompareStables, MAX_COMPARE } from "@/hooks/stable/useCompareStables";
+
+const PAGE_SIZE = 10;
 
 const SORT_KEYS = [
   "name",
@@ -50,6 +53,7 @@ export const Route = createFileRoute("/portfolio")({
     sort: z.enum(SORT_KEYS).optional(),
     dir: z.enum(["asc", "desc"]).optional(),
     tab: z.enum(["holdings", "bidding", "wins", "syndicates"]).optional(),
+    page: z.number().int().optional(),
   }),
   head: () => ({
     meta: [
@@ -79,6 +83,8 @@ function PortfolioPage() {
   const prestige = search.prestige ?? "all";
   const sortKey: PortfolioSortKey = search.sort ?? "netWorth";
   const sortDir = search.dir ?? "desc";
+  const page = Math.max(1, search.page ?? 1);
+  const compare = useCompareStables();
 
   const horses = useGameWithShallow((s: GameState) => s.horses);
   const npcStables = useGameWithShallow((s: GameState) => s.npcStables ?? []);
@@ -137,11 +143,21 @@ function PortfolioPage() {
     () => sortPortfolios(filtered, sortKey, sortDir),
     [filtered, sortKey, sortDir],
   );
+  const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount);
+  const paged = useMemo(
+    () => sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE),
+    [sorted, safePage],
+  );
   const totals = useMemo(() => portfolioTotals(filtered), [filtered]);
   const playerRow = rows.find((r) => r.isPlayer);
   const playerRank = playerRow
     ? sortPortfolios(rows, "netWorth", "desc").findIndex((r) => r.isPlayer) + 1
     : 0;
+
+  const pageNpcIds = paged.filter((r) => !r.isPlayer).map((r) => r.id);
+  const pageSelectedCount = pageNpcIds.filter((id) => compare.ids.includes(id)).length;
+  const allPageSelected = pageSelectedCount > 0;
 
   function setSearch(patch: Record<string, unknown>) {
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) });
@@ -149,9 +165,18 @@ function PortfolioPage() {
 
   function handleSort(key: PortfolioSortKey) {
     if (key === sortKey) {
-      setSearch({ dir: sortDir === "desc" ? "asc" : "desc" });
+      setSearch({ dir: sortDir === "desc" ? "asc" : "desc", page: 1 });
     } else {
-      setSearch({ sort: key, dir: key === "name" ? "asc" : "desc" });
+      setSearch({ sort: key, dir: key === "name" ? "asc" : "desc", page: 1 });
+    }
+  }
+
+  function toggleSelectPage() {
+    if (pageSelectedCount > 0) {
+      for (const id of pageNpcIds) compare.remove(id);
+    } else {
+      const slots = MAX_COMPARE - compare.ids.length;
+      for (const id of pageNpcIds.slice(0, Math.max(0, slots))) compare.add(id);
     }
   }
 
@@ -222,7 +247,7 @@ function PortfolioPage() {
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream-muted" />
                 <Input
                   value={q}
-                  onChange={(e) => setSearch({ q: e.target.value })}
+                  onChange={(e) => setSearch({ q: e.target.value, page: 1 })}
                   placeholder="Search stable or owner"
                   aria-label="Search stables"
                   className="pl-8"
@@ -232,14 +257,66 @@ function PortfolioPage() {
                 label="Tier"
                 options={TIERS.map((t) => ({ value: t, label: t }))}
                 value={tier}
-                onChange={(v) => setSearch({ tier: v })}
+                onChange={(v) => setSearch({ tier: v, page: 1 })}
               />
               <PillToggleGroup
                 label="Prestige"
                 options={PRESTIGE_FILTERS.map((p) => ({ value: p, label: p }))}
                 value={prestige}
-                onChange={(v) => setSearch({ prestige: v })}
+                onChange={(v) => setSearch({ prestige: v, page: 1 })}
               />
+              <PillToggleGroup
+                label="Sort"
+                options={[
+                  { value: "netWorth", label: "Net Worth" },
+                  { value: "syndicateValue", label: "Syndicate Stakes" },
+                  { value: "cash", label: "Cash" },
+                  { value: "prestige", label: "Prestige" },
+                ]}
+                value={sortKey}
+                onChange={(v) => handleSort(v as PortfolioSortKey)}
+                ariaLabel="Quick sort"
+              />
+            </CardContent>
+          </Card>
+
+          <Card className="border-white/5 bg-slate-900/40">
+            <CardContent className="p-3 flex flex-wrap items-center gap-3">
+              <label className="flex items-center gap-2 text-xs text-cream cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={allPageSelected}
+                  onChange={toggleSelectPage}
+                  aria-label="Select all stables on this page"
+                  className="h-3.5 w-3.5 rounded border-border accent-primary"
+                />
+                Select page
+              </label>
+              <span className="text-xs text-cream-muted" aria-live="polite">
+                {compare.ids.length}/{MAX_COMPARE} selected for comparison
+              </span>
+              <div className="ml-auto flex items-center gap-2">
+                {compare.ids.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => compare.clear()}
+                    className="text-cream-muted"
+                  >
+                    Clear
+                  </Button>
+                )}
+                <Link to="/npc-stables/compare">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={compare.ids.length === 0}
+                    className="border-white/10 text-cream"
+                  >
+                    Compare selected
+                  </Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
 
@@ -282,7 +359,37 @@ function PortfolioPage() {
             </CardContent>
           </Card>
 
-          <PortfolioTable rows={sorted} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+          <PortfolioTable rows={paged} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs text-cream-muted" aria-live="polite">
+              Showing {(safePage - 1) * PAGE_SIZE + 1}–
+              {Math.min(safePage * PAGE_SIZE, sorted.length)} of {sorted.length} stables
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={safePage <= 1}
+                onClick={() => setSearch({ page: safePage - 1 })}
+                className="border-white/10 text-cream"
+              >
+                Previous
+              </Button>
+              <span className="text-xs tabular-nums text-cream-muted">
+                Page {safePage} of {pageCount}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={safePage >= pageCount}
+                onClick={() => setSearch({ page: safePage + 1 })}
+                className="border-white/10 text-cream"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
         </TabsContent>
         <TabsContent value="syndicates" className="mt-4">
           <SyndicateStakesPage />

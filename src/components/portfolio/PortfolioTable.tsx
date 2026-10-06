@@ -1,5 +1,6 @@
 import { Fragment, useState } from "react";
 import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Crown, Home } from "lucide-react";
+import { useCompareStables, MAX_COMPARE } from "@/hooks/stable/useCompareStables";
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -38,6 +39,7 @@ export function PortfolioTable({
   onSort: (key: PortfolioSortKey) => void;
 }) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const compare = useCompareStables();
   if (rows.length === 0) {
     return (
       <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-cream-muted">
@@ -51,6 +53,7 @@ export function PortfolioTable({
       <Table>
         <TableHeader>
           <TableRow className="border-white/5">
+            <TableHead className="w-8" aria-label="Select for comparison" />
             <TableHead className="w-8" aria-label="Expand roster" />
             {COLUMNS.map((c) => (
               <TableHead
@@ -83,6 +86,20 @@ export function PortfolioTable({
           {rows.map((r) => (
             <Fragment key={r.id}>
               <TableRow className={`border-white/5 ${r.isPlayer ? "bg-primary/5" : ""}`}>
+                <TableCell className="w-8 align-top">
+                  {!r.isPlayer && (
+                    <input
+                      type="checkbox"
+                      checked={compare.ids.includes(r.id)}
+                      disabled={
+                        !compare.ids.includes(r.id) && compare.ids.length >= MAX_COMPARE
+                      }
+                      onChange={() => compare.toggle(r.id)}
+                      aria-label={`Select ${r.name} for comparison`}
+                      className="h-3.5 w-3.5 rounded border-border accent-primary"
+                    />
+                  )}
+                </TableCell>
                 <TableCell className="w-8 align-top">
                   <button
                     type="button"
@@ -166,7 +183,7 @@ export function PortfolioTable({
               </TableRow>
               {expanded === r.id && (
                 <TableRow className="border-white/5 bg-slate-950/40">
-                  <TableCell colSpan={COLUMNS.length + 1} className="p-4">
+                  <TableCell colSpan={COLUMNS.length + 2} className="p-4">
                     <div className="mb-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
                       {r.yard ? `${r.yard.name} — ${r.yard.town}` : "Roster"}
                     </div>
