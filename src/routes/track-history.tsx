@@ -46,13 +46,17 @@ export const Route = createFileRoute("/track-history")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  validateSearch: (search: Record<string, unknown>): { track?: string } => ({
+    track: typeof search.track === "string" ? search.track : undefined,
+  }),
   component: TrackHistoryPage,
 });
 
 function TrackHistoryPage() {
   const ledger = useGameWithShallow((s) => s.trackLedger ?? EMPTY_LEDGER) as TrackLedgerEntry[];
   const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState<string | null>(null);
+  const { track } = Route.useSearch();
+  const [selected, setSelected] = useState<string | null>(track ?? null);
   const [fromDay, setFromDay] = useState("");
   const [toDay, setToDay] = useState("");
   const [raceType, setRaceType] = useState("all");

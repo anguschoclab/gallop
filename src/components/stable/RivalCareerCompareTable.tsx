@@ -119,7 +119,7 @@ export function RivalCareerCompareTable({ profiles, stableNames }: RivalCareerCo
             <td className={ROW_LABEL_CLASS}>Milestones</td>
             {profiles.map((p) => (
               <td key={p.id} className={`${CELL_CLASS} text-left`}>
-                <RivalCareerMilestoneTimeline milestones={p.milestones} />
+                <RivalCareerMilestoneTimeline milestones={p.milestones} horseId={p.id} />
               </td>
             ))}
           </tr>
