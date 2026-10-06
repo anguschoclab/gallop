@@ -86,11 +86,11 @@ Union-merge rule for directiveNewsGenerator: dedupe near-identical strings (e.g.
 |---|---|---|
 | #455 palette-aria-labels-52116 | aria-label on 3 icon-only nav buttons (CircuitWidget, HQOpsWidget, StableRosterWidget) | **APPROVE** — clean, minimal, correct |
 | #500 palette-icon-button-tooltips-12865 | tooltips on PriceAlertsPanel delete, StableCompareBar clear, StewardsDigestToast dismiss | **APPROVE — canonical** — canonical Tooltip pattern (`TooltipProvider`/`asChild`), **preserves aria-labels** |
-| #470 palette-add-tooltips-16026 | widest coverage: 11 component files | **APPROVE-EXTRACT** — extract per-file tooltip hunks for files #500 doesn't cover (HorseBenchmarkDialog, TrackLedger×2, ScoutingInsightsPanel, WorldRankingsPanel, GameplaySettingsCard, RivalCareer×2); discard stray payload |
-| #487 palette-icon-tooltips-86709 | 9 component files | **APPROVE-EXTRACT** — union with #470 per-file; dedupe identical hunks |
-| #458 palette-tooltip-stablecomparebar-42539 | 5 component files | DISAPPROVE-DUPLICATE — subset of #470/#487 coverage; identical hunks |
+| #470 palette-add-tooltips-16026 | 3 tooltip files + 17 stray | DISAPPROVE — identical tooltip scope to #500 (verified: all other component diffs are prettier/lint stray payload, zero Tooltip adds); contaminated |
+| #487 palette-icon-tooltips-86709 | same 3 files + stray | DISAPPROVE — identical duplicate; contaminated |
+| #458 palette-tooltip-stablecomparebar-42539 | StableCompareBar only + stray | DISAPPROVE — subset duplicate; contaminated |
 
-All Palette variants preserve `aria-label` alongside tooltips (verified per-hunk). Union target = 11 component files.
+Correction from initial file-list triage: counting only `+Tooltip` lines reveals all four tooltip PRs cover the identical 3 files — the apparent broader coverage was stray lint payload. All variants preserve `aria-label` alongside tooltips (verified per-hunk).
 
 ### Groom cluster (3 PRs)
 
@@ -134,14 +134,12 @@ All Palette variants preserve `aria-label` alongside tooltips (verified per-hunk
 
 | Verdict | Count | PRs |
 |---|---|---|
-| APPROVE (canonical/clean) | 15 | #452, #455, #462, #463, #467, #469, #474, #482, #489, #490, #493, #494, #499, #500, #501, #505 |
+| APPROVE (canonical/clean) | 18 | #452, #454, #455, #462, #463, #467, #469, #472, #474, #482, #489, #490, #493, #494, #499, #500, #501, #505 |
 | APPROVE-UNION (Herald content merge) | 6 | #460, #466, #471, #478, #492, #506 |
-| APPROVE-EXTRACT (hunks from contaminated PRs) | 8 | #454*, #456, #457, #470, #475, #476, #487, #498, #503 |
-| DISAPPROVE — equivalent duplicate | 13 | #451, #453, #461, #458, #479, #481, #484, #486, #488, #491, #496, #502, #504 |
-| DISAPPROVE — contaminated (payload superseded/identical) | 11 | #459, #464, #468, #477, #480, #483, #485*, #497, #507, #508 |
+| APPROVE-EXTRACT (hunks from contaminated PRs) | 7 | #456, #457, #475, #476, #485, #498, #503 |
+| DISAPPROVE — equivalent duplicate | 15 | #451, #453, #458, #461, #470, #479, #481, #484, #486, #487, #488, #491, #496, #502, #504 |
+| DISAPPROVE — contaminated (payload superseded/identical) | 9 | #459, #464, #468, #477, #480, #483, #497, #507, #508 |
 | DISAPPROVE — empty/mislabeled payload | 3 | #465, #495, #509 |
 | DISAPPROVE — regression | 1 | #473 |
 
-\* #454 is clean (APPROVE); #485 is contaminated but its directiveNews hunks join the union (APPROVE-EXTRACT).
-
-**Integration manifest** (Phase 4 order): Bolt #463 + #474 → Mason #472 → Herald union (#460/466/471/478/485/492/506 + #498 + #454 + #501) → Palette (#455 + #500 + #470/#487 union) → Groom (#505 + #456) → Probe tests → Tipster (#489 + #476) → Anvil (#493 + #499). All stray payload excluded; every hunk mapped to a Phase-3 test gate.
+**Integration manifest** (Phase 4 order): Bolt #463 + #474 → Mason #472 → Herald union (#460/466/471/478/485/492/506 + #498 + #454 + #501) → Palette (#455 + #500) → Groom (#505 + #456) → Probe tests → Tipster (#489 + #476) → Anvil (#493 + #499). All stray payload excluded; every hunk mapped to a Phase-3 test gate.
