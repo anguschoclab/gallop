@@ -26,6 +26,7 @@ import { HorseIdentitySection } from "@/components/horse/HorseIdentitySection";
 import { HorseConditionSection } from "@/components/horse/HorseConditionSection";
 import { HorseAnalyticsSection } from "@/components/horse/HorseAnalyticsSection";
 import { RunningStyleBreakdown } from "@/components/horse/RunningStyleBreakdown";
+import { HorseDailyProgress } from "@/components/horse/HorseDailyProgress";
 import { HorseManagementSection } from "@/components/horse/HorseManagementSection";
 import { HorseLineageSection } from "@/components/horse/HorseLineageSection";
 import { BreedingTimeline } from "@/components/breeding/BreedingTimeline";
@@ -245,6 +246,8 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
             </section>
 
             <HorseAnalyticsSection horse={horse} peakingMultiplier={peakingMultiplier} />
+
+            <HorseDailyProgress horseId={horse.id} />
 
             <RunningStyleBreakdown horse={horse} />
 
