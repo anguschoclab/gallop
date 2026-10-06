@@ -124,7 +124,9 @@ export function getCourseSpec(
  * @param race - Race object
  * @returns Course specification or undefined if not found
  */
-export function getCourseForRace(race: Race): CourseSpecification | undefined {
+export function getCourseForRace(
+  race: Pick<Race, "trackId" | "graded" | "surface">,
+): CourseSpecification | undefined {
   const trackId = race.trackId || race.graded?.trackId;
   const surface = race.surface || race.graded?.surface;
   if (!trackId || !surface) return undefined;

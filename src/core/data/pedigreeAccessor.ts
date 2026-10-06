@@ -40,13 +40,13 @@ export const pedigreeAccessors = {
   sireByName: (horseName: string): string | undefined => dataGetSireByName(horseName),
   damByName: (horseName: string): string | undefined => dataGetDamByName(horseName),
   randomHorseFromEra: (
-    era: string,
+    era: PedigreeHorse["era"],
     rng?: import("@/core/common/rng").Rng,
-  ): PedigreeHorse | undefined => dataGetRandomHorseFromEra(era as never, rng as never),
+  ): PedigreeHorse | undefined => dataGetRandomHorseFromEra(era, rng),
   randomSire: (rng?: import("@/core/common/rng").Rng): PedigreeHorse | undefined =>
-    dataGetRandomSire(rng as never),
+    dataGetRandomSire(rng),
   randomDam: (rng?: import("@/core/common/rng").Rng): PedigreeHorse | undefined =>
-    dataGetRandomDam(rng as never),
+    dataGetRandomDam(rng),
   stallionResearch: (name: string): StallionResearchData | undefined =>
     getStallionResearchData(name),
   stallionResearchComplete: (data: StallionResearchData): boolean => hasCompleteData(data),

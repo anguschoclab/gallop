@@ -26,6 +26,7 @@ import {
   getCourseForRace,
 } from "@/data/tracks";
 import type { Track, CourseSpecification, TrackSchedule, TrackSection } from "@/data/tracks";
+import type { Race } from "@/game/types";
 
 export type { Track, CourseSpecification, TrackSchedule, TrackSection };
 
@@ -37,8 +38,8 @@ export const trackAccessors = {
   countryByTrackName: (name: string): string => getCountryByTrackName(name),
   courseSpec: (trackId: string, surface: "Turf" | "Dirt" | "Synthetic") =>
     getCourseSpec(trackId, surface),
-  courseForRace: (race: { trackId?: string; graded?: { trackId?: string }; surface?: string }) =>
-    getCourseForRace(race as never),
+  courseForRace: (race: Pick<Race, "trackId" | "graded" | "surface">) =>
+    getCourseForRace(race),
   schedules: (): typeof TRACK_SCHEDULES => TRACK_SCHEDULES,
   trackByMap: TRACK_BY_NAME,
   trackByIdMap: TRACK_BY_ID,

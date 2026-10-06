@@ -22,11 +22,9 @@ import type { PedigreeHorse, StallionResearchData } from "./pedigreeAccessor";
 export interface TrackLookupPorts {
   byId: (id: string) => Track | undefined;
   byName: (name: string) => Track | undefined;
-  courseForRace: (race: {
-    trackId?: string;
-    graded?: { trackId?: string };
-    surface?: string;
-  }) => CourseSpecification | undefined;
+  courseForRace: (
+    race: Pick<import("@/game/types").Race, "trackId" | "graded" | "surface">,
+  ) => CourseSpecification | undefined;
 }
 
 /** Optional override for graded race lookups. */

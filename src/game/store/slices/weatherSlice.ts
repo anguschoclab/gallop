@@ -41,6 +41,6 @@ export const createWeatherSlice: GameStateCreator<WeatherSlice> = (set, get) => 
   getForecast: (trackId) => get().weather?.forecast?.[trackId] ?? [],
 
   resetWeather: () => {
-    set({ weather: { byTrack: {}, forecast: {} } } as Partial<unknown> as never);
+    set({ weather: { byTrack: {}, forecast: {} } });
   },
 });
