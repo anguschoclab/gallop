@@ -63,3 +63,30 @@ describe("generateDirectiveChangeNews", () => {
     expect(result).toBeNull();
   });
 });
+
+describe("template integrity (post-variety-merge)", () => {
+  const stable = { id: "sX", name: "Union Test Stable", personality: "conservative" } as any;
+
+  it("leaves no unsubstituted placeholders in headline or body", () => {
+    for (let day = 1; day <= 40; day++) {
+      const result = generateDirectiveChangeNews(
+        stable,
+        [{ type: "racing_focus", priority: 1, weight: 1.0 }],
+        [{ type: "financial_distress", priority: 1, weight: 1.0 }],
+        day,
+      );
+      expect(result).not.toBeNull();
+      expect(result!.headline).not.toMatch(/\{|\}/);
+      expect(result!.body).not.toMatch(/\{|\}/);
+      const normal = generateDirectiveChangeNews(
+        stable,
+        [{ type: "racing_focus", priority: 1, weight: 1.0 }],
+        [{ type: "breeding_expansion", priority: 1, weight: 1.0 }],
+        day,
+      );
+      expect(normal).not.toBeNull();
+      expect(normal!.headline).not.toMatch(/\{|\}/);
+      expect(normal!.body).not.toMatch(/\{|\}/);
+    }
+  });
+});
