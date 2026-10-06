@@ -27,6 +27,9 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useCompareStables, MAX_COMPARE } from "@/hooks/stable/useCompareStables";
+
+const PAGE_SIZE = 10;
 
 const SORT_KEYS = [
   "name",
@@ -50,6 +53,7 @@ export const Route = createFileRoute("/portfolio")({
     sort: z.enum(SORT_KEYS).optional(),
     dir: z.enum(["asc", "desc"]).optional(),
     tab: z.enum(["holdings", "bidding", "wins", "syndicates"]).optional(),
+    page: z.number().int().optional(),
   }),
   head: () => ({
     meta: [
