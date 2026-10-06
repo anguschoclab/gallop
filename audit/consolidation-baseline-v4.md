@@ -30,3 +30,15 @@ Pre-existing breakage on `main` — not introduced by consolidation:
 ## Delta since V3
 
 `git diff 5d3dd0e0..main --stat` — 78 commits. Notable new routes requiring review: `race-advisor.tsx`, `track-history.tsx`, `npc-stables.rival-careers.tsx`, `financial-report`, `almanac`, `honors`, `bookmarks`, `calendar._regionId`.
+
+## Final gate results (post-integration, `consolidation/integration-v4`)
+
+| Gate | Result |
+|---|---|
+| `bun run typecheck:errors` | **0 errors, 0 warnings** |
+| `bun run lint` | **0 errors** (99 baseline errors repaired) |
+| `bun run test` | **867 files / 9,284 pass / 1 skip / 0 fail** (vs 9,198/2fail baseline; +86 tests) |
+| `bun run build` | **PASS** — clean ~2.2s |
+| `bash scripts/verify.sh` | **PASS** — all gates green |
+| Perf spot-check (`buildFieldContext`) | **~3x faster** (0.20 → 0.07 µs/call), outputs byte-identical |
+| Tree hygiene | no `.jules/`, no `.tmp-herald/`, no conflict markers, no lockfile changes, `routeTree.gen.ts`/`tsc-results.txt` untracked |
