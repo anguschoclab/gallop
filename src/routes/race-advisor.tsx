@@ -208,8 +208,7 @@ function RaceAdvisorPage() {
               >
                 Save to journal
               </Button>
-              {isEntered ? null
-              ) : (
+              {isEntered ? null : (
                 <p className="text-sm text-muted-foreground">
                   Enter {horse.name} in this race to send the plan to the jockey.
                 </p>
