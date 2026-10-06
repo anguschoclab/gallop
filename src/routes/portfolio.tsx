@@ -358,7 +358,37 @@ function PortfolioPage() {
             </CardContent>
           </Card>
 
-          <PortfolioTable rows={sorted} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+          <PortfolioTable rows={paged} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-xs text-cream-muted" aria-live="polite">
+              Showing {(safePage - 1) * PAGE_SIZE + 1}–
+              {Math.min(safePage * PAGE_SIZE, sorted.length)} of {sorted.length} stables
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={safePage <= 1}
+                onClick={() => setSearch({ page: safePage - 1 })}
+                className="border-white/10 text-cream"
+              >
+                Previous
+              </Button>
+              <span className="text-xs tabular-nums text-cream-muted">
+                Page {safePage} of {pageCount}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={safePage >= pageCount}
+                onClick={() => setSearch({ page: safePage + 1 })}
+                className="border-white/10 text-cream"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
         </TabsContent>
         <TabsContent value="syndicates" className="mt-4">
           <SyndicateStakesPage />
