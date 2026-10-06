@@ -70,6 +70,8 @@ export interface SystemsState {
   /** Per-stable cash-pressure snapshot history (last 90 days) for trend UI */
   cashPressureHistory?: CashPressureHistory;
   /** Per-horse end-of-day snapshots of stats, form and price (player horses) */
+  /** Player-written race plans and reflections (Strategy Journal) */
+  strategyJournal?: import("@/core/tactics/strategyJournal").StrategyJournalEntry[];
   horseDailyProgress?: import("@/core/horse/dailyProgress").HorseDailyProgress;
 
   // Breeding programs system

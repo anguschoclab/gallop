@@ -179,6 +179,7 @@ const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   // Cash-pressure history snapshots (last 90 days per stable)
   "cashPressureHistory" as keyof GameState,
   "horseDailyProgress" as keyof GameState,
+  "strategyJournal" as keyof GameState,
   // Bloodstock exchange: open orders, trade tape and price history
   "exchange",
   // Player auction bidding history

@@ -15,6 +15,7 @@ import { useGame } from "@/game/store";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { adviseRace, adviceToInstructions } from "@/core/tactics/raceAdvisor";
 import type { Horse } from "@/game/types";
+import { addJournalEntry } from "@/core/tactics/strategyJournal";
 
 export const Route = createFileRoute("/race-advisor")({
   head: () => ({
@@ -182,7 +183,32 @@ function RaceAdvisorPage() {
                 >
                   Apply plan to this entry
                 </Button>
-              ) : (
+              ) : null}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  useGame.setState((s) => ({
+                    strategyJournal: addJournalEntry(s.strategyJournal, {
+                      createdDay: day,
+                      horseId: horse.id,
+                      horseName: horse.name,
+                      raceId: race.id,
+                      raceName: race.name,
+                      raceDay: race.day,
+                      ridingStyle: STYLE_LABEL[advice.ridingStyle],
+                      earlyPosition: POS_LABEL[advice.earlyPosition],
+                      moveTiming: MOVE_LABEL[advice.moveTiming],
+                      aggressiveness: advice.aggressiveness,
+                      confidence: advice.confidence,
+                      plan: advice.jockeyNotes,
+                    }),
+                  }));
+                  toast.success("Plan saved to your Strategy Journal.");
+                }}
+              >
+                Save to journal
+              </Button>
+              {isEntered ? null : (
                 <p className="text-sm text-muted-foreground">
                   Enter {horse.name} in this race to send the plan to the jockey.
                 </p>
