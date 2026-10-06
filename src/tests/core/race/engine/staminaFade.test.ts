@@ -205,4 +205,24 @@ describe("calculateStaminaMultiplier", () => {
       expect(savingResult).toBeGreaterThan(normalResult);
     });
   });
+
+  describe("jockey stamina bonus (stored by applyJockeyEffects)", () => {
+    it("applies a positive jockeyStaminaBonus to the multiplier", () => {
+      const runner = createMockRunner({ jockeyStaminaBonus: 0.02 });
+      const result = calculateStaminaMultiplier(runner, STAMINA_FADE_START - 0.1, 1200);
+      expect(result).toBeCloseTo(1.02);
+    });
+
+    it("applies a negative jockeyStaminaBonus (mismatch penalty) to the multiplier", () => {
+      const runner = createMockRunner({ jockeyStaminaBonus: -0.03 });
+      const result = calculateStaminaMultiplier(runner, STAMINA_FADE_START - 0.1, 1200);
+      expect(result).toBeCloseTo(0.97);
+    });
+
+    it("ignores a zero jockeyStaminaBonus", () => {
+      const runner = createMockRunner({ jockeyStaminaBonus: 0 });
+      const result = calculateStaminaMultiplier(runner, STAMINA_FADE_START - 0.1, 1200);
+      expect(result).toBe(1);
+    });
+  });
 });

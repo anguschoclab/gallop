@@ -230,16 +230,7 @@ export function stepRunner(
   r.velocity += Math.sign(diff) * Math.min(Math.abs(diff), rateLimit);
 
   // Apply jockey effects and get final distance step
-  const { finalDs, staminaMul: updatedStaminaMul } = applyJockeyEffects(
-    r,
-    progress,
-    radius,
-    arcFactor,
-    dt,
-    staminaMul,
-    fieldSize,
-  );
-  staminaMul = updatedStaminaMul;
+  const { finalDs } = applyJockeyEffects(r, progress, radius, arcFactor, dt, fieldSize);
 
   // Tactical AI Integration (Throttle to ~1Hz)
   if (Math.floor(t / 1.0) !== Math.floor((t - dt) / 1.0) && pace) {

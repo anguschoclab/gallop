@@ -86,10 +86,10 @@ export function calculateStaminaMultiplier(
     staminaMul *= EARLY_SPEED_STAMINA_PENALTY;
   }
 
-  // Apply jockey pacing stamina bonus (stored by applyJockeyEffects in the
-  // previous tick). This fixes a pre-existing bug where the bonus was computed
-  // but assigned to a local variable that was never used again.
-  if (r.jockeyStaminaBonus && r.jockeyStaminaBonus > 0) {
+  // Apply the jockey stamina effect stored by applyJockeyEffects last tick:
+  // a positive matched-archetype pacing bonus, or a negative
+  // front_runner-on-stalker mismatch penalty.
+  if (r.jockeyStaminaBonus) {
     staminaMul *= 1 + r.jockeyStaminaBonus;
   }
 

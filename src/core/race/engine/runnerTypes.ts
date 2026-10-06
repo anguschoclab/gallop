@@ -68,8 +68,9 @@ export type Runner = {
   /** Lateral escape distance sought (in lane-widths) when blocked but not boxed in.
    *  Set by calculateTargetLane, consumed by applyBlockingEffect to scale the escape penalty. */
   escapeLaneDelta?: number;
-  /** Jockey stamina bonus fraction (e.g., 0.02 for a 2% bonus). Set by
-   *  applyJockeyEffects when a matched-archetype pacing bonus applies.
+  /** Jockey stamina effect as a signed fraction (e.g., +0.02 for a 2% bonus,
+   *  -0.03 for a 3% penalty). Set by applyJockeyEffects for a matched-archetype
+   *  pacing bonus or a front_runner-on-stalker mismatch penalty.
    *  Consumed by calculateStaminaMultiplier in the next tick. */
   jockeyStaminaBonus?: number;
 };

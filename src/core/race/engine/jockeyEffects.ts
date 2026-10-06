@@ -40,11 +40,9 @@ export function applyJockeyEffects(
   radius: number,
   arcFactor: number,
   dt: number,
-  staminaMul: number,
   fieldSize?: number,
-): { finalDs: number; staminaMul: number } {
+): { finalDs: number } {
   let finalDs = r.velocity * dt;
-  let updatedStaminaMul = staminaMul;
 
   if (r.jockey) {
     const stats = r.jockey.stats;
@@ -80,11 +78,8 @@ export function applyJockeyEffects(
       (arch === "finisher" && r.runningStyle === "P");
 
     if (isMatched && progress > MATCHED_ARCHETYPE_PROGRESS_THRESHOLD) {
-      const pacingBonus = (stats.pacing / 100) * PACING_STAMINA_BONUS_FACTOR;
-      updatedStaminaMul *= 1 + pacingBonus;
-      // Store on runner so calculateStaminaMultiplier can apply it next tick.
-      // Previously this bonus was computed but lost (local variable never reused).
-      r.jockeyStaminaBonus = pacingBonus;
+      // Store on runner so calculateStaminaMultiplier applies it next tick.
+      r.jockeyStaminaBonus = (stats.pacing / 100) * PACING_STAMINA_BONUS_FACTOR;
     } else {
       r.jockeyStaminaBonus = 0;
     }
@@ -95,7 +90,9 @@ export function applyJockeyEffects(
       progress < MATCHED_ARCHETYPE_PROGRESS_THRESHOLD
     ) {
       r.velocity += FRONT_RUNNER_STALKER_MISMATCH_VELOCITY_BONUS * dt;
-      updatedStaminaMul *= FRONT_RUNNER_STALKER_MISMATCH_STAMINA_PENALTY;
+      // Store the penalty as a negative bonus fraction (PENALTY - 1) so
+      // calculateStaminaMultiplier applies it next tick.
+      r.jockeyStaminaBonus = FRONT_RUNNER_STALKER_MISMATCH_STAMINA_PENALTY - 1;
     }
 
     if (progress > VIGOR_PROGRESS_THRESHOLD) {
@@ -122,7 +119,7 @@ export function applyJockeyEffects(
     finalDs = (r.velocity * dt) / arcFactor;
   }
 
-  return { finalDs, staminaMul: updatedStaminaMul };
+  return { finalDs };
 }
 
 /**
