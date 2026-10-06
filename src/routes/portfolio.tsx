@@ -246,7 +246,7 @@ function PortfolioPage() {
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream-muted" />
                 <Input
                   value={q}
-                  onChange={(e) => setSearch({ q: e.target.value })}
+                  onChange={(e) => setSearch({ q: e.target.value, page: 1 })}
                   placeholder="Search stable or owner"
                   aria-label="Search stables"
                   className="pl-8"
@@ -256,14 +256,66 @@ function PortfolioPage() {
                 label="Tier"
                 options={TIERS.map((t) => ({ value: t, label: t }))}
                 value={tier}
-                onChange={(v) => setSearch({ tier: v })}
+                onChange={(v) => setSearch({ tier: v, page: 1 })}
               />
               <PillToggleGroup
                 label="Prestige"
                 options={PRESTIGE_FILTERS.map((p) => ({ value: p, label: p }))}
                 value={prestige}
-                onChange={(v) => setSearch({ prestige: v })}
+                onChange={(v) => setSearch({ prestige: v, page: 1 })}
               />
+              <PillToggleGroup
+                label="Sort"
+                options={[
+                  { value: "netWorth", label: "Net Worth" },
+                  { value: "syndicateValue", label: "Syndicate Stakes" },
+                  { value: "cash", label: "Cash" },
+                  { value: "prestige", label: "Prestige" },
+                ]}
+                value={sortKey}
+                onChange={(v) => handleSort(v as PortfolioSortKey)}
+                ariaLabel="Quick sort"
+              />
+            </CardContent>
+          </Card>
+
+          <Card className="border-white/5 bg-slate-900/40">
+            <CardContent className="p-3 flex flex-wrap items-center gap-3">
+              <label className="flex items-center gap-2 text-xs text-cream cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={allPageSelected}
+                  onChange={toggleSelectPage}
+                  aria-label="Select all stables on this page"
+                  className="h-3.5 w-3.5 rounded border-border accent-primary"
+                />
+                Select page
+              </label>
+              <span className="text-xs text-cream-muted" aria-live="polite">
+                {compare.ids.length}/{MAX_COMPARE} selected for comparison
+              </span>
+              <div className="ml-auto flex items-center gap-2">
+                {compare.ids.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => compare.clear()}
+                    className="text-cream-muted"
+                  >
+                    Clear
+                  </Button>
+                )}
+                <Link to="/npc-stables/compare">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={compare.ids.length === 0}
+                    className="border-white/10 text-cream"
+                  >
+                    Compare selected
+                  </Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
 
