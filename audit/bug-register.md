@@ -389,3 +389,21 @@ All sampled hits are `title=` **props on custom components** (KPI cards etc.), n
 - `engine.ts`: BUG-011 fix confirmed — AI bid branch now applies `housePrestigeMultiplier`.
 - `insightDetectors.ts`/`insightMetrics.ts` additions: clean; `detectEarningsMilestone` registered.
 - Stale `routeTree.gen.ts` produces phantom `FileRoutesByPath` type errors — environmental gotcha; regenerate via `bun run build` before trusting typecheck output.
+
+### BUG-V4-007: Gender-restricted award categories ignored gender — CONFIRMED & FIXED
+
+- **Severity:** MEDIUM (wrong award winners)
+- **Description:** `potrillo_del_ano` (2YO colt), `potranca_del_ano` (2YO filly), `champion_sprint_male`, `champion_sprint_female` were gender-labeled but `isCategoryEligible` in `src/core/awards/scoring.ts` only checked age/distance — fillies could win colt awards. Surfaced by Probe #503's bug-documentation test (flipped to assert correct behavior) + expanded to the sprint pair during review.
+- **Fix:** Added `SIRE_GENDERS`/`DAM_GENDERS` checks matching sibling categories (`campeon_3yo_macho`, `champion_2yo_colt`, etc.). Test-first: 2 FAIL-EXPECTED assertions flipped green. **Verdict: FIXED.**
+
+### FINDING-V4-004 update: all production `as never` casts removed
+
+- `auctions.ts` via Anvil #499; `raceSimulationService.ts` + `marketRefresh.ts` via precise tier unions; `pedigreeAccessor.ts` (casts were noise — same Rng type; `era` param properly typed); `tracksAccessor.ts`/`dataPorts.ts`/`tracks.ts` (`Pick<Race,...>`); `weatherSlice.ts` (vestigial double-cast removed); `NpcStableTradingTab.tsx` (`asOwnerKey` via commonFacade). Test-file `as never` fixtures remain — accepted convention. **Verdict: FIXED.**
+
+## V4 verdict summary update
+
+| Severity | Count |
+|---|---|
+| HIGH | 2 FIXED (V4-001 lint, V4-002 data-immutability) |
+| MEDIUM | 1 FIXED (V4-007 award gender) |
+| LOW | 1 FIXED (V4-004 as-never), V4-003 FIXED (naming baseline) |
