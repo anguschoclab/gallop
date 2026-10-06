@@ -87,6 +87,20 @@ export function PortfolioTable({
             <Fragment key={r.id}>
               <TableRow className={`border-white/5 ${r.isPlayer ? "bg-primary/5" : ""}`}>
                 <TableCell className="w-8 align-top">
+                  {!r.isPlayer && (
+                    <input
+                      type="checkbox"
+                      checked={compare.ids.includes(r.id)}
+                      disabled={
+                        !compare.ids.includes(r.id) && compare.ids.length >= MAX_COMPARE
+                      }
+                      onChange={() => compare.toggle(r.id)}
+                      aria-label={`Select ${r.name} for comparison`}
+                      className="h-3.5 w-3.5 rounded border-border accent-primary"
+                    />
+                  )}
+                </TableCell>
+                <TableCell className="w-8 align-top">
                   <button
                     type="button"
                     onClick={() => setExpanded(expanded === r.id ? null : r.id)}
