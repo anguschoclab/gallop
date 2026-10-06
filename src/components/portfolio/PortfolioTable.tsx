@@ -39,6 +39,7 @@ export function PortfolioTable({
   onSort: (key: PortfolioSortKey) => void;
 }) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const compare = useCompareStables();
   if (rows.length === 0) {
     return (
       <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-cream-muted">
@@ -52,6 +53,7 @@ export function PortfolioTable({
       <Table>
         <TableHeader>
           <TableRow className="border-white/5">
+            <TableHead className="w-8" aria-label="Select for comparison" />
             <TableHead className="w-8" aria-label="Expand roster" />
             {COLUMNS.map((c) => (
               <TableHead
