@@ -16,6 +16,8 @@ import { isPlayerOwned } from "@/core/horse/ownership";
 import { adviseRace, adviceToInstructions } from "@/core/tactics/raceAdvisor";
 import type { Horse } from "@/game/types";
 import { addJournalEntry } from "@/core/tactics/strategyJournal";
+import { goalProgress, goalRaceBonus } from "@/core/stable/stableGoals";
+import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/race-advisor")({
   head: () => ({
@@ -69,11 +71,24 @@ function RaceAdvisorPage() {
   const [raceId, setRaceId] = useState<string>("");
   const horse = horseId ? horses[horseId] : undefined;
 
+  const goals = useGame((s) => s.stableGoals);
+  const cash = useGame((s) => s.cash);
+  const progress = useMemo(
+    () => (goals ? goalProgress(goals, Object.values(horses), cash) : undefined),
+    [goals, horses, cash],
+  );
+  const bonusOf = (r: (typeof races)[string]) => goalRaceBonus(r, goals, progress);
   const upcoming = useMemo(() => {
     const list = Object.values(races).filter((r) => !r.resolved && !r.cancelled && r.day >= day);
     const entered = horse ? list.filter((r) => r.entries.some((e) => e.horseId === horse.id)) : [];
-    return (entered.length ? entered : list).sort((a, b) => a.day - b.day).slice(0, 60);
-  }, [races, day, horse]);
+    const pool = entered.length ? entered : list;
+    // Goal races first (highest goal bonus), then by date.
+    return pool
+      .map((r) => ({ r, b: goalRaceBonus(r, goals, progress).bonus }))
+      .sort((a, b) => b.b - a.b || a.r.day - b.r.day)
+      .slice(0, 60)
+      .map((x) => x.r);
+  }, [races, day, horse, goals, progress]);
   const race = raceId ? races[raceId] : undefined;
   const isEntered = !!(race && horse && race.entries.some((e) => e.horseId === horse.id));
 
@@ -130,12 +145,35 @@ function RaceAdvisorPage() {
           <SelectContent>
             {upcoming.map((r) => (
               <SelectItem key={r.id} value={r.id}>
-                Day {r.day} · {r.name} · {r.distance}m{r.graded ? ` · ${r.graded.grade}` : ""}
+                {bonusOf(r).bonus > 0 ? "★ " : ""}Day {r.day} · {r.name} · {r.distance}m
+                {r.graded ? ` · ${r.graded.grade}` : ""}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
+
+      <p className="text-xs text-muted-foreground">
+        {goals
+          ? "★ marks races that serve your Stable Campaign goals; they're listed first."
+          : "Set goals on the "}
+        {!goals && (
+          <Link to="/stable-campaign" className="text-gold hover:underline">
+            Stable Campaign
+          </Link>
+        )}
+        {!goals && " page to have the advisor prioritise them."}
+      </p>
+      {race && bonusOf(race).reasons.length > 0 && (
+        <div className="rounded-md border border-gold/40 p-3 text-sm">
+          <div className="mb-1 text-xs uppercase text-gold">Campaign goal fit</div>
+          <ul className="list-disc pl-5">
+            {bonusOf(race).reasons.map((t) => (
+              <li key={t}>{t}</li>
+            ))}
+          </ul>
+        </div>
+      )}
 
       {myHorses.length === 0 && (
         <p className="text-cream-muted">You have no active racehorses yet.</p>
