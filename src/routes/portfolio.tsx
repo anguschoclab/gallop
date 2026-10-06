@@ -21,6 +21,7 @@ import { PortfolioTable } from "@/components/portfolio/PortfolioTable";
 import { BiddingHistoryTable } from "@/components/portfolio/BiddingHistoryTable";
 import { RaceWinsTable } from "@/components/portfolio/RaceWinsTable";
 import { RaceWinsDashboard } from "@/components/portfolio/RaceWinsDashboard";
+import { PeriodComparison } from "@/components/portfolio/PeriodComparison";
 import { SyndicateStakesPage } from "@/components/syndicates/SyndicateStakesPage";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
@@ -239,6 +240,7 @@ function PortfolioPage() {
           <TabsTrigger value="bidding">Bidding History</TabsTrigger>
           <TabsTrigger value="wins">Race Wins</TabsTrigger>
           <TabsTrigger value="wins-dashboard">Wins Dashboard</TabsTrigger>
+          <TabsTrigger value="compare-periods">Compare Periods</TabsTrigger>
         </TabsList>
         <TabsContent value="holdings" className="mt-4 space-y-4">
           <Card className="border-white/5 bg-slate-900/40">
@@ -402,6 +404,9 @@ function PortfolioPage() {
         </TabsContent>
         <TabsContent value="wins-dashboard" className="mt-4">
           <RaceWinsDashboard wins={raceWins} />
+        </TabsContent>
+        <TabsContent value="compare-periods" className="mt-4">
+          <PeriodComparison wins={raceWins} />
         </TabsContent>
       </Tabs>
     </div>
