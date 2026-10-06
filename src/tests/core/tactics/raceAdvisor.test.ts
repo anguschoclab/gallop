@@ -22,7 +22,7 @@ describe("raceAdvisor", () => {
       rival.runningStyle = "E";
     }
 
-    const race = generateRace({});
+    const race = generateRace(10);
     race.distance = 1600;
 
     const advice = adviseRace(horse, race, rivals);
@@ -46,7 +46,7 @@ describe("raceAdvisor", () => {
       rival.runningStyle = "S"; // Closer
     }
 
-    const race = generateRace({});
+    const race = generateRace(10);
     race.distance = 1600;
 
     const advice = adviseRace(horse, race, rivals);
@@ -75,7 +75,7 @@ describe("raceAdvisor", () => {
       rival.stats.acceleration = 90;
     }
 
-    const race = generateRace({});
+    const race = generateRace(10);
     race.distance = 1600;
 
     const advice = adviseRace(horse, race, rivals);
@@ -95,7 +95,7 @@ describe("raceAdvisor", () => {
     horse.stats.temperament = 40;
 
     const rivals = [ensurePhenotypeResolved(generateHorse({ tier: "mid", ownership: makeUnowned() }))];
-    const race = generateRace({ day: 20 });
+    const race = generateRace(20);
     race.distance = 2400; // Manually set to bypass raceGen bounds
     race.surface = "Turf";
 
@@ -123,7 +123,7 @@ describe("raceAdvisor", () => {
       rival.stats.acceleration = 30;
     }
 
-    const race = generateRace({});
+    const race = generateRace(10);
     race.distance = 1600;
 
     const advice = adviseRace(horse, race, rivals);
@@ -156,7 +156,7 @@ describe("raceAdvisor", () => {
       rival.stats.speed = 90;
       rival.stats.stamina = 90;
     }
-    const race = generateRace({});
+    const race = generateRace(10);
     race.distance = 1600;
 
     const advice = adviseRace(horse, race, rivals);
