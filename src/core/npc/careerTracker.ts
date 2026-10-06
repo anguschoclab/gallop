@@ -160,13 +160,11 @@ function careerStageAtDay(horse: Horse, day: number): NpcCareerStage {
 /** Build a dated career timeline from an NPC horse's off-screen starts and age transitions. */
 export function buildNpcCareerTimeline(horse: Horse, currentDay: number): NpcCareerTimelineEvent[] {
   const events: NpcCareerTimelineEvent[] = [];
-  const firstRelevantDay = horse.birthDay + CAREER_DEBUT_AGE * 365;
-  const finalDay = Math.max(firstRelevantDay, currentDay);
   let previousStage: NpcCareerStage = "unraced";
 
   for (let age = CAREER_DEBUT_AGE; age <= CAREER_MAX_AGE; age++) {
     const day = horse.birthDay + age * 365;
-    if (day > finalDay) break;
+    if (day > currentDay) break;
     const stage = careerStageAtDay(horse, day);
     if (stage !== previousStage) {
       events.push({ id: `stage-${stage}-${day}`, kind: "stage", day, age, stage });

@@ -3,11 +3,14 @@
  * Shows each horse's career stage, record, earnings and days since its last run,
  * including starts simulated off-screen by the career tracker.
  */
-import { useMemo } from "react";
+import { Fragment, useMemo, useState } from "react";
+import { ChevronDown } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ChartCard, MiniBar, chartColors, formatCurrencyCompact } from "@/components/charts";
 import { summarizeNpcCareer, careerStageLabel } from "@/services/npc/npcFacade";
+import { NpcHorseCareerTimeline } from "@/components/stable/NpcHorseCareerTimeline";
 import type { NpcCareerStage } from "@/services/horse/horseFacade";
 import type { Horse } from "@/game/types";
 import { cn } from "@/lib/cn";
@@ -47,6 +50,7 @@ function stageColor(stage: NpcCareerStage): string {
 }
 
 export function NpcCareerTrackerPanel({ horses, day }: NpcCareerTrackerPanelProps) {
+  const [expandedHorseId, setExpandedHorseId] = useState<string | null>(null);
   const rows = useMemo(
     () =>
       horses
@@ -128,12 +132,28 @@ export function NpcCareerTrackerPanel({ horses, day }: NpcCareerTrackerPanelProp
                   <th className="px-3 py-2 text-right">Wins</th>
                   <th className="px-3 py-2 text-right">Earnings</th>
                   <th className="px-4 py-2 text-right">Last Run</th>
+                  <th className="w-12 px-3 py-2">
+                    <span className="sr-only">Career timeline</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {rows.map(({ horse, career }) => (
-                  <tr key={horse.id} className="border-b border-white/5 last:border-0">
-                    <td className="px-4 py-2 font-semibold text-cream">{horse.name}</td>
+                {rows.map(({ horse, career }) => {
+                  const expanded = expandedHorseId === horse.id;
+                  return (
+                  <Fragment key={horse.id}>
+                  <tr className="border-b border-white/5 last:border-0">
+                    <td className="px-4 py-2 font-semibold text-cream">
+                      <Button
+                        variant="link"
+                        className="h-auto p-0 text-left text-xs font-semibold text-cream no-underline hover:text-gold"
+                        onClick={() => setExpandedHorseId(expanded ? null : horse.id)}
+                        aria-expanded={expanded}
+                        aria-controls={`career-timeline-${horse.id}`}
+                      >
+                        {horse.name}
+                      </Button>
+                    </td>
                     <td className="px-3 py-2">
                       <Badge
                         variant="outline"
@@ -158,8 +178,30 @@ export function NpcCareerTrackerPanel({ horses, day }: NpcCareerTrackerPanelProp
                     <td className="px-4 py-2 text-right font-mono text-cream/50">
                       {career.daysSinceStart === null ? "—" : `${career.daysSinceStart}d ago`}
                     </td>
+                    <td className="px-3 py-2 text-right">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7"
+                        onClick={() => setExpandedHorseId(expanded ? null : horse.id)}
+                        aria-label={`${expanded ? "Hide" : "Show"} ${horse.name} career timeline`}
+                        aria-expanded={expanded}
+                        aria-controls={`career-timeline-${horse.id}`}
+                      >
+                        <ChevronDown className={cn("transition-transform", expanded && "rotate-180")} />
+                      </Button>
+                    </td>
                   </tr>
-                ))}
+                  {expanded && (
+                    <tr id={`career-timeline-${horse.id}`}>
+                      <td colSpan={8} className="p-0">
+                        <NpcHorseCareerTimeline horse={horse} day={day} />
+                      </td>
+                    </tr>
+                  )}
+                  </Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>
