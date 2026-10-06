@@ -15,7 +15,7 @@ An exhaustive re-read of the repository (A–K subsystem taxonomy + full post-V3
 
 The consolidation landed **31 PRs' worth of real content** (18 canonical + 6 union contributors + 7 extracted hunks) across 9 duplicate-heavy clusters, fixed **2 baseline breakages** found on clean main, confirmed and fixed **1 real gameplay bug** (award gender eligibility), and removed **all production `as never` casts**. All of it gated behind 134 new characterization tests plus extracted spec tests (Phase 3 strict test-first gate: 10 FAIL-EXPECTED spec tests flipped green post-implementation; 0 FAIL-INVALID).
 
-**Remote lifecycle actions (push/merge/close/delete) are recorded in Phase 8 and were NOT taken at time of writing — no PR state on GitHub has been altered by this branch.**
+**Remote lifecycle: COMPLETE.** `consolidation/integration-v4` merged into `main` @ `5b58d707`. All 59 PRs carry verdict comments and are closed; all 60 remote branches (59 PR heads + integration branch) deleted. Only `origin/main` remains.
 
 ### Final Verification Quality Gates
 
@@ -105,4 +105,4 @@ Net suite delta vs baseline main: **+86 tests** (9,198 → 9,284), −2 failures
 - `routeTree.gen.ts` is regenerated locally for build/typecheck; it is gitignored and intentionally untracked.
 - Herald union content is additive-only; template-pool statistical balance across themes was not separately tuned.
 - `HorseHandler`'s local handler type is a deliberate divergence from `ImpactHandlerFunction`, not an oversight.
-- Remote cleanup (Phase 8) pending explicit confirmation: push branch → merge to `main` → close 28 losing PRs with verdict comments → delete 59 remote branches.
+- Remote cleanup (Phase 8) executed and verified: merge `5b58d707` on `main`, 59/59 PRs closed with verdict comments, all obsolete remote branches deleted.
