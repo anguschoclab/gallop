@@ -83,6 +83,8 @@ function PortfolioPage() {
   const prestige = search.prestige ?? "all";
   const sortKey: PortfolioSortKey = search.sort ?? "netWorth";
   const sortDir = search.dir ?? "desc";
+  const page = Math.max(1, search.page ?? 1);
+  const compare = useCompareStables();
 
   const horses = useGameWithShallow((s: GameState) => s.horses);
   const npcStables = useGameWithShallow((s: GameState) => s.npcStables ?? []);
@@ -141,11 +143,21 @@ function PortfolioPage() {
     () => sortPortfolios(filtered, sortKey, sortDir),
     [filtered, sortKey, sortDir],
   );
+  const pageCount = Math.max(1, Math.ceil(sorted.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount);
+  const paged = useMemo(
+    () => sorted.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE),
+    [sorted, safePage],
+  );
   const totals = useMemo(() => portfolioTotals(filtered), [filtered]);
   const playerRow = rows.find((r) => r.isPlayer);
   const playerRank = playerRow
     ? sortPortfolios(rows, "netWorth", "desc").findIndex((r) => r.isPlayer) + 1
     : 0;
+
+  const pageNpcIds = paged.filter((r) => !r.isPlayer).map((r) => r.id);
+  const allPageSelected =
+    pageNpcIds.length > 0 && pageNpcIds.every((id) => compare.ids.includes(id));
 
   function setSearch(patch: Record<string, unknown>) {
     navigate({ search: (prev: Record<string, unknown>) => ({ ...prev, ...patch }) });
@@ -153,9 +165,17 @@ function PortfolioPage() {
 
   function handleSort(key: PortfolioSortKey) {
     if (key === sortKey) {
-      setSearch({ dir: sortDir === "desc" ? "asc" : "desc" });
+      setSearch({ dir: sortDir === "desc" ? "asc" : "desc", page: 1 });
     } else {
-      setSearch({ sort: key, dir: key === "name" ? "asc" : "desc" });
+      setSearch({ sort: key, dir: key === "name" ? "asc" : "desc", page: 1 });
+    }
+  }
+
+  function toggleSelectPage() {
+    if (allPageSelected) {
+      for (const id of pageNpcIds) compare.remove(id);
+    } else {
+      for (const id of pageNpcIds) compare.add(id);
     }
   }
 
