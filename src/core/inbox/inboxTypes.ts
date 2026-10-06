@@ -50,6 +50,8 @@ export interface InboxMessage {
     route: string;
     /** Dynamic route parameters */
     params?: Record<string, string>;
+    /** Search params for deep-links (e.g. { tab: "exchange" }) */
+    search?: Record<string, string>;
   };
   /** Optional secondary Call-To-Action for additional navigation */
   secondaryCta?: {
@@ -59,5 +61,7 @@ export interface InboxMessage {
     route: string;
     /** Dynamic route parameters */
     params?: Record<string, string>;
+    /** Search params for deep-links (e.g. { tab: "alerts" }) */
+    search?: Record<string, string>;
   };
 }

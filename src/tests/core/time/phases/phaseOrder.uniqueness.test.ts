@@ -8,10 +8,10 @@ describe("Phase order uniqueness", () => {
     expect(orders.length).toBe(uniqueOrders.size);
   });
 
-  it("T45: all phase orders are within range 1-202", () => {
+  it("T45: all phase orders are within range 1-203", () => {
     for (const phase of GAME_PIPELINE_PHASES) {
       expect(phase.order).toBeGreaterThanOrEqual(1);
-      expect(phase.order).toBeLessThanOrEqual(202);
+      expect(phase.order).toBeLessThanOrEqual(203);
     }
   });
 

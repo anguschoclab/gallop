@@ -247,6 +247,38 @@ describe("evaluateMarketAlerts", () => {
     expect(useGame.getState().inbox.length).toBe(inboxBefore);
   });
 
+  it("fromDay notifies player fills across the whole advanced range", () => {
+    const exchange = createDefaultExchangeState();
+    exchange.trades = [
+      mkTrade({ id: "t-d8", horseId: "h1", buyerId: "player", day: 8 }),
+      mkTrade({ id: "t-d10", horseId: "h1", buyerId: "player", day: 10 }),
+    ];
+    seedStore({ day: 10, exchange, priceAlerts: [] });
+
+    // Simulates the tail of a batch advance from day 7 → 10
+    useGame.getState().evaluateMarketAlerts(7);
+
+    const fillMessages = useGame
+      .getState()
+      .inbox.filter((m) => m.category === "market" && m.title.includes("Bought"));
+    expect(fillMessages.length).toBe(2);
+    expect(useGame.getState().notifiedTradeKeys).toEqual(expect.arrayContaining(["t-d8", "t-d10"]));
+  });
+
+  it("a repeated evaluation in the same range notifies nothing new", () => {
+    const exchange = createDefaultExchangeState();
+    exchange.trades = [
+      mkTrade({ id: "t-d9", horseId: "h1", buyerId: "player", day: 9 }),
+      mkTrade({ id: "t-d10", horseId: "h1", buyerId: "player", day: 10 }),
+    ];
+    seedStore({ day: 10, exchange, priceAlerts: [] });
+
+    useGame.getState().evaluateMarketAlerts(7);
+    const inboxAfterFirst = useGame.getState().inbox.length;
+    useGame.getState().evaluateMarketAlerts(7);
+    expect(useGame.getState().inbox.length).toBe(inboxAfterFirst);
+  });
+
   it("caps inbox at MAX_INBOX (100)", () => {
     // Pre-fill inbox with 99 messages
     const existingMessages = Array.from({ length: 99 }, (_, i) => ({

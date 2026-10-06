@@ -261,7 +261,7 @@ function InboxPage() {
                       markRead(msg.id);
                       if (msg.cta) {
                         const routePath = interpolateCtaRoute(msg.cta.route, msg.cta.params);
-                        navigate({ to: routePath as FileRouteTypes["to"] });
+                        navigate({ to: routePath as FileRouteTypes["to"], search: msg.cta.search });
                       }
                     }}
                   >
@@ -279,7 +279,7 @@ function InboxPage() {
                       const sc = msg.secondaryCta;
                       if (sc) {
                         const routePath = interpolateCtaRoute(sc.route, sc.params);
-                        navigate({ to: routePath as FileRouteTypes["to"] });
+                        navigate({ to: routePath as FileRouteTypes["to"], search: sc.search });
                       }
                     }}
                   >

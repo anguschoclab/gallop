@@ -10,8 +10,13 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { createElement } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/game/store/state";
-import { createDefaultExchangeState, type ExchangeAsk } from "@/core/market/exchange";
-import { createTestHorse } from "@/tests/helpers";
+import { useGame } from "@/game/store";
+import {
+  createDefaultExchangeState,
+  type ExchangeAsk,
+  type ExchangeTrade,
+} from "@/core/market/exchange";
+import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId } from "@/core/types/branded";
 import { MarketStrategyPanel } from "@/components/market/MarketStrategyPanel";
@@ -44,6 +49,23 @@ function mkAsk(overrides: Partial<ExchangeAsk> & { id: string; horseId: string }
     fairValue: 100_000,
     createdDay: 1,
     expiresDay: 20,
+    ...overrides,
+  };
+}
+
+function mkTrade(
+  overrides: Partial<ExchangeTrade> & { id: string; horseId: string },
+): ExchangeTrade {
+  return {
+    horseName: "Traded Horse",
+    price: 100_000,
+    commission: 0,
+    buyerId: "npc-2",
+    buyerName: "NPC Buyer",
+    sellerId: "npc-1",
+    sellerName: "NPC Seller",
+    day: 9,
+    initiatedBy: "ask",
     ...overrides,
   };
 }
@@ -133,11 +155,12 @@ describe("MarketStrategyPanel", () => {
     expect(screen.getByText(/above your price ceiling/i)).toBeTruthy();
   });
 
-  it("renders PriceAlertsPanel below the candidate list", () => {
+  it("renders the recent fills card below the candidate list", () => {
     seedStore({ ...createDefaultGameState() });
     render(createElement(MarketStrategyPanel));
-    // PriceAlertsPanel has a "New alert" heading
-    expect(screen.getByText(/new alert/i)).toBeTruthy();
+    // Alerts live on their own tab; the Strategy panel shows the trade tape.
+    expect(screen.getByText(/recent fills/i)).toBeTruthy();
+    expect(screen.queryByText(/new alert/i)).toBeNull();
   });
 
   it("shows empty state when no candidates found", () => {
@@ -150,5 +173,105 @@ describe("MarketStrategyPanel", () => {
     render(createElement(MarketStrategyPanel));
     // Should show some empty-state message
     expect(screen.getByText(/no candidates/i)).toBeTruthy();
+  });
+
+  it("buying an exchange candidate calls buyFromExchange and transfers ownership", () => {
+    const horse = mkHorse("h1", { raceHistory: mkRaceHistory("G1") });
+    const stable = createTestStable({ id: "npc-1", name: "NPC Stable", cash: 0 });
+    const exchange = createDefaultExchangeState();
+    exchange.asks = [mkAsk({ id: "ask-1", horseId: "h1", price: 100_000, fairValue: 100_000 })];
+    seedStore({
+      ...createDefaultGameState(),
+      day: 10,
+      cash: 1_000_000,
+      horses: { h1: horse },
+      npcStables: [stable],
+      exchange,
+    });
+    render(createElement(MarketStrategyPanel));
+
+    const buyButton = screen.getByRole("button", {
+      name: /buy horse h1 from exchange/i,
+    });
+    fireEvent.click(buyButton);
+
+    expect(useGame.getState().horses["h1"].ownership.type).toBe("player");
+    expect(useGame.getState().cash).toBe(900_000);
+    // The ask is consumed — horse no longer listed
+    expect(useGame.getState().exchange.asks.some((a) => a.horseId === "h1")).toBe(false);
+  });
+
+  it("buying a house candidate calls buyHorseFromAuctionHouse", () => {
+    const horse = mkHorse("h1", { raceHistory: mkRaceHistory("G1") });
+    const stable = createTestStable({ id: "npc-1", name: "NPC Stable", cash: 0 });
+    seedStore({
+      ...createDefaultGameState(),
+      day: 10,
+      cash: 50_000_000,
+      horses: { h1: horse },
+      npcStables: [stable],
+      exchange: createDefaultExchangeState(),
+    });
+    render(createElement(MarketStrategyPanel));
+
+    // The horse appears in auction-house catalogues — every house candidate
+    // gets a Buy button labelled with its venue
+    const buyButtons = screen.getAllByRole("button", { name: /buy horse h1 from/i });
+    expect(buyButtons.length).toBeGreaterThan(0);
+    fireEvent.click(buyButtons[0]);
+
+    expect(useGame.getState().horses["h1"].ownership.type).toBe("player");
+  });
+
+  it("disables Buy when the player cannot afford the price", () => {
+    const horse = mkHorse("h1", { raceHistory: mkRaceHistory("G1") });
+    const exchange = createDefaultExchangeState();
+    exchange.asks = [mkAsk({ id: "ask-1", horseId: "h1", price: 100_000, fairValue: 100_000 })];
+    seedStore({
+      ...createDefaultGameState(),
+      day: 10,
+      cash: 1_000,
+      horses: { h1: horse },
+      npcStables: [createTestStable({ id: "npc-1", name: "NPC Stable" })],
+      exchange,
+    });
+    render(createElement(MarketStrategyPanel));
+
+    const buyButton = screen.getByRole("button", {
+      name: /buy horse h1 from exchange/i,
+    });
+    expect(buyButton).toBeDisabled();
+  });
+
+  it("renders a recent fills feed from the trade tape", () => {
+    const exchange = createDefaultExchangeState();
+    exchange.trades = [
+      mkTrade({ id: "t1", horseId: "h1", horseName: "Tape Filler", price: 123_450 }),
+    ];
+    seedStore({
+      ...createDefaultGameState(),
+      day: 10,
+      horses: {},
+      exchange,
+    });
+    render(createElement(MarketStrategyPanel));
+    expect(screen.getByText(/recent fills/i)).toBeTruthy();
+    expect(screen.getByText("Tape Filler")).toBeTruthy();
+  });
+
+  it("shows the last fill price on a candidate card when the horse has traded", () => {
+    const horse = mkHorse("h1", { raceHistory: mkRaceHistory("G1") });
+    const exchange = createDefaultExchangeState();
+    exchange.asks = [mkAsk({ id: "ask-1", horseId: "h1", price: 100_000, fairValue: 100_000 })];
+    exchange.trades = [mkTrade({ id: "t1", horseId: "h1", price: 87_500, day: 8 })];
+    seedStore({
+      ...createDefaultGameState(),
+      day: 10,
+      horses: { h1: horse },
+      exchange,
+    });
+    render(createElement(MarketStrategyPanel));
+    expect(screen.getAllByText(/last fill/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/\$87,500/).length).toBeGreaterThan(0);
   });
 });

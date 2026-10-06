@@ -48,7 +48,8 @@ export function priceAlertMessage(trigger: PriceAlertTrigger): NewInboxMessage {
       `Average traded price for ${label.toLowerCase()} is now ${money(trigger.current)}, ` +
       `against ${money(trigger.previous)} in the previous window (${trigger.sampleSize} ` +
       `trade${trigger.sampleSize === 1 ? "" : "s"}).${realNote}`,
-    cta: { label: "Open the Exchange", route: "/market" },
+    cta: { label: "Open the Exchange", route: "/market", search: { tab: "exchange" } },
+    secondaryCta: { label: "Manage alerts", route: "/market", search: { tab: "alerts" } },
   };
 }
 
@@ -69,6 +70,11 @@ export function tradeNotificationMessage(notification: TradeNotification): NewIn
         notification.price,
       )}.`,
       cta: { label: "View portfolio", route: "/portfolio" },
+      secondaryCta: {
+        label: "Open the Exchange",
+        route: "/market",
+        search: { tab: "exchange" },
+      },
     };
   }
   return {
@@ -79,6 +85,6 @@ export function tradeNotificationMessage(notification: TradeNotification): NewIn
     body:
       `${notification.bidderName} is bidding ${money(notification.bidPrice)} against your ` +
       `${money(notification.askPrice)} ask. You can take the bid now.`,
-    cta: { label: "Open the Exchange", route: "/market" },
+    cta: { label: "Open the Exchange", route: "/market", search: { tab: "exchange" } },
   };
 }

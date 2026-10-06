@@ -92,6 +92,29 @@ describe("Foal development inbox CTA → route → back navigation", () => {
     expect(navigateMock).toHaveBeenCalledWith({ to: "/foal-development/abc-123" });
   });
 
+  it("passes cta.search params through to navigate for tab deep-links", () => {
+    const messages = [
+      {
+        id: "msg-3",
+        title: "Market move",
+        body: "Prices moved.",
+        priority: "action" as const,
+        cta: {
+          route: "/market",
+          search: { tab: "exchange" },
+        },
+      },
+    ];
+
+    renderWithStore(<UrgentMessagesStrip messages={messages} />);
+    fireEvent.click(screen.getByText("Market move"));
+
+    expect(navigateMock).toHaveBeenCalledWith({
+      to: "/market",
+      search: { tab: "exchange" },
+    });
+  });
+
   it("resolution page Back button returns to the previous route via router history", () => {
     const horse = createTestHorse({
       id: "foal-1",

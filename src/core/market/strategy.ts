@@ -58,6 +58,10 @@ export type StrategyCandidate = {
   trackPrestige: number;
   /** Cost of the targeted syndication stake at this price. */
   stakeCost: number;
+  /** Live Exchange ask id — present on exchange candidates so the UI can buy. */
+  askId?: string;
+  /** Most recent fill for this horse on the tape, if it has ever traded. */
+  lastTrade?: { price: number; day: number };
   /** 0-100 fit against the strategy. */
   score: number;
   reasons: string[];
@@ -97,6 +101,10 @@ function gradeRank(grade: string): number {
  * @param args.source - Where the lot is offered
  * @param args.sourceLabel - Human label for the venue
  * @param args.strategy - Player strategy
+ * @param args.askId - Live ask id for exchange candidates
+ * @param args.lastTrade - Most recent fill for this horse, if any
+ * @param args.lastTrade.price
+ * @param args.lastTrade.day
  */
 export function scoreCandidate(args: {
   horse: Horse;
@@ -105,6 +113,8 @@ export function scoreCandidate(args: {
   source: StrategySource;
   sourceLabel: string;
   strategy: MarketStrategy;
+  askId?: string;
+  lastTrade?: { price: number; day: number };
 }): StrategyCandidate {
   const { horse, price, fairValue, source, sourceLabel, strategy } = args;
   const grade = horseGradeSegment({
@@ -185,6 +195,8 @@ export function scoreCandidate(args: {
     trackName,
     trackPrestige,
     stakeCost,
+    askId: args.askId,
+    lastTrade: args.lastTrade,
     score: Math.round(gradeScore + prestigeScore + valueScore + budgetScore),
     reasons,
     warnings,
@@ -212,6 +224,15 @@ export function runMarketStrategy(args: {
   const byId = new Map(horses.map((h) => [h.id, h]));
   const candidates: StrategyCandidate[] = [];
 
+  // Latest fill per horse from the tape, so candidates can show real comps.
+  const lastTradeByHorse = new Map<string, { price: number; day: number }>();
+  for (const trade of exchange.trades) {
+    const prev = lastTradeByHorse.get(trade.horseId);
+    if (!prev || trade.day >= prev.day) {
+      lastTradeByHorse.set(trade.horseId, { price: trade.price, day: trade.day });
+    }
+  }
+
   for (const ask of exchange.asks) {
     if (ask.sellerId === "player") continue;
     const horse = byId.get(ask.horseId);
@@ -224,6 +245,8 @@ export function runMarketStrategy(args: {
         source: { kind: "exchange" },
         sourceLabel: `Exchange · ${ask.sellerName}`,
         strategy,
+        askId: ask.id,
+        lastTrade: lastTradeByHorse.get(ask.horseId),
       }),
     );
   }
@@ -239,6 +262,7 @@ export function runMarketStrategy(args: {
           source: { kind: "house", houseId: house.id, houseName: house.name },
           sourceLabel: `${house.name} (prestige ${house.prestige})`,
           strategy,
+          lastTrade: lastTradeByHorse.get(listing.horse.id),
         }),
       );
     }

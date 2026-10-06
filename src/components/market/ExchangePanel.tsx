@@ -162,9 +162,11 @@ export function ExchangePanel() {
             </h4>
             <div className="flex h-12 items-end gap-0.5">
               {series.map((s) => (
-                <Hint content={`Day ${s.day}: ${s.volume} trades · ${formatCurrency(s.turnover)}`}>
+                <Hint
+                  key={s.day}
+                  content={`Day ${s.day}: ${s.volume} trades · ${formatCurrency(s.turnover)}`}
+                >
                   <div
-                    key={s.day}
                     className="flex-1 rounded-t bg-primary/60"
                     style={{ height: `${Math.max(2, (s.volume / maxVolume) * 100)}%` }}
                   />

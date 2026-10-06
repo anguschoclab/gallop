@@ -372,8 +372,9 @@ export function resolveNpcExchangeTrades(args: {
 
     const fairValue = ask.fairValue > 0 ? ask.fairValue : ask.price;
     // Use the listing-time acceptFloor if available (preserves the original
-    // agreement; recalculating from current stance can diverge from listing)
-    const floorPrice = fairValue * (ask.acceptFloor ?? stance.acceptFloor);
+    // agreement; recalculating from current stance can diverge from listing).
+    // Stored acceptFloor is an absolute price; stance.acceptFloor is a fraction.
+    const floorPrice = ask.acceptFloor ?? fairValue * stance.acceptFloor;
 
     const candidates = state.bids
       .filter(

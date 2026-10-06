@@ -46,8 +46,13 @@ export type PriceAlertSlice = {
   togglePriceAlert: (id: string, enabled?: boolean) => void;
   /** Patch an existing alert's thresholds or direction. */
   updatePriceAlert: (id: string, patch: Partial<Omit<PriceAlert, "id">>) => void;
-  /** Evaluate alerts and player trade activity for the current day. */
-  evaluateMarketAlerts: () => void;
+  /**
+   * Evaluate alerts and player trade activity for the current day.
+   * When `fromDay` is given, fills on every day in `(fromDay, day]` notify —
+   * covers batch advances where intermediate days were simulated without a
+   * per-day evaluation pass.
+   */
+  evaluateMarketAlerts: (fromDay?: number) => void;
   /** Patch the player's market buying-strategy settings. */
   updateMarketStrategy: (patch: Partial<MarketStrategy>) => void;
 };
@@ -93,7 +98,7 @@ export function createPriceAlertSlice(set: StoreSet, get: StoreGet): PriceAlertS
       set({ priceAlerts: alerts().map((a) => (a.id === id ? { ...a, ...patch } : a)) });
     },
 
-    evaluateMarketAlerts: () => {
+    evaluateMarketAlerts: (fromDay) => {
       const s = get();
       const exchange = s.exchange ?? createDefaultExchangeState();
       const configured = alerts();
@@ -117,6 +122,7 @@ export function createPriceAlertSlice(set: StoreSet, get: StoreGet): PriceAlertS
         asks: exchange.asks,
         bids: exchange.bids,
         day: s.day,
+        fromDay,
         notifiedKeys: s.notifiedTradeKeys ?? [],
         horses: new Map(Object.values(s.horses).map((h) => [h.id, { name: h.name }])),
       });

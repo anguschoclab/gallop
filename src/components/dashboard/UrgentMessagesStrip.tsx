@@ -24,6 +24,7 @@ interface UrgentMessagesStripProps {
     cta?: {
       route: string;
       params?: Record<string, string>;
+      search?: Record<string, string>;
     };
   }>;
 }
@@ -46,7 +47,7 @@ export function UrgentMessagesStrip({ messages }: UrgentMessagesStripProps) {
           onClick={() => {
             if (msg.cta) {
               const routePath = interpolateCtaRoute(msg.cta.route, msg.cta.params);
-              navigate({ to: routePath as FileRouteTypes["to"] });
+              navigate({ to: routePath as FileRouteTypes["to"], search: msg.cta.search });
               markMessageRead(msg.id);
             } else {
               navigate({ to: "/inbox" });

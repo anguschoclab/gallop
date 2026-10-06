@@ -384,6 +384,69 @@ describe("playerTradeNotifications", () => {
     // Ask expired at day 5, current day is 10 → skip
     expect(notifications.length).toBe(0);
   });
+
+  it("fromDay notifies fills on every day inside (fromDay, day]", () => {
+    const trades = [
+      mkTrade({ id: "t-old", horseId: "h1", buyerId: "player", day: 6 }),
+      mkTrade({ id: "t-d8", horseId: "h1", buyerId: "player", day: 8 }),
+      mkTrade({ id: "t-d9", horseId: "h1", sellerId: "player", day: 9 }),
+      mkTrade({ id: "t-d10", horseId: "h1", buyerId: "player", day: 10 }),
+    ];
+    // Player advanced day 7 → 10 in one batch; fills on 8/9/10 should notify
+    const notifications = playerTradeNotifications({
+      trades,
+      asks: [],
+      bids: [],
+      day: 10,
+      fromDay: 7,
+    });
+    expect(notifications.map((n) => n.key).sort()).toEqual(["t-d10", "t-d8", "t-d9"]);
+  });
+
+  it("fromDay is exclusive of the boundary day", () => {
+    const trades = [
+      mkTrade({ id: "t-d7", horseId: "h1", buyerId: "player", day: 7 }),
+      mkTrade({ id: "t-d8", horseId: "h1", buyerId: "player", day: 8 }),
+    ];
+    const notifications = playerTradeNotifications({
+      trades,
+      asks: [],
+      bids: [],
+      day: 10,
+      fromDay: 7,
+    });
+    expect(notifications.map((n) => n.key)).toEqual(["t-d8"]);
+  });
+
+  it("omitting fromDay keeps the same-day-only behavior", () => {
+    const trades = [
+      mkTrade({ id: "t-d9", horseId: "h1", buyerId: "player", day: 9 }),
+      mkTrade({ id: "t-d10", horseId: "h1", buyerId: "player", day: 10 }),
+    ];
+    const notifications = playerTradeNotifications({
+      trades,
+      asks: [],
+      bids: [],
+      day: 10,
+    });
+    expect(notifications.map((n) => n.key)).toEqual(["t-d10"]);
+  });
+
+  it("ranged fills still respect notifiedKeys de-duplication", () => {
+    const trades = [
+      mkTrade({ id: "t-d8", horseId: "h1", buyerId: "player", day: 8 }),
+      mkTrade({ id: "t-d10", horseId: "h1", buyerId: "player", day: 10 }),
+    ];
+    const notifications = playerTradeNotifications({
+      trades,
+      asks: [],
+      bids: [],
+      day: 10,
+      fromDay: 7,
+      notifiedKeys: ["t-d8"],
+    });
+    expect(notifications.map((n) => n.key)).toEqual(["t-d10"]);
+  });
 });
 
 describe("priceAlertMessage / tradeNotificationMessage", () => {

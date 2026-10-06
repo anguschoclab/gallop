@@ -73,9 +73,10 @@ export function createAdvanceDayActions(
       // Exchange refresh must never block day advancement.
     }
 
-    // Market price alerts and trade notifications for the new day.
+    // Market price alerts and trade notifications for the new day. Passing the
+    // pre-advance day sweeps up fills from every intermediate day of a batch.
     try {
-      (get() as StoreType).evaluateMarketAlerts?.();
+      (get() as StoreType).evaluateMarketAlerts?.(s.day);
     } catch {
       // Alert evaluation must never block day advancement.
     }

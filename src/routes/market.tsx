@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { z } from "zod";
 import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
@@ -23,15 +23,28 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AuctionHouseDesk } from "@/components/market/AuctionHouseDesk";
 import { PriceAlertsPanel } from "@/components/market/PriceAlertsPanel";
 import { MarketStrategyPanel } from "@/components/market/MarketStrategyPanel";
+import { useTabParam } from "@/hooks/ui/useTabParam";
 
-type MarketTab = "houses" | "bloodstock" | "exchange" | "syndicate" | "alerts" | "strategy";
+const MARKET_TABS = [
+  "houses",
+  "bloodstock",
+  "exchange",
+  "syndicate",
+  "alerts",
+  "strategy",
+] as const;
+type MarketTab = (typeof MARKET_TABS)[number];
 
 export const Route = createFileRoute("/market")({
+  validateSearch: z.object({
+    // Invalid values degrade to undefined → the page falls back to "houses"
+    tab: z.enum(MARKET_TABS).optional().catch(undefined),
+  }),
   component: MarketPage,
 });
 
 function MarketPage() {
-  const [activeTab, setActiveTab] = useState<MarketTab>("houses");
+  const { tab: activeTab, setTab } = useTabParam<MarketTab>("houses", MARKET_TABS);
   const market = useGameWithShallow((s: GameState) => s.market);
   const cash = useGame((s: GameState) => s.cash);
   const buyHorse = useGame((s) => s.buyHorse);
@@ -65,11 +78,7 @@ function MarketPage() {
         </div>
       </div>
 
-      <Tabs
-        value={activeTab}
-        onValueChange={(v) => setActiveTab(v as MarketTab)}
-        className="space-y-6"
-      >
+      <Tabs value={activeTab} onValueChange={(v) => setTab(v as MarketTab)} className="space-y-6">
         <div className="flex items-center justify-between bg-slate-900/40 p-1 border border-white/5 rounded-lg">
           <TabsList className="bg-transparent h-10 gap-2">
             <TabsTrigger

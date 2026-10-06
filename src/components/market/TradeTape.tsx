@@ -50,14 +50,12 @@ export function TradeTape({
             const takenByBuyer = t.initiatedBy === "ask";
             return (
               <Hint
+                key={t.id}
                 content={`Day ${t.day} · commission ${formatCurrency(t.commission)} · ${
                   takenByBuyer ? "buyer took the ask" : "seller hit the bid"
                 }`}
               >
-                <li
-                  key={t.id}
-                  className="flex items-center justify-between gap-2 rounded border border-white/5 bg-slate-950/50 px-3 py-1.5 text-xs"
-                >
+                <li className="flex items-center justify-between gap-2 rounded border border-white/5 bg-slate-950/50 px-3 py-1.5 text-xs">
                   <span className="flex min-w-0 items-center gap-1.5">
                     {takenByBuyer ? (
                       <ArrowUpRight className="h-3 w-3 shrink-0 text-destructive" aria-hidden />

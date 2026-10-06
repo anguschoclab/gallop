@@ -303,6 +303,8 @@ export type TradeNotification =
  * @param args.asks - Live asks
  * @param args.bids - Live bids
  * @param args.day - Current day
+ * @param args.fromDay - Optional exclusive lower bound: include fills on days
+ *   in `(fromDay, day]` so batch advances do not drop intermediate fills
  * @param args.notifiedKeys - Keys already notified (skipped)
  * @param args.playerId - Player order id (defaults to "player")
  * @param args.horses - Optional horse map for name lookup
@@ -312,18 +314,20 @@ export function playerTradeNotifications(args: {
   asks: ExchangeAsk[];
   bids: ExchangeBid[];
   day: number;
+  fromDay?: number;
   notifiedKeys?: string[];
   playerId?: string;
   horses?: Map<string, { name: string }>;
 }): TradeNotification[] {
-  const { trades, asks, bids, day } = args;
+  const { trades, asks, bids, day, fromDay } = args;
   const playerId = args.playerId ?? "player";
   const seen = new Set(args.notifiedKeys ?? []);
   const horseMap = args.horses ?? new Map<string, { name: string }>();
   const out: TradeNotification[] = [];
 
   for (const trade of trades) {
-    if (trade.day !== day) continue;
+    if (fromDay !== undefined ? trade.day <= fromDay || trade.day > day : trade.day !== day)
+      continue;
     const isBuyer = trade.buyerId === playerId;
     const isSeller = trade.sellerId === playerId;
     if (!isBuyer && !isSeller) continue;

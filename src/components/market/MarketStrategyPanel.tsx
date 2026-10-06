@@ -4,16 +4,17 @@
  * Lets the player set which grades they target, how prestigious a horse's home
  * track must be, what they will pay, and how large a syndication stake they
  * want. Runs the strategy engine against every live Exchange ask and
- * auction-house lot, showing scored candidates with reasons and warnings.
- *
- * Also renders the PriceAlertsPanel so players can tune alerts in-context.
+ * auction-house lot, showing scored candidates with reasons and warnings —
+ * each card carries a real Buy action and the recent-fills tape.
  */
 
 import { useMemo } from "react";
+import { toast } from "sonner";
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import type { Horse } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Target, TrendingUp, AlertTriangle, CheckCircle2 } from "lucide-react";
@@ -23,7 +24,7 @@ import {
   runMarketStrategy,
   type StrategyCandidate,
 } from "@/services/market/marketStrategyService";
-import { PriceAlertsPanel } from "@/components/market/PriceAlertsPanel";
+import { TradeTape } from "@/components/market/TradeTape";
 
 const money = (v: number) => `$${Math.round(v).toLocaleString("en-US")}`;
 const pct = (v: number) => `${v >= 0 ? "+" : ""}${v.toFixed(1)}%`;
@@ -177,20 +178,49 @@ export function MarketStrategyPanel() {
         <div className="space-y-3">
           {run.candidates.map((c: StrategyCandidate) => (
             <CandidateCard
-              key={`${c.source.kind}:${c.source.kind === "house" ? c.source.houseId : "exchange"}:${c.horseId}`}
+              key={`${c.source.kind}:${c.source.kind === "house" ? c.source.houseId : (c.askId ?? "exchange")}:${c.horseId}`}
               candidate={c}
             />
           ))}
         </div>
       )}
 
-      {/* Price alerts panel — tune alerts in-context */}
-      <PriceAlertsPanel />
+      {/* Recent fills — the same tape the Exchange tab shows */}
+      <Card className="bg-slate-900/40 border-white/5">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-cream text-lg">
+            <TrendingUp className="h-4 w-4 text-primary" />
+            Recent fills
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <TradeTape trades={exchange.trades} day={day} limit={8} />
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
 function CandidateCard({ candidate: c }: { candidate: StrategyCandidate }) {
+  const cash = useGame((s: StoreType) => s.cash);
+  const buyFromExchange = useGame((s: StoreType) => s.buyFromExchange);
+  const buyHorseFromAuctionHouse = useGame((s: StoreType) => s.buyHorseFromAuctionHouse);
+
+  const affordable = cash >= c.price;
+  const buyable =
+    c.source.kind === "exchange" ? c.askId !== undefined : c.source.houseId !== undefined;
+
+  const handleBuy = () => {
+    const result =
+      c.source.kind === "exchange"
+        ? c.askId
+          ? buyFromExchange(c.askId)
+          : { ok: false as const, reason: "Listing no longer available" }
+        : buyHorseFromAuctionHouse(c.horseId, c.source.houseId);
+    if (result.ok) toast.success(`Bought ${c.horseName} for ${money(c.price)}`);
+    else toast.error(result.reason ?? "Purchase failed");
+  };
+
   return (
     <Card className="bg-slate-900/40 border-white/5">
       <CardContent className="p-4 space-y-3">
@@ -233,6 +263,34 @@ function CandidateCard({ candidate: c }: { candidate: StrategyCandidate }) {
           <span>
             <span className="text-cream/40">Stake cost:</span> {money(c.stakeCost)}
           </span>
+          {c.lastTrade && (
+            <span>
+              <span className="text-cream/40">Last fill:</span> {money(c.lastTrade.price)} (D
+              {c.lastTrade.day})
+            </span>
+          )}
+        </div>
+
+        {/* Buy action */}
+        <div className="flex items-center gap-3">
+          <Button
+            size="sm"
+            disabled={!affordable || !buyable}
+            aria-label={`Buy ${c.horseName} from ${c.sourceLabel}`}
+            onClick={handleBuy}
+          >
+            Buy
+          </Button>
+          {!affordable && (
+            <span className="text-[10px] font-mono text-amber-400/80">
+              Insufficient funds — need {money(c.price)}
+            </span>
+          )}
+          {!buyable && affordable && (
+            <span className="text-[10px] font-mono text-cream/40">
+              Listing no longer actionable
+            </span>
+          )}
         </div>
 
         {/* Reasons */}

@@ -65,6 +65,7 @@ import { economyPhase } from "./economyPhase";
 import { difficultyPhase } from "./difficultyPhase";
 import { cashPressureHistoryPhase } from "./cashPressureHistoryPhase";
 import { eventTriggersPhase } from "./eventTriggersPhase";
+import { exchangeSettlementPhase } from "./exchangeSettlementPhase";
 
 /**
  * Shared array of all game pipeline phases in their correct order.
@@ -153,4 +154,6 @@ export const GAME_PIPELINE_PHASES = [
   cashPressureHistoryPhase,
   // Event registry triggers (order 202 — after all state is finalized, observes end-of-day state)
   eventTriggersPhase,
+  // Exchange refresh + NPC settlement (order 203 — runs on end-of-day state every simulated day)
+  exchangeSettlementPhase,
 ].sort((a, b) => a.order - b.order);

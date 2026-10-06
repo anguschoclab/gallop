@@ -407,6 +407,80 @@ describe("runMarketStrategy", () => {
     expect(exchangeCandidates.some((c) => c.horseId === "h1")).toBe(true);
     expect(exchangeCandidates.some((c) => c.horseId === "h-missing")).toBe(false);
   });
+
+  it("exchange candidates carry the askId needed to buy them", () => {
+    const horse = mkHorse({ id: asHorseId("h1") });
+    const exchange = createDefaultExchangeState();
+    exchange.asks = [mkAsk({ id: "ask-42", horseId: "h1", price: 100_000, fairValue: 100_000 })];
+    const result = runMarketStrategy({
+      strategy: { ...baseStrategy, targetGrades: [] },
+      day: 10,
+      horses: [horse],
+      exchange,
+    });
+    const candidate = result.candidates.find(
+      (c) => c.source.kind === "exchange" && c.horseId === "h1",
+    );
+    expect(candidate?.askId).toBe("ask-42");
+  });
+
+  it("candidates carry the most recent fill for the horse from the trade tape", () => {
+    const horse = mkHorse({ id: asHorseId("h1") });
+    const exchange = createDefaultExchangeState();
+    exchange.asks = [mkAsk({ id: "ask-1", horseId: "h1", price: 100_000, fairValue: 100_000 })];
+    exchange.trades = [
+      {
+        id: "t-old",
+        horseId: "h1",
+        horseName: "Test Horse",
+        price: 90_000,
+        commission: 0,
+        buyerId: "npc-2",
+        buyerName: "Buyer",
+        sellerId: "npc-1",
+        sellerName: "Seller",
+        day: 5,
+        initiatedBy: "ask",
+      },
+      {
+        id: "t-new",
+        horseId: "h1",
+        horseName: "Test Horse",
+        price: 95_000,
+        commission: 0,
+        buyerId: "npc-3",
+        buyerName: "Buyer 2",
+        sellerId: "npc-1",
+        sellerName: "Seller",
+        day: 8,
+        initiatedBy: "bid",
+      },
+    ];
+    const result = runMarketStrategy({
+      strategy: { ...baseStrategy, targetGrades: [] },
+      day: 10,
+      horses: [horse],
+      exchange,
+    });
+    const candidate = result.candidates.find((c) => c.horseId === "h1");
+    expect(candidate?.lastTrade).toEqual({ price: 95_000, day: 8 });
+  });
+
+  it("leaves lastTrade undefined when the horse has never traded", () => {
+    const horse = mkHorse({ id: asHorseId("h1") });
+    const exchange = createDefaultExchangeState();
+    exchange.asks = [mkAsk({ id: "ask-1", horseId: "h1", price: 100_000, fairValue: 100_000 })];
+    const result = runMarketStrategy({
+      strategy: { ...baseStrategy, targetGrades: [] },
+      day: 10,
+      horses: [horse],
+      exchange,
+    });
+    const candidate = result.candidates.find(
+      (c) => c.source.kind === "exchange" && c.horseId === "h1",
+    );
+    expect(candidate?.lastTrade).toBeUndefined();
+  });
 });
 
 describe("DEFAULT_MARKET_STRATEGY", () => {

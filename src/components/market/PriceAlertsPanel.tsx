@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Bell, BellRing, Trash2, TrendingDown, TrendingUp } from "lucide-react";
+import { Bell, BellRing, Pencil, Trash2, TrendingDown, TrendingUp } from "lucide-react";
 import { TRACKS } from "@/data/tracks";
 import {
   DEFAULT_ALERT_THRESHOLD_PCT,
@@ -52,6 +52,12 @@ export function PriceAlertsPanel() {
   const addAlert = useGame((s: StoreType) => s.addPriceAlert);
   const removeAlert = useGame((s: StoreType) => s.removePriceAlert);
   const toggleAlert = useGame((s: StoreType) => s.togglePriceAlert);
+  const updateAlert = useGame((s: StoreType) => s.updatePriceAlert);
+
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editDirection, setEditDirection] = useState<PriceAlertDirection>("either");
+  const [editThreshold, setEditThreshold] = useState(String(DEFAULT_ALERT_THRESHOLD_PCT));
+  const [editWindowDays, setEditWindowDays] = useState(String(DEFAULT_ALERT_WINDOW_DAYS));
 
   const [kind, setKind] = useState<ScopeKind>("market");
   const [grade, setGrade] = useState<string>("G1");
@@ -224,71 +230,171 @@ export function PriceAlertsPanel() {
               No alerts yet. Watch a track or a grade to get told when prices move.
             </p>
           ) : (
-            rows.map(({ alert, index }) => (
-              <div
-                key={alert.id}
-                className="flex flex-wrap items-center justify-between gap-3 border border-white/5 bg-slate-950/40 p-3"
-              >
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
+            rows.map(({ alert, index }) =>
+              editingId === alert.id ? (
+                <div
+                  key={alert.id}
+                  className="flex flex-wrap items-end gap-4 border border-primary/30 bg-slate-950/60 p-3"
+                >
+                  <div className="space-y-1">
                     <span className="font-bold text-cream">
                       {scopeLabel(alert.scope, trackName)}
                     </span>
-                    <Badge variant="outline" className="text-[10px]">
-                      {alert.direction === "either"
-                        ? "either way"
-                        : alert.direction === "up"
-                          ? "rising"
-                          : "falling"}{" "}
-                      ≥ {alert.thresholdPct}%
-                    </Badge>
-                    {!alert.enabled && (
-                      <Badge variant="secondary" className="text-[10px]">
-                        paused
+                    <div className="text-[10px] font-mono uppercase text-cream/40">
+                      Editing alert
+                    </div>
+                  </div>
+                  <div className="space-y-1">
+                    <Label
+                      className="text-[10px] uppercase text-cream/50"
+                      htmlFor={`edit-direction-${alert.id}`}
+                    >
+                      Direction
+                    </Label>
+                    <Select
+                      value={editDirection}
+                      onValueChange={(v) => setEditDirection(v as PriceAlertDirection)}
+                    >
+                      <SelectTrigger id={`edit-direction-${alert.id}`} aria-label="Edit direction">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="either">Either way</SelectItem>
+                        <SelectItem value="up">Rising only</SelectItem>
+                        <SelectItem value="down">Falling only</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label
+                      className="text-[10px] uppercase text-cream/50"
+                      htmlFor={`edit-threshold-${alert.id}`}
+                    >
+                      Move %
+                    </Label>
+                    <Input
+                      id={`edit-threshold-${alert.id}`}
+                      aria-label="Edit move %"
+                      value={editThreshold}
+                      inputMode="numeric"
+                      onChange={(e) => setEditThreshold(e.target.value)}
+                      className="w-24"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <Label
+                      className="text-[10px] uppercase text-cream/50"
+                      htmlFor={`edit-window-${alert.id}`}
+                    >
+                      Window (days)
+                    </Label>
+                    <Input
+                      id={`edit-window-${alert.id}`}
+                      aria-label="Edit window"
+                      value={editWindowDays}
+                      inputMode="numeric"
+                      onChange={(e) => setEditWindowDays(e.target.value)}
+                      className="w-24"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        updateAlert(alert.id, {
+                          direction: editDirection,
+                          thresholdPct: Number(editThreshold) || alert.thresholdPct,
+                          windowDays: Number(editWindowDays) || alert.windowDays,
+                        });
+                        setEditingId(null);
+                      }}
+                    >
+                      Save
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setEditingId(null)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  key={alert.id}
+                  className="flex flex-wrap items-center justify-between gap-3 border border-white/5 bg-slate-950/40 p-3"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-cream">
+                        {scopeLabel(alert.scope, trackName)}
+                      </span>
+                      <Badge variant="outline" className="text-[10px]">
+                        {alert.direction === "either"
+                          ? "either way"
+                          : alert.direction === "up"
+                            ? "rising"
+                            : "falling"}{" "}
+                        ≥ {alert.thresholdPct}%
                       </Badge>
-                    )}
+                      {!alert.enabled && (
+                        <Badge variant="secondary" className="text-[10px]">
+                          paused
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 font-mono text-[11px] text-cream/60">
+                      {index.movePct >= 0 ? (
+                        <TrendingUp className="h-3 w-3 text-success" />
+                      ) : (
+                        <TrendingDown className="h-3 w-3 text-destructive" />
+                      )}
+                      <span>{pct(index.movePct)}</span>
+                      <span>
+                        {money(index.previous)} → {money(index.current)}
+                      </span>
+                      <span>
+                        {index.sampleSize} trade{index.sampleSize === 1 ? "" : "s"} /{" "}
+                        {alert.windowDays}d
+                      </span>
+                      {alert.lastTriggeredDay !== undefined && (
+                        <span>fired day {alert.lastTriggeredDay}</span>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 font-mono text-[11px] text-cream/60">
-                    {index.movePct >= 0 ? (
-                      <TrendingUp className="h-3 w-3 text-success" />
-                    ) : (
-                      <TrendingDown className="h-3 w-3 text-destructive" />
-                    )}
-                    <span>{pct(index.movePct)}</span>
-                    <span>
-                      {money(index.previous)} → {money(index.current)}
-                    </span>
-                    <span>
-                      {index.sampleSize} trade{index.sampleSize === 1 ? "" : "s"} /{" "}
-                      {alert.windowDays}d
-                    </span>
-                    {alert.lastTriggeredDay !== undefined && (
-                      <span>fired day {alert.lastTriggeredDay}</span>
-                    )}
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      aria-label={`Edit alert for ${scopeLabel(alert.scope, trackName)}`}
+                      onClick={() => {
+                        setEditingId(alert.id);
+                        setEditDirection(alert.direction);
+                        setEditThreshold(String(alert.thresholdPct));
+                        setEditWindowDays(String(alert.windowDays));
+                      }}
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => toggleAlert(alert.id)}>
+                      {alert.enabled ? "Pause" : "Resume"}
+                    </Button>
+                    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`Delete alert for ${scopeLabel(alert.scope, trackName)}`}
+                            onClick={() => removeAlert(alert.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Delete alert</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => toggleAlert(alert.id)}>
-                    {alert.enabled ? "Pause" : "Resume"}
-                  </Button>
-                  <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label={`Delete alert for ${scopeLabel(alert.scope, trackName)}`}
-                          onClick={() => removeAlert(alert.id)}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Delete alert</TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </div>
-            ))
+              ),
+            )
           )}
         </CardContent>
       </Card>
