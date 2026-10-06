@@ -1,5 +1,6 @@
 import { Fragment, useState } from "react";
 import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Crown, Home } from "lucide-react";
+import { useCompareStables, MAX_COMPARE } from "@/hooks/stable/useCompareStables";
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/components/ui/badge";
 import {
