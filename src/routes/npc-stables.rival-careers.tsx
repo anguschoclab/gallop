@@ -16,10 +16,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useHorses, useDay } from "@/hooks/game/useCoreState";
 import { useNpcStables } from "@/hooks/game/useSystemsState";
-import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
-import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { isNotableRival } from "@/core/npc/careerMilestones";
-import { buildRivalCareerProfiles } from "@/core/npc/rivalCareerCompare";
+import { isPlayerOwned, getStableId, ensurePhenotypeResolved } from "@/services/horse/horseFacade";
+import { isNotableRival, buildRivalCareerProfiles } from "@/services/npc/npcFacade";
 import { RivalCareerCompareTable } from "@/components/stable/RivalCareerCompareTable";
 import type { Horse } from "@/game/types";
 
@@ -54,9 +52,7 @@ export function NpcStablesRivalCareers() {
 
   const profiles = useMemo(() => {
     const byId = new Map(rivals.map((h) => [h.id, h]));
-    const picked = selected
-      .map((id) => byId.get(id))
-      .filter((h): h is Horse => h !== undefined);
+    const picked = selected.map((id) => byId.get(id)).filter((h): h is Horse => h !== undefined);
     return buildRivalCareerProfiles(picked, day);
   }, [selected, rivals, day]);
 

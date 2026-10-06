@@ -9,7 +9,7 @@ import {
   clearImportedDataset,
   importRealWorldText,
   useImportedRealWorld,
-} from "@/data/importedRealWorld";
+} from "@/services/storage/importedRealWorldService";
 
 /** Upload real race results, track records and careers for the Almanac and Insights. */
 export function RealWorldDataCard() {
