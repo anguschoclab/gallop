@@ -1,9 +1,20 @@
 import { describe, it, expect } from "vitest";
-import { goalRaceBonus, raceGoalClass, type StableGoals, type GoalProgress } from "@/core/stable/stableGoals";
+import {
+  goalRaceBonus,
+  raceGoalClass,
+  type StableGoals,
+  type GoalProgress,
+} from "@/core/stable/stableGoals";
 
-const goals: StableGoals = { classGoals: { G1: 2 }, startDay: 0, weight: 1, targetNetWorth: 1_000_000 };
+const goals: StableGoals = {
+  classGoals: { G1: 2 },
+  startDay: 0,
+  weight: 1,
+  targetNetWorth: 1_000_000,
+};
 const progress: GoalProgress = {
-  netWorth: 200_000, netWorthGap: 800_000,
+  netWorth: 200_000,
+  netWorthGap: 800_000,
   classWins: { G1: 0, G2: 0, G3: 0, Stakes: 0 },
   classRemaining: { G1: 2, G2: 0, G3: 0, Stakes: 0 },
 };

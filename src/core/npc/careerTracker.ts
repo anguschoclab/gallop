@@ -157,7 +157,11 @@ function careerStageAtDay(horse: Horse, day: number): NpcCareerStage {
   return "declining";
 }
 
-/** Build a dated career timeline from an NPC horse's off-screen starts and age transitions. */
+/**
+ * Build a dated career timeline from an NPC horse's off-screen starts and age transitions.
+ * @param horse
+ * @param currentDay
+ */
 export function buildNpcCareerTimeline(horse: Horse, currentDay: number): NpcCareerTimelineEvent[] {
   const events: NpcCareerTimelineEvent[] = [];
   let previousStage: NpcCareerStage = "unraced";
@@ -173,7 +177,9 @@ export function buildNpcCareerTimeline(horse: Horse, currentDay: number): NpcCar
   }
 
   if (horse.retiredOnDay !== undefined && horse.retiredOnDay <= currentDay) {
-    const alreadyIncluded = events.some((event) => event.kind === "stage" && event.stage === "retired");
+    const alreadyIncluded = events.some(
+      (event) => event.kind === "stage" && event.stage === "retired",
+    );
     if (!alreadyIncluded) {
       events.push({
         id: `stage-retired-${horse.retiredOnDay}`,

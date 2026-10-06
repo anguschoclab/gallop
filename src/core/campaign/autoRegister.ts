@@ -114,6 +114,7 @@ function selectBestJockey(horse: Horse, jockeys: Jockey[]): Jockey | null {
  * @param day - Current game day
  * @param daysAhead - Number of days to look ahead (default: 7)
  * @param minCashReserve - Minimum cash to preserve (default: 5000)
+ * @param goals
  * @returns AutoRegisterResult with entries and skipped horses
  */
 export function calculateAutoRegisterEntries(

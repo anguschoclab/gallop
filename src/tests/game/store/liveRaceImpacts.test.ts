@@ -125,10 +125,21 @@ describe("Live race finish applies player impacts immediately", () => {
 describe("Live race finish updates every stable and horse", () => {
   it("records race history for both runners immediately, and only once after day advance", () => {
     const playerHorse = createTestHorse({ id: asHorseId("h1"), ownership: makePlayerOwned() });
-    const npcHorse = createTestHorse({ id: asHorseId("h2"), ownership: makeNpcOwned(asNpcStableId("s1")) });
+    const npcHorse = createTestHorse({
+      id: asHorseId("h2"),
+      ownership: makeNpcOwned(asNpcStableId("s1")),
+    });
     useGame.setState({
-      day: 5, cash: 500, horses: h2r([playerHorse, npcHorse]), races: r2r([makeRace("r1", 5)]),
-      npcStables: [], jockeys: [], hiredStaff: [], transactions: [], pendingIntents: [], runEnded: false,
+      day: 5,
+      cash: 500,
+      horses: h2r([playerHorse, npcHorse]),
+      races: r2r([makeRace("r1", 5)]),
+      npcStables: [],
+      jockeys: [],
+      hiredStaff: [],
+      transactions: [],
+      pendingIntents: [],
+      runEnded: false,
     });
     useGame.getState().resolveRaceWithImpacts("r1", [
       { horseId: "h1", position: 2, time: 97 },
@@ -148,11 +159,32 @@ describe("Live race finish updates every stable and horse", () => {
 describe("Strategy Journal outcome fill", () => {
   it("records result, prize money and cash the moment the race finishes", () => {
     const playerHorse = createTestHorse({ id: asHorseId("h1"), ownership: makePlayerOwned() });
-    const npcHorse = createTestHorse({ id: asHorseId("h2"), ownership: makeNpcOwned(asNpcStableId("s1")) });
+    const npcHorse = createTestHorse({
+      id: asHorseId("h2"),
+      ownership: makeNpcOwned(asNpcStableId("s1")),
+    });
     useGame.setState({
-      day: 5, cash: 500, horses: h2r([playerHorse, npcHorse]), races: r2r([makeRace("r1", 5)]),
-      npcStables: [], jockeys: [], hiredStaff: [], transactions: [], pendingIntents: [], runEnded: false,
-      strategyJournal: [{ id: "j1", createdDay: 4, horseId: "h1", horseName: "H1", raceId: "r1", raceDay: 5, plan: "Lead" }],
+      day: 5,
+      cash: 500,
+      horses: h2r([playerHorse, npcHorse]),
+      races: r2r([makeRace("r1", 5)]),
+      npcStables: [],
+      jockeys: [],
+      hiredStaff: [],
+      transactions: [],
+      pendingIntents: [],
+      runEnded: false,
+      strategyJournal: [
+        {
+          id: "j1",
+          createdDay: 4,
+          horseId: "h1",
+          horseName: "H1",
+          raceId: "r1",
+          raceDay: 5,
+          plan: "Lead",
+        },
+      ],
     });
     useGame.getState().resolveRaceWithImpacts("r1", [
       { horseId: "h1", position: 1, time: 96 },

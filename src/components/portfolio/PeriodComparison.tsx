@@ -52,7 +52,13 @@ function Change({ a, b, fmt = String }: { a: number; b: number; fmt?: (n: number
     <span className={d > 0 ? "text-success" : "text-destructive"}>
       {d > 0 ? "+" : "−"}
       {fmt(Math.abs(d))}
-      {p !== null && <span className="opacity-70"> ({p > 0 ? "+" : ""}{p.toFixed(0)}%)</span>}
+      {p !== null && (
+        <span className="opacity-70">
+          {" "}
+          ({p > 0 ? "+" : ""}
+          {p.toFixed(0)}%)
+        </span>
+      )}
     </span>
   );
 }
@@ -70,7 +76,9 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
 
   const sa = useMemo(() => periodStats(wins, ledger, a), [wins, ledger, a]);
   const sb = useMemo(() => periodStats(wins, ledger, b), [wins, ledger, b]);
-  const classes = Array.from(new Set([...Object.keys(sa.byClass), ...Object.keys(sb.byClass)])).sort();
+  const classes = Array.from(
+    new Set([...Object.keys(sa.byClass), ...Object.keys(sb.byClass)]),
+  ).sort();
 
   const rows: { label: string; a: number; b: number; fmt?: (n: number) => string }[] = [
     { label: "Wins", a: sa.wins, b: sb.wins },
@@ -158,8 +166,12 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
                   return (
                     <tr key={k} className="border-t border-border">
                       <td className="py-1.5">{k}</td>
-                      <td className="text-right">{ca.starts} / {ca.wins}</td>
-                      <td className="text-right">{cb.starts} / {cb.wins}</td>
+                      <td className="text-right">
+                        {ca.starts} / {ca.wins}
+                      </td>
+                      <td className="text-right">
+                        {cb.starts} / {cb.wins}
+                      </td>
                       <td className="text-right">
                         <Change a={ca.wins} b={cb.wins} />
                       </td>

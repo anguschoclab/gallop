@@ -68,8 +68,14 @@ export function NpcHorseCareerTimeline({ horse, day }: { horse: Horse; day: numb
                   ) : (
                     <>
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className={cn("text-xs font-semibold", event.won ? "text-gold" : "text-cream")}>
-                          {event.won ? "Won" : `${ordinal(event.position)} finish`} · {event.raceName}
+                        <span
+                          className={cn(
+                            "text-xs font-semibold",
+                            event.won ? "text-gold" : "text-cream",
+                          )}
+                        >
+                          {event.won ? "Won" : `${ordinal(event.position)} finish`} ·{" "}
+                          {event.raceName}
                         </span>
                         {(event.grade || event.raceClass) && (
                           <Badge variant="outline" className="rounded-none text-[9px] uppercase">
@@ -79,7 +85,8 @@ export function NpcHorseCareerTimeline({ horse, day }: { horse: Horse; day: numb
                       </div>
                       <div className="mt-1 flex flex-wrap gap-x-3 font-mono text-[10px] text-cream-muted">
                         <span>
-                          Finish {event.position}{event.fieldSize ? `/${event.fieldSize}` : ""}
+                          Finish {event.position}
+                          {event.fieldSize ? `/${event.fieldSize}` : ""}
                         </span>
                         <span className={event.payout > 0 ? "text-success" : undefined}>
                           Payout {formatCurrency(event.payout)}

@@ -83,7 +83,12 @@ export interface GoalBonus {
   reasons: string[];
 }
 
-/** Extra suitability points for a race given the stable's open goals. */
+/**
+ * Extra suitability points for a race given the stable's open goals.
+ * @param race
+ * @param goals
+ * @param progress
+ */
 export function goalRaceBonus(
   race: Pick<Race, "graded" | "raceClass" | "purse">,
   goals: StableGoals | undefined,

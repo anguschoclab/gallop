@@ -48,7 +48,9 @@ function StableCampaignPage() {
   const day = useGame((s) => s.day);
   const autoEnter = useGame((s) => s.userSettings?.gameplay?.autoEnterRaces ?? false);
 
-  const [draft, setDraft] = useState<StableGoals>(saved ?? { ...DEFAULT_STABLE_GOALS, startDay: day });
+  const [draft, setDraft] = useState<StableGoals>(
+    saved ?? { ...DEFAULT_STABLE_GOALS, startDay: day },
+  );
   useEffect(() => {
     if (saved) setDraft(saved);
   }, [saved]);
@@ -125,7 +127,10 @@ function StableCampaignPage() {
             {draft.targetNetWorth ? (
               <>
                 {" "}
-                · gap <span className="font-mono">{money(Math.max(0, draft.targetNetWorth - progress.netWorth))}</span>
+                · gap{" "}
+                <span className="font-mono">
+                  {money(Math.max(0, draft.targetNetWorth - progress.netWorth))}
+                </span>
                 {draft.targetDay && draft.targetDay > day && (
                   <> · {draft.targetDay - day} days left</>
                 )}
@@ -156,7 +161,10 @@ function StableCampaignPage() {
                     onChange={(e) =>
                       setDraft({
                         ...draft,
-                        classGoals: { ...draft.classGoals, [c]: Math.max(0, Number(e.target.value) || 0) },
+                        classGoals: {
+                          ...draft.classGoals,
+                          [c]: Math.max(0, Number(e.target.value) || 0),
+                        },
                       })
                     }
                   />
@@ -183,7 +191,9 @@ function StableCampaignPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm uppercase tracking-wide">How strongly to prioritise</CardTitle>
+          <CardTitle className="text-sm uppercase tracking-wide">
+            How strongly to prioritise
+          </CardTitle>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
           {STRENGTH.map((s) => (

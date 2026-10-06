@@ -33,7 +33,13 @@ export interface StrategyJournalEntry {
   };
 }
 
-/** Record actual results for any journal plans whose race has now been run. */
+/**
+ * Record actual results for any journal plans whose race has now been run.
+ * @param list
+ * @param horses
+ * @param cash
+ * @param day
+ */
 export function fillJournalOutcomes(
   list: StrategyJournalEntry[] | undefined,
   horses: Record<string, { raceHistory?: HorseRaceHistoryEntry[] } | undefined>,
@@ -117,7 +123,8 @@ export function journalOutcome(
   return { status: "missing" };
 }
 
-export type PlanDimension = "ridingStyle" | "earlyPosition" | "moveTiming" | "aggression" | "source";
+export type PlanDimension =
+  "ridingStyle" | "earlyPosition" | "moveTiming" | "aggression" | "source";
 
 export interface PlanEffectivenessRow {
   key: string;
@@ -142,7 +149,11 @@ function dimensionKey(e: StrategyJournalEntry, dim: PlanDimension): string {
       return e.moveTiming ?? "Custom plan";
     case "aggression":
       if (e.aggressiveness === undefined) return "Custom plan";
-      return e.aggressiveness < 40 ? "Patient (0-39)" : e.aggressiveness < 70 ? "Balanced (40-69)" : "Aggressive (70-100)";
+      return e.aggressiveness < 40
+        ? "Patient (0-39)"
+        : e.aggressiveness < 70
+          ? "Balanced (40-69)"
+          : "Aggressive (70-100)";
     case "source":
       return e.ridingStyle ? "Race Advisor plan" : "Custom plan";
   }
@@ -154,7 +165,11 @@ function rawScore(winRate: number, placeRate: number, finishQuality: number) {
   return 100 * (0.6 * winRate + 0.3 * placeRate + 0.1 * finishQuality);
 }
 
-/** How often each plan type wins, from journal entries that have a recorded result. */
+/**
+ * How often each plan type wins, from journal entries that have a recorded result.
+ * @param list
+ * @param dim
+ */
 export function planEffectiveness(
   list: StrategyJournalEntry[] | undefined,
   dim: PlanDimension,
