@@ -4,3 +4,4 @@
  */
 
 export * from "@/core/tactics/tacticsTypes";
+export * from "@/core/tactics/strategyJournal";

@@ -1,8 +1,8 @@
 import { useMemo, useState } from "react";
 import { useGame } from "@/game/store";
-import type { PlayerRaceWinRecord } from "@/core/stable/raceWins";
-import type { TrackLedgerEntry } from "@/core/history/trackLedger";
-import { periodStats, pctChange, type DayRange } from "@/core/stable/periodComparison";
+import type { PlayerRaceWinRecord } from "@/services/stable/stableFacade";
+import type { TrackLedgerEntry } from "@/services/history/historyFacade";
+import { periodStats, pctChange, type DayRange } from "@/services/stable/stableFacade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

@@ -5,7 +5,7 @@ import {
   planEffectiveness,
   type PlanDimension,
   type StrategyJournalEntry,
-} from "@/core/tactics/strategyJournal";
+} from "@/services/tactics/tacticsFacade";
 
 const DIMS: { v: PlanDimension; label: string }[] = [
   { v: "ridingStyle", label: "Riding style" },

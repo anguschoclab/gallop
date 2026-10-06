@@ -35,10 +35,10 @@ export interface StrategyJournalEntry {
 
 /**
  * Record actual results for any journal plans whose race has now been run.
- * @param list
- * @param horses
- * @param cash
- * @param day
+ * @param list - Journal entries to fill outcomes for
+ * @param horses - Horses keyed by id, used to look up race results
+ * @param cash - Current player cash balance
+ * @param day - Current game day
  */
 export function fillJournalOutcomes(
   list: StrategyJournalEntry[] | undefined,
@@ -167,8 +167,8 @@ function rawScore(winRate: number, placeRate: number, finishQuality: number) {
 
 /**
  * How often each plan type wins, from journal entries that have a recorded result.
- * @param list
- * @param dim
+ * @param list - Journal entries with recorded outcomes
+ * @param dim - Plan dimension to group by
  */
 export function planEffectiveness(
   list: StrategyJournalEntry[] | undefined,

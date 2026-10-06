@@ -159,8 +159,8 @@ function careerStageAtDay(horse: Horse, day: number): NpcCareerStage {
 
 /**
  * Build a dated career timeline from an NPC horse's off-screen starts and age transitions.
- * @param horse
- * @param currentDay
+ * @param horse - NPC horse to build the timeline for
+ * @param currentDay - Current game day (timeline cutoff)
  */
 export function buildNpcCareerTimeline(horse: Horse, currentDay: number): NpcCareerTimelineEvent[] {
   const events: NpcCareerTimelineEvent[] = [];

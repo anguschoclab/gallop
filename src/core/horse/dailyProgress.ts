@@ -41,9 +41,9 @@ export function snapshotHorse(horse: Horse, day: number, allHorses: Horse[]): Ho
 
 /**
  * Append today's snapshot for every player-owned horse; drop horses no longer owned.
- * @param history
- * @param horses
- * @param day
+ * @param history - Existing per-horse snapshot map
+ * @param horses - All horses in game
+ * @param day - Current game day
  */
 export function recordDailyProgress(
   history: HorseDailyProgress | undefined,

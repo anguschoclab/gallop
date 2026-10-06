@@ -85,9 +85,9 @@ export interface GoalBonus {
 
 /**
  * Extra suitability points for a race given the stable's open goals.
- * @param race
- * @param goals
- * @param progress
+ * @param race - Race being evaluated for suitability
+ * @param goals - Stable goals (may be undefined)
+ * @param progress - Goal progress snapshot (may be undefined)
  */
 export function goalRaceBonus(
   race: Pick<Race, "graded" | "raceClass" | "purse">,

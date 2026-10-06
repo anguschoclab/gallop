@@ -1,5 +1,5 @@
 import { useGame } from "@/game/store";
-import type { HorseDailySnapshot } from "@/core/horse/dailyProgress";
+import type { HorseDailySnapshot } from "@/services/horse/horseFacade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/cn";
 import { CalendarClock } from "lucide-react";

@@ -24,3 +24,4 @@ export * from "@/core/horse/grading";
 export * from "@/core/horse/insights";
 export * from "@/core/horse/proceduralPortrait";
 export * from "@/core/horse/portraitPalettes";
+export * from "@/core/horse/dailyProgress";
