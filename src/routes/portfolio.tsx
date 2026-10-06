@@ -172,10 +172,11 @@ function PortfolioPage() {
   }
 
   function toggleSelectPage() {
-    if (allPageSelected) {
+    if (pageSelectedCount > 0) {
       for (const id of pageNpcIds) compare.remove(id);
     } else {
-      for (const id of pageNpcIds) compare.add(id);
+      const slots = MAX_COMPARE - compare.ids.length;
+      for (const id of pageNpcIds.slice(0, Math.max(0, slots))) compare.add(id);
     }
   }
 
