@@ -21,7 +21,6 @@ import type {
   OutpostImpact,
 } from "../impacts/miscImpacts";
 
-
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   facility_upgrade: (draft, impact, lookupMaps) => {
     const { facilityId, nextLevel } = impact as FacilityUpgradeImpact;

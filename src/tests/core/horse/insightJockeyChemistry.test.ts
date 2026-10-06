@@ -15,9 +15,7 @@ describe("detectJockeyChemistry", () => {
   });
 
   it("returns null for single entry", () => {
-    const horse = createHorse([
-      { jockeyId: "j1", position: 1 } as any,
-    ]);
+    const horse = createHorse([{ jockeyId: "j1", position: 1 } as any]);
     expect(detectJockeyChemistry(horse)).toBeNull();
   });
 

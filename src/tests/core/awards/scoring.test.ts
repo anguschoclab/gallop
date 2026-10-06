@@ -10,13 +10,24 @@ import { NorthAmericanCategory, AsiaPacificCategory } from "@/core/awards/types"
 import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 
 describe("awards/scoring (PR #490)", () => {
-  const createMockHorse = (id: string, age: number, gender: string, raceHistory: any[], ownershipType: string = "player"): Horse => {
+  const createMockHorse = (
+    id: string,
+    age: number,
+    gender: string,
+    raceHistory: any[],
+    ownershipType: string = "player",
+  ): Horse => {
     return {
       id,
       name: `Horse ${id}`,
       age,
       gender,
-      ownership: ownershipType === "player" ? { type: "player" } : ownershipType === "npc" ? { type: "npc", stableId: "s1" } : { type: "world" },
+      ownership:
+        ownershipType === "player"
+          ? { type: "player" }
+          : ownershipType === "npc"
+            ? { type: "npc", stableId: "s1" }
+            : { type: "world" },
       raceHistory,
     } as Horse;
   };
@@ -32,12 +43,10 @@ describe("awards/scoring (PR #490)", () => {
   it("calculates points correctly for a horse in a specific region and category", () => {
     const raceId = "race-1";
     // Belmont Park is in USA -> north_america
-    const raceMap = new Map<string, Race>([
-      [raceId, createMockRace(raceId, "Belmont Park")]
-    ]);
+    const raceMap = new Map<string, Race>([[raceId, createMockRace(raceId, "Belmont Park")]]);
 
     const horse = createMockHorse("h1", 3, "colt", [
-      { day: 100, raceId, position: 1, grade: "G1", distance: 2000, surface: "dirt", beyer: 115 }
+      { day: 100, raceId, position: 1, grade: "G1", distance: 2000, surface: "dirt", beyer: 115 },
     ]);
 
     // weights for NA: G1_WIN (10) + BEYER_110_PLUS (6) = 16 points
@@ -47,12 +56,10 @@ describe("awards/scoring (PR #490)", () => {
 
   it("filters out races outside the year", () => {
     const raceId = "race-1";
-    const raceMap = new Map<string, Race>([
-      [raceId, createMockRace(raceId, "Belmont Park")]
-    ]);
+    const raceMap = new Map<string, Race>([[raceId, createMockRace(raceId, "Belmont Park")]]);
 
     const horse = createMockHorse("h1", 3, "colt", [
-      { day: 400, raceId, position: 1, grade: "G1", distance: 2000, surface: "dirt", beyer: 115 }
+      { day: 400, raceId, position: 1, grade: "G1", distance: 2000, surface: "dirt", beyer: 115 },
     ]);
 
     const points = calculateAwardPoints(horse, 1, "north_america", "champion_3yo_male", raceMap);
@@ -61,16 +68,28 @@ describe("awards/scoring (PR #490)", () => {
 
   it("does not award points to unowned world stock", () => {
     const raceId1 = "race-1";
-    const raceMap = new Map<string, Race>([
-      [raceId1, createMockRace(raceId1, "Belmont Park")]
-    ]);
+    const raceMap = new Map<string, Race>([[raceId1, createMockRace(raceId1, "Belmont Park")]]);
 
-    const horseWorld = createMockHorse("h3", 3, "colt", [
-      { day: 100, raceId: raceId1, position: 1, grade: "G1", distance: 2000, surface: "dirt", beyer: 115 }
-    ], "world");
+    const horseWorld = createMockHorse(
+      "h3",
+      3,
+      "colt",
+      [
+        {
+          day: 100,
+          raceId: raceId1,
+          position: 1,
+          grade: "G1",
+          distance: 2000,
+          surface: "dirt",
+          beyer: 115,
+        },
+      ],
+      "world",
+    );
 
     const winners = determineRegionalWinners([horseWorld], 1, "north_america", raceMap);
-    const champ = winners.find(w => w.category === "champion_3yo_male");
+    const champ = winners.find((w) => w.category === "champion_3yo_male");
     expect(champ).toBeUndefined();
   });
 
@@ -79,19 +98,35 @@ describe("awards/scoring (PR #490)", () => {
     const raceId2 = "race-2";
     const raceMap = new Map<string, Race>([
       [raceId1, createMockRace(raceId1, "Belmont Park")],
-      [raceId2, createMockRace(raceId2, "Belmont Park")]
+      [raceId2, createMockRace(raceId2, "Belmont Park")],
     ]);
 
     const horse1 = createMockHorse("h1", 3, "colt", [
-      { day: 100, raceId: raceId1, position: 1, grade: "G1", distance: 2000, surface: "dirt", beyer: 115 }
+      {
+        day: 100,
+        raceId: raceId1,
+        position: 1,
+        grade: "G1",
+        distance: 2000,
+        surface: "dirt",
+        beyer: 115,
+      },
     ]);
 
     const horse2 = createMockHorse("h2", 3, "colt", [
-      { day: 150, raceId: raceId2, position: 1, grade: "G2", distance: 2000, surface: "dirt", beyer: 90 }
+      {
+        day: 150,
+        raceId: raceId2,
+        position: 1,
+        grade: "G2",
+        distance: 2000,
+        surface: "dirt",
+        beyer: 90,
+      },
     ]);
 
     const winners = determineRegionalWinners([horse1, horse2], 1, "north_america", raceMap);
-    const champ3yoMale = winners.find(w => w.category === "champion_3yo_male");
+    const champ3yoMale = winners.find((w) => w.category === "champion_3yo_male");
     expect(champ3yoMale).toBeDefined();
     expect(champ3yoMale?.horseId).toBe("h1");
     expect(champ3yoMale?.points).toBe(16);
@@ -106,23 +141,47 @@ describe("awards/scoring (PR #490)", () => {
 
     const raceMap = new Map<string, Race>([
       [raceNA, createMockRace(raceNA, "Belmont Park")],
-      [raceEU, createMockRace(raceEU, "Ascot")]
+      [raceEU, createMockRace(raceEU, "Ascot")],
     ]);
 
     const horseNA = createMockHorse("h1", 3, "colt", [
-      { day: 100, raceId: raceNA, position: 1, grade: "G1", distance: 2000, surface: "dirt", beyer: 115 }
+      {
+        day: 100,
+        raceId: raceNA,
+        position: 1,
+        grade: "G1",
+        distance: 2000,
+        surface: "dirt",
+        beyer: 115,
+      },
     ]);
 
     const horseEU = createMockHorse("h2", 3, "colt", [
-      { day: 100, raceId: raceEU, position: 1, grade: "G1", distance: 2000, surface: "turf", beyer: 115 }
+      {
+        day: 100,
+        raceId: raceEU,
+        position: 1,
+        grade: "G1",
+        distance: 2000,
+        surface: "turf",
+        beyer: 115,
+      },
     ]);
 
-    const allWinners = determineAllRegionalWinners([horseNA, horseEU], Array.from(raceMap.values()), 1);
+    const allWinners = determineAllRegionalWinners(
+      [horseNA, horseEU],
+      Array.from(raceMap.values()),
+      1,
+    );
 
-    const naWinner = allWinners.find(w => w.region === "north_america" && w.category === "champion_3yo_male");
+    const naWinner = allWinners.find(
+      (w) => w.region === "north_america" && w.category === "champion_3yo_male",
+    );
     expect(naWinner?.horseId).toBe("h1");
 
-    const euWinner = allWinners.find(w => w.region === "europe" && w.category === "champion_3yo_colt");
+    const euWinner = allWinners.find(
+      (w) => w.region === "europe" && w.category === "champion_3yo_colt",
+    );
     expect(euWinner?.horseId).toBe("h2");
   });
 });
@@ -378,9 +437,7 @@ describe("Awards Scoring (PR #503)", () => {
   });
 
   it("enforces gender restrictions on sprint awards", () => {
-    const raceMap = new Map<string, Race>([
-      ["race1", createMockRace("race1", "Belmont Park")],
-    ]);
+    const raceMap = new Map<string, Race>([["race1", createMockRace("race1", "Belmont Park")]]);
     const colt = createMockHorse("colt1", 4, "colt", [
       {
         raceId: "race1",
@@ -407,14 +464,14 @@ describe("Awards Scoring (PR #503)", () => {
     expect(
       calculateAwardPoints(colt, 1, "north_america", "champion_sprint_male", raceMap),
     ).toBeGreaterThan(0);
-    expect(
-      calculateAwardPoints(colt, 1, "north_america", "champion_sprint_female", raceMap),
-    ).toBe(0);
+    expect(calculateAwardPoints(colt, 1, "north_america", "champion_sprint_female", raceMap)).toBe(
+      0,
+    );
     expect(
       calculateAwardPoints(filly, 1, "north_america", "champion_sprint_female", raceMap),
     ).toBeGreaterThan(0);
-    expect(
-      calculateAwardPoints(filly, 1, "north_america", "champion_sprint_male", raceMap),
-    ).toBe(0);
+    expect(calculateAwardPoints(filly, 1, "north_america", "champion_sprint_male", raceMap)).toBe(
+      0,
+    );
   });
 });

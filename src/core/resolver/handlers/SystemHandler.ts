@@ -42,7 +42,6 @@ import { getReputationTier, createReputationEvent, type ReputationSource } from 
 import { addReservedName } from "@/core/horse/naming/reservedNames";
 import { trackRecordKey } from "@/core/history/historyTypes";
 
-
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   log: (draft, impact) => {
     const { text } = impact as LogImpact;

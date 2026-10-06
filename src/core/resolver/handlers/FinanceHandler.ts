@@ -22,7 +22,6 @@ import {
 } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 
-
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   cash_change: (draft, impact, lookupMaps) => {
     const { entityId, amount } = impact as CashImpact;

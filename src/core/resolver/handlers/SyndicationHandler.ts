@@ -26,7 +26,6 @@ import type {
   SyndicateSatisfactionImpact,
 } from "../impacts/breedingImpacts";
 
-
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   syndicate_creation: (draft, impact, lookupMaps) => {
     const { syndicateId, stallionId, stallionName, totalShares, sharePrice, initialShareholders } =

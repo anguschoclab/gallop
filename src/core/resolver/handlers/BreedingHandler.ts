@@ -22,7 +22,6 @@ import type {
 } from "../impacts/breedingImpacts";
 import type { BlueHenImpact } from "../impacts/horseImpacts";
 
-
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   update_stud_fee: (draft, impact, lookupMaps) => {
     const { horseId, newFee } = impact as UpdateStudFeeImpact;

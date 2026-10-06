@@ -21,7 +21,6 @@ import type {
 import { generateUUID } from "@/core/uuid";
 import { makeUnowned } from "@/core/horse/ownership";
 
-
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   scout_report: (draft, impact) => {
     const { report } = impact as ScoutReportImpact;

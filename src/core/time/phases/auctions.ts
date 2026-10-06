@@ -129,9 +129,9 @@ export const auctionsPhase = {
       // horses from earlier this turn (so the runner can find them).
       const horsesIncludingFresh = [
         ...Object.values(state.horses),
-        ...(impacts
+        ...impacts
           .filter((i) => i.type === "horse_creation")
-          .map((i) => (i as HorseCreationImpact).horse)),
+          .map((i) => (i as HorseCreationImpact).horse),
       ];
       const runner = createAuctionRunner(sale, state.npcStables, horsesIncludingFresh);
       runner.runToCompletion();

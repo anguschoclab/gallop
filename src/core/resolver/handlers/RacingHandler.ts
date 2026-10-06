@@ -44,7 +44,6 @@ import {
 import { asNpcStableId } from "@/core/types/branded";
 import { createTransaction } from "@/core/transactions";
 
-
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   race_entry: (draft, impact, lookupMaps) => {
     const { raceId, horseId, jockeyId, weight, jockeyInstructions, bumpEntryHorseId, entryFee } =
