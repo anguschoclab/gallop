@@ -12,7 +12,7 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact, ReputationImpact } from "../impacts";
-import type { ImpactHandler, LookupMaps } from "./types";
+import type { ImpactHandler, LookupMaps, ImpactHandlerFunction } from "./types";
 import type { HallOfFameInductionImpact, SeasonHistoryImpact } from "../impacts/horseImpacts";
 import type {
   CampaignSlotImpact,
@@ -42,11 +42,6 @@ import { getReputationTier, createReputationEvent, type ReputationSource } from 
 import { addReservedName } from "@/core/horse/naming/reservedNames";
 import { trackRecordKey } from "@/core/history/historyTypes";
 
-type ImpactHandlerFunction = (
-  draft: WritableDraft<GameState>,
-  impact: AnyImpact,
-  lookupMaps?: LookupMaps,
-) => void;
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   log: (draft, impact) => {
