@@ -72,6 +72,8 @@ export interface SystemsState {
   /** Per-horse end-of-day snapshots of stats, form and price (player horses) */
   /** Player-written race plans and reflections (Strategy Journal) */
   strategyJournal?: import("@/core/tactics/strategyJournal").StrategyJournalEntry[];
+  /** Player stable campaign goals (net worth + class wins) */
+  stableGoals?: import("@/core/stable/stableGoals").StableGoals;
   horseDailyProgress?: import("@/core/horse/dailyProgress").HorseDailyProgress;
 
   // Breeding programs system

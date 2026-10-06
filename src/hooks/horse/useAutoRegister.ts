@@ -14,6 +14,7 @@ export function useAutoRegister() {
   const jockeys = useJockeys();
   const cash = useCash();
   const day = useDay();
+  const goals = useGame((s) => s.stableGoals);
 
   const enterRace = useGame((s) => s.enterRace);
   const assignJockey = useGame((s) => s.assignJockey);
@@ -26,8 +27,11 @@ export function useAutoRegister() {
       jockeys,
       cash,
       day,
+      7,
+      5000,
+      goals,
     );
-  }, [horses, races, jockeys, cash, day]);
+  }, [horses, races, jockeys, cash, day, goals]);
 
   const eligibleCount = result.entries.length + result.skipped.length;
   const hasEntries = result.entries.length > 0;
