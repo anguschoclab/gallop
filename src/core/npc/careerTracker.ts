@@ -102,6 +102,29 @@ export interface OffscreenStartOutcome {
   beyer: number;
 }
 
+export type NpcCareerTimelineEvent =
+  | {
+      id: string;
+      kind: "stage";
+      day: number;
+      age: number;
+      stage: NpcCareerStage;
+    }
+  | {
+      id: string;
+      kind: "start";
+      day: number;
+      age: number;
+      stage: NpcCareerStage;
+      raceName: string;
+      position: number;
+      fieldSize?: number;
+      payout: number;
+      won: boolean;
+      grade?: string;
+      raceClass?: string;
+    };
+
 /**
  * Determine which stage of its racing life a horse is in.
  *
@@ -119,6 +142,70 @@ export function careerStage(horse: Horse): NpcCareerStage {
   if (age <= peak + 1) return "prime";
   if (age >= 8) return "veteran";
   return "declining";
+}
+
+function careerStageAtDay(horse: Horse, day: number): NpcCareerStage {
+  if (horse.retiredOnDay !== undefined && day >= horse.retiredOnDay) return "retired";
+  const age = Math.max(0, Math.floor((day - horse.birthDay) / 365));
+  const peak = horse.peakAge && horse.peakAge > 2 ? horse.peakAge : 4;
+  if (age < CAREER_DEBUT_AGE) return "unraced";
+  if (age === 2) return "juvenile";
+  if (age >= CAREER_MAX_AGE) return "veteran";
+  if (age < peak) return "rising";
+  if (age <= peak + 1) return "prime";
+  if (age >= 8) return "veteran";
+  return "declining";
+}
+
+/** Build a dated career timeline from an NPC horse's off-screen starts and age transitions. */
+export function buildNpcCareerTimeline(horse: Horse, currentDay: number): NpcCareerTimelineEvent[] {
+  const events: NpcCareerTimelineEvent[] = [];
+  const firstRelevantDay = horse.birthDay + CAREER_DEBUT_AGE * 365;
+  const finalDay = Math.max(firstRelevantDay, currentDay);
+  let previousStage: NpcCareerStage = "unraced";
+
+  for (let age = CAREER_DEBUT_AGE; age <= CAREER_MAX_AGE; age++) {
+    const day = horse.birthDay + age * 365;
+    if (day > finalDay) break;
+    const stage = careerStageAtDay(horse, day);
+    if (stage !== previousStage) {
+      events.push({ id: `stage-${stage}-${day}`, kind: "stage", day, age, stage });
+      previousStage = stage;
+    }
+  }
+
+  if (horse.retiredOnDay !== undefined && horse.retiredOnDay <= currentDay) {
+    const alreadyIncluded = events.some((event) => event.kind === "stage" && event.stage === "retired");
+    if (!alreadyIncluded) {
+      events.push({
+        id: `stage-retired-${horse.retiredOnDay}`,
+        kind: "stage",
+        day: horse.retiredOnDay,
+        age: Math.max(0, Math.floor((horse.retiredOnDay - horse.birthDay) / 365)),
+        stage: "retired",
+      });
+    }
+  }
+
+  for (const start of horse.raceHistory ?? []) {
+    if (!start.offscreen) continue;
+    events.push({
+      id: `start-${start.raceId}-${start.day}`,
+      kind: "start",
+      day: start.day,
+      age: Math.max(0, Math.floor((start.day - horse.birthDay) / 365)),
+      stage: careerStageAtDay(horse, start.day),
+      raceName: start.raceName,
+      position: start.position,
+      fieldSize: start.fieldSize,
+      payout: start.purseEarned ?? 0,
+      won: start.position === 1,
+      grade: start.grade,
+      raceClass: start.raceClass,
+    });
+  }
+
+  return events.sort((a, b) => a.day - b.day || (a.kind === "stage" ? -1 : 1));
 }
 
 /**
