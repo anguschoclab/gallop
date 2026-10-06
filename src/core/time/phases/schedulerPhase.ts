@@ -65,6 +65,9 @@ function runDailyAutoEntry(context: PipelineContext): PipelineContext {
     state.jockeys ?? [],
     state.cash - pendingSpend,
     newDay,
+    7,
+    5000,
+    state.stableGoals,
   );
   if (result.entries.length === 0) return context;
 

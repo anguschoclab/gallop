@@ -1,3 +1,4 @@
+import { goalProgress, goalRaceBonus, type StableGoals } from "@/core/stable/stableGoals";
 /**
  * autoRegister.ts - Smart auto-registration for player horses
  *
@@ -123,7 +124,9 @@ export function calculateAutoRegisterEntries(
   day: number,
   daysAhead: number = 7,
   minCashReserve: number = 5000,
+  goals?: StableGoals,
 ): AutoRegisterResult {
+  const progress = goals ? goalProgress(goals, horses, cash) : undefined;
   const entries: AutoRegisterEntry[] = [];
   const skipped: { horseId: string; horseName: string; reason: string }[] = [];
 
@@ -223,7 +226,8 @@ export function calculateAutoRegisterEntries(
       }
 
       // Calculate suitability score using AI scoring
-      const score = calculateRaceSuitability(horse, race, PLAYER_STABLE_CONFIG);
+      const base = calculateRaceSuitability(horse, race, PLAYER_STABLE_CONFIG);
+      const score = base > 0 ? base + goalRaceBonus(race, goals, progress).bonus : base;
 
       // Only consider positive scores (meaning the race is at least marginally suitable)
       if (score > 0 && score > bestScore) {
