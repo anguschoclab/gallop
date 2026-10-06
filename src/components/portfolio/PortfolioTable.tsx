@@ -183,7 +183,7 @@ export function PortfolioTable({
               </TableRow>
               {expanded === r.id && (
                 <TableRow className="border-white/5 bg-slate-950/40">
-                  <TableCell colSpan={COLUMNS.length + 1} className="p-4">
+                  <TableCell colSpan={COLUMNS.length + 2} className="p-4">
                     <div className="mb-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
                       {r.yard ? `${r.yard.name} — ${r.yard.town}` : "Roster"}
                     </div>
