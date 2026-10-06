@@ -121,3 +121,26 @@ describe("Live race finish applies player impacts immediately", () => {
     expect(nextState.reputation?.score).toBeLessThan(liveScore + 1);
   });
 });
+
+describe("Live race finish updates every stable and horse", () => {
+  it("records race history for both runners immediately, and only once after day advance", () => {
+    const playerHorse = createTestHorse({ id: asHorseId("h1"), ownership: makePlayerOwned() });
+    const npcHorse = createTestHorse({ id: asHorseId("h2"), ownership: makeNpcOwned(asNpcStableId("s1")) });
+    useGame.setState({
+      day: 5, cash: 500, horses: h2r([playerHorse, npcHorse]), races: r2r([makeRace("r1", 5)]),
+      npcStables: [], jockeys: [], hiredStaff: [], transactions: [], pendingIntents: [], runEnded: false,
+    });
+    useGame.getState().resolveRaceWithImpacts("r1", [
+      { horseId: "h1", position: 2, time: 97 },
+      { horseId: "h2", position: 1, time: 96 },
+    ]);
+    const s = useGame.getState();
+    for (const id of ["h1", "h2"]) {
+      expect(s.horses[id].raceHistory.filter((r) => r.raceId === "r1").length).toBe(1);
+    }
+    const { state: next } = runPipelineForDay(s, 6);
+    for (const id of ["h1", "h2"]) {
+      expect(next.horses[id].raceHistory.filter((r) => r.raceId === "r1").length).toBe(1);
+    }
+  });
+});

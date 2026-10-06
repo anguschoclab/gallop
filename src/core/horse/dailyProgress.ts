@@ -47,7 +47,7 @@ export function recordDailyProgress(
 ): HorseDailyProgress {
   const next: HorseDailyProgress = {};
   for (const h of horses) {
-    if (!isPlayerOwned(h) || h.lifecycleStatus === "deceased") continue;
+    if (!h?.stats || !isPlayerOwned(h) || h.lifecycleStatus === "deceased") continue;
     const prev = (history?.[h.id] ?? []).filter((s) => s.day !== day);
     const list = [...prev, snapshotHorse(h, day, horses)];
     next[h.id] = list.slice(-DAILY_PROGRESS_MAX_ENTRIES);
