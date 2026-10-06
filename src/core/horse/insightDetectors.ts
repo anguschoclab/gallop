@@ -53,6 +53,51 @@ export const detectBridesmaid: InsightDetector = (horse) => {
   return null;
 };
 
+// 1.2 Check for Jockey Chemistry
+export const detectJockeyChemistry: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  const jockeyStats = new Map<string, { starts: number; wins: number }>();
+  let bestJockeyId: string | null = null;
+  let bestWins = 0;
+  let bestStarts = 0;
+
+  for (const race of history) {
+    if (race.jockeyId) {
+      const stats = jockeyStats.get(race.jockeyId) || { starts: 0, wins: 0 };
+      stats.starts++;
+      if (race.position === 1) stats.wins++;
+      jockeyStats.set(race.jockeyId, stats);
+    }
+  }
+
+  for (const [jockeyId, stats] of jockeyStats.entries()) {
+    if (stats.starts >= 3 && stats.wins >= 2) {
+      const winRate = stats.wins / stats.starts;
+      const bestWinRate = bestStarts > 0 ? bestWins / bestStarts : 0;
+      if (winRate > bestWinRate || (winRate === bestWinRate && stats.starts > bestStarts)) {
+        bestJockeyId = jockeyId;
+        bestWins = stats.wins;
+        bestStarts = stats.starts;
+      }
+    }
+  }
+
+  if (bestJockeyId) {
+    const winRate = Math.round((bestWins / bestStarts) * 100);
+    // Requires >= 50% win rate and more than a single win.
+    if (winRate >= 50) {
+      return {
+        label: "Jockey Chemistry",
+        value: "{jockeyName}",
+        context: `Has won ${bestWins} of ${bestStarts} starts (${winRate}%) when paired with this jockey`,
+        type: "positive",
+        jockeyId: bestJockeyId,
+      };
+    }
+  }
+  return null;
+};
+
 // 1.25 Check for Model of Consistency (80%+ top-3 finish rate, min 5 starts)
 export const detectConsistency: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -554,6 +599,7 @@ export const detectGateAffinity: InsightDetector = (horse) => {
 export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectWinStreak,
   detectBridesmaid,
+  detectJockeyChemistry,
   detectConsistency,
   detectBounceCandidate,
   detectImprovingForm,
