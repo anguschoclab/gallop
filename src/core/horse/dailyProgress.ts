@@ -32,7 +32,7 @@ export function snapshotHorse(horse: Horse, day: number, allHorses: Horse[]): Ho
     stamina: r1(horse.stats.stamina),
     acceleration: r1(horse.stats.acceleration),
     consistency: r1(horse.stats.consistency),
-    ovr: r1(calculateOverallRating(horse.stats)),
+    ovr: r1(calculateOverallRating(horse)),
     form: r1(horse.form),
     energy: Math.round(horse.energy ?? 0),
     price: horseMarketValue(horse, allHorses),

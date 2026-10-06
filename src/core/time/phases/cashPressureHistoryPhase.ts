@@ -18,6 +18,8 @@ import {
   type CashPressureHistory,
 } from "@/core/stable/cashPressureHistory";
 import { PHASE_ORDER_CASH_PRESSURE_HISTORY } from "@/constants";
+import { recordDailyProgress, type HorseDailyProgress } from "@/core/horse/dailyProgress";
+import type { Horse } from "@/core/horse/types";
 
 export const cashPressureHistoryPhase: PipelinePhase = {
   name: "cashPressureHistory",
@@ -25,7 +27,14 @@ export const cashPressureHistoryPhase: PipelinePhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const stables = state.npcStables ?? [];
-    if (stables.length === 0) return context;
+    const horseDailyProgress = recordDailyProgress(
+      (state as { horseDailyProgress?: HorseDailyProgress }).horseDailyProgress,
+      Object.values(state.horses ?? {}) as Horse[],
+      newDay,
+    );
+    if (stables.length === 0) {
+      return { ...context, state: { ...state, horseDailyProgress } };
+    }
 
     // Start from existing history or lazily initialize
     let history: CashPressureHistory =
@@ -52,6 +61,7 @@ export const cashPressureHistoryPhase: PipelinePhase = {
       state: {
         ...state,
         cashPressureHistory: history,
+        horseDailyProgress,
       },
     };
   },
