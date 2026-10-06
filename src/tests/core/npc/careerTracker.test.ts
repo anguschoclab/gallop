@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import {
+  buildNpcCareerTimeline,
   careerStage,
   offscreenStartInterval,
   isDueForOffscreenStart,
@@ -136,5 +137,48 @@ describe("npc career tracker", () => {
     expect(summary.offscreenStarts).toBe(1);
     expect(summary.lastStartDay).toBe(80);
     expect(summary.daysSinceStart).toBe(20);
+  });
+
+  it("builds a chronological timeline of stage changes and every offscreen start", () => {
+    const h = horse({
+      birthDay: 0,
+      age: 5,
+      peakAge: 4,
+      raceHistory: [
+        {
+          raceId: "offscreen-1",
+          raceName: "Provincial Stakes",
+          position: 1,
+          fieldSize: 9,
+          purseEarned: 192000,
+          day: 800,
+          grade: "G3",
+          offscreen: true,
+        },
+        { raceId: "visible", raceName: "Visible Race", position: 2, day: 820 },
+        {
+          raceId: "offscreen-2",
+          raceName: "Coronation Trial",
+          position: 4,
+          fieldSize: 10,
+          purseEarned: 30000,
+          day: 1500,
+          offscreen: true,
+        },
+      ],
+    });
+
+    const timeline = buildNpcCareerTimeline(h, 1900);
+    const starts = timeline.filter((event) => event.kind === "start");
+    expect(starts).toHaveLength(2);
+    expect(starts[0]).toMatchObject({ won: true, position: 1, payout: 192000, age: 2 });
+    expect(timeline.filter((event) => event.kind === "stage").map((event) => event.stage)).toEqual([
+      "juvenile",
+      "rising",
+      "prime",
+    ]);
+    expect(timeline.map((event) => event.day)).toEqual(
+      [...timeline.map((event) => event.day)].sort((a, b) => a - b),
+    );
   });
 });

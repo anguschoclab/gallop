@@ -35,6 +35,8 @@ bun run typecheck:errors
 
 ## Known Gotchas
 
+- NPC career timelines are derived from `raceHistory` and age boundaries rather than separately persisted, so existing saves automatically gain complete off-screen histories.
+
 - The test suite is large but fast. Stderr from `saveManager` error-path tests is expected, not a failure.
 - `bun run build` validates auto-generated `routeTree.gen.ts` — run it after adding/removing routes.
 - **`bun run build` may fail with `ENOTEMPTY` on `node_modules/.nitro/`** — this is a stale cache issue, not a code error. Fix: `rm -rf node_modules/.nitro` then rebuild.

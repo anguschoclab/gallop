@@ -4,7 +4,12 @@
  */
 
 export { getDisplayableStats, calculateScoutCost } from "@/core/npc/scouting";
-export { summarizeNpcCareer, careerStageLabel } from "@/core/npc/careerTracker";
+export {
+  buildNpcCareerTimeline,
+  summarizeNpcCareer,
+  careerStageLabel,
+} from "@/core/npc/careerTracker";
+export type { NpcCareerTimelineEvent } from "@/core/npc/careerTracker";
 export { buildRivalCareerProfile, buildRivalCareerProfiles } from "@/core/npc/rivalCareerCompare";
 export type { RivalCareerProfile, RivalMilestoneRecord } from "@/core/npc/rivalCareerCompare";
 export { isNotableRival } from "@/core/npc/careerMilestones";
