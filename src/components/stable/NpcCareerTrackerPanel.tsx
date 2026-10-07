@@ -5,6 +5,8 @@
  */
 import { Fragment, useMemo, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { TOOLTIP_DELAY_MS } from "@/constants";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -181,19 +183,28 @@ export function NpcCareerTrackerPanel({ horses, day }: NpcCareerTrackerPanelProp
                           {career.daysSinceStart === null ? "—" : `${career.daysSinceStart}d ago`}
                         </td>
                         <td className="px-3 py-2 text-right">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7"
-                            onClick={() => setExpandedHorseId(expanded ? null : horse.id)}
-                            aria-label={`${expanded ? "Hide" : "Show"} ${horse.name} career timeline`}
-                            aria-expanded={expanded}
-                            aria-controls={`career-timeline-${horse.id}`}
-                          >
-                            <ChevronDown
-                              className={cn("transition-transform", expanded && "rotate-180")}
-                            />
-                          </Button>
+                          <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  className="h-7 w-7"
+                                  onClick={() => setExpandedHorseId(expanded ? null : horse.id)}
+                                  aria-label={`${expanded ? "Hide" : "Show"} ${horse.name} career timeline`}
+                                  aria-expanded={expanded}
+                                  aria-controls={`career-timeline-${horse.id}`}
+                                >
+                                  <ChevronDown
+                                    className={cn("transition-transform", expanded && "rotate-180")}
+                                  />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                {expanded ? "Hide" : "Show"} career timeline
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
                         </td>
                       </tr>
                       {expanded && (
