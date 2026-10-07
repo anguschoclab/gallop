@@ -343,22 +343,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
 export class RacingHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return [
-      "race_entry",
-      "race_withdrawal",
-      "race_result",
-      "jockey_contract",
-      "jockey_release",
-      "jockey_assignment",
-      "jockey_silk",
-      "jockey_stats",
-      "race_history",
-      "claiming",
-      "triple_crown_progress",
-      "tactics",
-      "race_result_adjustment",
-      "jockey_affinity_gain",
-    ].includes(type);
+    return type in IMPACT_HANDLERS;
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {

@@ -76,15 +76,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
 export class BreedingHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return [
-      "pregnancy_creation",
-      "pregnancy_update",
-      "pregnancy_deletion",
-      "stud_career",
-      "mare_foaling_update",
-      "blue_hen_status",
-      "update_stud_fee",
-    ].includes(type);
+    return type in IMPACT_HANDLERS;
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
