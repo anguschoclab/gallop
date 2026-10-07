@@ -1,7 +1,8 @@
 import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_MS } from "@/constants";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Dice5 } from "lucide-react";
 import { randomStableName, randomOwnerName } from "@/services/stable/stableFacade";
 import { makeWizardRng } from "./helpers";
@@ -87,20 +88,22 @@ function FieldWithRandom({
           </TooltipTrigger>
           <TooltipContent>{tooltip}</TooltipContent>
         </Tooltip>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              variant="outline"
-              size="icon"
-              onClick={onRandomize}
-              aria-label={`Roll a random ${label.toLowerCase()}`}
-            >
-              <Dice5 className="h-4 w-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Roll a random {label.toLowerCase()}</TooltipContent>
-        </Tooltip>
+        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={onRandomize}
+                aria-label={`Roll a random ${label.toLowerCase()}`}
+              >
+                <Dice5 className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Roll a random {label.toLowerCase()}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
     </div>
   );
