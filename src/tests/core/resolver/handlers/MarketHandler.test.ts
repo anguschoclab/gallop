@@ -32,7 +32,7 @@ describe("MarketHandler", () => {
       reason: "Scout report",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.scoutReports).toHaveLength(1);
@@ -62,7 +62,7 @@ describe("MarketHandler", () => {
       reason: "Consigned to sale",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].consignedSaleId).toBe("sale-1");
@@ -100,7 +100,7 @@ describe("MarketHandler", () => {
       reason: "Withdrawn",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].consignedSaleId).toBeUndefined();
@@ -142,7 +142,7 @@ describe("MarketHandler", () => {
       reason: "Auction resolved",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     const lot = draft.auctions[0].lots[0];
@@ -185,7 +185,7 @@ describe("MarketHandler", () => {
       reason: "Auction passed",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].consignedSaleId).toBeUndefined();

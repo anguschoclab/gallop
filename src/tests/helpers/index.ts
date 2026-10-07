@@ -1,4 +1,5 @@
 // Test helper utilities for creating complete test objects
+export { deepClone } from "./deepClone";
 export { createProgenyLeaderboard, createProgenyRanking } from "./createProgenyLeaderboard";
 export { createTestRng } from "./createTestRng";
 export { createTestGenotype } from "./createTestGenotype";

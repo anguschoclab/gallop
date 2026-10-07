@@ -48,7 +48,7 @@ describe("RacingHandler", () => {
       reason: "Entered race",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(Object.keys(draft.races["race-1"].entries)).toHaveLength(1);
@@ -81,7 +81,7 @@ describe("RacingHandler", () => {
       reason: "Entered race",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.races["race-1"].entries[0].horseId).toBe("h-unowned");
@@ -113,7 +113,7 @@ describe("RacingHandler", () => {
       reason: "Withdrawn",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(Object.keys(draft.races["race-1"].entries)).toHaveLength(0);
@@ -142,7 +142,7 @@ describe("RacingHandler", () => {
       reason: "Race finished",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.races["race-1"].resolved).toBe(true);
@@ -171,7 +171,7 @@ describe("RacingHandler", () => {
       reason: "Contract signed",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.jockeys[0].stableId).toBe("player");
@@ -203,7 +203,7 @@ describe("RacingHandler", () => {
       reason: "Reassigned",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.races["race-1"].entries[0].jockeyId).toBe("j2");
@@ -229,7 +229,7 @@ describe("RacingHandler", () => {
       reason: "Silk rerolled",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.jockeys[0].silk).toEqual(impact.silk);
@@ -264,7 +264,7 @@ describe("RacingHandler", () => {
       reason: "Stats updated",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.jockeys[0].careerStarts).toBe(30);
@@ -297,7 +297,7 @@ describe("RacingHandler", () => {
       reason: "Claimed by player",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].ownership).toEqual({ type: "player" });
@@ -326,7 +326,7 @@ describe("RacingHandler", () => {
       reason: "Triple crown progress",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.triplecrownHistory).toHaveLength(1);
@@ -363,7 +363,7 @@ describe("RacingHandler", () => {
       reason: "Triple crown won",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.triplecrownHistory).toHaveLength(1);
@@ -419,7 +419,7 @@ describe("RacingHandler", () => {
       reason: "Updated",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     // Only the matching entry (h2:us_3yo:2024) should be updated
@@ -474,7 +474,7 @@ describe("RacingHandler", () => {
       reason: "Tactics updated",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.races["race-1"].entries[0].jockeyInstructions.ridingStyle).toBe("front_runner");
@@ -516,7 +516,7 @@ describe("RacingHandler", () => {
       reason: "Stewards DQ",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.races["race-1"].result[0].horseId).toBe("h2");
@@ -570,7 +570,7 @@ describe("RacingHandler", () => {
       reason: "Multiple DQs",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.races["race-1"].result[0].horseId).toBe("h2");
@@ -606,7 +606,7 @@ describe("RacingHandler", () => {
       reason: "Affinity gained",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.jockeys[0].affinityMap["h1"]).toBe(10);
@@ -657,7 +657,7 @@ describe("RacingHandler", () => {
         reason: "Entered race",
       };
 
-      const draft = JSON.parse(JSON.stringify(state));
+      const draft: any = structuredClone(state);
       handler.handle(draft, impact);
 
       expect(draft.cash).toBe(4000);
@@ -689,7 +689,7 @@ describe("RacingHandler", () => {
         reason: "Entered race",
       };
 
-      const draft = JSON.parse(JSON.stringify(state));
+      const draft: any = structuredClone(state);
       handler.handle(draft, impact);
 
       expect(draft.transactions).toHaveLength(1);
@@ -725,7 +725,7 @@ describe("RacingHandler", () => {
         reason: "Entered race",
       };
 
-      const draft = JSON.parse(JSON.stringify(state));
+      const draft: any = structuredClone(state);
       handler.handle(draft, impact);
 
       expect(draft.npcStables[0].cash).toBe(4000);
@@ -756,7 +756,7 @@ describe("RacingHandler", () => {
         reason: "Entered race",
       };
 
-      const draft = JSON.parse(JSON.stringify(state));
+      const draft: any = structuredClone(state);
       handler.handle(draft, impact);
 
       expect(draft.cash).toBe(5000);
@@ -789,7 +789,7 @@ describe("RacingHandler", () => {
         reason: "Entered race",
       };
 
-      const draft = JSON.parse(JSON.stringify(state));
+      const draft: any = structuredClone(state);
       handler.handle(draft, impact);
 
       expect(draft.cash).toBe(5000);
@@ -848,7 +848,7 @@ describe("RacingHandler", () => {
         reason: "Bump entry",
       };
 
-      const draft = JSON.parse(JSON.stringify(state));
+      const draft: any = structuredClone(state);
       handler.handle(draft, impact);
 
       // Bumped stable gets refund (3000 + 1000 = 4000)
@@ -890,7 +890,7 @@ describe("RacingHandler", () => {
         reason: "Race withdrawal",
       };
 
-      const draft = JSON.parse(JSON.stringify(state));
+      const draft: any = structuredClone(state);
       handler.handle(draft, impact);
 
       expect(draft.cash).toBe(5000);
@@ -929,7 +929,7 @@ describe("RacingHandler", () => {
         reason: "Race withdrawal",
       };
 
-      const draft = JSON.parse(JSON.stringify(state));
+      const draft: any = structuredClone(state);
       handler.handle(draft, impact);
 
       expect(draft.npcStables[0].cash).toBe(4000);

@@ -23,7 +23,7 @@ describe("SystemHandler", () => {
       reason: "Log entry",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.log).toHaveLength(1);
@@ -48,7 +48,7 @@ describe("SystemHandler", () => {
       reason: "Campaign created",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.campaigns).toHaveLength(1);
@@ -97,7 +97,7 @@ describe("SystemHandler", () => {
       reason: "Flag dismissed",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     // Handler is a no-op: the store (campaignSlice.dismissCampaignFlag)
@@ -141,7 +141,7 @@ describe("SystemHandler", () => {
       reason: "Flag dismissed",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     // Handler is a no-op: the store already removes the flag immediately.

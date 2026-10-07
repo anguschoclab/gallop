@@ -34,6 +34,7 @@ function simulateReload<T extends Record<string, unknown>>(
   for (const key of keys) {
     if (key in state) partial[key] = (state as any)[key];
   }
+  // Intentional JSON round-trip — models persist/storage serialization, not a deep copy.
   return JSON.parse(JSON.stringify(partial));
 }
 

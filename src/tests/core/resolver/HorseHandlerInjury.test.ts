@@ -27,7 +27,7 @@ describe("HorseHandler - Injury Handling", () => {
       reason: "Race injury",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     const horse = draft.horses["horse-1"];
@@ -59,7 +59,7 @@ describe("HorseHandler - Injury Handling", () => {
       reason: "Race injury",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     const horse = draft.horses["horse-1"];
@@ -88,7 +88,7 @@ describe("HorseHandler - Injury Handling", () => {
       reason: "Race injury",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     const horse = draft.horses["horse-1"];
@@ -119,7 +119,7 @@ describe("HorseHandler - Injury Handling", () => {
       reason: "Race injury",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     const horse = draft.horses["horse-1"];
@@ -150,7 +150,7 @@ describe("HorseHandler - Injury Handling", () => {
       reason: "Race injury",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     const horse = draft.horses["horse-1"];
@@ -180,7 +180,7 @@ describe("HorseHandler - Injury Handling", () => {
       reason: "OCD injury during training",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     const horse = draft.horses["horse-1"];
@@ -213,7 +213,7 @@ describe("HorseHandler - Injury Handling", () => {
       reason: "Race injury",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.inbox).toHaveLength(1);
@@ -246,7 +246,7 @@ describe("HorseHandler - Injury Handling", () => {
       reason: "Race injury",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.inbox).toHaveLength(1);
@@ -277,7 +277,7 @@ describe("HorseHandler - Injury Handling", () => {
       reason: "Race injury",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.inbox).toHaveLength(1);
@@ -308,7 +308,7 @@ describe("HorseHandler - Injury Handling", () => {
       reason: "Race injury",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.inbox).toHaveLength(1);
@@ -339,7 +339,7 @@ describe("HorseHandler - Injury Handling", () => {
       reason: "Race injury",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.inbox).toHaveLength(1);

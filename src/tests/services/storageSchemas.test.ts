@@ -16,6 +16,7 @@ import { createDefaultGameState } from "@/game/store/state";
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function makeValidGameState() {
+  // Intentional JSON round-trip — schemas validate wire-format data, not a deep copy.
   return JSON.parse(JSON.stringify(createDefaultGameState()));
 }
 

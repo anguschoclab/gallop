@@ -61,7 +61,7 @@ describe("HorseHandler — stat rounding", () => {
       delta: 1,
       reason: "Training",
     });
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
     expect(draft.horses["h1"].stats.speed).toBe(39);
   });
@@ -84,7 +84,7 @@ describe("HorseHandler — stat rounding", () => {
       delta: 1.7,
       reason: "Training",
     });
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
     expect(draft.horses["h1"].stats.speed).toBe(52);
   });
@@ -107,7 +107,7 @@ describe("HorseHandler — stat rounding", () => {
       delta: 2,
       reason: "Training",
     });
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
     expect(draft.horses["h1"].stats.speed).toBe(80);
   });
@@ -119,7 +119,7 @@ describe("HorseHandler — stat rounding", () => {
       delta: -15.3,
       reason: "Training",
     });
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
     expect(draft.horses["h1"].energy).toBe(65);
   });
@@ -128,7 +128,7 @@ describe("HorseHandler — stat rounding", () => {
     const handler = new HorseHandler();
     const state = mkState({ fame: 10 });
     const impact = mkImpact<FameImpact>("fame_change", "h1", { delta: 0.5, reason: "Placed" });
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
     expect(draft.horses["h1"].fame).toBe(11);
   });
@@ -137,7 +137,7 @@ describe("HorseHandler — stat rounding", () => {
     const handler = new HorseHandler();
     const state = mkState({ form: 3 });
     const impact = mkImpact<FormImpact>("form_change", "h1", { delta: 1.5, reason: "Good race" });
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
     expect(draft.horses["h1"].form).toBe(5);
   });
@@ -149,7 +149,7 @@ describe("HorseHandler — stat rounding", () => {
       delta: 12.0,
       reason: "Training",
     });
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
     expect(draft.horses["h1"].fitness).toBe(62);
   });
@@ -158,7 +158,7 @@ describe("HorseHandler — stat rounding", () => {
     const handler = new HorseHandler();
     const state = mkState({ fatigue: 30 });
     const impact = mkImpact<FatigueImpact>("fatigue_change", "h1", { delta: 24.0, reason: "Race" });
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
     expect(draft.horses["h1"].fatigue).toBe(54);
   });
@@ -170,7 +170,7 @@ describe("HorseHandler — stat rounding", () => {
       delta: 15.7,
       reason: "Recovery",
     });
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
     expect(draft.horses["h1"].recoveryPoints).toBe(66);
   });
@@ -193,7 +193,7 @@ describe("HorseHandler — stat rounding", () => {
       delta: 5,
       reason: "Training",
     });
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
     expect(draft.horses["h1"].stats.speed).toBe(55);
   });

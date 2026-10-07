@@ -53,7 +53,7 @@ describe("HorseHandler", () => {
       reason: "Training gain",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].stats.speed).toBe(80);
@@ -92,7 +92,7 @@ describe("HorseHandler", () => {
       reason: "Decline",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].stats.speed).toBe(0);
@@ -116,7 +116,7 @@ describe("HorseHandler", () => {
       reason: "Energy gain",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].energy).toBe(100);
@@ -140,7 +140,7 @@ describe("HorseHandler", () => {
       reason: "Energy loss",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].energy).toBe(0);
@@ -164,7 +164,7 @@ describe("HorseHandler", () => {
       reason: "Good race",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].form).toBe(10);
@@ -188,7 +188,7 @@ describe("HorseHandler", () => {
       reason: "G1 win",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].fame).toBe(100);
@@ -212,7 +212,7 @@ describe("HorseHandler", () => {
       reason: "G1 win fan gain",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].fanCount).toBe(25000);
@@ -236,7 +236,7 @@ describe("HorseHandler", () => {
       reason: "Fan decay",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].fanCount).toBe(45000);
@@ -260,7 +260,7 @@ describe("HorseHandler", () => {
       reason: "Massive fan decay",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].fanCount).toBe(0);
@@ -284,7 +284,7 @@ describe("HorseHandler", () => {
       reason: "Championship win",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].fanCount).toBe(150000);
@@ -308,7 +308,7 @@ describe("HorseHandler", () => {
       reason: "Renamed",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].name).toBe("New Name");
@@ -333,7 +333,7 @@ describe("HorseHandler", () => {
       reason: "New year",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].age).toBe(4);
@@ -357,7 +357,7 @@ describe("HorseHandler", () => {
       reason: "Retired",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].lifecycleStatus).toBe("retired");
@@ -383,7 +383,7 @@ describe("HorseHandler", () => {
       reason: "Passed away",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].lifecycleStatus).toBe("deceased");
@@ -409,7 +409,7 @@ describe("HorseHandler", () => {
       reason: "Recovery used",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].recoveryPoints).toBe(0);
@@ -433,7 +433,7 @@ describe("HorseHandler", () => {
       reason: "Race fatigue",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].fitness).toBe(0);
@@ -457,7 +457,7 @@ describe("HorseHandler", () => {
       reason: "Peaking update",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].peakingIndex).toBe(75);
@@ -482,7 +482,7 @@ describe("HorseHandler", () => {
       reason: "Race result",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].lastBeyer).toBe(92);
@@ -507,7 +507,7 @@ describe("HorseHandler", () => {
       reason: "Energy gain",
     } as any;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].energy).toBe(70);

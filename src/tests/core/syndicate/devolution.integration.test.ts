@@ -138,7 +138,7 @@ describe("Syndicate Devolution Integration", () => {
     const handler = new SyndicationHandler();
 
     // Player sells 1 -> player 20, npcA 19. 20 <= 25 but npcA 19 < 20, no transfer
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, makeSaleImpact("syn-s1", "player", 1));
     expect(draft.syndicates["syn-s1"].shareHolders.player).toBe(20);
     expect(draft.horses["s1"].ownership).toEqual({ type: "player" }); // Still player-owned
@@ -176,7 +176,7 @@ describe("Syndicate Devolution Integration", () => {
       { id: "npcB", name: "NPC B", cash: 500000 },
     ]);
     const handler = new SyndicationHandler();
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
 
     // Player is owner at 15. 15 <= 20 -> check. npcA 15 = 15, not > -> no transfer
     // (devolution check happens on every transaction, but player is already below threshold)
@@ -209,7 +209,7 @@ describe("Syndicate Devolution Integration", () => {
       { id: "npcB", name: "NPC B", cash: 1000000 },
     ]);
     const handler = new SyndicationHandler();
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
 
     // NPC-A buys 6 -> npcA 21, player 20. 20 <= 25, npcA 21 > 20 -> transfer to npcA (devolution #1)
     handler.handle(draft, makePurchaseImpact("syn-s1", "npcA", 6));
@@ -243,7 +243,7 @@ describe("Syndicate Devolution Integration", () => {
     const syndicate = makeSyndicate("syn-s1", "s1", "Champ", { player: 20 });
     const state = makeState(stallion, syndicate);
     const handler = new SyndicationHandler();
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
 
     handler.handle(draft, makePurchaseImpact("syn-s1", "npcA", 5));
 
@@ -258,7 +258,7 @@ describe("Syndicate Devolution Integration", () => {
     const syndicate = makeSyndicate("syn-s1", "s1", "Champ", { player: 20, npcA: 10 });
     const state = makeState(stallion, syndicate, [{ id: "npcA", name: "NPC A", cash: 500000 }]);
     const handler = new SyndicationHandler();
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
 
     // Purchase
     handler.handle(draft, makePurchaseImpact("syn-s1", "npcA", 2));

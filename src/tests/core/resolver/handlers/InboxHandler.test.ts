@@ -25,7 +25,7 @@ describe("InboxHandler", () => {
       reason: "Race notification",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.inbox).toHaveLength(1);

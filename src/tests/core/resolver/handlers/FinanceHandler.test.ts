@@ -27,7 +27,7 @@ describe("FinanceHandler", () => {
       reason: "Prize money",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.cash).toBe(1500);
@@ -53,7 +53,7 @@ describe("FinanceHandler", () => {
       reason: "NPC prize money",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.cash).toBe(1000);
@@ -76,7 +76,7 @@ describe("FinanceHandler", () => {
       reason: "Big expense",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.cash).toBe(-400);
@@ -105,7 +105,7 @@ describe("FinanceHandler", () => {
       reason: "Claimed",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].ownership).toEqual({ type: "npc", stableId: "stable-2" });
@@ -134,7 +134,7 @@ describe("FinanceHandler", () => {
       reason: "Returned to player",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].ownership).toEqual({ type: "player" });
@@ -157,7 +157,7 @@ describe("FinanceHandler", () => {
       reason: "Transaction",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.transactions).toHaveLength(1);
@@ -182,7 +182,7 @@ describe("FinanceHandler", () => {
       reason: "Transaction",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.transactions).toHaveLength(1);

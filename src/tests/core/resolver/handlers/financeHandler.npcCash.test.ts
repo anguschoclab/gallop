@@ -17,7 +17,7 @@ describe("FinanceHandler cash_change — NPC cash", () => {
       cash: 50000,
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: CashImpact = {
       id: "imp-1",
       intentId: "",
@@ -43,7 +43,7 @@ describe("FinanceHandler cash_change — NPC cash", () => {
       cash: 50000,
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: CashImpact = {
       id: "imp-1",
       intentId: "",
@@ -69,7 +69,7 @@ describe("FinanceHandler cash_change — NPC cash", () => {
       cash: 50000,
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: CashImpact = {
       id: "imp-1",
       intentId: "",
@@ -95,7 +95,7 @@ describe("FinanceHandler cash_change — NPC cash", () => {
       cash: 50000,
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: CashImpact = {
       id: "imp-1",
       intentId: "",
@@ -120,7 +120,7 @@ describe("FinanceHandler cash_change — NPC cash", () => {
       cash: 50000,
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: CashImpact = {
       id: "imp-1",
       intentId: "",
@@ -146,7 +146,7 @@ describe("FinanceHandler cash_change — NPC cash", () => {
       cash: 50000,
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: CashImpact = {
       id: "imp-1",
       intentId: "",
@@ -171,7 +171,7 @@ describe("FinanceHandler cash_change — NPC cash", () => {
       cash: 5000,
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: CashImpact = {
       id: "imp-1",
       intentId: "",

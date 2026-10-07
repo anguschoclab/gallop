@@ -53,7 +53,7 @@ describe("MarketHandler auction_resolution", () => {
       npcStables: [createTestStable({ id: "npc-stable-1", cash: 50000 })],
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: AuctionResolutionImpact = {
       id: "imp-1",
       intentId: "",
@@ -104,7 +104,7 @@ describe("MarketHandler auction_resolution", () => {
       npcStables: [],
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: AuctionResolutionImpact = {
       id: "imp-1",
       intentId: "",
@@ -156,7 +156,7 @@ describe("MarketHandler auction_resolution", () => {
       npcStables: [createTestStable({ id: "other-stable", cash: 50000 })],
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: AuctionResolutionImpact = {
       id: "imp-1",
       intentId: "",
@@ -206,7 +206,7 @@ describe("MarketHandler auction_resolution", () => {
       npcStables: [createTestStable({ id: "existing-stable", cash: 50000 })],
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: AuctionResolutionImpact = {
       id: "imp-1",
       intentId: "",
@@ -255,7 +255,7 @@ describe("MarketHandler auction_resolution", () => {
       npcStables: [createTestStable({ id: "npc-stable-1", cash: 50000 })],
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: AuctionResolutionImpact = {
       id: "imp-1",
       intentId: "",
@@ -289,7 +289,7 @@ describe("MarketHandler auction_resolution", () => {
       npcStables: [],
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: AuctionResolutionImpact = {
       id: "imp-1",
       intentId: "",
@@ -316,7 +316,7 @@ describe("MarketHandler auction_resolution", () => {
       npcStables: [],
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: AuctionResolutionImpact = {
       id: "imp-1",
       intentId: "",
@@ -365,7 +365,7 @@ describe("MarketHandler auction_resolution", () => {
       npcStables: [createTestStable({ id: "npc-stable-1", cash: 50000 })],
     } as unknown as GameState;
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const impact: AuctionResolutionImpact = {
       id: "imp-1",
       intentId: "",

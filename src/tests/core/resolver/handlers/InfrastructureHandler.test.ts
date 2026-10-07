@@ -31,7 +31,7 @@ describe("InfrastructureHandler", () => {
       reason: "Facility upgrade started",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.facilities.training_track.level).toBe("premium");
@@ -62,7 +62,7 @@ describe("InfrastructureHandler", () => {
       reason: "Hired trainer",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.hiredStaff).toHaveLength(1);
@@ -97,7 +97,7 @@ describe("InfrastructureHandler", () => {
       reason: "Fired trainer",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.hiredStaff).toHaveLength(0);
@@ -125,7 +125,7 @@ describe("InfrastructureHandler", () => {
       reason: "Transported",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].outpostId).toBe("outpost-1");
@@ -154,7 +154,7 @@ describe("InfrastructureHandler", () => {
       reason: "Outpost created",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.outposts).toHaveLength(1);
@@ -194,7 +194,7 @@ describe("InfrastructureHandler", () => {
       reason: "Transported",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["h1"].outpostId).toBe("outpost-1");

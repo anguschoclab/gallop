@@ -43,7 +43,7 @@ describe("SyndicationHandler", () => {
       reason: "Syndicate created",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.syndicates["syn-1"]).toBeDefined();
@@ -78,7 +78,7 @@ describe("SyndicationHandler", () => {
       reason: "Syndicate created",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.syndicates["syn-1"]).toBeUndefined();
@@ -119,7 +119,7 @@ describe("SyndicationHandler", () => {
       reason: "Share purchase",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.syndicates["syn-1"].shareHolders["stable-2"]).toBe(5);
@@ -161,7 +161,7 @@ describe("SyndicationHandler", () => {
       reason: "Share sale",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.syndicates["syn-1"].shareHolders["stable-2"]).toBe(2);
@@ -201,7 +201,7 @@ describe("SyndicationHandler", () => {
       reason: "Fee distribution",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.syndicates["syn-1"].lifetimeEarnings).toBe(10000);
@@ -242,7 +242,7 @@ describe("SyndicationHandler", () => {
       reason: "Great results",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.syndicates["syn-1"].shareholderSatisfaction.player).toBe(100);

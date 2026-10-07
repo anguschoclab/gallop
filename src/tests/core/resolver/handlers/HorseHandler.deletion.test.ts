@@ -51,7 +51,7 @@ describe("HorseHandler — horse_deletion", () => {
       reason: "Retired",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const lookupMaps = {
       horseMap: new Map([
         ["h1", draft.horses["h1"]],
@@ -90,7 +90,7 @@ describe("HorseHandler — horse_deletion", () => {
       reason: "Retired",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const horseMap = new Map([
       ["h1", draft.horses["h1"]],
       ["h2", draft.horses["h2"]],
@@ -129,7 +129,7 @@ describe("HorseHandler — horse_deletion", () => {
       reason: "Not found",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     const lookupMaps = {
       horseMap: new Map([["h1", draft.horses["h1"]]]),
       stableMap: new Map(),

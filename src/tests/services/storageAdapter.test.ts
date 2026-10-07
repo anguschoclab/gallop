@@ -296,7 +296,7 @@ describe("storageAdapter", () => {
 
         const loaded = freshStorage.loadWizardState();
 
-        expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
+        expect(loaded).toEqual(structuredClone(mockState));
       });
 
       it("returns null when key doesn't exist", () => {
@@ -438,7 +438,7 @@ describe("storageAdapter", () => {
         storageAdapter.saveWizardState(mockState);
         const loaded = storageAdapter.loadWizardState();
 
-        expect(loaded).toEqual(JSON.parse(JSON.stringify(mockState)));
+        expect(loaded).toEqual(structuredClone(mockState));
       });
     });
   });

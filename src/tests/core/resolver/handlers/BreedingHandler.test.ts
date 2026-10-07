@@ -35,7 +35,7 @@ describe("BreedingHandler", () => {
       reason: "Stud fee updated",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].stud.standingFee).toBe(7500);
@@ -60,7 +60,7 @@ describe("BreedingHandler", () => {
       reason: "Stud fee updated",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].stud).toBeUndefined();
@@ -95,7 +95,7 @@ describe("BreedingHandler", () => {
       reason: "Retired to stud",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].stud).toEqual(studCareer);
@@ -128,7 +128,7 @@ describe("BreedingHandler", () => {
       reason: "Pregnancy confirmed",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.pregnancies).toHaveLength(1);
@@ -166,7 +166,7 @@ describe("BreedingHandler", () => {
       reason: "Pregnancy progressing",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.pregnancies[0].stage).toBe("mid");
@@ -213,7 +213,7 @@ describe("BreedingHandler", () => {
       reason: "Pregnancy lost",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.pregnancies).toHaveLength(1);
@@ -247,7 +247,7 @@ describe("BreedingHandler", () => {
       reason: "Mare foaled",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].lastFoaledDay).toBe(30);
@@ -292,7 +292,7 @@ describe("BreedingHandler", () => {
       reason: "Blue hen status updated",
     };
 
-    const draft = JSON.parse(JSON.stringify(state));
+    const draft: any = structuredClone(state);
     handler.handle(draft, impact);
 
     expect(draft.horses["horse-1"].blueHenStatus).toEqual({
