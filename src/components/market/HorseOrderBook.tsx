@@ -14,12 +14,14 @@ export function HorseOrderBook({
   onBuyAsk,
   onAcceptBid,
   onCancelAsk,
+  onCancelBid,
 }: {
   book: Book;
   cash: number;
   onBuyAsk: (askId: string) => void;
   onAcceptBid: (bidId: string) => void;
   onCancelAsk: (askId: string) => void;
+  onCancelBid: (bidId: string) => void;
 }) {
   const maxSize = Math.max(...book.asks.map((a) => a.price), ...book.bids.map((b) => b.price), 1);
   const reputationScore = useGame((s) => s.reputation?.score ?? 0);
@@ -151,6 +153,11 @@ export function HorseOrderBook({
                 >
                   <span className="relative min-w-0 truncate text-cream-muted">
                     {b.bidderName}
+                    {b.bidderId === "player" && (
+                      <span className="ml-1 rounded bg-primary/20 px-1 text-[9px] uppercase tracking-wide text-primary">
+                        You
+                      </span>
+                    )}
                     {b.bidderTier && (
                       <span className="ml-1 text-[9px] uppercase tracking-wide text-gold/60">
                         {b.bidderTier}
@@ -165,15 +172,26 @@ export function HorseOrderBook({
                 </Hint>
                 <span className="relative flex items-center gap-2">
                   <span className="tabular-nums text-cream">{formatCurrency(b.price)}</span>
-                  {book.isPlayerOwned && (
+                  {b.bidderId === "player" ? (
                     <Button
                       size="sm"
-                      variant="secondary"
-                      onClick={() => onAcceptBid(b.id)}
-                      title={`Net ${formatCurrency(netProceeds(b.price))} after commission`}
+                      variant="ghost"
+                      onClick={() => onCancelBid(b.id)}
+                      title="Withdraw bid and refund escrow"
                     >
-                      Sell
+                      Cancel bid
                     </Button>
+                  ) : (
+                    book.isPlayerOwned && (
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => onAcceptBid(b.id)}
+                        title={`Net ${formatCurrency(netProceeds(b.price))} after commission`}
+                      >
+                        Sell
+                      </Button>
+                    )
                   )}
                 </span>
               </div>

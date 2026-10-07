@@ -264,8 +264,8 @@ describe("Orphan Scan: Pipeline Phase Outputs", () => {
     expect(typeof consumed).toBe("boolean");
   });
 
-  it("all 56 pipeline phases are registered", () => {
-    expect(GAME_PIPELINE_PHASES.length).toBe(57);
+  it("all 58 pipeline phases are registered", () => {
+    expect(GAME_PIPELINE_PHASES.length).toBe(58);
   });
 });
 

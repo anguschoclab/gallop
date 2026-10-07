@@ -85,10 +85,14 @@ function milestoneDay(horse: Horse, key: string, currentDay: number): number | n
     return Number.isFinite(threshold) ? earningsMilestoneDay(history, threshold) : null;
   }
   if (key === "stage_prime") {
-    return Math.min(currentDay, horse.birthDay + Math.max(2, horse.peakAge) * 365);
+    // Day the horse reached peak age, anchored on the authoritative `age`
+    // field — `birthDay` is a placeholder (1) for all generated horses.
+    const primeAge = Math.max(2, horse.peakAge);
+    return Math.min(currentDay, currentDay - (Math.floor(horse.age) - primeAge) * 365);
   }
   if (key === "stage_declining") {
-    return Math.min(currentDay, horse.birthDay + (Math.max(2, horse.peakAge) + 2) * 365);
+    const decliningAge = Math.max(2, horse.peakAge) + 2;
+    return Math.min(currentDay, currentDay - (Math.floor(horse.age) - decliningAge) * 365);
   }
   if (key === "retirement") {
     return horse.retiredOnDay ?? history.at(-1)?.day ?? currentDay;

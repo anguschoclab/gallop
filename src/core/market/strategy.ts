@@ -14,6 +14,7 @@
  */
 
 import type { Horse } from "@/core/horse/types";
+import type { Syndicate } from "@/core/breeding/types";
 import { TRACK_BY_ID } from "@/core/data/tracksAccessor";
 import { getRacecoursePrestige } from "@/core/prestige/racecoursePrestige";
 import { AUCTION_HOUSES } from "@/core/prestige/auctionHouses";
@@ -56,8 +57,17 @@ export type StrategyCandidate = {
   trackId?: string;
   trackName?: string;
   trackPrestige: number;
-  /** Cost of the targeted syndication stake at this price. */
-  stakeCost: number;
+  /**
+   * Real cost of the targeted syndication stake — only set when the horse is
+   * actually syndicated and shares remain purchasable.
+   */
+  stakeCost?: number;
+  /** Live syndicate id — present when the horse is syndicated. */
+  syndicateId?: string;
+  /** Shares the strategy would buy (target % of total, capped by availability). */
+  sharesToBuy?: number;
+  /** Current share price inside the syndicate. */
+  sharePrice?: number;
   /** Live Exchange ask id — present on exchange candidates so the UI can buy. */
   askId?: string;
   /** Most recent fill for this horse on the tape, if it has ever traded. */
@@ -105,6 +115,7 @@ function gradeRank(grade: string): number {
  * @param args.lastTrade - Most recent fill for this horse, if any
  * @param args.lastTrade.price
  * @param args.lastTrade.day
+ * @param args.syndicate - Live syndicate for this horse, if syndicated
  */
 export function scoreCandidate(args: {
   horse: Horse;
@@ -115,6 +126,8 @@ export function scoreCandidate(args: {
   strategy: MarketStrategy;
   askId?: string;
   lastTrade?: { price: number; day: number };
+  /** Live syndicate for this horse, if it is syndicated at all. */
+  syndicate?: Syndicate;
 }): StrategyCandidate {
   const { horse, price, fairValue, source, sourceLabel, strategy } = args;
   const grade = horseGradeSegment({
@@ -179,7 +192,29 @@ export function scoreCandidate(args: {
   const budgetScore = withinBudget ? 10 : 0;
   if (!withinBudget) warnings.push("Above your price ceiling");
 
-  const stakeCost = Math.round((price * clamp(strategy.targetSyndicationStakePct)) / 100);
+  // Syndication stake — only real when a syndicate exists for this horse.
+  const syndicate = args.syndicate;
+  let stakeCost: number | undefined;
+  let sharesToBuy: number | undefined;
+  let sharePrice: number | undefined;
+  let syndicateId: string | undefined;
+  if (syndicate) {
+    syndicateId = syndicate.id;
+    sharePrice = syndicate.sharePrice;
+    if (strategy.targetSyndicationStakePct > 0) {
+      const held = Object.values(syndicate.shareHolders ?? {}).reduce((sum, n) => sum + n, 0);
+      const available = Math.max(0, syndicate.totalShares - held);
+      const target = Math.round(
+        (clamp(strategy.targetSyndicationStakePct) / 100) * syndicate.totalShares,
+      );
+      sharesToBuy = Math.min(target, available);
+      if (sharesToBuy > 0) {
+        stakeCost = Math.round(sharesToBuy * sharePrice);
+      } else {
+        warnings.push("Syndicate is fully subscribed — no shares available");
+      }
+    }
+  }
 
   return {
     horseId: horse.id,
@@ -195,6 +230,9 @@ export function scoreCandidate(args: {
     trackName,
     trackPrestige,
     stakeCost,
+    syndicateId,
+    sharesToBuy,
+    sharePrice,
     askId: args.askId,
     lastTrade: args.lastTrade,
     score: Math.round(gradeScore + prestigeScore + valueScore + budgetScore),
@@ -212,6 +250,7 @@ export function scoreCandidate(args: {
  * @param args.horses - All horses in the world
  * @param args.exchange - Exchange state (asks are scanned)
  * @param args.playerReputation - Player reputation score, for house quotes
+ * @param args.syndicates - Live stallion syndicates keyed by stallion id
  */
 export function runMarketStrategy(args: {
   strategy: MarketStrategy;
@@ -219,9 +258,14 @@ export function runMarketStrategy(args: {
   horses: Horse[];
   exchange: ExchangeState;
   playerReputation?: number;
+  syndicates?: Record<string, Syndicate>;
 }): StrategyRun {
   const { strategy, day, horses, exchange } = args;
   const byId = new Map(horses.map((h) => [h.id, h]));
+  // Syndicates are stored under a syndicate id — index by stallion for lookup.
+  const syndicateByStallion = new Map(
+    Object.values(args.syndicates ?? {}).map((s) => [s.stallionId, s]),
+  );
   const candidates: StrategyCandidate[] = [];
 
   // Latest fill per horse from the tape, so candidates can show real comps.
@@ -247,6 +291,7 @@ export function runMarketStrategy(args: {
         strategy,
         askId: ask.id,
         lastTrade: lastTradeByHorse.get(ask.horseId),
+        syndicate: syndicateByStallion.get(horse.id),
       }),
     );
   }
@@ -263,6 +308,7 @@ export function runMarketStrategy(args: {
           sourceLabel: `${house.name} (prestige ${house.prestige})`,
           strategy,
           lastTrade: lastTradeByHorse.get(listing.horse.id),
+          syndicate: syndicateByStallion.get(listing.horse.id),
         }),
       );
     }
@@ -281,6 +327,6 @@ export function runMarketStrategy(args: {
     scanned: candidates.length,
     qualified: qualifying.length,
     averageScore,
-    totalStakeCost: qualifying.reduce((sum, c) => sum + c.stakeCost, 0),
+    totalStakeCost: qualifying.reduce((sum, c) => sum + (c.stakeCost ?? 0), 0),
   };
 }

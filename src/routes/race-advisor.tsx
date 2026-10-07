@@ -158,7 +158,7 @@ function RaceAdvisorPage() {
           ? "★ marks races that serve your Stable Campaign goals; they're listed first."
           : "Set goals on the "}
         {!goals && (
-          <Link to="/stable-campaign" className="text-gold hover:underline">
+          <Link to="/stableCampaign" className="text-gold hover:underline">
             Stable Campaign
           </Link>
         )}

@@ -6,7 +6,14 @@
  * seed. On load, the full Horse objects are regenerated from these summaries.
  */
 
-import type { Horse, HorseGender } from "@/core/horse/types";
+import type {
+  ActiveInjury,
+  Horse,
+  HorseGender,
+  HorseRaceHistoryEntry,
+  NpcCareerProgress,
+} from "@/core/horse/types";
+import type { Hemisphere } from "@/core/weather/trackClimate";
 import type { Stable, StableTier } from "@/core/stable/types";
 import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import { generateNpcHorse } from "@/core/horse/horseFactory";
@@ -38,6 +45,27 @@ export interface NpcHorseSummary {
   careerStarts: number;
   careerWins: number;
   lifecycleStatus: "active" | "retired" | "deceased";
+  /** Full race history — the source of truth for career stats and timelines. */
+  raceHistory?: HorseRaceHistoryEntry[];
+  /** Off-screen career bookkeeping — keeps cooldowns and stage across reloads. */
+  careerTracker?: NpcCareerProgress;
+  /** Milestone keys already announced — prevents re-announcement after reload. */
+  careerMilestonesAnnounced?: string[];
+  courseVisits?: Record<string, number>;
+  hemisphere?: Hemisphere;
+  gelded?: boolean;
+  foalsProduced?: string[];
+  distanceAptitude?: number;
+  surfaceAptitude?: Record<"Turf" | "Dirt" | "Synthetic", number>;
+  consignedSaleId?: string;
+  activeInjury?: ActiveInjury;
+  lastBeyer?: number;
+  lastRaceDay?: number;
+  /** Stud counters (only set when `atStud`). */
+  seasonBookings?: number;
+  lifetimeFoals?: number;
+  lifetimeStakesFoals?: number;
+  lifetimeG1Foals?: number;
 }
 
 /**
@@ -83,6 +111,23 @@ export function compressNpcHorses(
       careerStarts: horse.careerStarts,
       careerWins: horse.careerWins,
       lifecycleStatus: horse.lifecycleStatus,
+      raceHistory: horse.raceHistory,
+      careerTracker: horse.careerTracker,
+      careerMilestonesAnnounced: horse.careerMilestonesAnnounced,
+      courseVisits: horse.courseVisits,
+      hemisphere: horse.hemisphere,
+      gelded: horse.gelded,
+      foalsProduced: horse.foalsProduced,
+      distanceAptitude: horse.distanceAptitude,
+      surfaceAptitude: horse.surfaceAptitude,
+      consignedSaleId: horse.consignedSaleId,
+      activeInjury: horse.activeInjury,
+      lastBeyer: horse.lastBeyer,
+      lastRaceDay: horse.lastRaceDay,
+      seasonBookings: horse.stud?.seasonBookings,
+      lifetimeFoals: horse.stud?.lifetimeFoals,
+      lifetimeStakesFoals: horse.stud?.lifetimeStakesFoals,
+      lifetimeG1Foals: horse.stud?.lifetimeG1Foals,
     });
   }
 
@@ -130,6 +175,28 @@ export function regenerateNpcHorses(summaries: NpcHorseSummary[], stables: Stabl
     horse.lifecycleStatus = summary.lifecycleStatus;
     horse.retiredOnDay = summary.retiredOnDay;
 
+    // Restore career continuity and mutable runtime state. `raceHistory` is the
+    // source of truth for career stats, timelines and milestone detection;
+    // `careerTracker.lastOffscreenDay` keeps the off-screen start cooldown alive
+    // so a reload never produces a burst of simulated starts.
+    if (summary.raceHistory) horse.raceHistory = summary.raceHistory;
+    if (summary.careerTracker) horse.careerTracker = summary.careerTracker;
+    if (summary.careerMilestonesAnnounced) {
+      horse.careerMilestonesAnnounced = [...summary.careerMilestonesAnnounced];
+    }
+    if (summary.courseVisits) horse.courseVisits = summary.courseVisits;
+    if (summary.hemisphere) horse.hemisphere = summary.hemisphere;
+    if (summary.gelded !== undefined) horse.gelded = summary.gelded;
+    if (summary.foalsProduced) horse.foalsProduced = [...summary.foalsProduced];
+    if (summary.distanceAptitude !== undefined) {
+      horse.distanceAptitude = summary.distanceAptitude;
+    }
+    if (summary.surfaceAptitude) horse.surfaceAptitude = { ...summary.surfaceAptitude };
+    if (summary.consignedSaleId) horse.consignedSaleId = summary.consignedSaleId;
+    if (summary.activeInjury) horse.activeInjury = { ...summary.activeInjury };
+    if (summary.lastBeyer !== undefined) horse.lastBeyer = summary.lastBeyer;
+    if (summary.lastRaceDay !== undefined) horse.lastRaceDay = summary.lastRaceDay;
+
     // Restore stud career if applicable
     if (summary.atStud) {
       const { bookSize } = defaultStudParams(stable.tier);
@@ -137,10 +204,10 @@ export function regenerateNpcHorses(summaries: NpcHorseSummary[], stables: Stabl
         atStud: true,
         standingFee: summary.standingFee ?? calculateRecommendedStudFee(horse, stable.tier),
         bookSize,
-        seasonBookings: 0,
-        lifetimeFoals: 0,
-        lifetimeStakesFoals: 0,
-        lifetimeG1Foals: 0,
+        seasonBookings: summary.seasonBookings ?? 0,
+        lifetimeFoals: summary.lifetimeFoals ?? 0,
+        lifetimeStakesFoals: summary.lifetimeStakesFoals ?? 0,
+        lifetimeG1Foals: summary.lifetimeG1Foals ?? 0,
         retiredOnDay: summary.retiredOnDay,
       };
     }

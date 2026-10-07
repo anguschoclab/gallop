@@ -23,23 +23,20 @@ import { getAuctionHouse } from "@/core/prestige/auctionHouses";
 import { houseQuote } from "@/core/market/houseQuotes";
 import {
   createDefaultExchangeState,
-  exchangeCommission,
-  generateNpcBook,
   netProceeds,
-  resolveNpcExchangeTrades,
-  pruneExchange,
   suggestAskPrice,
   EXCHANGE_ORDER_TTL_DAYS,
   type ExchangeState,
   type ExchangeTrade,
 } from "@/core/market/exchange";
+import { runExchangeSettlementDay } from "@/core/market/exchangeSettlement";
 import {
   computeReputationAfterTrade,
-  applyTradeToExchange,
   buildSettleTradePatch,
   validateListHorse,
   validateAcceptBid,
   validateBuyAsk,
+  validatePlaceBid,
   buildBidAcceptTrade,
   buildAskBuyTrade,
 } from "@/core/market/exchangeActions";
@@ -61,6 +58,10 @@ export type ExchangeSlice = {
   sellHorseToAuctionHouse: (horseId: string, houseId: string) => ActionResult;
   /** Buy a horse from an auction house catalogue at that house's buy price. */
   buyHorseFromAuctionHouse: (horseId: string, houseId: string) => ActionResult;
+  /** Place a standing bid on an NPC-listed horse; the price is escrowed until the bid fills, is cancelled, or expires. */
+  placeExchangeBid: (horseId: string, price: number) => ActionResult;
+  /** Cancel one of the player's own standing bids and refund the escrow. */
+  cancelExchangeBid: (bidId: string) => ActionResult;
 };
 
 const PLAYER_ID = "player";
@@ -132,68 +133,22 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
       const s = get();
       const exchange = readExchange();
       if (exchange.lastRefreshDay === s.day) return;
-      const horses = Object.values(s.horses) as Horse[];
-      const pruned = pruneExchange(exchange, s.day);
-      const { asks, bids } = generateNpcBook({
+
+      // Shared daily tick — same implementation as exchangeSettlementPhase.
+      const result = runExchangeSettlementDay({
         day: s.day,
-        horses,
+        exchange,
+        horses: s.horses,
         npcStables: s.npcStables ?? [],
-        existing: pruned,
         playerReputation: s.reputation?.score ?? 0,
+        playerName: s.playerProfile?.stableName ?? "My Stable",
       });
-      const refreshed: ExchangeState = {
-        ...pruned,
-        asks: [...pruned.asks.filter((a) => a.sellerId === PLAYER_ID), ...asks],
-        bids,
-        lastRefreshDay: s.day,
-      };
-
-      // NPC-vs-NPC trading: cross the book so the tape stays live even when the
-      // player does nothing.
-      const npcStables = s.npcStables ?? [];
-      const settlement = resolveNpcExchangeTrades({
-        day: s.day,
-        state: refreshed,
-        horses,
-        npcStables,
-        commission: (price) => exchangeCommission(price),
-      });
-
-      if (settlement.trades.length === 0) {
-        set({ exchange: refreshed });
-        return;
-      }
-
-      const nextHorses = { ...s.horses };
-      for (const change of settlement.ownershipChanges) {
-        const horse = nextHorses[change.horseId] as Horse | undefined;
-        if (!horse) continue;
-        nextHorses[change.horseId] = {
-          ...horse,
-          ownership: makeNpcOwned(asNpcStableId(change.buyerStableId)),
-        };
-      }
-
-      const filledAsks = new Set(settlement.filledAskIds);
-      const filledBids = new Set(settlement.filledBidIds);
-      const tradedHorses = new Set(settlement.trades.map((t) => t.horseId));
 
       set({
-        horses: nextHorses,
-        npcStables: npcStables.map((st) =>
-          settlement.cashDeltas[st.id] !== undefined
-            ? { ...st, cash: st.cash + settlement.cashDeltas[st.id] }
-            : st,
-        ),
-        exchange: {
-          ...refreshed,
-          asks: refreshed.asks.filter(
-            (a) =>
-              !filledAsks.has(a.id) && !(a.sellerId !== PLAYER_ID && tradedHorses.has(a.horseId)),
-          ),
-          bids: refreshed.bids.filter((b) => !filledBids.has(b.id) && !tradedHorses.has(b.horseId)),
-          trades: [...refreshed.trades, ...settlement.trades],
-        },
+        horses: result.horses,
+        npcStables: result.npcStables,
+        exchange: result.exchange,
+        cash: result.playerCashDelta ? s.cash + result.playerCashDelta : s.cash,
       });
     },
 
@@ -408,6 +363,67 @@ export function createExchangeSlice(set: StoreSet, get: StoreGet): ExchangeSlice
         counterpartyName: house.name,
         logText: `Bought ${horse.name} at ${house.shortName} for ${quote.buyPrice} (hammer ${quote.hammerEstimate}).`,
         npcCashDeltas: seller ? [{ stableId: seller.id, delta: quote.sellPrice }] : undefined,
+      });
+      return { ok: true };
+    },
+
+    placeExchangeBid: (horseId, price) => {
+      const s = get();
+      const horse = s.horses[horseId] as Horse | undefined;
+      const exchange = readExchange();
+      const error = validatePlaceBid({
+        horse,
+        price,
+        playerCash: s.cash,
+        existingPlayerBid: exchange.bids.some(
+          (b) => b.horseId === horseId && b.bidderId === PLAYER_ID,
+        ),
+        liveNpcAsk: exchange.asks.some(
+          (a) => a.horseId === horseId && a.sellerId !== PLAYER_ID && a.expiresDay >= s.day,
+        ),
+      });
+      if (error) return { ok: false, reason: error };
+
+      const rounded = Math.round(price);
+      set({
+        cash: s.cash - rounded,
+        exchange: {
+          ...exchange,
+          bids: [
+            ...exchange.bids,
+            {
+              id: generateUUID(),
+              horseId,
+              bidderId: PLAYER_ID,
+              bidderName: s.playerProfile?.stableName ?? "My Stable",
+              price: rounded,
+              createdDay: s.day,
+              expiresDay: s.day + EXCHANGE_ORDER_TTL_DAYS,
+              rationale: "Your standing bid",
+            },
+          ].sort((a, b) => b.price - a.price),
+        },
+        log: [
+          ...s.log,
+          { day: s.day, text: `Standing bid of ${rounded} placed on ${horse!.name} (escrowed).` },
+        ],
+      });
+      return { ok: true };
+    },
+
+    cancelExchangeBid: (bidId) => {
+      const s = get();
+      const exchange = readExchange();
+      const bid = exchange.bids.find((b) => b.id === bidId);
+      if (!bid) return { ok: false, reason: "Bid not found" };
+      if (bid.bidderId !== PLAYER_ID) return { ok: false, reason: "Not your bid" };
+      set({
+        cash: s.cash + bid.price,
+        exchange: { ...exchange, bids: exchange.bids.filter((b) => b.id !== bidId) },
+        log: [
+          ...s.log,
+          { day: s.day, text: `Standing bid of ${bid.price} withdrawn — escrow refunded.` },
+        ],
       });
       return { ok: true };
     },

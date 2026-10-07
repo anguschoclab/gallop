@@ -18,6 +18,8 @@ import {
 } from "@/core/market/strategy";
 import { createDefaultExchangeState, type ExchangeAsk } from "@/core/market/exchange";
 import type { Horse } from "@/core/horse/types";
+import type { Syndicate } from "@/core/breeding/types";
+import { asOwnerKey } from "@/core/types/branded";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -52,6 +54,21 @@ const baseStrategy: MarketStrategy = {
 };
 
 const exchangeSource: StrategySource = { kind: "exchange" };
+
+function mkSyndicate(overrides: Partial<Syndicate> = {}): Syndicate {
+  return {
+    id: "syn-1",
+    stallionId: "h1",
+    stallionName: "Test Horse",
+    totalShares: 40,
+    shareHolders: {},
+    sharePrice: 5_000,
+    studFee: 10_000,
+    isPublic: true,
+    lifetimeEarnings: 0,
+    ...overrides,
+  };
+}
 
 describe("scoreCandidate", () => {
   it("assigns full grade score (35) when grade matches target", () => {
@@ -199,7 +216,7 @@ describe("scoreCandidate", () => {
     expect(over.warnings).toContain("Above your price ceiling");
   });
 
-  it("computes stakeCost as price * targetSyndicationStakePct / 100", () => {
+  it("does not fabricate a stakeCost when the horse has no syndicate", () => {
     const horse = mkHorse();
     const result = scoreCandidate({
       horse,
@@ -209,7 +226,66 @@ describe("scoreCandidate", () => {
       sourceLabel: "Exchange",
       strategy: { ...baseStrategy, targetGrades: [], targetSyndicationStakePct: 30 },
     });
-    expect(result.stakeCost).toBe(60_000);
+    expect(result.stakeCost).toBeUndefined();
+    expect(result.syndicateId).toBeUndefined();
+    expect(result.sharesToBuy).toBeUndefined();
+  });
+
+  it("sizes the stake from real syndicate shares and share price", () => {
+    const horse = mkHorse();
+    // 25% of 40 shares = 10 shares at $5,000 → $50,000 real cost.
+    const result = scoreCandidate({
+      horse,
+      price: 200_000,
+      fairValue: 200_000,
+      source: exchangeSource,
+      sourceLabel: "Exchange",
+      strategy: { ...baseStrategy, targetGrades: [], targetSyndicationStakePct: 25 },
+      syndicate: mkSyndicate(),
+    });
+    expect(result.syndicateId).toBe("syn-1");
+    expect(result.sharesToBuy).toBe(10);
+    expect(result.sharePrice).toBe(5_000);
+    expect(result.stakeCost).toBe(50_000);
+  });
+
+  it("caps the stake at the shares still available in the syndicate", () => {
+    const horse = mkHorse();
+    const syndicate = mkSyndicate({
+      shareHolders: { [asOwnerKey("npc-1")]: 38 },
+    });
+    const result = scoreCandidate({
+      horse,
+      price: 200_000,
+      fairValue: 200_000,
+      source: exchangeSource,
+      sourceLabel: "Exchange",
+      strategy: { ...baseStrategy, targetGrades: [], targetSyndicationStakePct: 25 },
+      syndicate,
+    });
+    // Target is 10 shares but only 2 remain.
+    expect(result.sharesToBuy).toBe(2);
+    expect(result.stakeCost).toBe(10_000);
+  });
+
+  it("flags a fully subscribed syndicate instead of quoting a fake cost", () => {
+    const horse = mkHorse();
+    const syndicate = mkSyndicate({
+      shareHolders: { [asOwnerKey("npc-1")]: 40 },
+    });
+    const result = scoreCandidate({
+      horse,
+      price: 200_000,
+      fairValue: 200_000,
+      source: exchangeSource,
+      sourceLabel: "Exchange",
+      strategy: { ...baseStrategy, targetGrades: [], targetSyndicationStakePct: 25 },
+      syndicate,
+    });
+    expect(result.syndicateId).toBe("syn-1");
+    expect(result.sharesToBuy).toBe(0);
+    expect(result.stakeCost).toBeUndefined();
+    expect(result.warnings.some((w) => /subscribed|sold out/i.test(w))).toBe(true);
   });
 
   it("total score = gradeScore + prestigeScore + valueScore + budgetScore", () => {
@@ -373,8 +449,63 @@ describe("runMarketStrategy", () => {
       exchange,
     });
     const qualifying = result.candidates.filter((c) => c.warnings.length === 0);
-    const expectedTotal = qualifying.reduce((sum, c) => sum + c.stakeCost, 0);
+    const expectedTotal = qualifying.reduce((sum, c) => sum + (c.stakeCost ?? 0), 0);
     expect(result.totalStakeCost).toBe(expectedTotal);
+  });
+
+  it("attaches real syndicate stake info when the candidate's horse is syndicated", () => {
+    const horse = mkHorse({
+      id: asHorseId("h1"),
+      raceHistory: mkRaceHistory("G1"),
+      courseVisits: { "churchill-downs": 5 },
+    });
+    const exchange = createDefaultExchangeState();
+    exchange.asks = [mkAsk({ id: "ask-1", horseId: "h1", price: 100_000, fairValue: 100_000 })];
+    const syndicate = mkSyndicate();
+    const result = runMarketStrategy({
+      strategy: { ...baseStrategy, minTrackPrestige: 0, targetSyndicationStakePct: 25 },
+      day: 10,
+      horses: [horse],
+      exchange,
+      syndicates: { h1: syndicate },
+    });
+    const candidate = result.candidates.find(
+      (c) => c.source.kind === "exchange" && c.horseId === "h1",
+    );
+    // 25% of 40 shares = 10 shares at $5,000.
+    expect(candidate?.syndicateId).toBe("syn-1");
+    expect(candidate?.sharesToBuy).toBe(10);
+    expect(candidate?.stakeCost).toBe(50_000);
+    // The same horse can also appear in auction-house catalogues — the total
+    // must equal the sum of every *qualifying* candidate's real stake cost.
+    const expected = result.candidates
+      .filter((c) => c.warnings.length === 0)
+      .reduce((sum, c) => sum + (c.stakeCost ?? 0), 0);
+    expect(result.totalStakeCost).toBe(expected);
+    expect(result.totalStakeCost).toBeGreaterThanOrEqual(50_000);
+  });
+
+  it("leaves stake fields empty and contributes nothing when no syndicate exists", () => {
+    const horse = mkHorse({
+      id: asHorseId("h1"),
+      raceHistory: mkRaceHistory("G1"),
+      courseVisits: { "churchill-downs": 5 },
+    });
+    const exchange = createDefaultExchangeState();
+    exchange.asks = [mkAsk({ id: "ask-1", horseId: "h1", price: 100_000, fairValue: 100_000 })];
+    const result = runMarketStrategy({
+      strategy: { ...baseStrategy, minTrackPrestige: 0, targetSyndicationStakePct: 25 },
+      day: 10,
+      horses: [horse],
+      exchange,
+      syndicates: {},
+    });
+    const candidate = result.candidates.find(
+      (c) => c.source.kind === "exchange" && c.horseId === "h1",
+    );
+    expect(candidate?.stakeCost).toBeUndefined();
+    expect(candidate?.syndicateId).toBeUndefined();
+    expect(result.totalStakeCost).toBe(0);
   });
 
   it("returns empty candidates when exchange has no asks and no horses", () => {

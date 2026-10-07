@@ -19,6 +19,7 @@ import {
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId } from "@/core/types/branded";
+import type { Syndicate } from "@/core/breeding/types";
 import { MarketStrategyPanel } from "@/components/market/MarketStrategyPanel";
 
 vi.mock("@tanstack/react-router", () => ({
@@ -49,6 +50,21 @@ function mkAsk(overrides: Partial<ExchangeAsk> & { id: string; horseId: string }
     fairValue: 100_000,
     createdDay: 1,
     expiresDay: 20,
+    ...overrides,
+  };
+}
+
+function mkSyndicate(stallionId: string, overrides: Partial<Syndicate> = {}): Syndicate {
+  return {
+    id: `syn-${stallionId}`,
+    stallionId,
+    stallionName: `Horse ${stallionId}`,
+    totalShares: 40,
+    shareHolders: {},
+    sharePrice: 5_000,
+    studFee: 10_000,
+    isPublic: true,
+    lifetimeEarnings: 0,
     ...overrides,
   };
 }
@@ -273,5 +289,53 @@ describe("MarketStrategyPanel", () => {
     render(createElement(MarketStrategyPanel));
     expect(screen.getAllByText(/last fill/i).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/\$87,500/).length).toBeGreaterThan(0);
+  });
+
+  it("shows a real Buy stake action only on candidates whose horse is syndicated", () => {
+    const horse = mkHorse("h1", { raceHistory: mkRaceHistory("G1") });
+    const syndicate = mkSyndicate("h1");
+    const exchange = createDefaultExchangeState();
+    exchange.asks = [mkAsk({ id: "ask-1", horseId: "h1", price: 100_000, fairValue: 100_000 })];
+    seedStore({
+      ...createDefaultGameState(),
+      day: 10,
+      cash: 1_000_000,
+      horses: { h1: horse },
+      syndicates: { "syn-h1": syndicate },
+      exchange,
+    });
+    render(createElement(MarketStrategyPanel));
+
+    // 25% target of 40 shares = 10 shares at $5,000 = $50,000 real cost.
+    // The horse may surface in multiple venues — any card's stake button works.
+    const stakeButtons = screen.getAllByRole("button", { name: /buy stake in horse h1/i });
+    expect(stakeButtons.length).toBeGreaterThan(0);
+    fireEvent.click(stakeButtons[0]);
+
+    const intents = useGame.getState().pendingIntents ?? [];
+    expect(
+      intents.some(
+        (i: { type: string; syndicateId?: string; shares?: number }) =>
+          i.type === "share_purchase" && i.syndicateId === "syn-h1" && i.shares === 10,
+      ),
+    ).toBe(true);
+  });
+
+  it("hides the stake metric entirely when the candidate has no syndicate", () => {
+    const horse = mkHorse("h1", { raceHistory: mkRaceHistory("G1") });
+    const exchange = createDefaultExchangeState();
+    exchange.asks = [mkAsk({ id: "ask-1", horseId: "h1", price: 100_000, fairValue: 100_000 })];
+    seedStore({
+      ...createDefaultGameState(),
+      day: 10,
+      horses: { h1: horse },
+      syndicates: {},
+      exchange,
+    });
+    render(createElement(MarketStrategyPanel));
+
+    // No fabricated "Stake:" figure and no stake purchase action.
+    expect(screen.queryAllByText(/^stake:$/i)).toHaveLength(0);
+    expect(screen.queryByRole("button", { name: /buy stake/i })).toBeNull();
   });
 });

@@ -15,6 +15,8 @@ import { makeNpcOwned, makePlayerOwned, getStableId } from "@/core/horse/ownersh
 import { asNpcStableId, asStableId } from "@/core/types/branded";
 import { generateNpcHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { createRng, hashStr } from "@/core/common/rng";
+import { detectRivalMilestones } from "@/core/npc/careerMilestones";
+import { isDueForOffscreenStart, lastStartDay, summarizeNpcCareer } from "@/core/npc/careerTracker";
 
 function makeTestStable(): Stable {
   return {
@@ -264,6 +266,187 @@ describe("regenerateNpcHorses", () => {
 
     const regenerated = regenerateNpcHorses(summaries, [stable]);
     expect(regenerated[0].lifecycleStatus).toBe("deceased");
+  });
+});
+
+describe("career continuity persistence", () => {
+  it("round-trips race history, tracker, milestones and mutable runtime state", () => {
+    const stable = makeTestStable();
+    const npc = makeNpcHorses(stable, 1)[0];
+    npc.raceHistory = [
+      {
+        raceId: "off-1",
+        raceName: "Allowance Optional",
+        position: 1,
+        day: 100,
+        purseEarned: 36000,
+        offscreen: true,
+      },
+      {
+        raceId: "real-1",
+        raceName: "Derby",
+        position: 3,
+        day: 200,
+        purseEarned: 50000,
+        grade: "G1",
+      },
+    ];
+    npc.careerTracker = {
+      lastOffscreenDay: 100,
+      offscreenStarts: 1,
+      offscreenWins: 1,
+      offscreenEarnings: 36000,
+      stage: "rising",
+    };
+    npc.careerMilestonesAnnounced = ["debut", "earnings_250000"];
+    npc.courseVisits = { "track-a": 3 };
+    npc.hemisphere = "Southern";
+    npc.gelded = true;
+    npc.foalsProduced = ["f1", "f2"];
+    npc.distanceAptitude = 2200;
+    npc.surfaceAptitude = { Turf: 2, Dirt: 0, Synthetic: -1 };
+    npc.consignedSaleId = "sale-1";
+    npc.activeInjury = { type: "Sprain", severity: "minor", recoveryDays: 5, onsetDay: 250 };
+    npc.lastBeyer = 88;
+    npc.lastRaceDay = 200;
+
+    const summaries = compressNpcHorses([stable], { [npc.id]: npc });
+    const [regen] = regenerateNpcHorses(summaries, [stable]);
+
+    expect(regen.raceHistory).toEqual(npc.raceHistory);
+    expect(regen.careerTracker).toEqual(npc.careerTracker);
+    expect(regen.careerMilestonesAnnounced).toEqual(["debut", "earnings_250000"]);
+    expect(regen.courseVisits).toEqual({ "track-a": 3 });
+    expect(regen.hemisphere).toBe("Southern");
+    expect(regen.gelded).toBe(true);
+    expect(regen.foalsProduced).toEqual(["f1", "f2"]);
+    expect(regen.distanceAptitude).toBe(2200);
+    expect(regen.surfaceAptitude).toEqual({ Turf: 2, Dirt: 0, Synthetic: -1 });
+    expect(regen.consignedSaleId).toBe("sale-1");
+    expect(regen.activeInjury).toEqual({
+      type: "Sprain",
+      severity: "minor",
+      recoveryDays: 5,
+      onsetDay: 250,
+    });
+    expect(regen.lastBeyer).toBe(88);
+    expect(regen.lastRaceDay).toBe(200);
+  });
+
+  it("restores stud counters instead of zeroed defaults", () => {
+    const stable = makeTestStable();
+    const npc = makeNpcHorses(stable, 1)[0];
+    npc.lifecycleStatus = "retired";
+    npc.retiredOnDay = 100;
+    npc.stud = {
+      atStud: true,
+      standingFee: 5000,
+      bookSize: 40,
+      seasonBookings: 12,
+      lifetimeFoals: 30,
+      lifetimeStakesFoals: 4,
+      lifetimeG1Foals: 1,
+      retiredOnDay: 100,
+    };
+
+    const summaries = compressNpcHorses([stable], { [npc.id]: npc });
+    const [regen] = regenerateNpcHorses(summaries, [stable]);
+
+    expect(regen.stud).toMatchObject({
+      atStud: true,
+      standingFee: 5000,
+      seasonBookings: 12,
+      lifetimeFoals: 30,
+      lifetimeStakesFoals: 4,
+      lifetimeG1Foals: 1,
+    });
+  });
+
+  it("does not re-announce milestones after a save/load round-trip", () => {
+    const stable = makeTestStable();
+    const npc = makeNpcHorses(stable, 1)[0];
+    npc.fame = 50;
+    npc.age = 6;
+    npc.peakAge = 4;
+    npc.lifetimeEarnings = 300_000;
+    npc.raceHistory = [
+      {
+        raceId: "off-1",
+        raceName: "Provincial Stakes",
+        position: 1,
+        day: 100,
+        purseEarned: 300_000,
+        grade: "G3",
+        offscreen: true,
+      },
+    ];
+    npc.careerMilestonesAnnounced = detectRivalMilestones(npc, []).map((m) => m.key);
+
+    const summaries = compressNpcHorses([stable], { [npc.id]: npc });
+    const [regen] = regenerateNpcHorses(summaries, [stable]);
+
+    expect(detectRivalMilestones(regen, regen.careerMilestonesAnnounced ?? [])).toEqual([]);
+  });
+
+  it("keeps the offscreen start cooldown after a save/load round-trip", () => {
+    const stable = makeTestStable();
+    const npc = makeNpcHorses(stable, 1)[0];
+    npc.age = 4;
+    npc.raceHistory = [
+      {
+        raceId: "off-1",
+        raceName: "Allowance",
+        position: 2,
+        day: 98,
+        purseEarned: 5000,
+        offscreen: true,
+      },
+    ];
+    npc.careerTracker = {
+      lastOffscreenDay: 98,
+      offscreenStarts: 1,
+      offscreenWins: 0,
+      offscreenEarnings: 5000,
+      stage: "rising",
+    };
+
+    const summaries = compressNpcHorses([stable], { [npc.id]: npc });
+    const [regen] = regenerateNpcHorses(summaries, [stable]);
+
+    // The last start must be recoverable so the cooldown continues — no
+    // post-reload burst of offscreen starts.
+    expect(lastStartDay(regen)).toBe(98);
+    expect(isDueForOffscreenStart(regen, 100, "mid", createRng(1))).toBe(false);
+  });
+
+  it("reports the same career summary after a save/load round-trip", () => {
+    const stable = makeTestStable();
+    const npc = makeNpcHorses(stable, 1)[0];
+    npc.raceHistory = [
+      { raceId: "r1", raceName: "A", position: 1, day: 50, purseEarned: 10_000 },
+      {
+        raceId: "r2",
+        raceName: "B",
+        position: 2,
+        day: 80,
+        purseEarned: 5_000,
+        offscreen: true,
+      },
+    ];
+    npc.careerTracker = {
+      lastOffscreenDay: 80,
+      offscreenStarts: 1,
+      offscreenWins: 0,
+      offscreenEarnings: 5_000,
+      stage: "rising",
+    };
+
+    const before = summarizeNpcCareer(npc, 100);
+    const summaries = compressNpcHorses([stable], { [npc.id]: npc });
+    const [regen] = regenerateNpcHorses(summaries, [stable]);
+    const after = summarizeNpcCareer(regen, 100);
+
+    expect(after).toEqual(before);
   });
 });
 

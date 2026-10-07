@@ -24,7 +24,7 @@ import {
   type StrategyJournalEntry,
 } from "@/core/tactics/strategyJournal";
 
-export const Route = createFileRoute("/strategy-journal")({
+export const Route = createFileRoute("/strategyJournal")({
   head: () => ({
     meta: [
       { title: "Strategy Journal — Stable Strategy" },

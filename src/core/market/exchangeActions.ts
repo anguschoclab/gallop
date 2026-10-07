@@ -81,6 +81,35 @@ export function validateBuyAsk(
 }
 
 /**
+ * Validate that the player can place a standing bid on a horse.
+ * The bid price is escrowed at placement, so funds must cover it now.
+ * Pure: returns an error reason string or null if valid.
+ * @param args - Placement context
+ * @param args.horse - The horse being bid on
+ * @param args.price - The standing bid price
+ * @param args.playerCash - The player's current cash (funds the escrow)
+ * @param args.existingPlayerBid - Whether the player already has a bid on this horse
+ * @param args.liveNpcAsk - Whether an NPC ask for this horse is live today
+ */
+export function validatePlaceBid(args: {
+  horse: Horse | undefined;
+  price: number;
+  playerCash: number;
+  existingPlayerBid: boolean;
+  liveNpcAsk: boolean;
+}): string | null {
+  const { horse, price, playerCash } = args;
+  if (!horse) return "Horse not found";
+  if (isPlayerOwned(horse)) return "You cannot bid on your own horse";
+  if (horse.lifecycleStatus === "deceased") return "Horse is no longer with us";
+  if (!Number.isFinite(price) || price <= 0) return "Bid price must be positive";
+  if (playerCash < price) return "Insufficient funds";
+  if (args.existingPlayerBid) return "You already have a bid on this horse";
+  if (!args.liveNpcAsk) return "No live listing for this horse";
+  return null;
+}
+
+/**
  * Build an ExchangeTrade object for a bid acceptance (player sells to NPC).
  * Pure: returns the trade object.
  * @param horse - The horse being sold.

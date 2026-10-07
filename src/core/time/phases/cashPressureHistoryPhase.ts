@@ -6,8 +6,11 @@
  * to `state.cashPressureHistory`, capped at 90 entries per stable. Also prunes
  * histories for stables that no longer exist (bankruptcy dissolution).
  *
+ * Player-side daily snapshots (horse progress, Strategy Journal outcomes)
+ * live in dailySnapshotPhase (order 204).
+ *
  * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/stable/cashPressure (evaluateCashPressure), @/core/stable/cashPressureHistory (appendCashPressureSnapshot, pruneCashPressureHistory), @/constants (PHASE_ORDER_CASH_PRESSURE_HISTORY)
- * Related files: src/core/time/phases/index.ts (registers phase)
+ * Related files: src/core/time/phases/index.ts (registers phase), src/core/time/phases/dailySnapshotPhase.ts
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
@@ -18,9 +21,6 @@ import {
   type CashPressureHistory,
 } from "@/core/stable/cashPressureHistory";
 import { PHASE_ORDER_CASH_PRESSURE_HISTORY } from "@/constants";
-import { recordDailyProgress, type HorseDailyProgress } from "@/core/horse/dailyProgress";
-import type { Horse } from "@/core/horse/types";
-import { fillJournalOutcomes } from "@/core/tactics/strategyJournal";
 
 export const cashPressureHistoryPhase: PipelinePhase = {
   name: "cashPressureHistory",
@@ -28,19 +28,8 @@ export const cashPressureHistoryPhase: PipelinePhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const stables = state.npcStables ?? [];
-    const horseDailyProgress = recordDailyProgress(
-      (state as { horseDailyProgress?: HorseDailyProgress }).horseDailyProgress,
-      Object.values(state.horses ?? {}) as Horse[],
-      newDay,
-    );
-    const strategyJournal = fillJournalOutcomes(
-      state.strategyJournal,
-      state.horses,
-      state.cash,
-      newDay,
-    );
     if (stables.length === 0) {
-      return { ...context, state: { ...state, horseDailyProgress, strategyJournal } };
+      return context;
     }
 
     // Start from existing history or lazily initialize
@@ -68,8 +57,6 @@ export const cashPressureHistoryPhase: PipelinePhase = {
       state: {
         ...state,
         cashPressureHistory: history,
-        horseDailyProgress,
-        strategyJournal,
       },
     };
   },

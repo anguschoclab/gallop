@@ -327,6 +327,10 @@ export type NpcSettlement = {
  * @param args.commission - Commission function for the exchange
  * @param args.maxTrades - Cap on crossings per day
  * @param args.makeId - Optional custom trade id generator
+ * @param args.playerId - When set, standing bids from this id compete in the
+ *   crossings. Player bids are escrowed at placement, so they are always
+ *   "funded"; a winning player bid pays the seller but debits no NPC stable.
+ * @param args.playerName - Display name recorded on player-winning trades
  */
 export function resolveNpcExchangeTrades(args: {
   day: number;
@@ -336,6 +340,8 @@ export function resolveNpcExchangeTrades(args: {
   commission: (price: number) => number;
   maxTrades?: number;
   makeId?: (askId: string, bidId: string) => string;
+  playerId?: string;
+  playerName?: string;
 }): NpcSettlement {
   const { day, state, horses, npcStables, commission } = args;
   const maxTrades = args.maxTrades ?? 5;
@@ -381,16 +387,19 @@ export function resolveNpcExchangeTrades(args: {
         (b) =>
           b.horseId === ask.horseId &&
           b.expiresDay >= day &&
-          b.bidderId !== "player" &&
           b.bidderId !== seller.id &&
-          byStable.has(b.bidderId),
+          (b.bidderId === args.playerId || byStable.has(b.bidderId)),
       )
       .sort((a, b) => b.price - a.price);
 
-    const bid = candidates.find((b) => b.price >= floorPrice && cashOf(b.bidderId) >= b.price);
+    const bid = candidates.find(
+      (b) =>
+        b.price >= floorPrice && (b.bidderId === args.playerId || cashOf(b.bidderId) >= b.price),
+    );
     if (!bid) continue;
-    const buyer = byStable.get(bid.bidderId);
-    if (!buyer) continue;
+    const isPlayerBid = args.playerId !== undefined && bid.bidderId === args.playerId;
+    const buyer = isPlayerBid ? undefined : byStable.get(bid.bidderId);
+    if (!isPlayerBid && !buyer) continue;
 
     const fee = commission(bid.price);
     trades.push({
@@ -399,15 +408,16 @@ export function resolveNpcExchangeTrades(args: {
       horseName: horse.name,
       price: bid.price,
       commission: fee,
-      buyerId: buyer.id,
-      buyerName: buyer.name,
+      buyerId: bid.bidderId,
+      buyerName: isPlayerBid ? (args.playerName ?? "Player") : buyer!.name,
       sellerId: seller.id,
       sellerName: seller.name,
       day,
       initiatedBy: "bid",
     });
-    ownershipChanges.push({ horseId: horse.id, buyerStableId: buyer.id });
-    cashDeltas[buyer.id] = (cashDeltas[buyer.id] ?? 0) - bid.price;
+    ownershipChanges.push({ horseId: horse.id, buyerStableId: bid.bidderId });
+    // Player bids are escrowed at placement — no cash debit at fill.
+    if (!isPlayerBid) cashDeltas[buyer!.id] = (cashDeltas[buyer!.id] ?? 0) - bid.price;
     cashDeltas[seller.id] = (cashDeltas[seller.id] ?? 0) + (bid.price - fee);
     filledAskIds.push(ask.id);
     filledBidIds.push(bid.id);

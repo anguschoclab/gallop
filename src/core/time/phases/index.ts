@@ -66,6 +66,7 @@ import { difficultyPhase } from "./difficultyPhase";
 import { cashPressureHistoryPhase } from "./cashPressureHistoryPhase";
 import { eventTriggersPhase } from "./eventTriggersPhase";
 import { exchangeSettlementPhase } from "./exchangeSettlementPhase";
+import { dailySnapshotPhase } from "./dailySnapshotPhase";
 
 /**
  * Shared array of all game pipeline phases in their correct order.
@@ -156,4 +157,6 @@ export const GAME_PIPELINE_PHASES = [
   eventTriggersPhase,
   // Exchange refresh + NPC settlement (order 203 — runs on end-of-day state every simulated day)
   exchangeSettlementPhase,
+  // Daily player snapshot (order 204 — last: captures post-settlement cash/ownership, fills journal outcomes)
+  dailySnapshotPhase,
 ].sort((a, b) => a.order - b.order);

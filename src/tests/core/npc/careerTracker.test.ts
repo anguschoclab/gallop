@@ -181,4 +181,41 @@ describe("npc career tracker", () => {
       [...timeline.map((event) => event.day)].sort((a, b) => a - b),
     );
   });
+
+  it("anchors timeline ages on horse.age, not the placeholder birthDay", () => {
+    // Generated horses keep the factory default birthDay of 1, so (day - birthDay)
+    // math is meaningless. The timeline must derive ages from the authoritative
+    // `age` field: a 5yo at day 1900 turned 2 at ~day 805, 3 at ~1170, 4 at ~1535.
+    const h = horse({ birthDay: 1, age: 5, peakAge: 4 });
+
+    const timeline = buildNpcCareerTimeline(h, 1900);
+    const stages = timeline.filter((event) => event.kind === "stage");
+
+    expect(stages.map((s) => s.age)).toEqual([2, 3, 4]);
+    expect(stages.map((s) => s.stage)).toEqual(["juvenile", "rising", "prime"]);
+    expect(stages.map((s) => s.day)).toEqual([805, 1170, 1535]);
+  });
+
+  it("dates offscreen start ages relative to the current game day", () => {
+    const h = horse({
+      birthDay: 1,
+      age: 5,
+      peakAge: 4,
+      raceHistory: [
+        {
+          raceId: "offscreen-1",
+          raceName: "Allowance",
+          position: 2,
+          purseEarned: 5000,
+          day: 800,
+          offscreen: true,
+        },
+      ],
+    });
+
+    const timeline = buildNpcCareerTimeline(h, 1900);
+    const start = timeline.find((event) => event.kind === "start");
+    // A 5yo at day 1900 was 2yo at day 800 (1100 days ≈ 3 years earlier).
+    expect(start?.age).toBe(2);
+  });
 });

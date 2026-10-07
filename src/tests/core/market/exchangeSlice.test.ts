@@ -14,6 +14,7 @@ import {
   createDefaultExchangeState,
   netProceeds,
   exchangeCommission,
+  EXCHANGE_ORDER_TTL_DAYS,
   type ExchangeState,
   type ExchangeAsk,
   type ExchangeBid,
@@ -443,5 +444,205 @@ describe("refreshExchange", () => {
     useGame.getState().refreshExchange();
     const exchange = useGame.getState().exchange!;
     expect(exchange.lastRefreshDay).toBe(5);
+  });
+
+  it("preserves standing player bids through the daily book regen", () => {
+    const h = npcHorse();
+    const stable = mkStable({ id: "npc-1", cash: 500_000 });
+    const bid = mkBid({
+      id: "p-bid-1",
+      // Bid on an unlisted horse — nothing can fill it, so it must survive regen.
+      horseId: "h-unlisted",
+      bidderId: "player",
+      bidderName: "My Stable",
+      price: 60_000,
+    });
+    seedStore({
+      horses: { [h.id]: h },
+      npcStables: [stable],
+      exchange: { ...createDefaultExchangeState(), bids: [bid] },
+      day: 5,
+    });
+    useGame.getState().refreshExchange();
+    const exchange = useGame.getState().exchange!;
+    expect(exchange.bids.some((b) => b.id === "p-bid-1" && b.price === 60_000)).toBe(true);
+  });
+
+  it("fills a standing player bid against an NPC ask during settlement", () => {
+    // Broke seller lists its only horse; the player's standing bid clears the
+    // accept floor, so the bid fills at the bid price.
+    const seller = mkStable({ id: "npc-1", cash: 500, personality: "trader" });
+    const h = npcHorse("h-npc", "npc-1");
+    const bid = mkBid({
+      id: "p-bid-1",
+      horseId: h.id,
+      bidderId: "player",
+      bidderName: "My Stable",
+      price: 1_000_000,
+    });
+    seedStore({
+      horses: { [h.id]: h },
+      npcStables: [seller],
+      exchange: { ...createDefaultExchangeState(), bids: [bid] },
+      day: 5,
+      cash: 0, // escrow was already debited at placement — no further charge
+    });
+
+    useGame.getState().refreshExchange();
+    const s = useGame.getState();
+    const trade = s.exchange!.trades.find((t) => t.horseId === h.id);
+    expect(trade).toBeDefined();
+    expect(trade!.buyerId).toBe("player");
+    expect(trade!.price).toBe(1_000_000);
+    expect(s.horses[h.id].ownership.type).toBe("player");
+    expect(s.cash).toBe(0); // fill does not re-charge escrowed funds
+    const sellerAfter = s.npcStables!.find((st) => st.id === "npc-1")!;
+    expect(sellerAfter.cash).toBe(500 + netProceeds(1_000_000));
+  });
+
+  it("refunds expired player bids on refresh", () => {
+    const h = npcHorse();
+    const stable = mkStable({ id: "npc-1", cash: 500_000 });
+    const bid = mkBid({
+      id: "p-bid-exp",
+      horseId: h.id,
+      bidderId: "player",
+      bidderName: "My Stable",
+      price: 75_000,
+      expiresDay: 4, // expired before day 5
+    });
+    seedStore({
+      horses: { [h.id]: h },
+      npcStables: [stable],
+      exchange: { ...createDefaultExchangeState(), bids: [bid] },
+      day: 5,
+      cash: 100,
+    });
+    useGame.getState().refreshExchange();
+    const s = useGame.getState();
+    expect(s.exchange!.bids.some((b) => b.id === "p-bid-exp")).toBe(false);
+    expect(s.cash).toBe(100 + 75_000);
+  });
+});
+
+describe("placeExchangeBid", () => {
+  beforeEach(() => seedStore());
+
+  function listedNpcHorse(id = "h-npc") {
+    const h = npcHorse(id, "npc-1");
+    const stable = mkStable({ id: "npc-1", cash: 100_000 });
+    const ask = mkAsk({ id: "ask-1", horseId: h.id, sellerId: "npc-1", price: 120_000 });
+    return { h, stable, ask };
+  }
+
+  it("places a standing bid and escrows the cash", () => {
+    const { h, stable, ask } = listedNpcHorse();
+    seedStore({
+      horses: { [h.id]: h },
+      npcStables: [stable],
+      exchange: { ...createDefaultExchangeState(), asks: [ask] },
+      day: 5,
+      cash: 500_000,
+    });
+    const res = useGame.getState().placeExchangeBid(h.id, 90_000);
+    expect(res.ok).toBe(true);
+
+    const s = useGame.getState();
+    expect(s.cash).toBe(500_000 - 90_000);
+    const bid = s.exchange!.bids.find((b) => b.bidderId === "player");
+    expect(bid).toBeDefined();
+    expect(bid!.horseId).toBe(h.id);
+    expect(bid!.price).toBe(90_000);
+    expect(bid!.expiresDay).toBe(5 + EXCHANGE_ORDER_TTL_DAYS);
+  });
+
+  it("rejects a bid on a non-existent horse", () => {
+    seedStore({ cash: 500_000 });
+    expect(useGame.getState().placeExchangeBid("no-such", 100).ok).toBe(false);
+  });
+
+  it("rejects bidding on the player's own horse", () => {
+    const h = playerHorse();
+    seedStore({ horses: { [h.id]: h }, cash: 500_000 });
+    expect(useGame.getState().placeExchangeBid(h.id, 100).ok).toBe(false);
+  });
+
+  it("rejects non-positive prices", () => {
+    const { h, stable, ask } = listedNpcHorse();
+    seedStore({
+      horses: { [h.id]: h },
+      npcStables: [stable],
+      exchange: { ...createDefaultExchangeState(), asks: [ask] },
+      cash: 500_000,
+    });
+    expect(useGame.getState().placeExchangeBid(h.id, 0).ok).toBe(false);
+    expect(useGame.getState().placeExchangeBid(h.id, -5).ok).toBe(false);
+  });
+
+  it("rejects when the player cannot fund the escrow", () => {
+    const { h, stable, ask } = listedNpcHorse();
+    seedStore({
+      horses: { [h.id]: h },
+      npcStables: [stable],
+      exchange: { ...createDefaultExchangeState(), asks: [ask] },
+      cash: 50,
+    });
+    expect(useGame.getState().placeExchangeBid(h.id, 90_000).ok).toBe(false);
+  });
+
+  it("rejects a duplicate player bid on the same horse", () => {
+    const { h, stable, ask } = listedNpcHorse();
+    seedStore({
+      horses: { [h.id]: h },
+      npcStables: [stable],
+      exchange: { ...createDefaultExchangeState(), asks: [ask] },
+      day: 5,
+      cash: 500_000,
+    });
+    expect(useGame.getState().placeExchangeBid(h.id, 90_000).ok).toBe(true);
+    expect(useGame.getState().placeExchangeBid(h.id, 95_000).ok).toBe(false);
+  });
+
+  it("rejects a bid when no live NPC ask exists for the horse", () => {
+    const h = npcHorse();
+    const stable = mkStable({ id: "npc-1", cash: 100_000 });
+    seedStore({ horses: { [h.id]: h }, npcStables: [stable], day: 5, cash: 500_000 });
+    expect(useGame.getState().placeExchangeBid(h.id, 90_000).ok).toBe(false);
+  });
+});
+
+describe("cancelExchangeBid", () => {
+  beforeEach(() => seedStore());
+
+  it("cancels the player's bid and refunds the escrow", () => {
+    const h = npcHorse("h-npc", "npc-1");
+    const stable = mkStable({ id: "npc-1", cash: 100_000 });
+    const ask = mkAsk({ id: "ask-1", horseId: h.id, sellerId: "npc-1" });
+    seedStore({
+      horses: { [h.id]: h },
+      npcStables: [stable],
+      exchange: { ...createDefaultExchangeState(), asks: [ask] },
+      day: 5,
+      cash: 500_000,
+    });
+    useGame.getState().placeExchangeBid(h.id, 90_000);
+    const bidId = useGame.getState().exchange!.bids.find((b) => b.bidderId === "player")!.id;
+
+    const res = useGame.getState().cancelExchangeBid(bidId);
+    expect(res.ok).toBe(true);
+    const s = useGame.getState();
+    expect(s.cash).toBe(500_000);
+    expect(s.exchange!.bids.some((b) => b.id === bidId)).toBe(false);
+  });
+
+  it("rejects a non-existent bid", () => {
+    seedStore();
+    expect(useGame.getState().cancelExchangeBid("no-such-bid").ok).toBe(false);
+  });
+
+  it("rejects cancelling an NPC bid", () => {
+    const bid = mkBid({ id: "npc-bid", horseId: "h-x", bidderId: "npc-1" });
+    seedStore({ exchange: { ...createDefaultExchangeState(), bids: [bid] } });
+    expect(useGame.getState().cancelExchangeBid("npc-bid").ok).toBe(false);
   });
 });

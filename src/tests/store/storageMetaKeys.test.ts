@@ -52,6 +52,7 @@ import {
   _resetSaveExists,
   _resetPersistenceEnabled,
 } from "@/game/store/storage";
+import { PERSISTED_KEYS, DEDICATED_BUCKET_KEYS } from "@/game/store/persistedKeys";
 
 function makeMockHorse(id: string, owned: boolean, stableId?: string): any {
   return {
@@ -169,6 +170,104 @@ function makeMockGameState(overrides: Record<string, any> = {}): any {
     ...overrides,
   };
 }
+
+describe("storage META_KEYS — parity with PERSISTED_KEYS", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockIdbAvailable = true;
+    mockSaveBuckets.mockResolvedValue(undefined);
+    mockLoadBuckets.mockResolvedValue(null);
+    mockClearDatabase.mockResolvedValue(undefined);
+    _resetSaveExists();
+    _resetPersistenceEnabled();
+  });
+
+  afterEach(() => {
+    _resetSaveExists();
+    _resetPersistenceEnabled();
+    vi.restoreAllMocks();
+  });
+
+  it("saves every non-dedicated PERSISTED_KEY to the meta bucket", async () => {
+    // Sentinel value per key so a wrong-key mapping is caught, not just an
+    // absent one. Dedicated-bucket keys keep valid mock shapes and are
+    // asserted in the dedicated-bucket test below.
+    const sentinels: Record<string, unknown> = {};
+    const expectedMetaKeys: string[] = [];
+    for (const key of PERSISTED_KEYS as string[]) {
+      if (DEDICATED_BUCKET_KEYS.has(key)) continue;
+      sentinels[key] = { __sentinel: key };
+      expectedMetaKeys.push(key);
+    }
+    const state = makeMockGameState(sentinels);
+    await saveGameStateToIDB(state);
+    const meta = mockSaveBuckets.mock.calls[0][0].meta as Record<string, unknown>;
+    const missing = expectedMetaKeys.filter((k) => !(k in meta));
+    expect(missing).toEqual([]);
+    for (const k of expectedMetaKeys) {
+      expect(meta[k]).toEqual({ __sentinel: k });
+    }
+  });
+
+  it("writes dedicated-bucket fields to their own buckets, plus storeVersion to meta", async () => {
+    const npcStable = {
+      id: "stable-1",
+      name: "NPC Stable",
+      owner: "NPC",
+      tier: "mid",
+      reputation: 50,
+      founded: 1,
+      cash: 100000,
+      horses: [],
+      isMajor: true,
+      colors: { primary: "#fff", secondary: "#000" },
+      personality: "conservative",
+      staff: { trainer: null, veterinarian: null, farrier: null, nutritionist: null, groom: null },
+      outposts: [],
+    };
+    const npcHorse = makeMockHorse("npc-h1", false, "stable-1");
+    const playerHorse = makeMockHorse("p-h1", true);
+    const state = makeMockGameState({
+      storeVersion: 8,
+      npcStables: [npcStable],
+      horses: { "npc-h1": npcHorse, "p-h1": playerHorse },
+      races: { r1: { id: "r1" } },
+    });
+    await saveGameStateToIDB(state);
+    const buckets = mockSaveBuckets.mock.calls[0][0];
+    expect(buckets.meta.storeVersion).toBe(8);
+    expect(Object.keys(buckets.npcStables)).toEqual(["stable-1"]);
+    expect(Object.keys(buckets.horses.playerHorses)).toEqual(["p-h1"]);
+    expect(buckets.horses.npcSummaries).toHaveLength(1);
+    expect(Object.keys(buckets.races)).toEqual(["r1"]);
+  });
+
+  it("saves strategyJournal to the meta bucket", async () => {
+    const strategyJournal = [
+      { id: "j1", createdDay: 1, horseId: "h1", plan: "Press the lead", rationale: "test" },
+    ];
+    const state = makeMockGameState({ strategyJournal });
+    await saveGameStateToIDB(state);
+    const buckets = mockSaveBuckets.mock.calls[0][0];
+    expect(buckets.meta.strategyJournal).toEqual(strategyJournal);
+  });
+
+  it("saves stableGoals to the meta bucket", async () => {
+    const stableGoals = { startDay: 1, targetEarnings: 500000, targetWins: 10 };
+    const state = makeMockGameState({ stableGoals });
+    await saveGameStateToIDB(state);
+    const buckets = mockSaveBuckets.mock.calls[0][0];
+    expect(buckets.meta.stableGoals).toEqual(stableGoals);
+  });
+
+  it("saves horseDailyProgress to the meta bucket", async () => {
+    const horseDailyProgress = { "p-h1": [{ day: 1, ovr: 60, energy: 90 }] };
+    const state = makeMockGameState({ horseDailyProgress });
+    await saveGameStateToIDB(state);
+    const buckets = mockSaveBuckets.mock.calls[0][0];
+    expect(buckets.meta.horseDailyProgress).toEqual(horseDailyProgress);
+  });
+});
 
 describe("storage META_KEYS — market fields persisted", () => {
   beforeEach(() => {

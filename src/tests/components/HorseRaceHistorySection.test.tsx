@@ -131,4 +131,18 @@ describe("HorseRaceHistorySection", () => {
     );
     expect(screen.getAllByText(/G3/).length).toBeGreaterThan(0);
   });
+
+  it("marks off-screen simulated starts and leaves live races unmarked", () => {
+    const horse = createHorse({
+      raceHistory: [
+        { raceId: "r1", raceName: "Real Derby", position: 2, day: 25 },
+        { raceId: "r2", raceName: "Sim Sprint", position: 1, day: 40, offscreen: true },
+      ],
+    });
+    renderWithStore(
+      <HorseRaceHistorySection horse={horse} raceHistoryLimit={10} onLimitChange={() => {}} />,
+    );
+    // Exactly one row carries the off-screen marker.
+    expect(screen.getAllByText(/^off-screen$/i)).toHaveLength(1);
+  });
 });

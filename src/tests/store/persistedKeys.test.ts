@@ -40,4 +40,39 @@ describe("PERSISTED_KEYS includes cashPressureHistory", () => {
     // Cleanup
     useGame.setState({ cashPressureHistory: undefined } as Partial<GameState>);
   });
+
+  // Guard: every field that was previously missing from META_KEYS must stay
+  // inside partialize's output so it can reach the IDB meta bucket.
+  const previouslyDroppedKeys = [
+    "strategyJournal",
+    "stableGoals",
+    "horseDailyProgress",
+    "cashPressureHistory",
+    "savedMatingPlans",
+    "tutorial",
+    "runEnded",
+    "runEndSnapshot",
+    "solvencyTier",
+    "solvencyAuditLog",
+    "consecutiveDaysInDebt",
+    "awardCeremonyInvitations",
+  ] as const;
+
+  it.each(previouslyDroppedKeys)("partialize preserves %s when set", (key) => {
+    const sentinel = { __sentinel: key };
+    useGame.setState({ [key]: sentinel } as Partial<GameState>);
+
+    const persistApi = (
+      useGame as unknown as {
+        persist?: { getOptions?: () => { partialize?: (s: unknown) => unknown } };
+      }
+    ).persist;
+    const options = persistApi?.getOptions?.();
+    expect(options?.partialize).toBeDefined();
+    const partialized = options!.partialize!(useGame.getState()) as Record<string, unknown>;
+    expect(partialized[key]).toEqual(sentinel);
+
+    // Cleanup
+    useGame.setState({ [key]: undefined } as Partial<GameState>);
+  });
 });

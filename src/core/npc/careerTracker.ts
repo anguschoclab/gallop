@@ -144,9 +144,25 @@ export function careerStage(horse: Horse): NpcCareerStage {
   return "declining";
 }
 
-function careerStageAtDay(horse: Horse, day: number): NpcCareerStage {
+/**
+ * Age of a horse on a given day, anchored on the authoritative `horse.age`.
+ *
+ * Generated horses keep the factory default `birthDay` of 1 (only bred foals get
+ * a real birth day), so `(day - birthDay)` math is meaningless for them. `age`
+ * is the maintained integer field — we walk it backwards by elapsed years.
+ *
+ * @param horse - Horse whose age anchors the timeline
+ * @param day - Day to compute the age at
+ * @param currentDay - Reference day for elapsed-year walkback
+ */
+function ageAtDay(horse: Horse, day: number, currentDay: number): number {
+  const elapsedYears = Math.max(0, Math.floor((currentDay - day) / 365));
+  return Math.max(0, Math.floor(horse.age) - elapsedYears);
+}
+
+function careerStageAtDay(horse: Horse, day: number, currentDay: number): NpcCareerStage {
   if (horse.retiredOnDay !== undefined && day >= horse.retiredOnDay) return "retired";
-  const age = Math.max(0, Math.floor((day - horse.birthDay) / 365));
+  const age = ageAtDay(horse, day, currentDay);
   const peak = horse.peakAge && horse.peakAge > 2 ? horse.peakAge : 4;
   if (age < CAREER_DEBUT_AGE) return "unraced";
   if (age === 2) return "juvenile";
@@ -165,11 +181,14 @@ function careerStageAtDay(horse: Horse, day: number): NpcCareerStage {
 export function buildNpcCareerTimeline(horse: Horse, currentDay: number): NpcCareerTimelineEvent[] {
   const events: NpcCareerTimelineEvent[] = [];
   let previousStage: NpcCareerStage = "unraced";
+  const currentAge = Math.floor(horse.age);
 
   for (let age = CAREER_DEBUT_AGE; age <= CAREER_MAX_AGE; age++) {
-    const day = horse.birthDay + age * 365;
+    // Day the horse reached this age, derived from the authoritative `age`
+    // field — `birthDay` is a placeholder (1) for all generated horses.
+    const day = currentDay - (currentAge - age) * 365;
     if (day > currentDay) break;
-    const stage = careerStageAtDay(horse, day);
+    const stage = careerStageAtDay(horse, day, currentDay);
     if (stage !== previousStage) {
       events.push({ id: `stage-${stage}-${day}`, kind: "stage", day, age, stage });
       previousStage = stage;
@@ -185,7 +204,7 @@ export function buildNpcCareerTimeline(horse: Horse, currentDay: number): NpcCar
         id: `stage-retired-${horse.retiredOnDay}`,
         kind: "stage",
         day: horse.retiredOnDay,
-        age: Math.max(0, Math.floor((horse.retiredOnDay - horse.birthDay) / 365)),
+        age: ageAtDay(horse, horse.retiredOnDay, currentDay),
         stage: "retired",
       });
     }
@@ -197,8 +216,8 @@ export function buildNpcCareerTimeline(horse: Horse, currentDay: number): NpcCar
       id: `start-${start.raceId}-${start.day}`,
       kind: "start",
       day: start.day,
-      age: Math.max(0, Math.floor((start.day - horse.birthDay) / 365)),
-      stage: careerStageAtDay(horse, start.day),
+      age: ageAtDay(horse, start.day, currentDay),
+      stage: careerStageAtDay(horse, start.day, currentDay),
       raceName: start.raceName,
       position: start.position,
       fieldSize: start.fieldSize,

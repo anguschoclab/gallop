@@ -29,6 +29,7 @@ import {
   regenerateNpcHorses,
 } from "@/core/persistence/npcCompression";
 import { prunePedigree } from "@/core/persistence/pedigreePrune";
+import { META_KEYS } from "./persistedKeys";
 import { STORAGE_KEYS } from "@/services/storage/storageAdapter";
 import { safeParseJson, bucketPayloadSchema } from "@/services/storage/schemas";
 
@@ -72,84 +73,8 @@ export function createIdbStorage() {
 
 // ─── IndexedDB save/load with NPC compression & pedigree pruning ────────────
 
-/**
- * Keys that go into the "meta" bucket (everything except horses, races, npcStables).
- */
-const META_KEYS: (keyof GameState)[] = [
-  "day",
-  "cash",
-  "market",
-  "trainingUsed",
-  "log",
-  "news",
-  "archive",
-  "pregnancies",
-  "activeBreedingProgram",
-  "triplecrownHistory",
-  "paceSamples",
-  "calibratedPars",
-  "lastCalibrationDay",
-  "npcAIManager",
-  "scoutReports",
-  "auctions",
-  "jockeys",
-  "awards",
-  "campaigns",
-  "expenses",
-  "transactions",
-  "replays",
-  "reputation",
-  "transports",
-  "userSettings",
-  "facilities",
-  "npcFacilities",
-  "playerProfile",
-  "privateSaleOffers",
-  "claims",
-  "breedingPrograms",
-  "usedHorseNames",
-  "usedJockeyNames",
-  "reservedHorseNames",
-  "seasonRecords",
-  "hallOfFame",
-  "trackRecords",
-  "trackLedger",
-  "horseLeaderboards",
-  "founders",
-  "lastFounderUpdateDay",
-  "syndicates",
-  "staffPool",
-  "hiredStaff",
-  "weather",
-  "inbox",
-  "stewardsInquiries",
-  "playerNominations",
-  "syndicateInvestors",
-  "lastTopTenRank",
-  "shareTransactions",
-  "shareActivityFeed",
-  "outposts",
-  "sireLeaderboards",
-  "sireTrendHistory",
-  "leaderboardsUpdatedDay",
-  "damsireLeaderboard",
-  "blueHenLeaderboard",
-  "lastAwardYear",
-  "pendingAwardCeremonies",
-  "currentCeremonyIndex",
-  "industryMeanEarnings",
-  "industryEarningsUpdatedDay",
-  "narrativeArcs",
-  "worldSize",
-  // Market fields — were missing from META_KEYS, causing silent data loss on save
-  "exchange",
-  "scoutingAssignments",
-  "autoSyndicateEnabled",
-  "playerBiddingHistory",
-  "priceAlerts",
-  "notifiedTradeKeys",
-  "marketStrategy",
-];
+// META_KEYS is derived from PERSISTED_KEYS in ./persistedKeys so a key can
+// never again pass partialize yet be silently dropped before the IDB write.
 
 export async function saveGameStateToIDB(state: GameState): Promise<void> {
   const stables = state.npcStables ?? [];

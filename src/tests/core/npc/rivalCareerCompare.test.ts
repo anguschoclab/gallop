@@ -74,6 +74,37 @@ describe("rival career comparison", () => {
     );
   });
 
+  it("dates career-stage milestones from horse.age, not placeholder birthDay", () => {
+    // A 6yo in decline at day 3000 with the default birthDay of 1.
+    const p = buildRivalCareerProfile(
+      horse({
+        age: 6,
+        peakAge: 4,
+        birthDay: 1,
+        fame: 50,
+        raceHistory: [start(100, 2)],
+      }),
+      3_000,
+    );
+    // Entered "declining" (peakAge + 2 = age 6) at day 3000.
+    expect(p.milestones.find((m) => m.key === "stage_declining")?.day).toBe(3_000);
+  });
+
+  it("dates the prime-stage milestone at the age it was reached", () => {
+    // A 5yo at peak, day 3000 — reached prime (age 4) at day 2635.
+    const p = buildRivalCareerProfile(
+      horse({
+        age: 5,
+        peakAge: 4,
+        birthDay: 1,
+        fame: 50,
+        raceHistory: [start(100, 2)],
+      }),
+      3_000,
+    );
+    expect(p.milestones.find((m) => m.key === "stage_prime")?.day).toBe(2_635);
+  });
+
   it("sorts profiles by earnings", () => {
     const profiles = buildRivalCareerProfiles(
       [

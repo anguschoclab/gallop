@@ -75,7 +75,14 @@ export function HorseRaceHistorySection({
                     {r.position}
                   </span>
                   <div>
-                    <div className="text-xs font-bold text-cream truncate">{r.raceName}</div>
+                    <div className="text-xs font-bold text-cream truncate">
+                      {r.raceName}
+                      {r.offscreen && (
+                        <span className="ml-2 text-[9px] font-mono font-normal uppercase text-cream/30">
+                          off-screen
+                        </span>
+                      )}
+                    </div>
                     <div className="text-[10px] font-mono text-cream/30">Day {r.day}</div>
                   </div>
                   {r.grade && (

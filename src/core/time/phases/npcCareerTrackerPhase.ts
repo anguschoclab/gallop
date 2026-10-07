@@ -23,6 +23,8 @@ import {
 /**
  * Phase: NPC Career Tracker
  * Simulates off-screen starts for NPC horses so careers progress over time.
+ * Purses earned off-screen are credited to the owning NPC stable's cash so
+ * stable finances stay consistent with horse earnings.
  */
 export const npcCareerTrackerPhase: PipelinePhase = {
   name: "npcCareerTracker",
@@ -36,21 +38,36 @@ export const npcCareerTrackerPhase: PipelinePhase = {
     );
 
     let changed = false;
+    const purseDeltaByStable = new Map<string, number>();
     const horses: Record<string, Horse> = {};
     for (const [id, horse] of Object.entries(state.horses)) {
       horses[id] = horse;
       if (!isNpcOwned(horse) || horse.lifecycleStatus !== "active") continue;
 
-      const tier = tierByStable.get(String(getStableId(horse) ?? "")) ?? "mid";
+      const stableId = String(getStableId(horse) ?? "");
+      const tier = tierByStable.get(stableId) ?? "mid";
       if (!isDueForOffscreenStart(horse, newDay, tier, dailyRng)) continue;
 
       const outcome = simulateOffscreenStart(horse, newDay, tier, dailyRng);
       horses[id] = applyOffscreenStart(horse, outcome);
       changed = true;
+
+      const purseEarned = outcome.entry.purseEarned ?? 0;
+      if (purseEarned > 0 && tierByStable.has(stableId)) {
+        purseDeltaByStable.set(stableId, (purseDeltaByStable.get(stableId) ?? 0) + purseEarned);
+      }
     }
 
     if (!changed) return context;
 
-    return { ...context, state: { ...state, horses } };
+    const npcStables =
+      purseDeltaByStable.size === 0
+        ? state.npcStables
+        : state.npcStables.map((stable) => {
+            const delta = purseDeltaByStable.get(String(stable.id));
+            return delta ? { ...stable, cash: (stable.cash ?? 0) + delta } : stable;
+          });
+
+    return { ...context, state: { ...state, horses, npcStables } };
   },
 };

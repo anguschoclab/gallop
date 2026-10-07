@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { FilterX, Landmark, MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -57,6 +57,13 @@ function TrackHistoryPage() {
   const [query, setQuery] = useState("");
   const { track } = Route.useSearch();
   const [selected, setSelected] = useState<string | null>(track ?? null);
+
+  // Keep the selection driven by the ?track= param: same-route navigations
+  // that only change the search must re-select the target course. When the
+  // param is absent, fall back to the first course (same as initial load).
+  useEffect(() => {
+    setSelected(track ?? null);
+  }, [track]);
   const [fromDay, setFromDay] = useState("");
   const [toDay, setToDay] = useState("");
   const [raceType, setRaceType] = useState("all");

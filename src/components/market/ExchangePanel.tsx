@@ -36,10 +36,14 @@ export function ExchangePanel() {
   const cancelExchangeListing = useGame((s) => s.cancelExchangeListing);
   const acceptExchangeBid = useGame((s) => s.acceptExchangeBid);
   const buyFromExchange = useGame((s) => s.buyFromExchange);
+  const placeExchangeBid = useGame((s) => s.placeExchangeBid);
+  const cancelExchangeBid = useGame((s) => s.cancelExchangeBid);
 
   const [selected, setSelected] = useState<string | null>(null);
   const [listHorseId, setListHorseId] = useState<string>("");
   const [listPrice, setListPrice] = useState<string>("");
+  const [bidHorseId, setBidHorseId] = useState<string>("");
+  const [bidPrice, setBidPrice] = useState<string>("");
 
   useEffect(() => {
     refreshExchange();
@@ -94,6 +98,11 @@ export function ExchangePanel() {
     () => exchange.asks.filter((a) => a.sellerId === "player"),
     [exchange.asks],
   );
+  const myBids = useMemo(
+    () => exchange.bids.filter((b) => b.bidderId === "player"),
+    [exchange.bids],
+  );
+  const myBidHorseIds = useMemo(() => new Set(myBids.map((b) => b.horseId)), [myBids]);
   const npcListings = useMemo(
     () => exchange.asks.filter((a) => a.sellerId !== "player").sort((a, b) => a.price - b.price),
     [exchange.asks],
@@ -230,6 +239,42 @@ export function ExchangePanel() {
             )}
           </div>
 
+          {myBids.length > 0 && (
+            <div className="space-y-1.5 border-t border-white/5 pt-3">
+              <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
+                Your bids
+              </h4>
+              {myBids.map((b) => (
+                <div
+                  key={b.id}
+                  className="flex flex-wrap items-center justify-between gap-2 rounded border border-white/5 bg-slate-950/50 px-3 py-2 text-xs"
+                >
+                  <span className="text-cream">
+                    {(horses[b.horseId] as Horse | undefined)?.name ?? b.horseId}
+                  </span>
+                  <span className="flex items-center gap-3 text-cream-muted">
+                    <span>
+                      Bid <span className="tabular-nums text-cream">{formatCurrency(b.price)}</span>
+                      <span className="text-cream-muted/70"> (escrowed)</span>
+                    </span>
+                    <Button size="sm" variant="ghost" onClick={() => setSelected(b.horseId)}>
+                      Book
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() =>
+                        run(cancelExchangeBid(b.id), "Bid withdrawn — escrow refunded")
+                      }
+                    >
+                      Cancel
+                    </Button>
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+
           {myListings.length > 0 && (
             <div className="space-y-1.5 border-t border-white/5 pt-3">
               <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
@@ -329,6 +374,22 @@ export function ExchangePanel() {
                       </Button>
                       <Button
                         size="sm"
+                        variant="ghost"
+                        disabled={myBidHorseIds.has(a.horseId)}
+                        title={
+                          myBidHorseIds.has(a.horseId)
+                            ? "You already have a bid on this horse"
+                            : "Place a standing bid — fills during daily settlement if the seller's floor accepts it"
+                        }
+                        onClick={() => {
+                          setBidHorseId(a.horseId);
+                          setBidPrice(String(a.fairValue || a.price));
+                        }}
+                      >
+                        Bid
+                      </Button>
+                      <Button
+                        size="sm"
                         disabled={cash < a.price}
                         onClick={() =>
                           run(buyFromExchange(a.id), `Bought ${horse?.name ?? "horse"}`)
@@ -337,6 +398,42 @@ export function ExchangePanel() {
                         Buy
                       </Button>
                     </span>
+                    {bidHorseId === a.horseId && (
+                      <span className="flex w-full items-center gap-2 pt-1">
+                        <Input
+                          type="number"
+                          value={bidPrice}
+                          onChange={(e) => setBidPrice(e.target.value)}
+                          placeholder="Bid price"
+                          aria-label="Bid price"
+                          className="w-32"
+                        />
+                        <Button
+                          size="sm"
+                          disabled={!bidPrice}
+                          onClick={() => {
+                            run(
+                              placeExchangeBid(a.horseId, Number(bidPrice)),
+                              `Standing bid placed — ${formatCurrency(Number(bidPrice))} escrowed`,
+                            );
+                            setBidHorseId("");
+                            setBidPrice("");
+                          }}
+                        >
+                          Place bid
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            setBidHorseId("");
+                            setBidPrice("");
+                          }}
+                        >
+                          Dismiss
+                        </Button>
+                      </span>
+                    )}
                   </div>
                 );
               })
@@ -377,6 +474,7 @@ export function ExchangePanel() {
               onBuyAsk={(id) => run(buyFromExchange(id), "Purchase settled")}
               onAcceptBid={(id) => run(acceptExchangeBid(id), "Sale settled")}
               onCancelAsk={(id) => run(cancelExchangeListing(id), "Listing cancelled")}
+              onCancelBid={(id) => run(cancelExchangeBid(id), "Bid withdrawn — escrow refunded")}
             />
           </CardContent>
         </Card>

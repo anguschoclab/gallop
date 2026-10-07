@@ -36,6 +36,7 @@ export function MarketStrategyPanel() {
   const reputation = useGame((s: StoreType) => s.reputation);
   const strategy = useGameWithShallow((s: StoreType) => s.marketStrategy);
   const updateStrategy = useGame((s: StoreType) => s.updateMarketStrategy);
+  const syndicates = useGame((s: StoreType) => s.syndicates);
 
   const horseList: Horse[] = useMemo(() => Object.values(horses ?? {}) as Horse[], [horses]);
 
@@ -47,8 +48,9 @@ export function MarketStrategyPanel() {
         horses: horseList,
         exchange,
         playerReputation: reputation?.score,
+        syndicates,
       }),
-    [strategy, day, horseList, exchange, reputation?.score],
+    [strategy, day, horseList, exchange, reputation?.score, syndicates],
   );
 
   const toggleGrade = (grade: string) => {
@@ -205,10 +207,14 @@ function CandidateCard({ candidate: c }: { candidate: StrategyCandidate }) {
   const cash = useGame((s: StoreType) => s.cash);
   const buyFromExchange = useGame((s: StoreType) => s.buyFromExchange);
   const buyHorseFromAuctionHouse = useGame((s: StoreType) => s.buyHorseFromAuctionHouse);
+  const purchaseShares = useGame((s: StoreType) => s.purchaseShares);
 
   const affordable = cash >= c.price;
   const buyable =
     c.source.kind === "exchange" ? c.askId !== undefined : c.source.houseId !== undefined;
+  const canBuyStake =
+    c.syndicateId !== undefined && (c.sharesToBuy ?? 0) > 0 && c.stakeCost !== undefined;
+  const stakeAffordable = canBuyStake && cash >= (c.stakeCost ?? 0);
 
   const handleBuy = () => {
     const result =
@@ -219,6 +225,13 @@ function CandidateCard({ candidate: c }: { candidate: StrategyCandidate }) {
         : buyHorseFromAuctionHouse(c.horseId, c.source.houseId);
     if (result.ok) toast.success(`Bought ${c.horseName} for ${money(c.price)}`);
     else toast.error(result.reason ?? "Purchase failed");
+  };
+
+  const handleBuyStake = () => {
+    if (!c.syndicateId || !c.sharesToBuy || !c.sharePrice) return;
+    const result = purchaseShares(c.syndicateId, c.sharesToBuy, c.sharePrice);
+    if (result.ok) toast.success(`Bought ${c.sharesToBuy} shares in ${c.horseName}`);
+    else toast.error(result.reason ?? "Stake purchase failed");
   };
 
   return (
@@ -260,9 +273,15 @@ function CandidateCard({ candidate: c }: { candidate: StrategyCandidate }) {
           <span className={c.valueEdgePct >= 0 ? "text-success" : "text-destructive"}>
             {pct(c.valueEdgePct)}
           </span>
-          <span>
-            <span className="text-cream/40">Stake cost:</span> {money(c.stakeCost)}
-          </span>
+          {c.stakeCost !== undefined && (
+            <span>
+              <span className="text-cream/40">Stake:</span> {money(c.stakeCost)} for {c.sharesToBuy}{" "}
+              shares
+            </span>
+          )}
+          {c.syndicateId !== undefined && c.sharesToBuy === 0 && (
+            <span className="text-amber-400/80">Syndicate sold out</span>
+          )}
           {c.lastTrade && (
             <span>
               <span className="text-cream/40">Last fill:</span> {money(c.lastTrade.price)} (D
@@ -289,6 +308,22 @@ function CandidateCard({ candidate: c }: { candidate: StrategyCandidate }) {
           {!buyable && affordable && (
             <span className="text-[10px] font-mono text-cream/40">
               Listing no longer actionable
+            </span>
+          )}
+          {canBuyStake && (
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!stakeAffordable}
+              aria-label={`Buy stake in ${c.horseName}`}
+              onClick={handleBuyStake}
+            >
+              Buy stake
+            </Button>
+          )}
+          {canBuyStake && !stakeAffordable && (
+            <span className="text-[10px] font-mono text-amber-400/80">
+              Stake needs {money(c.stakeCost ?? 0)}
             </span>
           )}
         </div>

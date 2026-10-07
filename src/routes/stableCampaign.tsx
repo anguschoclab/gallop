@@ -13,7 +13,7 @@ import {
   type StableGoals,
 } from "@/core/stable/stableGoals";
 
-export const Route = createFileRoute("/stable-campaign")({
+export const Route = createFileRoute("/stableCampaign")({
   head: () => ({
     meta: [
       { title: "Stable Campaign — Stable Strategy" },

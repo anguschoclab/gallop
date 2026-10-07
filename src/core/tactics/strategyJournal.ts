@@ -3,6 +3,7 @@
  * Outcomes are derived from the horse's raceHistory, never stored twice.
  */
 import type { HorseRaceHistoryEntry } from "@/core/horse/types";
+import { generateUUID } from "@/core/uuid";
 
 export const STRATEGY_JOURNAL_MAX = 500;
 
@@ -74,7 +75,7 @@ export function addJournalEntry(
   list: StrategyJournalEntry[] | undefined,
   entry: NewJournalEntry,
 ): StrategyJournalEntry[] {
-  const id = `sj-${entry.createdDay}-${entry.horseId}-${(list?.length ?? 0) + 1}-${Math.floor(Math.random() * 1e6)}`;
+  const id = `sj-${entry.createdDay}-${entry.horseId}-${(list?.length ?? 0) + 1}-${generateUUID()}`;
   return [{ ...entry, id }, ...(list ?? [])].slice(0, STRATEGY_JOURNAL_MAX);
 }
 
