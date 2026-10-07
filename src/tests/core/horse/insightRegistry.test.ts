@@ -10,8 +10,8 @@ import { describe, it, expect } from "vitest";
 import { INSIGHT_DETECTORS } from "@/core/horse/insightDetectors";
 
 describe("INSIGHT_DETECTORS registry order", () => {
-  it("has exactly 19 detectors", () => {
-    expect(INSIGHT_DETECTORS).toHaveLength(19);
+  it("has exactly 20 detectors", () => {
+    expect(INSIGHT_DETECTORS).toHaveLength(20);
   });
 
   it("preserves the original priority order", () => {
@@ -44,6 +44,7 @@ describe("INSIGHT_DETECTORS registry order", () => {
       "detectDistanceVersatility", // 1.94 Distance Versatility
       "detectGateAffinity", // 4. Gate Affinity
       "detectEarningsMilestone", // 5. Earnings Milestone
+      "detectSireValue", // 3.97 Sire Value
     ];
 
     expect(labels).toEqual(expectedOrder);

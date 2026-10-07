@@ -596,6 +596,47 @@ export const detectGateAffinity: InsightDetector = (horse) => {
  * The coordinator (getHorseInsight) iterates this array and returns
  * the first non-null result.
  */
+// 3.97 Check for Sire Value (Stallion outperforming his fee)
+export const detectSireValue: InsightDetector = (horse) => {
+  if (!horse.stud || !horse.stud.atStud || horse.stud.lifetimeFoals < 15) return null;
+
+  const stakesRate = horse.stud.lifetimeStakesFoals / horse.stud.lifetimeFoals;
+  const fee = horse.stud.standingFee;
+
+  // A sire producing >= 8% stakes winners is excellent. If fee is <= $20k, that's value.
+  if (stakesRate >= 0.08 && fee <= 20000) {
+    return {
+      label: "Value Sire",
+      value: "Elite Production at a Bargain",
+      context: `Producing stakes winners at an ${Math.round(stakesRate * 100)}% clip despite a modest $${(fee / 1000).toFixed(0)}k fee`,
+      type: "positive"
+    };
+  }
+
+  // A sire producing <= 2% stakes winners but charging >= $50k is a trap
+  if (stakesRate <= 0.02 && fee >= 50000 && horse.stud.lifetimeFoals >= 30) {
+    return {
+      label: "Overpriced Sire",
+      value: "Underperforming Fee",
+      context: `Only ${horse.stud.lifetimeStakesFoals} stakes winners from ${horse.stud.lifetimeFoals} foals (${Math.round(stakesRate * 100)}%), hard to justify the $${(fee / 1000).toFixed(0)}k fee`,
+      type: "negative"
+    };
+  }
+
+  // Elite Sire (regardless of fee)
+  if (stakesRate >= 0.12) {
+    return {
+      label: "Elite Sire",
+      value: "Stakes Factory",
+      context: `An incredible ${Math.round(stakesRate * 100)}% of his foals go on to win stakes races`,
+      type: "positive"
+    };
+  }
+
+  return null;
+};
+
+
 export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectWinStreak,
   detectBridesmaid,
@@ -616,4 +657,5 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceVersatility,
   detectGateAffinity,
   detectEarningsMilestone,
+  detectSireValue,
 ];

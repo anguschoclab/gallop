@@ -769,3 +769,83 @@ describe("Tipster: Gate Affinity insights", () => {
     expect(insight?.label).not.toBe("Rail Skimmer");
   });
 });
+
+describe("Tipster: Sire Value insight", () => {
+  it("detects Value Sire when stakes rate >= 8% and fee <= 20k", () => {
+    const horse = {
+      raceHistory: [{ position: 5, day: 1 }, { position: 5, day: 2 }, { position: 5, day: 3 }],
+      stud: {
+        atStud: true,
+        lifetimeFoals: 20,
+        lifetimeStakesFoals: 2, // 10%
+        standingFee: 15000,
+      },
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Value Sire");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("detects Overpriced Sire when stakes rate <= 2% and fee >= 50k and foals >= 30", () => {
+    const horse = {
+      raceHistory: [{ position: 5, day: 1 }, { position: 5, day: 2 }, { position: 5, day: 3 }],
+      stud: {
+        atStud: true,
+        lifetimeFoals: 40,
+        lifetimeStakesFoals: 0, // 0%
+        standingFee: 60000,
+      },
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Overpriced Sire");
+    expect(insight!.type).toBe("negative");
+  });
+
+  it("detects Elite Sire when stakes rate >= 12% regardless of fee", () => {
+    const horse = {
+      raceHistory: [{ position: 5, day: 1 }, { position: 5, day: 2 }, { position: 5, day: 3 }],
+      stud: {
+        atStud: true,
+        lifetimeFoals: 20,
+        lifetimeStakesFoals: 3, // 15%
+        standingFee: 100000,
+      },
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Elite Sire");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("does not detect Sire Value when fewer than 15 foals", () => {
+    const horse = {
+      raceHistory: [{ position: 5, day: 1 }, { position: 5, day: 2 }, { position: 5, day: 3 }],
+      stud: {
+        atStud: true,
+        lifetimeFoals: 10,
+        lifetimeStakesFoals: 2, // 20%
+        standingFee: 15000,
+      },
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight?.label).not.toBe("Elite Sire");
+    expect(insight?.label).not.toBe("Value Sire");
+  });
+
+  it("does not detect Sire Value when not at stud", () => {
+    const horse = {
+      raceHistory: [{ position: 5, day: 1 }, { position: 5, day: 2 }, { position: 5, day: 3 }],
+      stud: {
+        atStud: false,
+        lifetimeFoals: 20,
+        lifetimeStakesFoals: 4, // 20%
+        standingFee: 15000,
+      },
+    };
+    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    expect(insight?.label).not.toBe("Elite Sire");
+    expect(insight?.label).not.toBe("Value Sire");
+  });
+});
