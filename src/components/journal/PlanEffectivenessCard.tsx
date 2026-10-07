@@ -61,7 +61,10 @@ export function PlanEffectivenessCard({ journal }: { journal: StrategyJournalEnt
                   <td className="text-right">
                     <span className="inline-flex items-center gap-2">
                       <span className="h-1.5 w-16 overflow-hidden rounded bg-muted">
-                        <span className="block h-full bg-primary" style={{ width: `${r.score}%` }} />
+                        <span
+                          className="block h-full bg-primary"
+                          style={{ width: `${r.score}%` }}
+                        />
                       </span>
                       {r.score}
                     </span>

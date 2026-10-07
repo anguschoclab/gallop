@@ -141,65 +141,69 @@ export function NpcCareerTrackerPanel({ horses, day }: NpcCareerTrackerPanelProp
                 {rows.map(({ horse, career }) => {
                   const expanded = expandedHorseId === horse.id;
                   return (
-                  <Fragment key={horse.id}>
-                  <tr className="border-b border-white/5 last:border-0">
-                    <td className="px-4 py-2 font-semibold text-cream">
-                      <Button
-                        variant="link"
-                        className="h-auto p-0 text-left text-xs font-semibold text-cream no-underline hover:text-gold"
-                        onClick={() => setExpandedHorseId(expanded ? null : horse.id)}
-                        aria-expanded={expanded}
-                        aria-controls={`career-timeline-${horse.id}`}
-                      >
-                        {horse.name}
-                      </Button>
-                    </td>
-                    <td className="px-3 py-2">
-                      <Badge
-                        variant="outline"
-                        className={cn(
-                          "rounded-none font-mono text-[9px] uppercase",
-                          stageColor(career.stage),
-                        )}
-                      >
-                        {careerStageLabel(career.stage)}
-                      </Badge>
-                    </td>
-                    <td className="px-3 py-2 text-right font-mono text-cream/70">
-                      {Math.floor(horse.age)}
-                    </td>
-                    <td className="px-3 py-2 text-right font-mono text-cream/70">
-                      {career.starts}
-                    </td>
-                    <td className="px-3 py-2 text-right font-mono text-cream/70">{career.wins}</td>
-                    <td className="px-3 py-2 text-right font-mono text-gold">
-                      {formatCurrencyCompact(career.earnings)}
-                    </td>
-                    <td className="px-4 py-2 text-right font-mono text-cream/50">
-                      {career.daysSinceStart === null ? "—" : `${career.daysSinceStart}d ago`}
-                    </td>
-                    <td className="px-3 py-2 text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7"
-                        onClick={() => setExpandedHorseId(expanded ? null : horse.id)}
-                        aria-label={`${expanded ? "Hide" : "Show"} ${horse.name} career timeline`}
-                        aria-expanded={expanded}
-                        aria-controls={`career-timeline-${horse.id}`}
-                      >
-                        <ChevronDown className={cn("transition-transform", expanded && "rotate-180")} />
-                      </Button>
-                    </td>
-                  </tr>
-                  {expanded && (
-                    <tr id={`career-timeline-${horse.id}`}>
-                      <td colSpan={8} className="p-0">
-                        <NpcHorseCareerTimeline horse={horse} day={day} />
-                      </td>
-                    </tr>
-                  )}
-                  </Fragment>
+                    <Fragment key={horse.id}>
+                      <tr className="border-b border-white/5 last:border-0">
+                        <td className="px-4 py-2 font-semibold text-cream">
+                          <Button
+                            variant="link"
+                            className="h-auto p-0 text-left text-xs font-semibold text-cream no-underline hover:text-gold"
+                            onClick={() => setExpandedHorseId(expanded ? null : horse.id)}
+                            aria-expanded={expanded}
+                            aria-controls={`career-timeline-${horse.id}`}
+                          >
+                            {horse.name}
+                          </Button>
+                        </td>
+                        <td className="px-3 py-2">
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              "rounded-none font-mono text-[9px] uppercase",
+                              stageColor(career.stage),
+                            )}
+                          >
+                            {careerStageLabel(career.stage)}
+                          </Badge>
+                        </td>
+                        <td className="px-3 py-2 text-right font-mono text-cream/70">
+                          {Math.floor(horse.age)}
+                        </td>
+                        <td className="px-3 py-2 text-right font-mono text-cream/70">
+                          {career.starts}
+                        </td>
+                        <td className="px-3 py-2 text-right font-mono text-cream/70">
+                          {career.wins}
+                        </td>
+                        <td className="px-3 py-2 text-right font-mono text-gold">
+                          {formatCurrencyCompact(career.earnings)}
+                        </td>
+                        <td className="px-4 py-2 text-right font-mono text-cream/50">
+                          {career.daysSinceStart === null ? "—" : `${career.daysSinceStart}d ago`}
+                        </td>
+                        <td className="px-3 py-2 text-right">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7"
+                            onClick={() => setExpandedHorseId(expanded ? null : horse.id)}
+                            aria-label={`${expanded ? "Hide" : "Show"} ${horse.name} career timeline`}
+                            aria-expanded={expanded}
+                            aria-controls={`career-timeline-${horse.id}`}
+                          >
+                            <ChevronDown
+                              className={cn("transition-transform", expanded && "rotate-180")}
+                            />
+                          </Button>
+                        </td>
+                      </tr>
+                      {expanded && (
+                        <tr id={`career-timeline-${horse.id}`}>
+                          <td colSpan={8} className="p-0">
+                            <NpcHorseCareerTimeline horse={horse} day={day} />
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
                   );
                 })}
               </tbody>

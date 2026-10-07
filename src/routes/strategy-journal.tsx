@@ -178,8 +178,7 @@ function StrategyJournalPage() {
       <p className="text-xs text-muted-foreground">
         Prize money from journaled races: ${Math.round(earned).toLocaleString()}
         {byStyle.length > 0 &&
-          " · By riding style: " +
-            byStyle.map(([k, v]) => `${k} ${v.wins}/${v.runs}`).join(", ")}
+          " · By riding style: " + byStyle.map(([k, v]) => `${k} ${v.wins}/${v.runs}`).join(", ")}
       </p>
 
       <PlanEffectivenessCard journal={journal} />
@@ -190,13 +189,21 @@ function StrategyJournalPage() {
         </CardHeader>
         <CardContent className="space-y-3">
           <div className="flex flex-wrap gap-3">
-            <Select value={newHorse} onValueChange={(v) => { setNewHorse(v); setNewRace("none"); }}>
+            <Select
+              value={newHorse}
+              onValueChange={(v) => {
+                setNewHorse(v);
+                setNewRace("none");
+              }}
+            >
               <SelectTrigger className="w-56" aria-label="Horse">
                 <SelectValue placeholder="Choose a horse" />
               </SelectTrigger>
               <SelectContent>
                 {myHorses.map((h) => (
-                  <SelectItem key={h.id} value={h.id}>{h.name}</SelectItem>
+                  <SelectItem key={h.id} value={h.id}>
+                    {h.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -207,7 +214,9 @@ function StrategyJournalPage() {
               <SelectContent>
                 <SelectItem value="none">No race</SelectItem>
                 {raceOptions.map((r) => (
-                  <SelectItem key={r.id} value={r.id}>Day {r.day} · {r.name}</SelectItem>
+                  <SelectItem key={r.id} value={r.id}>
+                    Day {r.day} · {r.name}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -227,16 +236,22 @@ function StrategyJournalPage() {
 
       <div className="flex flex-wrap gap-3">
         <Select value={horseFilter} onValueChange={setHorseFilter}>
-          <SelectTrigger className="w-56" aria-label="Filter by horse"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-56" aria-label="Filter by horse">
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All horses</SelectItem>
             {Array.from(new Map(journal.map((e) => [e.horseId, e.horseName]))).map(([id, n]) => (
-              <SelectItem key={id} value={id}>{n}</SelectItem>
+              <SelectItem key={id} value={id}>
+                {n}
+              </SelectItem>
             ))}
           </SelectContent>
         </Select>
         <Select value={resultFilter} onValueChange={setResultFilter}>
-          <SelectTrigger className="w-44" aria-label="Filter by result"><SelectValue /></SelectTrigger>
+          <SelectTrigger className="w-44" aria-label="Filter by result">
+            <SelectValue />
+          </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">All results</SelectItem>
             <SelectItem value="won">Won</SelectItem>

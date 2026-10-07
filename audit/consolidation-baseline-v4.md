@@ -4,12 +4,12 @@
 
 ## Gate results on clean main
 
-| Gate | Command | Result |
-|---|---|---|
-| Typecheck | `bun run typecheck:errors` | **0 errors** — but only after regenerating stale `routeTree.gen.ts` via `bun run build` (3 phantom `FileRoutesByPath` errors for `race-advisor`, `track-history`, `npc-stables/rival-careers` before regen) |
-| Lint | `bun run lint` | **99 errors on clean main** — see BUG-V4-001 |
-| Build | `bun run build` | clean, 12.26s |
-| Unit tests | `bun run test` | (recording — see below) |
+| Gate       | Command                    | Result                                                                                                                                                                                                      |
+| ---------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Typecheck  | `bun run typecheck:errors` | **0 errors** — but only after regenerating stale `routeTree.gen.ts` via `bun run build` (3 phantom `FileRoutesByPath` errors for `race-advisor`, `track-history`, `npc-stables/rival-careers` before regen) |
+| Lint       | `bun run lint`             | **99 errors on clean main** — see BUG-V4-001                                                                                                                                                                |
+| Build      | `bun run build`            | clean, 12.26s                                                                                                                                                                                               |
+| Unit tests | `bun run test`             | (recording — see below)                                                                                                                                                                                     |
 
 ## BUG-V4-001 — main lint is red (99 errors)
 
@@ -33,12 +33,12 @@ Pre-existing breakage on `main` — not introduced by consolidation:
 
 ## Final gate results (post-integration, `consolidation/integration-v4`)
 
-| Gate | Result |
-|---|---|
-| `bun run typecheck:errors` | **0 errors, 0 warnings** |
-| `bun run lint` | **0 errors** (99 baseline errors repaired) |
-| `bun run test` | **867 files / 9,284 pass / 1 skip / 0 fail** (vs 9,198/2fail baseline; +86 tests) |
-| `bun run build` | **PASS** — clean ~2.2s |
-| `bash scripts/verify.sh` | **PASS** — all gates green |
-| Perf spot-check (`buildFieldContext`) | **~3x faster** (0.20 → 0.07 µs/call), outputs byte-identical |
-| Tree hygiene | no `.jules/`, no `.tmp-herald/`, no conflict markers, no lockfile changes, `routeTree.gen.ts`/`tsc-results.txt` untracked |
+| Gate                                  | Result                                                                                                                    |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `bun run typecheck:errors`            | **0 errors, 0 warnings**                                                                                                  |
+| `bun run lint`                        | **0 errors** (99 baseline errors repaired)                                                                                |
+| `bun run test`                        | **867 files / 9,284 pass / 1 skip / 0 fail** (vs 9,198/2fail baseline; +86 tests)                                         |
+| `bun run build`                       | **PASS** — clean ~2.2s                                                                                                    |
+| `bash scripts/verify.sh`              | **PASS** — all gates green                                                                                                |
+| Perf spot-check (`buildFieldContext`) | **~3x faster** (0.20 → 0.07 µs/call), outputs byte-identical                                                              |
+| Tree hygiene                          | no `.jules/`, no `.tmp-herald/`, no conflict markers, no lockfile changes, `routeTree.gen.ts`/`tsc-results.txt` untracked |

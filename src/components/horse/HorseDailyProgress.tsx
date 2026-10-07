@@ -41,7 +41,13 @@ function Spark({ values }: { values: number[] }) {
     .join(" ");
   return (
     <svg viewBox="0 0 100 20" className="h-5 w-24" preserveAspectRatio="none" aria-hidden>
-      <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="1.5" className="text-gold" />
+      <polyline
+        points={pts}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        className="text-gold"
+      />
     </svg>
   );
 }

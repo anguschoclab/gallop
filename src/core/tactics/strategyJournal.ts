@@ -117,7 +117,8 @@ export function journalOutcome(
   return { status: "missing" };
 }
 
-export type PlanDimension = "ridingStyle" | "earlyPosition" | "moveTiming" | "aggression" | "source";
+export type PlanDimension =
+  "ridingStyle" | "earlyPosition" | "moveTiming" | "aggression" | "source";
 
 export interface PlanEffectivenessRow {
   key: string;
@@ -142,7 +143,11 @@ function dimensionKey(e: StrategyJournalEntry, dim: PlanDimension): string {
       return e.moveTiming ?? "Custom plan";
     case "aggression":
       if (e.aggressiveness === undefined) return "Custom plan";
-      return e.aggressiveness < 40 ? "Patient (0-39)" : e.aggressiveness < 70 ? "Balanced (40-69)" : "Aggressive (70-100)";
+      return e.aggressiveness < 40
+        ? "Patient (0-39)"
+        : e.aggressiveness < 70
+          ? "Balanced (40-69)"
+          : "Aggressive (70-100)";
     case "source":
       return e.ridingStyle ? "Race Advisor plan" : "Custom plan";
   }

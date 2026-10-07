@@ -4,9 +4,23 @@ import type { PlayerRaceWinRecord } from "@/core/stable/raceWins";
 import type { TrackLedgerEntry } from "@/core/history/trackLedger";
 
 const win = (day: number, payout: number, grade?: string) =>
-  ({ id: `w${day}`, day, raceId: `r${day}`, raceName: "", horseId: "h", horseName: "", payout, grade }) as PlayerRaceWinRecord;
+  ({
+    id: `w${day}`,
+    day,
+    raceId: `r${day}`,
+    raceName: "",
+    horseId: "h",
+    horseName: "",
+    payout,
+    grade,
+  }) as PlayerRaceWinRecord;
 const entry = (day: number, delta: number, grade?: "G1") =>
-  ({ day, grade, winnerIsPlayer: false, prestigeDeltas: [{ stableId: "__player__", stableName: "", delta, isPlayer: true }] }) as unknown as TrackLedgerEntry;
+  ({
+    day,
+    grade,
+    winnerIsPlayer: false,
+    prestigeDeltas: [{ stableId: "__player__", stableName: "", delta, isPlayer: true }],
+  }) as unknown as TrackLedgerEntry;
 
 describe("periodStats", () => {
   it("splits wins, earnings, class results and prestige by range", () => {

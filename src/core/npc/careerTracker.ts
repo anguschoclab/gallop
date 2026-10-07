@@ -173,7 +173,9 @@ export function buildNpcCareerTimeline(horse: Horse, currentDay: number): NpcCar
   }
 
   if (horse.retiredOnDay !== undefined && horse.retiredOnDay <= currentDay) {
-    const alreadyIncluded = events.some((event) => event.kind === "stage" && event.stage === "retired");
+    const alreadyIncluded = events.some(
+      (event) => event.kind === "stage" && event.stage === "retired",
+    );
     if (!alreadyIncluded) {
       events.push({
         id: `stage-retired-${horse.retiredOnDay}`,
