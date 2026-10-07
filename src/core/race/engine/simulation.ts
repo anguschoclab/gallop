@@ -300,6 +300,14 @@ export function runRaceToCompletion(
 
   const laneDensity = new Array(12).fill(0);
 
+  // Pre-allocate arrays to avoid allocations in the hot loop
+  const sortedField = [...runners];
+  const ranks = new Int32Array(numRunners);
+  const runnerIndices = new Map<string, number>();
+  for (let i = 0; i < numRunners; i++) {
+    runnerIndices.set(runners[i].horseId, i);
+  }
+
   while (finishedCount < numRunners && t < maxTime) {
     const pace = computePaceContext(runners, distance, laneDensity);
 
@@ -328,19 +336,24 @@ export function runRaceToCompletion(
     }
 
     // Sort runners by position for faster spatial lookups in stepRunner
-    const sortedField = [...runners].sort((a, b) => b.position - a.position);
+    for (let i = 0; i < numRunners; i++) {
+      sortedField[i] = runners[i];
+    }
+    sortedField.sort((a, b) => b.position - a.position);
 
     // Compute rank-from-front once per tick to avoid O(n²) filter+findIndex
-    const rankMap = new Map<string, number>();
     let aliveRank = 0;
-    for (const o of sortedField) {
+    for (let i = 0; i < numRunners; i++) {
+      const o = sortedField[i];
       if (o.finishTime === null) {
-        rankMap.set(o.horseId, aliveRank);
+        const originalIdx = runnerIndices.get(o.horseId)!;
+        ranks[originalIdx] = aliveRank;
         aliveRank++;
       }
     }
 
-    for (const r of runners) {
+    for (let i = 0; i < numRunners; i++) {
+      const r = runners[i];
       if (r.finishTime !== null) continue;
 
       stepRunner(
@@ -352,7 +365,7 @@ export function runRaceToCompletion(
         sortedField,
         pace,
         course,
-        rankMap.get(r.horseId),
+        ranks[i],
         aliveRank,
         windKph,
         windDirectionDeg,
