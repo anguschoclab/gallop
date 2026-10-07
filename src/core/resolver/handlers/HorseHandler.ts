@@ -269,28 +269,7 @@ const IMPACT_HANDLERS: Record<string, HorseImpactHandlerFunction> = {
 
 export class HorseHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return [
-      "horse_stat_change",
-      "energy_change",
-      "form_change",
-      "fame_change",
-      "fan_count_change",
-      "gelding",
-      "rename",
-      "aging",
-      "health_status_change",
-      "pasture_retirement",
-      "horse_death",
-      "injury",
-      "horse_creation",
-      "horse_deletion",
-      "recovery_change",
-      "fitness_change",
-      "fatigue_change",
-      "peaking_index_update",
-      "beyer_update",
-      "distance_aptitude_shift",
-    ].includes(type);
+    return type in IMPACT_HANDLERS;
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {

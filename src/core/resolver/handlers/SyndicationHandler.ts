@@ -265,12 +265,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
 export class SyndicationHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return [
-      "syndicate_creation",
-      "share_transaction",
-      "syndicate_fee_distribution",
-      "syndicate_satisfaction",
-    ].includes(type);
+    return type in IMPACT_HANDLERS;
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
