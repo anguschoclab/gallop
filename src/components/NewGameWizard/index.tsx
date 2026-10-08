@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import { useNewGameWizard, type Step } from "@/hooks/shared/useNewGameWizard";
 import { StepIdentity } from "./steps/StepIdentity";
 import { StepSilks } from "./steps/StepSilks";
@@ -31,7 +32,7 @@ export function NewGameWizard() {
   } = useNewGameWizard();
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="w-full max-w-3xl">
           <header className="mb-8 text-center">
