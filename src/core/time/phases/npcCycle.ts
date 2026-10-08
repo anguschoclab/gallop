@@ -45,14 +45,12 @@ export const npcCyclePhase = {
     // Get existing AI manager or create new one
     // Attach cross-phase data so NPC AI subsystems can use economic trends and world assessment
     const aiManager: NpcAIManager = {
-      ...((state as { npcAIManager?: NpcAIManager }).npcAIManager || {
+      ...(state.npcAIManager || {
         stableStates: {},
         globalDay: newDay,
         regionalKings: {},
       }),
-      globalEconomicState:
-        economicTrend ??
-        (state as { npcAIManager?: NpcAIManager }).npcAIManager?.globalEconomicState,
+      globalEconomicState: economicTrend ?? state.npcAIManager?.globalEconomicState,
     };
 
     // Run the complete NPC cycle

@@ -165,7 +165,7 @@ export const auctionsPhase = {
         }
       }
       if (auctionResults.length > 0) {
-        const aiManager = (state as { npcAIManager?: NpcAIManager }).npcAIManager;
+        const aiManager = state.npcAIManager;
         if (aiManager) {
           updatedNpcAIManager = trackAuctionPrices(aiManager, auctionResults);
         }

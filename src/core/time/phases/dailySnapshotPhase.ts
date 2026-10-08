@@ -27,7 +27,7 @@ export const dailySnapshotPhase: PipelinePhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const horseDailyProgress = recordDailyProgress(
-      (state as { horseDailyProgress?: HorseDailyProgress }).horseDailyProgress,
+      state.horseDailyProgress,
       Object.values(state.horses ?? {}) as Horse[],
       newDay,
     );
