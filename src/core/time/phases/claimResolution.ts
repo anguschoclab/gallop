@@ -195,7 +195,7 @@ export const claimResolutionPhase = {
     }
 
     // Process diplomacy friction for NPC-to-NPC claims
-    let updatedNpcAIManager = (state as { npcAIManager?: NpcAIManager }).npcAIManager;
+    let updatedNpcAIManager = state.npcAIManager;
     if (updatedNpcAIManager) {
       let claimCount = 0;
       for (const [key, horseClaims] of grouped) {

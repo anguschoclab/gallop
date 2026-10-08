@@ -28,8 +28,7 @@ export const worldAssessmentPhase = {
       return context;
     }
 
-    const aiManager: NpcAIManager | undefined = (state as { npcAIManager?: NpcAIManager })
-      .npcAIManager;
+    const aiManager: NpcAIManager | undefined = state.npcAIManager;
     if (!aiManager) {
       return context;
     }
