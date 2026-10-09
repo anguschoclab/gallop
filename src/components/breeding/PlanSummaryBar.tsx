@@ -84,6 +84,7 @@ export function PlanSummaryBar({
                 value={planName}
                 onChange={(e) => setPlanName(e.target.value)}
                 placeholder="Plan name…"
+                aria-label="Plan name"
                 className="h-8 w-32 rounded border border-t700 bg-t900 px-2 text-xs text-cream"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && planName.trim()) {
