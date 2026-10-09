@@ -821,7 +821,8 @@ describe("seedGazetteNews", () => {
         (n) =>
           n.category === "flavor" &&
           n.importance === "low" &&
-          (n.entityLinks && n.entityLinks.length > 0),
+          n.entityLinks &&
+          n.entityLinks.length > 0,
       );
       expect(veterans.length).toBe(1);
     });
@@ -841,7 +842,8 @@ describe("seedGazetteNews", () => {
         (n) =>
           n.category === "flavor" &&
           n.importance === "low" &&
-          (n.entityLinks && n.entityLinks.length > 0),
+          n.entityLinks &&
+          n.entityLinks.length > 0,
       );
       expect(veteranNews).toBeDefined();
       const text = `${veteranNews!.headline} ${veteranNews!.body}`;
@@ -861,7 +863,8 @@ describe("seedGazetteNews", () => {
         (n) =>
           n.category === "flavor" &&
           n.importance === "low" &&
-          (n.entityLinks && n.entityLinks.length > 0),
+          n.entityLinks &&
+          n.entityLinks.length > 0,
       );
       expect(veterans.length).toBe(0);
     });
