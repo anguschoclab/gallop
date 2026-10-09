@@ -15,6 +15,23 @@ import type { HorseInsight } from "./insights";
 
 export type InsightDetector = (horse: Horse) => HorseInsight | null;
 
+// 0. Check for Undefeated (perfect career, minimum 3 starts)
+export const detectUndefeated: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  if (history.length < 3) return null;
+
+  const isUndefeated = history.every((race) => race.position === 1);
+  if (isUndefeated) {
+    return {
+      label: "Perfection",
+      value: "Undefeated",
+      context: `Has won all ${history.length} career starts`,
+      type: "positive",
+    };
+  }
+  return null;
+};
+
 // 1. Check for win streak (Red Hot)
 export const detectWinStreak: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -597,6 +614,7 @@ export const detectGateAffinity: InsightDetector = (horse) => {
  * the first non-null result.
  */
 export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
+  detectUndefeated,
   detectWinStreak,
   detectBridesmaid,
   detectJockeyChemistry,

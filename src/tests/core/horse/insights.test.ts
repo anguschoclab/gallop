@@ -3,6 +3,33 @@ import { getHorseInsight } from "@/core/horse/insights";
 import type { Horse } from "@/core/horse/types";
 
 describe("getHorseInsight", () => {
+  it("detects Undefeated when a horse has won all starts (min 3)", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, beyer: 70 },
+        { position: 1, day: 2, beyer: 75 },
+        { position: 1, day: 3, beyer: 85 },
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.value).toBe("Undefeated");
+    expect(insight?.label).toBe("Perfection");
+    expect(insight?.type).toBe("positive");
+    expect(insight?.context).toBe("Has won all 3 career starts");
+  });
+
+  it("does not detect Undefeated if there is a non-win", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1, beyer: 70 },
+        { position: 1, day: 2, beyer: 75 },
+        { position: 2, day: 3, beyer: 85 },
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.value).not.toBe("Undefeated");
+  });
+
   it("detects Bounce Candidate when last beyer is massive jump", () => {
     const horse = {
       raceHistory: [
@@ -165,6 +192,7 @@ describe("getHorseInsight", () => {
   it("win streak takes priority over distance specialist", () => {
     const horse = {
       raceHistory: [
+        { position: 5, day: 0, distance: 1600, beyer: 60 },
         { position: 1, day: 1, distance: 1200, beyer: 90 },
         { position: 1, day: 2, distance: 1200, beyer: 90 },
         { position: 1, day: 3, distance: 1200, beyer: 90 },

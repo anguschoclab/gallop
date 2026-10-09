@@ -10,8 +10,8 @@ import { describe, it, expect } from "vitest";
 import { INSIGHT_DETECTORS } from "@/core/horse/insightDetectors";
 
 describe("INSIGHT_DETECTORS registry order", () => {
-  it("has exactly 19 detectors", () => {
-    expect(INSIGHT_DETECTORS).toHaveLength(19);
+  it("has exactly 20 detectors", () => {
+    expect(INSIGHT_DETECTORS).toHaveLength(20);
   });
 
   it("preserves the original priority order", () => {
@@ -25,6 +25,7 @@ describe("INSIGHT_DETECTORS registry order", () => {
 
     // Expected order from the original implementation
     const expectedOrder = [
+      "detectUndefeated", // 0. Undefeated
       "detectWinStreak", // 1. Red Hot
       "detectBridesmaid", // 1.1 Bridesmaid
       "detectJockeyChemistry", // 1.2 Jockey Chemistry
