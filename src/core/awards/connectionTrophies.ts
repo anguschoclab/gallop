@@ -27,8 +27,10 @@ export interface G1WinEntry {
   trackId?: string;
 }
 
-const isWinningG1 = (r: Horse["raceHistory"][number]) =>
-  r && r.position === 1 && (r.grade === "G1" || r.grade === "G2" || r.grade === "G3");
+const isWinningG1 = (
+  r: Horse["raceHistory"][number]
+): r is Horse["raceHistory"][number] & { grade: "G1" | "G2" | "G3" } =>
+  !!r && r.position === 1 && (r.grade === "G1" || r.grade === "G2" || r.grade === "G3");
 
 /**
  * Returns all graded (G1/G2/G3) wins for horses ridden by `jockeyId`,
@@ -52,7 +54,7 @@ export function getG1WinsForJockey(state: GameState, jockeyId: string): G1WinEnt
         raceId: r.raceId,
         raceName: r.raceName,
         raceDay: r.day,
-        grade: r.grade as "G1" | "G2" | "G3",
+        grade: r.grade,
         horseId: horse.id,
         horseName: horse.name,
         distance: r.distance,
@@ -79,7 +81,7 @@ export function getG1WinsForStable(
   const out: G1WinEntry[] = [];
   const wantPlayer = !stableId;
   for (const horse of Object.values(state.horses || {})) {
-    const horseStable = getStableId(horse as Horse);
+    const horseStable = getStableId(horse);
     if (wantPlayer ? !isPlayerOwned(horse) : (horseStable ?? undefined) !== stableId) continue;
     for (const r of horse.raceHistory || []) {
       if (!isWinningG1(r)) continue;
@@ -87,7 +89,7 @@ export function getG1WinsForStable(
         raceId: r.raceId,
         raceName: r.raceName,
         raceDay: r.day,
-        grade: r.grade as "G1" | "G2" | "G3",
+        grade: r.grade,
         horseId: horse.id,
         horseName: horse.name,
         distance: r.distance,
