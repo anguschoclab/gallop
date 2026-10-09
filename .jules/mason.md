@@ -1,0 +1,3 @@
+## 2025-03-09 - Ensure dynamic `canHandle` implementations
+**Learning:** Found that many impact handlers (e.g. `BreedingHandler`, `HorseHandler`, `SystemHandler`) were using hardcoded string arrays in their `canHandle` methods, even though they already defined an `IMPACT_HANDLERS` dictionary mapping impact types to handler functions. This creates unnecessary duplication and a maintenance burden where new impact types must be added in two places.
+**Action:** When adding or modifying impact handlers, ensure `canHandle` dynamically checks against `IMPACT_HANDLERS` (e.g., `return type in IMPACT_HANDLERS`) rather than hardcoding supported strings.
