@@ -739,7 +739,7 @@ describe("seedGazetteNews", () => {
         (n) =>
           n.category === "flavor" &&
           n.importance === "low" &&
-          n.headline.toLowerCase().includes("bloodline"),
+          (!n.entityLinks || n.entityLinks.length === 0),
       );
       expect(bloodlineItems.length).toBe(1);
     });
@@ -757,7 +757,7 @@ describe("seedGazetteNews", () => {
         (n) =>
           n.category === "flavor" &&
           n.importance === "low" &&
-          n.headline.toLowerCase().includes("bloodline"),
+          (!n.entityLinks || n.entityLinks.length === 0),
       );
       expect(bloodlineItem).toBeDefined();
       // With 20 horses and 3 bloodlines (7 Northern Dancer, 7 Mr. Prospector, 6 Galileo), mode is Northern Dancer or Mr. Prospector
@@ -783,7 +783,7 @@ describe("seedGazetteNews", () => {
         (n) =>
           n.category === "flavor" &&
           n.importance === "low" &&
-          n.headline.toLowerCase().includes("bloodline"),
+          (!n.entityLinks || n.entityLinks.length === 0),
       );
       expect(bloodlineItems.length).toBe(1);
     });
@@ -800,7 +800,7 @@ describe("seedGazetteNews", () => {
         (n) =>
           n.category === "flavor" &&
           n.importance === "low" &&
-          n.headline.toLowerCase().includes("bloodline"),
+          (!n.entityLinks || n.entityLinks.length === 0),
       );
       expect(bloodlineItems.length).toBe(0);
     });
@@ -821,7 +821,7 @@ describe("seedGazetteNews", () => {
         (n) =>
           n.category === "flavor" &&
           n.importance === "low" &&
-          !n.headline.toLowerCase().includes("bloodline"),
+          (n.entityLinks && n.entityLinks.length > 0),
       );
       expect(veterans.length).toBe(1);
     });
@@ -841,7 +841,7 @@ describe("seedGazetteNews", () => {
         (n) =>
           n.category === "flavor" &&
           n.importance === "low" &&
-          !n.headline.toLowerCase().includes("bloodline"),
+          (n.entityLinks && n.entityLinks.length > 0),
       );
       expect(veteranNews).toBeDefined();
       const text = `${veteranNews!.headline} ${veteranNews!.body}`;
@@ -861,7 +861,7 @@ describe("seedGazetteNews", () => {
         (n) =>
           n.category === "flavor" &&
           n.importance === "low" &&
-          !n.headline.toLowerCase().includes("bloodline"),
+          (n.entityLinks && n.entityLinks.length > 0),
       );
       expect(veterans.length).toBe(0);
     });
