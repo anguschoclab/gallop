@@ -293,6 +293,13 @@ export function runRaceToCompletion(
   const numRunners = runners.length;
   let finishedCount = 0;
 
+  // Pre-allocate to avoid GC in the simulation loop
+  const sortedField = new Array(numRunners);
+  for (let i = 0; i < numRunners; i++) {
+    sortedField[i] = runners[i];
+  }
+  const rankMap = new Map<string, number>();
+
   // Initialize finishedCount in case some runners start finished (unlikely but safe)
   for (const r of runners) {
     if (r.finishTime !== null) finishedCount++;
@@ -328,10 +335,11 @@ export function runRaceToCompletion(
     }
 
     // Sort runners by position for faster spatial lookups in stepRunner
-    const sortedField = [...runners].sort((a, b) => b.position - a.position);
+    // Re-sort the pre-allocated array (in-place)
+    sortedField.sort((a, b) => b.position - a.position);
 
     // Compute rank-from-front once per tick to avoid O(n²) filter+findIndex
-    const rankMap = new Map<string, number>();
+    rankMap.clear();
     let aliveRank = 0;
     for (const o of sortedField) {
       if (o.finishTime === null) {
