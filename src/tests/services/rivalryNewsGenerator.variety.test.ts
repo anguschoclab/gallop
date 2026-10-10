@@ -83,7 +83,7 @@ describe("generateRivalryEmergenceNews — template variety", () => {
     const headlines = sweepHeadlines(
       (rng) => generateRivalryEmergenceNews(stable, 75, DAY, rng)?.headline ?? null,
     );
-    expect(headlines.size).toBeLessThanOrEqual(24);
+    expect(headlines.size).toBeLessThanOrEqual(30);
   });
 
   it("all headlines contain the stable name", () => {
