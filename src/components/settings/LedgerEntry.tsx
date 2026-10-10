@@ -1,7 +1,8 @@
 import { Trash2, Clock, ChevronRight } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/cn";
-import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/components/ui/tooltip";
+import { TOOLTIP_DELAY_MS } from "@/constants";
 import type { SaveSlotMetadata } from "@/services/storage/saveManager";
 
 interface LedgerEntryProps {
@@ -80,19 +81,21 @@ export function LedgerEntry({
         </div>
 
         <div className="flex items-center gap-4 ml-6 pl-6 border-l border-white/5">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                type="button"
-                className="text-slate-600 hover:text-destructive transition-colors p-1"
-                onClick={onDelete}
-                aria-label={`Delete save ${save.name}`}
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>Delete save</TooltipContent>
-          </Tooltip>
+          <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  className="text-slate-600 hover:text-destructive transition-colors p-1"
+                  onClick={onDelete}
+                  aria-label={`Delete save ${save.name}`}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>Delete save</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <div className="flex items-center gap-1 group/btn">
             <span
               className={cn(
