@@ -69,7 +69,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
 export class FinanceHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return ["cash_change", "horse_transfer", "transaction"].includes(type);
+    return type in IMPACT_HANDLERS;
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {

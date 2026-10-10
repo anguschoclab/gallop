@@ -313,29 +313,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
 export class SystemHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return [
-      "log",
-      "pace_sample",
-      "campaign_slot",
-      "campaign_flag",
-      "campaign_flag_dismissal",
-      "campaign_creation",
-      "campaign_deletion",
-      "auto_manage_toggle",
-      "reputation_change",
-      "news_item",
-      "narrative_arc_update",
-      "hall_of_fame_induction",
-      "season_history_record",
-      "track_record",
-      "name_reservation",
-      "trainer_stats",
-      "insurance_purchase",
-      "insurance_cancel",
-      "insurance_payout",
-      "stewards_inquiry",
-      "stewards_resolution",
-    ].includes(type);
+    return type in IMPACT_HANDLERS;
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
