@@ -38,9 +38,14 @@ export const dailySnapshotPhase: PipelinePhase = {
       state.cash,
       newDay,
     );
+    const rankingsHistory = recordRankingsHistory(
+      (state as { rankingsHistory?: RankingsHistory }).rankingsHistory,
+      Object.values(state.horses ?? {}) as Horse[],
+      newDay,
+    );
     return {
       ...context,
-      state: { ...state, horseDailyProgress, strategyJournal },
+      state: { ...state, horseDailyProgress, strategyJournal, rankingsHistory },
     };
   },
 };
