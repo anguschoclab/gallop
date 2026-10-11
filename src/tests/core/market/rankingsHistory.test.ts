@@ -10,6 +10,8 @@ function makeHorse(id: string, wins: number, day: number): Horse {
     id,
     name: `Horse ${id}`,
     fame: 42,
+    age: 3,
+    gender: "colt",
     lifecycleStatus: "active",
     stats: { speed: 60, stamina: 60, acceleration: 60, consistency: 60 },
     raceHistory: Array.from({ length: wins }, (_, i) => ({
