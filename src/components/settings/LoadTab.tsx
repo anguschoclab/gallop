@@ -6,7 +6,13 @@ interface LoadTabProps {
   onLoad: (id: string) => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
   isLoading: boolean;
-  LedgerEntryComponent: React.FC<any>;
+  LedgerEntryComponent: React.ComponentType<{
+    save: SaveSlotMetadata;
+    onAction: () => void;
+    onDelete: (e: React.MouseEvent) => void;
+    actionLabel: string;
+    isLoading?: boolean;
+  }>;
 }
 
 export function LoadTab({

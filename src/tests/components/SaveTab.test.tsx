@@ -19,7 +19,10 @@ const LedgerEntryMock = ({
   actionLabel,
 }: {
   save: SaveSlotMetadata;
+  onAction: () => void;
+  onDelete: (e: React.MouseEvent) => void;
   actionLabel: string;
+  isLoading?: boolean;
 }) => (
   <div data-testid={`ledger-${save.id}`}>
     <span>{save.name}</span>
@@ -38,7 +41,7 @@ describe("SaveTab", () => {
         saves={[]}
         onOverwrite={vi.fn()}
         onDelete={vi.fn()}
-        LedgerEntryComponent={LedgerEntryMock as any}
+        LedgerEntryComponent={LedgerEntryMock}
       />,
     );
     expect(screen.getByText("Entry Label")).toBeInTheDocument();
@@ -55,7 +58,7 @@ describe("SaveTab", () => {
         saves={[]}
         onOverwrite={vi.fn()}
         onDelete={vi.fn()}
-        LedgerEntryComponent={LedgerEntryMock as any}
+        LedgerEntryComponent={LedgerEntryMock}
       />,
     );
     const createButton = screen.getByText("Create Snapshot").closest("button");
@@ -72,7 +75,7 @@ describe("SaveTab", () => {
         saves={[]}
         onOverwrite={vi.fn()}
         onDelete={vi.fn()}
-        LedgerEntryComponent={LedgerEntryMock as any}
+        LedgerEntryComponent={LedgerEntryMock}
       />,
     );
     const createButton = screen.getByText("Create Snapshot").closest("button");
@@ -94,7 +97,7 @@ describe("SaveTab", () => {
         saves={saves}
         onOverwrite={vi.fn()}
         onDelete={vi.fn()}
-        LedgerEntryComponent={LedgerEntryMock as any}
+        LedgerEntryComponent={LedgerEntryMock}
       />,
     );
     expect(screen.getByTestId("ledger-manual1")).toBeInTheDocument();
@@ -113,7 +116,7 @@ describe("SaveTab", () => {
         saves={[]}
         onOverwrite={vi.fn()}
         onDelete={vi.fn()}
-        LedgerEntryComponent={LedgerEntryMock as any}
+        LedgerEntryComponent={LedgerEntryMock}
       />,
     );
     const input = screen.getByPlaceholderText("Save name...");
@@ -132,7 +135,7 @@ describe("SaveTab", () => {
         saves={[]}
         onOverwrite={vi.fn()}
         onDelete={vi.fn()}
-        LedgerEntryComponent={LedgerEntryMock as any}
+        LedgerEntryComponent={LedgerEntryMock}
       />,
     );
     expect(screen.getByText("Previous Snapshots")).toBeInTheDocument();
