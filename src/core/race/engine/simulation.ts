@@ -300,6 +300,11 @@ export function runRaceToCompletion(
 
   const laneDensity = new Array(12).fill(0);
 
+  // Pre-allocate arrays and maps to prevent excessive garbage collection inside the high-frequency loop.
+  // ⚡ Bolt: Eliminates O(N) array allocation and Map creation per tick (~6000 ticks/race).
+  const sortedField = new Array<Runner>(numRunners);
+  const rankMap = new Map<string, number>();
+
   while (finishedCount < numRunners && t < maxTime) {
     const pace = computePaceContext(runners, distance, laneDensity);
 
@@ -328,12 +333,17 @@ export function runRaceToCompletion(
     }
 
     // Sort runners by position for faster spatial lookups in stepRunner
-    const sortedField = [...runners].sort((a, b) => b.position - a.position);
+    // Copy into pre-allocated array to avoid spread allocation
+    for (let i = 0; i < numRunners; i++) {
+      sortedField[i] = runners[i];
+    }
+    sortedField.sort((a, b) => b.position - a.position);
 
     // Compute rank-from-front once per tick to avoid O(n²) filter+findIndex
-    const rankMap = new Map<string, number>();
+    rankMap.clear();
     let aliveRank = 0;
-    for (const o of sortedField) {
+    for (let i = 0; i < numRunners; i++) {
+      const o = sortedField[i];
       if (o.finishTime === null) {
         rankMap.set(o.horseId, aliveRank);
         aliveRank++;
