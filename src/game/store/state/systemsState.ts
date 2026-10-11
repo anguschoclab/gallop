@@ -75,6 +75,8 @@ export interface SystemsState {
   /** Player stable campaign goals (net worth + class wins) */
   stableGoals?: import("@/core/stable/stableGoals").StableGoals;
   horseDailyProgress?: import("@/core/horse/dailyProgress").HorseDailyProgress;
+  /** Daily world-rankings snapshots (rank, points, reputation, price) per horse */
+  rankingsHistory?: import("@/core/market/rankingsHistory").RankingsHistory;
 
   // Breeding programs system
   /** Breeding programs for stables targeting specific archetypes */
