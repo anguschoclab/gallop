@@ -15,6 +15,7 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { recordDailyProgress, type HorseDailyProgress } from "@/core/horse/dailyProgress";
 import type { Horse } from "@/core/horse/types";
 import { fillJournalOutcomes } from "@/core/tactics/strategyJournal";
+import { recordRankingsHistory, type RankingsHistory } from "@/core/market/rankingsHistory";
 import { PHASE_ORDER_DAILY_SNAPSHOT } from "@/constants";
 
 /**
