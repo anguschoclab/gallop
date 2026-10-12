@@ -304,16 +304,51 @@ export function generateRivalryEscalationNews(
         `The feud with ${stable.name} has reached a boiling point, and ${horseName} — fighting to cement a championship legacy — finds itself in the crosshairs. Every race against this rival now carries the weight of a career.`,
         `As ${horseName} chases championship glory, ${stable.name} has made it their mission to play the spoiler. The escalation is personal, and the stakes couldn't be higher.`,
         `${horseName}'s championship bid is under direct threat. ${stable.name} has escalated hostilities to a level that suggests they'd rather deny your horse glory than win for themselves.`,
+        `${stable.name} has decided that if they can't be champions, they'll make sure ${horseName} isn't either. The rivalry has reached a fever pitch.`,
+        `With ${horseName} eyeing a historic campaign, ${stable.name} has thrown down the gauntlet, escalating the conflict when the stakes are at their absolute peak.`,
+        `The timing couldn't be worse for ${horseName}. Just as a championship seems within reach, ${stable.name} has dramatically turned up the heat on this bitter feud.`,
+        `Every move ${horseName} makes is now being shadowed by ${stable.name}, who have escalated their tactics to try and derail a title run.`,
+        `The pressure is immense. ${horseName} must navigate a championship campaign while fending off an increasingly hostile and unpredictable ${stable.name}.`,
+        `A season-defining clash looms as ${stable.name} pulls out all the stops to prevent ${horseName} from securing championship honors.`,
+        `There's a target on ${horseName}'s back, and ${stable.name} is aiming directly for it. The escalation threatens to overshadow the championship race.`,
+        `The feud has become a major storyline of the championship chase. ${stable.name} is relishing their role as the ultimate antagonist to ${horseName}.`,
+        `With a title on the line for ${horseName}, the escalated hostilities from ${stable.name} add a massive layer of stress to an already tense campaign.`,
+        `${stable.name} knows exactly what is at stake for ${horseName}, and they have escalated the rivalry to inflict maximum damage on the championship bid.`,
+        `The narrative of ${horseName}'s season is now irrevocably tied to this bitter feud. ${stable.name} is determined to write a tragic ending to the championship dream.`,
       );
     } else if (arcStage === "contender") {
       bodies.push(
         `With ${horseName} rising as a genuine contender, ${stable.name} has turned up the heat. The rivalry is no longer just about pride — it's about who gets to contend at the highest level.`,
         `${horseName}'s ascent has clearly rattled ${stable.name}, who have escalated their attacks. The contender's momentum is being directly challenged by a rival with nothing to lose.`,
+        `As ${horseName} establishes contender status, ${stable.name} has responded with increased aggression, eager to prove they belong in the same conversation.`,
+        `The rivalry has taken on new significance now that ${horseName} is a serious threat. ${stable.name} is escalating the conflict to establish dominance among the elite.`,
+        `${stable.name} is attempting to intimidate ${horseName} before the contender can fully realize their potential. The feud has never been more intense.`,
+        `With ${horseName} knocking on the door of greatness, ${stable.name} has made it their mission to slam it shut. The hostilities have reached a dangerous new level.`,
+        `The emergence of ${horseName} as a top-tier competitor has caused ${stable.name} to panic, resulting in a dramatic escalation of their ongoing rivalry.`,
+        `${stable.name} is testing the mettle of ${horseName}. They've escalated the feud to see if the contender can handle the heat of a true rivalry.`,
+        `It's a baptism by fire for ${horseName}. ${stable.name} has ramped up the pressure, forcing the contender to navigate a toxic rivalry alongside top-level competition.`,
+        `The feud has shifted from a sideshow to a main event. ${stable.name} is desperate to halt the momentum of the rapidly rising ${horseName}.`,
+        `${horseName}'s breakout season is being actively undermined by ${stable.name}, who have escalated their hostility to protect their own standing.`,
+        `The path to the top just got much harder for ${horseName}. ${stable.name} has declared war, turning this rivalry into a major hurdle for the contender.`,
+        `With ${horseName} demanding respect as a contender, ${stable.name} has responded with escalating disrespect. The bad blood is palpable.`,
+        `${stable.name} refuses to concede the spotlight to ${horseName}. They've turned up the volume on this rivalry to ensure the contender doesn't shine too brightly.`,
       );
     } else if (arcStage === "rising_star") {
       bodies.push(
         `The rising star ${horseName} has become a particular target of ${stable.name}'s escalation. The rival stable seems determined to snuff out the momentum before it becomes unstoppable.`,
         `${stable.name} has singled out rising star ${horseName} as the focal point of their escalated hostilities. It's a calculated move — take out the brightest light before it shines too bright.`,
+        `The hype surrounding ${horseName} has seemingly triggered ${stable.name}. They've escalated the rivalry in a direct attempt to intimidate the young prospect.`,
+        `${stable.name} is trying to bully ${horseName} early in their career. The escalating feud is a harsh introduction to the realities of top-flight racing.`,
+        `It's clear ${stable.name} views ${horseName} as a long-term threat. They've ramped up the hostility now to try and derail the rising star's development.`,
+        `The escalating conflict with ${stable.name} is the biggest test yet for the highly touted ${horseName}. Can the young horse handle the pressure of a bitter rivalry?`,
+        `${stable.name} is attempting to overshadow the early success of ${horseName} by dominating the headlines with their escalating feud.`,
+        `The rivalry has grown toxic just as ${horseName} is finding their stride. ${stable.name} is determined to be the roadblock in this rising star's path.`,
+        `With all eyes on ${horseName}, ${stable.name} has chosen this moment to escalate the rivalry, hoping the young horse wilts under the combined pressure.`,
+        `${stable.name} is throwing everything they have at ${horseName}. They want to break the young star's confidence before the career truly takes off.`,
+        `The feud is escalating rapidly, and ${horseName} is caught right in the middle. It's a trial by combat for the promising youngster.`,
+        `${stable.name} sees the potential in ${horseName} and has decided to act preemptively. The escalated rivalry is a clear sign they feel threatened.`,
+        `The early buzz around ${horseName} has been somewhat dampened by the escalating, ugly conflict with ${stable.name}.`,
+        `It's a tough environment for a young horse to develop in. ${stable.name} has ensured that every race for ${horseName} is a high-stakes battle.`,
       );
     }
   }

@@ -161,31 +161,107 @@ export function generateGrudgeMatchNews(
         bodies.push(
           `${horseName} wasn't just racing for pride today — a championship legacy was on the line. Defeating ${rivalHorse.name} in this grudge match sends a message that the champion's resolve is unbreakable.`,
           `The championship dream lives on. ${horseName} overcame ${rivalHorse.name} in a grudge match that felt like a title defense. This victory could define the season.`,
+          `In a race carrying massive championship implications, ${horseName} delivered, vanquishing ${rivalHorse.name} in a grudge match that will echo throughout the season.`,
+          `${horseName} refused to let ${rivalHorse.name} derail the title run. The grudge match victory is a testament to a champion's heart.`,
+          `The pressure was immense, but ${horseName} handled it flawlessly, securing a grudge match win over ${rivalHorse.name} that bolsters the championship resume.`,
+          `With a legacy at stake, ${horseName} rose to the occasion, leaving ${rivalHorse.name} behind and taking another crucial step toward championship glory.`,
+          `${horseName} silenced the doubters and crushed ${rivalHorse.name} in a high-stakes grudge match. The championship campaign is well and truly alive.`,
+          `A massive hurdle cleared for ${horseName}. The grudge match win against ${rivalHorse.name} proves the horse is ready for the ultimate prize.`,
+          `${rivalHorse.name} threw everything they had at ${horseName}, but the champion stood tall. A legendary grudge match victory.`,
+          `The quest for greatness continues. ${horseName} brushed aside ${rivalHorse.name} in a grudge match that solidifies their status as the horse to beat.`,
+          `${horseName} demonstrated why they are the championship favorite, dominating ${rivalHorse.name} in a highly publicized grudge match.`,
+          `It was a make-or-break moment, and ${horseName} made it. The grudge match victory over ${rivalHorse.name} is a massive boost for the title bid.`,
+          `${horseName}'s championship mettle was tested today by ${rivalHorse.name}, and the answer was a resounding, emphatic victory.`,
+          `The dream scenario played out for ${horseName}. A grudge match win against ${rivalHorse.name} on the path to a potential championship.`,
         );
       } else {
         bodies.push(
           `A devastating blow to ${horseName}'s championship aspirations. Losing to ${rivalHorse.name} in this grudge match raises serious questions about whether the title bid can survive.`,
           `The championship arc hangs by a thread after ${horseName} fell to ${rivalHorse.name}. This wasn't just a grudge match — it was a potential turning point in a career.`,
+          `${horseName}'s legacy took a massive hit today. The grudge match loss to ${rivalHorse.name} is a catastrophic setback for the championship campaign.`,
+          `The dream may be over. ${horseName} crumbled under the pressure of the grudge match, allowing ${rivalHorse.name} to strike a fatal blow to the title hopes.`,
+          `A shocking defeat for ${horseName}. ${rivalHorse.name} played the ultimate spoiler in a grudge match that could define the season for all the wrong reasons.`,
+          `${horseName}'s championship bid is now on life support after a stunningly poor performance against ${rivalHorse.name} in today's grudge match.`,
+          `The pressure proved too much for ${horseName}. ${rivalHorse.name} exploited every weakness in a grudge match that leaves the championship campaign in tatters.`,
+          `${horseName} faltered when it mattered most. The grudge match loss to ${rivalHorse.name} is a bitter pill to swallow for a horse with such high expectations.`,
+          `The narrative has flipped entirely. ${horseName} is now fighting just to stay relevant after a disastrous grudge match showing against ${rivalHorse.name}.`,
+          `${rivalHorse.name} didn't just win a grudge match; they may have ended ${horseName}'s championship aspirations entirely. A devastating result.`,
+          `The road to the championship just got infinitely steeper for ${horseName} following a humbling grudge match defeat at the hands of ${rivalHorse.name}.`,
+          `Questions will undoubtedly swirl around ${horseName}'s ability to win the big one after folding against ${rivalHorse.name} in this crucial grudge match.`,
+          `It's a worst-case scenario for ${horseName}. The grudge match loss to ${rivalHorse.name} leaves the stable scrambling to salvage the season.`,
+          `${horseName}'s aura of invincibility was shattered today by ${rivalHorse.name} in a grudge match that completely alters the championship picture.`,
         );
       }
     } else if (arcStage === "contender") {
       if (playerWon) {
         bodies.push(
           `${horseName}'s contender status was validated in the fire of this grudge match. Beating ${rivalHorse.name} proves the horse has the mettle for the biggest stages.`,
+          `A huge leap forward for ${horseName}. Dispatching ${rivalHorse.name} in a grudge match confirms they are a legitimate threat to the top tier.`,
+          `${horseName} answered the call today. The grudge match victory over ${rivalHorse.name} cements their place among the serious contenders.`,
+          `The contender has arrived. ${horseName} put on a clinic against ${rivalHorse.name} in a grudge match that puts the whole division on notice.`,
+          `${horseName} showed immense growth today, handling the pressure of a grudge match against ${rivalHorse.name} with the poise of a seasoned champion.`,
+          `This is what contenders do. ${horseName} stepped up and delivered a knockout blow to ${rivalHorse.name} in a fiercely contested grudge match.`,
+          `${horseName}'s rising profile got another massive boost with a statement grudge match win over rival ${rivalHorse.name}.`,
+          `The transition from prospect to contender is complete. ${horseName}'s grudge match victory against ${rivalHorse.name} leaves no doubt.`,
+          `${horseName} refused to be denied, securing a gutsy grudge match win over ${rivalHorse.name} that screams 'contender'.`,
+          `A signature win for ${horseName}. Beating ${rivalHorse.name} in this grudge match is the highlight of an already impressive campaign.`,
+          `${horseName} proved they belong at the top table, thoroughly outclassing ${rivalHorse.name} in today's high-stakes grudge match.`,
+          `The momentum is undeniable. ${horseName} continues to surge after a dominant grudge match performance against ${rivalHorse.name}.`,
+          `${horseName} laid down a marker today. The grudge match victory over ${rivalHorse.name} proves they are ready for anyone.`,
+          `A massive confidence builder for ${horseName}. Taking down ${rivalHorse.name} in a grudge match validates all the stable's hard work.`,
         );
       } else {
         bodies.push(
           `A setback for ${horseName}'s contender campaign. Losing to ${rivalHorse.name} in this grudge match will test the horse's resilience and the stable's confidence.`,
+          `${horseName}'s progression hit a speed bump today. The grudge match loss to ${rivalHorse.name} raises questions about their readiness for the elite level.`,
+          `A harsh lesson for ${horseName}. ${rivalHorse.name} exposed some flaws in a grudge match that sends the contender back to the drawing board.`,
+          `The hype train derailed slightly as ${horseName} failed to fire against ${rivalHorse.name} in a crucial grudge match.`,
+          `${horseName} looked outmatched today. The grudge match loss to ${rivalHorse.name} suggests the jump to contender status might be premature.`,
+          `A disappointing result for ${horseName}, who was expected to make a statement against ${rivalHorse.name} in today's grudge match.`,
+          `${horseName}'s momentum has stalled. The grudge match defeat to ${rivalHorse.name} is a significant blow to their rising profile.`,
+          `It's a gut check moment for ${horseName}. How they respond to this grudge match loss against ${rivalHorse.name} will define their season.`,
+          `${rivalHorse.name} provided a reality check for ${horseName}, easily handling the supposed contender in today's grudge match.`,
+          `${horseName} wilted under the pressure of the rivalry, surrendering a vital grudge match to ${rivalHorse.name}.`,
+          `The contender status of ${horseName} is now in doubt after a lackluster showing against ${rivalHorse.name} in the grudge match.`,
+          `A frustrating step backward for ${horseName}. The grudge match loss to ${rivalHorse.name} undoes much of the recent progress.`,
+          `${horseName} was found wanting today, heavily beaten by ${rivalHorse.name} in a grudge match that highlights the gap to the top tier.`,
+          `The stable has plenty of work to do. ${horseName}'s grudge match defeat to ${rivalHorse.name} shows they are not yet the finished article.`,
         );
       }
     } else if (arcStage === "rising_star") {
       if (playerWon) {
         bodies.push(
           `Rising star ${horseName} passed the grudge match test with flying colors. Beating ${rivalHorse.name} confirms the hype is real and the trajectory is still pointing up.`,
+          `The future is now. Young ${horseName} showed incredible maturity to defeat ${rivalHorse.name} in a high-pressure grudge match.`,
+          `${horseName} is a star in the making. The grudge match victory over ${rivalHorse.name} is a massive milestone in a promising career.`,
+          `A brilliant performance from the young ${horseName}, who made light work of ${rivalHorse.name} in today's grudge match.`,
+          `${horseName} continues to impress. The grudge match win against ${rivalHorse.name} proves this rising star is the real deal.`,
+          `The potential is limitless. ${horseName} effortlessly handled ${rivalHorse.name} in a grudge match that further fuels the hype.`,
+          `${horseName} is ahead of schedule. Dominating ${rivalHorse.name} in a grudge match suggests this young horse is ready for bigger challenges.`,
+          `A statement win for the prodigy. ${horseName}'s grudge match victory over ${rivalHorse.name} puts the entire racing world on notice.`,
+          `${horseName} showed no fear today, taking the fight to ${rivalHorse.name} and emerging victorious in a thrilling grudge match.`,
+          `The sky is the limit for ${horseName}. Beating ${rivalHorse.name} in a grudge match is just the beginning for this rising star.`,
+          `${horseName} handled the pressure of the rivalry perfectly, securing a grudge match win over ${rivalHorse.name} that highlights their immense talent.`,
+          `A flawless display from ${horseName}. The young star completely outclassed ${rivalHorse.name} in today's grudge match.`,
+          `${horseName}'s star continues to rise after a dominant, eye-catching grudge match victory against ${rivalHorse.name}.`,
+          `The buzz around ${horseName} is justified. The grudge match win against ${rivalHorse.name} confirms we are watching something special.`,
         );
       } else {
         bodies.push(
           `A reality check for rising star ${horseName}. ${rivalHorse.name} proved too tough in this grudge match, but how the young horse responds will define the career arc.`,
+          `The inexperience showed today as ${horseName} was outmaneuvered by ${rivalHorse.name} in a tough grudge match.`,
+          `A valuable learning experience for ${horseName}. The grudge match loss to ${rivalHorse.name} highlights areas for improvement for the young star.`,
+          `${horseName} found the pressure of the rivalry too much, succumbing to ${rivalHorse.name} in today's grudge match.`,
+          `The hype train was slowed today as ${horseName} struggled to match ${rivalHorse.name} in a crucial grudge match.`,
+          `A bump in the road for ${horseName}. The grudge match defeat to ${rivalHorse.name} shows the young horse still has a lot to learn.`,
+          `${horseName} looked somewhat green today, easily handled by ${rivalHorse.name} in a grudge match that serves as a harsh lesson.`,
+          `It's a minor setback for ${horseName}. The grudge match loss to ${rivalHorse.name} shouldn't overshadow the immense potential still there.`,
+          `${rivalHorse.name} taught ${horseName} a lesson in race craft today, handing the rising star a humbling grudge match defeat.`,
+          `${horseName} failed to fire in the grudge match, easily beaten by ${rivalHorse.name} in a performance that temper expectations slightly.`,
+          `The young ${horseName} was thrown in the deep end and struggled, losing the grudge match to a sharper ${rivalHorse.name}.`,
+          `A tough day at the office for ${horseName}. The grudge match defeat to ${rivalHorse.name} is a reminder that potential must be realized on the track.`,
+          `${horseName} was outclassed today, with ${rivalHorse.name} proving far too strong in a one-sided grudge match.`,
+          `The stable will need to rebuild ${horseName}'s confidence after a bruising grudge match encounter with ${rivalHorse.name}.`,
         );
       }
     }
