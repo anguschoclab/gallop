@@ -299,9 +299,14 @@ export function runRaceToCompletion(
   }
 
   const laneDensity = new Array(12).fill(0);
+  const leadGroupVelocitiesBuffer: number[] = [];
+
+  // Pre-allocate arrays and maps outside the high-frequency loop to reduce GC pressure
+  const sortedField = [...runners];
+  const rankMap = new Map<string, number>();
 
   while (finishedCount < numRunners && t < maxTime) {
-    const pace = computePaceContext(runners, distance, laneDensity);
+    const pace = computePaceContext(runners, distance, laneDensity, leadGroupVelocitiesBuffer);
 
     // Capture pace snapshot at 25/50/75% progress milestones
     if (
@@ -328,10 +333,11 @@ export function runRaceToCompletion(
     }
 
     // Sort runners by position for faster spatial lookups in stepRunner
-    const sortedField = [...runners].sort((a, b) => b.position - a.position);
+    // We sort the pre-allocated array in-place to avoid GC allocations
+    sortedField.sort((a, b) => b.position - a.position);
 
     // Compute rank-from-front once per tick to avoid O(n²) filter+findIndex
-    const rankMap = new Map<string, number>();
+    rankMap.clear();
     let aliveRank = 0;
     for (const o of sortedField) {
       if (o.finishTime === null) {
