@@ -32,7 +32,7 @@ describe("calculateTrackGeometryModifiers", () => {
       type: "straight",
       length: 100,
       gradient: 5,
-    } as unknown as ReturnType<typeof trackGeometry.getTrackSection>);
+    } as unknown as TrackSection);
 
     const result = calculateTrackGeometryModifiers(baseRunner, 10, 1000);
     expect(result.gradientSpeedMul).toBe(1 - 5 / 100);
@@ -47,7 +47,7 @@ describe("calculateTrackGeometryModifiers", () => {
       type: "straight",
       length: 100,
       gradient: 5,
-    } as unknown as ReturnType<typeof trackGeometry.getTrackSection>);
+    } as unknown as TrackSection);
 
     const specialistRunner = {
       ...baseRunner,
@@ -67,7 +67,7 @@ describe("calculateTrackGeometryModifiers", () => {
       length: 100,
       gradient: 0,
       radius: 100,
-    } as unknown as ReturnType<typeof trackGeometry.getTrackSection>);
+    } as unknown as TrackSection);
 
     const result = calculateTrackGeometryModifiers(baseRunner, 10, 1000);
     expect(result.arcFactor).toBe(1 + baseRunner.lane / 100);
