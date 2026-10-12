@@ -1,3 +1,4 @@
+import type { TrackSection } from "@/core/data/tracksAccessor";
 import { describe, it, expect, vi } from "vitest";
 import { calculateTrackGeometryModifiers } from "@/core/race/engine/trackGeometryModifiers";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
@@ -25,11 +26,13 @@ describe("calculateTrackGeometryModifiers", () => {
 
   it("calculates gradient modifiers correctly for an uphill section", () => {
     vi.mocked(trackGeometry.getTrackSection).mockReturnValue({
-      type: "straight",
       startPos: 0,
+      id: "section",
+      index: 0,
+      type: "straight",
       length: 100,
       gradient: 5,
-    });
+    } as unknown as ReturnType<typeof trackGeometry.getTrackSection>);
 
     const result = calculateTrackGeometryModifiers(baseRunner, 10, 1000);
     expect(result.gradientSpeedMul).toBe(1 - 5 / 100);
@@ -38,11 +41,13 @@ describe("calculateTrackGeometryModifiers", () => {
 
   it("applies hill_specialist trait to reduce uphill stamina penalty", () => {
     vi.mocked(trackGeometry.getTrackSection).mockReturnValue({
-      type: "straight",
       startPos: 0,
+      id: "section",
+      index: 0,
+      type: "straight",
       length: 100,
       gradient: 5,
-    });
+    } as unknown as ReturnType<typeof trackGeometry.getTrackSection>);
 
     const specialistRunner = {
       ...baseRunner,
@@ -55,12 +60,14 @@ describe("calculateTrackGeometryModifiers", () => {
 
   it("calculates turn modifiers correctly", () => {
     vi.mocked(trackGeometry.getTrackSection).mockReturnValue({
-      type: "turn",
       startPos: 0,
+      id: "section",
+      index: 0,
+      type: "turn",
       length: 100,
       gradient: 0,
       radius: 100,
-    });
+    } as unknown as ReturnType<typeof trackGeometry.getTrackSection>);
 
     const result = calculateTrackGeometryModifiers(baseRunner, 10, 1000);
     expect(result.arcFactor).toBe(1 + baseRunner.lane / 100);
