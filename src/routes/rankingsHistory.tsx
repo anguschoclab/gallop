@@ -11,7 +11,7 @@ import type { Horse } from "@/game/types";
 
 const EMPTY_HISTORY: RankingsHistory = {};
 
-export const Route = createFileRoute("/rankings-history")({
+export const Route = createFileRoute("/rankingsHistory")({
   head: () => ({
     meta: [
       { title: "Rankings History — Position, Reputation & Price Over Time" },
