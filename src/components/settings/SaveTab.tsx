@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { FileText } from "lucide-react";
 import React from "react";
 import type { SaveSlotMetadata } from "@/services/storage/saveManager";
+import type { LedgerEntryProps } from "./LedgerEntry";
 
 interface SaveTabProps {
   newSaveName: string;
@@ -12,7 +13,7 @@ interface SaveTabProps {
   saves: SaveSlotMetadata[];
   onOverwrite: (id: string, name: string) => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
-  LedgerEntryComponent: React.FC<any>;
+  LedgerEntryComponent: React.ComponentType<LedgerEntryProps>;
 }
 
 export function SaveTab({

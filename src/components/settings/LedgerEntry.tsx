@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import type { SaveSlotMetadata } from "@/services/storage/saveManager";
 
-interface LedgerEntryProps {
+export interface LedgerEntryProps {
   save: SaveSlotMetadata;
   onAction: () => void;
   onDelete: (e: React.MouseEvent) => void;
