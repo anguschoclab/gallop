@@ -92,8 +92,8 @@ function RankingsHistoryPage() {
       {rows.length === 0 ? (
         <Card className="border-white/5 bg-slate-900/40">
           <CardContent className="p-6 text-center text-[11px] font-mono uppercase tracking-wide text-cream/40">
-            No rankings recorded yet. Advance a day after races have been run and
-            snapshots will appear here.
+            No rankings recorded yet. Advance a day after races have been run and snapshots will
+            appear here.
           </CardContent>
         </Card>
       ) : (
@@ -174,10 +174,7 @@ function RankingsHistoryPage() {
                   title="Rank (lower is better)"
                   data={selected.snaps.map((s) => -s.rank)}
                 />
-                <TrendCard
-                  title="Reputation"
-                  data={selected.snaps.map((s) => s.reputation)}
-                />
+                <TrendCard title="Reputation" data={selected.snaps.map((s) => s.reputation)} />
                 <TrendCard title="Auction price" data={selected.snaps.map((s) => s.price)} />
               </div>
 
@@ -202,9 +199,7 @@ function RankingsHistoryPage() {
                           </td>
                           <td className="p-2 text-right tabular-nums">{s.points.toFixed(1)}</td>
                           <td className="p-2 text-right tabular-nums">{s.reputation}</td>
-                          <td className="p-2 text-right tabular-nums">
-                            {formatCurrency(s.price)}
-                          </td>
+                          <td className="p-2 text-right tabular-nums">{formatCurrency(s.price)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -232,9 +227,7 @@ function TrendCard({ title, data }: { title: string; data: number[] }) {
   return (
     <Card className="border-white/5 bg-slate-900/40">
       <CardContent className="p-3">
-        <p className="mb-1 text-[10px] font-mono uppercase tracking-wide text-cream/40">
-          {title}
-        </p>
+        <p className="mb-1 text-[10px] font-mono uppercase tracking-wide text-cream/40">{title}</p>
         {data.length > 1 ? (
           <Sparkline data={data} height={56} />
         ) : (
