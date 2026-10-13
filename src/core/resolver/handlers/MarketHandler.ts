@@ -100,9 +100,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
 export class MarketHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return ["scout_report", "consignment", "consignment_withdrawal", "auction_resolution"].includes(
-      type,
-    );
+    return type in IMPACT_HANDLERS;
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
