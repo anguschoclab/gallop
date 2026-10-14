@@ -9,6 +9,7 @@ export {
   summarizeNpcCareer,
   careerStageLabel,
 } from "@/core/npc/careerTracker";
+export { careerStage } from "@/core/npc/careerTracker";
 export type { NpcCareerTimelineEvent } from "@/core/npc/careerTracker";
 export { buildRivalCareerProfile, buildRivalCareerProfiles } from "@/core/npc/rivalCareerCompare";
 export type { RivalCareerProfile, RivalMilestoneRecord } from "@/core/npc/rivalCareerCompare";

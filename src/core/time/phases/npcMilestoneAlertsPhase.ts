@@ -27,6 +27,9 @@ export const npcMilestoneAlertsPhase: PipelinePhase = {
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
     const impacts: AnyImpact[] = [];
+    // Per-kind mute switches from Settings → Notifications; muted milestones
+    // are still recorded as announced so unmuting doesn't flood old alerts.
+    const mutedKinds = state.userSettings?.notifications?.rivalMilestoneAlerts;
     const horses: Record<string, Horse> = {};
     let changed = false;
     let emitted = 0;
@@ -43,6 +46,7 @@ export const npcMilestoneAlertsPhase: PipelinePhase = {
       const keys = [...announced];
       for (const milestone of found) {
         keys.push(milestone.key);
+        if (mutedKinds?.[milestone.kind] === false) continue;
         if (emitted >= MAX_RIVAL_ALERTS_PER_DAY) continue;
         emitted++;
         const stableId = getStableId(horse);

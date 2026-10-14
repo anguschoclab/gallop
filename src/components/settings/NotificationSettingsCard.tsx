@@ -3,18 +3,52 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Bell } from "lucide-react";
+import type { RivalMilestoneAlertSettings } from "@/core/settings/settingsTypes";
 
 interface NotificationSettings {
   raceResults?: boolean;
   auctionEvents?: boolean;
   breedingEvents?: boolean;
   healthAlerts?: boolean;
+  rivalMilestoneAlerts?: RivalMilestoneAlertSettings;
 }
 
 interface NotificationSettingsCardProps {
   settings: NotificationSettings;
   onUpdate: (patch: Partial<NotificationSettings>) => void;
 }
+
+const MILESTONE_ALERT_ROWS: {
+  key: keyof RivalMilestoneAlertSettings;
+  label: string;
+  description: string;
+}[] = [
+  {
+    key: "debut",
+    label: "Racecourse debuts",
+    description: "Notable rivals make their first career start",
+  },
+  {
+    key: "breakthrough_win",
+    label: "Graded breakthroughs",
+    description: "A rival lands its first graded victory",
+  },
+  {
+    key: "earnings",
+    label: "Earnings milestones",
+    description: "A rival passes a major earnings threshold",
+  },
+  {
+    key: "peak_transition",
+    label: "Peak-career transitions",
+    description: "A rival enters or passes its peak years",
+  },
+  {
+    key: "retirement",
+    label: "Retirements",
+    description: "A notable rival retires from racing",
+  },
+];
 
 export function NotificationSettingsCard({ settings, onUpdate }: NotificationSettingsCardProps) {
   return (
@@ -72,6 +106,44 @@ export function NotificationSettingsCard({ settings, onUpdate }: NotificationSet
             checked={settings?.healthAlerts ?? true}
             onCheckedChange={(checked) => onUpdate({ healthAlerts: checked })}
           />
+        </div>
+        <Separator />
+        <div className="space-y-3">
+          <div>
+            <Label className="text-sm font-medium">Rival Milestone Alerts</Label>
+            <p className="text-xs text-cream-muted">
+              Choose which rival-horse career milestones appear in your Message Center.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {MILESTONE_ALERT_ROWS.map((row) => (
+              <div key={row.key} className="flex items-center justify-between gap-2">
+                <div className="space-y-0.5">
+                  <Label htmlFor={`milestone-${row.key}`} className="text-xs">
+                    {row.label}
+                  </Label>
+                  <p className="text-[10px] text-cream-muted">{row.description}</p>
+                </div>
+                <Switch
+                  id={`milestone-${row.key}`}
+                  checked={settings?.rivalMilestoneAlerts?.[row.key] ?? true}
+                  onCheckedChange={(checked) =>
+                    onUpdate({
+                      rivalMilestoneAlerts: {
+                        debut: true,
+                        breakthrough_win: true,
+                        earnings: true,
+                        peak_transition: true,
+                        retirement: true,
+                        ...settings?.rivalMilestoneAlerts,
+                        [row.key]: checked,
+                      },
+                    })
+                  }
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </CardContent>
     </Card>

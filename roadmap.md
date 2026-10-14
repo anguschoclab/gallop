@@ -1,4 +1,6 @@
-- [x] Portfolio live updates on race finish: cash, syndicate stakes, prestige refresh automatically
+- [x] Portfolio live updates on race finish: cash, syndicate stakes and prestige refresh automatically
+- [ ] Rival career comparison: filters (age, career stage, wins, earnings, fame, starts) and sorting
+- [ ] Alert preferences: pick which rival-horse milestone kinds appear in Message Center (mute per category)
 - [x] Visual milestone timelines in rival career comparison
 - [x] Track history filters for game-day range, race type, and stable
 - [x] NPC horse career timelines with off-screen starts, finishes, payouts, ages, and stage transitions
