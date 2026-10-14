@@ -315,7 +315,7 @@ export function generateRivalryEscalationNews(
         `${stable.name} is throwing everything they have at ${horseName}. This isn't just a rivalry anymore; it's a desperate attempt to stop a champion.`,
         `The pressure on ${horseName} is mounting as ${stable.name} escalates the feud. A championship season hangs in the balance of this bitter conflict.`,
         `As ${horseName} reaches for greatness, ${stable.name} is pulling them back into the mud. This escalating feud could define the entire season.`,
-        `The championship narrative for ${horseName} is being written in the shadow of an increasingly vicious war with ${stable.name}.`
+        `The championship narrative for ${horseName} is being written in the shadow of an increasingly vicious war with ${stable.name}.`,
       );
     } else if (arcStage === "contender") {
       bodies.push(
@@ -332,7 +332,7 @@ export function generateRivalryEscalationNews(
         `The gloves are off as ${stable.name} seeks to expose any weaknesses in ${horseName}'s newfound contender status.`,
         `A bitter feud is brewing as ${stable.name} challenges ${horseName}'s right to be called a top-tier contender.`,
         `The rivalry is escalating rapidly, with ${stable.name} determined to halt the momentum of the exciting contender, ${horseName}.`,
-        `As ${horseName} aims for the top, ${stable.name} is determined to be the immovable object blocking their path.`
+        `As ${horseName} aims for the top, ${stable.name} is determined to be the immovable object blocking their path.`,
       );
     } else if (arcStage === "rising_star") {
       bodies.push(
@@ -349,7 +349,7 @@ export function generateRivalryEscalationNews(
         `${stable.name} is making it their mission to ensure that the rapid ascent of ${horseName} comes to a sudden and painful halt.`,
         `The pressure is on the young shoulders of ${horseName} as ${stable.name} escalates the rivalry to unprecedented levels.`,
         `With ${horseName} grabbing headlines, ${stable.name} has decided to play the spoiler, intensifying the hostility between the camps.`,
-        `The rising star status of ${horseName} is being severely tested by an increasingly vindictive ${stable.name}.`
+        `The rising star status of ${horseName} is being severely tested by an increasingly vindictive ${stable.name}.`,
       );
     }
   }

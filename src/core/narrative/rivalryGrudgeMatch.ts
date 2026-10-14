@@ -172,7 +172,7 @@ export function generateGrudgeMatchNews(
           `Critics questioned if ${horseName} could handle the pressure, but defeating ${rivalHorse.name} today emphatically answered them.`,
           `${horseName} defended their championship credentials with a stunning defeat of their bitter rival, ${rivalHorse.name}.`,
           `The road to the title runs through ${rivalHorse.name}, and ${horseName} just cleared that hurdle with flying colors.`,
-          `A crucial victory for ${horseName}. Taking down ${rivalHorse.name} breathes new life into a grueling championship campaign.`
+          `A crucial victory for ${horseName}. Taking down ${rivalHorse.name} breathes new life into a grueling championship campaign.`,
         );
       } else {
         bodies.push(
@@ -189,7 +189,7 @@ export function generateGrudgeMatchNews(
           `The champion's resolve was tested and broken by ${rivalHorse.name} today. ${horseName} must regroup quickly to save the season.`,
           `A painful loss for ${horseName}. ${rivalHorse.name} struck a critical blow to their bitter rival's title hopes.`,
           `The narrative takes a dark turn for ${horseName} as ${rivalHorse.name} inflicts a damaging defeat in this high-stakes grudge match.`,
-          `Time is running out for ${horseName}. The loss to ${rivalHorse.name} leaves their championship dreams hanging by the thinnest of threads.`
+          `Time is running out for ${horseName}. The loss to ${rivalHorse.name} leaves their championship dreams hanging by the thinnest of threads.`,
         );
       }
     } else if (arcStage === "contender") {
@@ -208,7 +208,7 @@ export function generateGrudgeMatchNews(
           `The momentum is building for ${horseName}. Taking down ${rivalHorse.name} in this grudge match is a significant milestone for the contender.`,
           `${horseName} looks the real deal. The victory over ${rivalHorse.name} sends a warning shot to the rest of the division.`,
           `A star-making performance from ${horseName}. Beating ${rivalHorse.name} proves this contender is ready for the biggest challenges.`,
-          `${horseName} passed a crucial test today, defeating ${rivalHorse.name} and firmly establishing themselves in the contender ranks.`
+          `${horseName} passed a crucial test today, defeating ${rivalHorse.name} and firmly establishing themselves in the contender ranks.`,
         );
       } else {
         bodies.push(
@@ -225,7 +225,7 @@ export function generateGrudgeMatchNews(
           `The road to the top just got longer for ${horseName}. ${rivalHorse.name} exposed some vulnerabilities in the rising contender today.`,
           `A painful learning experience for ${horseName}. The defeat to ${rivalHorse.name} highlights the work still needed to compete at this level.`,
           `${horseName} fell short when the pressure was on, succumbing to ${rivalHorse.name} in a race that tests their contender credentials.`,
-          `The narrative shifts from hype to concern as ${horseName} suffers a damaging loss to ${rivalHorse.name}.`
+          `The narrative shifts from hype to concern as ${horseName} suffers a damaging loss to ${rivalHorse.name}.`,
         );
       }
     } else if (arcStage === "rising_star") {
@@ -244,7 +244,7 @@ export function generateGrudgeMatchNews(
           `The buzz around ${horseName} is growing louder. Taking down a rival like ${rivalHorse.name} is exactly what a rising star needs to do.`,
           `${horseName} showed exceptional class to overcome ${rivalHorse.name}. This is a horse destined for greater things.`,
           `A flawless execution by ${horseName} secures a memorable victory over ${rivalHorse.name}. The sky is the limit for this rising star.`,
-          `${horseName}'s star continues to rise after a brilliant tactical victory over their bitter rival, ${rivalHorse.name}.`
+          `${horseName}'s star continues to rise after a brilliant tactical victory over their bitter rival, ${rivalHorse.name}.`,
         );
       } else {
         bodies.push(
@@ -261,7 +261,7 @@ export function generateGrudgeMatchNews(
           `A setback for the promising ${horseName}. ${rivalHorse.name} proved a bridge too far at this early stage of their career.`,
           `${horseName} will need to bounce back quickly after ${rivalHorse.name} handed them a comprehensive defeat in this high-profile clash.`,
           `The narrative hits a snag as ${horseName} falls to ${rivalHorse.name}. The true measure of this rising star will be how they recover.`,
-          `A difficult afternoon for ${horseName}. The loss to ${rivalHorse.name} highlights the vast difference between potential and proven class.`
+          `A difficult afternoon for ${horseName}. The loss to ${rivalHorse.name} highlights the vast difference between potential and proven class.`,
         );
       }
     }
