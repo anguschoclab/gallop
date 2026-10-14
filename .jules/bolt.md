@@ -1,0 +1,3 @@
+## 2023-11-20 - High-Frequency Simulation Loop Object Spreading
+**Learning:** In `runRaceToCompletion`, cloning arrays per-tick via object spreading (`[...runners]`) and creating new `Map` instances (`new Map()`) inside a loop executing thousands of times per race caused massive overhead due to excessive garbage collection and repeated allocation.
+**Action:** Always pre-allocate static arrays (`runners.slice()` updated in-place via `sort`) and typed arrays (e.g. `Int32Array`) outside the main execution loop for any high-frequency game engine simulation ticks. Use indexing strategies instead of `Map` instances when possible.
