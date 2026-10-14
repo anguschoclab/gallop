@@ -6,7 +6,11 @@ import {
 } from "@/core/awards/scoring";
 import type { Horse, HorseRaceHistoryEntry } from "@/core/horse/types";
 import type { Race } from "@/core/race/types";
-import { NorthAmericanCategory, AsiaPacificCategory } from "@/core/awards/types";
+import {
+  NorthAmericanCategory,
+  AsiaPacificCategory,
+  RegionalAwardCategory,
+} from "@/core/awards/types";
 import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 
 describe("awards/scoring (PR #490)", () => {
@@ -358,8 +362,8 @@ function createMockRace(id: string, track: string): Race {
   } as Race;
 }
 
-describe("Awards Scoring (PR #503)", () => {
-  it("enforces gender restrictions on South American 2YO awards", () => {
+describe("gender-restricted award categories", () => {
+  it("restricts South American 2YO awards by gender", () => {
     const raceMap = new Map<string, Race>([
       ["race1", createMockRace("race1", "Hipódromo de San Isidro")], // South America (Argentina)
     ]);
@@ -390,53 +394,18 @@ describe("Awards Scoring (PR #503)", () => {
       },
     ]);
 
-    // Filly gets points for potranca (filly)
-    const fillyPotrancaPoints = calculateAwardPoints(
-      filly,
-      1,
-      "south_america",
-      "potranca_del_ano",
-      raceMap,
-    );
-
-    // EXPECTED BEHAVIOR: Filly should get 0 points for potrillo (colt)
-    // ACTUAL BEHAVIOR (BUG): She gets > 0 points because `potrillo_del_ano` only checks `age === 2`
-    const fillyPotrilloPoints = calculateAwardPoints(
-      filly,
-      1,
-      "south_america",
-      "potrillo_del_ano",
-      raceMap,
-    );
-
-    // Colt gets points for potrillo (colt)
-    const coltPotrilloPoints = calculateAwardPoints(
-      colt,
-      1,
-      "south_america",
-      "potrillo_del_ano",
-      raceMap,
-    );
-
-    // EXPECTED BEHAVIOR: Colt should get 0 points for potranca (filly)
-    // ACTUAL BEHAVIOR (BUG): He gets > 0 points because `potranca_del_ano` only checks `age === 2`
-    const coltPotrancaPoints = calculateAwardPoints(
-      colt,
-      1,
-      "south_america",
-      "potranca_del_ano",
-      raceMap,
-    );
-
-    expect(fillyPotrancaPoints).toBeGreaterThan(0);
-    expect(coltPotrilloPoints).toBeGreaterThan(0);
-
-    // Corrected behavior: wrong-gender categories yield 0 points
-    expect(fillyPotrilloPoints).toBe(0);
-    expect(coltPotrancaPoints).toBe(0);
+    // potrillo_del_ano = 2YO colt, potranca_del_ano = 2YO filly
+    expect(
+      calculateAwardPoints(filly, 1, "south_america", "potranca_del_ano", raceMap),
+    ).toBeGreaterThan(0);
+    expect(calculateAwardPoints(filly, 1, "south_america", "potrillo_del_ano", raceMap)).toBe(0);
+    expect(
+      calculateAwardPoints(colt, 1, "south_america", "potrillo_del_ano", raceMap),
+    ).toBeGreaterThan(0);
+    expect(calculateAwardPoints(colt, 1, "south_america", "potranca_del_ano", raceMap)).toBe(0);
   });
 
-  it("enforces gender restrictions on sprint awards", () => {
+  it("restricts North American sprint awards by gender", () => {
     const raceMap = new Map<string, Race>([["race1", createMockRace("race1", "Belmont Park")]]);
     const colt = createMockHorse("colt1", 4, "colt", [
       {
@@ -473,5 +442,67 @@ describe("Awards Scoring (PR #503)", () => {
     expect(calculateAwardPoints(filly, 1, "north_america", "champion_sprint_male", raceMap)).toBe(
       0,
     );
+  });
+
+  it("treats geldings as male for award eligibility", () => {
+    const saRaceMap = new Map<string, Race>([
+      ["race1", createMockRace("race1", "Hipódromo de San Isidro")],
+    ]);
+    const juvenileGelding = createMockHorse("geld1", 2, "gelding", [
+      {
+        raceId: "race1",
+        raceName: "Mock Race",
+        day: 100,
+        position: 1,
+        grade: "G1",
+        distance: 2000,
+        surface: "dirt",
+      },
+    ]);
+
+    expect(
+      calculateAwardPoints(juvenileGelding, 1, "south_america", "potrillo_del_ano", saRaceMap),
+    ).toBeGreaterThan(0);
+    expect(
+      calculateAwardPoints(juvenileGelding, 1, "south_america", "potranca_del_ano", saRaceMap),
+    ).toBe(0);
+
+    const naRaceMap = new Map<string, Race>([["race2", createMockRace("race2", "Belmont Park")]]);
+    const olderGelding = createMockHorse("geld2", 4, "gelding", [
+      {
+        raceId: "race2",
+        raceName: "Sprint",
+        day: 100,
+        position: 1,
+        grade: "G1",
+        distance: 1200,
+        surface: "dirt",
+      },
+    ]);
+
+    expect(
+      calculateAwardPoints(olderGelding, 1, "north_america", "champion_sprint_male", naRaceMap),
+    ).toBeGreaterThan(0);
+    expect(
+      calculateAwardPoints(olderGelding, 1, "north_america", "champion_sprint_female", naRaceMap),
+    ).toBe(0);
+  });
+
+  it("returns 0 for unknown categories", () => {
+    const raceMap = new Map<string, Race>([["race1", createMockRace("race1", "Belmont Park")]]);
+    const horse = createMockHorse("h1", 3, "colt", [
+      {
+        raceId: "race1",
+        raceName: "Mock Race",
+        day: 100,
+        position: 1,
+        grade: "G1",
+        distance: 2000,
+        surface: "dirt",
+      },
+    ]);
+
+    const unknownCategory = "not_a_real_category" as unknown as RegionalAwardCategory;
+    expect(calculateAwardPoints(horse, 1, "north_america", unknownCategory, raceMap)).toBe(0);
   });
 });

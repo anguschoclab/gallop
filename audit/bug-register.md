@@ -395,6 +395,7 @@ All sampled hits are `title=` **props on custom components** (KPI cards etc.), n
 - **Severity:** MEDIUM (wrong award winners)
 - **Description:** `potrillo_del_ano` (2YO colt), `potranca_del_ano` (2YO filly), `champion_sprint_male`, `champion_sprint_female` were gender-labeled but `isCategoryEligible` in `src/core/awards/scoring.ts` only checked age/distance — fillies could win colt awards. Surfaced by Probe #503's bug-documentation test (flipped to assert correct behavior) + expanded to the sprint pair during review.
 - **Fix:** Added `SIRE_GENDERS`/`DAM_GENDERS` checks matching sibling categories (`campeon_3yo_macho`, `champion_2yo_colt`, etc.). Test-first: 2 FAIL-EXPECTED assertions flipped green. **Verdict: FIXED.**
+- **Residual audit follow-up:** `isEligibleForCategory` reused `SIRE_GENDERS`/`DAM_GENDERS` — breeding constants for intact males/females — so geldings were locked out of all 9 male award categories despite being eligible for male-division awards in real racing. Switched to `isMaleHorse`/`isFemaleHorse` (geldings now treated as male). Also hardened the `default:` branch to fail closed (`return false`) so unknown/misspelled categories accrue no points — resolves the silent-eligibility flag from `audit/subsystems/G-narrative-history.md`. Test-first: gelding + unknown-category tests red → green.
 
 ### FINDING-V4-004 update: all production `as never` casts removed
 

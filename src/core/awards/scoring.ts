@@ -24,7 +24,7 @@ import {
 } from "./types";
 import { getTrackContinent } from "@/core/data/gradedRacesAccessor";
 import { DAYS_PER_YEAR } from "@/constants";
-import { SIRE_GENDERS, DAM_GENDERS } from "@/core/horse/gender";
+import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
 import { isPlayerOwned } from "@/core/horse/ownership";
 
 // Get eligible categories for a region
@@ -97,41 +97,41 @@ function isEligibleForCategory(
     // Age-based categories
     case "champion_2yo_male":
     case "champion_2yo_colt":
-      return age === 2 && SIRE_GENDERS.includes(gender);
+      return age === 2 && isMaleHorse(gender);
     case "champion_2yo_female":
     case "champion_2yo_filly":
-      return age === 2 && DAM_GENDERS.includes(gender);
+      return age === 2 && isFemaleHorse(gender);
     case "champion_3yo_male":
     case "champion_3yo_colt":
     case "campeon_3yo_macho":
-      return age === 3 && SIRE_GENDERS.includes(gender);
+      return age === 3 && isMaleHorse(gender);
     case "champion_3yo_female":
     case "champion_3yo_filly":
     case "campeona_3yo_hembras":
-      return age === 3 && DAM_GENDERS.includes(gender);
+      return age === 3 && isFemaleHorse(gender);
     case "champion_2yo":
       return age === 2;
     case "potrillo_del_ano":
-      return age === 2 && SIRE_GENDERS.includes(gender);
+      return age === 2 && isMaleHorse(gender);
     case "potranca_del_ano":
-      return age === 2 && DAM_GENDERS.includes(gender);
+      return age === 2 && isFemaleHorse(gender);
     case "champion_3yo":
       return age === 3;
 
     // Older horse categories
     case "champion_older_dirt_male":
-      return age >= 4 && SIRE_GENDERS.includes(gender) && surface === "dirt";
+      return age >= 4 && isMaleHorse(gender) && surface === "dirt";
     case "champion_older_dirt_female":
-      return age >= 4 && DAM_GENDERS.includes(gender) && surface === "dirt";
+      return age >= 4 && isFemaleHorse(gender) && surface === "dirt";
     case "champion_older_horse":
     case "campeon_mayor":
       return age >= 4;
 
     // Sprint categories
     case "champion_sprint_male":
-      return distance <= 1400 && SIRE_GENDERS.includes(gender);
+      return distance <= 1400 && isMaleHorse(gender);
     case "champion_sprint_female":
-      return distance <= 1400 && DAM_GENDERS.includes(gender);
+      return distance <= 1400 && isFemaleHorse(gender);
     case "champion_sprinter_eu":
     case "champion_sprinter_apac":
     case "campeon_velocidad":
@@ -144,9 +144,9 @@ function isEligibleForCategory(
 
     // Turf categories
     case "champion_turf_male":
-      return SIRE_GENDERS.includes(gender) && surface === "turf";
+      return isMaleHorse(gender) && surface === "turf";
     case "champion_turf_female":
-      return DAM_GENDERS.includes(gender) && surface === "turf";
+      return isFemaleHorse(gender) && surface === "turf";
 
     // Middle distance
     case "champion_middle_distance":
@@ -154,7 +154,7 @@ function isEligibleForCategory(
 
     // Filly/Mare categories
     case "champion_filly_or_mare":
-      return DAM_GENDERS.includes(gender);
+      return isFemaleHorse(gender);
 
     // Steeplechase - longer distance turf races (heuristic until proper steeplechase type added)
     case "champion_steeplechase":
@@ -171,7 +171,7 @@ function isEligibleForCategory(
       return false;
 
     default:
-      return true;
+      return false;
   }
 }
 
