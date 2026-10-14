@@ -67,13 +67,9 @@ describe("npcMilestoneAlertsPhase", () => {
     const result = npcMilestoneAlertsPhase.execute(contextFor(state));
 
     expect(inboxCount(result)).toBe(1);
-    expect(
-      result.impacts.some(
-        (i) =>
-          i.type === "inbox_message" &&
-          /passes/.test((i as { message?: { title?: string } }).message?.title ?? ""),
-      ),
-    ).toBe(true);
+    expect(result.impacts.some((i) => i.type === "inbox_message" && /passes/.test(
+      (i as { message?: { title?: string } }).message?.title ?? "",
+    ))).toBe(true);
 
     // Muted milestones are recorded so unmuting later doesn't replay them.
     const keys = result.state.horses["rival-1"].careerMilestonesAnnounced ?? [];

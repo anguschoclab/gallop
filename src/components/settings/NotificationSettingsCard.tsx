@@ -3,7 +3,15 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Bell } from "lucide-react";
-import type { RivalMilestoneAlertSettings } from "@/core/settings/settingsTypes";
+
+// Inline type to avoid layering violation
+export interface RivalMilestoneAlertSettings {
+  debut: boolean;
+  breakthrough_win: boolean;
+  earnings: boolean;
+  peak_transition: boolean;
+  retirement: boolean;
+}
 
 interface NotificationSettings {
   raceResults?: boolean;

@@ -70,7 +70,9 @@ describe("filterAndSortRivalCandidates", () => {
 
   it("filters by exact age and a 7yo+ floor", () => {
     const byAge = (age: string) =>
-      filterAndSortRivalCandidates(base, { ...DEFAULT_RIVAL_CAREER_FILTERS, age }).map((c) => c.id);
+      filterAndSortRivalCandidates(base, { ...DEFAULT_RIVAL_CAREER_FILTERS, age }).map(
+        (c) => c.id,
+      );
     expect(byAge("3")).toEqual(["a"]);
     expect(byAge("7+")).toEqual(["c"]);
   });
