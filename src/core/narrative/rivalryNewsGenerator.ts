@@ -304,16 +304,52 @@ export function generateRivalryEscalationNews(
         `The feud with ${stable.name} has reached a boiling point, and ${horseName} — fighting to cement a championship legacy — finds itself in the crosshairs. Every race against this rival now carries the weight of a career.`,
         `As ${horseName} chases championship glory, ${stable.name} has made it their mission to play the spoiler. The escalation is personal, and the stakes couldn't be higher.`,
         `${horseName}'s championship bid is under direct threat. ${stable.name} has escalated hostilities to a level that suggests they'd rather deny your horse glory than win for themselves.`,
+        `The title aspirations of ${horseName} are being directly targeted. ${stable.name} is ramping up the pressure to derail a potential championship run.`,
+        `Every start for ${horseName} is now a battleground. ${stable.name} is determined to sabotage the championship dreams of this legendary horse.`,
+        `With a championship on the line for ${horseName}, ${stable.name} has decided to play the ultimate villain, escalating tensions to an all-time high.`,
+        `The legacy of ${horseName} is under siege. ${stable.name} is making calculated moves designed entirely to disrupt a historic championship bid.`,
+        `${stable.name} seems singularly focused on destroying ${horseName}'s championship campaign. The hostility is palpable every time these two meet.`,
+        `The championship trail has become a warzone for ${horseName}, with ${stable.name} leading the charge to break their spirit.`,
+        `It's a clash of titans as ${horseName}'s championship run collides with the ruthless aggression of ${stable.name}.`,
+        `The stakes have never been higher for ${horseName}, and ${stable.name} is doing everything in their power to ensure a championship never happens.`,
+        `${stable.name} is throwing everything they have at ${horseName}. This isn't just a rivalry anymore; it's a desperate attempt to stop a champion.`,
+        `The pressure on ${horseName} is mounting as ${stable.name} escalates the feud. A championship season hangs in the balance of this bitter conflict.`,
+        `As ${horseName} reaches for greatness, ${stable.name} is pulling them back into the mud. This escalating feud could define the entire season.`,
+        `The championship narrative for ${horseName} is being written in the shadow of an increasingly vicious war with ${stable.name}.`
       );
     } else if (arcStage === "contender") {
       bodies.push(
         `With ${horseName} rising as a genuine contender, ${stable.name} has turned up the heat. The rivalry is no longer just about pride — it's about who gets to contend at the highest level.`,
         `${horseName}'s ascent has clearly rattled ${stable.name}, who have escalated their attacks. The contender's momentum is being directly challenged by a rival with nothing to lose.`,
+        `As ${horseName} establishes themselves as a true contender, ${stable.name} has decided to test their limits with aggressive new tactics.`,
+        `The contender status of ${horseName} has provoked a fierce response from ${stable.name}. The rivalry has intensified dramatically.`,
+        `${stable.name} is actively trying to derail ${horseName}'s rise to the top tier. The animosity between these camps is undeniable.`,
+        `The emergence of ${horseName} as a major player has struck a nerve with ${stable.name}, leading to a sudden escalation in hostilities.`,
+        `With ${horseName} proving they belong in the big leagues, ${stable.name} has ramped up the pressure to see if they can handle the heat.`,
+        `The feud has reached new levels as ${stable.name} sets their sights squarely on the rising contender, ${horseName}.`,
+        `${horseName} is finding that life as a contender comes with a target on their back, courtesy of an increasingly hostile ${stable.name}.`,
+        `${stable.name} is leaving no stone unturned in their quest to undermine the contender campaign of ${horseName}.`,
+        `The gloves are off as ${stable.name} seeks to expose any weaknesses in ${horseName}'s newfound contender status.`,
+        `A bitter feud is brewing as ${stable.name} challenges ${horseName}'s right to be called a top-tier contender.`,
+        `The rivalry is escalating rapidly, with ${stable.name} determined to halt the momentum of the exciting contender, ${horseName}.`,
+        `As ${horseName} aims for the top, ${stable.name} is determined to be the immovable object blocking their path.`
       );
     } else if (arcStage === "rising_star") {
       bodies.push(
         `The rising star ${horseName} has become a particular target of ${stable.name}'s escalation. The rival stable seems determined to snuff out the momentum before it becomes unstoppable.`,
         `${stable.name} has singled out rising star ${horseName} as the focal point of their escalated hostilities. It's a calculated move — take out the brightest light before it shines too bright.`,
+        `The hype surrounding ${horseName} has clearly annoyed ${stable.name}, who are now making a concerted effort to derail the young star.`,
+        `As ${horseName}'s star begins to shine, ${stable.name} is throwing everything they can to cast a shadow over their early success.`,
+        `${stable.name} is treating the emergence of ${horseName} as a direct threat, escalating the rivalry to halt the rising star in their tracks.`,
+        `The early promise shown by ${horseName} has ignited a fierce reaction from ${stable.name}. This is a brutal introduction to top-flight racing.`,
+        `The rising star ${horseName} is learning the hard way that success breeds contempt, with ${stable.name} ramping up their aggressive tactics.`,
+        `${stable.name} seems intent on providing a harsh reality check to the rising star, ${horseName}, escalating the tension with every race.`,
+        `The feud is heating up as ${stable.name} sets out to prove that the hype around ${horseName} is completely unjustified.`,
+        `A bitter rivalry is taking shape as ${stable.name} targets ${horseName}, attempting to derail the narrative of this rising star.`,
+        `${stable.name} is making it their mission to ensure that the rapid ascent of ${horseName} comes to a sudden and painful halt.`,
+        `The pressure is on the young shoulders of ${horseName} as ${stable.name} escalates the rivalry to unprecedented levels.`,
+        `With ${horseName} grabbing headlines, ${stable.name} has decided to play the spoiler, intensifying the hostility between the camps.`,
+        `The rising star status of ${horseName} is being severely tested by an increasingly vindictive ${stable.name}.`
       );
     }
   }
