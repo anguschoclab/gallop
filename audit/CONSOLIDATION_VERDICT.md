@@ -162,7 +162,7 @@ All 16 PRs remain open on GitHub. Their changes have been selectively integrated
 | Tests      | **PASS** | 8,790 passed, 1 skipped, 0 failures |
 | Build      | **PASS** | Clean build, no errors              |
 
-*The single pre-existing test failure (`economyInvariant.test.ts`) was fixed as BUG-034 — the solvency phase now uses projected post-impact cash for tier determination, and the FinanceHandler skips player cash changes when runEnded is true.
+\*The single pre-existing test failure (`economyInvariant.test.ts`) was fixed as BUG-034 — the solvency phase now uses projected post-impact cash for tier determination, and the FinanceHandler skips player cash changes when runEnded is true.
 
 ---
 
