@@ -69,6 +69,20 @@ export interface NotificationSettings {
   dailySummary: boolean;
   /** Flash browser tab on important events */
   flashTab: boolean;
+  /** Per-kind toggles for rival-horse career milestone alerts in the Message Center */
+  rivalMilestoneAlerts?: RivalMilestoneAlertSettings;
+}
+
+/**
+ * Per-kind toggles for rival-horse career milestone alerts (Mute a kind to
+ * stop its Message Center messages; unmuting only affects future milestones).
+ */
+export interface RivalMilestoneAlertSettings {
+  debut: boolean;
+  breakthrough_win: boolean;
+  earnings: boolean;
+  peak_transition: boolean;
+  retirement: boolean;
 }
 
 /**
@@ -134,6 +148,13 @@ export function createDefaultUserSettings(currentDay: number = 1): UserSettings 
       healthAlerts: true,
       dailySummary: false,
       flashTab: true,
+      rivalMilestoneAlerts: {
+        debut: true,
+        breakthrough_win: true,
+        earnings: true,
+        peak_transition: true,
+        retirement: true,
+      },
     },
     audio: {
       masterVolume: 50,
