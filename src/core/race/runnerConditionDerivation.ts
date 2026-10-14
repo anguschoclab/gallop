@@ -70,13 +70,18 @@ export function buildFieldContext(runners: Runner[]): FieldContext {
   const meanVelocity = moving.length > 0 ? sumVelocity / moving.length : 0;
 
   const velocityRank = new Map<string, number>();
-  moving
-    .sort((a, b) => b.velocity - a.velocity || a.horseId.localeCompare(b.horseId))
-    .forEach((r, i) => velocityRank.set(r.horseId, i + 1));
+  moving.sort((a, b) => b.velocity - a.velocity || a.horseId.localeCompare(b.horseId));
+  // ⚡ Bolt: Use imperative loops instead of .forEach in hot paths to eliminate intermediate closure allocations
+  for (let i = 0; i < moving.length; i++) {
+    velocityRank.set(moving[i].horseId, i + 1);
+  }
 
   const sortedLive = live.sort((a, b) => a.position - b.position);
   const liveRank = new Map<string, number>();
-  sortedLive.forEach((r, i) => liveRank.set(r.horseId, i));
+  // ⚡ Bolt: Use imperative loops instead of .forEach in hot paths to eliminate intermediate closure allocations
+  for (let i = 0; i < sortedLive.length; i++) {
+    liveRank.set(sortedLive[i].horseId, i);
+  }
 
   return {
     meanVelocity,
