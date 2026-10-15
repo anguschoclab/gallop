@@ -43,7 +43,7 @@ function createHorse(overrides: Partial<Horse> = {}): Horse {
 }
 
 describe("HorseAnalyticsSection — Tipster Insight", () => {
-  it("renders insight when horse has a 3-race win streak", () => {
+  it("renders insight when horse is undefeated", () => {
     const horse = createHorse({
       raceHistory: [
         {
@@ -79,8 +79,8 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
       ],
     });
     renderWithStore(<HorseAnalyticsSection horse={horse} peakingMultiplier={1.0} />);
-    expect(screen.getByText(/Tipster Insight: Red Hot/i)).toBeTruthy();
-    expect(screen.getByText(/3 Race Win Streak/i)).toBeTruthy();
+    expect(screen.getByText(/Tipster Insight: Perfection/i)).toBeTruthy();
+    expect(screen.getByText(/Undefeated/i)).toBeTruthy();
   });
 
   it("does not render insight section when horse has fewer than 3 races", () => {
