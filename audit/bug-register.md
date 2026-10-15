@@ -408,3 +408,35 @@ All sampled hits are `title=` **props on custom components** (KPI cards etc.), n
 | HIGH | 2 FIXED (V4-001 lint, V4-002 data-immutability) |
 | MEDIUM | 1 FIXED (V4-007 award gender) |
 | LOW | 1 FIXED (V4-004 as-never), V4-003 FIXED (naming baseline) |
+
+## V5 entries
+
+### BUG-V5-001: Residual `(state as {rankingsHistory?...})` cast in dailySnapshotPhase — FIXED
+
+- **Severity:** LOW (dead cast; field declared `systemsState.ts:79`)
+- **Found:** V5 subsystem re-read; #521's phase-sweep removed 9 sibling casts but missed this one.
+- **Fix:** cast + unused `RankingsHistory` import removed (`8f772bd0`). dailySnapshotPhase tests 7/7 green; typecheck 0 errors.
+
+### BUG-V5-002: `rankings-history` kebab-case route — DISPROVED as bug
+
+- Naming baseline correctly whitelists kebab routes (15+ instances — the established convention). #545's rename hunk rejected: URL churn + inconsistency with siblings for zero gain. Baseline regen in `59bbfa8c` retains the entry intentionally.
+
+### BUG-V5-003: Duplicate `aria-label` on RaceVisualizer scrubber — FIXED
+
+- #525 added `aria-label="Race scrubber"` to an input already carrying `aria-label="Race timeline scrubber"` on main (branch predated it) → TS17001 post-merge. Kept main's label. Typecheck clean.
+
+### FINDING-V5-001: `canHandle`/`IMPACT_HANDLERS` drift hazard — FIXED
+
+- 8 dict-dispatch handlers maintained duplicated includes-lists; verified zero drift today (all IDENTICAL) but drift-prone. `Object.hasOwn(IMPACT_HANDLERS, type)` landed (`de7652e9`); contract spec `handlerCanHandle.test.ts` pins known-type acceptance, proto-prop rejection, cross-claim exclusion.
+
+### FINDING-V5-002: Bolt keep-and-resort sortedField divergence — CONFIRMED, REJECTED
+
+- #529/#540/#549-style reuse of stale sortedField changes stable-sort tie-break order (prior-tick order vs original runners order). #520's refill approach is semantics-exact and was chosen; divergent hunks explicitly excluded.
+
+### FINDING-V5-003: bruceLowe doc stale — FIXED
+
+- `rollProceduralFamily` doc claimed default `Math.random`; actual default `nondeterministicRng()`. Comment corrected.
+
+### Closed-PR re-audit — see `audit/pr-verdicts-v5-closed.md`
+
+313 closed-unmerged PRs: 193 covered by V3/V4 ledgers (verdicts stand), 120 re-audited → 5 individually verified (#7/#12/#116/#120/#130 all superseded-or-fixed), 115 bulk-adjudicated SUPERSEDED on sampling evidence.

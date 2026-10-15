@@ -55,3 +55,9 @@ Fix: change `distance <= 5000` to `distance > 200` for air, or add explicit hand
 ## PR #386 note
 
 The `expenseTypes.test.ts` file from PR #386 was NOT found in the working tree (on main). It only exists on the PR branch. This is expected — it's a new test file the PR adds.
+
+## V5 delta
+
+- `economyPhase.ts`: #521 removed `(state as {npcAIManager?...})` dead cast — field verified on systemsState.
+- FinanceHandler now dispatches via `Object.hasOwn(IMPACT_HANDLERS)` — no behavior change (lists were identical).
+- LedgerEntry props typing landed (#545): `LedgerEntryProps` exported; SaveTab/LoadTab `React.ComponentType<LedgerEntryProps>` replaces `React.FC<any>`; test mock typed.

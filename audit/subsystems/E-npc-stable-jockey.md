@@ -58,3 +58,9 @@ Inline type annotation bypasses real entry type; `console.warn` in catch.
 ## All other files: KEEP
 
 62 files audited, 9 requiring action, 53 KEEP.
+
+## V5 delta
+
+- `proceduralNaming.test.ts` landed (#514): region pools, fallback, dedup, initial fallback pinned for `generateProceduralJockeyName(region, rng, usedNames?)`.
+- Mason handler dedup covers SyndicationHandler + RacingHandler (jockey impact types) — see B.
+- `getMajorStables` verified: `isMajor` flag is canonical (`eliteStablePool` sets it); closed-PR #7's tier-based alternative correctly disapproved.

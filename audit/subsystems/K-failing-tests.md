@@ -56,3 +56,11 @@ Need to run `bunx vitest run src/tests/services/raceImpactHelpers.test.ts` to ge
 
 `scripts/orphan-audit.ts:246-250` uses brittle regex to extract `SLOT_FOOTPRINTS` keys from raw file text. Test expects `jockey_academy` and `museum` in `outpostFootprints`. Keys exist in `outpostTypes.ts:51-52` but regex misses them (likely due to formatting or `as Record<...>` cast changes).
 **Fix:** Make `scanFacilityTypeParity` import `OUTPOST_CONSTANTS.SLOT_FOOTPRINTS` directly and use `Object.keys()` instead of regex parsing.
+
+## V5 delta — all V4 pending items RESOLVED
+
+- bunfig `[test]` section: **gone** (packageManagerConfig green).
+- HorseHandler injury CTA conditional on `severity === "major" || "career-ending"`: **present** (l.211); HorseHandlerInjury 11/11 green.
+- orphanAudit `SLOT_FOOTPRINTS` extraction: now brace-balanced, not regex — 5/5 green.
+- V5 new-test gate: 6 FAIL-EXPECTED (2 registry + 4 detector specs) all flipped green post-implementation; 0 FAIL-INVALID; 0 residual failures.
+- Full suite intentionally not run this session (user constraint) — targeted suites only.

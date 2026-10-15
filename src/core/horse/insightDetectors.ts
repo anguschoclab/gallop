@@ -15,6 +15,23 @@ import type { HorseInsight } from "./insights";
 
 export type InsightDetector = (horse: Horse) => HorseInsight | null;
 
+// 0. Check for Undefeated (perfect career, minimum 3 starts)
+export const detectUndefeated: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  if (history.length < 3) return null;
+
+  const isUndefeated = history.every((race) => race.position === 1);
+  if (isUndefeated) {
+    return {
+      label: "Perfection",
+      value: "Undefeated",
+      context: `Has won all ${history.length} career starts`,
+      type: "positive",
+    };
+  }
+  return null;
+};
+
 // 1. Check for win streak (Red Hot)
 export const detectWinStreak: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -591,12 +608,53 @@ export const detectGateAffinity: InsightDetector = (horse) => {
   return null;
 };
 
+// Check for Sire Value (Stallion outperforming his fee)
+export const detectSireValue: InsightDetector = (horse) => {
+  if (!horse.stud || !horse.stud.atStud || horse.stud.lifetimeFoals < 15) return null;
+
+  const stakesRate = horse.stud.lifetimeStakesFoals / horse.stud.lifetimeFoals;
+  const fee = horse.stud.standingFee;
+
+  // A sire producing >= 8% stakes winners is excellent. If fee is <= $20k, that's value.
+  if (stakesRate >= 0.08 && fee <= 20000) {
+    return {
+      label: "Value Sire",
+      value: "Elite Production at a Bargain",
+      context: `Producing stakes winners at an ${Math.round(stakesRate * 100)}% clip despite a modest $${(fee / 1000).toFixed(0)}k fee`,
+      type: "positive",
+    };
+  }
+
+  // A sire producing <= 2% stakes winners but charging >= $50k is a trap
+  if (stakesRate <= 0.02 && fee >= 50000 && horse.stud.lifetimeFoals >= 30) {
+    return {
+      label: "Overpriced Sire",
+      value: "Underperforming Fee",
+      context: `Only ${horse.stud.lifetimeStakesFoals} stakes winners from ${horse.stud.lifetimeFoals} foals (${Math.round(stakesRate * 100)}%), hard to justify the $${(fee / 1000).toFixed(0)}k fee`,
+      type: "negative",
+    };
+  }
+
+  // Elite Sire (regardless of fee)
+  if (stakesRate >= 0.12) {
+    return {
+      label: "Elite Sire",
+      value: "Stakes Factory",
+      context: `An incredible ${Math.round(stakesRate * 100)}% of his foals go on to win stakes races`,
+      type: "positive",
+    };
+  }
+
+  return null;
+};
+
 /**
  * Registry of all insight detectors in priority order.
  * The coordinator (getHorseInsight) iterates this array and returns
  * the first non-null result.
  */
 export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
+  detectUndefeated,
   detectWinStreak,
   detectBridesmaid,
   detectJockeyChemistry,
@@ -616,4 +674,5 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceVersatility,
   detectGateAffinity,
   detectEarningsMilestone,
+  detectSireValue,
 ];

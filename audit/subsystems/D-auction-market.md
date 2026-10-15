@@ -70,3 +70,9 @@ Test call sites (most omit `house`):
 ## Files: KEEP
 
 - `auctionRunnerTypes.ts`, `biddingHistory.ts`, `data.ts`, `runner.ts` (with notes), `claiming.ts`, `claimingImpacts.ts`, `exchange.ts`, `houseQuotes.ts`, `priceAlertMessages.ts`, `strategy.ts`, `tradeSeries.ts`, `types.ts`
+
+## V5 delta
+
+- `auctionActions.test.ts` landed (30 specs, #518 canonical over #528's thinner fixtures) — validator coverage for bid/claim/withdrawal actions.
+- No production changes in auction engine this round; V4's `housePrestigeMultiplier` fix (BUG-011) still present.
+- `rankingsHistory.test.ts` prettier-formatted in baseline repair; `rankings-history.tsx` route kept kebab-case (baselined convention).

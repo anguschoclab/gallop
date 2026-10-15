@@ -53,6 +53,12 @@ export function buildSeasonOpener(
     `${stableName} Unveils Their Seasonal Strategy`,
     `A Bold Start: ${stableName} Prepares to Challenge the Elite`,
     `First Look: ${stableName} Enters the Competition`,
+    `The Dawn of ${stableName}`,
+    `${stableName} Makes Their Grand Entrance`,
+    `A Promising Start: ${stableName} Enters the Sport`,
+    `${stableName} Steps Onto the Big Stage`,
+    `The Racing World Awaits ${stableName}`,
+    `New Beginnings: ${stableName} Launches Campaign`,
   ];
 
   const bodies = [
@@ -70,6 +76,12 @@ export function buildSeasonOpener(
     `A new contender emerges as ${stableName} begins their campaign. ${ownerName} has laid the groundwork for what hopes to be a competitive stable.`,
     `The paddock is buzzing with the arrival of ${stableName}. ${ownerName}'s operation is the latest addition to a highly competitive field.`,
     `It's day one for ${stableName}, and ${ownerName} knows the pressure is on. The early races will be a true test of their mettle.`,
+    `The gates are open and ${stableName} is officially off and running. ${ownerName}'s new venture is looking to make an immediate impact on the circuit.`,
+    `Expectations are high as ${stableName} makes their highly anticipated debut today. ${ownerName} has signaled that they are here to challenge the establishment.`,
+    `A fresh face joins the fray as ${stableName} officially commences racing operations. Under the guidance of ${ownerName}, they are a stable to watch.`,
+    `The highly touted ${stableName} is finally ready to hit the track. ${ownerName}'s operation is hoping to turn heads early in the campaign.`,
+    `Today marks the beginning of the ${stableName} era. ${ownerName} is setting the bar high for this new racing stable.`,
+    `${stableName} throws their hat into the ring today. The ${ownerName}-led operation is eager to establish themselves as a force to be reckoned with.`,
   ];
 
   return createNewsItem(
@@ -120,6 +132,12 @@ export function buildRivalIntros(
       `Focus on ${stable.name}`,
       `What to Expect from ${stable.name}`,
       `${stable.name}: The View from the Outside`,
+      `Analyzing the ${stable.name} Operation`,
+      `The Elite from ${country}: ${stable.name}`,
+      `${stable.name} Steps Into the Spotlight`,
+      `What Makes ${stable.name} Tick?`,
+      `Behind the Success of ${stable.name}`,
+      `${stable.name}: A Deep Dive`,
     ];
 
     const bodies = [
@@ -137,6 +155,12 @@ export function buildRivalIntros(
       `Operating with a reputation of ${stable.reputation}, ${stable.name} represents the best of ${country}. ${capitalize(description)} ${stable.owner} will be a tough nut to crack.`,
       `The story of ${stable.name} continues to unfold in ${country}. ${stable.owner}'s impressive ${stable.reputation} reputation precedes them. ${capitalize(description)}`,
       `Rival stable ${stable.name} from ${country} is a proven quantity with a reputation of ${stable.reputation}. ${capitalize(description)} ${stable.owner} expects them to be a constant thorn in the side.`,
+      `The ${country} racing scene is defined by ${stable.name}. With a stellar ${stable.reputation} reputation, ${stable.owner}'s yard is a major player. ${capitalize(description)}`,
+      `If you want to win, you have to go through ${stable.name}. This ${country} based stable, led by ${stable.owner}, boasts a ${stable.reputation} reputation. ${capitalize(description)}`,
+      `${stable.name} is a name synonymous with quality in ${country}. Their ${stable.reputation} reputation is well earned by ${stable.owner}. ${capitalize(description)}`,
+      `A true titan of the sport, ${stable.name} operates out of ${country}. ${stable.owner} has guided them to a ${stable.reputation} reputation. ${capitalize(description)}`,
+      `The ${country} operation of ${stable.name} is a machine. With ${stable.owner} at the helm, their ${stable.reputation} reputation is formidable. ${capitalize(description)}`,
+      `You cannot ignore ${stable.name}. This ${country} elite stable, boasting a ${stable.reputation} reputation under ${stable.owner}, demands respect. ${capitalize(description)}`,
     ];
 
     const news = createNewsItem(
@@ -186,6 +210,12 @@ export function buildPowerRankings(horses: Horse[], day: number, rng: Rng): News
     `Who's Number One? Season Power Rankings Revealed`,
     `Power Rankings: The Early Season Form Guide`,
     `The Track's Finest: Power Rankings`,
+    `The Top 5: Early Season Power Rankings`,
+    `Power Rankings: The Best of the Best`,
+    `Setting the Standard: The Power Rankings`,
+    `Power Rankings: Evaluating the Elite`,
+    `The Pre-Season Power Rankings Are Here`,
+    `Power Rankings: Tracking the Heavy Hitters`,
   ];
 
   const rankingText = top5
@@ -207,6 +237,12 @@ export function buildPowerRankings(horses: Horse[], day: number, rng: Rng): News
     `The racing world is digesting the latest power rankings: ${rankingText}. The competition at the top is hotter than ever.`,
     `The form experts have spoken. The power rankings reveal the true pecking order: ${rankingText}.`,
     `These are the names striking fear into their rivals. The power rankings top five: ${rankingText}.`,
+    `The initial power rankings set the stage for the season. ${rankingText}. These runners are the ones to catch.`,
+    `Our experts have weighed in, and the first power rankings are clear: ${rankingText}. The elite division is incredibly strong this year.`,
+    `Who has the early edge? The power rankings give us a glimpse: ${rankingText}. These horses are primed for a massive campaign.`,
+    `The debate is settled, at least for now. The power rankings highlight the top contenders: ${rankingText}.`,
+    `These five runners stand head and shoulders above the rest in our first power rankings: ${rankingText}. Expect greatness.`,
+    `The season begins with these five leading the way in the power rankings: ${rankingText}. It will take a special horse to unseat them.`,
   ];
 
   return createNewsItem(
@@ -256,6 +292,12 @@ export function buildG1Spotlight(races: Race[], day: number, rng: Rng): NewsItem
     `Stakes Are High for the ${g1Race.name}`,
     `Preparing for Greatness in the ${g1Race.name}`,
     `The First Classic: The ${g1Race.name}`,
+    `G1 Action Returns: The ${g1Race.name}`,
+    `Setting the Stage: The ${g1Race.name}`,
+    `The ${g1Race.name} Kicks Off the G1 Season`,
+    `All Aboard for the ${g1Race.name}`,
+    `G1 Preview: The Prestigious ${g1Race.name}`,
+    `The ${g1Race.name}: The First True Test`,
   ];
 
   const bodies = [
@@ -273,6 +315,12 @@ export function buildG1Spotlight(races: Race[], day: number, rng: Rng): NewsItem
     `Every trainer dreams of winning the ${g1Race.name}. The Grade 1 feature at ${g1Race.graded?.track ?? "the venue"} is the headline event of the early season.`,
     `The countdown is on for the ${g1Race.name}. ${g1Race.graded?.track ?? "The track"} is ready to host a vintage renewal of this historic Grade 1 contest.`,
     `The ${g1Race.name} represents the holy grail of early season racing. The Grade 1 at ${g1Race.graded?.track ?? "the premier venue"} will be a battle of titans.`,
+    `The G1 season kicks off with a bang in the ${g1Race.name}. ${g1Race.graded?.track ?? "The host track"} is the place to be for this spectacular early test.`,
+    `There is a special aura around the ${g1Race.name}. As the first Grade 1 of the year, ${g1Race.graded?.track ?? "the venue"} will see the best of the best clash.`,
+    `The ${g1Race.name} is more than just a race; it's a statement. The G1 feature at ${g1Race.graded?.track ?? "the track"} will define the early season narratives.`,
+    `Anticipation is building for the ${g1Race.name}. This Grade 1 contest at ${g1Race.graded?.track ?? "a premier venue"} is the jewel of the early calendar.`,
+    `The ${g1Race.name} promises elite competition. The G1 showdown at ${g1Race.graded?.track ?? "the host track"} is a must-watch event.`,
+    `The finest equine athletes will gather for the ${g1Race.name}. This G1 at ${g1Race.graded?.track ?? "the track"} is the perfect way to open the major stakes season.`,
   ];
 
   return createNewsItem(
@@ -335,6 +383,12 @@ export function buildGradedPreview(
     `A Closer Look at the ${previewRace.name} (${grade})`,
     `The Road Ahead: The ${previewRace.name}`,
     `Graded Action Continues with the ${previewRace.name}`,
+    `The ${previewRace.name} (${grade}) Takes Center Stage`,
+    `Graded Stakes Spotlight: The ${previewRace.name}`,
+    `The ${previewRace.name}: A ${grade} Showdown`,
+    `Preview: The ${grade} ${previewRace.name}`,
+    `The Next Challenge: The ${previewRace.name}`,
+    `Focus on the ${previewRace.name} (${grade})`,
   ];
 
   const bodies = [
@@ -352,6 +406,12 @@ export function buildGradedPreview(
     `The spotlight shifts to the ${previewRace.name} (${grade}). Connections are finalizing preparations for the clash at ${previewRace.graded?.track ?? "the track"}.`,
     `The ${previewRace.name} (${grade}) is the next significant milestone on the calendar. ${previewRace.graded?.track ?? "A quality venue"} hosts this compelling matchup.`,
     `The graded action continues apace with the ${previewRace.name} (${grade}) at ${previewRace.graded?.track ?? "the host track"}. Expect fireworks.`,
+    `The ${grade} ${previewRace.name} at ${previewRace.graded?.track ?? "the track"} is the next major objective for many promising runners.`,
+    `Expect a tactical battle in the ${previewRace.name} (${grade}). ${previewRace.graded?.track ?? "The host venue"} provides a stern test for the contenders.`,
+    `The ${previewRace.name} (${grade}) represents a massive opportunity. The field assembling at ${previewRace.graded?.track ?? "a top track"} is deep and talented.`,
+    `The graded calendar marches on with the ${previewRace.name} (${grade}). ${previewRace.graded?.track ?? "The venue"} is ready for a thrilling contest.`,
+    `The ${grade} ${previewRace.name} is the highlight of the upcoming fixtures. ${previewRace.graded?.track ?? "The host track"} will see intense competition.`,
+    `Don't take your eyes off the ${previewRace.name} (${grade}). It's a crucial stepping stone at ${previewRace.graded?.track ?? "the track"}.`,
   ];
 
   return createNewsItem(
@@ -408,6 +468,12 @@ export function buildBloodlineInsight(horses: Horse[], day: number, rng: Rng): N
     `Sire Line Spotlight: ${modeBloodline}`,
     `Tracing the Blood: The ${modeBloodline} Lineage`,
     `The Prolific ${modeBloodline} Bloodline`,
+    `The Ubiquity of the ${modeBloodline} Bloodline`,
+    `Bloodline Analysis: ${modeBloodline} Stays on Top`,
+    `The Power of ${modeBloodline} Genetics`,
+    `${modeBloodline}: The Defining Bloodline`,
+    `Pedigree Focus: The Enduring ${modeBloodline} Line`,
+    `The ${modeBloodline} Sire Line Keeps Delivering`,
   ];
 
   const bodies = [
@@ -425,6 +491,12 @@ export function buildBloodlineInsight(horses: Horse[], day: number, rng: Rng): N
     `Breeders continue to flock to the ${modeBloodline} line, and with good reason. There are ${count} horses from this lineage currently making their mark.`,
     `The ${modeBloodline} bloodline remains the gold standard, with ${count} representatives flying the flag. The genetic legacy is secure.`,
     `It's the bloodline that keeps on giving. ${count} horses trace their roots to ${modeBloodline}, cementing its status as the most dominant force in breeding.`,
+    `The ${modeBloodline} bloodline is ubiquitous among the elite. A staggering ${count} horses carry this lineage, proving its immense value to breeders.`,
+    `Our pedigree analysts are marveling at the ${modeBloodline} line. With ${count} representatives, it's the undisputed king of the current crop.`,
+    `The success of the ${modeBloodline} bloodline is staggering. ${count} active horses owe their genetics to this phenomenal sire line.`,
+    `If you want to breed a champion, the ${modeBloodline} line is the obvious choice. ${count} runners currently represent this dominant pedigree.`,
+    `The genetic legacy of ${modeBloodline} is secure. A massive ${count} horses in the current ranks carry this esteemed bloodline.`,
+    `The ${modeBloodline} influence shows no signs of waning. With ${count} horses tracing their lineage back to it, the line is as potent as ever.`,
   ];
 
   return createNewsItem(
@@ -468,6 +540,12 @@ export function buildVeteranChampion(horses: Horse[], day: number, rng: Rng): Ne
     `The Veteran's Class: ${champion.name}`,
     `Still Got It: The Continuing Story of ${champion.name}`,
     `${champion.name} Leads the Veteran Division`,
+    `${champion.name}: The Timeless Wonder`,
+    `The Veteran Class of ${champion.name}`,
+    `Still Dominating: ${champion.age}-Year-Old ${champion.name}`,
+    `The Legend Continues: ${champion.name}`,
+    `${champion.name}: Defying Father Time`,
+    `The Old Guard: ${champion.name} Stands Firm`,
   ];
 
   const bodies = [
@@ -485,6 +563,12 @@ export function buildVeteranChampion(horses: Horse[], day: number, rng: Rng): Ne
     `Age has not withered the appeal of ${champion.name}. The ${champion.age}-year-old veteran boasts a fame of ${champion.fame} and remains a serious contender.`,
     `The continuing story of ${champion.name} is one of racing's great narratives. At ${champion.age} years of age and a fame rating of ${champion.fame}, they are simply iconic.`,
     `${champion.name} shows no signs of relinquishing their status as top veteran. The ${champion.age}-year-old, with a fame of ${champion.fame}, remains a benchmark for excellence.`,
+    `The ${champion.age}-year-old ${champion.name} is a marvel. With a fame of ${champion.fame}, they continue to compete at a level that belies their advanced age.`,
+    `Few horses achieve the legendary status of ${champion.name}. Still racing at ${champion.age} with a fame of ${champion.fame}, they are a true icon of the turf.`,
+    `The racing public adores ${champion.name}. The ${champion.age}-year-old veteran, boasting a fame of ${champion.fame}, is a testament to the enduring spirit of the racehorse.`,
+    `${champion.name} is the standard bearer for the veteran division. At ${champion.age} years of age and a fame of ${champion.fame}, their legacy is etched in stone.`,
+    `The old warrior ${champion.name} is still a force to be reckoned with. The ${champion.age}-year-old's fame of ${champion.fame} reflects a lifetime of achievement.`,
+    `They don't make them like ${champion.name} anymore. At ${champion.age} years old and with a fame of ${champion.fame}, they are the undisputed king of the veterans.`,
   ];
 
   return createNewsItem(

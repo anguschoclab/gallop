@@ -65,3 +65,11 @@ Component is sound. 3 test failures are brittle tests:
 - Incomplete Race mocks held together with `as Race`
 - No cleanup between renders
   **Fix:** Mock the benchmark dataset, add cleanup, loosen assertions.
+
+## V5 delta
+
+- Tooltips: `TOOLTIP_DELAY_MS` now applied in NewGameWizard (#519) and LedgerEntry (#533); #512 added provider wraps in StepIdentity + NpcCareerTrackerPanel.
+- a11y: #525 aria-labels on PlanSummaryBar input (RaceVisualizer scrubber label dedup'd — main already had one; duplicate removed post-merge). #534 EligibleHorseRow Hint migration + DisabledTooltipWrapper guard.
+- SaveTab/LoadTab/LedgerEntry typed via exported `LedgerEntryProps` (#545) — `as any` mock removed in test.
+- NotificationSettingsCard imports settings types via `settingsFacade` (baseline repair — layering rule held).
+- `title=`/`alert(`/`confirm(`/production `as any`: zero true positives — V3/V4 sweeps hold.

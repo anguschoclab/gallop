@@ -51,3 +51,10 @@ All 55 phases are registered in `index.ts:72-150` with matching `PHASE_ORDER_*` 
 ## Files: KEEP
 
 105 files audited, 6 requiring action, 99 KEEP.
+
+## V5 delta
+
+- Resolver: `Object.hasOwn(IMPACT_HANDLERS, type)` landed in all 8 dict-dispatch handlers — canHandle/handle share one source of truth; drift hazard eliminated. Diplomacy/Inbox keep `type ===` (no dict, verified correct exclusion). New contract spec `handlerCanHandle.test.ts` (known-type acceptance + proto-prop rejection + no cross-claim).
+- Phases: #521's dead-cast removal merged (8 files). BUG-V5-001: residual `(state as {rankingsHistory?...})` in `dailySnapshotPhase.ts:42` missed by the sweep — removed; field declared `systemsState.ts:79`.
+- BUG-V5-002 disproved: `rankings-history` kebab route is NOT a violation to fix — kebab-case routes are the baselined convention (15+ instances); #545's rename would change the URL and create inconsistency. Baseline entry retained.
+- K-audit check: pipeline phase count unchanged; no phase additions this round.

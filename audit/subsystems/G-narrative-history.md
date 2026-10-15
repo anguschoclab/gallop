@@ -45,3 +45,12 @@ Re-declares `REGION_DISPLAY_NAMES` (already in `types.ts`); the two maps are inc
 ## Files: KEEP
 
 All other files in scope are clean. 38 files audited, 5 requiring action, 33 KEEP.
+
+## V5 delta
+
+- `flavorStories.ts` +40 lines (#515: community×4, industry×4 templates) — merged.
+- `seedNewsSlots.ts` +94 (#527 season-opener/preview slots) — merged; file verified real module (not a facade).
+- `rivalryNewsGenerator.ts`: #530 region-lost templates + #541/#546 union (3 pools); variety-test bound 24→30.
+- `rivalryGrudgeMatch.ts`: deduplicated union of #541+#546 (6 pools, championship/escalation arcStage templates).
+- `services/narrative/` confirmed mixed dir — facades re-export core, but `seedNewsSlots.ts`/`seedNewsGenerator.ts` are real modules; PRs authored against either path land correctly.
+- orphanScan + all narrative tests green post-union.

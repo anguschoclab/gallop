@@ -109,8 +109,7 @@ export function hasActiveRivalCareerFilters(filters: RivalCareerFilterState): bo
 export function useRivalCareerFilters(candidates: RivalCareerCandidate[]) {
   const [filters, setFilters] = useState<RivalCareerFilterState>(DEFAULT_RIVAL_CAREER_FILTERS);
 
-  const patch = (p: Partial<RivalCareerFilterState>) =>
-    setFilters((prev) => ({ ...prev, ...p }));
+  const patch = (p: Partial<RivalCareerFilterState>) => setFilters((prev) => ({ ...prev, ...p }));
 
   const filtered = useMemo(
     () => filterAndSortRivalCandidates(candidates, filters),

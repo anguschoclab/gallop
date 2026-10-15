@@ -3,7 +3,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Bell } from "lucide-react";
-import type { RivalMilestoneAlertSettings } from "@/core/settings/settingsTypes";
+import type { RivalMilestoneAlertSettings } from "@/services/settings/settingsFacade";
 
 interface NotificationSettings {
   raceResults?: boolean;

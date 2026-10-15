@@ -107,7 +107,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
 export class InfrastructureHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return ["facility_upgrade", "staff", "transport_horse", "outpost_action"].includes(type);
+    return Object.hasOwn(IMPACT_HANDLERS, type);
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
