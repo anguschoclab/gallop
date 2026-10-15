@@ -28,7 +28,7 @@ export const diplomacyPhase = {
       return context;
     }
 
-    let aiManager: NpcAIManager = (state as { npcAIManager?: NpcAIManager }).npcAIManager || {
+    let aiManager: NpcAIManager = state.npcAIManager || {
       stableStates: {},
       globalDay: newDay,
       regionalKings: {},
