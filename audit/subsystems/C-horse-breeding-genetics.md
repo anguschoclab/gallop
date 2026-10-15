@@ -36,3 +36,9 @@
 ## Files: KEEP
 
 83 files audited, 3 requiring action, 80 KEEP.
+
+## V5 delta
+
+- `insightDetectors.ts`: union of #524 (`detectUndefeated` @ registry head — Perfection > Red Hot for all-wins careers) + #513 (`detectSireValue` 3-tier: Value/Overpriced/Elite) → 21 detectors; registry-order spec updated. 63 insight tests green.
+- `dailyProgress.test.ts`: union landed (#531 base + #547 deceased-with-history case) — snapshot rounding, player/NPC filtering, dropped-history, idempotency semantics all pinned.
+- `bruceLowe.ts` doc fixed: `rollProceduralFamily` defaults to `nondeterministicRng()`, not Math.random (stale comment; Sentinel #116 finding already resolved).

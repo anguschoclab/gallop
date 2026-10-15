@@ -63,3 +63,8 @@ Year-boundary `winAndYouInQualified` cleanup duplicated in `advanceDayActions.ts
 ## Files: KEEP
 
 198 files audited, 10 requiring action, 188 KEEP.
+
+## V5 delta
+
+- No route additions/removals this round (74 route files). `rankings-history.tsx` stays kebab-case — matches 15+ sibling convention; naming baseline entry is correct-as-baselined, not a violation to fix. #545's rename hunk rejected.
+- `advanceDayActions.ts:144-147` map resync verified for closed-PR #130 re-audit — raceMap/horseMap/stableMap/jockeyMap all rebuilt on day advance.

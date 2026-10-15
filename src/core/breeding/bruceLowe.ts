@@ -143,7 +143,7 @@ const PROCEDURAL_FAMILIES = [
  * frequencies (families 1-5 are most common). Used for NPC and market horses
  * that don't have full pedigrees.
  *
- * @param rng - Random number generator (optional, defaults to Math.random)
+ * @param rng - Random number generator (optional, defaults to nondeterministicRng)
  * @returns Bruce Lowe family number
  *
  * @example

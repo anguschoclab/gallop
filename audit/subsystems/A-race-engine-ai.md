@@ -52,3 +52,10 @@ Heavy JSON `as unknown as` casting for tuning config.
 ## All other files: KEEP
 
 137 files audited, 7 requiring action, 130 KEEP.
+
+## V5 delta
+
+- `simulation.ts` runRaceToCompletion: merged #520 (refill sortedField + idToIndex Map + Int32Array ranks) — semantics-exact union; #540's `leadGroupVelocitiesBuffer` param hoisted into `computePaceContext`; #540's rankMap hunk dropped (superseded by ranks array). Keep-and-resort family (#529/#549 hunks) rejected — tie-order divergence confirmed (Array.sort stability changes tie-break to prior-tick order). 700 race tests + perfShape green.
+- `runnerConditionDerivation.ts`: #510 forEach→for loops — closure allocs removed, post-sort order identical.
+- FINDING-V5: residual `as {` casts in `phases/market.ts:142,144` are `imp` union narrowing (acceptable pattern) not GameState asserts — KEEP.
+- `tacticalAI.ts:38` progress>1 flag stands from V4 — unchanged.

@@ -42,3 +42,9 @@
 ## Files: KEEP
 
 62 files audited, 2 requiring action (dead imports + stale JSDoc), 60 KEEP.
+
+## V5 delta
+
+- `TOOLTIP_DELAY_MS` (=300, uiConstants) now consumed by NewGameWizard + LedgerEntry; remaining bare TooltipProviders audited via #512/#533 merges.
+- `RankingsHistory` type import removed from dailySnapshotPhase after dead-cast removal (BUG-V5-001).
+- No constant additions; pipeline constants untouched (no phase changes this round).
