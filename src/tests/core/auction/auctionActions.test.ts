@@ -5,7 +5,7 @@ import {
   validateBookBid,
   validateBuyNow,
   buildBookBidLogText,
-  buildAuctionResolutionLogText
+  buildAuctionResolutionLogText,
 } from "@/core/auction/auctionActions";
 import type { Horse, AuctionSale, AuctionLot } from "@/game/types";
 import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
@@ -19,12 +19,39 @@ vi.mock("@/core/horse/pricing", () => ({
 const mockHorse = { id: "h1", consignedSaleId: null } as unknown as Horse;
 const mockConsignedHorse = { id: "h2", consignedSaleId: "s1" } as unknown as Horse;
 const mockSale = { id: "s1", resolved: false, kind: "yearling" } as unknown as AuctionSale;
-const mockBroodmareSale = { id: "s2", resolved: false, kind: "broodmare" } as unknown as AuctionSale;
+const mockBroodmareSale = {
+  id: "s2",
+  resolved: false,
+  kind: "broodmare",
+} as unknown as AuctionSale;
 const mockResolvedSale = { id: "s3", resolved: true } as unknown as AuctionSale;
-const mockLot = { id: "lot1", withdrawn: false, passed: false, buyNowPrice: 1000, hammerPrice: undefined } as unknown as AuctionLot;
-const mockWithdrawnLot = { id: "lot2", withdrawn: true, passed: false, buyNowPrice: 1000 } as unknown as AuctionLot;
-const mockPassedLot = { id: "lot3", withdrawn: false, passed: true, buyNowPrice: 1000, hammerPrice: undefined } as unknown as AuctionLot;
-const mockSoldLot = { id: "lot4", withdrawn: false, passed: false, buyNowPrice: 1000, hammerPrice: 800 } as unknown as AuctionLot;
+const mockLot = {
+  id: "lot1",
+  withdrawn: false,
+  passed: false,
+  buyNowPrice: 1000,
+  hammerPrice: undefined,
+} as unknown as AuctionLot;
+const mockWithdrawnLot = {
+  id: "lot2",
+  withdrawn: true,
+  passed: false,
+  buyNowPrice: 1000,
+} as unknown as AuctionLot;
+const mockPassedLot = {
+  id: "lot3",
+  withdrawn: false,
+  passed: true,
+  buyNowPrice: 1000,
+  hammerPrice: undefined,
+} as unknown as AuctionLot;
+const mockSoldLot = {
+  id: "lot4",
+  withdrawn: false,
+  passed: false,
+  buyNowPrice: 1000,
+  hammerPrice: 800,
+} as unknown as AuctionLot;
 
 describe("auctionActions", () => {
   describe("validateConsignment", () => {
@@ -134,13 +161,23 @@ describe("auctionActions", () => {
     });
 
     it("fails if lot is withdrawn", () => {
-      const result = validateBookBid({ sale: mockSale, lot: mockWithdrawnLot, cash: 5000, amount: 2000 });
+      const result = validateBookBid({
+        sale: mockSale,
+        lot: mockWithdrawnLot,
+        cash: 5000,
+        amount: 2000,
+      });
       expect(result.ok).toBe(false);
       expect(result.reason).toBe("Lot not available.");
     });
 
     it("fails if lot is passed", () => {
-      const result = validateBookBid({ sale: mockSale, lot: mockPassedLot, cash: 5000, amount: 2000 });
+      const result = validateBookBid({
+        sale: mockSale,
+        lot: mockPassedLot,
+        cash: 5000,
+        amount: 2000,
+      });
       expect(result.ok).toBe(false);
       expect(result.reason).toBe("Lot not available.");
     });
@@ -152,7 +189,12 @@ describe("auctionActions", () => {
     });
 
     it("fails if sale is resolved", () => {
-      const result = validateBookBid({ sale: mockResolvedSale, lot: mockLot, cash: 5000, amount: 2000 });
+      const result = validateBookBid({
+        sale: mockResolvedSale,
+        lot: mockLot,
+        cash: 5000,
+        amount: 2000,
+      });
       expect(result.ok).toBe(false);
       expect(result.reason).toBe("Sale already resolved.");
     });
@@ -196,7 +238,12 @@ describe("auctionActions", () => {
     });
 
     it("fails if lot has no buyNowPrice", () => {
-      const noBuyNowLot = { id: "lot1", withdrawn: false, passed: false, hammerPrice: undefined } as unknown as AuctionLot;
+      const noBuyNowLot = {
+        id: "lot1",
+        withdrawn: false,
+        passed: false,
+        hammerPrice: undefined,
+      } as unknown as AuctionLot;
       const result = validateBuyNow({ sale: mockSale, lot: noBuyNowLot, cash: 5000 });
       expect(result.ok).toBe(false);
       expect(result.reason).toBe("buy_now_unavailable");
@@ -230,7 +277,7 @@ describe("auctionActions", () => {
   describe("buildBookBidLogText", () => {
     it("builds the correct log text", () => {
       expect(buildBookBidLogText(5000, "lot-123", "Spring Yearling Sale")).toBe(
-        "Book bid of $5,000 placed on lot lot-123 in Spring Yearling Sale."
+        "Book bid of $5,000 placed on lot lot-123 in Spring Yearling Sale.",
       );
     });
   });
@@ -238,7 +285,7 @@ describe("auctionActions", () => {
   describe("buildAuctionResolutionLogText", () => {
     it("builds the correct log text", () => {
       expect(buildAuctionResolutionLogText("Spring Yearling Sale")).toBe(
-        "Auction Spring Yearling Sale resolved."
+        "Auction Spring Yearling Sale resolved.",
       );
     });
   });

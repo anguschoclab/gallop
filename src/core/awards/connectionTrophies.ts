@@ -28,7 +28,7 @@ export interface G1WinEntry {
 }
 
 const isWinningG1 = (
-  r: Horse["raceHistory"][number]
+  r: Horse["raceHistory"][number],
 ): r is Horse["raceHistory"][number] & { grade: "G1" | "G2" | "G3" } =>
   !!r && r.position === 1 && (r.grade === "G1" || r.grade === "G2" || r.grade === "G3");
 

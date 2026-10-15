@@ -801,7 +801,11 @@ describe("Tipster: Gate Affinity insights", () => {
 describe("Tipster: Sire Value insight", () => {
   it("detects Value Sire when stakes rate >= 8% and fee <= 20k", () => {
     const horse = {
-      raceHistory: [{ position: 5, day: 1 }, { position: 5, day: 2 }, { position: 5, day: 3 }],
+      raceHistory: [
+        { position: 5, day: 1 },
+        { position: 5, day: 2 },
+        { position: 5, day: 3 },
+      ],
       stud: {
         atStud: true,
         lifetimeFoals: 20,
@@ -817,7 +821,11 @@ describe("Tipster: Sire Value insight", () => {
 
   it("detects Overpriced Sire when stakes rate <= 2% and fee >= 50k and foals >= 30", () => {
     const horse = {
-      raceHistory: [{ position: 5, day: 1 }, { position: 5, day: 2 }, { position: 5, day: 3 }],
+      raceHistory: [
+        { position: 5, day: 1 },
+        { position: 5, day: 2 },
+        { position: 5, day: 3 },
+      ],
       stud: {
         atStud: true,
         lifetimeFoals: 40,
@@ -832,7 +840,11 @@ describe("Tipster: Sire Value insight", () => {
 
   it("detects Elite Sire when stakes rate >= 12% regardless of fee", () => {
     const horse = {
-      raceHistory: [{ position: 5, day: 1 }, { position: 5, day: 2 }, { position: 5, day: 3 }],
+      raceHistory: [
+        { position: 5, day: 1 },
+        { position: 5, day: 2 },
+        { position: 5, day: 3 },
+      ],
       stud: {
         atStud: true,
         lifetimeFoals: 20,
@@ -847,7 +859,11 @@ describe("Tipster: Sire Value insight", () => {
 
   it("does not detect Sire Value when fewer than 15 foals", () => {
     const horse = {
-      raceHistory: [{ position: 5, day: 1 }, { position: 5, day: 2 }, { position: 5, day: 3 }],
+      raceHistory: [
+        { position: 5, day: 1 },
+        { position: 5, day: 2 },
+        { position: 5, day: 3 },
+      ],
       stud: {
         atStud: true,
         lifetimeFoals: 10,
@@ -862,7 +878,11 @@ describe("Tipster: Sire Value insight", () => {
 
   it("does not detect Sire Value when not at stud", () => {
     const horse = {
-      raceHistory: [{ position: 5, day: 1 }, { position: 5, day: 2 }, { position: 5, day: 3 }],
+      raceHistory: [
+        { position: 5, day: 1 },
+        { position: 5, day: 2 },
+        { position: 5, day: 3 },
+      ],
       stud: {
         atStud: false,
         lifetimeFoals: 20,

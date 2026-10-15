@@ -608,12 +608,7 @@ export const detectGateAffinity: InsightDetector = (horse) => {
   return null;
 };
 
-/**
- * Registry of all insight detectors in priority order.
- * The coordinator (getHorseInsight) iterates this array and returns
- * the first non-null result.
- */
-// 3.97 Check for Sire Value (Stallion outperforming his fee)
+// Check for Sire Value (Stallion outperforming his fee)
 export const detectSireValue: InsightDetector = (horse) => {
   if (!horse.stud || !horse.stud.atStud || horse.stud.lifetimeFoals < 15) return null;
 
@@ -653,6 +648,11 @@ export const detectSireValue: InsightDetector = (horse) => {
   return null;
 };
 
+/**
+ * Registry of all insight detectors in priority order.
+ * The coordinator (getHorseInsight) iterates this array and returns
+ * the first non-null result.
+ */
 export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectUndefeated,
   detectWinStreak,

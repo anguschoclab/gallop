@@ -4,7 +4,11 @@ import {
   recordDailyProgress,
   DAILY_PROGRESS_MAX_ENTRIES,
 } from "@/core/horse/dailyProgress";
-import { createTestHorse, createTestNpcHorse, createTestColt } from "@/tests/helpers/createTestHorse";
+import {
+  createTestHorse,
+  createTestNpcHorse,
+  createTestColt,
+} from "@/tests/helpers/createTestHorse";
 import * as pricing from "@/core/horse/pricing";
 
 vi.mock("@/core/horse/pricing", () => ({
@@ -70,8 +74,32 @@ describe("dailyProgress", () => {
 
     it("drops horses that were in history but are no longer owned by player", () => {
       const history = {
-        "sold-horse": [{ day: 1, speed: 50, stamina: 50, acceleration: 50, consistency: 50, ovr: 50, form: 50, energy: 100, price: 1000 }],
-        "kept-horse": [{ day: 1, speed: 50, stamina: 50, acceleration: 50, consistency: 50, ovr: 50, form: 50, energy: 100, price: 1000 }],
+        "sold-horse": [
+          {
+            day: 1,
+            speed: 50,
+            stamina: 50,
+            acceleration: 50,
+            consistency: 50,
+            ovr: 50,
+            form: 50,
+            energy: 100,
+            price: 1000,
+          },
+        ],
+        "kept-horse": [
+          {
+            day: 1,
+            speed: 50,
+            stamina: 50,
+            acceleration: 50,
+            consistency: 50,
+            ovr: 50,
+            form: 50,
+            energy: 100,
+            price: 1000,
+          },
+        ],
       };
 
       const keptHorse = createTestHorse({ id: "kept-horse" });
@@ -88,8 +116,28 @@ describe("dailyProgress", () => {
       const horse = createTestHorse({ id: "horse-1" });
       const history = {
         "horse-1": [
-          { day: 4, speed: 50, stamina: 50, acceleration: 50, consistency: 50, ovr: 50, form: 50, energy: 100, price: 1000 },
-          { day: 5, speed: 40, stamina: 40, acceleration: 40, consistency: 40, ovr: 40, form: 40, energy: 80, price: 800 }, // old snapshot
+          {
+            day: 4,
+            speed: 50,
+            stamina: 50,
+            acceleration: 50,
+            consistency: 50,
+            ovr: 50,
+            form: 50,
+            energy: 100,
+            price: 1000,
+          },
+          {
+            day: 5,
+            speed: 40,
+            stamina: 40,
+            acceleration: 40,
+            consistency: 40,
+            ovr: 40,
+            form: 40,
+            energy: 80,
+            price: 800,
+          }, // old snapshot
         ],
       };
 
@@ -104,7 +152,17 @@ describe("dailyProgress", () => {
       const deadHorse = createTestHorse({ id: "dead-1", lifecycleStatus: "deceased" });
       const history = {
         "dead-1": [
-          { day: 0, speed: 50, stamina: 50, acceleration: 50, consistency: 50, ovr: 50, form: 100, energy: 100, price: 10000 },
+          {
+            day: 0,
+            speed: 50,
+            stamina: 50,
+            acceleration: 50,
+            consistency: 50,
+            ovr: 50,
+            form: 100,
+            energy: 100,
+            price: 10000,
+          },
         ],
       };
 
@@ -117,8 +175,16 @@ describe("dailyProgress", () => {
       const horse = createTestHorse({ id: "horse-1" });
       const history = {
         "horse-1": Array.from({ length: DAILY_PROGRESS_MAX_ENTRIES }, (_, i) => ({
-          day: i, speed: 50, stamina: 50, acceleration: 50, consistency: 50, ovr: 50, form: 50, energy: 100, price: 1000
-        }))
+          day: i,
+          speed: 50,
+          stamina: 50,
+          acceleration: 50,
+          consistency: 50,
+          ovr: 50,
+          form: 50,
+          energy: 100,
+          price: 1000,
+        })),
       };
 
       const next = recordDailyProgress(history, [horse], DAILY_PROGRESS_MAX_ENTRIES);
