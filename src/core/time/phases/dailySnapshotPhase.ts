@@ -15,7 +15,7 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { recordDailyProgress, type HorseDailyProgress } from "@/core/horse/dailyProgress";
 import type { Horse } from "@/core/horse/types";
 import { fillJournalOutcomes } from "@/core/tactics/strategyJournal";
-import { recordRankingsHistory, type RankingsHistory } from "@/core/market/rankingsHistory";
+import { recordRankingsHistory } from "@/core/market/rankingsHistory";
 import { PHASE_ORDER_DAILY_SNAPSHOT } from "@/constants";
 
 /**
@@ -39,7 +39,7 @@ export const dailySnapshotPhase: PipelinePhase = {
       newDay,
     );
     const rankingsHistory = recordRankingsHistory(
-      (state as { rankingsHistory?: RankingsHistory }).rankingsHistory,
+      state.rankingsHistory,
       Object.values(state.horses ?? {}) as Horse[],
       newDay,
     );

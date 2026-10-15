@@ -356,7 +356,6 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         <input
           ref={scrubberRef}
           type="range"
-          aria-label="Race scrubber"
           min={0}
           max={duration}
           step={0.01}
