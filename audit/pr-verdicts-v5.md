@@ -1,4 +1,4 @@
-# Per-PR Verdicts V5 — 40 Open PRs (#510–#549)
+# Per-PR Verdicts V5 — 41 Open PRs (#510–#550)
 
 **Date:** 2026-10-15 · **Auditor:** Devin · **Base:** `main` @ `438fc7a9` (+ baseline repair `59bbfa8c`)
 **Branch:** `consolidation/integration-v5`
@@ -46,6 +46,7 @@ Target: 8 dict-based handlers (`IMPACT_HANDLERS` `Record<string, ImpactHandlerFu
 | #538 | **APPROVE-EXTRACT** — canonical semantics; strip stray trio |
 | #516, #522, #532, #539 | DISAPPROVE — identical `in`-operator duplicates (prototype hazard) |
 | #526, #543 | DISAPPROVE — same `in` payload + `.jules/mason.md` stray |
+| #550 | DISAPPROVE — `in`-operator variant identical to #516/#522 family (prototype hazard); superseded — `Object.hasOwn` landed in `de7652e9` (PR appeared mid-run, 41st open PR) |
 
 ### Herald — narrative content (5 PRs)
 
@@ -99,7 +100,7 @@ Target: 8 dict-based handlers (`IMPACT_HANDLERS` `Record<string, ImpactHandlerFu
 | #528 | `auctionActions.test.ts` (new, 25 cases, thinner `{} as X` fixtures) | DISAPPROVE — equivalent duplicate, thinner fixtures |
 | #536 | `resolution.test.ts` (new, `computePayoutSplits`/`sanitizeAndRankResults`/`detectPhotoFinish`) | **APPROVE-EXTRACT** — strip stray trio |
 | #511 | `trackGeometryModifiers.test.ts` (new, ~17 cases) | **APPROVE-EXTRACT** — 22 stray files (audit docs, prettier sweep); land test only |
-| #542 | `trackGeometryModifiers.test.ts` (new, 3 cases) + strays | **APPROVE-EXTRACT** — union any unique cases into #511's file |
+| #542 | `trackGeometryModifiers.test.ts` (new, 3 cases) + strays | **APPROVE-EXTRACT** — union any unique cases into #511's file. RESOLVED: all 3 cases semantically subsumed by #511's superset (uphill gradient + hill_specialist + turn modifiers); nothing unique to port |
 
 ## Summary
 
@@ -108,6 +109,6 @@ Target: 8 dict-based handlers (`IMPACT_HANDLERS` `Record<string, ImpactHandlerFu
 | APPROVE (canonical/clean) | 16 | #510, #512, #513, #514, #515, #518, #519, #520, #521, #523, #524, #525, #527, #530, #533, #534 |
 | APPROVE-UNION / UNION-EXTRACT | 10 | #511, #531, #536, #538, #540, #541, #542, #545, #546, #547 |
 | DISAPPROVE — equivalent duplicate | 9 | #516, #517, #522, #526, #528, #532, #535, #539, #543 |
-| DISAPPROVE — semantic divergence / contaminated / inferior | 5 | #529, #537, #544, #548, #549 |
+| DISAPPROVE — semantic divergence / contaminated / inferior | 6 | #529, #537, #544, #548, #549, #550 |
 
-Full tally: 40/40 adjudicated (16 approve + 10 union/extract + 14 disapprove).
+Full tally: 41/41 adjudicated (16 approve + 10 union/extract + 15 disapprove).
