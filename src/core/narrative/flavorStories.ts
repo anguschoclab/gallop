@@ -830,6 +830,26 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
   ],
   community: [
     {
+      headline: "Local Artist Unveils Backstretch Mural",
+      body: "A stunning new mural depicting a morning workout was unveiled on the side of the main receiving barn, drawing praise from horsemen and fans alike.",
+      category: "flavor",
+    },
+    {
+      headline: "Track Superintendent Leads Soil Seminar",
+      body: "The track superintendent hosted a community seminar explaining the intricate science behind track maintenance and soil composition to fascinated local bettors.",
+      category: "flavor",
+    },
+    {
+      headline: "Retired Jockey Opens Tack Shop",
+      body: "A fan-favorite journeyman jockey who recently hung up his boots has opened a new tack shop near the stables, and it's already becoming a popular hangout spot.",
+      category: "flavor",
+    },
+    {
+      headline: "Annual Backstretch Barbecue a Success",
+      body: "The annual community barbecue for stable staff was a massive hit this year, featuring live music and a rare moment of relaxation for the hardworking grooms and hotwalkers.",
+      category: "flavor",
+    },
+    {
       headline: "Local Bakery Honors Track Mascot",
       body: "A popular bakery in town has debuted a line of cookies shaped like the beloved track pony, with proceeds going to equine charity.",
       category: "flavor",
@@ -1026,6 +1046,26 @@ export const FLAVOR_STORIES: Record<FlavorStoryTheme, FlavorStory[]> = {
     },
   ],
   industry: [
+    {
+      headline: "Proposed Medication Rules Face Pushback",
+      body: "A newly proposed set of medication regulations is facing stiff opposition from prominent trainers, sparking heated debate across the industry.",
+      category: "flavor",
+    },
+    {
+      headline: "New Tech Startup Aims at Pedigree Analysis",
+      body: "A tech startup has entered the racing space, promising to revolutionize breeding decisions with an advanced data analytics platform.",
+      category: "flavor",
+    },
+    {
+      headline: "Major Farm Announces Stallion Fee Reductions",
+      body: "In a surprise move, a leading breeding operation announced across-the-board reductions in stallion fees for the upcoming season, citing market corrections.",
+      category: "flavor",
+    },
+    {
+      headline: "Broadcaster Signs Landmark TV Deal",
+      body: "The sport received a massive boost today as a major sports network signed a multi-year deal to broadcast weekend feature races nationwide.",
+      category: "flavor",
+    },
     {
       headline: "New Ownership Syndicate Demographics Shifting",
       body: "A recent industry report highlighted a massive surge in younger fans joining micro-share syndicates, pointing to a potential demographic shift for the sport.",
