@@ -14,6 +14,7 @@ export function computePaceContext(
   runners: Runner[],
   distance: number,
   laneDensityBuffer?: number[],
+  leadGroupVelocitiesBuffer?: number[],
 ): PaceContext {
   let leaderPos = 0;
   let leaderVelocity = 0;
@@ -33,7 +34,10 @@ export function computePaceContext(
 
   let leadGroupCount = 0;
   let frontRunnersInLeadGroup = 0;
-  const leadGroupVelocities: number[] = [];
+  const leadGroupVelocities = leadGroupVelocitiesBuffer ?? [];
+  if (leadGroupVelocitiesBuffer) {
+    leadGroupVelocities.length = 0;
+  }
 
   for (const r of runners) {
     if (r.finishTime === null) {

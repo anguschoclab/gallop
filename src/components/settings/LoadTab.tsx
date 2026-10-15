@@ -1,12 +1,13 @@
 import { Archive } from "lucide-react";
 import type { SaveSlotMetadata } from "@/services/storage/saveManager";
+import type { LedgerEntryProps } from "./LedgerEntry";
 
 interface LoadTabProps {
   saves: SaveSlotMetadata[];
   onLoad: (id: string) => void;
   onDelete: (id: string, e: React.MouseEvent) => void;
   isLoading: boolean;
-  LedgerEntryComponent: React.FC<any>;
+  LedgerEntryComponent: React.ComponentType<LedgerEntryProps>;
 }
 
 export function LoadTab({

@@ -299,6 +299,7 @@ export function runRaceToCompletion(
   }
 
   const laneDensity = new Array(12).fill(0);
+  const leadGroupVelocitiesBuffer: number[] = [];
 
   // Pre-allocate arrays and maps outside the high-frequency loop to prevent excessive garbage collection
   const sortedField = [...runners];
@@ -309,7 +310,7 @@ export function runRaceToCompletion(
   const ranks = new Int32Array(numRunners);
 
   while (finishedCount < numRunners && t < maxTime) {
-    const pace = computePaceContext(runners, distance, laneDensity);
+    const pace = computePaceContext(runners, distance, laneDensity, leadGroupVelocitiesBuffer);
 
     // Capture pace snapshot at 25/50/75% progress milestones
     if (
