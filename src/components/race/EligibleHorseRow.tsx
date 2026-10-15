@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { Hint } from "@/components/ui/Hint";
+import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import { Badge } from "@/components/ui/badge";
 import { HorsePortraitBadge } from "@/components/horse/HorsePortrait";
 import { Check } from "lucide-react";
@@ -122,27 +124,25 @@ function TrackVisitsBadge({ horse, race }: { horse: Horse; race: Race }) {
   const visits = horse.courseVisits?.[trackId] ?? 0;
   if (visits === 0) {
     return (
-      <Badge className="bg-slate-500 text-white text-[10px]" title="First time at this track">
-        Debut at {trackName}
-      </Badge>
+      <Hint content="First time at this track">
+        <Badge className="bg-slate-500 text-white text-[10px]">Debut at {trackName}</Badge>
+      </Hint>
     );
   } else if (visits < 5) {
     return (
-      <Badge
-        className="bg-yellow-600 text-white text-[10px]"
-        title={`${visits} previous run(s) here`}
-      >
-        {trackName}: {visits} run{visits === 1 ? "" : "s"}
-      </Badge>
+      <Hint content={`${visits} previous run(s) here`}>
+        <Badge className="bg-yellow-600 text-white text-[10px]">
+          {trackName}: {visits} run{visits === 1 ? "" : "s"}
+        </Badge>
+      </Hint>
     );
   } else {
     return (
-      <Badge
-        className="bg-emerald-600 text-white text-[10px]"
-        title={`${visits} previous runs here`}
-      >
-        {trackName}: {visits} runs ★
-      </Badge>
+      <Hint content={`${visits} previous runs here`}>
+        <Badge className="bg-emerald-600 text-white text-[10px]">
+          {trackName}: {visits} runs ★
+        </Badge>
+      </Hint>
     );
   }
 }
@@ -162,22 +162,23 @@ function ClaimingWithdrawButton({
 }) {
   const canWithdraw = day < race.day - 1;
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      className="text-[10px] uppercase font-black tracking-wider"
-      disabled={!canWithdraw}
-      title={canWithdraw ? undefined : "Withdrawal closed"}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (canWithdraw) {
-          onWithdraw(race.id, horse.id);
-          toast.success(`${horse.name} withdrawn from ${race.name}.`);
-          onClose();
-        }
-      }}
-    >
-      {canWithdraw ? "Withdraw" : "Withdrawal closed"}
-    </Button>
+    <DisabledTooltipWrapper reason={!canWithdraw ? "Withdrawal closed" : false}>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="text-[10px] uppercase font-black tracking-wider"
+        disabled={!canWithdraw}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (canWithdraw) {
+            onWithdraw(race.id, horse.id);
+            toast.success(`${horse.name} withdrawn from ${race.name}.`);
+            onClose();
+          }
+        }}
+      >
+        {canWithdraw ? "Withdraw" : "Withdrawal closed"}
+      </Button>
+    </DisabledTooltipWrapper>
   );
 }
