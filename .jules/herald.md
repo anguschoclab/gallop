@@ -1,0 +1,3 @@
+## 2023-10-15 - Expanded Race Context Commentary
+**Learning:** Race context templates (defending champion, course specialist, etc.) had a low variety count (14) compared to other generic atmosphere arrays. Since these conditional strings can replace generic ones when triggered, having fewer variants creates a variety bottleneck where entities in these special states experience highly repetitive text.
+**Action:** Expanded the 4 conditional race context template arrays (`DEFENDING_CHAMPION_TEMPLATES`, `TRACK_RECORD_TEMPLATES`, `RETURNING_RUNNER_TEMPLATES`, `COURSE_SPECIALIST_TEMPLATES`) from 14 to 20 variants to match the variety of base pools and avoid repetition for special state entities.
