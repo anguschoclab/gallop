@@ -175,6 +175,10 @@ export function generateRegionLostNews(
     `The Surrender of ${region} to ${rivalStable.name}`,
     `${rivalStable.name} Plants Their Flag in ${region}`,
     `Unstoppable: ${rivalStable.name} Claims ${region}`,
+    `The Map Redrawn: ${region} Belongs to ${rivalStable.name}`,
+    `Changing of the Guard: ${rivalStable.name} Rises in ${region}`,
+    `${rivalStable.name} Shocks the Establishment in ${region}`,
+    `A New Dynasty? ${rivalStable.name} Rules ${region}`,
   );
 
   const bodies = [
@@ -206,6 +210,9 @@ export function generateRegionLostNews(
     `The local circuit will never be the same. ${rivalStable.name} has instituted a new regime in ${region}, taking the crown with authority.`,
     `They came, they saw, they conquered. ${rivalStable.name} has officially locked down ${region}, ending the tenure of the previous king.`,
     `A masterclass in strategic campaigning has paid off for ${rivalStable.name}, who now look down on the rest of ${region} from the top spot.`,
+    `The old guard in ${region} couldn't withstand the barrage from ${rivalStable.name}, who now rightfully claim the throne.`,
+    `With a relentless campaign, ${rivalStable.name} has successfully toppled the establishment to rule ${region}.`,
+    `${rivalStable.name}'s ascent in ${region} has been nothing short of spectacular, culminating in a total takeover of the regional circuit.`,
   );
 
   return buildRivalryNews(
