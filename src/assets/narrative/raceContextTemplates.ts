@@ -13,6 +13,12 @@ export const DEFENDING_CHAMPION_TEMPLATES: string[] = [
   "{horse} is back to defend their title — they conquered this race last year.",
   "History beckons for {horse} — a win today makes them a back-to-back champion.",
   "The crowd remembers {horse}'s victory last year — can they deliver an encore?",
+  "They all have to beat the defending champ {horse} — it’s their title on the line.",
+  "{horse} is aiming to replicate that magical run from last year.",
+  "The crown rests heavy on {horse}, our defending champion in the {raceName}.",
+  "It's a tough ask to win the {raceName} twice, but {horse} is here to try.",
+  "Can lightning strike twice for {horse} in the {raceName}?",
+  "All eyes on {horse}, returning to the scene of their greatest triumph.",
 ];
 
 export const TRACK_RECORD_TEMPLATES: string[] = [
@@ -30,6 +36,12 @@ export const TRACK_RECORD_TEMPLATES: string[] = [
   "{horse} is eating up the ground — the {recordTime}s track record is in sight!",
   "A record-breaking performance could be on the cards — {horse} is on pace for {recordTime}s.",
   "The {recordTime}s track record set by {recordHolder} — {horse} is giving it a real shake!",
+  "{horse} is absolutely motoring! Could that {recordTime}s record be shattered?",
+  "A scintillating pace from {horse} — {recordHolder}'s mark of {recordTime}s is looking vulnerable.",
+  "They are flying! The track record of {recordTime}s is well within reach for {horse}.",
+  "What a performance! {horse} is putting {recordHolder}'s {recordTime}s record under severe pressure.",
+  "The clock is ticking, and {horse} is racing against {recordTime}s!",
+  "Could history be rewritten today? {horse} is on target for {recordTime}s.",
 ];
 
 export const RETURNING_RUNNER_TEMPLATES: string[] = [
@@ -47,6 +59,12 @@ export const RETURNING_RUNNER_TEMPLATES: string[] = [
   "Determined to improve on {prevPosition} — {horse} returns to this race.",
   "Last time out in this race, {horse} was {prevPosition} — can they turn the tables today?",
   "{horse} knows the feeling of finishing {prevPosition} here — today they want a different result.",
+  "{horse} knows this race intimately, hoping to better that {prevPosition} finish.",
+  "Returning to a familiar battlefield — {horse} was {prevPosition} here last time.",
+  "{horse} is hungry for a better outcome after finishing {prevPosition} previously.",
+  "They say experience pays off; {horse} is back after a {prevPosition} place finish.",
+  "A previous {prevPosition} finish gives {horse} plenty of motivation today.",
+  "{horse} is seeking to right the wrongs of their {prevPosition} finish here last time.",
 ];
 
 export const COURSE_SPECIALIST_TEMPLATES: string[] = [
@@ -64,4 +82,10 @@ export const COURSE_SPECIALIST_TEMPLATES: string[] = [
   "You can't buy {visits} runs of experience at {trackName} — {horse} has it in spades.",
   "{horse} is a {trackName} veteran — {visits} previous starts at this track.",
   "The {visits} times {horse} has run at {trackName} makes them a course specialist.",
+  "This is {horse}'s playground — {visits} visits to {trackName} gives them a huge edge.",
+  "{horse} has {trackName} figured out after {visits} prior attempts.",
+  "Familiar surroundings for {horse}, making their {visits} appearance at {trackName}.",
+  "{horse} loves it here at {trackName}, boasting {visits} previous runs.",
+  "It's almost a home game for {horse} with {visits} starts at {trackName}.",
+  "{trackName} brings out the best in {horse}, who has raced here {visits} times.",
 ];
