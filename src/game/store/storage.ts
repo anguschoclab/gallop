@@ -100,7 +100,9 @@ export async function saveGameStateToIDB(state: GameState): Promise<void> {
     npcStablesBucket[s.id] = s;
   }
 
-  // Fallback to localStorage if IndexedDB is not available
+  // Fallback to localStorage if IndexedDB is not available; server-side
+  // evaluation has neither API and must not persist.
+  if (!isIndexedDbAvailable() && typeof localStorage === "undefined") return;
   if (!isIndexedDbAvailable()) {
     try {
       const payload = {
@@ -126,6 +128,9 @@ export async function saveGameStateToIDB(state: GameState): Promise<void> {
 }
 
 export async function loadGameStateFromIDB(): Promise<GameState | null> {
+  // Server-side module evaluation (Vite SSR, some tests) has neither storage
+  // API — there is no save to find.
+  if (!isIndexedDbAvailable() && typeof localStorage === "undefined") return null;
   // Try localStorage fallback first if IDB is not available
   if (!isIndexedDbAvailable()) {
     try {

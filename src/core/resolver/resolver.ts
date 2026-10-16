@@ -57,6 +57,9 @@ export interface ResolverContext {
  * @returns {ResolverContext} The updated resolver context with the new state and extended impact log.
  */
 export function applyImpacts(context: ResolverContext): ResolverContext {
+  // Nothing to apply: produce() and the eight draft index maps are pure
+  // overhead on quiet days — return the context untouched.
+  if (context.impacts.length === 0) return context;
   const impactLog: ImpactLogEntry[] = [];
 
   const newState = produce(context.state, (draft) => {

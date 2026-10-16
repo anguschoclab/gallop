@@ -44,6 +44,9 @@ export const raceResolutionPhase: PipelinePhase = {
     // PRE-INDEX: Use shared context maps built at pipeline entry
     const { horseMap, jockeyMap } = context;
     const npcStableMap = context.stableMap;
+    // All horses once per pass — the per-race helpers need the plain array
+    // for pedigree/history scans and state.horses cannot change mid-phase.
+    const allHorses = Object.values(state.horses);
     const hallOfFameIds = new Set((state.hallOfFame ?? []).map((e) => e.horseId));
 
     // Clone the AI manager so NPC learning updates are applied as a new object.
@@ -155,7 +158,7 @@ export const raceResolutionPhase: PipelinePhase = {
           state.trackRecords || {},
           hallOfFameIds,
           claimIntents,
-          Object.values(state.horses),
+          allHorses,
           rng,
           context.ports,
           result,
@@ -240,7 +243,7 @@ export const raceResolutionPhase: PipelinePhase = {
         state.trackRecords || {},
         hallOfFameIds,
         claimIntents,
-        Object.values(state.horses),
+        allHorses,
         rng,
         context.ports,
         result,

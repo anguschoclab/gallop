@@ -22,6 +22,7 @@ import {
 import { generateDirectiveChangeNews } from "@/core/narrative/directiveNewsGenerator";
 import { generateNpcTrainingIntents } from "./intents/trainingIntents";
 import { generateNpcRaceEntryIntents } from "./intents/raceEntryIntents";
+import { buildRaceCompetitorIndex, type RaceCompetitorIndex } from "@/core/ai/raceEntryAIScoring";
 import {
   generateNpcClaimingIntents,
   generateNpcWithdrawalIntents,
@@ -114,6 +115,15 @@ export function generateNpcIntents(
     raceEntrySets.set(race.id, new Set(race.entries.map((e: { horseId: string }) => e.horseId)));
   }
 
+  // Pre-index competitor quality once per race: the entry-scoring path would
+  // otherwise re-rate every field once per (stable, horse) evaluation.
+  const raceCompetitorIndex = new Map<string, RaceCompetitorIndex>();
+  for (const race of upcomingRaces) {
+    if (race.entries.length > 0) {
+      raceCompetitorIndex.set(race.id, buildRaceCompetitorIndex(race, horseMap));
+    }
+  }
+
   // Generate intents for each NPC stable
   for (const stable of state.npcStables) {
     try {
@@ -192,6 +202,7 @@ export function generateNpcIntents(
           weights?.raceEntry,
           distressLevel,
           aiManager?.difficultyModulator,
+          raceCompetitorIndex,
         ),
       );
 

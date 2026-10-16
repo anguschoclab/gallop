@@ -86,6 +86,10 @@ export function createAuctionRunner(
   }
 
   const bidderStables = stables.filter((s) => s.isMajor);
+  // Per-(stable, horse) valuation ceilings are invariant for the life of the
+  // runner (stable cash/roster only change when impacts commit after the
+  // sale) — memoize them across the per-tick bidder scans.
+  const valuationCache = new Map<string, number>();
   const log: string[] = [];
   let lotIndex = 0;
   let tick = 0;
@@ -130,6 +134,7 @@ export function createAuctionRunner(
         npcAIManager,
         currentDay,
         saleHouse,
+        valuationCache,
       );
       if (bid !== null && bid > state.currentBid) {
         state.currentBid = bid;

@@ -1,0 +1,152 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createAuctionRunner golden outcomes > produces identical final lots (hammer, winner, pass, bid history) 1`] = `
+[
+  {
+    "bids": [
+      {
+        "amount": 22700,
+        "stableId": "stable_aggressive",
+        "tick": 2,
+      },
+      {
+        "amount": 33200,
+        "stableId": "stable_prestige",
+        "tick": 3,
+      },
+    ],
+    "hammerPrice": 33200,
+    "id": "lot1",
+    "passed": false,
+    "soldTo": "stable_prestige",
+  },
+  {
+    "bids": [
+      {
+        "amount": 24200,
+        "stableId": "stable_aggressive",
+        "tick": 8,
+      },
+      {
+        "amount": 25700,
+        "stableId": "stable_breeder",
+        "tick": 9,
+      },
+      {
+        "amount": 34500,
+        "stableId": "stable_prestige",
+        "tick": 10,
+      },
+      {
+        "amount": 36500,
+        "stableId": "stable_breeder",
+        "tick": 11,
+      },
+    ],
+    "hammerPrice": 36500,
+    "id": "lot2",
+    "passed": false,
+    "soldTo": "stable_breeder",
+  },
+  {
+    "bids": [
+      {
+        "amount": 14400,
+        "stableId": "stable_aggressive",
+        "tick": 16,
+      },
+      {
+        "amount": 19800,
+        "stableId": "stable_prestige",
+        "tick": 17,
+      },
+    ],
+    "hammerPrice": null,
+    "id": "lot3",
+    "passed": true,
+    "soldTo": null,
+  },
+  {
+    "bids": [
+      {
+        "amount": 42200,
+        "stableId": "stable_aggressive",
+        "tick": 22,
+      },
+      {
+        "amount": 44600,
+        "stableId": "stable_breeder",
+        "tick": 23,
+      },
+      {
+        "amount": 75600,
+        "stableId": "stable_prestige",
+        "tick": 24,
+      },
+    ],
+    "hammerPrice": 75600,
+    "id": "lot4",
+    "passed": false,
+    "soldTo": "stable_prestige",
+  },
+  {
+    "bids": [],
+    "hammerPrice": null,
+    "id": "lot5",
+    "passed": false,
+    "soldTo": null,
+  },
+]
+`;
+
+exports[`createAuctionRunner golden outcomes > produces identical final lots (hammer, winner, pass, bid history) 2`] = `
+[
+  "LOT_OPEN",
+  "BID_RECEIVED",
+  "BID_RECEIVED",
+  "GOING_ONCE",
+  "GOING_TWICE",
+  "SOLD",
+  "LOT_OPEN",
+  "BID_RECEIVED",
+  "BID_RECEIVED",
+  "BID_RECEIVED",
+  "BID_RECEIVED",
+  "BID_WAR",
+  "GOING_ONCE",
+  "GOING_TWICE",
+  "SOLD",
+  "LOT_OPEN",
+  "BID_RECEIVED",
+  "BID_RECEIVED",
+  "GOING_ONCE",
+  "GOING_TWICE",
+  "RESERVE_NOT_MET",
+  "PASSED",
+  "LOT_OPEN",
+  "BID_RECEIVED",
+  "BID_RECEIVED",
+  "BID_RECEIVED",
+  "GOING_ONCE",
+  "GOING_TWICE",
+  "SOLD",
+]
+`;
+
+exports[`createAuctionRunner golden outcomes > produces identical final lots (hammer, winner, pass, bid history) 3`] = `
+[
+  "auction_resolution",
+  "cash_change",
+  "cash_change",
+  "horse_transfer",
+  "auction_resolution",
+  "cash_change",
+  "cash_change",
+  "horse_transfer",
+  "auction_resolution",
+  "auction_resolution",
+  "cash_change",
+  "cash_change",
+  "horse_transfer",
+]
+`;

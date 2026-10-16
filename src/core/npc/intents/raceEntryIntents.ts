@@ -2,7 +2,10 @@ import type { RaceEntryIntent } from "@/core/resolver/intents";
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import { createRaceEntryAIState } from "@/core/ai/raceEntryAITypes";
-import { calculateStrategicEntryScore } from "@/core/ai/raceEntryAIScoring";
+import {
+  calculateStrategicEntryScore,
+  type RaceCompetitorIndex,
+} from "@/core/ai/raceEntryAIScoring";
 import { calculateOptimalTactics, createJockeyStrategyAIState } from "@/core/ai/jockeyStrategyAI";
 import { applyAffinityBoost } from "@/core/ai/jockeyStrategyAdjustments";
 import type { StableAIState, DifficultyState } from "@/core/ai/npcCycleAI";
@@ -21,12 +24,12 @@ export function generateNpcRaceEntryIntents(
   raceEntryWeight = 1.0,
   distressLevel: DistressLevel = "healthy",
   difficultyModulator?: DifficultyState,
+  competitorIndex?: Map<string, RaceCompetitorIndex>,
 ): RaceEntryIntent[] {
   const intents: RaceEntryIntent[] = [];
 
   const raceEntryAI = stableAI?.raceEntryAI ?? createRaceEntryAIState(stable);
   const jockeyStrategyAI = stableAI?.jockeyStrategyAI ?? createJockeyStrategyAIState(stable);
-  const jockeyMap = new Map((state.jockeys || []).map((j) => [j.id, j]));
 
   for (const race of upcomingRaces) {
     if (distressLevel === "critical" && race.purse < MEDIUM_PURSE_THRESHOLD) continue;
@@ -54,6 +57,7 @@ export function generateNpcRaceEntryIntents(
         stable,
         day,
         horseMap,
+        competitorIndex?.get(race.id),
       );
 
       let threshold = 60;

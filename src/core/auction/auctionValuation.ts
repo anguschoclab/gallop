@@ -101,6 +101,10 @@ const VALUATION_STRATEGIES: Record<Stable["personality"], (ctx: ValuationContext
   prestige: prestigeValuation,
 };
 
+// pedigreeMultiplier prefers horseMap and never reads state.horses when it is
+// provided — avoid materializing an O(N) horses record per call in that case.
+const EMPTY_HORSES_STATE: { horses: Record<string, Horse> } = { horses: {} };
+
 export function calculateLotValuation(
   horse: Horse,
   stable: Stable,
@@ -111,7 +115,9 @@ export function calculateLotValuation(
   const pedigreeMul = allHorses
     ? pedigreeMultiplier(
         horse,
-        { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) },
+        horseMap
+          ? EMPTY_HORSES_STATE
+          : { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) },
         horseMap,
       )
     : 1;

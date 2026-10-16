@@ -29,28 +29,20 @@ export const dailySnapshotPhase: PipelinePhase = {
   order: PHASE_ORDER_DAILY_SNAPSHOT,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay } = context;
-    const horseDailyProgress = recordDailyProgress(
-      state.horseDailyProgress,
-      Object.values(state.horses ?? {}) as Horse[],
-      newDay,
-      {
-        cash: state.cash ?? 0,
-        syndicateValue: playerSyndicateValue(state.syndicates),
-      },
-    );
+    const allHorses = Object.values(state.horses ?? {}) as Horse[];
+    const horseDailyProgress = recordDailyProgress(state.horseDailyProgress, allHorses, newDay, {
+      cash: state.cash ?? 0,
+      syndicateValue: playerSyndicateValue(state.syndicates),
+    });
     const strategyJournal = fillJournalOutcomes(
       state.strategyJournal,
       state.horses,
       state.cash,
       newDay,
     );
-    const rankingsHistory = recordRankingsHistory(
-      state.rankingsHistory,
-      Object.values(state.horses ?? {}) as Horse[],
-      newDay,
-    );
+    const rankingsHistory = recordRankingsHistory(state.rankingsHistory, allHorses, newDay);
     const stableRankingsHistory = recordStableRankingsHistory(state.stableRankingsHistory, {
-      horses: Object.values(state.horses ?? {}) as Horse[],
+      horses: allHorses,
       npcStables: state.npcStables ?? [],
       playerReputationScore: state.reputation?.score ?? 0,
       playerProfile: state.playerProfile,

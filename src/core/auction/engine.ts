@@ -120,6 +120,7 @@ const BUDGET_CAPS: Record<Stable["personality"], number> = {
  * @param npcAIManager - Optional AI manager for advanced bidding logic
  * @param currentDay - Current game day
  * @param house - Optional auction house for prestige multiplier
+ * @param valuationCache - Optional per-sale cache for the bid-invariant valuation ceiling
  * @returns Bid amount or null if should not bid
  */
 export function calculateNpcBid(
@@ -133,6 +134,7 @@ export function calculateNpcBid(
   npcAIManager?: NpcAIManager,
   currentDay?: number,
   house?: AuctionHouse,
+  valuationCache?: Map<string, number>,
 ): number | null {
   // Use AI-driven bidding if AI manager is available
   if (npcAIManager && currentDay !== undefined) {
@@ -177,9 +179,20 @@ export function calculateNpcBid(
     }
   }
 
-  // Fall back to original logic if AI not available
-  const baseCeiling = calculateLotValuation(horse, stable, saleKind, allHorses, horseMap);
-  const ceiling = baseCeiling * housePrestigeMultiplier(house);
+  // Fall back to original logic if AI not available. The valuation ceiling is
+  // invariant for a (stable, horse) pair while a sale is in flight — callers
+  // that re-evaluate bids every tick pass a shared cache.
+  let ceiling: number;
+  const cacheKey = valuationCache ? `${stable.id}:${horse.id}` : undefined;
+  const cached = cacheKey ? valuationCache!.get(cacheKey) : undefined;
+  if (cached !== undefined) {
+    ceiling = cached;
+  } else {
+    ceiling =
+      calculateLotValuation(horse, stable, saleKind, allHorses, horseMap) *
+      housePrestigeMultiplier(house);
+    if (cacheKey) valuationCache!.set(cacheKey, ceiling);
+  }
 
   if (ceiling <= 0) return null;
 
