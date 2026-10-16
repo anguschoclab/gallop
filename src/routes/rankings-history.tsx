@@ -9,8 +9,18 @@ import { formatCurrency } from "@/lib/formatting";
 import type { RankingsHistory, RankingsSnapshot } from "@/core/market/rankingsHistory";
 import type { Horse } from "@/game/types";
 import { Button } from "@/components/ui/button";
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
-import { compareRankingsForDay, rankingsComparisonDays, type RankingsComparisonRow } from "@/core/market/rankingsComparison";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import {
+  compareRankingsForDay,
+  rankingsComparisonDays,
+  type RankingsComparisonRow,
+} from "@/core/market/rankingsComparison";
 
 const EMPTY_HISTORY: RankingsHistory = {};
 
@@ -39,7 +49,10 @@ export const Route = createFileRoute("/rankings-history")({
   component: RankingsHistoryPage,
 });
 
-function delta(now: number | null, then: number | null | undefined): { text: string; up: boolean } | null {
+function delta(
+  now: number | null,
+  then: number | null | undefined,
+): { text: string; up: boolean } | null {
   if (now === null || then == null || then === now) return null;
   const d = now - then;
   return { text: `${d > 0 ? "+" : ""}${d}`, up: d < 0 };
@@ -56,7 +69,10 @@ function RankingsHistoryPage() {
   const [comparisonDay, setComparisonDay] = useState<number | null>(null);
   const activeDay = comparisonDay ?? days[0];
   const comparison = useMemo(
-    () => activeDay === undefined ? null : compareRankingsForDay(history, Object.values(horses), activeDay),
+    () =>
+      activeDay === undefined
+        ? null
+        : compareRankingsForDay(history, Object.values(horses), activeDay),
     [history, horses, activeDay],
   );
 
@@ -101,18 +117,35 @@ function RankingsHistoryPage() {
 
       {comparison ? (
         <section className="space-y-4 border-b border-border pb-5">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div>
-                <h2 className="text-sm font-black text-cream">My horses vs daily leaders</h2>
-                <p className="text-[10px] font-mono uppercase text-cream/40">Gaps compare with that day’s #1</p>
-              </div>
-              <Select value={String(activeDay)} onValueChange={(value) => setComparisonDay(Number(value))}>
-                <SelectTrigger aria-label="Comparison day" className="h-8 w-32 text-xs"><SelectValue /></SelectTrigger>
-                <SelectContent>{days.map((d) => <SelectItem key={d} value={String(d)}>Day {d}</SelectItem>)}</SelectContent>
-              </Select>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <div>
+              <h2 className="text-sm font-black text-cream">My horses vs daily leaders</h2>
+              <p className="text-[10px] font-mono uppercase text-cream/40">
+                Gaps compare with that day’s #1
+              </p>
             </div>
-            <ComparisonTable title="Top-ranked horses" rows={comparison.leaders} />
-            <ComparisonTable title="My horses" rows={comparison.players} empty="You have no horses to compare." />
+            <Select
+              value={String(activeDay)}
+              onValueChange={(value) => setComparisonDay(Number(value))}
+            >
+              <SelectTrigger aria-label="Comparison day" className="h-8 w-32 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {days.map((d) => (
+                  <SelectItem key={d} value={String(d)}>
+                    Day {d}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <ComparisonTable title="Top-ranked horses" rows={comparison.leaders} />
+          <ComparisonTable
+            title="My horses"
+            rows={comparison.players}
+            empty="You have no horses to compare."
+          />
         </section>
       ) : null}
 
@@ -190,7 +223,10 @@ function RankingsHistoryPage() {
                       {selected.snaps.length === 1 ? "" : "s"}
                     </p>
                   </div>
-                  <Stat label="Rank" value={selected.latest.rank ? `#${selected.latest.rank}` : "Unranked"} />
+                  <Stat
+                    label="Rank"
+                    value={selected.latest.rank ? `#${selected.latest.rank}` : "Unranked"}
+                  />
                   <Stat label="Points" value={selected.latest.points.toFixed(1)} />
                   <Stat label="Reputation" value={String(selected.latest.reputation)} />
                   <Stat label="Auction price" value={formatCurrency(selected.latest.price)} />
@@ -256,22 +292,53 @@ function signed(n: number, money = false) {
   return `${n > 0 ? "+" : "−"}${money ? formatCurrency(Math.abs(n)) : Math.abs(Math.round(n * 10) / 10)}`;
 }
 
-function ComparisonTable({ title, rows, empty = "No ranked horses that day." }: { title: string; rows: RankingsComparisonRow[]; empty?: string }) {
+function ComparisonTable({
+  title,
+  rows,
+  empty = "No ranked horses that day.",
+}: {
+  title: string;
+  rows: RankingsComparisonRow[];
+  empty?: string;
+}) {
   return (
     <div className="overflow-x-auto">
       <p className="mb-1 text-[10px] font-mono uppercase tracking-wide text-primary">{title}</p>
-      {rows.length === 0 ? <p className="text-[11px] text-cream/40">{empty}</p> : (
+      {rows.length === 0 ? (
+        <p className="text-[11px] text-cream/40">{empty}</p>
+      ) : (
         <table className="w-full min-w-[620px] text-[11px] font-mono">
-          <thead><tr className="text-left text-[9px] uppercase text-cream/40"><th className="p-1.5">Horse</th><th>Rank</th><th>Points</th><th>Reputation</th><th>Price</th><th>Gap to #1</th></tr></thead>
+          <thead>
+            <tr className="text-left text-[9px] uppercase text-cream/40">
+              <th className="p-1.5">Horse</th>
+              <th>Rank</th>
+              <th>Points</th>
+              <th>Reputation</th>
+              <th>Price</th>
+              <th>Gap to #1</th>
+            </tr>
+          </thead>
           <tbody className="divide-y divide-white/5">
             {rows.map((r) => (
-              <tr key={r.horseId} className={r.isPlayer ? "bg-primary/10 text-cream" : "text-cream/75"}>
-                <td className="p-1.5 font-sans font-bold">{r.name}{r.isPlayer ? " · Yours" : ""}</td>
-                <td>{r.snapshot?.rank ? `#${r.snapshot.rank}` : r.snapshot ? "Unranked" : "No record"}</td>
+              <tr
+                key={r.horseId}
+                className={r.isPlayer ? "bg-primary/10 text-cream" : "text-cream/75"}
+              >
+                <td className="p-1.5 font-sans font-bold">
+                  {r.name}
+                  {r.isPlayer ? " · Yours" : ""}
+                </td>
+                <td>
+                  {r.snapshot?.rank ? `#${r.snapshot.rank}` : r.snapshot ? "Unranked" : "No record"}
+                </td>
                 <td>{r.snapshot?.points.toFixed(1) ?? "—"}</td>
                 <td>{r.snapshot?.reputation ?? "—"}</td>
                 <td>{r.snapshot ? formatCurrency(r.snapshot.price) : "—"}</td>
-                <td className="text-[10px] text-cream/50">{r.gap ? `${r.gap.rank === null ? "Unranked" : r.gap.rank === 0 ? "Leader" : `${r.gap.rank} places`} · ${signed(r.gap.points)} pts · ${signed(r.gap.reputation)} rep · ${signed(r.gap.price, true)}` : "—"}</td>
+                <td className="text-[10px] text-cream/50">
+                  {r.gap
+                    ? `${r.gap.rank === null ? "Unranked" : r.gap.rank === 0 ? "Leader" : `${r.gap.rank} places`} · ${signed(r.gap.points)} pts · ${signed(r.gap.reputation)} rep · ${signed(r.gap.price, true)}`
+                    : "—"}
+                </td>
               </tr>
             ))}
           </tbody>

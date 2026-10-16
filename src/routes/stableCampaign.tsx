@@ -214,7 +214,9 @@ function StableCampaignPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-sm uppercase tracking-wide">Automatic goal adjustment</CardTitle>
+          <CardTitle className="text-sm uppercase tracking-wide">
+            Automatic goal adjustment
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <label className="flex items-center gap-2">
@@ -341,7 +343,11 @@ function CampaignHistoryCard({
                         {r.fieldSize ? `/${r.fieldSize}` : ""}
                       </td>
                       <td className="pr-3 text-right font-mono">
-                        {r.prize > 0 ? <span className="text-success">+{money(r.prize)}</span> : "—"}
+                        {r.prize > 0 ? (
+                          <span className="text-success">+{money(r.prize)}</span>
+                        ) : (
+                          "—"
+                        )}
                         <div className="text-xs text-muted-foreground">
                           total {money(r.cumulativePrize)}
                         </div>

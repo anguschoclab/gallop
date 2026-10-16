@@ -12,13 +12,13 @@
 
 ## Individually verified flagged PRs
 
-| PR | Title | Finding | Verdict |
-|---|---|---|---|
-| #130 | Fix missing raceMap synchronization during day advancement | Bug real at the time; **already fixed** — `advanceDayActions.ts:145` rebuilds `raceMap` alongside `horseMap`/`stableMap`/`jockeyMap` on every day advance | SUPERSEDED-ALREADY-FIXED |
+| PR   | Title                                                         | Finding                                                                                                                                                                                                           | Verdict                  |
+| ---- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| #130 | Fix missing raceMap synchronization during day advancement    | Bug real at the time; **already fixed** — `advanceDayActions.ts:145` rebuilds `raceMap` alongside `horseMap`/`stableMap`/`jockeyMap` on every day advance                                                         | SUPERSEDED-ALREADY-FIXED |
 | #116 | Sentinel: Fix Math.random() usage (bruceLowe/mapper/claiming) | **Already fixed** — zero `Math.random()` calls remain in production `src/core`; `noMathRandom.test.ts` enforces an allowlist. `bruceLowe` defaults to `nondeterministicRng()` (stale doc comment corrected in V5) | SUPERSEDED-ALREADY-FIXED |
-| #120 | Sentinel: weak RNG entropy (`rng.ts`, `claiming.ts`) | Same — no Math.random in rng.ts/claiming.ts; seeded `Rng` is the only path | SUPERSEDED-ALREADY-FIXED |
-| #7 | tests for npcStable + fix getMajorStables | `getMajorStables` moved to `core/stable/stableQueries.ts:38`; `isMajor` is the canonical field (eliteStablePool sets it directly); PR's tier-based rewrite is obsolete and semantically different | DISAPPROVE-SUPERSEDED |
-| #12 | Fix 'any' in OPFS iteration | Target file `src/services/opfsService.ts` no longer exists (storage moved to `src/services/storage/`) | SUPERSEDED-FILE-GONE |
+| #120 | Sentinel: weak RNG entropy (`rng.ts`, `claiming.ts`)          | Same — no Math.random in rng.ts/claiming.ts; seeded `Rng` is the only path                                                                                                                                        | SUPERSEDED-ALREADY-FIXED |
+| #7   | tests for npcStable + fix getMajorStables                     | `getMajorStables` moved to `core/stable/stableQueries.ts:38`; `isMajor` is the canonical field (eliteStablePool sets it directly); PR's tier-based rewrite is obsolete and semantically different                 | DISAPPROVE-SUPERSEDED    |
+| #12  | Fix 'any' in OPFS iteration                                   | Target file `src/services/opfsService.ts` no longer exists (storage moved to `src/services/storage/`)                                                                                                             | SUPERSEDED-FILE-GONE     |
 
 ## Bulk disposition of the remaining 115 uncovered PRs
 

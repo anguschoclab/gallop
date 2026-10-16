@@ -34,9 +34,16 @@ describe("goalRaceBonus", () => {
 
 import { autoAdjustGoals } from "@/core/stable/stableGoals";
 describe("autoAdjustGoals", () => {
-  const base: StableGoals = { classGoals: { G1: 2 }, startDay: 0, weight: 1, autoAdjust: true, targetNetWorth: 100_000 };
+  const base: StableGoals = {
+    classGoals: { G1: 2 },
+    startDay: 0,
+    weight: 1,
+    autoAdjust: true,
+    targetNetWorth: 100_000,
+  };
   const prog = (wins: number, nw: number): GoalProgress => ({
-    netWorth: nw, netWorthGap: 0,
+    netWorth: nw,
+    netWorthGap: 0,
     classWins: { G1: wins, G2: 0, G3: 0, Stakes: 0 },
     classRemaining: { G1: 0, G2: 0, G3: 0, Stakes: 0 },
   });
@@ -47,9 +54,13 @@ describe("autoAdjustGoals", () => {
     expect(autoAdjustGoals(base, prog(0, 120_000), 10).goals.targetNetWorth).toBe(150_000);
   });
   it("extends a missed deadline by 90 days", () => {
-    expect(autoAdjustGoals({ ...base, targetDay: 5 }, prog(0, 50_000), 10).goals.targetDay).toBe(100);
+    expect(autoAdjustGoals({ ...base, targetDay: 5 }, prog(0, 50_000), 10).goals.targetDay).toBe(
+      100,
+    );
   });
   it("does nothing when auto-adjust is off", () => {
-    expect(autoAdjustGoals({ ...base, autoAdjust: false }, prog(5, 1e6), 10).adjustments).toHaveLength(0);
+    expect(
+      autoAdjustGoals({ ...base, autoAdjust: false }, prog(5, 1e6), 10).adjustments,
+    ).toHaveLength(0);
   });
 });

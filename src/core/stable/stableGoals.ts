@@ -135,6 +135,9 @@ export const DEADLINE_EXTENSION_DAYS = 90;
  * half its size (min 1), a reached net-worth target is raised to 125% of
  * current net worth (rounded to $10k), and a missed deadline is extended 90 days.
  * Returns the same object when nothing changes or auto-adjust is off.
+ * @param goals
+ * @param progress
+ * @param day
  */
 export function autoAdjustGoals(
   goals: StableGoals,
@@ -149,7 +152,10 @@ export function autoAdjustGoals(
     if (target <= 0 || progress.classWins[c] < target) continue;
     const next = progress.classWins[c] + Math.max(1, Math.ceil(target / 2));
     classGoals[c] = next;
-    adjustments.push({ day, text: `${c} goal met (${progress.classWins[c]} wins) — raised to ${next}.` });
+    adjustments.push({
+      day,
+      text: `${c} goal met (${progress.classWins[c]} wins) — raised to ${next}.`,
+    });
   }
   let { targetNetWorth, targetDay } = goals;
   if (targetNetWorth && progress.netWorth >= targetNetWorth) {
@@ -174,7 +180,10 @@ export function autoAdjustGoals(
       classGoals,
       targetNetWorth,
       targetDay,
-      adjustmentLog: [...adjustments, ...(goals.adjustmentLog ?? [])].slice(0, GOAL_ADJUSTMENT_LOG_MAX),
+      adjustmentLog: [...adjustments, ...(goals.adjustmentLog ?? [])].slice(
+        0,
+        GOAL_ADJUSTMENT_LOG_MAX,
+      ),
     },
     adjustments,
   };

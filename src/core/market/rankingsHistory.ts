@@ -46,7 +46,9 @@ export function recordRankingsHistory(
   const byId = new Map(horses.map((h) => [h.id, h]));
   const next: RankingsHistory = {};
   for (const [id, entries] of Object.entries(history ?? {})) {
-    const retained = entries.filter((entry) => entry.day > day - RANKINGS_HISTORY_MAX_ENTRIES && entry.day !== day);
+    const retained = entries.filter(
+      (entry) => entry.day > day - RANKINGS_HISTORY_MAX_ENTRIES && entry.day !== day,
+    );
     if (retained.length) next[id] = retained;
   }
   rows.forEach((row, i) => {
@@ -67,17 +69,21 @@ export function recordRankingsHistory(
     ? worldRankings(horses, day, 365, horses.length)
     : [];
   for (const horse of horses) {
-    if (!isPlayerOwned(horse) || horse.lifecycleStatus === "deceased" || rankedIds.has(horse.id)) continue;
+    if (!isPlayerOwned(horse) || horse.lifecycleStatus === "deceased" || rankedIds.has(horse.id))
+      continue;
     // A player horse below the tracked top 50 still has its actual world rank.
     const index = allRows.findIndex((row) => row.horseId === horse.id);
     const row = allRows[index];
-    next[horse.id] = [...(next[horse.id] ?? []), {
-      day,
-      rank: index < 0 ? null : index + 1,
-      points: row?.points ?? 0,
-      reputation: Math.round(horse.fame ?? 0),
-      price: horseMarketValue(horse, horses),
-    }].slice(-RANKINGS_HISTORY_MAX_ENTRIES);
+    next[horse.id] = [
+      ...(next[horse.id] ?? []),
+      {
+        day,
+        rank: index < 0 ? null : index + 1,
+        points: row?.points ?? 0,
+        reputation: Math.round(horse.fame ?? 0),
+        price: horseMarketValue(horse, horses),
+      },
+    ].slice(-RANKINGS_HISTORY_MAX_ENTRIES);
   }
   return next;
 }

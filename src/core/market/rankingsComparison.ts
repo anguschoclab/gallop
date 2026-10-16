@@ -10,7 +10,13 @@ export interface RankingsComparisonRow {
   gap: { rank: number | null; points: number; reputation: number; price: number } | null;
 }
 
-/** Compare exact-day snapshots only; never borrow values from another day. */
+/**
+ * Compare exact-day snapshots only; never borrow values from another day.
+ * @param history
+ * @param horses
+ * @param day
+ * @param topCount
+ */
 export function compareRankingsForDay(
   history: RankingsHistory,
   horses: Horse[],
@@ -31,20 +37,35 @@ export function compareRankingsForDay(
     name: byId.get(horseId)?.name ?? "Unknown horse",
     snapshot,
     isPlayer: isPlayerOwned(byId.get(horseId)),
-    gap: snapshot && leader ? {
-      rank: snapshot.rank === null || leader.rank === null ? null : snapshot.rank - leader.rank,
-      points: snapshot.points - leader.points,
-      reputation: snapshot.reputation - leader.reputation,
-      price: snapshot.price - leader.price,
-    } : null,
+    gap:
+      snapshot && leader
+        ? {
+            rank:
+              snapshot.rank === null || leader.rank === null ? null : snapshot.rank - leader.rank,
+            points: snapshot.points - leader.points,
+            reputation: snapshot.reputation - leader.reputation,
+            price: snapshot.price - leader.price,
+          }
+        : null,
   });
-  const leaders = ranked.slice(0, topCount).map(({ horseId, snapshot }) => rowFor(horseId, snapshot));
-  const players = horses.filter(isPlayerOwned).map((horse) =>
-    rowFor(horse.id, snapshots.find((row) => row.horseId === horse.id)?.snapshot ?? null),
-  ).sort((a, b) => (a.snapshot?.rank ?? Infinity) - (b.snapshot?.rank ?? Infinity) || a.name.localeCompare(b.name));
+  const leaders = ranked
+    .slice(0, topCount)
+    .map(({ horseId, snapshot }) => rowFor(horseId, snapshot));
+  const players = horses
+    .filter(isPlayerOwned)
+    .map((horse) =>
+      rowFor(horse.id, snapshots.find((row) => row.horseId === horse.id)?.snapshot ?? null),
+    )
+    .sort(
+      (a, b) =>
+        (a.snapshot?.rank ?? Infinity) - (b.snapshot?.rank ?? Infinity) ||
+        a.name.localeCompare(b.name),
+    );
   return { leaders, players };
 }
 
 export function rankingsComparisonDays(history: RankingsHistory): number[] {
-  return [...new Set(Object.values(history).flatMap((entries) => entries.map((entry) => entry.day)))].sort((a, b) => b - a);
+  return [
+    ...new Set(Object.values(history).flatMap((entries) => entries.map((entry) => entry.day))),
+  ].sort((a, b) => b - a);
 }

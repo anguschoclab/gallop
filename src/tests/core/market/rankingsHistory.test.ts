@@ -61,7 +61,11 @@ describe("recordRankingsHistory", () => {
 
   it("compares an unranked player horse to that day's leader", () => {
     const leader = makeHorse("leader", 2, 10);
-    const mine = { ...createTestHorse({ id: asHorseId("mine") }), ownership: { type: "player" as const }, fame: 7 };
+    const mine = {
+      ...createTestHorse({ id: asHorseId("mine") }),
+      ownership: { type: "player" as const },
+      fame: 7,
+    };
     const hist = recordRankingsHistory(undefined, [leader, mine], 10);
     const result = compareRankingsForDay(hist, [leader, mine], 10);
     expect(result.leaders[0].horseId).toBe("leader");

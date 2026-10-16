@@ -40,15 +40,15 @@ All production content landed **after** its tests were committed and classified:
 
 ## Bugs found & fixed this round
 
-| ID | Finding | Disposition |
-|---|---|---|
-| BUG-V5-001 | `(state as {rankingsHistory?…})` dead cast missed by #521 | FIXED `8f772bd0` |
-| BUG-V5-002 | `rankings-history` kebab route "violation" | DISPROVED — baselined convention |
-| BUG-V5-003 | Duplicate aria-label post-#525 merge | FIXED `8f772bd0` |
-| FINDING-V5-001 | canHandle/IMPACT_HANDLERS drift hazard | FIXED `de7652e9` (Object.hasOwn) |
-| FINDING-V5-002 | keep-and-resort sortedField tie-order divergence | CONFIRMED → divergent hunks rejected |
-| FINDING-V5-003 | bruceLowe stale `Math.random` doc | FIXED |
-| (V4 residue) | bunfig `[test]`, HorseHandler CTA, orphanAudit regex | VERIFIED FIXED (all green) |
+| ID             | Finding                                                   | Disposition                          |
+| -------------- | --------------------------------------------------------- | ------------------------------------ |
+| BUG-V5-001     | `(state as {rankingsHistory?…})` dead cast missed by #521 | FIXED `8f772bd0`                     |
+| BUG-V5-002     | `rankings-history` kebab route "violation"                | DISPROVED — baselined convention     |
+| BUG-V5-003     | Duplicate aria-label post-#525 merge                      | FIXED `8f772bd0`                     |
+| FINDING-V5-001 | canHandle/IMPACT_HANDLERS drift hazard                    | FIXED `de7652e9` (Object.hasOwn)     |
+| FINDING-V5-002 | keep-and-resort sortedField tie-order divergence          | CONFIRMED → divergent hunks rejected |
+| FINDING-V5-003 | bruceLowe stale `Math.random` doc                         | FIXED                                |
+| (V4 residue)   | bunfig `[test]`, HorseHandler CTA, orphanAudit regex      | VERIFIED FIXED (all green)           |
 
 ## Architectural choices — verdicts
 
@@ -61,14 +61,14 @@ All production content landed **after** its tests were committed and classified:
 
 ## Final gate results
 
-| Gate | Result |
-|---|---|
-| `bun run typecheck:errors` | **0 errors, 0 warnings** |
-| `bun run lint` | **clean** |
-| Architecture tests (layering/naming/immutability/any-regression/noMathRandom) | **23/23 green** |
-| Targeted suites (horse, resolver, phases, services, components, performance, race) | **2,039+ green** across 174 files |
-| `bun run build` | **clean** (routeTree regenerated, not committed) |
-| `bun run test` (full suite) | **NOT RUN — deferred per user constraint** |
+| Gate                                                                               | Result                                           |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------ |
+| `bun run typecheck:errors`                                                         | **0 errors, 0 warnings**                         |
+| `bun run lint`                                                                     | **clean**                                        |
+| Architecture tests (layering/naming/immutability/any-regression/noMathRandom)      | **23/23 green**                                  |
+| Targeted suites (horse, resolver, phases, services, components, performance, race) | **2,039+ green** across 174 files                |
+| `bun run build`                                                                    | **clean** (routeTree regenerated, not committed) |
+| `bun run test` (full suite)                                                        | **NOT RUN — deferred per user constraint**       |
 
 ## Remote lifecycle
 

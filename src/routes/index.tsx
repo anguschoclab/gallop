@@ -26,14 +26,22 @@ import { deriveNextAction } from "@/services/dashboard/dashboardFacade";
 import { useNextActionBanner } from "@/hooks/dashboard/useNextActionBanner";
 
 export const Route = createFileRoute("/")({
-  head: () => ({ meta: [
-    { title: "Command Center — Gallop" },
-    { name: "description", content: "Manage your Gallop racing stable, horses, finances and upcoming races." },
-    { property: "og:title", content: "Command Center — Gallop" },
-    { property: "og:description", content: "Manage your Gallop racing stable, horses, finances and upcoming races." },
-    { property: "og:type", content: "website" },
-    { name: "twitter:card", content: "summary_large_image" },
-  ] }),
+  head: () => ({
+    meta: [
+      { title: "Command Center — Gallop" },
+      {
+        name: "description",
+        content: "Manage your Gallop racing stable, horses, finances and upcoming races.",
+      },
+      { property: "og:title", content: "Command Center — Gallop" },
+      {
+        property: "og:description",
+        content: "Manage your Gallop racing stable, horses, finances and upcoming races.",
+      },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+    ],
+  }),
   component: Dashboard,
 });
 

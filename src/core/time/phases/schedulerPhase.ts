@@ -28,7 +28,10 @@ import { generateUUID } from "@/core/uuid";
 import { calculateAutoRegisterEntries } from "@/core/campaign/autoRegister";
 import { autoAdjustGoals, goalProgress } from "@/core/stable/stableGoals";
 
-/** Raises met stable-campaign goals before auto-entry scores races. */
+/**
+ * Raises met stable-campaign goals before auto-entry scores races.
+ * @param context
+ */
 function runGoalAutoAdjust(context: PipelineContext): PipelineContext {
   const { state, newDay } = context;
   const goals = state.stableGoals;
@@ -39,7 +42,10 @@ function runGoalAutoAdjust(context: PipelineContext): PipelineContext {
   return {
     ...context,
     state: { ...state, stableGoals: res.goals },
-    logs: [...res.adjustments.map((a) => ({ day: newDay, text: `Stable Campaign: ${a.text}` })), ...context.logs],
+    logs: [
+      ...res.adjustments.map((a) => ({ day: newDay, text: `Stable Campaign: ${a.text}` })),
+      ...context.logs,
+    ],
   };
 }
 
