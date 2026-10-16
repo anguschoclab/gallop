@@ -305,8 +305,8 @@ export function AuctionHouseDesk() {
             <AlertDialogDescription>
               Are you sure you want to sell <strong>{pendingSell?.name}</strong> to{" "}
               {house.shortName}? You will net{" "}
-              <strong>{pendingSell ? formatCurrency(pendingSell.price) : "$0"}</strong>.
-              This action cannot be undone.
+              <strong>{pendingSell ? formatCurrency(pendingSell.price) : "$0"}</strong>. This action
+              cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
