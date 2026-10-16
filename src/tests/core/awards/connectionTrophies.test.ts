@@ -89,7 +89,6 @@ describe("getG1WinsForStable", () => {
   });
 });
 
-
 describe("getG1WinsForJockey", () => {
   it("returns graded wins attributed to the specific jockey", () => {
     const horse = createTestHorse({
@@ -108,11 +107,23 @@ describe("getG1WinsForJockey", () => {
     const state = {
       horses: h2r([horse]),
       races: {
-        "g1-test-1": { id: "g1-test-1", entries: [{ horseId: "horse1", jockeyId: "j1" }] } as unknown as Race,
-        "g2-test-1": { id: "g2-test-1", entries: [{ horseId: "horse1", jockeyId: "j1" }] } as unknown as Race,
-        "g3-test-1": { id: "g3-test-1", entries: [{ horseId: "horse1", jockeyId: "j2" }] } as unknown as Race,
-        "non-graded": { id: "non-graded", entries: [{ horseId: "horse1", jockeyId: "j1" }] } as unknown as Race,
-        "loss": { id: "loss", entries: [{ horseId: "horse1", jockeyId: "j1" }] } as unknown as Race,
+        "g1-test-1": {
+          id: "g1-test-1",
+          entries: [{ horseId: "horse1", jockeyId: "j1" }],
+        } as unknown as Race,
+        "g2-test-1": {
+          id: "g2-test-1",
+          entries: [{ horseId: "horse1", jockeyId: "j1" }],
+        } as unknown as Race,
+        "g3-test-1": {
+          id: "g3-test-1",
+          entries: [{ horseId: "horse1", jockeyId: "j2" }],
+        } as unknown as Race,
+        "non-graded": {
+          id: "non-graded",
+          entries: [{ horseId: "horse1", jockeyId: "j1" }],
+        } as unknown as Race,
+        loss: { id: "loss", entries: [{ horseId: "horse1", jockeyId: "j1" }] } as unknown as Race,
       },
     } as unknown as GameState;
 
@@ -132,15 +143,13 @@ describe("getG1WinsForJockey", () => {
       id: "horse1",
       name: "Champ",
       ownership: makePlayerOwned(),
-      raceHistory: [
-        { ...G1_RACE, raceId: "loss", grade: "G1", position: 2, day: 1 },
-      ],
+      raceHistory: [{ ...G1_RACE, raceId: "loss", grade: "G1", position: 2, day: 1 }],
     });
 
     const state = {
       horses: h2r([horse]),
       races: {
-        "loss": { id: "loss", entries: [{ horseId: "horse1", jockeyId: "j1" }] } as unknown as Race,
+        loss: { id: "loss", entries: [{ horseId: "horse1", jockeyId: "j1" }] } as unknown as Race,
       },
     } as unknown as GameState;
 
