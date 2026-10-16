@@ -5,7 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { useGame } from "@/game/store";
+import { useGame, useGameWithShallow } from "@/game/store";
+import type { Horse } from "@/core/horse/types";
+import type { TrackLedgerEntry } from "@/core/history/trackLedger";
+import { buildCampaignHistory } from "@/core/stable/campaignHistory";
 import {
   DEFAULT_STABLE_GOALS,
   GOAL_CLASSES,
