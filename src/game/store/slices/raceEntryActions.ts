@@ -8,6 +8,7 @@ import type { CoreSlice } from "./coreSlice";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { initEngineClient, getEngineClient } from "../engineClient";
 import { snapshotState } from "./advanceDayActions";
+import { engineWorldSynced, noteCommittedWorld } from "../engineSync";
 import type { RaceRunner } from "@/core/race/types";
 
 export function createRaceEntryActions(
@@ -232,7 +233,7 @@ export function createRaceEntryActions(
             runners: liveRunners,
             factorLedgers,
             snapshots,
-            state: snapshotState(s),
+            state: engineWorldSynced(s) ? undefined : snapshotState(s),
           });
         } catch {
           enqueueFallbackIntent();
@@ -250,6 +251,7 @@ export function createRaceEntryActions(
         // resolve issued against an older revision.
         if (response.revision <= (current.engineRevision ?? 0)) return;
 
+        noteCommittedWorld(response.state);
         const update: Record<string, unknown> = {
           ...response.state,
           engineRevision: response.revision,

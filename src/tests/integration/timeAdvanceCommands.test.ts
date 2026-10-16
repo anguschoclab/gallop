@@ -50,18 +50,32 @@ vi.mock("@/game/store/storage", async (importActual) => {
 class RecordingTransport implements EngineTransport {
   commands: AdvanceCommand[] = [];
   private handler: (e: EngineEvent) => void = () => {};
+  // Like the real engine, the transport retains the last committed world —
+  // commands that omit `state` execute against it.
+  private world: GameState | null = null;
   submit(msg: AdvanceCommand | { kind: "cancel"; commandId: string }): void {
     if ((msg as { kind: string }).kind === "cancel") return;
     this.commands.push(msg as AdvanceCommand);
     const cmd = msg as AdvanceCommand;
+    if ((cmd as { kind: string }).kind === "loadWorld") {
+      const load = msg as { commandId: string; baseRevision: number; state: GameState };
+      this.world = load.state;
+      setTimeout(() =>
+        this.handler({ type: "loaded", commandId: load.commandId, revision: load.baseRevision }),
+      );
+      return;
+    }
+    const base = cmd.state ?? this.world;
+    const finalDay = base!.day + cmd.days;
+    const committed = makeGameState({ day: finalDay }) as GameState;
+    this.world = committed;
     // Auto-complete each command one microtask later.
-    const finalDay = cmd.state.day + cmd.days;
     setTimeout(() =>
       this.handler({
         type: "completed",
         commandId: cmd.commandId,
         revision: this.commands.length,
-        state: makeGameState({ day: finalDay }) as GameState,
+        state: committed,
         logs: [],
         daysAdvanced: cmd.days,
         checksum: `r${this.commands.length}`,

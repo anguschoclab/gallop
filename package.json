@@ -20,6 +20,7 @@
     "build-storybook": "storybook build",
     "check:no-stray-js": "bash scripts/check-no-stray-js.sh",
     "bench:advance": "bun run scripts/benchAdvance.ts",
+    "bench:race": "bun run scripts/benchRace.ts",
     "verify": "bash scripts/verify.sh"
   },
   "dependencies": {

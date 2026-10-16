@@ -26,18 +26,28 @@ export type SubmitOptions =
       kind?: "advance";
       days: number;
       headless: boolean;
-      state: GameState;
+      /** Omitted when the engine's retained world is already in sync. */
+      state?: GameState;
       telemetry?: boolean;
       checksum?: boolean;
     }
   | {
       kind: "resolveLiveRace";
-      state: GameState;
+      /** Omitted when the engine's retained world is already in sync. */
+      state?: GameState;
       raceId: string;
       result: { horseId: string; position: number; time: number }[];
       runners?: import("@/core/race/types").RaceRunner[];
       factorLedgers?: Record<string, import("@/core/race/factorLedger").RunnerFactorLedger>;
       snapshots?: import("@/core/race/engine/raceSnapshotTypes").RaceSnapshot[];
+    }
+  | {
+      kind: "loadWorld";
+      state: GameState;
+      /** Rebase target — defaults to the client's current revision. Pass an
+       *  explicit revision when seeding a fresh engine that must adopt an
+       *  already-committed world (e.g. recovery after a transport crash). */
+      baseRevision?: Revision;
     };
 
 interface QueuedCommand {
@@ -46,6 +56,10 @@ interface QueuedCommand {
 }
 
 export type AdvanceResult =
+  | {
+      status: "loaded";
+      revision: Revision;
+    }
   | {
       status: "completed";
       revision: Revision;
@@ -193,28 +207,35 @@ export class EngineClient {
     // baseRevision is captured at dispatch time so queued commands always
     // build on the latest committed revision.
     const command: EngineCommand =
-      options.kind === "resolveLiveRace"
+      options.kind === "loadWorld"
         ? {
-            kind: "resolveLiveRace",
+            kind: "loadWorld",
             commandId: pending.commandId,
-            baseRevision: this._revision,
+            baseRevision: options.baseRevision ?? this._revision,
             state: options.state,
-            raceId: options.raceId,
-            result: options.result,
-            runners: options.runners,
-            factorLedgers: options.factorLedgers,
-            snapshots: options.snapshots,
           }
-        : {
-            kind: "advance",
-            commandId: pending.commandId,
-            baseRevision: this._revision,
-            state: options.state,
-            days: options.days,
-            headless: options.headless,
-            telemetry: options.telemetry,
-            checksum: options.checksum,
-          };
+        : options.kind === "resolveLiveRace"
+          ? {
+              kind: "resolveLiveRace",
+              commandId: pending.commandId,
+              baseRevision: this._revision,
+              state: options.state,
+              raceId: options.raceId,
+              result: options.result,
+              runners: options.runners,
+              factorLedgers: options.factorLedgers,
+              snapshots: options.snapshots,
+            }
+          : {
+              kind: "advance",
+              commandId: pending.commandId,
+              baseRevision: this._revision,
+              state: options.state,
+              days: options.days,
+              headless: options.headless,
+              telemetry: options.telemetry,
+              checksum: options.checksum,
+            };
     this.transport.submit(command);
   }
 
@@ -233,6 +254,7 @@ export class EngineClient {
     switch (event.type) {
       case "accepted":
         return;
+      case "loaded":
       case "completed":
       case "interrupted":
       case "cancelled":
@@ -255,6 +277,9 @@ export class EngineClient {
     if (this.active === pending) this.active = null;
 
     switch (event.type) {
+      case "loaded":
+        pending.resolve({ status: "loaded", revision: event.revision });
+        break;
       case "completed":
         pending.resolve({
           status: "completed",

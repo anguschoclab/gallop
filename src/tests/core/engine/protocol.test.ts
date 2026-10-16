@@ -382,3 +382,114 @@ describe("resolveLiveRace command", () => {
     expect(client.revision).toBe(1);
   });
 });
+
+describe("retained world — loadWorld + stateless commands", () => {
+  let state: GameState;
+  beforeEach(() => {
+    state = makeGameState({ day: 1, cash: 100000 }) as GameState;
+  });
+
+  it("rejects a stateless command when no world is loaded", async () => {
+    const engine = new SimulationEngine();
+    const events: EngineEvent[] = [];
+    await engine.submit(
+      { kind: "advance", commandId: "c1", baseRevision: 0, days: 1, headless: true },
+      (e) => events.push(e),
+    );
+    expect(events.at(-1)).toEqual({
+      type: "rejected",
+      commandId: "c1",
+      reason: "no_world_loaded",
+    });
+  });
+
+  it("loadWorld seeds the retained world; stateless advances run against it", async () => {
+    const engine = new SimulationEngine();
+    const events: EngineEvent[] = [];
+    const emit = (e: EngineEvent) => events.push(e);
+    await engine.submit({ kind: "loadWorld", commandId: "load", baseRevision: 7, state }, emit);
+    expect(events.at(-1)).toEqual({ type: "loaded", commandId: "load", revision: 7 });
+    expect(engine.currentRevision).toBe(7);
+
+    await engine.submit(
+      { kind: "advance", commandId: "c1", baseRevision: 7, days: 1, headless: true },
+      emit,
+    );
+    const term = events.at(-1);
+    expect(term?.type).toBe("completed");
+    if (term?.type === "completed") {
+      expect(term.revision).toBe(8);
+      expect(term.state.day).toBe(state.day + 1);
+    }
+  });
+
+  it("a committed advance becomes the retained world for the next command", async () => {
+    const engine = new SimulationEngine();
+    const events: EngineEvent[] = [];
+    const emit = (e: EngineEvent) => events.push(e);
+    await engine.submit(
+      { kind: "advance", commandId: "c1", baseRevision: 0, state, days: 1, headless: true },
+      emit,
+    );
+    // Second command omits state entirely — runs against the commit.
+    await engine.submit(
+      { kind: "advance", commandId: "c2", baseRevision: 1, days: 1, headless: true },
+      emit,
+    );
+    const term = events.at(-1);
+    expect(term?.type).toBe("completed");
+    if (term?.type === "completed") {
+      expect(term.state.day).toBe(state.day + 2);
+    }
+  });
+
+  it("loadWorld rebases a stale engine (transport-restart recovery)", async () => {
+    const engine = new SimulationEngine();
+    const events: EngineEvent[] = [];
+    const emit = (e: EngineEvent) => events.push(e);
+    await engine.submit(
+      { kind: "advance", commandId: "c1", baseRevision: 0, state, days: 1, headless: true },
+      emit,
+    );
+    // Engine at rev 1; a recovered store believes rev 40 — loadWorld must
+    // adopt the supplied world at the supplied revision despite the mismatch.
+    await engine.submit({ kind: "loadWorld", commandId: "rebase", baseRevision: 40, state }, emit);
+    expect(events.at(-1)).toEqual({ type: "loaded", commandId: "rebase", revision: 40 });
+    await engine.submit(
+      { kind: "advance", commandId: "c2", baseRevision: 40, days: 1, headless: true },
+      emit,
+    );
+    expect(events.at(-1)?.type).toBe("completed");
+  });
+
+  it("an inline state payload overrides the retained world", async () => {
+    const engine = new SimulationEngine();
+    const events: EngineEvent[] = [];
+    const emit = (e: EngineEvent) => events.push(e);
+    await engine.submit({ kind: "loadWorld", commandId: "load", baseRevision: 0, state }, emit);
+    const diverged = makeGameState({ day: 100, cash: 5 }) as GameState;
+    await engine.submit(
+      {
+        kind: "advance",
+        commandId: "c1",
+        baseRevision: 0,
+        state: diverged,
+        days: 1,
+        headless: true,
+      },
+      emit,
+    );
+    const term = events.at(-1);
+    expect(term?.type).toBe("completed");
+    if (term?.type === "completed") {
+      expect(term.state.day).toBe(101);
+    }
+  });
+
+  it("client resolves a loadWorld submit with the loaded status", async () => {
+    const { client } = makeClient();
+    const res = await client.submit({ kind: "loadWorld", state, baseRevision: 12 });
+    expect(res).toEqual({ status: "loaded", revision: 12 });
+    expect(client.revision).toBe(12);
+  });
+});

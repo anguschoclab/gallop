@@ -27,6 +27,7 @@ export type EngineEmit = (event: EngineEvent) => void;
 export class SimulationEngine {
   private readonly executor: SimulationExecutor;
   private revision: Revision = 0;
+  private world: GameState | null = null;
   private activeId: CommandId | null = null;
   private cancelRequested = false;
   private readonly seenCommandIds = new Set<CommandId>();
@@ -71,8 +72,17 @@ export class SimulationEngine {
       return;
     }
 
-    if (command.baseRevision !== this.revision) {
+    // loadWorld rebases authority: it is the recovery path after a transport
+    // restart, so it is exempt from the base-revision check.
+    if (command.kind !== "loadWorld" && command.baseRevision !== this.revision) {
       emit({ type: "rejected", commandId: command.commandId, reason: "stale_base_revision" });
+      return;
+    }
+
+    // Mutating commands need an authoritative world: either the snapshot
+    // they carry or the retained world seeded by loadWorld/last commit.
+    if (command.kind !== "loadWorld" && !command.state && !this.world) {
+      emit({ type: "rejected", commandId: command.commandId, reason: "no_world_loaded" });
       return;
     }
 
@@ -108,12 +118,26 @@ export class SimulationEngine {
   }
 
   private async execute(command: EngineCommand, emit: EngineEmit): Promise<EngineEvent> {
+    if (command.kind === "loadWorld") {
+      // Adopt the supplied world at the supplied revision. Command-id
+      // deduplication resets too — a load marks a new session/generation.
+      this.world = command.state;
+      this.revision = command.baseRevision;
+      this.seenCommandIds.clear();
+      return {
+        type: "loaded",
+        commandId: command.commandId,
+        revision: this.revision,
+      };
+    }
+
     if (command.kind === "resolveLiveRace") {
       // Atomic live-race commit: player-facing impacts + the resolution
       // intent are applied once, at a new revision. A duplicate resolution
       // is a no-op state — the commit is still consistent.
-      const state = applyLiveRaceResolution(command.state, command);
+      const state = applyLiveRaceResolution((command.state ?? this.world)!, command);
       this.revision += 1;
+      this.world = state;
       return {
         type: "resolved",
         commandId: command.commandId,
@@ -123,9 +147,9 @@ export class SimulationEngine {
       };
     }
 
-    const plan = buildAdvancePlan(command.state, command.days, command.headless);
+    const plan = buildAdvancePlan((command.state ?? this.world)!, command.days, command.headless);
     const telemetry = createTelemetry(command.telemetry === true);
-    const outcome = await this.executor.runRangeAsync(command.state, plan, {
+    const outcome = await this.executor.runRangeAsync((command.state ?? this.world)!, plan, {
       telemetry,
       checksum: command.checksum === true,
       shouldCancel: () => this.cancelRequested,
@@ -144,9 +168,11 @@ export class SimulationEngine {
     });
 
     // Commit: a completed/interrupted/cancelled run commits the days that
-    // actually advanced — never partial within-day state.
+    // actually advanced — never partial within-day state. The committed
+    // state becomes the retained world for subsequent commands.
     this.revision += 1;
     const state = outcome.state as GameState;
+    this.world = state;
 
     const telemetryReport = telemetry.enabled ? telemetry.report() : undefined;
 

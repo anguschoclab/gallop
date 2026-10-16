@@ -9,16 +9,27 @@ import { asRaceId } from "@/core/types/branded";
 import { IDLE_EXECUTION } from "@/game/store/state/systemsState";
 import type { GameState } from "@/game/types";
 import { PostCommitDispatcher, postCommitId } from "@/game/store/postCommit";
+import { engineWorldSynced, noteCommittedWorld } from "@/game/store/engineSync";
 
 /**
  * Extract a structured-cloneable GameState snapshot from the store — action
  * functions are stripped so the payload survives postMessage to the worker.
+ * Session/bookkeeping keys are also stripped: they are store-only state the
+ * engine neither owns nor should transport.
  * @param s
  */
 export function snapshotState(s: StoreType): GameState {
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(s)) {
-    if (typeof v !== "function") out[k] = v;
+    if (typeof v === "function") continue;
+    if (
+      k === "execution" ||
+      k === "engineRevision" ||
+      k === "engineGeneration" ||
+      k === "lastFrameTime"
+    )
+      continue;
+    out[k] = v;
   }
   return out as unknown as GameState;
 }
@@ -66,10 +77,12 @@ export function createAdvanceDayActions(
   ) => {
     const s = get();
 
+    // Committed state already carries day/pendingIntents/trainingUsed from
+    // finalization — overriding them here would only break object identity
+    // with the engine's retained world. The log override is real store-side
+    // enrichment (phase lines + upkeep), and `log` is excluded from the
+    // world-sync check for exactly that reason.
     const overrides = {
-      day: newDay,
-      pendingIntents: [],
-      trainingUsed: {},
       engineRevision,
       log: [
         ...newLogs,
@@ -178,11 +191,30 @@ export function createAdvanceDayActions(
         progressCallback?.(e.daysCompleted, e.totalDays);
       });
 
-      const result = await client.submit({
+      // The engine retains its committed world between commands — send a
+      // full snapshot only when the store has diverged (first command after
+      // load/new-game, or any store-side mutation since the last commit).
+      let result = await client.submit({
         days: n,
         headless,
-        state: snapshotState(s),
+        state: engineWorldSynced(s) ? undefined : snapshotState(s),
       });
+
+      // A stale base revision means engine authority drifted (transport
+      // restart): rebase it to the store's revision via loadWorld, then
+      // retry once.
+      if (result.status === "rejected" && result.reason === "stale_base_revision") {
+        const snap = snapshotState(get());
+        const load = await client.submit({
+          kind: "loadWorld",
+          state: snap,
+          baseRevision: get().engineRevision ?? 0,
+        });
+        if (load.status === "loaded") {
+          noteCommittedWorld(snap);
+          result = await client.submit({ days: n, headless });
+        }
+      }
 
       // CAS guard: superseded generation or non-advancing revision → drop.
       const current = get();
@@ -192,14 +224,29 @@ export function createAdvanceDayActions(
         return;
       }
       if (result.status === "resolved") return; // resolveLiveRace results commit elsewhere
+      if (result.status === "loaded") return; // only reachable via a loadWorld submit
       if (result.revision <= (current.engineRevision ?? 0)) {
         console.warn(
           `[advance] dropping stale result revision ${result.revision} <= ${current.engineRevision}`,
         );
+        // The engine committed a revision the store already passed — its
+        // authority is behind ours (e.g. a restarted transport re-committed
+        // from rev 0). Rebase it to the store's world+revision so the next
+        // advance chains instead of dropping every future commit.
+        const snap = snapshotState(current);
+        const rebase = await client.submit({
+          kind: "loadWorld",
+          state: snap,
+          baseRevision: current.engineRevision ?? 0,
+        });
+        if (rebase.status === "loaded") noteCommittedWorld(snap);
         return;
       }
 
       const finalState = result.state;
+      // The engine retains this committed world — subsequent commands can
+      // omit state while the store's engine-owned fields stay identical.
+      noteCommittedWorld(finalState);
       // The committed state's day is authoritative; fall back to the local
       // projection only if the engine omitted it.
       const finalDay =

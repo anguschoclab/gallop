@@ -11,21 +11,28 @@ import { useGame } from "@/game/store";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { EngineClient, type EngineTransport } from "@/core/engine/client";
-import type { AdvanceCommand, EngineEvent } from "@/core/engine/protocol";
+import type { EngineCommand, EngineEvent } from "@/core/engine/protocol";
 import { _setEngineClientForTests } from "@/game/store/engineClient";
 import type { GameState } from "@/game/types";
 
 /** Scriptable transport: captures commands, emits events on demand. */
 class FakeTransport implements EngineTransport {
-  commands: AdvanceCommand[] = [];
+  commands: EngineCommand[] = [];
   cancels: string[] = [];
   private handler: (e: EngineEvent) => void = () => {};
-  submit(msg: AdvanceCommand | { kind: "cancel"; commandId: string }): void {
+  submit(msg: EngineCommand | { kind: "cancel"; commandId: string }): void {
     if ((msg as { kind: string }).kind === "cancel") {
       this.cancels.push((msg as { commandId: string }).commandId);
       return;
     }
-    this.commands.push(msg as AdvanceCommand);
+    this.commands.push(msg as EngineCommand);
+    const cmd = msg as EngineCommand;
+    if (cmd.kind === "loadWorld") {
+      // Like the real engine, adopt the world at the supplied revision.
+      setTimeout(() =>
+        this.emit({ type: "loaded", commandId: cmd.commandId, revision: cmd.baseRevision }),
+      );
+    }
   }
   onEvent(h: (e: EngineEvent) => void): void {
     this.handler = h;
@@ -197,6 +204,67 @@ describe("store commit CAS (real EngineClient + fake transport)", () => {
     await p2;
     expect(useGame.getState().day).toBe(2);
     expect(useGame.getState().execution?.status).toBe("idle");
+  });
+
+  it("omits the state payload once the store matches the engine's committed world", async () => {
+    const p1 = useGame.getState().advanceMultipleDays(1, true);
+    await vi.waitFor(() => expect(transport.commands).toHaveLength(1));
+    // First command after client injection: no committed world → full state.
+    expect(transport.commands[0].state).toBeDefined();
+    transport.emit(completed(transport.commands[0].commandId, 1, 2, 1));
+    await p1;
+
+    // The store's engine-owned fields are now identical to the committed
+    // world — the second command carries no 7MB snapshot.
+    const p2 = useGame.getState().advanceMultipleDays(1, true);
+    await vi.waitFor(() => expect(transport.commands).toHaveLength(2));
+    expect(transport.commands[1].state).toBeUndefined();
+    transport.emit(completed(transport.commands[1].commandId, 2, 3, 1));
+    await p2;
+    expect(useGame.getState().day).toBe(3);
+  });
+
+  it("resyncs a full state payload after a store-side world mutation", async () => {
+    const p1 = useGame.getState().advanceMultipleDays(1, true);
+    await vi.waitFor(() => expect(transport.commands).toHaveLength(1));
+    transport.emit(completed(transport.commands[0].commandId, 1, 2, 1));
+    await p1;
+
+    // Store-side mutation between commands (e.g. a purchase) diverges the
+    // world — the next command must carry a fresh snapshot.
+    useGame.setState({ cash: 42 });
+    const p2 = useGame.getState().advanceMultipleDays(1, true);
+    await vi.waitFor(() => expect(transport.commands).toHaveLength(2));
+    const resync = transport.commands[1].state;
+    expect(resync).toBeDefined();
+    expect(resync?.cash).toBe(42);
+    transport.emit(completed(transport.commands[1].commandId, 2, 3, 1));
+    await p2;
+  });
+
+  it("a stale_base_revision rejection rebases via loadWorld and retries", async () => {
+    const p = useGame.getState().advanceMultipleDays(1, true);
+    await vi.waitFor(() => expect(transport.commands).toHaveLength(1));
+    const cmd1 = transport.commands[0];
+
+    // Engine lost its authority (transport restart) — reject the command.
+    transport.emit({
+      type: "rejected",
+      commandId: cmd1.commandId,
+      reason: "stale_base_revision",
+    });
+    // The transport auto-answers loadWorld, so the retry advance queues
+    // immediately after it: [advance, loadWorld, advance].
+    await vi.waitFor(() => expect(transport.commands).toHaveLength(3));
+
+    const load = transport.commands[1];
+    expect(load.kind).toBe("loadWorld");
+    expect(load.baseRevision).toBe(0); // store's engineRevision
+    const retry = transport.commands[2];
+    expect(retry.kind).toBe("advance");
+    transport.emit(completed(retry.commandId, 1, 2, 1));
+    await p;
+    expect(useGame.getState().day).toBe(2);
   });
 
   it("interrupted range commits once; resume dispatches on the committed revision", async () => {

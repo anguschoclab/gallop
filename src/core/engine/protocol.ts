@@ -14,13 +14,28 @@ import type { GameState } from "@/game/types";
 export type CommandId = string;
 export type Revision = number;
 
+/**
+ * Seed or reset the engine's retained world. Establishes `state` as the
+ * authoritative world at `baseRevision`; subsequent commands may omit their
+ * `state` payload and execute against the retained copy. Loading a world
+ * resets command-id deduplication (a new session/generation).
+ */
+export interface LoadWorldCommand {
+  kind: "loadWorld";
+  commandId: CommandId;
+  baseRevision: Revision;
+  state: GameState;
+}
+
 /** Advance the world N days (may interrupt on a player race / cancel). */
 export interface AdvanceCommand {
   kind: "advance";
   commandId: CommandId;
   baseRevision: Revision;
-  /** Snapshot of authoritative state at baseRevision. */
-  state: GameState;
+  /** Snapshot of authoritative state at baseRevision. May be omitted when
+   *  the engine's retained world is already in sync — the command then runs
+   *  against retained state. */
+  state?: GameState;
   days: number;
   headless: boolean;
   /** When true the executor records span/counter telemetry for this command
@@ -40,7 +55,8 @@ export interface ResolveLiveRaceCommand {
   kind: "resolveLiveRace";
   commandId: CommandId;
   baseRevision: Revision;
-  state: GameState;
+  /** Optional resync snapshot — when omitted the retained world is used. */
+  state?: GameState;
   raceId: string;
   result: { horseId: string; position: number; time: number }[];
   runners?: import("@/core/race/types").RaceRunner[];
@@ -48,13 +64,18 @@ export interface ResolveLiveRaceCommand {
   snapshots?: import("@/core/race/engine/raceSnapshotTypes").RaceSnapshot[];
 }
 
-export type EngineCommand = AdvanceCommand | ResolveLiveRaceCommand;
+export type EngineCommand = AdvanceCommand | ResolveLiveRaceCommand | LoadWorldCommand;
 
 export type RejectReason =
-  "malformed" | "stale_base_revision" | "duplicate_command" | "engine_busy";
+  "malformed" | "stale_base_revision" | "duplicate_command" | "engine_busy" | "no_world_loaded";
 
 export type EngineEvent =
   | { type: "accepted"; commandId: CommandId }
+  | {
+      type: "loaded";
+      commandId: CommandId;
+      revision: Revision;
+    }
   | {
       type: "progress";
       commandId: CommandId;
@@ -104,7 +125,9 @@ export type EngineEvent =
 
 export type TerminalEvent = Extract<
   EngineEvent,
-  { type: "completed" | "interrupted" | "cancelled" | "resolved" | "rejected" | "failed" }
+  {
+    type: "loaded" | "completed" | "interrupted" | "cancelled" | "resolved" | "rejected" | "failed";
+  }
 >;
 
 /**
@@ -116,7 +139,13 @@ export function parseCommand(raw: unknown): EngineCommand | null {
   const c = raw as Record<string, unknown>;
   if (typeof c.commandId !== "string" || c.commandId.length === 0) return null;
   if (!Number.isInteger(c.baseRevision) || (c.baseRevision as number) < 0) return null;
-  if (typeof c.state !== "object" || c.state === null) return null;
+  if (c.kind === "loadWorld") {
+    if (typeof c.state !== "object" || c.state === null) return null;
+    return c as unknown as EngineCommand;
+  }
+  // state is optional on mutating commands — the engine falls back to the
+  // retained world seeded by loadWorld or the last committed state.
+  if (c.state !== undefined && (typeof c.state !== "object" || c.state === null)) return null;
   if (c.kind === "advance") {
     if (!Number.isInteger(c.days) || (c.days as number) <= 0) return null;
     if (typeof c.headless !== "boolean") return null;

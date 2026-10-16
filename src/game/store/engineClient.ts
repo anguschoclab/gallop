@@ -10,6 +10,7 @@
 import { EngineClient } from "@/core/engine/client";
 import { LocalTransport, WorkerTransport } from "@/core/engine/transports";
 import { SimulationEngine } from "@/core/engine/engine";
+import { resetCommittedWorld } from "./engineSync";
 
 let client: EngineClient | null = null;
 let workerStarted = false;
@@ -45,9 +46,11 @@ export async function initEngineClient(): Promise<void> {
 
   worker.addEventListener("error", () => {
     // Crash/restart: reject in-flight commands, drop back to in-process
-    // engine so subsequent submits still work.
+    // engine so subsequent submits still work. The replacement engine has
+    // no retained world — the next command resyncs a full snapshot.
     workerClient.failAll(new Error("engine worker crashed"));
     workerStarted = false;
+    resetCommittedWorld();
     if (client === workerClient) client = createLocalClient();
   });
 }
@@ -60,6 +63,7 @@ export function resetEngineClient(): void {
   client?.dispose();
   client = null;
   workerStarted = false;
+  resetCommittedWorld();
 }
 
 /**
@@ -69,4 +73,5 @@ export function resetEngineClient(): void {
 export function _setEngineClientForTests(c: EngineClient | null): void {
   client = c;
   workerStarted = false;
+  resetCommittedWorld();
 }

@@ -76,7 +76,7 @@ class ChaosTransport implements EngineTransport {
       return;
     }
     const days = cmd.days;
-    const baseDay = cmd.state.day;
+    const baseDay = cmd.state!.day;
     const rev = ++this.revision;
     const delay = Math.floor(this.rng() * 3);
     setTimeout(() => {
