@@ -224,3 +224,130 @@ function StableCampaignPage() {
     </div>
   );
 }
+
+const EMPTY_LEDGER: TrackLedgerEntry[] = [];
+const signed = (n: number) => (n > 0 ? `+${n}` : `${n}`);
+
+function CampaignHistoryCard({
+  goals,
+  horses,
+}: {
+  goals: StableGoals;
+  horses: Record<string, Horse>;
+}) {
+  const ledger = useGameWithShallow((s) => s.trackLedger ?? EMPTY_LEDGER) as TrackLedgerEntry[];
+  const rows = useMemo(
+    () => buildCampaignHistory(goals, Object.values(horses), ledger).reverse(),
+    [goals, horses, ledger],
+  );
+  const last = rows[0];
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="text-sm uppercase tracking-wide">
+          Campaign history (since day {goals.startDay})
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {rows.length === 0 ? (
+          <p className="text-sm text-muted-foreground">
+            No races run since the campaign started. Each start will appear here with its effect on
+            net worth, prestige and class wins.
+          </p>
+        ) : (
+          <>
+            <div className="flex flex-wrap gap-4 text-sm">
+              <span>
+                Starts: <span className="font-mono">{rows.length}</span>
+              </span>
+              <span>
+                Wins:{" "}
+                <span className="font-mono">{rows.filter((r) => r.position === 1).length}</span>
+              </span>
+              <span>
+                Net worth from prizes:{" "}
+                <span className="font-mono text-success">+{money(last.cumulativePrize)}</span>
+              </span>
+              <span>
+                Prestige: <span className="font-mono">{signed(last.cumulativePrestige)}</span>
+              </span>
+              <span>
+                Goal wins:{" "}
+                <span className="font-mono">{rows.filter((r) => r.countedForGoal).length}</span>
+              </span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="text-left text-xs uppercase text-muted-foreground">
+                  <tr>
+                    <th className="py-1 pr-3">Day</th>
+                    <th className="pr-3">Horse</th>
+                    <th className="pr-3">Race</th>
+                    <th className="pr-3">Class</th>
+                    <th className="pr-3">Finish</th>
+                    <th className="pr-3 text-right">Net worth</th>
+                    <th className="pr-3 text-right">Prestige</th>
+                    <th className="pr-3">Class wins</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {rows.map((r) => (
+                    <tr key={`${r.raceId}-${r.horseId}`} className="border-t border-border">
+                      <td className="py-1 pr-3 font-mono">{r.day}</td>
+                      <td className="pr-3">
+                        <Link
+                          to="/stable/$horseId"
+                          params={{ horseId: r.horseId }}
+                          className="hover:text-gold hover:underline"
+                        >
+                          {r.horseName}
+                        </Link>
+                      </td>
+                      <td className="pr-3">{r.raceName}</td>
+                      <td className="pr-3">{r.goalClass ?? "—"}</td>
+                      <td className="pr-3 font-mono">
+                        {r.position}
+                        {r.fieldSize ? `/${r.fieldSize}` : ""}
+                      </td>
+                      <td className="pr-3 text-right font-mono">
+                        {r.prize > 0 ? <span className="text-success">+{money(r.prize)}</span> : "—"}
+                        <div className="text-xs text-muted-foreground">
+                          total {money(r.cumulativePrize)}
+                        </div>
+                      </td>
+                      <td
+                        className={`pr-3 text-right font-mono ${
+                          (r.prestige ?? 0) > 0
+                            ? "text-success"
+                            : (r.prestige ?? 0) < 0
+                              ? "text-destructive"
+                              : ""
+                        }`}
+                      >
+                        {r.prestige === null ? "—" : signed(r.prestige)}
+                      </td>
+                      <td className="pr-3 text-xs">
+                        {r.goalClass && r.position === 1 ? (
+                          <span className={r.countedForGoal ? "text-gold" : ""}>
+                            {r.goalClass} win #{r.classWinsAfter}
+                            {r.countedForGoal ? " ★ goal" : ""}
+                          </span>
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Net worth shows prize money won; horse value changes aren't tied to single races.
+              Prestige comes from Course Histories, so "—" means it wasn't recorded.
+            </p>
+          </>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
