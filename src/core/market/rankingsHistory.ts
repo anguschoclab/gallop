@@ -63,10 +63,12 @@ export function recordRankingsHistory(
     next[row.horseId] = [...prev, snapshot].slice(-RANKINGS_HISTORY_MAX_ENTRIES);
   });
   const rankedIds = new Set(rows.map((row) => row.horseId));
+  const allRows = horses.some((h) => isPlayerOwned(h) && !rankedIds.has(h.id))
+    ? worldRankings(horses, day, 365, horses.length)
+    : [];
   for (const horse of horses) {
     if (!isPlayerOwned(horse) || horse.lifecycleStatus === "deceased" || rankedIds.has(horse.id)) continue;
     // A player horse below the tracked top 50 still has its actual world rank.
-    const allRows = worldRankings(horses, day, 365, horses.length);
     const index = allRows.findIndex((row) => row.horseId === horse.id);
     const row = allRows[index];
     next[horse.id] = [...(next[horse.id] ?? []), {
