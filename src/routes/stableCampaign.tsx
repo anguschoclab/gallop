@@ -216,6 +216,8 @@ function StableCampaignPage() {
         </Button>
         {saved && <span className="self-center text-xs text-muted-foreground">Goals active.</span>}
       </div>
+
+      <CampaignHistoryCard goals={saved ?? draft} horses={horses} />
     </div>
   );
 }
