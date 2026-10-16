@@ -9,7 +9,7 @@
  * Related files: horseFactory.ts (uses genome modifiers for foal generation), breedingCompatibility.ts (uses COI for compatibility)
  */
 
-import type { Horse, GameState, Pedigree } from "@/game/types";
+import type { Horse, Pedigree } from "@/game/types";
 import { findHorseByName } from "@/core/data/pedigreeAccessor";
 import { cachedCoi, cachedBloodline } from "@/core/genetics/genotypeCache";
 

@@ -4,15 +4,12 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Calendar,
-  Flag,
   Clock,
   MapPin,
   AlertTriangle,
   CheckCircle2,
   Trash2,
-  Plus,
   Compass,
-  ArrowRight,
 } from "lucide-react";
 import {
   calculateVenuePrestige,

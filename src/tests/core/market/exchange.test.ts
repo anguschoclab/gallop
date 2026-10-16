@@ -2,12 +2,7 @@ import { describe, it, expect } from "vitest";
 import { buildOrderBooks, buildMarketDepth } from "@/core/market/exchange";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
-import type {
-  ExchangeState,
-  ExchangeAsk,
-  ExchangeBid,
-  ExchangeTrade,
-} from "@/core/market/exchange";
+import type { ExchangeState, ExchangeAsk, ExchangeBid } from "@/core/market/exchange";
 
 describe("buildOrderBooks", () => {
   it("builds a book for a horse with live asks and bids", () => {

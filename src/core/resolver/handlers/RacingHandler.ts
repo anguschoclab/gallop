@@ -33,14 +33,7 @@ import type {
 import type { TripleCrownProgressImpact } from "../impacts/campaignImpacts";
 import { awardTraitXp, checkTraitUnlock, checkTraitAtrophy } from "@/core/jockey/traitProgression";
 import type { JockeyTrait } from "@/core/jockey/types";
-import {
-  isPlayerOwned,
-  isNpcOwned,
-  makePlayerOwned,
-  makeNpcOwned,
-  makeUnowned,
-  type HorseOwnership,
-} from "@/core/horse/ownership";
+import { isPlayerOwned, makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 import { createTransaction } from "@/core/transactions";
 

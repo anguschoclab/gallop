@@ -8,7 +8,7 @@ import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
 import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { asHorseId, asStableId, asPlayerOwnerId, asOwnerKey } from "@/core/types/branded";
 import type {
   AnyImpact,

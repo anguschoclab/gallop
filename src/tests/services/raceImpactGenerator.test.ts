@@ -9,12 +9,7 @@ import {
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import type { Race } from "@/game/types";
 import { RACE_ENERGY_IMPACT, STAMINA_DRAIN_MAX } from "@/constants";
-import {
-  AFFINITY_XP_PER_RACE,
-  AFFINITY_XP_PER_WIN_BONUS,
-  AFFINITY_XP_POOR_RACE_PENALTY,
-} from "@/constants";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { AFFINITY_XP_PER_RACE, AFFINITY_XP_PER_WIN_BONUS } from "@/constants";
 import { asNpcStableId } from "@/core/types/branded";
 import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 

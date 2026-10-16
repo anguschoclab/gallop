@@ -4,7 +4,7 @@ import { createDefaultGameState } from "@/game/store/state";
 import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
 import { renderHook } from "@testing-library/react";
 import type { Horse } from "@/game/types";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { makePlayerOwned } from "@/core/horse/ownership";
 
 // Mock IntersectionObserver (used by useHorseDetail's scroll section tracking)

@@ -2,7 +2,6 @@ import { describe, it, expect, afterEach, vi } from "vitest";
 import { cleanup, screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { AwardsTab } from "@/components/honors/AwardsTab";
-import { CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, to, params }: any) => (

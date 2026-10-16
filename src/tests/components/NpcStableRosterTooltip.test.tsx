@@ -4,7 +4,7 @@ import { NpcStableRosterTab } from "@/components/stable/NpcStableRosterTab";
 import type { Horse, Stable, PrivateSaleOffer } from "@/game/types";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
+import { asNpcStableId, asHorseId } from "@/core/types/branded";
 
 vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() },

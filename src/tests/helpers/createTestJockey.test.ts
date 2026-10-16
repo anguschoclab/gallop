@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { createTestJockey, createTestJockeys } from "@/tests/helpers";
-import type { Jockey } from "@/core/jockey/types";
 
 describe("createTestJockey", () => {
   it("returns a fully-typed Jockey with all required fields", () => {

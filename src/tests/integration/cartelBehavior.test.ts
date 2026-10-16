@@ -12,8 +12,7 @@ import {
   calculateDynamicStudFee,
   calculateAuctionReservePrice,
 } from "@/core/ai/economyAICartel";
-import { createEconomicState } from "@/core/ai/economyAIState";
-import { evaluateCartelFormation, formCartel } from "@/core/ai/diplomacyAI";
+import { formCartel } from "@/core/ai/diplomacyAI";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
 

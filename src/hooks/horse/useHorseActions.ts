@@ -1,6 +1,6 @@
 import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
 import { isMaleHorse } from "@/core/horse/gender";
-import type { Horse, AuctionSale } from "@/game/types";
+import type { AuctionSale } from "@/game/types";
 import { useMemo, useEffect } from "react";
 import { isPlayerOwned } from "@/core/horse/ownership";
 

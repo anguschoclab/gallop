@@ -13,8 +13,8 @@
 
 import { PHASE_ORDER_PURCHASE_RESOLUTION } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyIntent, PurchaseIntent } from "@/core/resolver/intents";
-import type { AnyImpact, HorseTransferImpact } from "@/core/resolver/impacts/index";
+import type { PurchaseIntent } from "@/core/resolver/intents";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 
 /**

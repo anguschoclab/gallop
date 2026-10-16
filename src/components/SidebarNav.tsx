@@ -42,7 +42,7 @@ import {
 
 import { formatCurrency } from "@/lib/formatting";
 import { gameCalendarDate } from "@/services/calendar/calendarFacade";
-import { DAYS_PER_WEEK, DAYS_PER_MONTH, TOOLTIP_DELAY_MS, SIDEBAR_WIDTH_PX } from "@/constants";
+import { TOOLTIP_DELAY_MS, SIDEBAR_WIDTH_PX } from "@/constants";
 import {
   NavSection,
   type InboxPeekMessage,
@@ -203,7 +203,7 @@ export function SidebarNav({
         <div className="px-3 py-2 rounded-md bg-t800 border border-gold-muted">
           <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Cash</p>
           <p className="text-[22px] font-bold text-cream font-[family-name:var(--font-mono)] tabular-nums">
-            ${cash.toLocaleString()}
+            {formatCurrency(cash)}
           </p>
           <p className="text-[10px] text-cream-muted/60 mt-1">{horseCount} horses</p>
           <div className="grid grid-cols-4 gap-1">

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
-import { renderWithStore, seedStore } from "@/test-utils/renderWithStore";
+import { screen, cleanup } from "@testing-library/react";
+import { renderWithStore } from "@/test-utils/renderWithStore";
 import { StaffSupportPanel } from "@/components/horse/StaffSupportPanel";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import { createDefaultGameState } from "@/game/store/state";

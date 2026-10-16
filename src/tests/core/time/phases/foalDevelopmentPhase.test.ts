@@ -19,7 +19,7 @@ import { createRng } from "@/core/common/rng";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { InboxImpact } from "@/core/resolver/impacts/index";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeContext(state: Partial<GameState>, newDay: number): PipelineContext {

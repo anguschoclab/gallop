@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { HorseHandler } from "@/core/resolver/handlers/HorseHandler";
 import type { GameState } from "@/game/store/state";
 import type { InjuryImpact, HealthStatusImpact } from "@/core/resolver/impacts/index";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("HorseHandler - Injury Handling", () => {
   it("should update horse health status when injured", () => {

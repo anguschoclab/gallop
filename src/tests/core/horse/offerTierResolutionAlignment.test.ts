@@ -6,11 +6,7 @@ import type { GameState, PrivateSaleOffer, Horse, Stable, StablePersonality } fr
 import { makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
 import { calculateLotValuation } from "@/core/auction/engine";
-import {
-  evaluateHorseAttachment,
-  attachmentAdjustedAsk,
-  suggestedOfferTiers,
-} from "@/core/horse/attachment";
+import { attachmentAdjustedAsk, suggestedOfferTiers } from "@/core/horse/attachment";
 import { privateSaleResolutionPhase } from "@/core/time/phases/privateSaleResolution";
 import { ACCEPT_THRESHOLDS } from "@/constants/privateSaleConstants";
 

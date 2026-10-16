@@ -1,4 +1,3 @@
-import type { Horse, Race } from "@/game/types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";

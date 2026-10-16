@@ -14,7 +14,6 @@ vi.mock("@/core/horse/pricing", () => ({
   horseMarketValue: vi.fn((h: Horse) => h.potential * 1000),
 }));
 
-import { calculateOverallRating } from "@/core/horse/stats";
 import { horseMarketValue } from "@/core/horse/pricing";
 import { makePlayerOwned } from "@/core/horse/ownership";
 

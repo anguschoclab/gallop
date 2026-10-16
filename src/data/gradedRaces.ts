@@ -13,7 +13,6 @@
 // Distances normalized to meters. dayOfYear schedules each race on the
 // game's 365-day annual cycle (day 1 = Jan 1).
 
-import { generateUUID } from "@/core/uuid";
 import { TRACK_TO_COUNTRY } from "@/data/trackToCountry";
 
 export type Grade = "G1" | "G2" | "G3";

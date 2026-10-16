@@ -7,7 +7,7 @@ import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import type { EnergyImpact } from "@/core/resolver/impacts/horseImpacts";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { AFFINITY_XP_PER_WORKOUT } from "@/constants";
 import { makeNpcOwned } from "@/core/horse/ownership";
 

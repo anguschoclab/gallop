@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement, type ReactNode } from "react";
-import { render, screen, fireEvent, act } from "@testing-library/react";
+import { screen, fireEvent, act } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { NextActionBanner } from "@/components/dashboard/NextActionBanner";
 import { TutorialNextActionBanner } from "@/components/tutorial/TutorialNextActionBanner";
 import { createDefaultTutorialState } from "@/core/tutorial/tutorialTypes";
 import type { NextAction } from "@/core/dashboard/nextAction";

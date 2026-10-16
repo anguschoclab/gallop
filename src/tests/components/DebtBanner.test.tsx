@@ -1,12 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement, type ReactNode } from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { DebtBanner } from "@/components/dashboard/DebtBanner";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { SOLVENCY_THRESHOLDS } from "@/core/financial/solvency";
-import { horsePrice } from "@/core/horse/pricing";
 import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
 
 vi.mock("@tanstack/react-router", () => ({

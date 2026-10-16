@@ -8,7 +8,7 @@
  * Related files: auctionRunner.ts (uses valuation logic), auctionData.ts (sale triggers and labels)
  */
 
-import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
+import { isFemaleHorse } from "@/core/horse/gender";
 import type {
   Horse,
   Pregnancy,

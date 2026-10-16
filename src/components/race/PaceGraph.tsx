@@ -10,7 +10,6 @@ import {
   ReferenceLine,
 } from "recharts";
 import type { SectionalSplit } from "@/services/race/raceFacade";
-import { SilkDot } from "@/components/SilkDot";
 import { RunnerLegend } from "./RunnerLegend";
 import { cn } from "@/lib/cn";
 import { useRunnerHighlight } from "@/components/race/useRunnerHighlight";

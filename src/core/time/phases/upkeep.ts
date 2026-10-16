@@ -11,14 +11,13 @@
 import type { PipelineContext } from "../pipeline";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { createExpense } from "@/core/expenses";
-import { createTransaction } from "@/core/transactions";
 import { calculateTotalMaintenance } from "@/core/facilities";
 import { resolveNarrativePort } from "@/core/time/pipelinePorts";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { CashImpact, TransactionImpact, NewsImpact } from "@/core/resolver/impacts/index";
 import { asNpcStableId } from "@/core/types/branded";
-import { calculateMonthlyExpenseBudget, createUpkeepAIState } from "@/core/ai/upkeepAI";
+import { createUpkeepAIState } from "@/core/ai/upkeepAI";
 import {
   recordBudgetDecision,
   updateReserveState,

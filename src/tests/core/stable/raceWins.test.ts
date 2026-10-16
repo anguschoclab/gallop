@@ -5,10 +5,9 @@ import {
   type PlayerRaceWinRecord,
 } from "@/core/stable/raceWins";
 import { createTestHorse } from "@/tests/helpers";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId, asRaceId } from "@/core/types/branded";
+import { makePlayerOwned } from "@/core/horse/ownership";
+import { asNpcStableId, asHorseId } from "@/core/types/branded";
 import { createTransaction } from "@/core/transactions";
-import type { Race } from "@/core/race/types";
 
 describe("derivePlayerRaceWins", () => {
   it("returns an empty array when no horses have race history", () => {

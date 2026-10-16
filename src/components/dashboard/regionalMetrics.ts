@@ -8,7 +8,6 @@ import {
 import {
   computeRegionDrilldown,
   type DrilldownEntity,
-  type RegionKey,
   type RegionRunRow,
 } from "@/services/analytics/analyticsFacade";
 import { weekBucket, type TimeWindowWeeks } from "@/services/analytics/analyticsFacade";
@@ -17,8 +16,6 @@ import {
   POSITION_WIN as WIN_POSITION,
   TOP_FINISH_POSITION as TOP3_POSITION,
 } from "@/constants/raceSimulationConstants";
-import type { Horse } from "@/services/horse/horseFacade";
-import type { Race } from "@/services/race/raceFacade";
 
 export interface MetricDef {
   key: string;

@@ -15,12 +15,11 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import {
   attachmentAdjustedAsk,
   calculateLotValuation,
-  evaluateHorseAttachment,
   findPendingOfferForStable,
   getReputationStars,
   stableTierColor,
 } from "@/services/stable/stableCardService";
-import type { Stable, PrivateSaleOffer, Horse } from "@/game/types";
+import type { Stable, PrivateSaleOffer } from "@/game/types";
 
 const BOOKMARK_TOP_OFFSET = "top-2";
 const BOOKMARK_RIGHT_OFFSET = "right-2";

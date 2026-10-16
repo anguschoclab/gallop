@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  createMarketAIState,
-  type MarketAIState,
-  type MarketPurchase,
-  type PortfolioState,
-} from "@/core/ai/marketAITypes";
+import { createMarketAIState } from "@/core/ai/marketAITypes";
 import {
   calculatePurchaseValue,
   shouldPurchaseHorse,

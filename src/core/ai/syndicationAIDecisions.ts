@@ -8,7 +8,6 @@ import {
   getSyndicationSuccessRate,
   shouldCreateSyndicate,
 } from "./syndicationAI";
-import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import { getCareerStats } from "@/core/horse/stats";
 import { getSyndicationAppetite, computeQualityStakeScale } from "./syndicationAppetite";
 import { recordSyndicatePurchaseTrace, type SyndicatePurchaseTrace } from "./syndicationTrace";

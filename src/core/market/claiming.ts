@@ -13,9 +13,8 @@
 
 import type { Horse } from "@/core/horse/types";
 import type { Race, ClaimingPrice } from "@/core/race/types";
-import type { Claim } from "./types";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { createRng, hashStr, nondeterministicRng, type Rng } from "@/core/common/rng";
+import { nondeterministicRng, type Rng } from "@/core/common/rng";
 import { formatCurrency } from "@/core/common/formatting";
 
 // Horse transfer result from a claiming race

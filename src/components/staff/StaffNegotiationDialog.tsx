@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 import { formatCurrency } from "@/lib/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/services/staff/staffFacade";
-import { PATIENCE_BY_TIER } from "@/services/staff/staffFacade";
 import type { StaffMember } from "@/services/staff/staffFacade";
 import { useStaffNegotiation } from "@/hooks/staff/useStaffNegotiation";
 

@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { RunnerConditionBadges } from "@/components/race/RunnerConditionBadges";
 import { RunnerMoodFace } from "@/components/race/RunnerMoodFace";
-import { Camera, Clock, Activity, Trash2, CheckCircle2, ChevronRight } from "lucide-react";
+import { Camera, Trash2, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/cn";
 import type {
   InRunningSnapshot,

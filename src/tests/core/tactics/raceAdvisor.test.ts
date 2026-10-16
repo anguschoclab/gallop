@@ -3,7 +3,6 @@ import { adviseRace } from "@/core/tactics/raceAdvisor";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { generateRace } from "@/core/race/generation/raceGen";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
-import type { Race } from "@/core/race/types";
 
 describe("raceAdvisor", () => {
   it("evaluates a hot pace scenario for a low-stamina front-runner", () => {

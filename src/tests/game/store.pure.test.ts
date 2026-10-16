@@ -3,7 +3,7 @@
  * These are business logic functions that don't depend on Zustand state
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   refreshMarket,
   generateUpcomingScheduledRaces,
@@ -11,7 +11,7 @@ import {
 } from "@/core/market/marketRefresh";
 import { resolvePregnancies } from "@/core/breeding/pregnancy";
 import { maybeRecalibratePars } from "@/core/race/beyerPars";
-import type { Horse, Race, Pregnancy } from "@/game/types";
+import type { Race, Pregnancy } from "@/game/types";
 import { generateHorse } from "@/core/horse/horseFactory";
 import { generateRace } from "@/core/race/generation/raceGen";
 import { createRng, hashStr } from "@/core/common/rng";

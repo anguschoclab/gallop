@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  createRaceEntryAIState,
-  type RaceEntryAIState,
-  type StrategicPlan,
-  type HorseDevelopmentTrack,
-} from "@/core/ai/raceEntryAITypes";
+import { createRaceEntryAIState } from "@/core/ai/raceEntryAITypes";
 import { calculateStrategicEntryScore } from "@/core/ai/raceEntryAIScoring";
 import {
   updateHorseDevelopment,

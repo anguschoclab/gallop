@@ -6,7 +6,7 @@ import { ParentStatsPanel } from "@/components/breeding/ParentStatsPanel";
 import { SireSelector } from "@/components/breeding/SireSelector";
 import { DamSelector } from "@/components/breeding/DamSelector";
 import { createTestHorse } from "@/tests/helpers";
-import type { AuctionLot, Stable } from "@/game/types";
+import type { AuctionLot } from "@/game/types";
 
 describe("Bruce Lowe family display — no raw codes", () => {
   describe("HorseDetailHeader", () => {

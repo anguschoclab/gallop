@@ -6,10 +6,6 @@ vi.mock("@/services/auction/auctionFacade", () => ({
   nextBidAmount: (current: number) => Math.ceil(current * 1.1),
 }));
 
-vi.mock("@/components/auction/AuctionStates", () => ({
-  AuctionErrorState: () => null,
-}));
-
 vi.mock("@/components/auction/sub/BidInputPanel", () => ({
   BidInputPanel: () => <div data-testid="bid-input-panel" />,
 }));
@@ -181,6 +177,68 @@ describe("AuctionControls", () => {
         error="Insufficient funds"
       />,
     );
+    expect(screen.getByRole("alert")).toBeInTheDocument();
     expect(screen.getByText("Insufficient funds")).toBeInTheDocument();
+  });
+
+  it("calls onDismissError when the dismiss button is clicked", async () => {
+    const onDismissError = vi.fn();
+    render(
+      <AuctionControls
+        currentBid={10000}
+        playerIsLeading={false}
+        paused={false}
+        onTogglePause={noop}
+        onBid={noop}
+        onPass={noop}
+        onSkip={noop}
+        playerMaxBid={undefined}
+        onSetMaxBid={noop}
+        error="Insufficient funds"
+        onDismissError={onDismissError}
+      />,
+    );
+    screen.getByLabelText("Dismiss error").click();
+    expect(onDismissError).toHaveBeenCalledTimes(1);
+  });
+
+  it("calls onRetryBid when the retry button is clicked", async () => {
+    const onRetryBid = vi.fn();
+    render(
+      <AuctionControls
+        currentBid={10000}
+        playerIsLeading={false}
+        paused={false}
+        onTogglePause={noop}
+        onBid={noop}
+        onPass={noop}
+        onSkip={noop}
+        playerMaxBid={undefined}
+        onSetMaxBid={noop}
+        error="Insufficient funds"
+        onRetryBid={onRetryBid}
+      />,
+    );
+    screen.getByText("Retry bid").click();
+    expect(onRetryBid).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides the retry button when onRetryBid is not provided", () => {
+    render(
+      <AuctionControls
+        currentBid={10000}
+        playerIsLeading={false}
+        paused={false}
+        onTogglePause={noop}
+        onBid={noop}
+        onPass={noop}
+        onSkip={noop}
+        playerMaxBid={undefined}
+        onSetMaxBid={noop}
+        error="Insufficient funds"
+      />,
+    );
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+    expect(screen.queryByText("Retry bid")).not.toBeInTheDocument();
   });
 });

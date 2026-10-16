@@ -8,7 +8,7 @@ import {
   TRAIT_XP_MAINTENANCE_THRESHOLD,
 } from "@/core/jockey/traitProgression";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
-import type { Jockey, JockeyTrait } from "@/core/jockey/types";
+import type { JockeyTrait } from "@/core/jockey/types";
 
 describe("awardTraitXp", () => {
   it("adds XP to correct trait key", () => {

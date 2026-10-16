@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement, type ReactNode } from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { BeyerExplainer } from "@/components/tutorial/BeyerExplainer";
 import { createDefaultTutorialState } from "@/core/tutorial/tutorialTypes";

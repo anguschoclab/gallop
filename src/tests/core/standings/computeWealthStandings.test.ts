@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { computeWealthStandings } from "@/core/standings/computeWealthStandings";
 import { createDefaultGameState } from "@/game/store/state";
-import type { GameState, Horse } from "@/game/types";
+import type { GameState } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { asNpcStableId } from "@/core/types/branded";
 import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";

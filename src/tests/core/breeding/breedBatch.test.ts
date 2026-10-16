@@ -5,7 +5,7 @@ import { createTestMare, createTestStallion } from "@/tests/helpers";
 import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE, MAX_BATCH_BREEDING } from "@/constants";
 import type { Horse, StudCareer, Pregnancy } from "@/game/types";
 import type { MatingPlanEntry } from "@/game/store/state/breedingState";
-import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 
 function mkStud(overrides: Partial<StudCareer> = {}): StudCareer {

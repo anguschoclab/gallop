@@ -8,18 +8,10 @@ import {
 import {
   resolveCoatColor,
   resolveStats,
-  resolveRunningStyle,
-  resolveHeartScore,
-  resolveFiberBias,
-  resolveTrainability,
-  resolvePeakAge,
-  resolveRecoveryRate,
-  resolveFertility,
   resolveSize,
   resolveInjuryProneness,
 } from "@/core/genetics/phenotype";
 import { inheritDNA } from "@/core/genetics/inheritance";
-import { stallionResearchData } from "@/data/stallionDNAData";
 
 describe("Universal DNA System", () => {
   const rng = createRng(123);

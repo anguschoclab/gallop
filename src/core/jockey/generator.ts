@@ -34,6 +34,13 @@ export type JockeyGenerationOptions = {
   usedNames?: Set<string>;
 };
 
+/** Base stat roll range per tier (archetype strategies adjust afterwards). */
+const TIER_BASE_STAT_RANGE: Record<"elite" | "mid" | "budget", [number, number]> = {
+  elite: [JOCKEY_SALARY_ELITE_MIN, JOCKEY_SALARY_ELITE_MAX],
+  mid: [JOCKEY_SALARY_MID_MIN, JOCKEY_SALARY_MID_MAX],
+  budget: [JOCKEY_SALARY_BUDGET_MIN, JOCKEY_SALARY_BUDGET_MAX],
+};
+
 /**
  * Archetype Strategy for jockey generation.
  */
@@ -124,8 +131,7 @@ export function generateJockey({
   const name = generateProceduralJockeyName(region, rng, usedNames);
   if (usedNames) usedNames.add(name.toLowerCase());
 
-  const baseMin = tier === "elite" ? 75 : tier === "mid" ? 55 : 35;
-  const baseMax = tier === "elite" ? 98 : tier === "mid" ? 80 : 60;
+  const [baseMin, baseMax] = TIER_BASE_STAT_RANGE[tier];
 
   const stats: JockeyStats = {
     pacing: rng.range(baseMin, baseMax),

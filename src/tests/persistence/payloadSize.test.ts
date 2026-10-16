@@ -9,11 +9,7 @@ import { describe, it, expect } from "vitest";
 import { generateNpcHorse } from "@/core/horse/horseFactory";
 import { createRng, hashStr } from "@/core/common/rng";
 import { prunePedigree, MAX_PERSISTED_PEDIGREE_DEPTH } from "@/core/persistence/pedigreePrune";
-import {
-  compressNpcHorses,
-  splitHorsesForPersistence,
-  type NpcHorseSummary,
-} from "@/core/persistence/npcCompression";
+import { compressNpcHorses, splitHorsesForPersistence } from "@/core/persistence/npcCompression";
 import type { Horse } from "@/core/horse/types";
 import type { Stable } from "@/core/stable/types";
 import { makePlayerOwned } from "@/core/horse/ownership";

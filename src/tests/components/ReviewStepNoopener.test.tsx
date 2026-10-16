@@ -7,7 +7,7 @@
 
 import { describe, it, expect, afterEach, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import type { Horse, Jockey, Race } from "@/game/types";
+import type { Race } from "@/game/types";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import { createTestHorse } from "@/tests/helpers";
 import { createTestJockey } from "@/tests/helpers";

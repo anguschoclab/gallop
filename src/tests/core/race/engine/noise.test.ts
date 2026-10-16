@@ -3,7 +3,6 @@ import { stepRunner, runRaceToCompletion } from "@/core/race/engine/simulation";
 import { createRng } from "@/core/common/rng";
 import { FactorLedgerCollector } from "@/core/race/factorLedger";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { makeUnowned } from "@/core/horse/ownership";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {

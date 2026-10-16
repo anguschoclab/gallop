@@ -8,7 +8,6 @@
  * Related files: store.ts (state management), auction.ts (uses market state)
  */
 
-import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 import type { Horse } from "@/core/horse/types";

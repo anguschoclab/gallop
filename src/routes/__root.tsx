@@ -1,11 +1,4 @@
-import {
-  Outlet,
-  Link,
-  createRootRoute,
-  HeadContent,
-  Scripts,
-  useNavigate,
-} from "@tanstack/react-router";
+import { Link, createRootRoute, HeadContent, Scripts, useNavigate } from "@tanstack/react-router";
 import { AppShell } from "../components/AppShell";
 import { useCallback, useEffect, useState } from "react";
 import { rehydrateStore, useGame, initEngineWorker, initInitializationWorker } from "@/game/store";

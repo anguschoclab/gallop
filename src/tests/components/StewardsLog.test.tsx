@@ -1,10 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement, type ReactNode } from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { StewardsLog } from "@/components/stewards/StewardsLog";
 import { createStewardsInquiry, resolveInquiry } from "@/core/stewards/stewardTypes";
-import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

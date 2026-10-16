@@ -6,7 +6,7 @@ import type { Horse, Race, Stable } from "@/game/types";
 import type { StaffRole } from "@/core/staff/staffTypes";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
 import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

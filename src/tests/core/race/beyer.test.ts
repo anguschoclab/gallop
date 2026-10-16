@@ -8,7 +8,7 @@ import {
   calculateBeyerForResult,
 } from "@/core/race/beyer";
 import { createTestHorse } from "@/tests/helpers";
-import type { CourseSpecification, TrackSection } from "@/data/tracks";
+import type { CourseSpecification } from "@/data/tracks";
 import { BEYER_MIN, BEYER_MAX, BEYER_BASE } from "@/constants";
 
 describe("beyer.ts", () => {

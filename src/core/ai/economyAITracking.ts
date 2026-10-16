@@ -6,7 +6,6 @@
 
 import type { GameState } from "@/game/types";
 import type { NpcAIManager } from "./npcCycleAI";
-import type { EconomicTrend } from "./strategicCoordinator";
 import { createEconomicState, updateEconomicTrends } from "./economyAIState";
 
 /**

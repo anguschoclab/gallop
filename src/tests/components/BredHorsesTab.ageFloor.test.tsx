@@ -6,7 +6,7 @@ import { createDefaultGameState } from "@/game/store/state";
 import { useGame } from "@/game/store";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import type { Horse } from "@/game/types";
-import { isPlayerOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children }: any) => children,

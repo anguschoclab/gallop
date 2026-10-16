@@ -1,10 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  FactorLedgerCollector,
-  FACTOR_META,
-  type FactorKey,
-  type RunnerFactorLedger,
-} from "@/core/race/factorLedger";
+import { FactorLedgerCollector, FACTOR_META, type FactorKey } from "@/core/race/factorLedger";
 
 const ALL_FACTORS: FactorKey[] = [
   "stamina",

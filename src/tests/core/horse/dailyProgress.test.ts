@@ -4,12 +4,7 @@ import {
   recordDailyProgress,
   DAILY_PROGRESS_MAX_ENTRIES,
 } from "@/core/horse/dailyProgress";
-import {
-  createTestHorse,
-  createTestNpcHorse,
-  createTestColt,
-} from "@/tests/helpers/createTestHorse";
-import * as pricing from "@/core/horse/pricing";
+import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 
 vi.mock("@/core/horse/pricing", () => ({
   horseMarketValue: vi.fn(() => 10000),

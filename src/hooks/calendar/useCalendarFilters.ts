@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from "react";
+import { useMemo } from "react";
 import { useGame } from "@/game/store";
 import type { Grade } from "@/data/gradedRaces";
 import { getRegion } from "@/core/calendar/regions";

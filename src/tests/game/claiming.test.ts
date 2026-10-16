@@ -13,7 +13,7 @@ import {
 import { createRng } from "@/core/common/rng";
 import { createTestHorse } from "@/tests/helpers";
 import type { Horse, Race } from "@/game/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("resolveClaims", () => {
   it("should return empty result when race is not a claiming race", () => {

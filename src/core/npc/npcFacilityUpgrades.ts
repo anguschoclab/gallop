@@ -7,7 +7,7 @@
  */
 
 import type { Stable } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import type { StableAIState } from "@/core/ai/npcCycleAI";
 import {
   selectFacilityToUpgrade,
   calculateFacilityBudget,

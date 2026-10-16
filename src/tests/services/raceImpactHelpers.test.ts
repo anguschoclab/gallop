@@ -5,15 +5,11 @@ import {
   generateFinancialBreedingImpacts,
   generateJockeyStatsTrackingImpacts,
 } from "@/core/race/impacts";
-import {
-  createTestColt,
-  createTestNpcHorse,
-  createTestMare,
-} from "@/tests/helpers/createTestHorse";
+import { createTestColt, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import { createTestRng } from "@/tests/helpers/createTestRng";
-import { RACE_ENERGY_IMPACT, MAX_FAME, GRADED_PRIZE_SPLIT } from "@/constants";
-import type { Race, Horse, Jockey } from "@/game/types";
+import { RACE_ENERGY_IMPACT, MAX_FAME } from "@/constants";
+import type { Race } from "@/game/types";
 import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 function makeOpenRace(overrides: Partial<Race> = {}): Race {

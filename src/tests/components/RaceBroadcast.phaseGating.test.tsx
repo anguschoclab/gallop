@@ -25,7 +25,6 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { createElement } from "react";
 
 // ─── Replicate the pure logic under test (no DOM required) ──────────────────
 

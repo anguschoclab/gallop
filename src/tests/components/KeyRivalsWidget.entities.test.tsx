@@ -1,5 +1,4 @@
 import { describe, it, expect, vi } from "vitest";
-import { render } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { KeyRivalsWidget } from "@/components/dashboard/KeyRivalsWidget";

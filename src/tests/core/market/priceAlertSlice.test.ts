@@ -13,8 +13,7 @@ import {
   type ExchangeAsk,
   type ExchangeTrade,
 } from "@/core/market/exchange";
-import { DEFAULT_MARKET_STRATEGY, type MarketStrategy } from "@/core/market/strategy";
-import type { PriceAlert } from "@/core/market/priceAlerts";
+import { DEFAULT_MARKET_STRATEGY } from "@/core/market/strategy";
 
 function seedStore(overrides: Record<string, unknown> = {}) {
   useGame.setState({ ...createDefaultGameState(), ...overrides } as any);

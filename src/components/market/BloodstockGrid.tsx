@@ -1,11 +1,10 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
-import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { HorseStats, overall, NumericValue } from "@/components/horse/HorseBits";
+import { HorseStats, overall } from "@/components/horse/HorseBits";
 import { CareerValuationBreakdown } from "@/components/horse/CareerValuationBreakdown";
 import { formatCurrency } from "@/lib/formatting";
 import { horseMarketValue, horseCareerValuation } from "@/services/horse/horseFacade";

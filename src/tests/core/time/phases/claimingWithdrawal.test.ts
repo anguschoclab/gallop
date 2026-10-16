@@ -9,7 +9,7 @@ import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import type { GameState, Race } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { AnyIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { r2r } from "@/tests/helpers/sampleGameState";
 import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("claimingWithdrawalPhase", () => {

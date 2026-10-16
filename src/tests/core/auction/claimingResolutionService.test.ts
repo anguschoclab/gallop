@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { resolveClaimingResolution } from "@/core/auction/claimingResolutionService";
-import type { Race, Horse } from "@/game/types";
+import type { Race } from "@/game/types";
 import type { ClaimingIntent } from "@/core/resolver/intents";
 import { createRng } from "@/core/common/rng";
 import { createTestHorse } from "@/tests/helpers";

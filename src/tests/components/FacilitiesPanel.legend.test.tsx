@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { screen, within } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { FacilitiesPanel } from "@/components/facilities/FacilitiesPanel";
 import type { PlayerFacilities, FacilityType } from "@/core/facilities";

@@ -4,7 +4,6 @@ import type { RaceEntry } from "@/core/race/types";
 import type { InboxMessage } from "@/core/inbox/inboxTypes";
 import type { Horse } from "@/core/horse/types";
 import { getStableId } from "@/core/horse/ownership";
-import { asRaceId } from "@/core/types/branded";
 import {
   ENERGY_LOW_THRESHOLD,
   DASHBOARD_UPCOMING_RACES_LIMIT,

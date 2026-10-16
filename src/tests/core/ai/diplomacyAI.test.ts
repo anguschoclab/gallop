@@ -4,7 +4,7 @@
  * and trust dynamics between NPC stables
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   initializeRelationships,
   evaluateAllianceOpportunity,
@@ -16,7 +16,7 @@ import {
   resolveDiplomaticInteractions,
   applyClaimingFriction,
 } from "@/core/ai/diplomacyAI";
-import type { Stable, GameState } from "@/game/types";
+import type { Stable } from "@/game/types";
 import type { NpcAIManager, StableAIState, NpcRelationship } from "@/core/ai/npcCycleAI";
 import { createTestStable } from "@/tests/helpers";
 

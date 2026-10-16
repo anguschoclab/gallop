@@ -3,7 +3,6 @@ import type { PipelineContext } from "@/core/time/pipeline";
 import { executePipeline } from "@/core/time/pipeline";
 import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
 import { createRng, hashStr } from "@/core/common/rng";
-import { getCurrentYear } from "@/core/race/schedule";
 import { computePlayerRaceDays } from "@/core/time/advance";
 import { UPKEEP_PER_HORSE, DAYS_PER_YEAR, DAYS_PER_MONTH, DAYS_PER_WEEK } from "@/constants";
 import { getEngineWorker, initEngineWorker } from "@/game/store";

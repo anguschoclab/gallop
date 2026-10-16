@@ -15,9 +15,6 @@ import {
   NOMINATION_FEE_G1_STANDARD,
   NOMINATION_FEE_G2_EARLY,
   NOMINATION_FEE_G2_STANDARD,
-  NOMINATION_FEE_G2_LATE,
-  NOMINATION_FEE_G3_EARLY,
-  NOMINATION_FEE_G3_STANDARD,
   NOMINATION_FEE_G3_LATE,
 } from "@/core/racing/nominationFees";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";

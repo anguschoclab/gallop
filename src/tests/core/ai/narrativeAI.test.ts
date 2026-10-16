@@ -4,7 +4,7 @@
  * and narrative state management for NPC stables
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   createNarrativeState,
   evaluateNarrativeOpportunity,
@@ -18,7 +18,7 @@ import {
   detectComebackBeats,
   detectAllianceDramaBeats,
 } from "@/core/ai/narrativeAI";
-import type { Stable, GameState, Horse } from "@/game/types";
+import type { Stable, Horse } from "@/game/types";
 import type { Race } from "@/core/race/types";
 import type {
   NpcAIManager,

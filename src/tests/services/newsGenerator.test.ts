@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { generateRaceNews } from "@/services/narrative/newsGenerator";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
-import type { Race, Horse } from "@/game/types";
+import type { Race } from "@/game/types";
 
 describe("newsGenerator", () => {
   it("should generate news for a G1 win", () => {

@@ -8,35 +8,15 @@
  * Related files: Used throughout game initialization and breeding systems
  */
 
-import type {
-  Horse,
-  Genotype,
-  HorseGender,
-  Hemisphere,
-  Pedigree,
-  HorseStats,
-  CoatColor,
-  RunningStyle,
-  Stable,
-  StableTier,
-} from "@/game/types";
+import type { Horse, Genotype, HorseGender, Hemisphere, Stable, StableTier } from "@/game/types";
 import type { Rng } from "@/core/common/types";
-import {
-  makePlayerOwned,
-  makeNpcOwned,
-  makeUnowned,
-  type HorseOwnership,
-} from "@/core/horse/ownership";
+import { makeNpcOwned, makeUnowned, type HorseOwnership } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId } from "@/core/types/branded";
 
 import { hashStr, nondeterministicRng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { generateAppearanceDNA, getPalette } from "@/core/horse/proceduralPortrait";
-import {
-  generateGenotype,
-  generateDeterministicGenotype,
-  generateResearchBasedGenotype,
-} from "@/core/genetics/generation";
+import { generateGenotype } from "@/core/genetics/generation";
 import { calculateOverallRating } from "@/core/horse/stats";
 import {
   resolveCoatColor,
@@ -68,22 +48,16 @@ import {
   resolveHealthStatus,
   computeHeterozygosity,
 } from "@/core/genetics/phenotype";
-import { rollGender, geldHorse } from "@/core/horse/gender";
-import { randomSilk, rand } from "@/core/common/random";
+import { rollGender } from "@/core/horse/gender";
+import { randomSilk } from "@/core/common/random";
 import { rollProceduralFamily } from "@/core/breeding/bruceLowe";
 import {
   generateProceduralHorseName,
   type NamingContext,
 } from "@/core/horse/naming/nameGenerator.ts";
-import { resolveBloodline } from "@/core/breeding/populationGenetics";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
-import { shouldRetireAtStartup, defaultStudParams } from "@/core/breeding/stallions";
-import { shouldGenerateHorseOfAge, createHorseGenAIState } from "@/core/ai/horseGenAI";
-import { recordHorseGeneration } from "@/core/ai/horseGenAIRecording";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { activeStallions2020s, type PedigreeHorse } from "@/core/data/pedigreeAccessor";
-import { clamp } from "@/core/common/math";
 import {
   POTENTIAL_MIN,
   POTENTIAL_MAX,

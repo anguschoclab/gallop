@@ -7,6 +7,14 @@ import {
   type WorldSize,
 } from "@/core/stable/worldSizeConfig";
 import { STABLE_CONFIG } from "@/core/stable/stableConfig";
+import {
+  NPC_HORSE_COUNT_ELITE_MIN,
+  NPC_HORSE_COUNT_ELITE_MAX,
+  NPC_HORSE_COUNT_MID_MIN,
+  NPC_HORSE_COUNT_MID_MAX,
+  NPC_HORSE_COUNT_BUDGET_MIN,
+  NPC_HORSE_COUNT_BUDGET_MAX,
+} from "@/constants";
 
 describe("WORLD_SIZE_CONFIGS", () => {
   it("has entries for small, medium, and large", () => {
@@ -102,5 +110,14 @@ describe("getStableConfig", () => {
 describe("DEFAULT_WORLD_SIZE", () => {
   it("is 'large'", () => {
     expect(DEFAULT_WORLD_SIZE).toBe("large");
+  });
+});
+
+describe("horseCounts derivation", () => {
+  it("large horseCounts derive from NPC_HORSE_COUNT constants", () => {
+    const h = WORLD_SIZE_CONFIGS.large.horseCounts;
+    expect(h.elite).toEqual([NPC_HORSE_COUNT_ELITE_MIN, NPC_HORSE_COUNT_ELITE_MAX]);
+    expect(h.mid).toEqual([NPC_HORSE_COUNT_MID_MIN, NPC_HORSE_COUNT_MID_MAX]);
+    expect(h.budget).toEqual([NPC_HORSE_COUNT_BUDGET_MIN, NPC_HORSE_COUNT_BUDGET_MAX]);
   });
 });

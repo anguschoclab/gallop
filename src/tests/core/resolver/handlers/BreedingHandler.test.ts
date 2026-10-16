@@ -11,7 +11,7 @@ import type {
   MareFoalingUpdateImpact,
 } from "@/core/resolver/impacts/index";
 import type { BlueHenImpact } from "@/core/resolver/impacts/index";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("BreedingHandler", () => {
   it("update_stud_fee sets horse.stud.standingFee", () => {

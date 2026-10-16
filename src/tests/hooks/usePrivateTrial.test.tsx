@@ -13,7 +13,6 @@ vi.mock("@/core/horse/trialFeedback", () => ({
 import { usePrivateTrial } from "@/hooks/race/usePrivateTrial";
 import { useGame } from "@/game/store";
 import { generateRiderFeedback } from "@/core/horse/trialFeedback";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function makeHorse(overrides: any = {}): Horse {

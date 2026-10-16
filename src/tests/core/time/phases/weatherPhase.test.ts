@@ -7,7 +7,7 @@ import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import { createRng } from "@/core/common/rng";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Race } from "@/game/types";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { r2r } from "@/tests/helpers/sampleGameState";
 
 describe("weatherPhase", () => {
   const createMockRace = (overrides: Partial<Race> = {}): Race => ({

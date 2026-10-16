@@ -55,7 +55,6 @@ vi.mock("@/components/NewGameWizard/steps/helpers", () => ({
 
 import { useNewGameWizard } from "@/hooks/shared/useNewGameWizard";
 import { useGame } from "@/game/store";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 function setupStore(startNewGameImpl: any) {
   (useGame as any).mockImplementation((selector: any) =>

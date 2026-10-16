@@ -7,7 +7,6 @@ import { getTrackHemisphere, getTrackClimate } from "@/core/weather/trackClimate
 import { REGIONS } from "@/core/calendar/regions";
 import { COUNTRY_TO_REGION as AWARDS_COUNTRY_TO_REGION } from "@/core/awards/types";
 import { getCountryFlag } from "@/core/common/countryFlag";
-import { COUNTRY_TO_REGION as SEASONAL_COUNTRY_TO_REGION } from "@/core/weather/seasonalModifiers";
 
 describe("Track data consistency — F1: graded race trackIds match track names", () => {
   it("every graded race trackId points to a track with the same name", () => {

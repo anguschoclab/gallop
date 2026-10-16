@@ -11,7 +11,7 @@ import { useGame } from "@/game/store";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
 import type { Horse } from "@/core/horse/types";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function seedHorse(overrides: Partial<Horse> = {}) {

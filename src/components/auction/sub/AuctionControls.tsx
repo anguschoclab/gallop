@@ -9,7 +9,6 @@ import type { Ref } from "react";
 import { Button } from "@/components/ui/button";
 import { formatCurrency } from "@/lib/formatting";
 import { Gavel, Pause, Play, FastForward, X } from "lucide-react";
-import { cn } from "@/lib/cn";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { nextBidAmount } from "@/services/auction/auctionFacade";
 import { AuctionErrorState } from "@/components/auction/AuctionStates";
@@ -44,6 +43,8 @@ export function AuctionControls({
   playerMaxBid,
   onSetMaxBid,
   error,
+  onDismissError,
+  onRetryBid,
   isPlayerConsignment,
   bidInputRef,
 }: AuctionControlsProps) {
@@ -51,11 +52,14 @@ export function AuctionControls({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Bid Error Toast (inline) */}
+      {/* Bid Error Toast */}
       {error && (
-        <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-xl text-destructive text-xs font-bold text-center animate-in fade-in slide-in-from-top-2">
-          {error}
-        </div>
+        <AuctionErrorState
+          message={error}
+          onDismiss={onDismissError}
+          onRetry={onRetryBid}
+          retryLabel="Retry bid"
+        />
       )}
 
       {/* Main Action Bar */}

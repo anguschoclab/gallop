@@ -3,7 +3,7 @@ import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { getSireAnalytics, type SireClassification } from "@/services/breeding/breedingFacade";
 import {
   LeaderboardControlsBar,

@@ -1,13 +1,9 @@
 import { describe, it, expect } from "vitest";
-import {
-  knownBuyerPremiumMultiplier,
-  attachmentAdjustedAsk,
-  evaluateHorseAttachment,
-} from "@/core/horse/attachment";
+import { knownBuyerPremiumMultiplier, attachmentAdjustedAsk } from "@/core/horse/attachment";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import type { Horse, Stable } from "@/game/types";
 import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
+import { asNpcStableId, asHorseId } from "@/core/types/branded";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 

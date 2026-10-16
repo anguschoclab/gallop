@@ -1,9 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useGame } from "@/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Trophy, TrendingUp, Zap } from "lucide-react";
+import { ArrowLeft, TrendingUp, Zap } from "lucide-react";
 import { getSireAnalytics, type SireClassification } from "@/services/breeding/breedingFacade";
 import { JargonTooltip } from "@/components/ui/JargonTooltip";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";

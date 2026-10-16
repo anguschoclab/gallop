@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { computePaceContext } from "@/core/race/engine/paceContext";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { LEAD_GROUP_GAP } from "@/constants/raceEngineConstants";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {

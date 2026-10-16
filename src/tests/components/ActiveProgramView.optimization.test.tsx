@@ -7,13 +7,13 @@ import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
  */
 
 import { describe, it, expect, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { screen, fireEvent } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { ActiveProgramView } from "@/components/breeding/ActiveProgramView";
-import { createTestHorse, createTestMare, createTestFilly, createTestColt } from "@/tests/helpers";
+import { createTestMare, createTestColt } from "@/tests/helpers";
 import type { BreedingProgram } from "@/core/breeding/programs";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import {
   CANCEL_DIALOG_TITLE,
   CANCEL_DIALOG_KEEP,

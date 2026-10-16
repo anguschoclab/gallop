@@ -15,14 +15,9 @@ import type {
 } from "@/core/horse/types";
 import type { Hemisphere } from "@/core/weather/trackClimate";
 import type { Stable, StableTier } from "@/core/stable/types";
-import { createRng, hashStr, type Rng } from "@/core/common/rng";
+import { createRng, hashStr } from "@/core/common/rng";
 import { generateNpcHorse } from "@/core/horse/horseFactory";
-import { calculateStartingFame } from "@/core/npc/horseGenHelpers";
-import {
-  shouldRetireAtStartup,
-  calculateRecommendedStudFee,
-  defaultStudParams,
-} from "@/core/breeding/stallions";
+import { calculateRecommendedStudFee, defaultStudParams } from "@/core/breeding/stallions";
 import type { HorseId, NpcStableId } from "@/core/types/branded";
 
 export interface NpcHorseSummary {

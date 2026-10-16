@@ -1,12 +1,10 @@
 import { useState, useMemo } from "react";
-import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useHorses, useDay, useCash, useRaces } from "@/hooks/game/useCoreState";
 import { useNpcStables, useAwards } from "@/hooks/game/useSystemsState";
 import { getStableById } from "@/core/stable/stableQueries";
 import { isMaleHorse, isFemaleHorse } from "@/core/horse/gender";
-import type { GameState, Horse, PrivateSaleOffer } from "@/game/types";
-import type { RaceEntry } from "@/core/race/types";
+import type { GameState, Horse } from "@/game/types";
 import type { EntityLink } from "@/services/narrative/newsTypes";
 import { isPlayerOwned, getStableId } from "@/core/horse/ownership";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";

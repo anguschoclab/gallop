@@ -11,7 +11,6 @@ import dagre from "@dagrejs/dagre";
 import "@xyflow/react/dist/style.css";
 import { useGame } from "@/game/store";
 import { buildPedigreeGraph, NODE_WIDTH, NODE_HEIGHT } from "@/services/breeding/breedingFacade";
-import { classifyCoi } from "@/services/breeding/breedingFacade";
 import { PedigreeNodeCard } from "./PedigreeNodeCard";
 import { cn } from "@/lib/cn";
 import type { PedigreeFlowNode, PedigreeEdge } from "@/services/breeding/breedingFacade";

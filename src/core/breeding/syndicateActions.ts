@@ -7,7 +7,6 @@
  */
 
 import type { Horse } from "@/game/types";
-import { getStableId } from "@/core/horse/ownership";
 import {
   SYNDICATE_BUYOUT_BASE_SATISFACTION_FACTOR,
   SYNDICATE_MAX_SATISFACTION,

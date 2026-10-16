@@ -10,7 +10,7 @@ import { recordRaceStrategy } from "@/core/ai/jockeyStrategyRecording";
 import { getDynamicProfile } from "@/core/race/engine/runningStyleProfiles";
 import type { GameState, Race, Horse } from "@/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { r2r } from "@/tests/helpers/sampleGameState";
 
 describe("Race Lifecycle Integration", () => {
   it("should generate races for a track", () => {

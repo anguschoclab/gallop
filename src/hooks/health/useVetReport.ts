@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useGame } from "@/game/store";
 import type { Horse } from "@/game/types";
 

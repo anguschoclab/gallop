@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { render, screen, fireEvent, waitFor, cleanup } from "@testing-library/react";
+import { render, fireEvent, waitFor, cleanup } from "@testing-library/react";
 import { RunnerMoodFace } from "@/components/race/RunnerMoodFace";
 import type { RunnerMood } from "@/core/race/runnerConditions";
 

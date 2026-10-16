@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { createRng } from "@/core/common/rng";
 import { generateGenotype } from "@/core/genetics/generation";
 import { inheritDNA } from "@/core/genetics/inheritance";
-import { resolveRunningStyle, resolveFiberBias } from "@/core/genetics/phenotype";
+import { INDEPENDENTLY_ASSORTING_LOCI, LINKAGE_MAP } from "@/core/genetics/linkageMap";
 
 // ─── Bug 1: inheritTrait order-dependency ────────────────────────────────────
 
@@ -158,5 +158,15 @@ describe("inheritDNA — style locus chromosome linkage", () => {
     expect(foal.style).toBeDefined();
     expect(Array.isArray(foal.style)).toBe(true);
     expect(foal.style).toHaveLength(2);
+  });
+});
+
+describe("independent assortment coverage", () => {
+  it("every genotype marker is declared in INDEPENDENTLY_ASSORTING_LOCI and absent from LINKAGE_MAP", () => {
+    const genotype = generateGenotype(createRng(1), "mid");
+    for (const key of Object.keys(genotype.markers)) {
+      expect(INDEPENDENTLY_ASSORTING_LOCI).toContain(key);
+      expect(LINKAGE_MAP[key]).toBeUndefined();
+    }
   });
 });

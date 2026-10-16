@@ -14,7 +14,7 @@ import {
 } from "@/services/narrative/careerArcGenerator";
 import { runNarrativeCycle } from "@/core/ai/narrativeAI";
 import { createStableAIState } from "@/core/ai/npcCycleAI";
-import type { GameState, Stable, Horse, Race } from "@/game/types";
+import type { Stable, Horse, Race } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { createRng } from "@/core/common/rng";

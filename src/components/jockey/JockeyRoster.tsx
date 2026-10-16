@@ -1,5 +1,4 @@
 import { useGame, useGameWithShallow } from "@/game/store";
-import { shallow } from "zustand/shallow";
 import { JockeyFilterPanel } from "./JockeyFilterPanel";
 import { JockeyRosterTabs } from "./JockeyRosterTabs";
 import { Badge } from "@/components/ui/badge";

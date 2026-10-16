@@ -10,7 +10,6 @@
  */
 
 import type { Race } from "@/game/types";
-import { generateUUID } from "@/core/uuid";
 import { TRACK_SCHEDULES } from "./trackSchedules";
 
 export type TrackSection = {

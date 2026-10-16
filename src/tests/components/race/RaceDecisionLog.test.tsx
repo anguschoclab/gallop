@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { RaceDecisionLog } from "@/components/race/RaceDecisionLog";
-import type { RaceSnapshot, HorseSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 
 interface RunnerInfo {
   horseId: string;

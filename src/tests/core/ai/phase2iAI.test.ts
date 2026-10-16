@@ -18,7 +18,6 @@ import {
   shouldCreateSyndicateWithLearning,
 } from "@/core/ai/syndicationAI";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import type { Horse, Stable } from "@/game/types";
 import { makeNpcOwned } from "@/core/horse/ownership";
 
 describe("identifyCostOptimizationOpportunities", () => {

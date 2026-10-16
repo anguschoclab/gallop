@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { nondeterministicRng, createRng } from "@/core/common/rng";
+import { nondeterministicRng } from "@/core/common/rng";
 
 describe("nondeterministicRng — crypto entropy", () => {
   const originalCrypto = globalThis.crypto;

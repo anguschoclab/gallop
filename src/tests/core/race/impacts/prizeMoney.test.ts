@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { generatePrizeMoneyImpacts } from "@/core/race/impacts/prizeMoney";
 import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants";
 import type { Race, Horse } from "@/game/types";

@@ -2,11 +2,7 @@ import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  FACILITY_ENABLED_WORKOUTS,
-  FACILITY_NAMES,
-  type FacilityType,
-} from "@/services/facilities/facilitiesFacade";
+import { FACILITY_NAMES, type FacilityType } from "@/services/facilities/facilitiesFacade";
 import { ArrowUp, Check, HardDrive } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/cn";
@@ -38,8 +34,8 @@ interface FacilityCardProps {
 }
 
 function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: FacilityCardProps) {
-  const { maxLevel, canAfford, rankVal, canUpgradeByReputation, requiredRepTier } =
-    useFacilityTiers(facility, cash, reputationTier);
+  const { maxLevel, canAfford, rankVal, canUpgradeByReputation, requiredRepTier, enabledWorkouts } =
+    useFacilityTiers(facility, cash, reputationTier, type);
   const canUpgrade = canAfford && canUpgradeByReputation;
 
   return (
@@ -106,7 +102,7 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
           )}
         </div>
 
-        {FACILITY_ENABLED_WORKOUTS[type] && FACILITY_ENABLED_WORKOUTS[type].length > 0 && (
+        {enabledWorkouts.length > 0 && (
           <div className="space-y-2">
             <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide flex items-center gap-1.5 px-1">
               <HardDrive className="h-2.5 w-2.5 opacity-40" />
@@ -115,7 +111,7 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
               </JargonTooltip>
             </div>
             <div className="flex flex-wrap gap-1">
-              {FACILITY_ENABLED_WORKOUTS[type].map((workout: string) => (
+              {enabledWorkouts.map((workout: string) => (
                 <div
                   key={workout}
                   className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-cream/60 uppercase tracking-tighter rounded-sm"

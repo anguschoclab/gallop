@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { createProgenyLeaderboard, createProgenyRanking } from "@/tests/helpers";
-import type { ProgenyLeaderboard, ProgenyRanking } from "@/core/breeding/leaderboardTypes";
 
 describe("createProgenyRanking", () => {
   it("returns a fully-typed ProgenyRanking with all required fields", () => {

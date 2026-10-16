@@ -21,9 +21,8 @@ import type {
   MareFoalingUpdateImpact,
   StudCareerImpact,
 } from "@/core/resolver/impacts";
-import type { PregnancyCheckIntent, PregnancyResolutionIntent } from "@/core/resolver/intents";
 import { generateUUID } from "@/core/uuid";
-import { createReputationEvent, calculateBreedingReputation } from "@/core/reputation";
+import { calculateBreedingReputation } from "@/core/reputation";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { recordBreedingOutcome } from "@/core/ai/breedingRecording";

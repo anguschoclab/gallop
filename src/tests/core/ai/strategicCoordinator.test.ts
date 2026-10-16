@@ -7,12 +7,10 @@ import {
   type WorldAssessment,
   type StrategicDirective,
   type BudgetAllocation,
-  type SubsystemWeights,
 } from "@/core/ai/strategicCoordinator";
 import type { GameState, Stable, Horse, Race } from "@/game/types";
 import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
-import { createRng, hashStr } from "@/core/common/rng";
 import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {

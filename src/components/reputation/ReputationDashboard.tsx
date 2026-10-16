@@ -12,7 +12,7 @@ import { cn } from "@/lib/cn";
 import { NewsContent } from "@/components/narrative/NewsContent";
 
 export function ReputationDashboard() {
-  const reputation = useGame((s) => s.reputation);
+  const reputation: ManagerReputation | undefined = useGame((s) => s.reputation);
   const day = useGame((s) => s.day);
 
   if (!reputation) {

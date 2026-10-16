@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { leaderboardPhase } from "@/core/time/phases/leaderboardPhase";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
-import { createTestHorse, createTestStallion } from "@/tests/helpers";
+import { createTestStallion } from "@/tests/helpers";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 

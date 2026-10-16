@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 
 // These functions are currently private in simulation.ts.
 // We test the enhanced logic via a new exported function:

@@ -17,8 +17,8 @@ import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import type { GameState } from "@/game/types";
 import type { TrainingIntent } from "@/core/resolver/intents";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { h2r } from "@/tests/helpers/sampleGameState";
+import { makeNpcOwned } from "@/core/horse/ownership";
 
 const ADVANCED_TYPES = ["gallop", "swimming", "breeze", "gate_work", "bullet", "treadmill"];
 const BASIC_TYPES = ["speed", "stamina", "acceleration", "rest"];

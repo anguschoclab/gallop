@@ -11,7 +11,7 @@ import { makePipelineContext } from "@/tests/helpers/sampleGameState";
 import { createRng } from "@/core/common/rng";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 const G1_RACE = {
   raceId: "g1-test",

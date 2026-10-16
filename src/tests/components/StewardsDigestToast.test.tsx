@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { describe, it, expect, beforeEach } from "vitest";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { createElement } from "react";
 import { useGame } from "@/game/store";
 import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";

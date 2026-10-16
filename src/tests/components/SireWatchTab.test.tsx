@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createElement, type ReactNode } from "react";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { screen, fireEvent, cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import type { Horse } from "@/game/types";
 import type { StudCareer } from "@/core/horse/types";
@@ -15,7 +15,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 import { SireWatchTab } from "@/components/breeding/SireWatchTab";
 import { createTestHorse } from "@/tests/helpers";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 function mkStud(overrides: Partial<StudCareer> = {}): StudCareer {
   return {

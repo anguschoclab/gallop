@@ -4,7 +4,6 @@ import { buildRunner } from "@/core/race/engine/runnerBuilder";
 import { createRng, hashStr } from "@/core/common/rng";
 import type { Horse, HorseGender } from "@/game/types";
 import type { Genotype } from "@/core/genetics/types";
-import type { Locus } from "@/core/common/types";
 import { makePlayerOwned } from "@/core/horse/ownership";
 
 // Mock Horse generator

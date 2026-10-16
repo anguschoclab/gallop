@@ -9,7 +9,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 import { ClaimingRacePanel } from "@/components/race/ClaimingRacePanel";
-import type { Race, Horse, Claim } from "@/game/types";
+import type { Race, Horse } from "@/game/types";
 import { asNpcStableId } from "@/core/types/branded";
 import { makeNpcOwned } from "@/core/horse/ownership";
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { screen, cleanup } from "@testing-library/react";
 import { LegacyAwardsWidget } from "@/components/dashboard/LegacyAwardsWidget";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import type { RegionalAward } from "@/core/awards/types";

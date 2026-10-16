@@ -7,19 +7,9 @@ import { RelationshipGraph } from "@/components/npc/RelationshipGraph";
 import { AiActivityFeed } from "@/components/npc/AiActivityFeed";
 import { EconomicIndicators } from "@/components/analytics/EconomicIndicators";
 import { NarrativeArcCard } from "@/components/narrative/NarrativeArcCard";
-import { JockeyStrategyBreakdown } from "@/components/race/JockeyStrategyBreakdown";
 import { TacticalAnalysisPanel } from "@/components/race/TacticalAnalysisPanel";
-import type {
-  StableAIState,
-  NpcAIManager,
-  NpcRelationship,
-  NarrativeArc,
-} from "@/core/ai/npcCycleAI";
-import type {
-  EconomicTrend,
-  StrategicDirective,
-  BudgetAllocation,
-} from "@/core/ai/strategicCoordinator";
+import type { StableAIState, NpcAIManager, NarrativeArc } from "@/core/ai/npcCycleAI";
+
 import type { PersonalityAIState } from "@/core/ai/personalitySystem";
 import type { Stable } from "@/game/types";
 import type { RaceRunner } from "@/core/race/types";

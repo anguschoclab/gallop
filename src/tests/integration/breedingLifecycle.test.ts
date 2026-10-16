@@ -7,11 +7,11 @@ import { describe, it, expect } from "vitest";
 import { runNpcBreeding } from "@/core/npc/breeding";
 import { createRng } from "@/core/common/rng";
 import { createDefaultGameState } from "@/game/store/state";
-import type { GameState, Horse, HorseGender, Stable } from "@/game/types";
+import type { GameState, Horse, HorseGender } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 // Helper to create minimal valid Horse objects for testing
 function mockHorse(

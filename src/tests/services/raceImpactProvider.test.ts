@@ -12,7 +12,7 @@ import { generateRaceImpacts } from "@/core/race/raceImpactGenerator";
 import { isValidUUID } from "@/core/uuid";
 import { UUIDProvider } from "@/core/uuidProvider";
 import { createRng } from "@/core/common/rng";
-import { createTestColt, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
+import { createTestColt } from "@/tests/helpers/createTestHorse";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import type { Race } from "@/game/types";
 

@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
+import { SCORING_CONSTANTS } from "@/core/race/entryScoringConstants";
+import { MIN_FORM_TO_ENTER, PREFERRED_DISTANCE_RANGE } from "@/constants";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Race } from "@/game/types";
 
@@ -40,5 +42,12 @@ describe("calculateAssignedWeight", () => {
     } as Race;
     const weight = calculateAssignedWeight(horse, race);
     expect(weight).toBe(130);
+  });
+});
+
+describe("entry scoring constants", () => {
+  it("SCORING_CONSTANTS derives form/distance thresholds from race entry constants", () => {
+    expect(SCORING_CONSTANTS.FORM_BAD_THRESHOLD).toBe(MIN_FORM_TO_ENTER);
+    expect(SCORING_CONSTANTS.DIST_GOOD_THRESHOLD).toBe(PREFERRED_DISTANCE_RANGE);
   });
 });

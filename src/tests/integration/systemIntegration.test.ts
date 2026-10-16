@@ -9,15 +9,15 @@
  * 6. Multi-day advance test (30 days)
  * 7. Storage/persistence test
  */
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
 import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
 import { createRng } from "@/core/common/rng";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makeGameState, makePipelineContext, h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
 import { createDefaultGameState } from "@/game/store/state";
 import { useGame } from "@/game/store";
-import type { GameState, Horse, Stable } from "@/game/types";
+import type { GameState, Horse } from "@/game/types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { makeUnowned } from "@/core/horse/ownership";
 

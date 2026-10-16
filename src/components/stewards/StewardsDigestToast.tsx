@@ -3,7 +3,6 @@ import { useGame } from "@/game/store";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { X, AlertCircle } from "lucide-react";
-import { cn } from "@/lib/cn";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { TOOLTIP_DELAY_MS } from "@/constants";
 

@@ -5,7 +5,6 @@ import {
   estimateBreedingValue,
 } from "@/core/horse/pricing";
 import {
-  createTestHorse,
   createTestColt,
   createTestStallion,
   createTestMare,

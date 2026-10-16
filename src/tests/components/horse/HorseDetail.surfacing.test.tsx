@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { createElement } from "react";
+import { screen } from "@testing-library/react";
 import { createRouterMock } from "@/test-utils/routerMock";
 
 vi.mock("@tanstack/react-router", () => createRouterMock());

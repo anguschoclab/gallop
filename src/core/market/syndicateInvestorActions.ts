@@ -14,7 +14,7 @@
  * Related files: src/game/store/slices/syndicateActions.ts (coordinator)
  */
 
-import type { ShareTransaction, ShareActivityFeedItem, Syndicate } from "@/core/breeding/types";
+import type { ShareTransaction, ShareActivityFeedItem } from "@/core/breeding/types";
 import type { OwnerKey } from "@/core/types/branded";
 import type { InvestorRecord, InvestorPersonality } from "@/core/breeding/investorTypes";
 import { generateUUID } from "@/core/uuid";

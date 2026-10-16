@@ -13,15 +13,13 @@ import { createDefaultGameState } from "@/game/store/state";
 import {
   createDefaultExchangeState,
   netProceeds,
-  exchangeCommission,
   EXCHANGE_ORDER_TTL_DAYS,
-  type ExchangeState,
   type ExchangeAsk,
   type ExchangeBid,
 } from "@/core/market/exchange";
 import { createTestHorse } from "@/tests/helpers";
-import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
-import { asHorseId, asNpcStableId, asStableId } from "@/core/types/branded";
+import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 import { AUCTION_HOUSES } from "@/core/prestige/auctionHouses";
 import type { Horse, Stable } from "@/game/types";
 

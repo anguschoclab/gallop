@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { runRaceToCompletion } from "@/core/race/engine/simulation";
-import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
+import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { Horse, Jockey } from "@/game/types";
 import { createRng } from "@/core/common/rng";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";

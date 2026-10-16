@@ -46,6 +46,7 @@ export function useFacilityTiers(
   facility: { level: FacilityLevel; upgradeCost: number; maintenanceCost: number } | undefined,
   cash: number,
   reputationTier: ReputationTier = "unknown",
+  facilityType?: FacilityType,
 ): FacilityTierInfo {
   const currentLevelIndex = facility ? FACILITY_LEVELS.indexOf(facility.level) : -1;
   const maxLevel = currentLevelIndex >= FACILITY_LEVELS.length - 1;
@@ -63,7 +64,7 @@ export function useFacilityTiers(
     upgradeCost,
     canAfford,
     rankVal,
-    enabledWorkouts: [],
+    enabledWorkouts: facilityType ? (FACILITY_ENABLED_WORKOUTS[facilityType] ?? []) : [],
     canUpgradeByReputation: repGate.allowed,
     requiredRepTier: maxLevel ? null : repGate.requiredTier,
   };

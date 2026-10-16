@@ -18,16 +18,16 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { GameState } from "@/game/types";
-import { createRacingSlice, type RacingSlice } from "./slices/racingSlice";
-import { createMarketSlice, type MarketSlice } from "./slices/marketSlice";
+import { createRacingSlice } from "./slices/racingSlice";
+import { createMarketSlice } from "./slices/marketSlice";
 import { createExchangeSlice } from "./slices/exchangeSlice";
 import { createPriceAlertSlice } from "./slices/priceAlertSlice";
 import { createScoutingSlice } from "./slices/scoutingSlice";
 import { createAuctionSlice } from "./slices/auctionSlice";
 import { createPrivateSaleSlice } from "./slices/privateSaleSlice";
-import { createBreedingSlice, type BreedingSlice } from "./slices/breedingSlice";
-import { createCampaignSlice, type CampaignSlice } from "./slices/campaignSlice";
-import { createCoreSlice, type CoreSlice } from "./slices/coreSlice";
+import { createBreedingSlice } from "./slices/breedingSlice";
+import { createCampaignSlice } from "./slices/campaignSlice";
+import { createCoreSlice } from "./slices/coreSlice";
 import { createJockeySlice } from "./slices/jockeySlice";
 import { createFacilitySlice } from "./slices/facilitySlice";
 import { createSettingsSlice } from "./slices/settingsSlice";
@@ -39,8 +39,8 @@ import { createWeatherSlice } from "./slices/weatherSlice";
 import { createInboxSlice } from "./slices/inboxSlice";
 import { createStaffSlice } from "./slices/staffSlice";
 import { createInsuranceSlice } from "./slices/insuranceSlice";
-import { createTransportSlice, type TransportSlice } from "./slices/transportSlice";
-import { createTutorialSlice, type TutorialSlice } from "./slices/tutorialSlice";
+import { createTransportSlice } from "./slices/transportSlice";
+import { createTutorialSlice } from "./slices/tutorialSlice";
 import { createAutoSyndicateSlice } from "./slices/autoSyndicateSlice";
 import {
   createIdbStorage,
@@ -51,15 +51,14 @@ import {
 } from "./storage";
 import { createInitialState } from "./initialization";
 import { PERSISTED_KEYS } from "./persistedKeys";
-import type { CoreState } from "@/game/store/state/coreState";
 
 import { shallow } from "zustand/shallow";
 import { useShallow } from "zustand/react/shallow";
-import { wrap, expose, type Remote } from "comlink";
+import { wrap, type Remote } from "comlink";
 import type { EngineWorkerApi } from "@/workers/engine.worker";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
 import { clearDatabase } from "@/services/storage/indexedDbService";
-import type { StoreType, ActionResult, GameStateCreator } from "./types";
+import type { StoreType, ActionResult } from "./types";
 import type { NewGameOptions } from "@/game/store/state";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";

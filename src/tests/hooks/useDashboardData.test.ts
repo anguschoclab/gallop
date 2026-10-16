@@ -2,7 +2,6 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { useDashboardData } from "@/hooks/dashboard/useDashboardData";
-import { createDefaultGameState } from "@/game/store/state";
 import { ENERGY_LOW_THRESHOLD } from "@/constants";
 import type { Horse } from "@/core/horse/types";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";

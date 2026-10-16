@@ -11,7 +11,7 @@
 import type { Impact } from "./base";
 import type { BlueHenStatus, Pregnancy, StudCareer } from "@/game/types";
 import type { BlueHenImpact } from "./horseImpacts";
-import type { HorseId, OwnerKey, StableId } from "@/core/types/branded";
+import type { HorseId, OwnerKey } from "@/core/types/branded";
 
 // Pregnancy creation impact
 export interface PregnancyCreationImpact extends Impact {

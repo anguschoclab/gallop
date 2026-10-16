@@ -6,7 +6,6 @@ import { AutoRegisterButton } from "@/components/stable";
 import { StableRosterView } from "@/components/stable/StableRosterView";
 import { RivalArchivesView } from "@/components/stable/RivalArchivesView";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { cn } from "@/lib/cn";

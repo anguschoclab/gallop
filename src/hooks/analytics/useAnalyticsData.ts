@@ -5,7 +5,6 @@
 import { useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { isPlayerOwned } from "@/core/horse/ownership";
-import type { Transaction } from "@/core/transactions/transactionTypes";
 import { getCareerStats } from "@/core/horse/stats";
 import { analyzeStableTrends } from "@/core/analytics/stableTrends";
 import {

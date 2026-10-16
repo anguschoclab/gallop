@@ -8,12 +8,7 @@
  * Related files: Used throughout the breeding module and game state
  */
 
-import type {
-  SurfaceBias,
-  DistancePreference,
-  SireClassification,
-  SireAnalytics,
-} from "./sireAnalytics";
+import type { SireAnalytics } from "./sireAnalytics";
 
 export type LeaderboardType =
   | "overall"

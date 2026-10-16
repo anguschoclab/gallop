@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { AwardIcon } from "./AwardIcon";
-import { AwardBadge } from "./AwardBadge";
 import { cn } from "@/lib/cn";
 import { Link } from "@tanstack/react-router";
 import type { AwardRegion, RegionalAward } from "@/services/awards/awardsFacade";

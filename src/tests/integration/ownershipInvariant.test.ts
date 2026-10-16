@@ -3,7 +3,7 @@ import fc from "fast-check";
 import { runPipelineForDay } from "@/tests/helpers/runPipeline";
 import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { isPlayerOwned, makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId } from "@/core/types/branded";
 import { UPKEEP_PER_HORSE } from "@/constants";
 import type { GameState, Horse, Stable } from "@/game/types";

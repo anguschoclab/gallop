@@ -23,7 +23,7 @@ import { ABSTRACT_TERMS, RACING_SPIRIT_NOUNS, RACING_SPIRIT_ADJECTIVES } from ".
  * @returns A single significant word from the name
  */
 function extractKeyWord(name: string, rng: Rng): string {
-  const words = name.split(" ").filter((w) => w.length > 2);
+  const words = name.split(" ").filter((w) => w.length > NAME_MIN_WORD_LENGTH);
   if (words.length === 0) return name;
   if (words.length === 1) return words[0];
 

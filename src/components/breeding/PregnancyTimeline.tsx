@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Hint } from "@/components/ui/Hint";
 
 interface PregnancyTimelineProps {

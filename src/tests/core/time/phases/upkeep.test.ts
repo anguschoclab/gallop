@@ -7,9 +7,9 @@ import { upkeepPhase } from "@/core/time/phases/upkeep";
 import { createTestHorse, createTestStable, createUnownedHorse } from "@/tests/helpers";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Stable } from "@/game/types";
+import type { GameState } from "@/game/types";
 import type { CashImpact, TransactionImpact } from "@/core/resolver/impacts/financialImpacts";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { asNpcStableId } from "@/core/types/branded";
 import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 

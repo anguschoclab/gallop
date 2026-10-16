@@ -18,7 +18,7 @@ import {
   BREEDING_MARE_FRACTION,
 } from "@/constants/financialDistressConstants";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
-import type { Stable, Horse } from "@/game/types";
+import type { Horse } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
 import { makeNpcOwned } from "@/core/horse/ownership";
 

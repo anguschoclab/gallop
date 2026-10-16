@@ -8,7 +8,6 @@ import {
   Baby,
   Calendar,
   Target,
-  ChevronRight,
   Users,
   BarChart2,
   Trophy,

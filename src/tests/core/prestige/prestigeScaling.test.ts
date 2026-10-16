@@ -4,9 +4,7 @@ import {
   housePrestigeMultiplier,
   houseCommissionRate,
   racecoursePrestigeMultiplier,
-  getRacecoursePrestigeByName,
   AUCTION_HOUSES,
-  resolveSaleHouse,
   RACECOURSE_FLOOR_PRESTIGE,
   RACECOURSE_PRESTIGE_SPREAD,
   NEUTRAL_PRESTIGE_SCORE,
@@ -15,7 +13,7 @@ import {
   HOUSE_PRESTIGE_SPREAD,
 } from "@/core/prestige";
 import { netProceeds, commissionAmount } from "@/core/auction/engine";
-import { CONSIGNMENT_COMMISSION, FAME_GAIN_G1_WIN } from "@/constants";
+import { FAME_GAIN_G1_WIN } from "@/constants";
 import { buildAuctionImpacts } from "@/core/auction/auctionRunnerImpacts";
 import type { LotState } from "@/core/auction/auctionRunnerTypes";
 import type { AuctionSale, Horse } from "@/game/types";

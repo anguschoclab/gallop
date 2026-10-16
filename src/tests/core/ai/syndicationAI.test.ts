@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   calculateShareSale,
   calculateSharePurchase,
-  calculateSharePrice,
   createSyndicationAIState,
   recordSyndicationOutcome,
   shouldCreateSyndicateWithLearning,

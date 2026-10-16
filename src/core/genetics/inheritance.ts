@@ -12,7 +12,7 @@ import type { Genotype, MarkerGenotype } from "./types";
 import type { Locus } from "@/core/common/types";
 import type { Rng } from "@/core/common/types";
 import { crossoverAllChromosomes, type ChromosomeId } from "./chromosomes";
-import { LINKAGE_MAP, getLociByChromosome, INDEPENDENTLY_ASSORTING_LOCI } from "./linkageMap";
+import { LINKAGE_MAP, getLociByChromosome } from "./linkageMap";
 
 /**
  * Independent crossover for loci that assort independently.

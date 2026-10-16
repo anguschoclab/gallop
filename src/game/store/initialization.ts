@@ -23,7 +23,7 @@ import { generateAllStables } from "@/core/npc/stables";
 import { generateAllNpcHorses } from "@/core/npc/horseGenerator";
 import { generateFamousStallions } from "@/data/famousStallions";
 import { runNpcRaceEntry } from "@/core/npc/raceEntry";
-import { createRng, hashStr, type Rng } from "@/core/common/rng";
+import { createRng, hashStr } from "@/core/common/rng";
 import { GRADED_RACES } from "@/data/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
 import type { FacilityLevel } from "@/core/facilities";

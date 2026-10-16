@@ -6,6 +6,7 @@ import {
   getRankValue,
 } from "@/hooks/facilities/useFacilityTiers";
 import type { FacilityLevel } from "@/core/facilities";
+import { FACILITY_ENABLED_WORKOUTS } from "@/core/facilities";
 
 function makeFacility(level: FacilityLevel, upgradeCost: number) {
   return { level, upgradeCost, maintenanceCost: 10 };
@@ -104,5 +105,21 @@ describe("getRankValue", () => {
 describe("FACILITY_LEVELS", () => {
   it("is the expected array", () => {
     expect(FACILITY_LEVELS).toEqual(["basic", "standard", "premium", "elite"]);
+  });
+});
+
+describe("useFacilityTiers - enabledWorkouts", () => {
+  it("returns the workouts enabled by the facility type", () => {
+    const { result } = renderHook(() =>
+      useFacilityTiers(makeFacility("standard", 5000), 10000, "national", "main_track"),
+    );
+    expect(result.current.enabledWorkouts).toEqual(FACILITY_ENABLED_WORKOUTS.main_track);
+  });
+
+  it("returns an empty array when the facility type enables none", () => {
+    const { result } = renderHook(() =>
+      useFacilityTiers(makeFacility("basic", 5000), 10000, "national", "veterinary_clinic"),
+    );
+    expect(result.current.enabledWorkouts).toEqual([]);
   });
 });

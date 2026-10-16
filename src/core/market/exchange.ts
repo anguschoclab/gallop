@@ -15,7 +15,7 @@
  */
 
 import type { Horse } from "@/core/horse/types";
-import type { Stable, StablePersonality } from "@/core/stable/types";
+import type { Stable } from "@/core/stable/types";
 import { horseMarketValue } from "@/core/horse/pricing";
 import { isNpcOwned, isPlayerOwned } from "@/core/horse/ownership";
 import { createRng } from "@/core/common/rng";

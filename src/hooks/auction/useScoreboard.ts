@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
+import { useGameWithShallow, type StoreType } from "@/game/store";
 import { netProceeds } from "@/core/auction/engine";
 import { resolveSaleHouse } from "@/core/prestige";
 

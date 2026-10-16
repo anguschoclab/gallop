@@ -9,7 +9,7 @@ import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import type { GameState, PrivateSaleOffer } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("privateSaleExpiryPhase", () => {
   const createTestState = (): GameState => makeGameState({ day: 10 }) as GameState;

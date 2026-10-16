@@ -5,7 +5,6 @@ import { LiveFreshnessBadge } from "@/components/race/LiveFreshnessBadge";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,
-  LeaderboardSkeleton,
 } from "@/components/leaderboard/LeaderboardPrimitives";
 import type { Runner } from "@/services/race/raceFacade";
 import {

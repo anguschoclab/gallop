@@ -1,5 +1,4 @@
 import { describe, it, expect } from "vitest";
-import type { RaceEntry } from "@/core/race/types";
 
 describe("Auto-resume batch advance state tracking", () => {
   it("pendingAdvanceRemaining should be set when batch stops at player race (worker path)", () => {

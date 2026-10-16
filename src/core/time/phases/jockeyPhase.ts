@@ -12,7 +12,7 @@ import type { PipelineContext } from "../pipeline";
 import { createRng, hashStr } from "@/core/common/rng";
 import { generateJockey } from "@/core/jockey/generator";
 import { selectBestJockey, createJockeyAIState } from "@/core/ai/jockeyAI";
-import { shouldRetainJockey, recordJockeyAssignment } from "@/core/ai/jockeyAIRetention";
+import { shouldRetainJockey } from "@/core/ai/jockeyAIRetention";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
 import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, PHASE_ORDER_JOCKEY_PHASE } from "@/constants";

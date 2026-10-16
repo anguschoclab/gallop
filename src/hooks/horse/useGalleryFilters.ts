@@ -1,6 +1,5 @@
 import { useState, useMemo } from "react";
-import { shallow } from "zustand/shallow";
-import { useGame, useGameWithShallow } from "@/game/store";
+import { useGameWithShallow } from "@/game/store";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import type { Horse } from "@/core/horse/types";

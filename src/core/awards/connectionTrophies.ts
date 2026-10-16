@@ -9,7 +9,7 @@
  * trainer / caretaker attribution is at the stable level.
  */
 
-import type { GameState, Horse, Race } from "@/game/types";
+import type { GameState, Horse } from "@/game/types";
 import type { RaceEntry } from "@/core/race/types";
 import { asRaceId } from "@/core/types/branded";
 import { isPlayerOwned, getStableId } from "@/core/horse/ownership";

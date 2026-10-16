@@ -12,7 +12,7 @@ import {
   getRunnersBy,
 } from "@/core/breeding/lineage";
 import { createTestHorse } from "@/tests/helpers";
-import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/constants";
+import { PRIZE_SPLIT } from "@/constants";
 import type { GameState } from "@/game/types";
 
 describe("breeding lineage utils", () => {

@@ -8,16 +8,9 @@ import {
   formatTransportMode,
   type TransportRequest,
 } from "@/services/transportation/transportationFacade";
+import { formatCurrency } from "@/lib/formatting";
 import { toast } from "sonner";
 import { cn } from "@/lib/cn";
-
-const formatCurrency = (amount: number): string => {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(amount);
-};
 
 interface TransportPlannerProps {
   horseId?: string;
@@ -35,7 +28,10 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
   const horseMap = horses;
 
   // Filter transports - if horseId provided, only show that horse's transports
-  const filteredTransports = horseId ? transports.filter((t) => t.horseId === horseId) : transports;
+  const filteredTransports: TransportRequest[] = useMemo(
+    () => (horseId ? transports.filter((t) => t.horseId === horseId) : transports),
+    [transports, horseId],
+  );
 
   if (filteredTransports.length === 0) {
     return null;

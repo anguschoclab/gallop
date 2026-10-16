@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import https from "https";
 import type { OverpassElement, OverpassWay, OverpassNode } from "./types/overpass";
 
 const tracksJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");

@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { useGame } from "@/game/store";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/game/types";
-import { makeNpcOwned, makePlayerOwned, getStableId } from "@/core/horse/ownership";
+import type { PrivateSaleOffer, Horse, Stable } from "@/game/types";
+import { makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 import { h2r } from "@/tests/helpers/sampleGameState";
 

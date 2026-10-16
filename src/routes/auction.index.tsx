@@ -1,5 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { shallow } from "zustand/shallow";
+import { createFileRoute } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useAuctions } from "@/hooks/game/useMarketState";
 import type { GameState } from "@/game/types";

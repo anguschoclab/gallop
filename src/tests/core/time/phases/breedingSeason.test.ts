@@ -8,7 +8,7 @@ import { createTestHorse } from "@/tests/helpers";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Horse } from "@/game/types";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("breedingSeasonPhase", () => {
   it("should not reset bookings when not breeding season start", () => {

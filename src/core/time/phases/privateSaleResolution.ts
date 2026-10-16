@@ -10,9 +10,7 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import { calculateNpcHorseValue } from "@/core/horse/pricing";
 import { calculateLotValuation } from "@/core/auction/engine";
-import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { attachmentAdjustedAsk, evaluateHorseAttachment } from "@/core/horse/attachment";
 import { computeDiplomaticPressure } from "@/core/horse/overrideNegotiation";
 import { DIPLOMATIC_FAILURE_FRICTION_PENALTY } from "@/constants/privateSaleConstants";

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { SyndicateMarket } from "@/components/market/SyndicateMarket";
 

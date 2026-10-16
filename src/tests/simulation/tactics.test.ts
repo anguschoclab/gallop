@@ -1,5 +1,4 @@
 import { describe, it, expect } from "vitest";
-import { runRaceToCompletion, computePaceContext } from "@/core/race/engine/simulation";
 import { calculateTacticalAdjustment } from "@/core/race/engine/tacticalAI";
 import { applyBlockingEffect, detectBlocking } from "@/core/race/engine/jockeyEffects";
 import type { Horse, Jockey } from "@/game/types";

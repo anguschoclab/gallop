@@ -1,5 +1,4 @@
-import type { AuctionSale, AuctionLot, Horse, Stable, AuctionBidRecord } from "@/game/types";
-import type { Rng } from "@/core/common/rng";
+import type { AuctionLot, Horse, AuctionBidRecord } from "@/game/types";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 

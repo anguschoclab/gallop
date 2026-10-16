@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { useGame } from "@/game/store";
 import { createDefaultGameState } from "@/game/store/state";
 import { makeBreedingProgram } from "@/tests/helpers/sampleGameState";

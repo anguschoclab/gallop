@@ -9,8 +9,6 @@
  */
 
 import type { Stable } from "@/game/types";
-import type { Race, RaceResult } from "@/core/race/types";
-import type { Horse } from "@/core/horse/types";
 import { generateUUID } from "@/core/uuid";
 import type { NpcAIManager, NarrativeState, NarrativeArc, StoryBeat } from "./npcCycleAI";
 

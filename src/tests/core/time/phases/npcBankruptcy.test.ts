@@ -7,7 +7,7 @@ import { npcBankruptcyPhase } from "@/core/time/phases/npcBankruptcy";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Stable, Horse, Syndicate } from "@/game/types";
+import type { GameState, Syndicate } from "@/game/types";
 import type {
   CashImpact,
   ConsignmentImpact,
@@ -15,8 +15,7 @@ import type {
   InboxImpact,
   HorseCreationImpact,
 } from "@/core/resolver/impacts/index";
-import { createRng } from "@/core/common/rng";
-import { getStableId, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { getStableId, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 
 function makeSyndicate(overrides: Partial<Syndicate> = {}): Syndicate {

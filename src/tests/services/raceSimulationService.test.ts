@@ -6,8 +6,7 @@ import {
   getRaceClassBonus,
 } from "@/core/race/raceSimulationService";
 import type { Horse, Race } from "@/game/types";
-import { createTestHorse, createTestJockeys } from "@/tests/helpers";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { createTestHorse } from "@/tests/helpers";
 import { makePlayerOwned } from "@/core/horse/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {

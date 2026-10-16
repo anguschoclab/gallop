@@ -7,7 +7,6 @@ import {
   PolarRadiusAxis,
 } from "recharts";
 import type { Jockey } from "@/game/types";
-import { Trophy, Calendar, Target } from "lucide-react";
 
 interface JockeyStatsGridProps {
   jockey: Jockey;

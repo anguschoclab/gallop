@@ -1,4 +1,4 @@
-import { Link, notFound, useParams, useRouter } from "@tanstack/react-router";
+import { notFound, useParams, useRouter } from "@tanstack/react-router";
 import { type ComponentType, useEffect } from "react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -43,16 +43,7 @@ import { useHorseActions } from "@/hooks/horse/useHorseActions";
 import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
 import { useHorses } from "@/hooks/game/useCoreState";
 import { useGame } from "@/game/store";
-import {
-  ArrowLeft,
-  Zap,
-  FileText,
-  Activity,
-  TrendingUp,
-  GitBranch,
-  History,
-  Dna,
-} from "lucide-react";
+import { Zap, FileText, Activity, TrendingUp, GitBranch, History, Dna } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export interface HorseDetailProps {

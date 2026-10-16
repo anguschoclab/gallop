@@ -7,7 +7,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
-import type { Horse, Race, Stable, Jockey } from "@/game/types";
+import type { Horse, Race, Stable } from "@/game/types";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────

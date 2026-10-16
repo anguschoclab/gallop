@@ -1,6 +1,6 @@
 import { Link, useNavigate, useParams, useSearch } from "@tanstack/react-router";
 import { useMemo } from "react";
-import { ArrowLeft, Globe, Briefcase } from "lucide-react";
+import { Globe, Briefcase } from "lucide-react";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/lib/formatting";

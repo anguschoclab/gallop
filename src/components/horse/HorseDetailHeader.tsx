@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { SilkDot } from "@/components/SilkDot";
 import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
-import { ShieldCheck, AlertCircle, Users } from "lucide-react";
+import { ShieldCheck, Users } from "lucide-react";
 import { formatFanCount } from "@/components/horse/fanFormat";
 import { cn } from "@/lib/cn";
 import type { Horse } from "@/game/types";

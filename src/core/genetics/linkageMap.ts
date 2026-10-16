@@ -151,4 +151,5 @@ export const INDEPENDENTLY_ASSORTING_LOCI = [
   "signalTransduction",
   "immunity",
   "geneticDiversity",
+  "csnbRisk",
 ];

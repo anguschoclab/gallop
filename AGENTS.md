@@ -33,6 +33,10 @@ bun run typecheck:errors
 - Full grouped-by-file report is in `tsc-results.txt` (overwritten each run).
 - Add `--quiet` to suppress per-error stdout: `bun run scripts/typecheck.ts --quiet`
 
+## Lint Guardrails
+
+- `eslint-plugin-unused-imports` is configured in `eslint.config.js` (`unused-imports/no-unused-imports: "warn"`). `bun run lint` reports unused imports; `bunx eslint . --fix` strips them safely. `@typescript-eslint/no-unused-vars` stays `off` so the two rules don't conflict.
+
 ## Known Gotchas
 
 - NPC career timelines derive from race history and age boundaries.

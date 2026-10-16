@@ -23,8 +23,7 @@ import { getAvailableTrainingTypes } from "@/core/facilities";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { simulateRace, type RaceSimulationResult } from "@/services/race/raceFacade";
-import { isPlayerOwned } from "@/core/horse/ownership";
-import type { NominationRecord, NominationStatus } from "@/core/racing/nominationFees";
+import type { NominationStatus } from "@/core/racing/nominationFees";
 import {
   validateTrialHorse,
   buildPacemaker,
@@ -38,7 +37,7 @@ import {
   applyMilestoneChoice,
   buildMilestoneLogText,
 } from "@/core/race/foalMilestoneActions";
-import { validateTraining, TRAINING_SLOTS_PER_DAY } from "@/core/race/trainingActions";
+import { validateTraining } from "@/core/race/trainingActions";
 import {
   validateNomination,
   buildNominationRecord,

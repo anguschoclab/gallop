@@ -8,7 +8,7 @@
  * Related files: store.ts (state management), raceSim.ts (uses racing state)
  */
 
-import { useGame, useGameWithShallow } from "@/game/store";
+import { useGame } from "@/game/store";
 import type { GameState } from "@/game/types";
 
 /**

@@ -1,5 +1,4 @@
 import { useState, useMemo } from "react";
-import { shallow } from "zustand/shallow";
 import { useGameSelector } from "@/hooks/shared/useGameSelector";
 import { useGame } from "@/game/store";
 import { usePregnancies } from "@/hooks/game/useBreedingState";

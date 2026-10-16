@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { calculateRecommendedStudFee, recalcStandingFee } from "@/core/breeding/stallions";
-import type { Horse, GameState } from "@/game/types";
+import type { GameState } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 

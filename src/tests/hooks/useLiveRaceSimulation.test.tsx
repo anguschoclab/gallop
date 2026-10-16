@@ -7,7 +7,7 @@
  * pushing commentary to the messageQueue.
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
+import { renderHook } from "@testing-library/react";
 import { useRef } from "react";
 import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
 

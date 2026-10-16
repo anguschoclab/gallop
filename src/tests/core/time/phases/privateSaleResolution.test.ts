@@ -3,9 +3,9 @@ import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/game/types";
-import { makeNpcOwned, getStableId } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import {
   setCashPressureTuningOverrides,

@@ -8,7 +8,7 @@ import { Link } from "@tanstack/react-router";
 import { TOOLTIP_DELAY_MS, MAX_COMPARE_HORSES } from "@/constants";
 import { HorseBit, overall } from "@/components/horse/HorseBits";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";

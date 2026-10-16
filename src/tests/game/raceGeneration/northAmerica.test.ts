@@ -2,7 +2,7 @@
  * Tests for North American race generation
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import {
   generateNorthAmericanRace,
   generateNorthAmericanRaceCard,

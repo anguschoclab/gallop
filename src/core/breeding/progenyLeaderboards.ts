@@ -10,7 +10,6 @@
 
 import { getCareerStats } from "@/core/horse/stats";
 import type { Horse } from "@/game/types";
-import { foalLifetimeEarnings } from "./lineage";
 import type {
   ProgenyLeaderboard,
   ProgenyLeaderboardType,

@@ -9,16 +9,9 @@
  * Related files: npcDailyCycle.ts (uses for NPC race entry), store.ts (uses for race recommendations)
  */
 
-import type { Horse, Race, Stable, StableTier } from "@/game/types";
+import type { Horse, Race, Stable } from "@/game/types";
 import { isFemaleHorse } from "@/core/horse/gender";
-import { isHorseEligibleForClaimingPrice } from "@/core/market/claiming";
-import {
-  BASE_RACE_WEIGHT_LBS,
-  MAX_HORSES_PER_STABLE_PER_RACE,
-  MIN_ENERGY_TO_ENTER,
-  MIN_FORM_TO_ENTER,
-  PREFERRED_DISTANCE_RANGE,
-} from "@/constants";
+
 import { BASE_PURSE_APPEAL, SCORING_CONSTANTS, GRADED_BONUS_BASE } from "./entryScoringConstants";
 import { SUITABILITY_SCORERS, buildSuitabilityContext } from "./raceSuitabilityScorers";
 

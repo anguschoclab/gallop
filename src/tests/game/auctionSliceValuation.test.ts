@@ -4,7 +4,6 @@ import { createDefaultGameState } from "@/game/store/state";
 import { horseMarketValue, horseCareerValuation } from "@/core/horse/pricing";
 import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
 import {
-  createTestHorse,
   createTestColt,
   createTestStallion,
   createTestMare,

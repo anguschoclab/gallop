@@ -9,7 +9,6 @@ import {
   buildAutoCampaign,
 } from "@/core/campaign/campaignActions";
 import type { HorseCampaign } from "@/game/types";
-import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 describe("buildCampaignIntent", () => {
   it("builds an intent with the common envelope fields", () => {

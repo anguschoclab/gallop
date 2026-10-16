@@ -14,12 +14,7 @@ import type { ImpactHandler, LookupMaps, ImpactHandlerFunction } from "./types";
 import type { CashImpact, TransactionImpact } from "../impacts/financialImpacts";
 import { createTransaction } from "@/core/transactions";
 import type { HorseTransferImpact } from "../impacts/horseImpacts";
-import {
-  makePlayerOwned,
-  makeNpcOwned,
-  makeUnowned,
-  type HorseOwnership,
-} from "@/core/horse/ownership";
+import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {

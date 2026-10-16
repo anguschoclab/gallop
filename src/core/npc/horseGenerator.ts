@@ -8,7 +8,7 @@
  * Related files: npcStables.ts (uses horse generation), npcHorseGenHelpers.ts (helper functions)
  */
 
-import type { Horse, Stable, StableTier } from "@/game/types";
+import type { Horse, Stable } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import { generateNpcHorse as _generateNpcHorse } from "@/core/horse/horseFactory";
 import { deriveFanCount } from "@/core/horse/fans";
@@ -22,14 +22,7 @@ import { shouldGenerateHorseOfAge, createHorseGenAIState } from "@/core/ai/horse
 import { recordHorseGeneration } from "@/core/ai/horseGenAIRecording";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { type AgeCategory, getAgeFromCategory, calculateStartingFame } from "./horseGenHelpers";
-import {
-  NPC_HORSE_COUNT_ELITE_MIN,
-  NPC_HORSE_COUNT_ELITE_MAX,
-  NPC_HORSE_COUNT_MID_MIN,
-  NPC_HORSE_COUNT_MID_MAX,
-  NPC_HORSE_COUNT_BUDGET_MIN,
-  NPC_HORSE_COUNT_BUDGET_MAX,
-} from "@/constants";
+
 import type { WorldSize } from "@/core/stable/worldSizeConfig";
 import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
 import { getStableId } from "@/core/horse/ownership";

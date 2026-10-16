@@ -2,7 +2,7 @@
  * outpostTypes.ts - Imperial Expansion Outpost and Branching Facility types
  */
 
-import type { Facility, FacilityType, FacilityLevel } from "./facilityTypes";
+import type { Facility, FacilityLevel } from "./facilityTypes";
 
 export type OutpostRegion =
   | "North America (East)"

@@ -66,7 +66,10 @@ const NAMING_STRATEGIES: Record<
         ? generatePortmanteau(context.sireName, context.damName, rng)
         : extractAndCombine(context.sireName, context.damName, rng);
     } else if (context.sireName || context.damName) {
-      return generateSoundAlike(context.sireName || context.damName!, rng);
+      const parent = context.sireName || context.damName!;
+      return rng.next() < 0.5
+        ? generateSoundAlike(parent, rng)
+        : generateReverseHomage(parent, rng);
     }
     return undefined;
   },

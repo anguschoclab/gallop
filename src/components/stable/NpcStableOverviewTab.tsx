@@ -1,10 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Brain, Trophy } from "lucide-react";
+import { Brain } from "lucide-react";
 import { TrophyCase } from "@/components/awards";
-import { NumericValue } from "@/components/horse/HorseBits";
 import { PERSONALITY_CONFIG } from "@/services/stable/stableFacade";
-import { cn } from "@/lib/cn";
 import { NpcStableCharts } from "@/components/stable/NpcStableCharts";
 import { NpcCareerTrackerPanel } from "@/components/stable/NpcCareerTrackerPanel";
 import { CashPressureTrend } from "@/components/stable/CashPressureTrend";

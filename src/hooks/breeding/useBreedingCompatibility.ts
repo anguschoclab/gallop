@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { useGame } from "@/game/store";
 import { calculateBreedingCompatibility } from "@/core/breeding/compatibility";
-import type { Horse } from "@/game/types";
 
 /**
  * Hook to calculate breeding compatibility between a sire and a dam.

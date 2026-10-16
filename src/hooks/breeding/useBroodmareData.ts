@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { usePregnancies } from "@/hooks/game/useBreedingState";
 import type { GameState, Pregnancy, Horse } from "@/game/types";

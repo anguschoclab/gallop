@@ -3,7 +3,7 @@
  * Tests personality-driven jockey matching, retention, and contract negotiation
  */
 
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import {
   createJockeyAIState,
   calculateJockeySuitability,
@@ -17,7 +17,6 @@ import {
   getJockeyInsights,
 } from "@/core/ai/jockeyAIRetention";
 import type { Jockey, Horse, Stable, Race } from "@/game/types";
-import type { JockeyStats } from "@/core/jockey/types";
 import { createTestHorse, createTestStable, createTestJockey } from "@/tests/helpers";
 
 function createMockRace(overrides: Partial<Race> = {}): Race {
@@ -852,5 +851,31 @@ describe("calculateJockeySuitability — affinity and compatibility", () => {
     expect(allScore).toBeGreaterThan(noScore);
     // The gap should be significant (affinity + compat + trait bonuses)
     expect(allScore - noScore).toBeGreaterThan(20);
+  });
+});
+
+describe("getJockeyInsights", () => {
+  it("aggregates assignments and outcomes for a stable", () => {
+    const stable = createMockStable({ id: "stable-1" });
+    const jockey = createMockJockey({ id: "jockey-1" });
+    const horse = createMockHorse({ id: "horse-1" });
+    let aiState = createJockeyAIState(stable);
+    aiState = recordJockeyAssignment(aiState, jockey, horse, "race-1", stable, 1000, 1);
+    aiState = recordJockeyOutcome(aiState, "jockey-1", "horse-1", "race-1", 2, 5000, 2);
+
+    const insights = getJockeyInsights(aiState, "stable-1");
+    expect(insights.totalAssignments).toBe(1);
+    expect(insights.avgPosition).toBe(2);
+    expect(insights.totalPrize).toBe(5000);
+    expect(insights.avgFee).toBe(1000);
+    expect(insights.retainedJockeys).toBe(1);
+  });
+
+  it("returns an empty aggregate for a stable with no history", () => {
+    const aiState = createJockeyAIState(createMockStable());
+    const insights = getJockeyInsights(aiState, "unknown-stable");
+    expect(insights.totalAssignments).toBe(0);
+    expect(insights.totalPrize).toBe(0);
+    expect(insights.retainedJockeys).toBe(0);
   });
 });

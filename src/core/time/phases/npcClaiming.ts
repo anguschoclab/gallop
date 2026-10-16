@@ -10,7 +10,7 @@
 
 import { PHASE_ORDER_NPC_CLAIMING } from "@/constants";
 import type { PipelineContext } from "../pipeline";
-import type { Race, Claim, Horse, Stable } from "@/game/types";
+import type { Race, Claim, Stable } from "@/game/types";
 import { calculateLotValuation } from "@/core/auction/engine";
 import { generateUUID } from "@/core/uuid";
 import { trackClaimingActivity } from "@/core/ai/economyAITracking";

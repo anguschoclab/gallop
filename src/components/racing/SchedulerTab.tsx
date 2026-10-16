@@ -1,5 +1,4 @@
 import { useGame, useGameWithShallow } from "@/game/store";
-import { shallow } from "zustand/shallow";
 import { useMemo } from "react";
 import type { GameState, Horse, HorseCampaign } from "@/game/types";
 import { Badge } from "@/components/ui/badge";

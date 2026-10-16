@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { createElement } from "react";
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { RunnerMood } from "@/core/race/runnerConditions";

@@ -38,7 +38,7 @@ import type {
   StewardsResolutionImpact,
 } from "../impacts/raceImpacts";
 import { distanceBucket } from "@/core/race/beyer";
-import { getReputationTier, createReputationEvent, type ReputationSource } from "@/core/reputation";
+import { getReputationTier, createReputationEvent } from "@/core/reputation";
 import { addReservedName } from "@/core/horse/naming/reservedNames";
 import { trackRecordKey } from "@/core/history/historyTypes";
 

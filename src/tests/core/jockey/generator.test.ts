@@ -1,6 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { generateJockey, generateApprentice } from "@/core/jockey/generator";
 import { createRng } from "@/core/common/rng";
+import {
+  JOCKEY_SALARY_ELITE_MIN,
+  JOCKEY_SALARY_ELITE_MAX,
+  JOCKEY_SALARY_MID_MIN,
+  JOCKEY_SALARY_MID_MAX,
+  JOCKEY_SALARY_BUDGET_MIN,
+  JOCKEY_SALARY_BUDGET_MAX,
+} from "@/constants";
 import type { JockeyTrait } from "@/core/jockey/types";
 
 const VALID_TRAITS: JockeyTrait[] = [
@@ -148,4 +156,26 @@ describe("generateJockey — tier storage", () => {
     const j = generateApprentice({ rng });
     expect(j.tier).toBe("budget");
   });
+});
+
+describe("generateJockey — tier stat bounds", () => {
+  // Archetype strategies adjust base rolls by up to +20 / -10.
+  const bounds = {
+    elite: { min: JOCKEY_SALARY_ELITE_MIN, max: JOCKEY_SALARY_ELITE_MAX },
+    mid: { min: JOCKEY_SALARY_MID_MIN, max: JOCKEY_SALARY_MID_MAX },
+    budget: { min: JOCKEY_SALARY_BUDGET_MIN, max: JOCKEY_SALARY_BUDGET_MAX },
+  } as const;
+
+  for (const tier of ["elite", "mid", "budget"] as const) {
+    it(`${tier} jockey stats stay within tier bounds plus archetype deltas`, () => {
+      const { min, max } = bounds[tier];
+      for (let seed = 0; seed < 50; seed++) {
+        const j = generateJockey({ tier, rng: createRng(seed) });
+        for (const s of Object.values(j.stats)) {
+          expect(s).toBeGreaterThanOrEqual(min - 10);
+          expect(s).toBeLessThanOrEqual(Math.min(100, max + 20));
+        }
+      }
+    });
+  }
 });

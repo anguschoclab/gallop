@@ -1,3 +1,12 @@
+import {
+  NPC_HORSE_COUNT_ELITE_MIN,
+  NPC_HORSE_COUNT_ELITE_MAX,
+  NPC_HORSE_COUNT_MID_MIN,
+  NPC_HORSE_COUNT_MID_MAX,
+  NPC_HORSE_COUNT_BUDGET_MIN,
+  NPC_HORSE_COUNT_BUDGET_MAX,
+} from "@/constants/aiConstants";
+
 export type WorldSize = "small" | "medium" | "large";
 
 export const DEFAULT_WORLD_SIZE: WorldSize = "large";
@@ -89,9 +98,9 @@ export const WORLD_SIZE_CONFIGS: Record<WorldSize, WorldSizeConfig> = {
       filler: { count: 80 },
     },
     horseCounts: {
-      elite: [30, 40],
-      mid: [20, 30],
-      budget: [15, 25],
+      elite: [NPC_HORSE_COUNT_ELITE_MIN, NPC_HORSE_COUNT_ELITE_MAX],
+      mid: [NPC_HORSE_COUNT_MID_MIN, NPC_HORSE_COUNT_MID_MAX],
+      budget: [NPC_HORSE_COUNT_BUDGET_MIN, NPC_HORSE_COUNT_BUDGET_MAX],
       filler: 10,
     },
     jockeyCount: 25,

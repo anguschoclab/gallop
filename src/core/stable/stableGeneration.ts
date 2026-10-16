@@ -8,7 +8,7 @@
  * Related files: stablePoolData.ts (provides pool data), stableSelection.ts (provides selection logic)
  */
 
-import type { Stable, StableTier, StablePersonality } from "@/game/types";
+import type { Stable, StableTier } from "@/game/types";
 import type { Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { selectPersonality, getSpecialistPreferences } from "@/core/stable/stableSelection";

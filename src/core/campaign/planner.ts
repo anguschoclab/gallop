@@ -24,13 +24,11 @@ import type {
 import { GRADED_RACES_BY_KEY } from "@/core/data/gradedRacesAccessor";
 import { getCurrentYear } from "@/core/race/schedule";
 import { detectContender, createCampaignAIState } from "@/core/ai/campaignAI";
-import { getOptimalMajorRaceTarget, getPrepRaceStrategy } from "@/core/ai/campaignTargeting";
+import { getOptimalMajorRaceTarget } from "@/core/ai/campaignTargeting";
 import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
 import {
   getDistanceBand,
-  surfaceScore,
-  distanceBandScore,
   buildPrepChain,
   buildGradeChaseSlots,
   buildEarningsSlots,

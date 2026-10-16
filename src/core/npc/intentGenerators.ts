@@ -10,13 +10,8 @@
  */
 
 import type { AnyIntent } from "@/core/resolver/intents";
-import type { GameState, Horse, Race, Stable } from "@/game/types";
-import {
-  getOrCreateStableAIState,
-  updateStableAIState,
-  type NpcAIManager,
-  type StableAIState,
-} from "@/core/ai/npcCycleAI";
+import type { GameState, Horse, Race } from "@/game/types";
+import { getOrCreateStableAIState, updateStableAIState } from "@/core/ai/npcCycleAI";
 import {
   assessWorldState,
   generateStrategicDirectives,

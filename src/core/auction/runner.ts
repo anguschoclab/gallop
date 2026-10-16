@@ -23,9 +23,7 @@ import type { AuctionSale, AuctionLot, Horse, Stable } from "@/game/types";
 import { calculateNpcBid } from "./engine";
 import { createRng, hashStr, type Rng } from "@/core/common/rng";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import type {
-  ChantPhase,
   AuctionTickEvent,
   StepResult,
   LotState,

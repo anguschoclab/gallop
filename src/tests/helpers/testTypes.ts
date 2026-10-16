@@ -7,7 +7,6 @@
 
 import type { Horse, Stable, GameState, Jockey, Race } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
-import type { Rng } from "@/core/common/rng";
 import { createRng } from "@/core/common/rng";
 
 // Partial types for test objects

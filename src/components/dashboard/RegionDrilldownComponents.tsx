@@ -1,11 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import {
-  DeltaPill,
-  MetricInfo,
-  Sparkline,
-  chartColors,
-  formatCurrencyCompact,
-} from "@/components/charts";
+import { DeltaPill, MetricInfo, Sparkline, chartColors } from "@/components/charts";
 import { cn } from "@/lib/cn";
 import { ArrowUpDown } from "lucide-react";
 import { timeWindowLabel } from "@/services/analytics/analyticsFacade";

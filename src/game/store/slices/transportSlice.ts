@@ -8,7 +8,7 @@
  * Related files: store/index.ts (uses this slice), @/core/transportation/transportationTypes.ts (transport types)
  */
 
-import type { TransportRequest, TransportMode } from "@/core/transportation/transportationTypes";
+import type { TransportMode } from "@/core/transportation/transportationTypes";
 import {
   createTransportRequest,
   getTransportModeForDistance,

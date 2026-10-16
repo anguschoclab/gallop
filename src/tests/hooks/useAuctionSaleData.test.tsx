@@ -16,7 +16,7 @@ vi.mock("@/services/auction/auctionLotFilter", () => ({
 
 import { useAuctionSaleData } from "@/hooks/auction/useAuctionSaleData";
 import { createDefaultGameState } from "@/game/store/state";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import type { Horse } from "@/game/types";
 
 let mockState: any;

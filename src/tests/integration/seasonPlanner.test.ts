@@ -6,9 +6,8 @@ import { canBreed } from "@/core/breeding/eligibility";
 import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
 import { createTestMare, createTestStallion } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { BREEDING_FEE } from "@/constants";
 import type { StoreGet } from "@/game/store/types";
-import type { Horse, StudCareer, GameState } from "@/game/types";
+import type { StudCareer, GameState } from "@/game/types";
 import type { MatingPlanEntry } from "@/game/store/state/breedingState";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 

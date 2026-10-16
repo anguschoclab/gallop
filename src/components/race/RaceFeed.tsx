@@ -1,7 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
 import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
 import { ClaimingRacePanel } from "@/components/race/ClaimingRacePanel";
 import { RaceCard } from "@/components/race/RaceCard";

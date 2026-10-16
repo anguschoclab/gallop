@@ -6,8 +6,6 @@ import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 import type { Rng } from "@/core/common/rng";
 import {
   AUCTION_RESERVE_SPECIALIST,
-  AUCTION_RESERVE_AGGRESSIVE,
-  AUCTION_RESERVE_SPECIALIST_LOW,
   AUCTION_RESERVE_BREEDER,
   AUCTION_RESERVE_CONSERVATIVE,
   AUCTION_RESERVE_ELITE,

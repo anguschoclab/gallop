@@ -1,7 +1,7 @@
 import type { TrainingIntent } from "@/core/resolver/intents";
 import type { GameState, Horse, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
-import { getAvailableTrainingTypes, type PlayerFacilities } from "@/core/facilities";
+import { getAvailableTrainingTypes } from "@/core/facilities";
 import { createTrainingAIState, selectTrainingType, shouldTrainToday } from "@/core/ai/trainingAI";
 import type { StableAIState, DifficultyState } from "@/core/ai/npcCycleAI";
 import type { DistressLevel } from "@/core/ai/financialDistressAI";

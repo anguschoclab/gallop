@@ -8,7 +8,6 @@
 
 import type { RaceClass } from "@/game/types";
 import type { Track } from "@/core/data/tracksAccessor";
-import type { Rng } from "@/core/common/rng";
 import { getRegionalSystem, type RaceNameParams } from "./raceNameUtils";
 import { selectNamingPattern, generateNameByPattern, ensureUnique } from "./raceNamePatterns";
 

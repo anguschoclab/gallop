@@ -9,7 +9,6 @@ import {
   Target,
   RefreshCw,
   ChevronRight,
-  User,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";

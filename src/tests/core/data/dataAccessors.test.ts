@@ -21,8 +21,6 @@ import {
   TRACKS as DATA_TRACKS,
   TRACK_BY_NAME as DATA_TRACK_BY_NAME,
   TRACK_BY_ID as DATA_TRACK_BY_ID,
-  getTrackById as dataGetTrackById,
-  getTrackByName as dataGetTrackByName,
 } from "@/data/tracks";
 import {
   GRADED_RACES as DATA_GRADED_RACES,

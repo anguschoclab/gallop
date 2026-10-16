@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
 import type { Horse } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 function mkHorse(over: Partial<Horse> = {}): Horse {
   return createTestHorse({

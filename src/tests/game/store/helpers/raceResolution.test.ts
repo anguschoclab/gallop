@@ -5,7 +5,6 @@ import {
   detectPhotoFinish,
   type RankedResult,
 } from "@/core/race/resolution";
-import { PRIZE_SPLIT } from "@/constants";
 
 // ---------------------------------------------------------------------------
 // computePayoutSplits

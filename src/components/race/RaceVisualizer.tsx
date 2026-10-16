@@ -1,5 +1,5 @@
 import { TOOLTIP_DELAY_MS } from "@/constants";
-import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
+import React, { useRef, useEffect, useMemo, useCallback } from "react";
 import {
   Play,
   Pause,

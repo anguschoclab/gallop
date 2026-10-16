@@ -3,7 +3,7 @@ import { useGame } from "@/game/store";
 import type { GameState } from "@/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft, Trophy } from "lucide-react";
+import { Trophy } from "lucide-react";
 import {
   CATEGORY_DISPLAY_NAMES,
   CATEGORY_DESCRIPTIONS,

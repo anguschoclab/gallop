@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from "@tanstack/react-router";
-import { useGame, useGameWithShallow, type StoreType } from "@/game/store";
+import { useGame, type StoreType } from "@/game/store";
 import { useDay, useCash, useHorses } from "@/hooks/game/useCoreState";
 import { useAwards } from "@/hooks/game/useSystemsState";
 import { useAutoSave } from "@/hooks/game/useAutoSave";

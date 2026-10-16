@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { STAGE_RANGES, STAGE_PHASES } from "@/workers/pipelineStages";
+import { STAGE_PHASES } from "@/workers/pipelineStages";
 import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
 
 describe("Worker pipeline stage boundaries", () => {

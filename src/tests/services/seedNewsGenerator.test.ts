@@ -5,7 +5,7 @@ import { isValidUUID } from "@/core/uuid";
 import type { NewsCategory, NewsImportance, EntityLink } from "@/services/narrative/newsTypes";
 import type { Race, Stable, Horse } from "@/game/types";
 import type { PlayerProfile } from "@/core/stable/types";
-import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 
 const VALID_CATEGORIES: NewsCategory[] = ["racing", "market", "stable", "flavor", "milestone"];

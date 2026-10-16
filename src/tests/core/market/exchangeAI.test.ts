@@ -9,7 +9,6 @@ import { createDefaultExchangeState, type ExchangeState } from "@/core/market/ex
 import { createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
 import type { Stable, StablePersonality } from "@/core/stable/types";
-import type { StableId } from "@/core/types/branded";
 
 function makeStable(overrides: Partial<Stable> & { id: string }): Stable {
   return {

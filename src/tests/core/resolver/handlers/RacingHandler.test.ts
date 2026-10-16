@@ -6,7 +6,6 @@ import type {
   RaceEntryImpact,
   RaceWithdrawalImpact,
   RaceResultImpact,
-  RaceHistoryImpact,
   ClaimingImpact,
   TacticsImpact,
   RaceResultAdjustmentImpact,

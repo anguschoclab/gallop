@@ -9,7 +9,6 @@ import {
   LeaderboardHeading,
   LeaderboardRow,
   LeaderboardShell,
-  LeaderboardSkeleton,
 } from "@/components/leaderboard/LeaderboardPrimitives";
 import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
 import { isPlayerOwned } from "@/services/breeding/breedingFacade";

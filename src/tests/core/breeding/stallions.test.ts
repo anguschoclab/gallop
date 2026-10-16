@@ -8,7 +8,7 @@ import {
 } from "@/core/breeding/stallions";
 import type { Horse, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { horsePrice, horsePriceWithPedigree } from "@/core/horse/pricing";
+import { horsePrice } from "@/core/horse/pricing";
 import { makeGradedRace, generateRace } from "@/core/race/generation/raceGen";
 import type { GradedRace } from "@/data/gradedRaces";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";

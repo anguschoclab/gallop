@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
 import { STAGE_PHASES } from "@/workers/pipelineStages";
 import { createRng, hashStr } from "@/core/common/rng";

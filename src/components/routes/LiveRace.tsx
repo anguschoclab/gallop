@@ -1,4 +1,4 @@
-import { Link, notFound, useNavigate, useParams } from "@tanstack/react-router";
+import { notFound, useNavigate, useParams } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";

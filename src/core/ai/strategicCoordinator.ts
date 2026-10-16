@@ -11,7 +11,7 @@
  * Related files: npc/intentGenerators.ts (calls coordinator before generating intents)
  */
 
-import type { GameState, Stable, StablePersonality, Race } from "@/game/types";
+import type { GameState, Stable, StablePersonality } from "@/game/types";
 import type { NpcAIManager } from "./npcCycleAI";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import type { FinancialDistressState } from "./financialDistressAI";

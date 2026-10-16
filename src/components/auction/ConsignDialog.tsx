@@ -7,7 +7,6 @@
 // (reserve + 50%).
 
 import { useMemo, useState } from "react";
-import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import {
   Dialog,

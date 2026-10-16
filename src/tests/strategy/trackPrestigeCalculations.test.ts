@@ -1,13 +1,11 @@
 import { describe, it, expect } from "vitest";
 import {
-  getRacecoursePrestige,
   getRacecoursePrestigeByName,
   racecoursePrestigeMultiplier,
 } from "@/core/prestige/racecoursePrestige";
 import {
   calculateAverageCampaignPrestige,
   getPrestigeTier,
-  type PrestigeTier,
 } from "@/core/prestige/strategyPrestigeHelpers";
 import type { CampaignRaceSlot, Race } from "@/game/types";
 

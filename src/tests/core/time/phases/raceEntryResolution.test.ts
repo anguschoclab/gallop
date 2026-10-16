@@ -5,12 +5,12 @@
 import { describe, it, expect } from "vitest";
 import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
 import { createTestHorse, createUnownedHorse } from "@/tests/helpers/createTestHorse";
+import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState } from "@/game/types";
 import type { RaceEntryIntent, RaceWithdrawalIntent } from "@/core/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
-import type { RaceEntryImpact } from "@/core/resolver/impacts/raceImpacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { createJockeyAIState } from "@/core/ai/jockeyAI";
 import { asNpcStableId } from "@/core/types/branded";
@@ -484,6 +484,73 @@ describe("raceEntryResolutionPhase", () => {
 
       const entryImpact = result.impacts.find((i) => i.type === "race_entry") as any;
       expect(entryImpact).toBeDefined();
+    });
+
+    it("records the assignment in the stable's jockeyAI history when a jockey is selected", () => {
+      const npcHorse = createTestHorse({ id: "npc-horse", ownership: makeNpcOwned("s-npc") });
+      const state: GameState = {
+        ...createTestState(),
+        horses: h2r([npcHorse]),
+        races: r2r([
+          {
+            id: "race-1",
+            name: "Test Race",
+            day: 5,
+            distance: 2000,
+            raceClass: "Maiden",
+            entryFee: 500,
+            purse: 10000,
+            minStat: 70,
+            fieldSize: 8,
+            entries: [],
+            resolved: false,
+          },
+        ]),
+        npcStables: [
+          {
+            id: "s-npc",
+            name: "NPC Stable",
+            horses: h2r([npcHorse]),
+            personality: "conservative",
+          } as any,
+        ],
+        jockeys: [
+          createTestJockey({
+            id: "j-retainer",
+            name: "Retainer",
+            stableId: "s-npc" as any,
+            ridingFee: 250,
+            lastRaceDay: 0,
+          }),
+        ],
+        npcAIManager: { stableStates: {} } as any,
+      };
+
+      const intent: RaceEntryIntent = {
+        id: "intent-record",
+        day: 1,
+        type: "race_entry",
+        entityId: "npc-horse",
+        priority: 100,
+        source: "npc",
+        sourceId: "s-npc",
+        horseId: "npc-horse",
+        raceId: "race-1",
+      };
+
+      const context = createTestContext(state, [intent]);
+      const result = raceEntryResolutionPhase.execute(context);
+
+      const jockeyAI = (result.state.npcAIManager as any)?.stableStates?.["s-npc"]?.jockeyAI;
+      expect(jockeyAI).toBeDefined();
+      expect(jockeyAI.jockeyHistory).toHaveLength(1);
+      expect(jockeyAI.jockeyHistory[0]).toMatchObject({
+        jockeyId: "j-retainer",
+        horseId: "npc-horse",
+        raceId: "race-1",
+        stableId: "s-npc",
+        fee: 250,
+      });
     });
 
     it("should process multiple NPC entries from different stables with retainers", () => {

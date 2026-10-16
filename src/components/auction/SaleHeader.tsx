@@ -6,7 +6,6 @@
  */
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import { formatCurrency } from "@/lib/formatting";
 import { KIND_LABELS } from "@/services/auction/auctionFacade";

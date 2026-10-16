@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
-import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
-import type { GameState, Horse } from "@/game/types";
+import type { GameState } from "@/game/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/lib/formatting";

@@ -1,8 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { cn } from "@/lib/cn";
 import { groupRacesByDate } from "@/core/race/groupRacesByDate";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import type { Race } from "@/game/types";
 
 describe("utils", () => {
   describe("cn", () => {

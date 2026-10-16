@@ -9,7 +9,6 @@
  */
 
 import type { DosageProfile, PedigreeNode, DosageMetrics } from "@/core/breeding/types";
-import type { AptitudinalGroup, PedigreeHorse } from "@/core/data/pedigreeAccessor";
 import { findHorseByName } from "@/core/data/pedigreeAccessor";
 
 // Point values per generation for dosage calculation

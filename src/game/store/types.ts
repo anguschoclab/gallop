@@ -8,7 +8,6 @@
  * Related files: store/index.ts (uses these types), all slice files (implement slice types)
  */
 
-import type { StateCreator } from "zustand";
 import type { CoreState } from "@/game/store/state/coreState";
 import type { SystemsState } from "@/game/store/state/systemsState";
 import type { NewGameOptions } from "@/game/store/state";

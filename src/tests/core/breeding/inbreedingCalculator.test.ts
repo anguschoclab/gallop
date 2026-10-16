@@ -6,7 +6,6 @@ import {
 import * as pedigreeAccessor from "@/core/data/pedigreeAccessor";
 import {
   DEFAULT_GENETIC_DIVERSITY,
-  INBREEDING_DIVERSITY_HIGH,
   INBREEDING_EXPECTED_MAX_ANCESTORS,
   INBREEDING_SCORE_BONUS,
 } from "@/constants";

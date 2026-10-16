@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from "vitest";
 import { validateIntent } from "@/core/resolver/resolver";
-import type { GameState, Horse } from "@/game/types";
+import type { GameState } from "@/game/types";
 import type {
   AnyIntent,
   TrainingIntent,

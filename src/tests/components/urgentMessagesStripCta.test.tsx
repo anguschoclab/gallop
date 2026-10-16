@@ -40,7 +40,7 @@ import { Route as FoalDevelopmentRoute } from "@/routes/foal-development.$horseI
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestHorse } from "@/tests/helpers";
 import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { makePlayerOwned } from "@/core/horse/ownership";
 
 describe("Foal development inbox CTA → route → back navigation", () => {

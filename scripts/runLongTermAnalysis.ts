@@ -37,7 +37,6 @@ import { npcClaimingPhase } from "../src/core/time/phases/npcClaiming";
 import { claimResolutionPhase } from "../src/core/time/phases/claimResolution";
 import { managementResolutionPhase } from "../src/core/time/phases/managementResolution";
 import { createRng, hashStr } from "../src/game/rng";
-import type { GameState } from "../src/game/types";
 import { produce } from "immer";
 
 // Pipeline phases in order

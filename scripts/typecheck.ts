@@ -16,7 +16,7 @@
  *   bun run typecheck:errors
  */
 import { spawnSync } from "node:child_process";
-import { writeFileSync, existsSync } from "node:fs";
+import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const RESULTS_FILE = resolve(import.meta.dir, "..", "tsc-results.txt");

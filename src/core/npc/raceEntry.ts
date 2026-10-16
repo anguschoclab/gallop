@@ -23,7 +23,6 @@ import { applyAffinityBoost } from "@/core/ai/jockeyStrategyAdjustments";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 import { shouldEnterHorse } from "./raceEntryHelpers";
 import { isHatedRival } from "@/core/stable/rivalry";
-import { calculateOverallRating } from "@/core/horse/stats";
 import { makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";

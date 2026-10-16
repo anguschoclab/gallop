@@ -15,7 +15,7 @@ import { resolveJockeyIntent } from "./jockeyManagementResolvers";
 import { resolveFacilityIntent } from "./facilityManagementResolvers";
 import { resolveHorseIntent } from "./horseManagementResolvers";
 import { resolveCampaignIntent } from "./campaignManagementResolvers";
-import { resolveInsuranceIntent, applyInsurancePremiums } from "./insuranceManagementResolvers";
+import { resolveInsuranceIntent } from "./insuranceManagementResolvers";
 
 // Re-export applyInsurancePremiums for backward compatibility
 export { applyInsurancePremiums } from "./insuranceManagementResolvers";

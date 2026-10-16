@@ -3,7 +3,7 @@ import type { Horse, Stable, GameState } from "@/game/types";
 import { runNpcBreeding } from "@/core/npc/breeding";
 import { createRng } from "@/core/common/rng";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 

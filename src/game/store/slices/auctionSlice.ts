@@ -11,7 +11,6 @@
 import type { Horse, AuctionSale, AuctionLot } from "@/game/types";
 import { asHorseId, asPlayerOwnerId } from "@/core/types/branded";
 import { generateUUID } from "@/core/uuid";
-import { formatCurrency } from "@/core/common/formatting";
 import type { StoreSet, StoreGet } from "../types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts";

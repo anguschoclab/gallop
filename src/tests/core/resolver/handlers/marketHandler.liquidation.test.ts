@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from "vitest";
 import { MarketHandler } from "@/core/resolver/handlers/MarketHandler";
-import type { GameState, Horse, AuctionSale } from "@/game/types";
+import type { GameState, AuctionSale } from "@/game/types";
 import type { AuctionResolutionImpact } from "@/core/resolver/impacts/miscImpacts";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { suggestBestSires } from "@/core/breeding/sireSuggestions";
 import { createTestMare, createTestStallion } from "@/tests/helpers";
 import { BREEDING_FEE } from "@/constants";
-import type { Horse, StudCareer } from "@/game/types";
+import type { StudCareer } from "@/game/types";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 function mkStud(overrides: Partial<StudCareer> = {}): StudCareer {

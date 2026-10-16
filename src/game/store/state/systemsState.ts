@@ -14,7 +14,6 @@
 // Includes NPC stables, jockeys, awards, campaigns, leaderboards, facilities, and pending intents
 
 import type { Stable, PlayerProfile } from "@/core/stable/types";
-import type { ScoutReport } from "@/core/market/types";
 import type { Jockey } from "@/core/jockey/types";
 import type { HorseCampaign } from "@/core/calendar/campaignTypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
@@ -24,7 +23,6 @@ import type {
   Leaderboard,
   SireTrendData,
   ProgenyLeaderboard,
-  ProgenyLeaderboardType,
   DamsireLeaderboard,
   BlueHenLeaderboard,
 } from "@/core/breeding/leaderboardTypes";

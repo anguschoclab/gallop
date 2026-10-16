@@ -131,3 +131,19 @@ describe("Horse Naming System", () => {
     });
   });
 });
+
+describe("pedigree strategy — single parent", () => {
+  it("can produce reverse-homage names (prefix + parent)", () => {
+    const prefixes = ["Sir ", "Lady ", "King ", "Queen ", "Noble ", "Wild ", "Swift "];
+    let sawHomage = false;
+    for (let seed = 0; seed < 200 && !sawHomage; seed++) {
+      const name = generateProceduralHorseName(
+        { sireName: "Invasor", existingNames: new Set() },
+        createRng(seed),
+        { strategy: "pedigree" },
+      );
+      if (prefixes.some((p) => name.startsWith(p))) sawHomage = true;
+    }
+    expect(sawHomage).toBe(true);
+  });
+});

@@ -2,7 +2,7 @@
  * stableTrends.ts - Pure functions for deriving stable-wide racing insights.
  */
 
-import type { Horse, HorseRaceHistoryEntry } from "@/core/horse/types";
+import type { Horse } from "@/core/horse/types";
 
 export interface SurfaceTrend {
   surface: string;

@@ -7,7 +7,6 @@ import {
   HORSE_TRAIT_CATEGORY_OPTIONS,
   HORSE_TRAIT_OPTIONS,
   getHorseTraitValue,
-  type HorseTraitKey,
 } from "@/core/common/traitLabels";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestGenotype } from "@/tests/helpers/createTestGenotype";

@@ -7,7 +7,7 @@ import type {
   SyndicateFeeDistributionImpact,
   SyndicateSatisfactionImpact,
 } from "@/core/resolver/impacts/index";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import type { Horse } from "@/game/types";
 import { asPlayerOwnerId, asOwnerKey } from "@/core/types/branded";
 

@@ -18,7 +18,7 @@ import {
 import { applyReputationEvents } from "@/core/reputation/reputationEvents";
 import type { ExchangeState, ExchangeTrade } from "@/core/market/exchange";
 import { isPlayerOwned } from "@/core/horse/ownership";
-import { exchangeCommission, netProceeds } from "@/core/market/exchange";
+import { exchangeCommission } from "@/core/market/exchange";
 
 /**
  * Validate that a horse can be listed on the exchange.

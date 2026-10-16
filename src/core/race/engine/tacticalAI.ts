@@ -1,4 +1,3 @@
-import { clamp } from "@/core/common/math";
 import type { Runner, PaceContext } from "./runnerBuilder";
 
 /**

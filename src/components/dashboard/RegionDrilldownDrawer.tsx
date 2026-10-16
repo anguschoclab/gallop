@@ -19,7 +19,6 @@ import {
   regionNameFor,
   type DrilldownEntity,
   type RegionKey,
-  type RegionRunRow,
 } from "@/services/analytics/analyticsFacade";
 import {
   TIME_WINDOW_OPTIONS,
@@ -39,7 +38,7 @@ import {
 } from "@/constants/regionalConstants";
 import type { Horse } from "@/services/horse/horseFacade";
 import type { Race } from "@/services/race/raceFacade";
-import { METRICS_RAW, METRICS_RATE, type MetricDef } from "./regionalMetrics";
+import { METRICS_RAW, METRICS_RATE } from "./regionalMetrics";
 import { EntityTable, CompareCards } from "./RegionDrilldownComponents";
 
 export type { MetricMode, DistPreset } from "@/constants/regionalConstants";

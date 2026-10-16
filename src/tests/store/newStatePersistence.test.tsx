@@ -13,7 +13,7 @@ import type { NominationRecord } from "@/core/racing/nominationFees";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
 import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
 import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { makePlayerOwned } from "@/core/horse/ownership";
 
 // Persisted keys must mirror src/game/store/index.ts PERSISTED_KEYS.

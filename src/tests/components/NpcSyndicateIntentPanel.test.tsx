@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, cleanup } from "@testing-library/react";
 import { NpcSyndicateIntentPanel } from "@/components/market/NpcSyndicateIntentPanel";
 import type { Horse, Stable } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";

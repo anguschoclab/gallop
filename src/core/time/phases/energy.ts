@@ -9,7 +9,7 @@
  */
 
 import { PHASE_ORDER_ENERGY } from "@/constants";
-import type { PipelineContext, PipelinePhase } from "../pipeline";
+import type { PipelineContext } from "../pipeline";
 import { getFacilityBonus } from "@/core/facilities";
 import { resolveEpmRisk } from "@/core/genetics/phenotype";
 import { BANISTER_CONSTANTS, decayValue, calculatePeakingIndex } from "@/core/health/banister";

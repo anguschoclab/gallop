@@ -21,7 +21,6 @@ import {
 } from "@/core/ai/campaignRecording";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { GradedRace } from "@/data/gradedRaces";
-import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import { asRaceId } from "@/core/types/branded";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 

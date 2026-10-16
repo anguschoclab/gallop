@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Globe2, Search, Trophy, Compass, CheckCircle2 } from "lucide-react";
+import { Globe2, Search } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -20,7 +20,7 @@ type MatchFilter = "all" | "outpaced" | "matched" | "uncontested";
 
 export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
   const imported = useImportedRealWorld();
-  const comparisons = useMemo(
+  const comparisons = useMemo<BenchmarkComparison[]>(
     () => compareToRealWorld(records, 120, [...ALL_REAL_WORLD_BENCHMARKS, ...imported.records]),
     [records, imported.records],
   );

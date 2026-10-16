@@ -1,6 +1,6 @@
 import type { Horse, Stable } from "@/game/types";
 import type { Jockey } from "@/game/types";
-import type { JockeyAIState, JockeyAssignment, JockeyRetention } from "./jockeyAI";
+import type { JockeyAIState, JockeyAssignment } from "./jockeyAI";
 import { getSuccessRate, recordLearningOutcome, trimHistory } from "./learningModule";
 
 export function shouldRetainJockey(

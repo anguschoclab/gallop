@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { computeIndustryMeanEarnings } from "@/core/breeding/industryMetrics";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 

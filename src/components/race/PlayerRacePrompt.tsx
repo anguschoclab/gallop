@@ -1,5 +1,4 @@
 import { useGame, useGameWithShallow } from "@/game/store";
-import { shallow } from "zustand/shallow";
 import {
   Dialog,
   DialogContent,

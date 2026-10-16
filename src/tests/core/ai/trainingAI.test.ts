@@ -6,8 +6,10 @@ import {
   detectOvertraining,
   shouldDoMaintenanceTraining,
   getFacilityTrainingMultiplier,
+  updateHorseTraining,
   type HorseTrainingTrack,
 } from "@/core/ai/trainingAI";
+import { TRAINING_HISTORY_MAX_SIZE } from "@/constants";
 import type { Horse, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
@@ -149,5 +151,19 @@ describe("shouldTrainToday", () => {
     const state = createTrainingAIState(stable);
     const horse = createMockHorse({ energy: 80 });
     expect(shouldTrainToday(state, horse, 100)).toBe(true);
+  });
+});
+
+describe("training history cap", () => {
+  it("trims training history to TRAINING_HISTORY_MAX_SIZE entries", () => {
+    const stable = createMockStable();
+    const horse = createMockHorse();
+    let state = createTrainingAIState(stable);
+    for (let day = 1; day <= TRAINING_HISTORY_MAX_SIZE + 2; day++) {
+      state = updateHorseTraining(state, horse, "speed", 80, day);
+    }
+    const track = state.horseDevelopment[horse.id];
+    expect(track.trainingHistory).toHaveLength(TRAINING_HISTORY_MAX_SIZE);
+    expect(track.trainingHistory[0].day).toBe(3);
   });
 });

@@ -6,14 +6,7 @@
  * (grade chase, earnings, maiden, prep chain) and aptitude scoring helpers.
  */
 
-import type {
-  Horse,
-  Race,
-  HorseCampaign,
-  CampaignRaceSlot,
-  ConfirmedAptitudes,
-} from "@/game/types";
-import { GRADED_RACES_BY_KEY } from "@/core/data/gradedRacesAccessor";
+import type { Horse, Race, CampaignRaceSlot, ConfirmedAptitudes } from "@/game/types";
 import type { GradedRace } from "@/core/data/gradedRacesAccessor";
 
 // ── Distance band helpers ────────────────────────────────────────────────────

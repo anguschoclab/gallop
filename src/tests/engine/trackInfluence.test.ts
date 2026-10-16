@@ -4,7 +4,7 @@ import { buildRunner } from "@/core/race/engine/runnerBuilder";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { asHorseId } from "@/core/types/branded";
 import type { CourseSpecification } from "@/data/tracks";
-import type { Horse, Rng, Genotype, HealthStatus } from "@/game/types";
+import type { Horse, Rng, Genotype } from "@/game/types";
 
 // Simple deterministic RNG for testing
 const mockRng: Rng = {

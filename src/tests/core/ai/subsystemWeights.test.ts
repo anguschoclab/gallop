@@ -8,16 +8,8 @@
  */
 
 import { describe, it, expect } from "vitest";
-import {
-  coordinateSubsystems,
-  type SubsystemWeights,
-  type BudgetAllocation,
-} from "@/core/ai/strategicCoordinator";
-import {
-  shouldTrainToday,
-  createTrainingAIState,
-  type TrainingAIState,
-} from "@/core/ai/trainingAI";
+import { coordinateSubsystems, type BudgetAllocation } from "@/core/ai/strategicCoordinator";
+import { shouldTrainToday, createTrainingAIState } from "@/core/ai/trainingAI";
 import { shouldClaimHorse } from "@/core/ai/claimingAIRecording";
 import { createClaimingAIState } from "@/core/ai/claimingAITypes";
 import { shouldGeldHorse, createGeldingAIState } from "@/core/ai/geldingAI";

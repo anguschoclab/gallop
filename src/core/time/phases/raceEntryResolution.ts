@@ -14,7 +14,7 @@
 import { PHASE_ORDER_RACE_ENTRY_RESOLUTION } from "@/constants";
 import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyIntent, RaceEntryIntent, RaceWithdrawalIntent } from "@/core/resolver/intents";
+import type { RaceEntryIntent, RaceWithdrawalIntent } from "@/core/resolver/intents";
 import type {
   AnyImpact,
   RaceEntryImpact,
@@ -30,9 +30,9 @@ import {
   createJockeyAIState,
   calculateJockeySuitability,
 } from "@/core/ai/jockeyAI";
+import { recordJockeyAssignment } from "@/core/ai/jockeyAIRetention";
 import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
 import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
-import { calculateOverallRating } from "@/core/horse/stats";
 import { isPlayerOwned } from "@/core/horse/ownership";
 
 /**
@@ -227,6 +227,27 @@ export const raceEntryResolutionPhase: PipelinePhase = {
               if (chosen) {
                 jockeyId = chosen.id;
               }
+            }
+          }
+
+          // Record the assignment so retention/learning state accumulates real history
+          // (recordJockeyOutcome in raceResolution matches these entries by race+horse+jockey).
+          if (jockeyId && npcAIManager) {
+            const stableAI = getOrCreateStableAIState(npcAIManager, stable, newDay);
+            const jockeyAI = stableAI.jockeyAI || createJockeyAIState(stable);
+            const assigned = jockeys.find((j) => j.id === jockeyId);
+            if (assigned) {
+              stableAI.jockeyAI = recordJockeyAssignment(
+                jockeyAI,
+                assigned,
+                horse,
+                race.id,
+                stable,
+                assigned.ridingFee ?? 0,
+                newDay,
+              );
+              npcAIManager.stableStates[stable.id] = stableAI;
+              npcAIManagerUpdated = true;
             }
           }
         }

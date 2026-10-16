@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { screen, cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestHorse } from "@/tests/helpers";
 
@@ -23,7 +23,7 @@ vi.mock("@/core/horse/paceTendency", () => ({
 }));
 
 import { RunningStyleBreakdown } from "@/components/horse/RunningStyleBreakdown";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 
 describe("RunningStyleBreakdown", () => {

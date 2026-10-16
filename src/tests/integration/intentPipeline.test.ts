@@ -7,7 +7,7 @@ import { createRng } from "@/core/common/rng";
 import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
 import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
 import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("Intent/Resolution Pipeline Integration", () => {
   const createTestState = (): GameState => ({

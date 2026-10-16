@@ -7,7 +7,7 @@ import { NARRATIVE_THRESHOLDS } from "@/constants/narrativeThresholds";
 import { getJockeyTier } from "@/core/jockey/jockeyTier";
 import { getCourseForRace } from "@/data/tracks";
 import type { JockeyTrait } from "@/core/jockey/types";
-import type { NarrativeEvent, DetectedEvent } from "./types";
+import type { DetectedEvent } from "./types";
 
 /**
  * Event Detection System

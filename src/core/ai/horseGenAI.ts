@@ -13,16 +13,9 @@
  * Personality-driven stock generation, roster composition, learning from outcomes
  */
 
-import type { Horse, Race, Stable } from "@/game/types";
-import { getPersonalityAIState, recordPersonalityOutcome } from "./personalitySystem";
-import {
-  createLearningState,
-  recordLearningOutcome,
-  getSuccessRate,
-  getAdaptiveThreshold,
-  type LearningState,
-} from "./learningModule";
-import { calculateOverallRating } from "@/core/horse/stats";
+import type { Stable } from "@/game/types";
+import { getPersonalityAIState } from "./personalitySystem";
+import { createLearningState, type LearningState } from "./learningModule";
 
 export interface HorseGenAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

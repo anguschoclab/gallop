@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  computeDebtBannerDisplay,
-  computeDailyInterest,
-  SOLVENCY_THRESHOLDS,
-} from "@/core/financial/solvency";
+import { computeDebtBannerDisplay, computeDailyInterest } from "@/core/financial/solvency";
 
 describe("computeDebtBannerDisplay", () => {
   it("returns null when cash >= 0", () => {

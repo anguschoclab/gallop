@@ -9,7 +9,6 @@ import {
   evaluatePriceAlerts,
   playerTradeNotifications,
   PRICE_ALERT_COOLDOWN_DAYS,
-  DEFAULT_ALERT_WINDOW_DAYS,
   type PriceAlert,
   type AlertHorse,
   type PriceAlertDirection,

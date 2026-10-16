@@ -1,4 +1,4 @@
-import { getStableId, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { getStableId, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 /**
  * Integration tests for NPC bankruptcy lifecycle —

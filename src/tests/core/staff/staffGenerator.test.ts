@@ -6,7 +6,6 @@ import {
 } from "@/core/staff/staffGenerator";
 import { STAFF_CONFIG } from "@/core/staff/staffConfig";
 import type { Rng } from "@/core/common/rng";
-import type { StaffRole, StaffTier } from "@/core/staff/staffTypes";
 
 vi.mock("@/core/uuid", () => ({
   generateUUID: vi.fn(() => "mocked-uuid"),

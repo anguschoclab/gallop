@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { weatherPhase } from "@/core/time/phases/weatherPhase";
 import * as weatherSim from "@/core/weather";
 import type { PipelineContext } from "@/core/time/pipeline";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { r2r } from "@/tests/helpers/sampleGameState";
 
 describe("Weather Phase - Storm Jump Logic", () => {
   let stepWeatherSpy: ReturnType<typeof vi.spyOn>;

@@ -12,17 +12,8 @@
 // Converts BreedingIntents into impacts (pregnancy creation, stud fee transfers)
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type {
-  AnyIntent,
-  BreedingIntent,
-  SyndicateFeeDistributionIntent,
-} from "@/core/resolver/intents";
-import type {
-  AnyImpact,
-  PregnancyCreationImpact,
-  CashImpact,
-  StudCareerImpact,
-} from "@/core/resolver/impacts/index";
+import type { BreedingIntent, SyndicateFeeDistributionIntent } from "@/core/resolver/intents";
+import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import type { Pregnancy } from "@/game/types";
 import { GESTATION_DAYS, PHASE_ORDER_BREEDING_RESOLUTION } from "@/constants";

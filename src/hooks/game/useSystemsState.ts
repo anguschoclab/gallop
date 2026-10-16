@@ -9,7 +9,6 @@
  * Related files: store.ts (state management), used throughout subsystems
  */
 
-import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState } from "@/game/types";
 

@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { claimResolutionPhase } from "@/core/time/phases/claimResolution";
-import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
-import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import type { GameState } from "@/game/types";
 import type { PipelineContext } from "@/core/time/pipeline";
 

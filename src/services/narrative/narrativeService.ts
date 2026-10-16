@@ -29,19 +29,8 @@ import {
   type Track,
   type CourseSpecification,
 } from "@/data/tracks";
-import {
-  ATMOSPHERE_LONG_STRAIGHT_TEMPLATES,
-  ATMOSPHERE_TIGHT_TURN_TEMPLATES,
-  ATMOSPHERE_GRADED_TEMPLATES,
-  ATMOSPHERE_TRIPLE_CROWN_TEMPLATES,
-  ATMOSPHERE_ELEVATION_TEMPLATES,
-} from "@/assets/narrative/atmosphereTemplates";
-import {
-  COMEBACK_NOTE_TEMPLATES,
-  REDEMPTION_NOTE_TEMPLATES,
-  CONFIRMATION_NOTE_TEMPLATES,
-  CALLBACK_CLAUSES,
-} from "@/assets/narrative/chainingTemplates";
+
+import { CALLBACK_CLAUSES } from "@/assets/narrative/chainingTemplates";
 import { MIDRACE_INSIGHT_CLOSER_TEMPLATES } from "@/assets/narrative/ongoingInsightTemplates";
 import type { RaceContext } from "./types";
 import { CommentaryMemory } from "./commentaryMemory";

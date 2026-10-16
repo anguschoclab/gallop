@@ -7,7 +7,7 @@ import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/core/uuid";
 import type { Race, Horse } from "@/game/types";
 import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 function createG1Race(overrides?: Partial<Race>): Race {
   return {

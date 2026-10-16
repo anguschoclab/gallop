@@ -9,7 +9,7 @@
  */
 
 import type { PipelineContext } from "../pipeline";
-import type { Race, Claim, Horse, Stable } from "@/game/types";
+import type { Claim } from "@/game/types";
 import { netProceeds } from "@/core/auction/engine";
 import { hashStr } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
@@ -19,7 +19,6 @@ import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts/index";
 import { applyClaimingFriction } from "@/core/ai/diplomacyAI";
 import { trackClaimingActivity } from "@/core/ai/economyAITracking";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
 /**
  * Phase: Claim Resolution

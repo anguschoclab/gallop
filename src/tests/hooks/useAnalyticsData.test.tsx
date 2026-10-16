@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { render, cleanup } from "@testing-library/react";
+import { cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { useAnalyticsData } from "@/hooks/analytics/useAnalyticsData";
 import { createTestHorse } from "@/tests/helpers";
@@ -10,7 +10,7 @@ import type {
 } from "@/core/transactions/transactionTypes";
 import type { SireRanking, Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
 import type { SireAnalytics } from "@/core/breeding/sireAnalytics";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { makePlayerOwned } from "@/core/horse/ownership";
 function mkSireAnalytics(stallionId: string): SireAnalytics {
   return {

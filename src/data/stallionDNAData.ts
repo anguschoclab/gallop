@@ -9,8 +9,6 @@
  * Related files: genetics/mapper.ts (uses research data for genotype mapping), genetics/generation.ts (uses for deterministic generation)
  */
 
-import type { Genotype, Locus, MarkerGenotype } from "@/core/genetics/types";
-
 /**
  * Research data for stallions gathered from real-world sources
  * Used to generate historically accurate DNA instead of procedural generation

@@ -31,7 +31,7 @@ import { generateStableHorses } from "@/core/npc/horseGenerator";
 import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
 import { PHASE_ORDER_NPC_BANKRUPTCY } from "@/constants";
 import { DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
-import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 
 const LIQUIDATION_SALE_DELAY = 3;

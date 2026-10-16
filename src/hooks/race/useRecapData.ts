@@ -1,8 +1,7 @@
 import { useMemo } from "react";
-import { shallow } from "zustand/shallow";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { useCalibratedPars } from "@/hooks/game/useRacingState";
-import type { GameState, Horse } from "@/game/types";
+import type { GameState } from "@/game/types";
 import type { Race } from "@/core/race/types";
 
 export function useRecapData() {

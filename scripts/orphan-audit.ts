@@ -9,7 +9,7 @@
  */
 
 import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join, extname, relative, sep } from "node:path";
+import { join, extname, sep } from "node:path";
 
 export interface IntentCoverageReport {
   allIntents: string[];

@@ -4,7 +4,7 @@
  * Aggregates transactions into Profit & Loss periods (week, month, year, all-time).
  */
 
-import type { Transaction, TransactionSubcategory } from "@/core/transactions/transactionTypes";
+import type { Transaction } from "@/core/transactions/transactionTypes";
 import {
   createEmptyIncome,
   createEmptyExpenses,
@@ -32,8 +32,8 @@ export function buildFinancialPeriod(
 ): FinancialPeriod {
   const periodTransactions = transactions.filter((t) => t.day >= startDay && t.day <= endDay);
 
-  const income = createEmptyIncome();
-  const expenses = createEmptyExpenses();
+  const income: IncomeSummary = createEmptyIncome();
+  const expenses: ExpenseSummary = createEmptyExpenses();
 
   for (const t of periodTransactions) {
     if (t.type === "income") {

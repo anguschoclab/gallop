@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createElement, type ReactNode } from "react";
-import { screen, fireEvent, cleanup } from "@testing-library/react";
+import { screen, cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 
 vi.mock("@tanstack/react-router", () => ({

@@ -10,7 +10,7 @@ import {
 import { racecoursePrestigeMultiplier } from "@/services/prestige/prestigeFacade";
 import { getTrackById } from "@/data/tracks";
 import type { CampaignRaceSlot, Race } from "@/game/types";
-import { Building2, Award, TrendingUp, Landmark } from "lucide-react";
+import { Building2, TrendingUp, Landmark } from "lucide-react";
 
 interface TrackPrestigeSectionProps {
   slots: CampaignRaceSlot[];

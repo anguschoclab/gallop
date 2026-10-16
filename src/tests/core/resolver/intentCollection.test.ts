@@ -4,13 +4,13 @@
 
 import { describe, it, expect } from "vitest";
 import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
-import type { PipelineContext, PipelinePhase } from "@/core/time/pipeline";
-import type { GameState, Horse } from "@/game/types";
-import type { AnyIntent, TrainingIntent } from "@/core/resolver/intents";
+import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState } from "@/game/types";
+import type { TrainingIntent } from "@/core/resolver/intents";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createRng } from "@/core/common/rng";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("intentCollectionPhase", () => {
   const createTestState = (): GameState =>

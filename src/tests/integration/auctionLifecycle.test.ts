@@ -13,7 +13,7 @@ import {
 import { CONSIGNMENT_COMMISSION } from "@/constants";
 import { createRng } from "@/core/common/rng";
 import { createAuctionRunner } from "@/core/auction/runner";
-import type { GameState, Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 
 describe("Auction Lifecycle Integration", () => {

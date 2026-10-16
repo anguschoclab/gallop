@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Check, Save, FolderOpen, Trash2, Sparkles, Eraser } from "lucide-react";
+import { Check, Save, Trash2, Sparkles, Eraser } from "lucide-react";
 import { formatCurrency } from "@/services/breeding/breedingFacade";
 import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";

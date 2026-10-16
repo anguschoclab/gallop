@@ -4,7 +4,6 @@ import { createTestRng, createTestHorse } from "@/tests/helpers";
 import { isValidUUID } from "@/core/uuid";
 import type { Race, Horse } from "@/game/types";
 import type { ClaimingIntent } from "@/core/resolver/intents";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { asNpcStableId } from "@/core/types/branded";
 import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 

@@ -9,7 +9,7 @@
  * Related files: horseFactory.ts (uses shouldRetireAtStartup), pricing.ts (base value calculation)
  */
 
-import type { Horse, Hemisphere, GameState, StableTier } from "@/game/types";
+import type { Horse, StableTier } from "@/game/types";
 import type { Stable } from "@/game/types";
 import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
 import { calculateBaseHorseValue } from "@/core/horse/pricing";

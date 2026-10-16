@@ -10,12 +10,7 @@ import type {
 } from "@/game/types";
 import { createTestGenotype } from "./createTestGenotype";
 import { createTestAppearance } from "./createTestAppearance";
-import {
-  makePlayerOwned,
-  makeNpcOwned,
-  makeUnowned,
-  type HorseOwnership,
-} from "@/core/horse/ownership";
+import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 import { asNpcStableId, asHorseId } from "@/core/types/branded";
 
 /**

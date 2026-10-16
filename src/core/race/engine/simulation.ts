@@ -20,7 +20,6 @@ import { calculateCoverModifier } from "./draftingAI";
 import { type Runner, type PaceContext } from "./runnerBuilder";
 import {
   getDynamicProfile,
-  getRunningStyleProfile,
   POSITION_SEEK_PROGRESS,
   SPURT_BUILDUP_START_M,
   SPURT_BUILDUP_END_M,

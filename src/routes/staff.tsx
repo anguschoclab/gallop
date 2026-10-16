@@ -2,8 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { formatCurrency } from "@/lib/formatting";
-import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/services/staff/staffFacade";
 import { Users, Search, Filter } from "lucide-react";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { useMemo, useState } from "react";

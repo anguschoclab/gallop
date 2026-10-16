@@ -8,8 +8,6 @@
  * Related files: store/index.ts (uses this slice), @/core/insurance/insuranceTypes.ts (policy types)
  */
 
-import type { InsurancePolicy, InsurancePolicyType } from "@/core/insurance/insuranceTypes";
-import { calculateDailyPremium } from "@/core/insurance/insuranceTypes";
 import { generateUUID } from "@/core/uuid";
 import type { ActionResult, SliceCreator } from "../types";
 import { requireOwned, requireHorse } from "../guards";

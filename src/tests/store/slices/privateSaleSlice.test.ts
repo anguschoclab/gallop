@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { useGame } from "@/game/store";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/game/types";
-import { makeNpcOwned, makePlayerOwned, getStableId } from "@/core/horse/ownership";
+import type { PrivateSaleOffer, Horse, Stable } from "@/game/types";
+import { makeNpcOwned, getStableId } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
   id: "offer-1",

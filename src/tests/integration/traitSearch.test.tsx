@@ -2,8 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { screen, fireEvent, cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { createTestGenotype } from "@/tests/helpers/createTestGenotype";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import type { Horse } from "@/core/horse/types";
 import type { Jockey } from "@/core/jockey/types";

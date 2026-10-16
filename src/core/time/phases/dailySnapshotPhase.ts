@@ -12,7 +12,7 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import { recordDailyProgress, type HorseDailyProgress } from "@/core/horse/dailyProgress";
+import { recordDailyProgress } from "@/core/horse/dailyProgress";
 import type { Horse } from "@/core/horse/types";
 import { playerSyndicateValue } from "@/core/stable/portfolio";
 import { fillJournalOutcomes } from "@/core/tactics/strategyJournal";

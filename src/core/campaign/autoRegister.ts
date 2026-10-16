@@ -20,7 +20,6 @@ import { isHorseEligibleForRace } from "@/core/race/eligibility";
 import { calculateRaceSuitability } from "@/core/race/entryScoring";
 import { getTransportCostForRace } from "@/core/race/transportCost";
 import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/constants";
-import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
 
 // Virtual player stable for scoring purposes

@@ -4,7 +4,6 @@
  * Left sidebar with search, filters, and lot list. Extracted from auction.$saleId.tsx.
  */
 
-import { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Search, History } from "lucide-react";

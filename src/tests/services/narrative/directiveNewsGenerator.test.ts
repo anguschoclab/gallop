@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { generateDirectiveChangeNews } from "@/services/narrative/directiveNewsGenerator";
 import type { StrategicDirective } from "@/core/ai/strategicCoordinator";
-import type { NewsItem } from "@/services/narrative/newsTypes";
 
 describe("generateDirectiveChangeNews", () => {
   const stable = { id: "s1", name: "Thunder Stables", personality: "aggressive" } as any;

@@ -15,7 +15,7 @@ import { SyndicationValidator } from "@/core/resolver/validators/SyndicationVali
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 import { SyndicationHandler } from "@/core/resolver/handlers/SyndicationHandler";
 import { generateUUID } from "@/core/uuid";
-import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import type { Horse } from "@/game/types";
 import { makePlayerOwned } from "@/core/horse/ownership";
 

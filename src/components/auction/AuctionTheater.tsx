@@ -6,10 +6,10 @@
  * atomic sub-components for rendering.
  */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useGame } from "@/game/store";
 import { useRouter, useNavigate } from "@tanstack/react-router";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { formatCurrency } from "@/lib/formatting";
 import { useScoreboard } from "@/hooks/auction/useScoreboard";
 import { BidHistoryPanel } from "./BidHistoryPanel";

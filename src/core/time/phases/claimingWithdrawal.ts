@@ -13,7 +13,7 @@
 
 import { PHASE_ORDER_CLAIMING_WITHDRAWAL } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
-import type { AnyIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
+import type { WithdrawFromClaimingIntent } from "@/core/resolver/intents";
 import type { AnyImpact, LogImpact } from "@/core/resolver/impacts/index";
 import type { Race } from "@/core/race/types";
 import { generateUUID } from "@/core/uuid";

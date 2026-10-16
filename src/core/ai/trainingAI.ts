@@ -195,8 +195,11 @@ export function updateHorseTraining(
     },
   ];
 
-  // Trim history to last 10 trainings1010
-  const trimmedHistory = newHistory.length > 10 ? newHistory.slice(-10) : newHistory;
+  // Trim history to the most recent trainings
+  const trimmedHistory =
+    newHistory.length > TRAINING_HISTORY_MAX_SIZE
+      ? newHistory.slice(-TRAINING_HISTORY_MAX_SIZE)
+      : newHistory;
 
   // Update focus based on recent training
   const recentTrainings = trimmedHistory.slice(-3);

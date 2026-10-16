@@ -9,8 +9,8 @@ import { useCallback, useMemo, useReducer, useRef } from "react";
 import { createRng, hashStr } from "@/core/common/rng";
 import { generateAuctioneerLine, type AuctioneerLine } from "@/services/auction/auctioneerService";
 import { getDisplayableStats } from "@/core/npc/scouting";
-import type { AuctionTickEvent, AuctionRunner } from "@/core/auction/runner";
-import type { Horse, Stable, AuctionLot, AuctionBidRecord } from "@/game/types";
+import type { AuctionRunner } from "@/core/auction/runner";
+import type { Horse, Stable, AuctionLot } from "@/game/types";
 import type { ScoutReport } from "@/core/market/types";
 
 interface UseAuctionEventProcessorOptions {

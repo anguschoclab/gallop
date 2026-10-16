@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { useGame, useGameWithShallow } from "@/game/store";
-import { renderWithStore, seedStore } from "@/test-utils/renderWithStore";
+import { useGameWithShallow } from "@/game/store";
+import { seedStore } from "@/test-utils/renderWithStore";
 
 function SelectorComponent({ selector, label }: { selector: (s: any) => any; label: string }) {
   const value = useGameWithShallow(selector);

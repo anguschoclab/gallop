@@ -6,7 +6,7 @@
 import { describe, it, expect } from "vitest";
 import { runNpcCycle } from "@/core/npc/npcCycle";
 import { createRng } from "@/core/common/rng";
-import type { GameState, Horse, Stable, Race, Jockey } from "@/game/types";
+import type { Horse, Stable, Race, Jockey } from "@/game/types";
 
 describe("NPC Daily Cycle Integration", () => {
   it("should run complete NPC cycle", () => {

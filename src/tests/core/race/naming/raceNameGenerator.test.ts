@@ -10,7 +10,7 @@ import {
   getRegionalSystem,
 } from "@/core/race/naming/raceNameGenerator";
 import { createRng } from "@/core/common/rng";
-import type { RaceClass, ClaimingPrice, WinCondition, RegionalSystem } from "@/game/types";
+import type { RaceClass } from "@/game/types";
 import type { Track } from "@/data/tracks";
 
 describe("formatClaimingPrice", () => {

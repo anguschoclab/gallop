@@ -8,8 +8,7 @@ import {
   determineRegionalWinners,
   determineAllRegionalWinners,
 } from "@/core/awards/scoring";
-import type { Horse, Race } from "@/game/types";
-import type { AwardRegion, RegionalAwardCategory } from "@/core/awards/types";
+import type { Race } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import { makePlayerOwned } from "@/core/horse/ownership";
 

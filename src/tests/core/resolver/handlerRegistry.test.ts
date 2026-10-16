@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { ALL_HANDLERS } from "@/core/resolver/handlers";
-import type { ImpactHandler } from "@/core/resolver/handlers/types";
 
 describe("Resolver pipeline: handler registry integrity", () => {
   const expectedHandlerNames = [

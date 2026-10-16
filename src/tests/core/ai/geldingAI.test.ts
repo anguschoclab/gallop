@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { createGeldingAIState, shouldGeldHorse } from "@/core/ai/geldingAI";
-import type { Stable, Horse } from "@/game/types";
+import type { Stable } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { hashStr } from "@/core/common/rng";
 

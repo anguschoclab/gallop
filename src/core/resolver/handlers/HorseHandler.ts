@@ -12,7 +12,7 @@
 import type { WritableDraft } from "immer";
 import type { GameState, Horse } from "@/game/types";
 import type { AnyImpact } from "../impacts";
-import { isMaleHorse } from "@/core/horse/gender";
+import { isMaleHorse, geldHorse } from "@/core/horse/gender";
 import type { ImpactHandler, LookupMaps } from "./types";
 import { generateUUID } from "@/core/uuid";
 import { isPlayerOwned } from "@/core/horse/ownership";
@@ -95,8 +95,7 @@ const IMPACT_HANDLERS: Record<string, HorseImpactHandlerFunction> = {
   },
   gelding: (draft, impact, horse) => {
     if (horse && isMaleHorse(horse.gender)) {
-      horse.gender = "gelding";
-      horse.gelded = true;
+      Object.assign(horse, geldHorse(horse));
     }
   },
   rename: (draft, impact, horse) => {

@@ -8,7 +8,12 @@
  */
 
 import type { StableTier } from "@/game/types";
-import { BASE_RACE_WEIGHT_LBS, MIN_ENERGY_TO_ENTER } from "@/constants";
+import {
+  BASE_RACE_WEIGHT_LBS,
+  MIN_ENERGY_TO_ENTER,
+  MIN_FORM_TO_ENTER,
+  PREFERRED_DISTANCE_RANGE,
+} from "@/constants";
 
 // Base purse appeal thresholds by tier (modified by personality)
 export const BASE_PURSE_APPEAL: Record<StableTier, number> = {
@@ -31,7 +36,7 @@ export const SCORING_CONSTANTS = {
   DIST_OK_BONUS: 5,
   DIST_BAD_PENALTY: -15,
   DIST_PERFECT_THRESHOLD: 100,
-  DIST_GOOD_THRESHOLD: 300,
+  DIST_GOOD_THRESHOLD: PREFERRED_DISTANCE_RANGE,
   DIST_OK_THRESHOLD: 600,
   // Surface scoring
   SURFACE_EXCELLENT_THRESHOLD: 1.0,
@@ -55,7 +60,7 @@ export const SCORING_CONSTANTS = {
   // Form scoring
   FORM_GOOD_THRESHOLD: 3,
   FORM_GOOD_BONUS: 10,
-  FORM_BAD_THRESHOLD: -3,
+  FORM_BAD_THRESHOLD: MIN_FORM_TO_ENTER,
   FORM_BAD_PENALTY_BASE: 10,
   FORM_TOLERANCE_BASE: 2,
   // Energy scoring

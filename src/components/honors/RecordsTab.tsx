@@ -1,4 +1,4 @@
-import { useGame, useGameWithShallow } from "@/game/store";
+import { useGameWithShallow } from "@/game/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { LeaderboardTable } from "@/components/history/LeaderboardTable";
 import { TrackRecordsTable } from "@/components/history/TrackRecordsTable";

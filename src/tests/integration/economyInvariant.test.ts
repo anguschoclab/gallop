@@ -5,15 +5,14 @@ import { UPKEEP_PER_HORSE } from "@/constants";
 import { isPlayerOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 import { calculateTotalMaintenance } from "@/core/facilities/facilityDefaults";
 import { runPipelineForDays } from "@/tests/helpers/runPipeline";
-import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
-import { createTestHorse, createTestStable } from "@/tests/helpers";
+import { createTestHorse } from "@/tests/helpers";
 import { buildAuctionImpacts } from "@/core/auction/auctionRunnerImpacts";
 import { netProceeds } from "@/core/auction/engine";
 import { resolveSaleHouse } from "@/core/prestige";
 import type { LotState } from "@/core/auction/auctionRunnerTypes";
-import type { GameState, AuctionSale, Horse } from "@/game/types";
+import type { AuctionSale, Horse } from "@/game/types";
 import type { NewGameOptions } from "@/game/store/state";
-import type { CashImpact, AnyImpact } from "@/core/resolver/impacts/index";
+import type { CashImpact } from "@/core/resolver/impacts/index";
 
 const ALLOWED_POSITIVE_SOURCES = [
   "auction_proceeds_player",

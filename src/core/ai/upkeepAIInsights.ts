@@ -1,7 +1,7 @@
 import type { Stable, Horse } from "@/game/types";
 import type { UpkeepAIState, BudgetDecision } from "./upkeepAI";
-import { calculateMonthlyExpenseBudget, UPKEEP_STRATEGIES } from "./upkeepAI";
-import { getSuccessRate, recordLearningOutcome, trimHistory } from "./learningModule";
+import { UPKEEP_STRATEGIES } from "./upkeepAI";
+import { recordLearningOutcome, trimHistory } from "./learningModule";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 

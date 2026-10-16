@@ -1,4 +1,3 @@
-import type { Stable } from "@/game/types";
 import type { Race } from "@/core/race/types";
 import type { Horse } from "@/core/horse/types";
 import type { NpcAIManager, StoryBeat } from "./npcCycleAI";

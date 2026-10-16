@@ -12,7 +12,6 @@ import { PHASE_ORDER_MARKET } from "@/constants";
 import type { PipelineContext } from "../pipeline";
 import { refreshMarket } from "@/core/market/marketRefresh";
 import { calculateRaceRating } from "@/core/horse/stats";
-import { createRng, hashStr } from "@/core/common/rng";
 import { shouldPurchaseHorse, calculateMaxPurchasePrice } from "@/core/ai/marketAIValue";
 import { createMarketAIState } from "@/core/ai/marketAITypes";
 import { recordMarketPurchase } from "@/core/ai/marketAIRecording";

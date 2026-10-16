@@ -20,8 +20,6 @@ import {
   resolveStrideType,
   resolveRunningStyle,
   resolveTrainability,
-  resolvePeakAge,
-  resolveRecoveryRate,
   resolveBleederRisk,
   resolveRoarerRisk,
   resolvePssmRisk,

@@ -17,7 +17,6 @@ import {
   type SimWeatherPattern,
   SIM_WEATHER_PATTERNS,
   type WeatherState,
-  PATTERN_SEVERITY,
   toTrackWeatherPattern,
 } from "./weatherTypes";
 

@@ -19,7 +19,6 @@ import { RegionalTrendsWidget } from "@/components/dashboard/RegionalTrendsWidge
 import { ReputationDashboard } from "@/components/reputation/ReputationDashboard";
 import { PlayerPrestigePanel } from "@/components/prestige/PlayerPrestigePanel";
 import { ApprenticeTracker } from "@/components/apprentice/ApprenticeTracker";
-import { NextActionBanner } from "@/components/dashboard/NextActionBanner";
 import { TutorialNextActionBanner } from "@/components/tutorial/TutorialNextActionBanner";
 import { DebtBanner } from "@/components/dashboard/DebtBanner";
 import { deriveNextAction } from "@/services/dashboard/dashboardFacade";

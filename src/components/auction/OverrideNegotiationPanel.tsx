@@ -13,7 +13,7 @@ import {
 import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import { formatCurrency } from "@/lib/formatting";
 import { computePremiumBuyout, computeDiplomaticPressure } from "@/services/horse/horseFacade";
-import { evaluateHorseAttachment, attachmentAdjustedAsk } from "@/services/horse/horseFacade";
+import { evaluateHorseAttachment } from "@/services/horse/horseFacade";
 import type { Horse, Stable } from "@/game/types";
 
 interface OverrideNegotiationPanelProps {

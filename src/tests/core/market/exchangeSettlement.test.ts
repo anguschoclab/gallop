@@ -16,7 +16,7 @@ import {
   type ExchangeAsk,
   type ExchangeBid,
 } from "@/core/market/exchange";
-import { createTestStable, createTestNpcHorse, createTestHorse } from "@/tests/helpers";
+import { createTestStable, createTestNpcHorse } from "@/tests/helpers";
 import { isPlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 import { h2r } from "@/tests/helpers/sampleGameState";

@@ -7,8 +7,8 @@
  * 3. Maps work correctly with both array and record state shapes
  */
 
-import { describe, it, expect, vi } from "vitest";
-import { executePipeline, type PipelineContext, type PipelinePhase } from "@/core/time/pipeline";
+import { describe, it, expect } from "vitest";
+import { executePipeline, type PipelinePhase } from "@/core/time/pipeline";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { makeGameState } from "@/tests/helpers/sampleGameState";

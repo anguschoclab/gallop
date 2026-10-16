@@ -1,5 +1,5 @@
 import { generateUUID } from "@/core/uuid";
-import type { AuctionSale, AuctionLot, Horse } from "@/game/types";
+import type { AuctionSale, Horse } from "@/game/types";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { asOwnerKey } from "@/core/types/branded";
 import { netProceeds } from "./engine";

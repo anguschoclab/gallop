@@ -24,7 +24,7 @@ function TierLegend() {
         Tier Reference
       </div>
       <div className="grid grid-cols-4 gap-2">
-        {tiers.map((level) => {
+        {tiers.map((level: FacilityLevel) => {
           const bonus = FACILITY_BONUSES[level];
           const maintenance = FACILITY_MAINTENANCE_COSTS[level];
           const upgradeCost = FACILITY_UPGRADE_COSTS[level];
