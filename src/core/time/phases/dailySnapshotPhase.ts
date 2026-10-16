@@ -14,6 +14,7 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { recordDailyProgress, type HorseDailyProgress } from "@/core/horse/dailyProgress";
 import type { Horse } from "@/core/horse/types";
+import { playerSyndicateValue } from "@/core/stable/portfolio";
 import { fillJournalOutcomes } from "@/core/tactics/strategyJournal";
 import { recordRankingsHistory } from "@/core/market/rankingsHistory";
 import { recordStableRankingsHistory } from "@/core/stable/stableRankings";
@@ -32,6 +33,10 @@ export const dailySnapshotPhase: PipelinePhase = {
       state.horseDailyProgress,
       Object.values(state.horses ?? {}) as Horse[],
       newDay,
+      {
+        cash: state.cash ?? 0,
+        syndicateValue: playerSyndicateValue(state.syndicates),
+      },
     );
     const strategyJournal = fillJournalOutcomes(
       state.strategyJournal,

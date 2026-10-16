@@ -194,4 +194,29 @@ describe("dailyProgress", () => {
       expect(next["horse-1"][DAILY_PROGRESS_MAX_ENTRIES - 1].day).toBe(DAILY_PROGRESS_MAX_ENTRIES); // new day added
     });
   });
+
+  describe("netWorth", () => {
+    // horseMarketValue is mocked to 10000 above, so roster value = 10000 × horses.
+    it("records stable-wide net worth (cash + horse values + syndicate value) on every player snapshot", () => {
+      const horse1 = createTestHorse({ id: "p1" });
+      const horse2 = createTestHorse({ id: "p2" });
+
+      const next = recordDailyProgress({}, [horse1, horse2], 5, {
+        cash: 5000,
+        syndicateValue: 700,
+      });
+
+      expect(next.p1[0].netWorth).toBe(25700);
+      expect(next.p2[0].netWorth).toBe(25700);
+    });
+
+    it("omits netWorth when extras are not provided", () => {
+      const horse = createTestHorse({ id: "p1" });
+
+      const next = recordDailyProgress({}, [horse], 5);
+
+      expect(next.p1[0].netWorth).toBeUndefined();
+      expect("netWorth" in next.p1[0]).toBe(false);
+    });
+  });
 });

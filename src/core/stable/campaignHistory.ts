@@ -1,6 +1,7 @@
 /**
  * campaignHistory.ts - Derives the player's campaign history (each race start since the
- * campaign start day) with its effect on net worth (prize money), prestige and class wins.
+ * campaign start day) with its prize money, prestige, class wins and — when a daily
+ * price snapshot exists — the horse's market value at the end of that race day.
  */
 import type { Horse } from "@/core/horse/types";
 import type { TrackLedgerEntry } from "@/core/history/trackLedger";
@@ -20,6 +21,10 @@ export interface CampaignHistoryRow {
   prize: number;
   /** Running prize total since the campaign started. */
   cumulativePrize: number;
+  /** Horse's market value at the end of the race day; null when no daily snapshot exists. */
+  value: number | null;
+  /** Change vs the horse's latest snapshot before the race day; null when either side is missing. */
+  valueDelta: number | null;
   /** Player prestige change from this race, null when unrecorded. */
   prestige: number | null;
   cumulativePrestige: number;
@@ -29,16 +34,44 @@ export interface CampaignHistoryRow {
   classWinsAfter: number;
 }
 
+/** Per-horse daily price series (matches `RankingsHistory` and `HorseDailyProgress`). */
+export type DailyPriceSeries = Record<string, readonly { day: number; price: number }[]>;
+
 export function buildCampaignHistory(
   goals: Pick<StableGoals, "startDay" | "classGoals">,
   horses: Horse[],
   ledger: TrackLedgerEntry[],
+  priceHistories?: DailyPriceSeries[],
 ): CampaignHistoryRow[] {
   const prestigeByRace = new Map<string, number>();
   for (const e of ledger) {
     const d = e.prestigeDeltas.find((p) => p.isPlayer || p.stableId === PLAYER_LEDGER_STABLE_ID);
     if (d) prestigeByRace.set(e.raceId, (prestigeByRace.get(e.raceId) ?? 0) + d.delta);
   }
+  // Per-horse day → price map; earlier sources win on overlapping days.
+  const priceByDay = new Map<string, Map<number, number>>();
+  for (const source of priceHistories ?? []) {
+    for (const [horseId, entries] of Object.entries(source)) {
+      let map = priceByDay.get(horseId);
+      if (!map) priceByDay.set(horseId, (map = new Map()));
+      for (const e of entries) if (!map.has(e.day)) map.set(e.day, e.price);
+    }
+  }
+  const valueAt = (horseId: string, day: number): number | null =>
+    priceByDay.get(horseId)?.get(day) ?? null;
+  const previousPrice = (horseId: string, day: number): number | null => {
+    const map = priceByDay.get(horseId);
+    if (!map) return null;
+    let prev: number | null = null;
+    let prevDay = -Infinity;
+    for (const [d, price] of map) {
+      if (d < day && d > prevDay) {
+        prevDay = d;
+        prev = price;
+      }
+    }
+    return prev;
+  };
   const raw: Omit<
     CampaignHistoryRow,
     "cumulativePrize" | "cumulativePrestige" | "countedForGoal" | "classWinsAfter"
@@ -48,6 +81,8 @@ export function buildCampaignHistory(
     for (const r of h.raceHistory ?? []) {
       if (r.day < goals.startDay) continue;
       const g = r.grade === "G1" || r.grade === "G2" || r.grade === "G3" ? r.grade : undefined;
+      const value = valueAt(h.id, r.day);
+      const prevPrice = previousPrice(h.id, r.day);
       raw.push({
         raceId: r.raceId,
         day: r.day,
@@ -61,6 +96,8 @@ export function buildCampaignHistory(
         position: r.position,
         fieldSize: r.fieldSize,
         prize: r.purseEarned ?? 0,
+        value,
+        valueDelta: value !== null && prevPrice !== null ? value - prevPrice : null,
         prestige: prestigeByRace.has(r.raceId) ? prestigeByRace.get(r.raceId)! : null,
       });
     }

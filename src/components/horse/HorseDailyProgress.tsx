@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useGame } from "@/game/store";
 import type { HorseDailySnapshot } from "@/services/horse/horseFacade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +17,7 @@ const ROWS: { key: Key; label: string; money?: boolean }[] = [
   { key: "form", label: "Form" },
   { key: "energy", label: "Energy" },
   { key: "price", label: "Price", money: true },
+  { key: "netWorth", label: "Net worth", money: true },
 ];
 
 const fmt = (v: number, money?: boolean) =>
@@ -54,10 +56,18 @@ function Spark({ values }: { values: number[] }) {
 
 export function HorseDailyProgress({ horseId }: { horseId: string }) {
   const snaps = useGame((s) => s.horseDailyProgress?.[horseId] ?? EMPTY);
+  const raceHistory = useGame((s) => s.horses[horseId]?.raceHistory);
   const last = snaps[snaps.length - 1];
   const prev = snaps[snaps.length - 2];
   const first = snaps[0];
   const recent = snaps.slice(-7).reverse();
+  const prizeByDay = useMemo(() => {
+    const m = new Map<number, number>();
+    for (const r of raceHistory ?? []) {
+      m.set(r.day, (m.get(r.day) ?? 0) + (r.purseEarned ?? 0));
+    }
+    return m;
+  }, [raceHistory]);
 
   return (
     <Card>
@@ -84,21 +94,37 @@ export function HorseDailyProgress({ horseId }: { horseId: string }) {
                 </tr>
               </thead>
               <tbody>
-                {ROWS.map((r) => (
-                  <tr key={r.key} className="border-t border-border">
-                    <td className="py-1.5">{r.label}</td>
-                    <td className="text-right">{fmt(last[r.key], r.money)}</td>
-                    <td className="text-right">
-                      {prev ? <Delta d={last[r.key] - prev[r.key]} money={r.money} /> : "—"}
-                    </td>
-                    <td className="text-right">
-                      <Delta d={last[r.key] - first[r.key]} money={r.money} />
-                    </td>
-                    <td className="pl-3 flex justify-end">
-                      <Spark values={snaps.map((s) => s[r.key])} />
-                    </td>
-                  </tr>
-                ))}
+                {ROWS.map((r) => {
+                  const cur = last[r.key];
+                  const prevV = prev?.[r.key];
+                  const firstV = first[r.key];
+                  const values = snaps
+                    .map((s) => s[r.key])
+                    .filter((v): v is number => v !== undefined);
+                  return (
+                    <tr key={r.key} className="border-t border-border">
+                      <td className="py-1.5">{r.label}</td>
+                      <td className="text-right">{cur === undefined ? "—" : fmt(cur, r.money)}</td>
+                      <td className="text-right">
+                        {cur !== undefined && prevV !== undefined ? (
+                          <Delta d={cur - prevV} money={r.money} />
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td className="text-right">
+                        {cur !== undefined && firstV !== undefined ? (
+                          <Delta d={cur - firstV} money={r.money} />
+                        ) : (
+                          "—"
+                        )}
+                      </td>
+                      <td className="pl-3 flex justify-end">
+                        <Spark values={values} />
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
             <div>
@@ -113,6 +139,8 @@ export function HorseDailyProgress({ horseId }: { horseId: string }) {
                     <th className="text-right">Form</th>
                     <th className="text-right">Energy</th>
                     <th className="text-right">Price</th>
+                    <th className="text-right">Prize</th>
+                    <th className="text-right">Net worth</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -133,12 +161,25 @@ export function HorseDailyProgress({ horseId }: { horseId: string }) {
                         >
                           {fmt(s.price, true)}
                         </td>
+                        <td className="text-right">
+                          {(prizeByDay.get(s.day) ?? 0) > 0
+                            ? fmt(prizeByDay.get(s.day)!, true)
+                            : "—"}
+                        </td>
+                        <td className="text-right">
+                          {s.netWorth === undefined ? "—" : fmt(s.netWorth, true)}
+                        </td>
                       </tr>
                     );
                   })}
                 </tbody>
               </table>
             </div>
+            <p className="text-xs text-muted-foreground">
+              Net worth is your whole stable — cash plus horses and syndicate shares — so a race
+              day&apos;s prize appears inside it next to every other entry, not as this horse&apos;s
+              value.
+            </p>
           </div>
         )}
       </CardContent>

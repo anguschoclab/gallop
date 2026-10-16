@@ -30,4 +30,75 @@ describe("buildCampaignHistory", () => {
     expect(rows[2].countedForGoal).toBe(false);
     expect(rows[2].classWinsAfter).toBe(2);
   });
+
+  describe("horse value", () => {
+    const prices = {
+      h1: [
+        { day: 9, price: 10000 },
+        { day: 10, price: 11200 },
+        { day: 12, price: 11000 },
+      ],
+    };
+
+    it("exposes the horse's end-of-day value and delta vs its previous snapshot", () => {
+      const rows = buildCampaignHistory({ startDay: 5, classGoals: {} }, [horse], ledger, [prices]);
+      expect(rows[0].value).toBe(11200);
+      expect(rows[0].valueDelta).toBe(1200); // vs day-9 snapshot
+      expect(rows[1].value).toBe(11000);
+      expect(rows[1].valueDelta).toBe(-200); // vs day-10 snapshot
+      expect(rows[2].value).toBeNull(); // no day-15 snapshot
+      expect(rows[2].valueDelta).toBeNull();
+    });
+
+    it("returns nulls when no price sources are provided", () => {
+      const rows = buildCampaignHistory({ startDay: 5, classGoals: {} }, [horse], ledger);
+      expect(rows.every((r) => r.value === null && r.valueDelta === null)).toBe(true);
+    });
+
+    it("looks up each runner's own price history for same-day races", () => {
+      const other = {
+        id: "h2",
+        name: "Bolt",
+        ownership: { type: "player" },
+        raceHistory: [{ raceId: "r1", raceName: "A", position: 3, day: 10, purseEarned: 200 }],
+      } as unknown as Horse;
+      const rows = buildCampaignHistory(
+        { startDay: 5, classGoals: {} },
+        [horse, other],
+        [],
+        [
+          prices,
+          {
+            h2: [
+              { day: 8, price: 5000 },
+              { day: 10, price: 5400 },
+            ],
+          },
+        ],
+      );
+      const r1 = rows.filter((r) => r.day === 10);
+      expect(r1.find((r) => r.horseId === "h1")!.value).toBe(11200);
+      expect(r1.find((r) => r.horseId === "h2")!.value).toBe(5400);
+      expect(r1.find((r) => r.horseId === "h2")!.valueDelta).toBe(400);
+    });
+
+    it("fills missing days from later sources", () => {
+      const sparse = { h1: [{ day: 10, price: 11200 }] };
+      const fallback = {
+        h1: [
+          { day: 9, price: 9900 },
+          { day: 12, price: 11000 },
+        ],
+      };
+      const rows = buildCampaignHistory(
+        { startDay: 5, classGoals: {} },
+        [horse],
+        [],
+        [sparse, fallback],
+      );
+      expect(rows[0].value).toBe(11200);
+      expect(rows[0].valueDelta).toBe(1300); // vs day-9 from the second source
+      expect(rows[1].value).toBe(11000); // day-12 from the second source
+    });
+  });
 });

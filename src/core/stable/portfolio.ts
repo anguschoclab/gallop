@@ -24,6 +24,22 @@ import { toRosterEntry, type RosterEntry } from "@/core/stable/stableRoster";
 /** Keys that historically identified the player inside syndicate shareholder maps. */
 const PLAYER_SYNDICATE_KEYS = ["player", "__player__"];
 
+/**
+ * Cash value of the player's syndicate share holdings (Σ shares × sharePrice
+ * across both historical player holder keys). 0 when there is nothing held.
+ * @param syndicates - Syndicate map from game state (may be undefined)
+ */
+export function playerSyndicateValue(syndicates: Record<string, Syndicate> | undefined): number {
+  let value = 0;
+  for (const syn of Object.values(syndicates ?? {})) {
+    for (const key of PLAYER_SYNDICATE_KEYS) {
+      value +=
+        (syn.shareHolders?.[key as keyof typeof syn.shareHolders] ?? 0) * (syn.sharePrice || 0);
+    }
+  }
+  return value;
+}
+
 export type StablePortfolio = {
   /** Stable id, or "player" for the player's own stable. */
   id: string;

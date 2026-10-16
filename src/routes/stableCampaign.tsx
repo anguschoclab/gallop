@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { Horse } from "@/core/horse/types";
+import type { HorseDailyProgress } from "@/core/horse/dailyProgress";
+import type { RankingsHistory } from "@/core/market/rankingsHistory";
 import type { TrackLedgerEntry } from "@/core/history/trackLedger";
 import { buildCampaignHistory } from "@/core/stable/campaignHistory";
 import {
@@ -259,7 +261,10 @@ function StableCampaignPage() {
 }
 
 const EMPTY_LEDGER: TrackLedgerEntry[] = [];
+const EMPTY_RANKINGS: RankingsHistory = {};
+const EMPTY_DAILY: HorseDailyProgress = {};
 const signed = (n: number) => (n > 0 ? `+${n}` : `${n}`);
+const signedMoney = (n: number) => `${n > 0 ? "+" : "−"}${money(Math.abs(n))}`;
 
 function CampaignHistoryCard({
   goals,
@@ -269,11 +274,19 @@ function CampaignHistoryCard({
   horses: Record<string, Horse>;
 }) {
   const ledger = useGameWithShallow((s) => s.trackLedger ?? EMPTY_LEDGER) as TrackLedgerEntry[];
+  const rankingsHistory = useGame((s) => s.rankingsHistory ?? EMPTY_RANKINGS);
+  const dailyProgress = useGame((s) => s.horseDailyProgress ?? EMPTY_DAILY);
   const rows = useMemo(
-    () => buildCampaignHistory(goals, Object.values(horses), ledger).reverse(),
-    [goals, horses, ledger],
+    () =>
+      buildCampaignHistory(goals, Object.values(horses), ledger, [
+        rankingsHistory,
+        dailyProgress,
+      ]).reverse(),
+    [goals, horses, ledger, rankingsHistory, dailyProgress],
   );
   const last = rows[0];
+  const worthDelta = rows.reduce((sum, r) => sum + (r.valueDelta ?? 0), 0);
+  const hasWorth = rows.some((r) => r.value !== null);
   return (
     <Card>
       <CardHeader>
@@ -284,8 +297,8 @@ function CampaignHistoryCard({
       <CardContent className="space-y-3">
         {rows.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No races run since the campaign started. Each start will appear here with its effect on
-            net worth, prestige and class wins.
+            No races run since the campaign started. Each start will appear here with its prize
+            money, horse value, prestige and class wins.
           </p>
         ) : (
           <>
@@ -298,8 +311,18 @@ function CampaignHistoryCard({
                 <span className="font-mono">{rows.filter((r) => r.position === 1).length}</span>
               </span>
               <span>
-                Net worth from prizes:{" "}
+                Prize money:{" "}
                 <span className="font-mono text-success">+{money(last.cumulativePrize)}</span>
+              </span>
+              <span>
+                Horse value Δ:{" "}
+                <span
+                  className={`font-mono ${
+                    worthDelta > 0 ? "text-success" : worthDelta < 0 ? "text-destructive" : ""
+                  }`}
+                >
+                  {hasWorth ? signedMoney(worthDelta) : "—"}
+                </span>
               </span>
               <span>
                 Prestige: <span className="font-mono">{signed(last.cumulativePrestige)}</span>
@@ -318,7 +341,8 @@ function CampaignHistoryCard({
                     <th className="pr-3">Race</th>
                     <th className="pr-3">Class</th>
                     <th className="pr-3">Finish</th>
-                    <th className="pr-3 text-right">Net worth</th>
+                    <th className="pr-3 text-right">Prize money</th>
+                    <th className="pr-3 text-right">Worth</th>
                     <th className="pr-3 text-right">Prestige</th>
                     <th className="pr-3">Class wins</th>
                   </tr>
@@ -352,6 +376,24 @@ function CampaignHistoryCard({
                           total {money(r.cumulativePrize)}
                         </div>
                       </td>
+                      <td className="pr-3 text-right font-mono">
+                        {r.value === null ? (
+                          "—"
+                        ) : (
+                          <>
+                            {money(r.value)}
+                            {r.valueDelta !== null && r.valueDelta !== 0 && (
+                              <div
+                                className={`text-xs ${
+                                  r.valueDelta > 0 ? "text-success" : "text-destructive"
+                                }`}
+                              >
+                                {signedMoney(r.valueDelta)}
+                              </div>
+                            )}
+                          </>
+                        )}
+                      </td>
                       <td
                         className={`pr-3 text-right font-mono ${
                           (r.prestige ?? 0) > 0
@@ -379,8 +421,9 @@ function CampaignHistoryCard({
               </table>
             </div>
             <p className="text-xs text-muted-foreground">
-              Net worth shows prize money won; horse value changes aren't tied to single races.
-              Prestige comes from Course Histories, so "—" means it wasn't recorded.
+              Worth is the horse's market value at the end of that race day — it reflects the whole
+              day's changes (training, aging, other races), not just this race; "—" means no
+              snapshot was recorded. Prestige comes from Course Histories.
             </p>
           </>
         )}

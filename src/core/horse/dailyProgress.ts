@@ -19,6 +19,8 @@ export interface HorseDailySnapshot {
   form: number;
   energy: number;
   price: number;
+  /** Stable-wide end-of-day net worth (cash + horse values + syndicate shares); identical across horses. Absent on snapshots recorded before it was tracked. */
+  netWorth?: number;
 }
 
 export type HorseDailyProgress = Record<string, HorseDailySnapshot[]>;
@@ -44,18 +46,34 @@ export function snapshotHorse(horse: Horse, day: number, allHorses: Horse[]): Ho
  * @param history - Existing per-horse snapshot map
  * @param horses - All horses in game
  * @param day - Current game day
+ * @param extras - When given, each snapshot also records stable-wide net worth
+ *   (`cash + today's player-horse values + syndicateValue`)
+ * @param extras.cash - Player cash on hand at end of day
+ * @param extras.syndicateValue - Cash value of the player's syndicate shares
  */
 export function recordDailyProgress(
   history: HorseDailyProgress | undefined,
   horses: Horse[],
   day: number,
+  extras?: { cash?: number; syndicateValue?: number },
 ): HorseDailyProgress {
   const next: HorseDailyProgress = {};
+  const snaps: HorseDailySnapshot[] = [];
   for (const h of horses) {
     if (!h?.stats || !isPlayerOwned(h) || h.lifecycleStatus === "deceased") continue;
+    const snap = snapshotHorse(h, day, horses);
     const prev = (history?.[h.id] ?? []).filter((s) => s.day !== day);
-    const list = [...prev, snapshotHorse(h, day, horses)];
+    const list = [...prev, snap];
     next[h.id] = list.slice(-DAILY_PROGRESS_MAX_ENTRIES);
+    snaps.push(snap);
+  }
+  if (extras) {
+    const netWorth = Math.round(
+      (extras.cash ?? 0) +
+        snaps.reduce((sum, s) => sum + s.price, 0) +
+        (extras.syndicateValue ?? 0),
+    );
+    for (const snap of snaps) snap.netWorth = netWorth;
   }
   return next;
 }

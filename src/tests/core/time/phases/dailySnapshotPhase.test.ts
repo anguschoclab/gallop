@@ -88,6 +88,30 @@ describe("dailySnapshotPhase", () => {
     expect(journal[0].result!.filledDay).toBe(10);
   });
 
+  it("records stable net worth (cash + player horse value + player syndicate shares) on each snapshot", () => {
+    const horse = createTestHorse({ id: "p1" });
+    const syndicate = {
+      id: "syn-1",
+      stallionId: "sire-1",
+      stallionName: "Sire",
+      totalShares: 40,
+      shareHolders: { player: 20 },
+      sharePrice: 150,
+      studFee: 5000,
+      isPublic: true,
+      lifetimeEarnings: 0,
+    } as never;
+    const ctx = mkContext(
+      { horses: { p1: horse }, cash: 50000, syndicates: { "syn-1": syndicate } },
+      10,
+    );
+
+    const result = dailySnapshotPhase.execute(ctx);
+    const progress = result.state.horseDailyProgress as HorseDailyProgress;
+    const snap = progress.p1[0];
+    expect(snap.netWorth).toBe(Math.round(50000 + snap.price + 20 * 150));
+  });
+
   it("is idempotent when executed twice for the same day", () => {
     const horse = createTestHorse({ id: "p1" });
     const ctx = mkContext({ horses: { p1: horse } }, 10);

@@ -8,10 +8,12 @@
 import { describe, it, expect } from "vitest";
 import {
   buildStablePortfolios,
+  playerSyndicateValue,
   portfolioTotals,
   sortPortfolios,
   type StablePortfolio,
 } from "@/core/stable/portfolio";
+import type { Syndicate } from "@/core/breeding/types";
 import { createTestHorse } from "@/tests/helpers";
 import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId, asStableId } from "@/core/types/branded";
@@ -137,6 +139,47 @@ describe("buildStablePortfolios", () => {
     const rows = buildStablePortfolios({ ...baseArgs, horses: [h] });
     const player = rows.find((r) => r.isPlayer)!;
     expect(player.horseCount).toBe(0);
+  });
+});
+
+describe("playerSyndicateValue", () => {
+  const mkSyndicate = (shareHolders: Record<string, number>, sharePrice = 100): Syndicate =>
+    ({
+      id: "syn-1",
+      stallionId: "stallion-1",
+      stallionName: "Sire",
+      totalShares: 40,
+      shareHolders,
+      sharePrice,
+      studFee: 5000,
+      isPublic: true,
+      lifetimeEarnings: 0,
+    }) as unknown as Syndicate;
+
+  it("sums shares × sharePrice for the player across both historical holder keys", () => {
+    const syndicates = {
+      a: mkSyndicate({ player: 20 }, 100),
+      b: mkSyndicate({ __player__: 10 }, 50),
+      c: mkSyndicate({ player: 5, __player__: 5 }, 200),
+    };
+    expect(playerSyndicateValue(syndicates)).toBe(20 * 100 + 10 * 50 + 10 * 200);
+  });
+
+  it("ignores NPC holders and zero-share player entries", () => {
+    const syndicates = {
+      a: mkSyndicate({ "npc-1": 30, player: 0 }, 100),
+      b: mkSyndicate({ "npc-2": 40 }, 999),
+    };
+    expect(playerSyndicateValue(syndicates)).toBe(0);
+  });
+
+  it("returns 0 for undefined or empty syndicate maps and tolerates missing fields", () => {
+    expect(playerSyndicateValue(undefined)).toBe(0);
+    expect(playerSyndicateValue({})).toBe(0);
+    const malformed = {
+      a: { ...mkSyndicate({ player: 10 }), shareHolders: undefined, sharePrice: undefined },
+    } as unknown as Record<string, Syndicate>;
+    expect(playerSyndicateValue(malformed)).toBe(0);
   });
 });
 
