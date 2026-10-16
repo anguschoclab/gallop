@@ -3,8 +3,13 @@ import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
+import { STORE_STATE_VERSION } from "../../game/store/stateVersion";
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixture = JSON.parse(readFileSync(join(__dirname, "fixtures", "e2e-fixture.json"), "utf-8"));
+// Seeded saves must claim the current schema version — a stale version is
+// treated as incompatible and wiped on rehydrate.
+fixture.meta.storeVersion = STORE_STATE_VERSION;
 
 test.beforeEach(async ({ page }) => {
   await page.addInitScript((data) => {

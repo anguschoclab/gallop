@@ -1,4 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
+import { STORE_STATE_VERSION } from "../../game/store/stateVersion";
 
 const FORECAST_PATTERNS = [
   "clear",
@@ -70,7 +71,7 @@ function seedWeatherState(
 
   const payload = {
     meta: {
-      storeVersion: 3,
+      storeVersion: STORE_STATE_VERSION,
       day: 5,
       cash: 100000,
       playerProfile: {

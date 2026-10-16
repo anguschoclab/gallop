@@ -10,6 +10,7 @@
  */
 
 import { createInitialState } from "../src/game/store/initialization";
+import { STORE_STATE_VERSION } from "../src/game/store/stateVersion";
 import { splitHorsesForPersistence } from "../src/core/persistence/npcCompression";
 import { prunePedigree } from "../src/core/persistence/pedigreePrune";
 import type { GameState } from "../src/game/types";
@@ -80,7 +81,7 @@ function buildPayload(state: GameState) {
     };
   }
 
-  const meta: Record<string, unknown> = { storeVersion: 3 };
+  const meta: Record<string, unknown> = { storeVersion: STORE_STATE_VERSION };
   for (const key of META_KEYS) {
     meta[key as string] = (state as any)[key];
   }
@@ -90,10 +91,21 @@ function buildPayload(state: GameState) {
     npcStablesBucket[s.id] = s;
   }
 
+  // The fixture travels through localStorage in the specs (~5MB quota). The
+  // full 2600+ race calendar alone is ~4MB, so keep only the earliest slate —
+  // the layout/analytics tests never look past the first few scheduled days.
+  const MAX_FIXTURE_RACES = 300;
+  const races = Object.fromEntries(
+    Object.values(state.races ?? {})
+      .sort((a, b) => a.day - b.day)
+      .slice(0, MAX_FIXTURE_RACES)
+      .map((r) => [r.id, r]),
+  );
+
   return {
     meta,
     horses: { playerHorses: prunedPlayerHorses, npcSummaries },
-    races: state.races ?? {},
+    races,
     npcStables: npcStablesBucket,
   };
 }

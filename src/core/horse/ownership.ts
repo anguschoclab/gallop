@@ -54,7 +54,7 @@ export function isUnowned(horse: { ownership: HorseOwnership } | undefined | nul
  * @param horse - The horse (or undefined/null) to check.
  */
 export function ownerKey(horse: { ownership: HorseOwnership } | undefined | null): OwnerKey | null {
-  if (!horse) return null;
+  if (!horse?.ownership) return null;
   switch (horse.ownership.type) {
     case "player":
       return PLAYER_OWNER_ID;
@@ -71,7 +71,7 @@ export function ownerKey(horse: { ownership: HorseOwnership } | undefined | null
 export function getStableId(
   horse: { ownership: HorseOwnership } | undefined | null,
 ): NpcStableId | null {
-  if (!horse) return null;
+  if (!horse?.ownership) return null;
   return horse.ownership.type === "npc" ? horse.ownership.stableId : null;
 }
 

@@ -67,13 +67,10 @@ import { generateUUID } from "@/core/uuid";
 
 export type { StoreType, GameStateCreator } from "./types";
 
-/**
- * Increment this when the persisted state shape changes in a way that is
- * incompatible with previously-stored data. On a version mismatch the store
- * resets to defaults, keeping only fields that are always safe to carry over
- * (playerNominations, syndicateInvestors).
- */
-export const STORE_STATE_VERSION = 9;
+// STORE_STATE_VERSION lives in ./stateVersion (leaf module — e2e specs read
+// it when seeding saves without importing the store).
+export { STORE_STATE_VERSION } from "./stateVersion";
+import { STORE_STATE_VERSION } from "./stateVersion";
 
 // PERSISTED_KEYS lives in ./persistedKeys (single source of truth shared
 // with storage.ts so partialize and the IDB meta bucket cannot drift).

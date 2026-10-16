@@ -3,8 +3,13 @@ import { readFileSync } from "fs";
 import { join, dirname } from "path";
 import { fileURLToPath } from "url";
 
+import { STORE_STATE_VERSION } from "../../game/store/stateVersion";
+
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const fixture = JSON.parse(readFileSync(join(__dirname, "fixtures", "e2e-fixture.json"), "utf-8"));
+// Seeded saves must claim the current schema version — a stale version is
+// treated as incompatible and wiped on rehydrate.
+fixture.meta.storeVersion = STORE_STATE_VERSION;
 
 const VIEWPORTS = [
   { width: 375, height: 812, name: "mobile" },
@@ -38,7 +43,9 @@ for (const vp of VIEWPORTS) {
       // Navigate directly to NPC stables index to find stable links
       await page.goto("/npc-stables");
 
-      const stableLinks = page.locator('a[href*="/npc-stables/"]');
+      const stableLinks = page.locator(
+        'a[href^="/npc-stables/"]:not([href$="rival-careers"]):not([href$="compare"])',
+      );
       await expect(stableLinks.first())
         .toBeVisible({ timeout: 15_000 })
         .catch(() => {
@@ -78,8 +85,11 @@ for (const vp of VIEWPORTS) {
       // Check first card for name/badge overlap
       const firstCard = cards.first();
       const nameSpan = firstCard.locator("span.text-lg").first();
+      // The scout badge is a Badge (div, tracking-wide) whose label comes from
+      // getScoutStatus: Unknown / Little Known / Partially Known / Well Known /
+      // Fully Scouted.
       const scoutBadge = firstCard
-        .locator('div[class*="tracking-widest"]')
+        .locator('div[class*="tracking-wide"]')
         .filter({ hasText: /unknown|known|scouted/i })
         .first();
 
@@ -98,7 +108,9 @@ for (const vp of VIEWPORTS) {
     test("OFFER and SCOUT buttons do not overlap each other", async ({ page }) => {
       await page.goto("/npc-stables");
 
-      const stableLinks = page.locator('a[href*="/npc-stables/"]');
+      const stableLinks = page.locator(
+        'a[href^="/npc-stables/"]:not([href$="rival-careers"]):not([href$="compare"])',
+      );
       await expect(stableLinks.first())
         .toBeVisible({ timeout: 15_000 })
         .catch(() => {
