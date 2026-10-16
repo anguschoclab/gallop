@@ -1,7 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { periodStats, pctChange } from "@/core/stable/periodComparison";
+import { periodRaces, periodStats, pctChange } from "@/core/stable/periodComparison";
 import type { PlayerRaceWinRecord } from "@/core/stable/raceWins";
 import type { TrackLedgerEntry } from "@/core/history/trackLedger";
+import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
+import type { Transaction } from "@/game/types";
 
 const win = (day: number, payout: number, grade?: string) =>
   ({
@@ -33,5 +37,92 @@ describe("periodStats", () => {
     expect(b.byClass.G1).toEqual({ starts: 2, wins: 1, prestige: 11 });
     expect(pctChange(1000, 7000)).toBe(600);
     expect(pctChange(0, 5)).toBeNull();
+  });
+});
+
+const start = (
+  day: number,
+  position: number,
+  purseEarned = 0,
+  extra: Record<string, unknown> = {},
+) => ({
+  raceId: `r${day}-${position}`,
+  raceName: `Race ${day}`,
+  position,
+  day,
+  purseEarned,
+  ...extra,
+});
+
+describe("periodRaces", () => {
+  it("returns every player start in range, sorted prize-desc then day-desc", () => {
+    const h = createTestHorse({
+      id: "h1",
+      name: "Ace",
+      raceHistory: [start(5, 1, 9000), start(12, 3, 2000), start(15, 8, 0), start(99, 1, 5000)],
+    });
+    const rows = periodRaces([h], { from: 10, to: 20 });
+    expect(rows.map((r) => r.day)).toEqual([12, 15]);
+    expect(rows[0]).toMatchObject({ horseId: "h1", horseName: "Ace", position: 3, prize: 2000 });
+    expect(rows[1].prize).toBe(0);
+  });
+
+  it("orders by prize descending, then day descending", () => {
+    const h = createTestHorse({
+      id: "h1",
+      raceHistory: [start(10, 4, 500), start(11, 1, 9000), start(12, 2, 3000)],
+    });
+    const rows = periodRaces([h], { from: 0, to: 20 });
+    expect(rows.map((r) => r.prize)).toEqual([9000, 3000, 500]);
+  });
+
+  it("excludes entries stamped with an NPC stable even when the horse is now player-owned", () => {
+    const h = createTestHorse({
+      id: "h1",
+      raceHistory: [
+        start(10, 1, 9000), // player-era win
+        start(11, 2, 3000, { stableId: "npc-9" }), // raced for an NPC before purchase
+      ],
+    });
+    const rows = periodRaces([h], { from: 0, to: 20 });
+    expect(rows).toHaveLength(1);
+    expect(rows[0].day).toBe(10);
+  });
+
+  it("includes player-era entries of a horse now owned by an NPC (via prize transaction)", () => {
+    const sold = createTestHorse({
+      id: "h1",
+      ownership: makeNpcOwned(asNpcStableId("npc-1")),
+      raceHistory: [start(10, 1, 9000)],
+    });
+    const tx = {
+      subcategory: "prize_money",
+      amount: 9000,
+      raceId: "r10-1",
+      horseId: "h1",
+    } as unknown as Transaction;
+    expect(periodRaces([sold], { from: 0, to: 20 }, [tx])).toHaveLength(1);
+    expect(periodRaces([sold], { from: 0, to: 20 })).toHaveLength(0);
+  });
+
+  it("falls back to the prize transaction amount when purseEarned is missing", () => {
+    const h = createTestHorse({
+      id: "h1",
+      raceHistory: [start(10, 1, 0)],
+    });
+    const tx = {
+      subcategory: "prize_money",
+      amount: 4200,
+      raceId: "r10-1",
+      horseId: "h1",
+    } as unknown as Transaction;
+    const rows = periodRaces([h], { from: 0, to: 20 }, [tx]);
+    expect(rows[0].prize).toBe(4200);
+  });
+
+  it("handles reversed ranges and empty inputs", () => {
+    const h = createTestHorse({ id: "h1", raceHistory: [start(10, 1, 100)] });
+    expect(periodRaces([h], { from: 20, to: 5 })).toHaveLength(1);
+    expect(periodRaces([], { from: 0, to: 99 })).toEqual([]);
   });
 });

@@ -25,6 +25,9 @@ import {
 } from "@/core/tactics/strategyJournal";
 
 export const Route = createFileRoute("/strategyJournal")({
+  validateSearch: (search: Record<string, unknown>): { horse?: string } => ({
+    horse: typeof search.horse === "string" ? search.horse : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "Strategy Journal — Stable Strategy" },
@@ -66,9 +69,10 @@ function StrategyJournalPage() {
   const races = useGame((s) => s.races);
   const day = useGame((s) => s.day);
 
+  const search = Route.useSearch();
   const [horseFilter, setHorseFilter] = useState("all");
   const [resultFilter, setResultFilter] = useState("all");
-  const [newHorse, setNewHorse] = useState("");
+  const [newHorse, setNewHorse] = useState(search.horse ?? "");
   const [newRace, setNewRace] = useState("none");
   const [newPlan, setNewPlan] = useState("");
 

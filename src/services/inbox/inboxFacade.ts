@@ -4,4 +4,4 @@
  */
 
 export { interpolateCtaRoute } from "@/core/inbox/ctaRoute";
-export type { InboxPriority } from "@/core/inbox/inboxTypes";
+export type { InboxCategory, InboxMessage, InboxPriority } from "@/core/inbox/inboxTypes";

@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { buildCampaignHistory } from "@/core/stable/campaignHistory";
 import type { Horse } from "@/core/horse/types";
 import type { TrackLedgerEntry } from "@/core/history/trackLedger";
+import type { StrategyJournalEntry } from "@/core/tactics/strategyJournal";
 
 const horse = {
   id: "h1",
@@ -99,6 +100,61 @@ describe("buildCampaignHistory", () => {
       expect(rows[0].value).toBe(11200);
       expect(rows[0].valueDelta).toBe(1300); // vs day-9 from the second source
       expect(rows[1].value).toBe(11000); // day-12 from the second source
+    });
+  });
+
+  describe("netDelta", () => {
+    const prices = {
+      h1: [
+        { day: 9, price: 10000 },
+        { day: 10, price: 11200 },
+      ],
+    };
+
+    it("combines prize money and value delta into one net-worth impact", () => {
+      const rows = buildCampaignHistory({ startDay: 5, classGoals: {} }, [horse], [], [prices]);
+      // r1: prize 1000 + (11200 - 10000) = 2200
+      expect(rows[0].netDelta).toBe(2200);
+    });
+
+    it("is null when the value snapshot is missing", () => {
+      const rows = buildCampaignHistory({ startDay: 5, classGoals: {} }, [horse], []);
+      expect(rows.every((r) => r.netDelta === null)).toBe(true);
+    });
+  });
+
+  describe("journal plan linkage", () => {
+    const journal = [
+      {
+        id: "j1",
+        createdDay: 8,
+        horseId: "h1",
+        horseName: "Ace",
+        raceId: "r1",
+        raceName: "A",
+        raceDay: 10,
+        plan: "Sit off the pace",
+      },
+    ] as unknown as StrategyJournalEntry[];
+
+    it("links a campaign row to its journal plan and outcome", () => {
+      const rows = buildCampaignHistory(
+        { startDay: 5, classGoals: {} },
+        [horse],
+        [],
+        undefined,
+        journal,
+        20,
+      );
+      expect(rows[0].plan?.text).toBe("Sit off the pace");
+      expect(rows[0].plan?.outcome).toMatchObject({ status: "run", position: 1 });
+      // r2 has no journal entry
+      expect(rows[1].plan).toBeUndefined();
+    });
+
+    it("leaves plan undefined when no journal is provided", () => {
+      const rows = buildCampaignHistory({ startDay: 5, classGoals: {} }, [horse], []);
+      expect(rows.every((r) => r.plan === undefined)).toBe(true);
     });
   });
 });

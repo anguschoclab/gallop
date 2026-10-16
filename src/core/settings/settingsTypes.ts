@@ -71,6 +71,8 @@ export interface NotificationSettings {
   flashTab: boolean;
   /** Per-kind toggles for rival-horse career milestone alerts in the Message Center */
   rivalMilestoneAlerts?: RivalMilestoneAlertSettings;
+  /** Per-kind toggles for the player's own career milestone alerts in the Message Center */
+  playerMilestoneAlerts?: RivalMilestoneAlertSettings;
 }
 
 /**
@@ -149,6 +151,13 @@ export function createDefaultUserSettings(currentDay: number = 1): UserSettings 
       dailySummary: false,
       flashTab: true,
       rivalMilestoneAlerts: {
+        debut: true,
+        breakthrough_win: true,
+        earnings: true,
+        peak_transition: true,
+        retirement: true,
+      },
+      playerMilestoneAlerts: {
         debut: true,
         breakthrough_win: true,
         earnings: true,

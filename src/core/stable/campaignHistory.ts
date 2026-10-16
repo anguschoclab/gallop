@@ -8,6 +8,11 @@ import type { TrackLedgerEntry } from "@/core/history/trackLedger";
 import { PLAYER_LEDGER_STABLE_ID } from "@/core/history/trackLedger";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import { raceGoalClass, type GoalClass, type StableGoals } from "./stableGoals";
+import {
+  journalOutcome,
+  type JournalOutcome,
+  type StrategyJournalEntry,
+} from "@/core/tactics/strategyJournal";
 
 export interface CampaignHistoryRow {
   raceId: string;
@@ -25,6 +30,10 @@ export interface CampaignHistoryRow {
   value: number | null;
   /** Change vs the horse's latest snapshot before the race day; null when either side is missing. */
   valueDelta: number | null;
+  /** Prize + valueDelta — the race's full net-worth impact; null when valueDelta is missing. */
+  netDelta: number | null;
+  /** Linked strategy-journal plan for this race, when one was journaled. */
+  plan?: { text: string; outcome: JournalOutcome };
   /** Player prestige change from this race, null when unrecorded. */
   prestige: number | null;
   cumulativePrestige: number;
@@ -42,6 +51,8 @@ export function buildCampaignHistory(
   horses: Horse[],
   ledger: TrackLedgerEntry[],
   priceHistories?: DailyPriceSeries[],
+  journal?: StrategyJournalEntry[],
+  currentDay?: number,
 ): CampaignHistoryRow[] {
   const prestigeByRace = new Map<string, number>();
   for (const e of ledger) {
@@ -72,6 +83,14 @@ export function buildCampaignHistory(
     }
     return prev;
   };
+  // raceId:horseId → journal entry; first match wins.
+  const journalByRace = new Map<string, StrategyJournalEntry>();
+  for (const j of journal ?? []) {
+    if (j.raceId && !journalByRace.has(`${j.raceId}:${j.horseId}`)) {
+      journalByRace.set(`${j.raceId}:${j.horseId}`, j);
+    }
+  }
+  const horsesById = new Map(horses.map((h) => [h.id, h]));
   const raw: Omit<
     CampaignHistoryRow,
     "cumulativePrize" | "cumulativePrestige" | "countedForGoal" | "classWinsAfter"
@@ -83,6 +102,8 @@ export function buildCampaignHistory(
       const g = r.grade === "G1" || r.grade === "G2" || r.grade === "G3" ? r.grade : undefined;
       const value = valueAt(h.id, r.day);
       const prevPrice = previousPrice(h.id, r.day);
+      const valueDelta = value !== null && prevPrice !== null ? value - prevPrice : null;
+      const journalEntry = journalByRace.get(`${r.raceId}:${h.id}`);
       raw.push({
         raceId: r.raceId,
         day: r.day,
@@ -97,7 +118,18 @@ export function buildCampaignHistory(
         fieldSize: r.fieldSize,
         prize: r.purseEarned ?? 0,
         value,
-        valueDelta: value !== null && prevPrice !== null ? value - prevPrice : null,
+        valueDelta,
+        netDelta: valueDelta !== null ? (r.purseEarned ?? 0) + valueDelta : null,
+        plan: journalEntry
+          ? {
+              text: journalEntry.plan,
+              outcome: journalOutcome(
+                journalEntry,
+                horsesById.get(journalEntry.horseId)?.raceHistory,
+                currentDay ?? 0,
+              ),
+            }
+          : undefined,
         prestige: prestigeByRace.has(r.raceId) ? prestigeByRace.get(r.raceId)! : null,
       });
     }

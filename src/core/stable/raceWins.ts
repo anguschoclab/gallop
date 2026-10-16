@@ -53,6 +53,64 @@ export interface DerivePlayerRaceWinsArgs {
 }
 
 /**
+ * Builds a `raceId[:horseId] -> amount` lookup from prize-money transactions.
+ * Used to prove player ownership of a race entry (the stable received the
+ * purse) and to recover payouts when `purseEarned` was not recorded.
+ *
+ * @param transactions - Transactions to scan for prize-money entries.
+ */
+export function buildPrizeTxMap(transactions?: Transaction[]): Map<string, number> {
+  const map = new Map<string, number>();
+  if (transactions) {
+    for (const tx of transactions) {
+      if (tx.subcategory === "prize_money" && tx.amount > 0) {
+        if (tx.raceId && tx.horseId) {
+          map.set(`${tx.raceId}:${tx.horseId}`, tx.amount);
+        }
+        if (tx.raceId && !map.has(tx.raceId)) {
+          map.set(tx.raceId, tx.amount);
+        }
+      }
+    }
+  }
+  return map;
+}
+
+/**
+ * Whether a single race-history entry belongs to the player's stable.
+ *
+ * `stableId` is only stamped on NPC-era entries — player-era entries are
+ * `undefined` — so current ownership alone would mis-attribute races run
+ * while the player owned a horse that was later sold. Attribution mirrors
+ * `derivePlayerRaceWins`: explicit NPC stamps are excluded; otherwise the
+ * entry counts when the horse is currently player-owned, the entry carries a
+ * player stable key, or a matching prize-money transaction exists.
+ *
+ * @param horse - Horse whose race history entry is being attributed.
+ * @param entry - Race history entry under test.
+ * @param entry.stableId - Stable stamp on the entry; non-player stamps exclude it.
+ * @param entry.raceId - Race id used to match prize-money transactions.
+ * @param prizeTxMap - Lookup built by {@link buildPrizeTxMap}.
+ */
+export function isPlayerRaceEntry(
+  horse: Horse,
+  entry: { stableId?: string; raceId?: string },
+  prizeTxMap: Map<string, number>,
+): boolean {
+  if (entry.stableId && entry.stableId !== "player" && entry.stableId !== "__player__") {
+    return false;
+  }
+  const raceId = entry.raceId ?? "";
+  return (
+    isPlayerOwned(horse) ||
+    entry.stableId === "player" ||
+    entry.stableId === "__player__" ||
+    prizeTxMap.has(`${raceId}:${horse.id}`) ||
+    (raceId !== "" && prizeTxMap.has(raceId))
+  );
+}
+
+/**
  * Derives each race won by the player along with its prize money payout.
  *
  * Scans all horses (active and archived) for 1st-place race history entries,
@@ -82,19 +140,7 @@ export function derivePlayerRaceWins(args: DerivePlayerRaceWinsArgs): PlayerRace
   }
 
   // Build fast lookup for prize money transactions
-  const prizeTxMap = new Map<string, number>();
-  if (transactions) {
-    for (const tx of transactions) {
-      if (tx.subcategory === "prize_money" && tx.amount > 0) {
-        if (tx.raceId && tx.horseId) {
-          prizeTxMap.set(`${tx.raceId}:${tx.horseId}`, tx.amount);
-        }
-        if (tx.raceId && !prizeTxMap.has(tx.raceId)) {
-          prizeTxMap.set(tx.raceId, tx.amount);
-        }
-      }
-    }
-  }
+  const prizeTxMap = buildPrizeTxMap(transactions);
 
   const wins: PlayerRaceWinRecord[] = [];
   const seenWinKeys = new Set<string>();
@@ -103,23 +149,10 @@ export function derivePlayerRaceWins(args: DerivePlayerRaceWinsArgs): PlayerRace
     for (const entry of horse.raceHistory ?? []) {
       if (entry.position !== 1) continue;
 
-      // If stableId is explicitly set to an NPC stable, this race was won
-      // before or after player ownership.
-      const isNpcWin =
-        entry.stableId && entry.stableId !== "player" && entry.stableId !== "__player__";
-      if (isNpcWin) continue;
+      if (!isPlayerRaceEntry(horse, entry, prizeTxMap)) continue;
 
-      // Verify that this was a player victory:
-      // Either horse is player-owned, stableId is player, or there is a matching prize transaction.
       const hasPrizeTx =
         prizeTxMap.has(`${entry.raceId}:${horse.id}`) || prizeTxMap.has(entry.raceId);
-      const isPlayerWin =
-        isPlayerOwned(horse) ||
-        entry.stableId === "player" ||
-        entry.stableId === "__player__" ||
-        hasPrizeTx;
-
-      if (!isPlayerWin) continue;
 
       const raceObj = entry.raceId ? raceMap.get(entry.raceId) : undefined;
       const totalPurse = entry.purse ?? raceObj?.purse;

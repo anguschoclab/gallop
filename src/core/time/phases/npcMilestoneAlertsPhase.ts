@@ -13,13 +13,42 @@
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { Horse } from "@/game/types";
 import type { AnyImpact, InboxImpact } from "@/core/resolver/impacts/index";
-import { isNpcOwned, getStableId } from "@/core/horse/ownership";
+import type { InboxCategory, InboxPriority } from "@/core/inbox/inboxTypes";
+import type { RivalMilestoneKind } from "@/core/npc/careerMilestones";
+import { isNpcOwned, isPlayerOwned, getStableId } from "@/core/horse/ownership";
 import { PHASE_ORDER_NPC_MILESTONE_ALERTS } from "@/constants";
 import { generateUUID } from "@/core/uuid";
-import { detectRivalMilestones, isNotableRival } from "@/core/npc/careerMilestones";
+import {
+  detectPlayerMilestones,
+  detectRivalMilestones,
+  isNotableRival,
+} from "@/core/npc/careerMilestones";
 
 /** Maximum rival milestone alerts emitted on a single day, to avoid inbox spam. */
 export const MAX_RIVAL_ALERTS_PER_DAY = 6;
+
+/**
+ * Maximum player milestone alerts emitted on a single day. Player milestones
+ * are also processed as a backlog — unlike rivals, capped-off keys are left
+ * unannounced so the remaining alerts land on subsequent days.
+ */
+export const MAX_PLAYER_ALERTS_PER_DAY = 8;
+
+const PLAYER_KIND_CATEGORY: Record<RivalMilestoneKind, InboxCategory> = {
+  debut: "race",
+  breakthrough_win: "race",
+  earnings: "race",
+  peak_transition: "race",
+  retirement: "retirement",
+};
+
+const PLAYER_KIND_PRIORITY: Record<RivalMilestoneKind, InboxPriority> = {
+  debut: "info",
+  breakthrough_win: "action",
+  earnings: "info",
+  peak_transition: "info",
+  retirement: "info",
+};
 
 export const npcMilestoneAlertsPhase: PipelinePhase = {
   name: "npcMilestoneAlerts",
@@ -30,12 +59,59 @@ export const npcMilestoneAlertsPhase: PipelinePhase = {
     // Per-kind mute switches from Settings → Notifications; muted milestones
     // are still recorded as announced so unmuting doesn't flood old alerts.
     const mutedKinds = state.userSettings?.notifications?.rivalMilestoneAlerts;
+    const playerMutedKinds = state.userSettings?.notifications?.playerMilestoneAlerts;
     const horses: Record<string, Horse> = {};
     let changed = false;
     let emitted = 0;
+    let playerEmitted = 0;
 
     for (const [id, horse] of Object.entries(state.horses)) {
       horses[id] = horse;
+
+      if (isPlayerOwned(horse)) {
+        const announced = horse.careerMilestonesAnnounced ?? [];
+        const found = detectPlayerMilestones(horse, announced);
+        if (found.length === 0) continue;
+
+        const keys = [...announced];
+        for (const milestone of found) {
+          if (playerMutedKinds?.[milestone.kind] === false) {
+            // Muted milestones are still recorded so unmuting doesn't replay them.
+            keys.push(milestone.key);
+            continue;
+          }
+          if (playerEmitted >= MAX_PLAYER_ALERTS_PER_DAY) continue; // stays pending for tomorrow
+          keys.push(milestone.key);
+          playerEmitted++;
+          impacts.push({
+            id: generateUUID(),
+            intentId: "",
+            day: newDay,
+            phase: "npcMilestoneAlerts",
+            logLevel: "always",
+            type: "inbox_message",
+            message: {
+              day: newDay,
+              category: PLAYER_KIND_CATEGORY[milestone.kind],
+              priority: PLAYER_KIND_PRIORITY[milestone.kind],
+              title: milestone.title,
+              body: milestone.body,
+              cta: {
+                label: "View horse",
+                route: "/stable/$horseId",
+                params: { horseId: horse.id },
+              },
+            },
+          } as InboxImpact);
+        }
+
+        if (keys.length !== announced.length) {
+          horses[id] = { ...horse, careerMilestonesAnnounced: keys };
+          changed = true;
+        }
+        continue;
+      }
+
       if (!isNpcOwned(horse)) continue;
       if (!isNotableRival(horse)) continue;
 

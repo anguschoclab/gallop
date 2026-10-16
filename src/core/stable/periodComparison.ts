@@ -2,7 +2,9 @@
  * periodComparison.ts - Compare the player's racing results across two day ranges:
  * wins, earnings, per-class starts/wins/places, and prestige movement.
  */
-import type { PlayerRaceWinRecord } from "./raceWins";
+import type { Horse } from "@/core/horse/types";
+import type { Transaction } from "@/core/transactions/transactionTypes";
+import { buildPrizeTxMap, isPlayerRaceEntry, type PlayerRaceWinRecord } from "./raceWins";
 import type { TrackLedgerEntry } from "@/core/history/trackLedger";
 
 export interface DayRange {
@@ -64,6 +66,64 @@ export function periodStats(
     c.prestige += mine?.delta ?? 0;
   }
   return out;
+}
+
+export interface PeriodRace {
+  day: number;
+  raceId: string;
+  raceName: string;
+  horseId: string;
+  horseName: string;
+  position: number;
+  fieldSize?: number;
+  prize: number;
+  grade?: string;
+  raceClass?: string;
+}
+
+/**
+ * Lists every race the player's stable started within a day range —
+ * all placings, not just wins — sorted by prize descending then day
+ * descending. Attribution mirrors `derivePlayerRaceWins`: player-era entries
+ * survive on horses that were later sold (matched via `stableId` stamps and
+ * prize-money transactions), while entries stamped to an NPC stable are
+ * excluded even if the horse is player-owned today.
+ *
+ * @param horses - Horses whose race histories are scanned for in-range starts.
+ * @param range - Day range to filter entries.
+ * @param transactions - Optional transactions used to attribute entries via prize money.
+ */
+export function periodRaces(
+  horses: Horse[],
+  range: DayRange,
+  transactions?: Transaction[],
+): PeriodRace[] {
+  const prizeTxMap = buildPrizeTxMap(transactions);
+  const out: PeriodRace[] = [];
+  for (const horse of horses) {
+    for (const entry of horse.raceHistory ?? []) {
+      if (!inRange(entry.day ?? 0, range)) continue;
+      if (!isPlayerRaceEntry(horse, entry, prizeTxMap)) continue;
+      const raceId = entry.raceId ?? "";
+      let prize = entry.purseEarned ?? 0;
+      if (prize <= 0 && raceId) {
+        prize = prizeTxMap.get(`${raceId}:${horse.id}`) ?? prizeTxMap.get(raceId) ?? 0;
+      }
+      out.push({
+        day: entry.day ?? 0,
+        raceId,
+        raceName: entry.raceName || "Race",
+        horseId: horse.id,
+        horseName: horse.name,
+        position: entry.position,
+        fieldSize: entry.fieldSize,
+        prize,
+        grade: entry.grade,
+        raceClass: entry.raceClass,
+      });
+    }
+  }
+  return out.sort((a, b) => b.prize - a.prize || b.day - a.day);
 }
 
 export function pctChange(a: number, b: number): number | null {

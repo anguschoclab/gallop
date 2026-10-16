@@ -131,4 +131,46 @@ describe("SidebarNav", () => {
     );
     expect(content).toMatch(/to:\s*"\/awards"/);
   });
+
+  it("renders an unread-message peek next to the Inbox item on hover", async () => {
+    const user = userEvent.setup();
+    render(
+      <SidebarNav
+        {...defaultProps}
+        unreadCount={2}
+        unreadMessages={[
+          {
+            id: "m1",
+            day: 5,
+            title: "Debut alert for Champ",
+            category: "race",
+            priority: "info",
+            pinned: false,
+          },
+          {
+            id: "m2",
+            day: 4,
+            title: "Stakes win bonus",
+            category: "race",
+            priority: "urgent",
+            pinned: false,
+          },
+        ]}
+      />,
+    );
+    await user.hover(screen.getByText("Inbox"));
+    await waitFor(() => {
+      expect(screen.getByText("Debut alert for Champ")).toBeTruthy();
+    });
+    expect(screen.getByText("Stakes win bonus")).toBeTruthy();
+    expect(screen.getByText("Open Message Center")).toBeTruthy();
+  });
+
+  it("renders no peek when there are no unread messages", async () => {
+    const user = userEvent.setup();
+    render(<SidebarNav {...defaultProps} unreadMessages={[]} />);
+    await user.hover(screen.getByText("Inbox"));
+    await new Promise((r) => setTimeout(r, 250));
+    expect(screen.queryByText("Open Message Center")).toBeNull();
+  });
 });

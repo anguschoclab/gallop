@@ -11,6 +11,7 @@ interface NotificationSettings {
   breedingEvents?: boolean;
   healthAlerts?: boolean;
   rivalMilestoneAlerts?: RivalMilestoneAlertSettings;
+  playerMilestoneAlerts?: RivalMilestoneAlertSettings;
 }
 
 interface NotificationSettingsCardProps {
@@ -47,6 +48,38 @@ const MILESTONE_ALERT_ROWS: {
     key: "retirement",
     label: "Retirements",
     description: "A notable rival retires from racing",
+  },
+];
+
+const PLAYER_MILESTONE_ALERT_ROWS: {
+  key: keyof RivalMilestoneAlertSettings;
+  label: string;
+  description: string;
+}[] = [
+  {
+    key: "debut",
+    label: "Racecourse debuts",
+    description: "One of your horses makes its first career start",
+  },
+  {
+    key: "breakthrough_win",
+    label: "Graded breakthroughs",
+    description: "Your horse lands its first graded victory",
+  },
+  {
+    key: "earnings",
+    label: "Earnings milestones",
+    description: "Your horse passes a major earnings threshold",
+  },
+  {
+    key: "peak_transition",
+    label: "Peak-career transitions",
+    description: "Your horse enters or passes its peak years",
+  },
+  {
+    key: "retirement",
+    label: "Retirements",
+    description: "One of your horses retires from racing",
   },
 ];
 
@@ -136,6 +169,44 @@ export function NotificationSettingsCard({ settings, onUpdate }: NotificationSet
                         peak_transition: true,
                         retirement: true,
                         ...settings?.rivalMilestoneAlerts,
+                        [row.key]: checked,
+                      },
+                    })
+                  }
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        <Separator />
+        <div className="space-y-3">
+          <div>
+            <Label className="text-sm font-medium">Your Milestone Alerts</Label>
+            <p className="text-xs text-cream-muted">
+              Choose which of your own horses' career milestones appear in your Message Center.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {PLAYER_MILESTONE_ALERT_ROWS.map((row) => (
+              <div key={row.key} className="flex items-center justify-between gap-2">
+                <div className="space-y-0.5">
+                  <Label htmlFor={`player-milestone-${row.key}`} className="text-xs">
+                    {row.label}
+                  </Label>
+                  <p className="text-[10px] text-cream-muted">{row.description}</p>
+                </div>
+                <Switch
+                  id={`player-milestone-${row.key}`}
+                  checked={settings?.playerMilestoneAlerts?.[row.key] ?? true}
+                  onCheckedChange={(checked) =>
+                    onUpdate({
+                      playerMilestoneAlerts: {
+                        debut: true,
+                        breakthrough_win: true,
+                        earnings: true,
+                        peak_transition: true,
+                        retirement: true,
+                        ...settings?.playerMilestoneAlerts,
                         [row.key]: checked,
                       },
                     })

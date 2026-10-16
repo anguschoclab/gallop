@@ -10,6 +10,7 @@ import type { Horse } from "@/core/horse/types";
 import type { HorseDailyProgress } from "@/core/horse/dailyProgress";
 import type { RankingsHistory } from "@/core/market/rankingsHistory";
 import type { TrackLedgerEntry } from "@/core/history/trackLedger";
+import type { StrategyJournalEntry } from "@/core/tactics/strategyJournal";
 import { buildCampaignHistory } from "@/core/stable/campaignHistory";
 import {
   DEFAULT_STABLE_GOALS,
@@ -263,6 +264,7 @@ function StableCampaignPage() {
 const EMPTY_LEDGER: TrackLedgerEntry[] = [];
 const EMPTY_RANKINGS: RankingsHistory = {};
 const EMPTY_DAILY: HorseDailyProgress = {};
+const EMPTY_JOURNAL: StrategyJournalEntry[] = [];
 const signed = (n: number) => (n > 0 ? `+${n}` : `${n}`);
 const signedMoney = (n: number) => `${n > 0 ? "+" : "−"}${money(Math.abs(n))}`;
 
@@ -276,13 +278,21 @@ function CampaignHistoryCard({
   const ledger = useGameWithShallow((s) => s.trackLedger ?? EMPTY_LEDGER) as TrackLedgerEntry[];
   const rankingsHistory = useGame((s) => s.rankingsHistory ?? EMPTY_RANKINGS);
   const dailyProgress = useGame((s) => s.horseDailyProgress ?? EMPTY_DAILY);
+  const journal = useGameWithShallow(
+    (s) => s.strategyJournal ?? EMPTY_JOURNAL,
+  ) as StrategyJournalEntry[];
+  const currentDay = useGame((s) => s.day);
   const rows = useMemo(
     () =>
-      buildCampaignHistory(goals, Object.values(horses), ledger, [
-        rankingsHistory,
-        dailyProgress,
-      ]).reverse(),
-    [goals, horses, ledger, rankingsHistory, dailyProgress],
+      buildCampaignHistory(
+        goals,
+        Object.values(horses),
+        ledger,
+        [rankingsHistory, dailyProgress],
+        journal,
+        currentDay,
+      ).reverse(),
+    [goals, horses, ledger, rankingsHistory, dailyProgress, journal, currentDay],
   );
   const last = rows[0];
   const worthDelta = rows.reduce((sum, r) => sum + (r.valueDelta ?? 0), 0);
@@ -343,6 +353,8 @@ function CampaignHistoryCard({
                     <th className="pr-3">Finish</th>
                     <th className="pr-3 text-right">Prize money</th>
                     <th className="pr-3 text-right">Worth</th>
+                    <th className="pr-3 text-right">Net Δ</th>
+                    <th className="pr-3">Plan</th>
                     <th className="pr-3 text-right">Prestige</th>
                     <th className="pr-3">Class wins</th>
                   </tr>
@@ -394,6 +406,57 @@ function CampaignHistoryCard({
                           </>
                         )}
                       </td>
+                      <td className="pr-3 text-right font-mono">
+                        {r.netDelta === null ? (
+                          "—"
+                        ) : (
+                          <span
+                            className={
+                              r.netDelta > 0
+                                ? "text-success"
+                                : r.netDelta < 0
+                                  ? "text-destructive"
+                                  : ""
+                            }
+                          >
+                            {signedMoney(r.netDelta)}
+                          </span>
+                        )}
+                      </td>
+                      <td className="pr-3 text-xs max-w-[12rem]">
+                        {r.plan ? (
+                          <span title={r.plan.text}>
+                            <span className="block truncate text-cream-muted">{r.plan.text}</span>
+                            {r.plan.outcome.status === "run" && (
+                              <span
+                                className={
+                                  r.plan.outcome.position === 1
+                                    ? "text-success"
+                                    : "text-muted-foreground"
+                                }
+                              >
+                                {r.plan.outcome.position === 1
+                                  ? "Won"
+                                  : `Finished ${r.plan.outcome.position}`}
+                              </span>
+                            )}
+                            {r.plan.outcome.status === "pending" && (
+                              <span className="text-muted-foreground">Upcoming</span>
+                            )}
+                            {r.plan.outcome.status === "missing" && (
+                              <span className="text-muted-foreground">Did not run</span>
+                            )}
+                          </span>
+                        ) : (
+                          <Link
+                            to="/strategyJournal"
+                            search={{ horse: r.horseId }}
+                            className="text-cream-muted/60 hover:text-gold hover:underline"
+                          >
+                            Log plan
+                          </Link>
+                        )}
+                      </td>
                       <td
                         className={`pr-3 text-right font-mono ${
                           (r.prestige ?? 0) > 0
@@ -423,7 +486,9 @@ function CampaignHistoryCard({
             <p className="text-xs text-muted-foreground">
               Worth is the horse's market value at the end of that race day — it reflects the whole
               day's changes (training, aging, other races), not just this race; "—" means no
-              snapshot was recorded. Prestige comes from Course Histories.
+              snapshot was recorded. Net Δ = prize money + worth change. Plan shows the Strategy
+              Journal entry linked to this race ("Log plan" creates one); races without a journal
+              entry have none to show. Prestige comes from Course Histories.
             </p>
           </>
         )}

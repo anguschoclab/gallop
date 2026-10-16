@@ -1,7 +1,27 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Pin } from "lucide-react";
 import { useEffect, useState, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/hover-card";
+import type { InboxCategory, InboxPriority } from "@/services/inbox/inboxFacade";
+
+/** Compact unread-message shape for the sidebar inbox hover preview. */
+export interface InboxPeekMessage {
+  id: string;
+  day: number;
+  title: string;
+  category: InboxCategory;
+  priority: InboxPriority;
+  pinned: boolean;
+}
+
+const PEEK_PRIORITY_DOT: Record<InboxPriority, string> = {
+  critical: "bg-red-500",
+  urgent: "bg-red-400",
+  action: "bg-gold",
+  info: "bg-cream-muted",
+  low: "bg-cream-muted/50",
+};
 
 interface NavSubItem {
   to: string;
@@ -18,6 +38,8 @@ export interface NavItem {
   exact?: boolean;
   search?: Record<string, string>;
   subItems?: NavSubItem[];
+  /** Unread messages previewed on hover (Message Center peek). */
+  peekMessages?: InboxPeekMessage[];
 }
 
 interface NavSectionProps {
@@ -163,35 +185,81 @@ export function NavSection({
         <div id={contentId} role="region" aria-labelledby={headerId} className="space-y-0.5 mb-1">
           {items.map((item) => {
             const active = isItemActive(pathname, item.to, item.exact);
+            const link = (
+              <Link
+                to={item.to}
+                search={item.search}
+                className={cn(
+                  "relative flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors group",
+                  focusRing,
+                  active
+                    ? "bg-gold/15 text-gold font-medium shadow-[inset_0_0_0_1px_rgba(212,175,55,0.25)]"
+                    : "text-cream-muted hover:text-cream hover:bg-cream/5",
+                )}
+              >
+                {active && (
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-gold" />
+                )}
+                <item.icon
+                  className={cn(
+                    "h-4 w-4 transition-colors",
+                    active ? "text-gold" : "text-cream-muted group-hover:text-cream",
+                  )}
+                />
+                <span className="flex-1">{item.label}</span>
+                {item.label === "Inbox" && unreadCount > 0 && (
+                  <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
+                    {unreadCount}
+                  </span>
+                )}
+              </Link>
+            );
+            const peek = item.peekMessages;
             return (
               <div key={item.label}>
-                <Link
-                  to={item.to}
-                  search={item.search}
-                  className={cn(
-                    "relative flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors group",
-                    focusRing,
-                    active
-                      ? "bg-gold/15 text-gold font-medium shadow-[inset_0_0_0_1px_rgba(212,175,55,0.25)]"
-                      : "text-cream-muted hover:text-cream hover:bg-cream/5",
-                  )}
-                >
-                  {active && (
-                    <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-gold" />
-                  )}
-                  <item.icon
-                    className={cn(
-                      "h-4 w-4 transition-colors",
-                      active ? "text-gold" : "text-cream-muted group-hover:text-cream",
-                    )}
-                  />
-                  <span className="flex-1">{item.label}</span>
-                  {item.label === "Inbox" && unreadCount > 0 && (
-                    <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-red-600 px-1 text-[10px] font-bold text-white">
-                      {unreadCount}
-                    </span>
-                  )}
-                </Link>
+                {peek && peek.length > 0 ? (
+                  <HoverCard openDelay={150} closeDelay={150}>
+                    <HoverCardTrigger asChild>{link}</HoverCardTrigger>
+                    <HoverCardContent side="right" align="start">
+                      <p className="px-1 pb-1 text-[9px] font-bold uppercase tracking-[0.14em] text-cream-muted font-[family-name:var(--font-mono)]">
+                        Unread messages
+                      </p>
+                      <div className="space-y-0.5">
+                        {peek.map((m) => (
+                          <Link
+                            key={m.id}
+                            to="/inbox"
+                            className="flex items-start gap-2 rounded px-1.5 py-1.5 transition-colors hover:bg-cream/5"
+                          >
+                            <span
+                              className={cn(
+                                "mt-1 h-1.5 w-1.5 shrink-0 rounded-full",
+                                PEEK_PRIORITY_DOT[m.priority],
+                              )}
+                            />
+                            <span className="min-w-0 flex-1">
+                              <span className="flex items-center gap-1">
+                                <span className="truncate text-xs text-cream">{m.title}</span>
+                                {m.pinned && <Pin className="h-2.5 w-2.5 shrink-0 text-gold" />}
+                              </span>
+                              <span className="block text-[9px] uppercase tracking-[0.1em] text-cream-muted/70 font-[family-name:var(--font-mono)]">
+                                Day {m.day} · {m.category.replace(/_/g, " ")}
+                              </span>
+                            </span>
+                          </Link>
+                        ))}
+                      </div>
+                      <Link
+                        to="/inbox"
+                        className="mt-1 block border-t border-gold-muted/30 px-1.5 pt-1.5 text-[10px] font-medium text-gold hover:underline"
+                      >
+                        Open Message Center
+                      </Link>
+                    </HoverCardContent>
+                  </HoverCard>
+                ) : (
+                  link
+                )}
                 {item.subItems && active && (
                   <div className="ml-7 mt-0.5 space-y-0.5 border-l border-gold-muted/40 pl-2">
                     {item.subItems.map((sub) => {

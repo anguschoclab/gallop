@@ -43,7 +43,12 @@ import {
 import { formatCurrency } from "@/lib/formatting";
 import { gameCalendarDate } from "@/services/calendar/calendarFacade";
 import { DAYS_PER_WEEK, DAYS_PER_MONTH, TOOLTIP_DELAY_MS, SIDEBAR_WIDTH_PX } from "@/constants";
-import { NavSection, type NavItem, clearAllSidebarStorage } from "./NavSection";
+import {
+  NavSection,
+  type InboxPeekMessage,
+  type NavItem,
+  clearAllSidebarStorage,
+} from "./NavSection";
 import { useState } from "react";
 
 const navSections: { label: string; items: NavItem[] }[] = [
@@ -115,6 +120,8 @@ interface SidebarNavProps {
   cash: number;
   horseCount: number;
   unreadCount: number;
+  /** Top unread inbox messages previewed when hovering the Inbox nav item. */
+  unreadMessages?: InboxPeekMessage[];
   isAdvancing?: boolean;
   onAdvanceDay: () => void;
   onAdvanceWeek: () => void;
@@ -130,6 +137,7 @@ export function SidebarNav({
   cash,
   horseCount,
   unreadCount,
+  unreadMessages,
   isAdvancing,
   onAdvanceDay,
   onAdvanceWeek,
@@ -168,7 +176,9 @@ export function SidebarNav({
           <NavSection
             key={section.label}
             label={section.label}
-            items={section.items}
+            items={section.items.map((item) =>
+              item.label === "Inbox" ? { ...item, peekMessages: unreadMessages } : item,
+            )}
             unreadCount={unreadCount}
             defaultCollapsed={idx > 0}
             resetSignal={resetSignal}

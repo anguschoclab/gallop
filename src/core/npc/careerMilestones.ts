@@ -54,14 +54,7 @@ export function isNotableRival(horse: Horse): boolean {
 
 const PEAK_STAGES: NpcCareerStage[] = ["prime", "declining"];
 
-/**
- * Detect the career milestones a rival horse has reached but not yet announced.
- *
- * @param horse - NPC horse to inspect
- * @param announced - Milestone keys already alerted on
- * @returns Newly reached milestones, in narrative order
- */
-export function detectRivalMilestones(horse: Horse, announced: string[] = []): RivalMilestone[] {
+function detectMilestones(horse: Horse, announced: string[], player: boolean): RivalMilestone[] {
   const seen = new Set(announced);
   const out: RivalMilestone[] = [];
   const starts = horse.raceHistory?.length ?? horse.careerStarts ?? 0;
@@ -71,13 +64,16 @@ export function detectRivalMilestones(horse: Horse, announced: string[] = []): R
     if (!seen.has(m.key)) out.push(m);
   };
 
-  // Debut — first career start.
-  if (starts >= 1 && (horse.fame ?? 0) >= DEBUT_FAME_FLOOR) {
+  // Debut — first career start. Rivals need a fame floor; the player's own
+  // debut always counts.
+  if (starts >= 1 && (player || (horse.fame ?? 0) >= DEBUT_FAME_FLOOR)) {
     push({
       key: "debut",
       kind: "debut",
       title: `${horse.name} makes racecourse debut`,
-      body: `${horse.name} has taken the first start of its career. Worth keeping an eye on.`,
+      body: player
+        ? `Your ${horse.name} has taken the first start of its career.`
+        : `${horse.name} has taken the first start of its career. Worth keeping an eye on.`,
     });
   }
 
@@ -88,7 +84,9 @@ export function detectRivalMilestones(horse: Horse, announced: string[] = []): R
       key: "breakthrough_win",
       kind: "breakthrough_win",
       title: `${horse.name} breaks through in graded company`,
-      body: `${horse.name} landed its first graded success in the ${graded.raceName} (${graded.grade}). A rival on the rise.`,
+      body: player
+        ? `Your ${horse.name} landed its first graded win in the ${graded.raceName} (${graded.grade}).`
+        : `${horse.name} landed its first graded success in the ${graded.raceName} (${graded.grade}). A rival on the rise.`,
     });
   }
 
@@ -99,7 +97,9 @@ export function detectRivalMilestones(horse: Horse, announced: string[] = []): R
       key: `earnings_${threshold}`,
       kind: "earnings",
       title: `${horse.name} passes ${formatCurrency(threshold)} in earnings`,
-      body: `${horse.name} has now banked ${formatCurrency(earnings)} across ${starts} career starts.`,
+      body: player
+        ? `Your ${horse.name} has now banked ${formatCurrency(earnings)} for the stable across ${starts} career starts.`
+        : `${horse.name} has now banked ${formatCurrency(earnings)} across ${starts} career starts.`,
     });
   }
 
@@ -111,8 +111,12 @@ export function detectRivalMilestones(horse: Horse, announced: string[] = []): R
       kind: "peak_transition",
       title: entering ? `${horse.name} enters peak form` : `${horse.name} is past its peak years`,
       body: entering
-        ? `At ${Math.floor(horse.age)}, ${horse.name} has reached the prime of its career and should campaign hard this season.`
-        : `${horse.name} is ${Math.floor(horse.age)} and beginning to decline — its best form may now be behind it.`,
+        ? player
+          ? `Your ${horse.name} has reached the prime of its career — campaign hard this season.`
+          : `At ${Math.floor(horse.age)}, ${horse.name} has reached the prime of its career and should campaign hard this season.`
+        : player
+          ? `Your ${horse.name} is ${Math.floor(horse.age)} and beginning to decline — its best form may be behind it.`
+          : `${horse.name} is ${Math.floor(horse.age)} and beginning to decline — its best form may now be behind it.`,
     });
   }
 
@@ -123,9 +127,35 @@ export function detectRivalMilestones(horse: Horse, announced: string[] = []): R
       key: "retirement",
       kind: "retirement",
       title: `${horse.name} retires from racing`,
-      body: `${horse.name} has been retired after ${starts} starts and ${wins} wins, with ${formatCurrency(earnings)} in lifetime earnings.`,
+      body: player
+        ? `Your ${horse.name} has been retired after ${starts} starts and ${wins} wins, with ${formatCurrency(earnings)} in lifetime earnings.`
+        : `${horse.name} has been retired after ${starts} starts and ${wins} wins, with ${formatCurrency(earnings)} in lifetime earnings.`,
     });
   }
 
   return out;
+}
+
+/**
+ * Detect the career milestones a rival horse has reached but not yet announced.
+ *
+ * @param horse - NPC horse to inspect
+ * @param announced - Milestone keys already alerted on
+ * @returns Newly reached milestones, in narrative order
+ */
+export function detectRivalMilestones(horse: Horse, announced: string[] = []): RivalMilestone[] {
+  return detectMilestones(horse, announced, false);
+}
+
+/**
+ * Detect the career milestones one of the player's own horses has reached but
+ * not yet announced. Same triggers and dedup keys as rivals, but no fame floor
+ * on debuts and player-flavoured copy.
+ *
+ * @param horse - Player-owned horse to inspect
+ * @param announced - Milestone keys already alerted on
+ * @returns Newly reached milestones, in narrative order
+ */
+export function detectPlayerMilestones(horse: Horse, announced: string[] = []): RivalMilestone[] {
+  return detectMilestones(horse, announced, true);
 }

@@ -1,14 +1,18 @@
 import { useMemo, useState } from "react";
 import { useGame } from "@/game/store";
-import type { PlayerRaceWinRecord } from "@/services/stable/stableFacade";
+import type { PlayerRaceWinRecord, PeriodRace } from "@/services/stable/stableFacade";
 import type { TrackLedgerEntry } from "@/services/history/historyFacade";
-import { periodStats, pctChange, type DayRange } from "@/services/stable/stableFacade";
+import type { Transaction } from "@/services/transactions/transactionsFacade";
+import type { Horse } from "@/services/horse/horseFacade";
+import { periodRaces, periodStats, pctChange, type DayRange } from "@/services/stable/stableFacade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
 
 const EMPTY: TrackLedgerEntry[] = [];
+const EMPTY_TX: Transaction[] = [];
+const EMPTY_HORSES: Horse[] = [];
 const money = (n: number) => `$${Math.round(n).toLocaleString()}`;
 
 function RangeInputs({
@@ -66,6 +70,9 @@ function Change({ a, b, fmt = String }: { a: number; b: number; fmt?: (n: number
 export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
   const day = useGame((s) => s.day);
   const ledger = useGame((s) => s.trackLedger ?? EMPTY);
+  const horses = useGame((s) => s.horses);
+  const archivedHorses = useGame((s) => s.archive?.horses ?? EMPTY_HORSES);
+  const transactions = useGame((s) => s.transactions ?? EMPTY_TX);
   const [a, setA] = useState<DayRange>({ from: Math.max(0, day - 60), to: Math.max(0, day - 31) });
   const [b, setB] = useState<DayRange>({ from: Math.max(0, day - 30), to: day });
 
@@ -76,6 +83,18 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
 
   const sa = useMemo(() => periodStats(wins, ledger, a), [wins, ledger, a]);
   const sb = useMemo(() => periodStats(wins, ledger, b), [wins, ledger, b]);
+  const allHorses = useMemo(
+    () => [...Object.values(horses), ...archivedHorses],
+    [horses, archivedHorses],
+  );
+  const racesA = useMemo(
+    () => periodRaces(allHorses, a, transactions),
+    [allHorses, a, transactions],
+  );
+  const racesB = useMemo(
+    () => periodRaces(allHorses, b, transactions),
+    [allHorses, b, transactions],
+  );
   const classes = Array.from(
     new Set([...Object.keys(sa.byClass), ...Object.keys(sb.byClass)]),
   ).sort();
@@ -187,6 +206,63 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
           <p className="mt-3 text-xs text-muted-foreground">
             Starts and prestige come from the course history records; wins and earnings from your
             race wins.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm uppercase tracking-wide">Races</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid gap-4 md:grid-cols-2">
+            {(
+              [
+                ["Period A", racesA],
+                ["Period B", racesB],
+              ] as [string, PeriodRace[]][]
+            ).map(([label, races]) => (
+              <div key={label}>
+                <p className="text-xs uppercase tracking-wide text-muted-foreground pb-1">
+                  {label}
+                </p>
+                {races.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">No starts in this period.</p>
+                ) : (
+                  <table className="w-full text-sm font-mono">
+                    <thead className="text-xs text-muted-foreground uppercase">
+                      <tr>
+                        <th className="text-left py-1">Day</th>
+                        <th className="text-left">Horse</th>
+                        <th className="text-left">Race</th>
+                        <th className="text-right">Fin</th>
+                        <th className="text-right">Prize</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {races.map((r) => (
+                        <tr key={`${r.raceId}-${r.horseId}`} className="border-t border-border">
+                          <td className="py-1 pr-2 text-muted-foreground">{r.day}</td>
+                          <td className="pr-2 truncate max-w-[8rem]">{r.horseName}</td>
+                          <td className="pr-2 truncate max-w-[10rem]">
+                            {r.raceName}
+                            {r.grade && (
+                              <span className="ml-1 text-[10px] text-gold">{r.grade}</span>
+                            )}
+                          </td>
+                          <td className="text-right">{r.position}</td>
+                          <td className="text-right">{r.prize > 0 ? money(r.prize) : "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Every stable start in the period, sorted by prize. Prize total differs from the Earnings
+            metric above, which counts wins only.
           </p>
         </CardContent>
       </Card>

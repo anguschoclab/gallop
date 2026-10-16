@@ -8,7 +8,7 @@ import { AutoSimPanel } from "@/components/race/AutoSimPanel";
 import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";
 import { AwardCeremony } from "./awards";
 import { SidebarNav } from "./SidebarNav";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSkipToNext } from "@/hooks/shared/useSkipToNext";
 import { useAwardCeremony } from "@/hooks/awards/useAwardCeremony";
 import { useUnreadCount } from "@/hooks/inbox/useInbox";
@@ -56,6 +56,29 @@ export function AppShell() {
   const [batchProgress, setBatchProgress] = useState<{ day: number; total: number } | null>(null);
 
   const unreadCount = useUnreadCount();
+  const inbox = useGame((s: StoreType) => s.inbox);
+  const unreadMessages = useMemo(
+    () =>
+      inbox
+        .filter((m) => !m.readAt)
+        .sort((a, b) => {
+          const aPinned = a.pinnedUntil && a.pinnedUntil >= day;
+          const bPinned = b.pinnedUntil && b.pinnedUntil >= day;
+          if (aPinned && !bPinned) return -1;
+          if (!aPinned && bPinned) return 1;
+          return b.day - a.day;
+        })
+        .slice(0, 5)
+        .map((m) => ({
+          id: m.id,
+          day: m.day,
+          title: m.title,
+          category: m.category,
+          priority: m.priority,
+          pinned: (m.pinnedUntil ?? 0) >= day,
+        })),
+    [inbox, day],
+  );
 
   const awards = useAwards();
   const { showCeremony, setShowCeremony, pendingCeremonies, clearPendingCeremonies } =
@@ -81,6 +104,7 @@ export function AppShell() {
           cash={cash}
           horseCount={Object.keys(horses).length}
           unreadCount={unreadCount}
+          unreadMessages={unreadMessages}
           isAdvancing={isAdvancing}
           onAdvanceDay={() => advanceDay()}
           onAdvanceWeek={() =>
