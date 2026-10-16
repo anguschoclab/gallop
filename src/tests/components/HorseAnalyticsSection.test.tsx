@@ -47,6 +47,16 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
     const horse = createHorse({
       raceHistory: [
         {
+          raceId: "r0",
+          raceName: "Race 0",
+          position: 4,
+          day: 0,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 70,
+          purse: 1000,
+        },
+        {
           raceId: "r1",
           raceName: "Race 1",
           position: 1,
