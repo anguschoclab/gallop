@@ -49,8 +49,14 @@ export interface RaceResolutionIntent extends Intent {
   type: "race_resolution";
   raceId: string;
   results: { horseId: string; position: number; time: number }[];
+  /** The live session's simulated field, when the race was resolved live.
+   *  Lets the resolution phase reuse it instead of re-running simulateRace. */
+  runners?: import("@/core/race/types").RaceRunner[];
   factorLedgers?: Record<string, RunnerFactorLedger>;
   snapshots?: import("@/core/race/engine/raceSnapshotTypes").RaceSnapshot[];
+  /** Player-facing impacts were already applied at live finish; the
+   *  resolution phase skips them to avoid double-counting. */
+  liveImpactsApplied?: boolean;
 }
 
 export interface ClaimingIntent extends Intent {

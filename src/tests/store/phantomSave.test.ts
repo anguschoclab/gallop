@@ -1,9 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+const { SAVED_KEY } = vi.hoisted(() => ({ SAVED_KEY: "gallop_game_state_fallback" }));
+
 vi.mock("@/services/storage/storageAdapter", () => ({
   STORAGE_KEYS: {
     GAME_STATE: "gallop_game_state",
-    GAME_STATE_FALLBACK: "gallop_game_state_fallback",
+    GAME_STATE_FALLBACK: SAVED_KEY,
     RACE_FILTERS: "gallop_race_filters",
     RACE_HISTORY_LIMIT: "gallop_race_history_limit",
     RACES_DAY_JUMP: "gallop_races_day_jump",
@@ -29,174 +31,146 @@ vi.mock("@/core/persistence/pedigreePrune", () => ({
 }));
 
 vi.mock("@/services/storage/schemas", () => ({
-  safeParseJson: vi.fn(),
+  safeParseJson: vi.fn((s: string) => {
+    try {
+      return JSON.parse(s);
+    } catch {
+      return null;
+    }
+  }),
   bucketPayloadSchema: {},
 }));
 
-vi.mock("@/game/store/storage", () => {
-  let _saveExists = false;
-  let _hydrationComplete = false;
-  let _persistenceEnabled = false;
-  let _cachedLoadResult: any = undefined;
-  const loadGameStateFromIDB = vi.fn();
-
-  return {
-    createIdbStorage: () => ({
-      getItem: async (_name: string) => {
-        if (_cachedLoadResult !== undefined) {
-          const cached = _cachedLoadResult;
-          _cachedLoadResult = undefined;
-          if (!cached) return null;
-          return { state: cached, version: 0 };
-        }
-        const state = await loadGameStateFromIDB();
-        if (!state) return null;
-        return { state, version: 0 };
-      },
-      setItem: async (_name: string, value: { state: any }) => {
-        if (!_persistenceEnabled) return;
-      },
-      removeItem: async (_name: string) => {},
-    }),
-    hydrationComplete: {
-      get value() {
-        return _hydrationComplete;
-      },
-      set value(v: boolean) {
-        _hydrationComplete = v;
-      },
-    },
-    saveExists: {
-      get value() {
-        return _saveExists;
-      },
-      set value(v: boolean) {
-        _saveExists = v;
-      },
-    },
-    persistenceEnabled: {
-      get value() {
-        return _persistenceEnabled;
-      },
-      set value(v: boolean) {
-        _persistenceEnabled = v;
-      },
-    },
-    _resetSaveExists: () => {
-      _saveExists = false;
-    },
-    _resetPersistenceEnabled: () => {
-      _persistenceEnabled = false;
-    },
-    saveGameStateToIDB: vi.fn().mockResolvedValue(undefined),
-    loadGameStateFromIDB,
-    createRehydrateStore: (useGameStore: any) => {
-      return async function rehydrateStore(passedStore?: any): Promise<void> {
-        const store = passedStore || useGameStore;
-        if (!store) return;
-        const state = await loadGameStateFromIDB();
-        _saveExists = !!state;
-        if (state) {
-          _cachedLoadResult = state;
-          _persistenceEnabled = true;
-          if (store.persist) {
-            await store.persist.rehydrate();
-          } else {
-            store.setState(state);
-          }
-          _hydrationComplete = true;
-        } else {
-          _hydrationComplete = true;
-        }
-      };
-    },
-  };
-});
-
+// Real storage module — the coordinator is what production uses.
 import {
-  persistenceEnabled,
-  _resetPersistenceEnabled,
+  saveCoordinator,
+  _resetSaveCoordinator,
+  createIdbStorage,
+  createRehydrateStore,
   saveExists,
   _resetSaveExists,
   hydrationComplete,
-  createIdbStorage,
-  createRehydrateStore,
-  loadGameStateFromIDB,
 } from "@/game/store/storage";
-import { clearDatabase } from "@/services/storage/indexedDbService";
+import { loadBuckets } from "@/services/storage/indexedDbService";
 
-describe("persistenceEnabled flag", () => {
+function savedPayloads(): any[] {
+  const raw = localStorage.getItem(SAVED_KEY);
+  return raw ? [JSON.parse(raw)] : [];
+}
+
+describe("saveCoordinator arming", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    _resetPersistenceEnabled();
+    localStorage.clear();
+    _resetSaveCoordinator();
     _resetSaveExists();
   });
 
-  it("is false by default", () => {
-    expect(persistenceEnabled.value).toBe(false);
+  it("is disarmed by default", () => {
+    expect(saveCoordinator.isArmed).toBe(false);
   });
 
-  it("_resetPersistenceEnabled resets to false", () => {
-    persistenceEnabled.value = true;
-    expect(persistenceEnabled.value).toBe(true);
-    _resetPersistenceEnabled();
-    expect(persistenceEnabled.value).toBe(false);
+  it("enqueue is a no-op while disarmed (no phantom saves)", async () => {
+    saveCoordinator.enqueue({ day: 1, engineRevision: 0 } as never);
+    await saveCoordinator.flush();
+    expect(localStorage.getItem(SAVED_KEY)).toBeNull();
   });
 
-  it("createIdbStorage.setItem is a no-op when persistenceEnabled === false", async () => {
-    const storage = createIdbStorage();
-    const state = { day: 1 } as any;
-    await storage.setItem("test", { state });
+  it("enqueue writes through once armed", async () => {
+    saveCoordinator.arm();
+    saveCoordinator.enqueue({ day: 7, horses: {}, npcStables: [], engineRevision: 1 } as never);
+    await saveCoordinator.flush();
+    const payloads = savedPayloads();
+    expect(payloads.length).toBe(1);
+    expect(payloads[0].meta.day).toBe(7);
   });
 
-  it("createIdbStorage.setItem writes when persistenceEnabled === true", async () => {
-    persistenceEnabled.value = true;
-    const storage = createIdbStorage();
-    const state = { day: 1, horses: {}, npcStables: [] } as any;
-    await storage.setItem("test", { state });
+  it("strictly-older revisions cannot overwrite newer commits", async () => {
+    saveCoordinator.arm();
+    saveCoordinator.enqueue({ day: 10, horses: {}, npcStables: [], engineRevision: 5 } as never);
+    // A stale snapshot at revision 3 arriving late must be dropped.
+    saveCoordinator.enqueue({ day: 5, horses: {}, npcStables: [], engineRevision: 3 } as never);
+    await saveCoordinator.flush();
+    const payloads = savedPayloads();
+    expect(payloads.length).toBe(1);
+    expect(payloads[0].meta.day).toBe(10);
   });
 
-  it("createIdbStorage.getItem works regardless of flag", async () => {
-    (loadGameStateFromIDB as any).mockResolvedValue(null);
-    const storage = createIdbStorage();
-    const result = await storage.getItem("test");
-    expect(result).toBeNull();
+  it("disarm resets revision tracking so a new game can write rev-0", async () => {
+    saveCoordinator.arm();
+    saveCoordinator.enqueue({ day: 400, horses: {}, npcStables: [], engineRevision: 99 } as never);
+    saveCoordinator.disarm();
+    saveCoordinator.arm();
+    saveCoordinator.enqueue({ day: 1, horses: {}, npcStables: [], engineRevision: 0 } as never);
+    await saveCoordinator.flush();
+    expect(localStorage.getItem(SAVED_KEY)).not.toBeNull();
+    expect(savedPayloads()[0].meta.day).toBe(1);
   });
 
-  it("createIdbStorage.removeItem works regardless of flag", async () => {
-    const storage = createIdbStorage();
-    await storage.removeItem("test");
+  it("disarm invalidates a queued write so a prior session cannot clobber the new game", async () => {
+    saveCoordinator.arm();
+    saveCoordinator.enqueue({ day: 400, horses: {}, npcStables: [], engineRevision: 99 } as never);
+    // New game starts before the queued write executes — the stale write must
+    // be dropped, not land after the new session's saves.
+    saveCoordinator.disarm();
+    saveCoordinator.arm();
+    saveCoordinator.enqueue({ day: 1, horses: {}, npcStables: [], engineRevision: 0 } as never);
+    await saveCoordinator.flush();
+    const payloads = savedPayloads();
+    expect(payloads.length).toBe(1);
+    expect(payloads[0].meta.day).toBe(1);
   });
 
-  it("createIdbStorage.getItem returns cached result when available (no second loadGameStateFromIDB call)", async () => {
-    (loadGameStateFromIDB as any).mockResolvedValue({ day: 5 } as any);
-    const storage = createIdbStorage();
-    const result = await storage.getItem("test");
-    expect(result).not.toBeNull();
-    expect((result as any).state.day).toBe(5);
-  });
-
-  it("cachedLoadResult is cleared after getItem consumes it", async () => {
-    (loadGameStateFromIDB as any).mockResolvedValue({ day: 5 } as any);
-    const storage = createIdbStorage();
-    await storage.getItem("test");
-    (loadGameStateFromIDB as any).mockClear();
-    (loadGameStateFromIDB as any).mockResolvedValue(null);
-    const result2 = await storage.getItem("test");
-    expect(result2).toBeNull();
-    expect(loadGameStateFromIDB).toHaveBeenCalled();
+  it("a failed save does not roll back committed memory state", async () => {
+    const spy = vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+      throw new Error("quota exceeded");
+    });
+    const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    saveCoordinator.arm();
+    saveCoordinator.enqueue({ day: 3, horses: {}, npcStables: [], engineRevision: 2 } as never);
+    // flush resolves — the write error is contained, state stays committed.
+    await expect(saveCoordinator.flush()).resolves.toBeUndefined();
+    spy.mockRestore();
+    errSpy.mockRestore();
   });
 });
 
-describe("rehydrateStore no-save path", () => {
+describe("createIdbStorage adapter", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    _resetPersistenceEnabled();
+    localStorage.clear();
+    _resetSaveCoordinator();
     _resetSaveExists();
-    (loadGameStateFromIDB as any).mockResolvedValue(null);
   });
 
-  it("does NOT call store.setState when loadGameStateFromIDB returns null", async () => {
+  it("setItem routes through the coordinator", async () => {
+    const storage = createIdbStorage();
+    saveCoordinator.arm();
+    await storage.setItem("test", {
+      state: { day: 9, horses: {}, npcStables: [], engineRevision: 1 } as never,
+    });
+    await saveCoordinator.flush();
+    expect(savedPayloads()[0]?.meta?.day).toBe(9);
+  });
+
+  it("getItem returns null when no save exists", async () => {
+    (loadBuckets as any).mockResolvedValue(null);
+    localStorage.clear();
+    const storage = createIdbStorage();
+    expect(await storage.getItem("test")).toBeNull();
+  });
+});
+
+describe("rehydrateStore (real coordinator)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    _resetSaveCoordinator();
+    _resetSaveExists();
+  });
+
+  it("does NOT call setState when no save exists and stays disarmed", async () => {
+    (loadBuckets as any).mockResolvedValue(null);
+    localStorage.clear();
     const mockStore = {
       persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
       setState: vi.fn(),
@@ -204,111 +178,9 @@ describe("rehydrateStore no-save path", () => {
     const rehydrate = createRehydrateStore(mockStore);
     await rehydrate(mockStore);
     expect(mockStore.setState).not.toHaveBeenCalled();
-  });
-
-  it("does NOT call store.persist.rehydrate when no save", async () => {
-    const mockStore = {
-      persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
-      setState: vi.fn(),
-    };
-    const rehydrate = createRehydrateStore(mockStore);
-    await rehydrate(mockStore);
     expect(mockStore.persist.rehydrate).not.toHaveBeenCalled();
-  });
-
-  it("sets saveExists.value = false", async () => {
-    const mockStore = {
-      persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
-      setState: vi.fn(),
-    };
-    const rehydrate = createRehydrateStore(mockStore);
-    await rehydrate(mockStore);
     expect(saveExists.value).toBe(false);
-  });
-
-  it("sets hydrationComplete.value = true", async () => {
-    const mockStore = {
-      persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
-      setState: vi.fn(),
-    };
-    const rehydrate = createRehydrateStore(mockStore);
-    await rehydrate(mockStore);
     expect(hydrationComplete.value).toBe(true);
-  });
-
-  it("persistenceEnabled.value stays false", async () => {
-    const mockStore = {
-      persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
-      setState: vi.fn(),
-    };
-    const rehydrate = createRehydrateStore(mockStore);
-    await rehydrate(mockStore);
-    expect(persistenceEnabled.value).toBe(false);
-  });
-});
-
-describe("rehydrateStore save-found path", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    _resetPersistenceEnabled();
-    _resetSaveExists();
-    (loadGameStateFromIDB as any).mockResolvedValue({ day: 1, cash: 50000 });
-  });
-
-  it("calls store.persist.rehydrate when save exists", async () => {
-    const mockStore = {
-      persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
-      setState: vi.fn(),
-    };
-    const rehydrate = createRehydrateStore(mockStore);
-    await rehydrate(mockStore);
-    expect(mockStore.persist.rehydrate).toHaveBeenCalled();
-  });
-
-  it("sets saveExists.value = true", async () => {
-    const mockStore = {
-      persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
-      setState: vi.fn(),
-    };
-    const rehydrate = createRehydrateStore(mockStore);
-    await rehydrate(mockStore);
-    expect(saveExists.value).toBe(true);
-  });
-
-  it("sets persistenceEnabled.value = true before rehydrate", async () => {
-    const callOrder: string[] = [];
-    const mockStore = {
-      persist: {
-        rehydrate: vi.fn().mockImplementation(async () => {
-          callOrder.push(`persistence=${persistenceEnabled.value}`);
-        }),
-      },
-      setState: vi.fn(),
-    };
-    const rehydrate = createRehydrateStore(mockStore);
-    await rehydrate(mockStore);
-    expect(callOrder[0]).toBe("persistence=true");
-  });
-});
-
-describe("onRehydrateStorage version mismatch", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    _resetPersistenceEnabled();
-    _resetSaveExists();
-  });
-
-  it("does NOT call createInitialState on main thread", async () => {
-    const mockStore = {
-      persist: { rehydrate: vi.fn().mockResolvedValue(undefined) },
-      setState: vi.fn(),
-    };
-    const rehydrate = createRehydrateStore(mockStore);
-    (loadGameStateFromIDB as any).mockResolvedValue(null);
-    await rehydrate(mockStore);
-  });
-
-  it("calls clearDatabase to wipe incompatible save", async () => {
-    expect(clearDatabase).toBeDefined();
+    expect(saveCoordinator.isArmed).toBe(false);
   });
 });

@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import { computePaceContext, stepRunner } from "@/core/race/engine/simulation";
 import type { Runner } from "@/core/race/engine/runnerBuilder";
 import type { CourseSpecification } from "@/data/tracks";
 import type { NarrativeGenerator } from "@/services/narrative/narrativeService";
@@ -8,11 +7,12 @@ import type { Race, RaceResult } from "@/core/race/types";
 import type { Rng } from "@/core/common/rng";
 import { DEFAULT_DT as FIXED_DT } from "@/constants/raceEngineConstants";
 import { SIMULATION_MAX_STEPS_PER_FRAME as MAX_STEPS_PER_FRAME } from "@/constants/raceSimulationConstants";
-import { SPLIT_FRACTIONS } from "@/constants/raceBroadcastConstants";
 
 import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
+import { RaceSimulationSession } from "@/core/race/engine/raceSession";
+import { toRaceRunner } from "@/core/race/raceSimulationExecutor";
 import type { RunnerFactorLedger } from "@/core/race/factorLedger";
-import type { RaceSnapshot, HorseSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
 
 /**
  * Callback invoked once per non-silent simulation step.
@@ -133,10 +133,10 @@ export function useLiveRaceSimulation({
   resolveRaceWithImpacts: (
     raceId: string,
     finishOrder: RaceResult[],
-    runners?: Array<{ horseId: string; owned?: boolean }>,
+    runners?: import("@/core/race/types").RaceRunner[],
     factorLedgers?: Record<string, RunnerFactorLedger>,
     snapshots?: RaceSnapshot[],
-  ) => void;
+  ) => void | Promise<void>;
   narrativeRef: React.MutableRefObject<NarrativeGenerator | null>;
   messageQueue: React.MutableRefObject<CommentaryLine[]>;
   rngRef: React.MutableRefObject<Rng | null>;
@@ -155,16 +155,12 @@ export function useLiveRaceSimulation({
   const [paused, setPaused] = useState(initialPaused);
 
   const simTimeRef = useRef(0);
-  const finishOrderRef = useRef<
-    { horseId: string; position: number; time: number; gate: number }[]
-  >([]);
   const speedRef = useRef(speed);
   const pausedRef = useRef(paused);
   // splitCrossings[horseId] = [t_at_25%, t_at_50%, t_at_75%, t_at_finish]
   const splitCrossingsRef = useRef<Map<string, number[]>>(new Map());
   // Live race snapshots — captured periodically for replay playback
   const snapshotsRef = useRef<RaceSnapshot[]>([]);
-  const snapshotTickCounterRef = useRef(0);
 
   // Sync refs with state
   useEffect(() => {
@@ -181,91 +177,36 @@ export function useLiveRaceSimulation({
     let raf = 0;
     let last = performance.now();
     let accumulator = 0;
-    const splitMarkers = SPLIT_FRACTIONS.map((f) => f * race.distance);
 
-    const runOneTick = (silent: boolean): boolean => {
-      let stillRunning = false;
-
-      const pace = computePaceContext(runners, race.distance);
-      const sortedField = [...runners].sort((a, b) => b.position - a.position);
-      const { rankMap, aliveRank } = buildRankMap(runners);
-
-      if (!silent) {
+    const session = new RaceSimulationSession(runners, {
+      distance: race.distance,
+      rng: rngRef.current!,
+      dt: FIXED_DT,
+      course,
+      windKph,
+      windDirectionDeg,
+      snapshotEveryTicks: 10,
+      recordPaceSnapshots: false,
+      trackSplits: true,
+      onTick: (sortedField, simTime, silent) => {
         if (onTick) {
-          onTick(sortedField, simTimeRef.current, silent);
+          onTick(sortedField, simTime, silent);
         } else if (narrativeRef.current) {
-          const newCommentary = narrativeRef.current.update(sortedField, simTimeRef.current);
+          const newCommentary = narrativeRef.current.update(sortedField, simTime);
           if (newCommentary.length > 0) {
             messageQueue.current.push(...newCommentary);
           }
         }
-      }
-
-      for (const r of runners) {
-        if (r.finishTime !== null) continue;
-        const posBefore = r.position;
-        stepRunner(
-          r,
-          FIXED_DT,
-          simTimeRef.current,
-          race.distance,
-          rngRef.current!,
-          sortedField,
-          pace,
-          course,
-          rankMap.get(r.horseId),
-          aliveRank,
-          windKph,
-          windDirectionDeg,
-          runners.length,
-        );
-        if (!splitCrossingsRef.current.has(r.horseId)) {
-          splitCrossingsRef.current.set(r.horseId, []);
-        }
-        updateSplitCrossings(
-          r,
-          posBefore,
-          splitMarkers,
-          simTimeRef.current,
-          FIXED_DT,
-          splitCrossingsRef.current.get(r.horseId)!,
-        );
-        if (r.finishTime !== null) {
-          recordFinish(r, finishOrderRef.current);
-        } else {
-          stillRunning = true;
-        }
-      }
-      simTimeRef.current += FIXED_DT;
-
-      // Capture a snapshot every ~10 ticks for replay playback
-      snapshotTickCounterRef.current++;
-      if (snapshotTickCounterRef.current >= 10) {
-        snapshotTickCounterRef.current = 0;
-        const horseSnapshots: HorseSnapshot[] = runners.map((r) => ({
-          horseId: r.horseId,
-          position: r.position,
-          lane: r.lane,
-          velocity: r.velocity,
-        }));
-        snapshotsRef.current.push({
-          t: simTimeRef.current,
-          horses: horseSnapshots,
-        });
-      }
-
-      return stillRunning;
-    };
+      },
+    });
+    simTimeRef.current = session.simTime;
+    splitCrossingsRef.current = session.splitCrossings;
+    snapshotsRef.current = session.snapshots;
 
     // Fast-forward to resumeAtSimTime (silent: no commentary spam on replay).
-    if (resumeAtSimTime > 0 && simTimeRef.current < resumeAtSimTime) {
-      const targetSteps = Math.floor(resumeAtSimTime / FIXED_DT);
-      let safety = 0;
-      while (simTimeRef.current + FIXED_DT * 0.5 < resumeAtSimTime && safety < targetSteps + 10) {
-        const still = runOneTick(true);
-        safety++;
-        if (!still) break;
-      }
+    if (resumeAtSimTime > 0 && session.simTime < resumeAtSimTime) {
+      session.fastForwardTo(resumeAtSimTime);
+      simTimeRef.current = session.simTime;
     }
 
     const loop = (now: number) => {
@@ -276,14 +217,15 @@ export function useLiveRaceSimulation({
         accumulator += real * speedRef.current;
       }
 
-      let stillRunning = runners.some((r) => r.finishTime === null);
+      let stillRunning = !session.finished;
       let steps = 0;
 
       while (accumulator >= FIXED_DT && stillRunning && steps < MAX_STEPS_PER_FRAME) {
         accumulator -= FIXED_DT;
         steps++;
-        stillRunning = runOneTick(false);
+        stillRunning = session.step(false);
       }
+      simTimeRef.current = session.simTime;
 
       setTick((t) => t + 1);
 
@@ -291,20 +233,15 @@ export function useLiveRaceSimulation({
         raf = requestAnimationFrame(loop);
       } else {
         setFinished(true);
-        const factorLedgers: Record<string, RunnerFactorLedger> = {};
-        for (const r of runners) {
-          if (r.factorLedger) {
-            const finalized = r.factorLedger.finalize();
-            r.finalizedLedger = finalized;
-            factorLedgers[r.horseId] = finalized;
-          }
-        }
+        const outcome = session.finalize();
         resolveRaceWithImpacts(
           race.id,
-          finishOrderRef.current,
-          undefined,
-          factorLedgers,
-          snapshotsRef.current,
+          outcome.finishOrder,
+          // Pass the actual simulated field so neither the resolve commit nor
+          // the pipeline re-runs a duplicate headless simulation.
+          session.runners.map(toRaceRunner),
+          outcome.factorLedgers,
+          outcome.snapshots,
         );
       }
     };

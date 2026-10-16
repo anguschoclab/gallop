@@ -38,10 +38,10 @@ export type CoreSlice = CoreState & {
   resolveRaceWithImpacts: (
     raceId: string,
     result: { horseId: string; position: number; time: number }[],
-    runners?: Array<{ horseId: string; owned?: boolean }>,
+    runners?: import("@/core/race/types").RaceRunner[],
     factorLedgers?: Record<string, import("@/core/race/factorLedger").RunnerFactorLedger>,
     snapshots?: import("@/core/race/engine/raceSnapshotTypes").RaceSnapshot[],
-  ) => void;
+  ) => Promise<void>;
   submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
   purchaseInsurance: (
@@ -60,6 +60,8 @@ export type CoreSlice = CoreState & {
   advanceWeek: (headless?: boolean) => Promise<void>;
   advanceMonth: (headless?: boolean) => Promise<void>;
   advanceYear: (headless?: boolean) => Promise<void>;
+  /** Cooperatively cancel an in-flight advance at the next day checkpoint. */
+  cancelAdvance: () => void;
   setDay: (day: number) => void;
   setCash: (cash: number) => void;
   setHorses: (horses: Record<string, Horse>) => void;

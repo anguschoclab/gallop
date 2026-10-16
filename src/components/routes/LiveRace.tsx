@@ -99,7 +99,7 @@ function LiveRace() {
     (
       raceId: string,
       result: { horseId: string; position: number; time: number }[],
-      runners?: Array<{ horseId: string; owned?: boolean }>,
+      runners?: import("@/core/race/types").RaceRunner[],
       factorLedgers?: Record<string, import("@/core/race/factorLedger").RunnerFactorLedger>,
       snapshots?: import("@/core/race/engine/raceSnapshotTypes").RaceSnapshot[],
     ) => {

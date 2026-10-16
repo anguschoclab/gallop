@@ -20,6 +20,7 @@ vi.mock("@/game/store/initialization", () => ({
 vi.mock("@/game/store/storage", () => {
   let _saveExistsValue = false;
   let _persistenceEnabledValue = false;
+  const saveMock = vi.fn().mockResolvedValue(undefined);
   return {
     createIdbStorage: () => ({
       getItem: vi.fn().mockResolvedValue(null),
@@ -35,21 +36,29 @@ vi.mock("@/game/store/storage", () => {
         _saveExistsValue = v;
       },
     },
-    persistenceEnabled: {
-      get value() {
+    saveCoordinator: {
+      get isArmed() {
         return _persistenceEnabledValue;
       },
-      set value(v: boolean) {
-        _persistenceEnabledValue = v;
+      lastWrittenRevision: -1,
+      arm() {
+        _persistenceEnabledValue = true;
       },
+      disarm() {
+        _persistenceEnabledValue = false;
+      },
+      // The coordinator's ordered write delegates to saveGameStateToIDB —
+      // mirroring the real implementation so save-path assertions hold.
+      enqueue: vi.fn((s: unknown) => saveMock(s) as Promise<void>),
+      flush: vi.fn().mockResolvedValue(undefined),
     },
     createRehydrateStore: vi.fn(() => vi.fn().mockResolvedValue(undefined)),
-    saveGameStateToIDB: vi.fn().mockResolvedValue(undefined),
+    saveGameStateToIDB: saveMock,
     loadGameStateFromIDB: vi.fn().mockResolvedValue(null),
     _resetSaveExists: () => {
       _saveExistsValue = false;
     },
-    _resetPersistenceEnabled: () => {
+    _resetSaveCoordinator: () => {
       _persistenceEnabledValue = false;
     },
   };

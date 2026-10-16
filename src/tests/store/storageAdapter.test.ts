@@ -53,9 +53,9 @@ import {
   createRehydrateStore,
   saveExists,
   hydrationComplete,
-  persistenceEnabled,
+  saveCoordinator,
   _resetSaveExists,
-  _resetPersistenceEnabled,
+  _resetSaveCoordinator,
 } from "@/game/store/storage";
 
 function makeMockHorse(id: string, owned: boolean, stableId?: string): any {
@@ -183,7 +183,7 @@ describe("store/storage.ts", () => {
     mockLoadBuckets.mockResolvedValue(null);
     mockClearDatabase.mockResolvedValue(undefined);
     _resetSaveExists();
-    _resetPersistenceEnabled();
+    _resetSaveCoordinator();
     // Clear localStorage
     if (typeof localStorage !== "undefined") {
       localStorage.clear();
@@ -192,7 +192,7 @@ describe("store/storage.ts", () => {
 
   afterEach(() => {
     _resetSaveExists();
-    _resetPersistenceEnabled();
+    _resetSaveCoordinator();
     vi.restoreAllMocks();
   });
 
@@ -391,26 +391,28 @@ describe("store/storage.ts", () => {
     });
 
     it("setItem is a no-op when persistence disabled", async () => {
-      persistenceEnabled.value = false;
+      saveCoordinator.disarm();
       const storage = createIdbStorage();
       await storage.setItem("test", { state: makeMockGameState() });
       expect(mockSaveBuckets).not.toHaveBeenCalled();
     });
 
     it("setItem saves when persistence enabled", async () => {
-      persistenceEnabled.value = true;
+      saveCoordinator.arm();
       const storage = createIdbStorage();
       const state = makeMockGameState();
       await storage.setItem("test", { state });
+      await saveCoordinator.flush();
       expect(mockSaveBuckets).toHaveBeenCalledTimes(1);
     });
 
     it("setItem catches and logs errors", async () => {
-      persistenceEnabled.value = true;
+      saveCoordinator.arm();
       mockSaveBuckets.mockRejectedValue(new Error("IDB write failed"));
       const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
       const storage = createIdbStorage();
       await storage.setItem("test", { state: makeMockGameState() });
+      await saveCoordinator.flush();
       expect(consoleErrorSpy).toHaveBeenCalledWith(
         "Failed to save game state to IndexedDB:",
         expect.any(Error),
@@ -462,7 +464,7 @@ describe("store/storage.ts", () => {
       expect(saveExists.value).toBe(true);
       expect(hydrationComplete.value).toBe(true);
       expect(mockStore.persist.rehydrate).toHaveBeenCalledTimes(1);
-      expect(persistenceEnabled.value).toBe(true);
+      expect(saveCoordinator.isArmed).toBe(true);
     });
 
     it("store without persist middleware falls back to setState", async () => {

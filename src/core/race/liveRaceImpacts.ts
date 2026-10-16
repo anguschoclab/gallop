@@ -5,10 +5,12 @@
  * speed figures), prize money for every stable, prestige and syndicate stakes
  * land right away instead of waiting for the next day advance. This module
  * marks which impacts inside a race's impact batch are safe to apply live.
- * The day-advance race resolution phase skips these same impacts for races
- * flagged `livePlayerImpactsApplied` so nothing is double-counted.
+ * The day-advance race resolution phase skips these same impacts when the
+ * race_resolution intent carries `liveImpactsApplied`, so nothing is
+ * double-counted.
  *
- * Related files: ../../game/store/slices/raceEntryActions.ts (applies live),
+ * Related files: ./liveResolution.ts (engine-side live commit),
+ * ../../game/store/slices/raceEntryActions.ts (submits the command),
  * ../time/phases/raceResolution.ts (skips on day advance)
  */
 

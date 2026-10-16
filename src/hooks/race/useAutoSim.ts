@@ -46,7 +46,7 @@ export function useAutoSim() {
       await advanceMultipleDays(batchSize, headless);
       const afterDay = useGame.getState().day;
 
-      if (useGame.getState().pendingPlayerRaceId) {
+      if (useGame.getState().execution?.interruptRaceId) {
         setRunning(false);
         setLog((l) => [
           `Paused — player race detected on ${gameCalendarDate(afterDay + 1)}.`,

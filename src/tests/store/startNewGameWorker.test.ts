@@ -21,6 +21,7 @@ vi.mock("@/services/storage/indexedDbService", () => ({
 vi.mock("@/game/store/storage", () => {
   let _saveExists = false;
   let _persistenceEnabled = false;
+  const saveMock = vi.fn().mockResolvedValue(undefined);
   return {
     createIdbStorage: () => ({
       getItem: vi.fn().mockResolvedValue(null),
@@ -36,22 +37,30 @@ vi.mock("@/game/store/storage", () => {
         _saveExists = v;
       },
     },
-    persistenceEnabled: {
-      get value() {
+    saveCoordinator: {
+      get isArmed() {
         return _persistenceEnabled;
       },
-      set value(v: boolean) {
-        _persistenceEnabled = v;
+      lastWrittenRevision: -1,
+      arm() {
+        _persistenceEnabled = true;
       },
+      disarm() {
+        _persistenceEnabled = false;
+      },
+      // The coordinator's ordered write delegates to saveGameStateToIDB —
+      // mirroring the real implementation so save-path assertions hold.
+      enqueue: vi.fn((s: unknown) => saveMock(s) as Promise<void>),
+      flush: vi.fn().mockResolvedValue(undefined),
     },
     _resetSaveExists: () => {
       _saveExists = false;
     },
-    _resetPersistenceEnabled: () => {
+    _resetSaveCoordinator: () => {
       _persistenceEnabled = false;
     },
     createRehydrateStore: vi.fn(() => vi.fn().mockResolvedValue(undefined)),
-    saveGameStateToIDB: vi.fn().mockResolvedValue(undefined),
+    saveGameStateToIDB: saveMock,
     loadGameStateFromIDB: vi.fn().mockResolvedValue(null),
   };
 });
@@ -85,8 +94,8 @@ import {
   saveGameStateToIDB,
   saveExists,
   _resetSaveExists,
-  persistenceEnabled,
-  _resetPersistenceEnabled,
+  saveCoordinator,
+  _resetSaveCoordinator,
 } from "@/game/store/storage";
 import { clearDatabase } from "@/services/storage/indexedDbService";
 import type { NewGameOptions } from "@/game/store/state";
@@ -130,7 +139,7 @@ describe("startNewGame uses initialization worker", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     _resetSaveExists();
-    _resetPersistenceEnabled();
+    _resetSaveCoordinator();
     (saveGameStateToIDB as any).mockResolvedValue(undefined);
     (clearDatabase as any).mockResolvedValue(undefined);
     mockWorkerCreateInitialState.mockResolvedValue({ state: mockWorkerState });
@@ -144,15 +153,15 @@ describe("startNewGame uses initialization worker", () => {
     expect(mockWorkerCreateInitialState).toHaveBeenCalled();
   });
 
-  it("sets persistenceEnabled.value = true before saving", async () => {
+  it("arms the save coordinator before saving", async () => {
     const callOrder: string[] = [];
     (saveGameStateToIDB as any).mockImplementation(async () => {
-      callOrder.push(`persistence=${persistenceEnabled.value}`);
+      callOrder.push(`armed=${saveCoordinator.isArmed}`);
     });
 
     await useGame.getState().startNewGame(mockOptions);
 
-    expect(callOrder[0]).toBe("persistence=true");
+    expect(callOrder[0]).toBe("armed=true");
   });
 
   it("calls saveGameStateToIDB after worker returns state", async () => {

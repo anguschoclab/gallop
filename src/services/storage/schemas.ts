@@ -87,7 +87,6 @@ export const gameStateSchema = z
     reputation: z.unknown().optional(),
     transports: z.array(z.unknown()).optional(),
     pendingIntents: z.array(z.unknown()).optional(),
-    pendingPlayerRaceId: z.string().optional(),
     trackRecords: z.record(z.string(), z.unknown()).optional(),
     horseLeaderboards: z.record(z.string(), z.unknown()).optional(),
     founders: z.record(z.string(), z.unknown()).optional(),

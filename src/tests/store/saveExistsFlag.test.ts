@@ -46,18 +46,24 @@ vi.mock("@/game/store/storage", () => {
         _saveExists = v;
       },
     },
-    persistenceEnabled: {
-      get value() {
+    saveCoordinator: {
+      get isArmed() {
         return _persistenceEnabled;
       },
-      set value(v: boolean) {
-        _persistenceEnabled = v;
+      lastWrittenRevision: -1,
+      arm() {
+        _persistenceEnabled = true;
       },
+      disarm() {
+        _persistenceEnabled = false;
+      },
+      enqueue: vi.fn(),
+      flush: vi.fn().mockResolvedValue(undefined),
     },
     _resetSaveExists: () => {
       _saveExists = false;
     },
-    _resetPersistenceEnabled: () => {
+    _resetSaveCoordinator: () => {
       _persistenceEnabled = false;
     },
     saveGameStateToIDB: vi.fn().mockResolvedValue(undefined),
@@ -69,7 +75,8 @@ vi.mock("@/game/store/storage", () => {
         const state = await loadGameStateFromIDB();
         _saveExists = !!state;
         if (state) {
-          _persistenceEnabled = true;
+          _persistenceEnabled = true; // arms the coordinator stub
+
           if (store.persist) {
             await store.persist.rehydrate();
           } else {

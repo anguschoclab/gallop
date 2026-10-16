@@ -50,7 +50,7 @@ import {
   saveGameStateToIDB,
   loadGameStateFromIDB,
   _resetSaveExists,
-  _resetPersistenceEnabled,
+  _resetSaveCoordinator,
 } from "@/game/store/storage";
 import { PERSISTED_KEYS, DEDICATED_BUCKET_KEYS } from "@/game/store/persistedKeys";
 
@@ -179,12 +179,12 @@ describe("storage META_KEYS — parity with PERSISTED_KEYS", () => {
     mockLoadBuckets.mockResolvedValue(null);
     mockClearDatabase.mockResolvedValue(undefined);
     _resetSaveExists();
-    _resetPersistenceEnabled();
+    _resetSaveCoordinator();
   });
 
   afterEach(() => {
     _resetSaveExists();
-    _resetPersistenceEnabled();
+    _resetSaveCoordinator();
     vi.restoreAllMocks();
   });
 
@@ -277,7 +277,7 @@ describe("storage META_KEYS — market fields persisted", () => {
     mockLoadBuckets.mockResolvedValue(null);
     mockClearDatabase.mockResolvedValue(undefined);
     _resetSaveExists();
-    _resetPersistenceEnabled();
+    _resetSaveCoordinator();
     if (typeof localStorage !== "undefined") {
       localStorage.clear();
     }
@@ -285,7 +285,7 @@ describe("storage META_KEYS — market fields persisted", () => {
 
   afterEach(() => {
     _resetSaveExists();
-    _resetPersistenceEnabled();
+    _resetSaveCoordinator();
     vi.restoreAllMocks();
   });
 

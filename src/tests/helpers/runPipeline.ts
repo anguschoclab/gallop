@@ -1,8 +1,9 @@
-import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
-import { STAGE_PHASES } from "@/workers/pipelineStages";
-import { createRng, hashStr } from "@/core/common/rng";
+import { SimulationExecutor } from "@/core/time/executor";
+import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
+
+const executor = new SimulationExecutor(GAME_PHASE_DESCRIPTORS);
 
 export interface PerDayResult {
   day: number;
@@ -12,35 +13,18 @@ export interface PerDayResult {
   state: GameState;
 }
 
+/**
+ * Run the production pipeline for a single day via SimulationExecutor — the
+ * same code path the worker and store use, so tests exercise real behavior.
+ * @param state - game state at the start of the day
+ * @param newDay - the day number being simulated
+ */
 export function runPipelineForDay(
   state: GameState,
   newDay: number,
 ): { state: GameState; logs: { day: number; text: string }[]; impacts: AnyImpact[] } {
-  const pipelineContext: PipelineContext = {
-    previousDay: state.day,
-    newDay,
-    state: { ...state },
-    logs: [],
-    dailyRng: createRng(hashStr("daily_" + newDay)),
-    intents: state.pendingIntents || [],
-    impacts: [],
-    impactLog: [],
-    horseMap: new Map(Object.values(state.horses).map((h) => [h.id, h])),
-    raceMap: new Map(Object.values(state.races).map((r) => [r.id, r])),
-    stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
-    jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
-  };
-
-  let currentContext = pipelineContext;
-  for (const stagePhases of STAGE_PHASES) {
-    currentContext = executePipeline(stagePhases, currentContext);
-  }
-
-  return {
-    state: { ...currentContext.state, day: newDay },
-    logs: currentContext.logs,
-    impacts: currentContext.impacts,
-  };
+  const { state: dayState, logs, impacts } = executor.runDayDetailed(state, newDay);
+  return { state: dayState, logs, impacts };
 }
 
 export function runPipelineForDays(

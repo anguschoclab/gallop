@@ -19,7 +19,7 @@ import {
 import { useNavigate } from "@tanstack/react-router";
 import { gameCalendarDate } from "@/services/race/raceFacade";
 import { buildRaceField, rngForRace } from "@/services/race/raceFacade";
-import { runRaceToCompletion } from "@/services/race/raceFacade";
+import { runRaceToCompletion, toRaceRunner } from "@/services/race/raceFacade";
 import { getCourseForRace } from "@/data/tracks";
 import { formatCurrency } from "@/services/race/raceFacade";
 import { useMemo, useState } from "react";
@@ -28,7 +28,7 @@ import { AGGRESSIVENESS_DEFAULT } from "@/constants";
 import { DEFAULT_DT, defaultMaxTime } from "@/constants/raceEngineConstants";
 
 export function PlayerRacePrompt() {
-  const pendingRaceId = useGame((s) => s.pendingPlayerRaceId);
+  const pendingRaceId = useGame((s) => s.execution?.interruptRaceId);
   const races = useGameWithShallow((s) => s.races ?? {});
   const horses = useGameWithShallow((s) => s.horses ?? {});
   const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
@@ -56,11 +56,17 @@ export function PlayerRacePrompt() {
   if (!race) return null;
 
   function clearPending() {
-    useGame.setState({ pendingPlayerRaceId: undefined });
+    const ex = useGame.getState().execution;
+    if (ex) useGame.setState({ execution: { ...ex, interruptRaceId: undefined } });
   }
 
   function stopHere() {
-    useGame.setState({ pendingPlayerRaceId: undefined, pendingAdvanceRemaining: undefined });
+    const ex = useGame.getState().execution;
+    useGame.setState({
+      execution: ex
+        ? { ...ex, status: "idle", interruptRaceId: undefined, remainingDays: undefined }
+        : ex,
+    });
   }
 
   function goToRace() {
@@ -116,7 +122,7 @@ export function PlayerRacePrompt() {
     resolveRaceWithImpacts(
       race!.id,
       result.result,
-      undefined,
+      runners.map(toRaceRunner),
       result.factorLedgers,
       result.snapshots,
     );

@@ -32,7 +32,7 @@ function makeInstructions(
 describe("Jockey Instructions Flow Integration", () => {
   beforeEach(() => {
     useGame.setState({
-      pendingPlayerRaceId: undefined,
+      execution: { status: "idle", daysCompleted: 0, totalDays: 0 },
       pendingIntents: [],
       races: {},
       horses: {},

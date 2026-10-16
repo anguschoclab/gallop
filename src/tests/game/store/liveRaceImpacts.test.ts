@@ -26,11 +26,19 @@ vi.mock("@/game/store/storage", () => ({
   }),
   hydrationComplete: { value: true },
   saveExists: { value: false },
-  persistenceEnabled: { value: false },
+  saveCoordinator: {
+    isArmed: false,
+    lastWrittenRevision: -1,
+    arm: vi.fn(),
+    disarm: vi.fn(),
+    enqueue: vi.fn(),
+    flush: vi.fn().mockResolvedValue(undefined),
+  },
   createRehydrateStore: () => vi.fn().mockResolvedValue(undefined),
 }));
 
 import { useGame } from "@/game/store";
+import { _setEngineClientForTests } from "@/game/store/engineClient";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { runPipelineForDay } from "@/tests/helpers/runPipeline";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
@@ -58,6 +66,7 @@ function makeRace(id: string, day: number): Race {
 
 describe("Live race finish applies player impacts immediately", () => {
   beforeEach(() => {
+    _setEngineClientForTests(null);
     const playerHorse = createTestHorse({ id: asHorseId("h1"), ownership: makePlayerOwned() });
     const npcHorse = createTestHorse({
       id: asHorseId("h2"),
@@ -74,6 +83,8 @@ describe("Live race finish applies player impacts immediately", () => {
       transactions: [],
       pendingIntents: [],
       runEnded: false,
+      engineRevision: 0,
+      engineGeneration: 1,
       reputation: {
         score: 0,
         tier: "unknown",
@@ -85,8 +96,8 @@ describe("Live race finish applies player impacts immediately", () => {
     });
   });
 
-  it("updates cash and reputation the moment the race finishes", () => {
-    useGame.getState().resolveRaceWithImpacts("r1", [
+  it("updates cash and reputation the moment the race finishes", async () => {
+    await useGame.getState().resolveRaceWithImpacts("r1", [
       { horseId: "h1", position: 1, time: 96 },
       { horseId: "h2", position: 2, time: 97 },
     ]);
@@ -95,12 +106,15 @@ describe("Live race finish applies player impacts immediately", () => {
     expect(s.cash).toBeGreaterThan(500);
     expect(s.reputation?.score).toBeGreaterThan(0);
     expect(s.reputation?.totalWins).toBe(1);
-    expect(s.races["r1"].livePlayerImpactsApplied).toBe(true);
+    const intent = (s.pendingIntents ?? []).find(
+      (i) => i.type === "race_resolution" && (i as { raceId?: string }).raceId === "r1",
+    ) as { liveImpactsApplied?: boolean } | undefined;
+    expect(intent?.liveImpactsApplied).toBe(true);
     expect(s.transactions.filter((t) => t.subcategory === "prize_money").length).toBe(1);
   });
 
-  it("day advance does not double-apply prize money or prestige", () => {
-    useGame.getState().resolveRaceWithImpacts("r1", [
+  it("day advance does not double-apply prize money or prestige", async () => {
+    await useGame.getState().resolveRaceWithImpacts("r1", [
       { horseId: "h1", position: 1, time: 96 },
       { horseId: "h2", position: 2, time: 97 },
     ]);
@@ -123,7 +137,8 @@ describe("Live race finish applies player impacts immediately", () => {
 });
 
 describe("Live race finish updates every stable and horse", () => {
-  it("records race history for both runners immediately, and only once after day advance", () => {
+  beforeEach(() => _setEngineClientForTests(null));
+  it("records race history for both runners immediately, and only once after day advance", async () => {
     const playerHorse = createTestHorse({ id: asHorseId("h1"), ownership: makePlayerOwned() });
     const npcHorse = createTestHorse({
       id: asHorseId("h2"),
@@ -140,8 +155,10 @@ describe("Live race finish updates every stable and horse", () => {
       transactions: [],
       pendingIntents: [],
       runEnded: false,
+      engineRevision: 0,
+      engineGeneration: 1,
     });
-    useGame.getState().resolveRaceWithImpacts("r1", [
+    await useGame.getState().resolveRaceWithImpacts("r1", [
       { horseId: "h1", position: 2, time: 97 },
       { horseId: "h2", position: 1, time: 96 },
     ]);
@@ -157,7 +174,8 @@ describe("Live race finish updates every stable and horse", () => {
 });
 
 describe("Strategy Journal outcome fill", () => {
-  it("records result, prize money and cash the moment the race finishes", () => {
+  beforeEach(() => _setEngineClientForTests(null));
+  it("records result, prize money and cash the moment the race finishes", async () => {
     const playerHorse = createTestHorse({ id: asHorseId("h1"), ownership: makePlayerOwned() });
     const npcHorse = createTestHorse({
       id: asHorseId("h2"),
@@ -174,6 +192,8 @@ describe("Strategy Journal outcome fill", () => {
       transactions: [],
       pendingIntents: [],
       runEnded: false,
+      engineRevision: 0,
+      engineGeneration: 1,
       strategyJournal: [
         {
           id: "j1",
@@ -186,7 +206,7 @@ describe("Strategy Journal outcome fill", () => {
         },
       ],
     });
-    useGame.getState().resolveRaceWithImpacts("r1", [
+    await useGame.getState().resolveRaceWithImpacts("r1", [
       { horseId: "h1", position: 1, time: 96 },
       { horseId: "h2", position: 2, time: 97 },
     ]);

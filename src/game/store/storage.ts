@@ -58,12 +58,7 @@ export function createIdbStorage() {
       return { state, version: 0 };
     },
     setItem: async (_name: string, value: { state: GameState }) => {
-      if (!persistenceEnabled.value) return;
-      try {
-        await saveGameStateToIDB(value.state);
-      } catch (error) {
-        console.error("Failed to save game state to IndexedDB:", error);
-      }
+      saveCoordinator.enqueue(value.state);
     },
     removeItem: async (_name: string): Promise<void> => {
       await clearDatabase();
@@ -203,18 +198,83 @@ export function _resetSaveExists(): void {
   _saveExists = false;
 }
 
-let _persistenceEnabled = false;
-export const persistenceEnabled = {
-  get value() {
-    return _persistenceEnabled;
+/**
+ * Revision-keyed persistence coordinator.
+ *
+ * Replaces the old mutable persistence-suppression flag. Writes are serialized
+ * through a single chain in commit order, and a write tagged with a revision
+ * at-or-below the last written revision is dropped — so a late or duplicated
+ * save can never overwrite newer state, and autosave cannot regress
+ * committed checkpoints. The coordinator is `armed` only after hydration or
+ * an explicit `startNewGame` save, so no phantom writes land before the game
+ * exists.
+ */
+let _armed = false;
+let _lastWrittenRevision = -1;
+let _writeChain: Promise<void> = Promise.resolve();
+// Persistence session token. Writes capture the session at enqueue time; a
+// disarm (new game / incompatible-save wipe) invalidates queued and in-flight
+// writes so a previous session's save can never land after the new session's.
+let _session = 0;
+
+export const saveCoordinator = {
+  get isArmed() {
+    return _armed;
   },
-  set value(v: boolean) {
-    _persistenceEnabled = v;
+  get lastWrittenRevision() {
+    return _lastWrittenRevision;
+  },
+  arm(): void {
+    _armed = true;
+  },
+  disarm(): void {
+    _armed = false;
+    _session += 1;
+    // New persistence session — revision tracking restarts so a rev-0 state
+    // from a fresh game is not suppressed by a previous session's high-water mark.
+    _lastWrittenRevision = -1;
+  },
+  /**
+   * Enqueue a state snapshot for persistence. The write is chained after any
+   * in-flight write so IDB operations never interleave or reorder.
+   *
+   * Returns a promise for THIS write — it rejects if the write fails so
+   * callers that must guarantee persistence (e.g. startNewGame) can surface
+   * the error. The shared chain still absorbs failures so one bad write
+   * never stalls later saves.
+   * @param state
+   */
+  enqueue(state: GameState): Promise<void> {
+    if (!_armed) return Promise.resolve();
+    const revision = (state as GameState & { engineRevision?: number }).engineRevision ?? 0;
+    // A strictly-older revision means this snapshot was captured before the
+    // last committed checkpoint — drop it so late writes can't regress state.
+    // Equal revisions still write (non-advance mutations share a revision).
+    if (revision < _lastWrittenRevision) return Promise.resolve();
+    _lastWrittenRevision = revision;
+    const session = _session;
+    const write = _writeChain.then(() => {
+      // Session invalidation: a disarm between enqueue and write means this
+      // snapshot belongs to a wiped/superseded session — drop it.
+      if (session !== _session) return;
+      return saveGameStateToIDB(state);
+    });
+    _writeChain = write.catch((error) => {
+      console.error("Failed to save game state to IndexedDB:", error);
+    });
+    return write;
+  },
+  /** Await all queued writes (tests, explicit flush). */
+  async flush(): Promise<void> {
+    await _writeChain;
   },
 };
 
-export function _resetPersistenceEnabled(): void {
-  _persistenceEnabled = false;
+export function _resetSaveCoordinator(): void {
+  _armed = false;
+  _lastWrittenRevision = -1;
+  _writeChain = Promise.resolve();
+  _session += 1;
 }
 
 /**
@@ -244,8 +304,8 @@ export function createRehydrateStore(useGameStore: AnyStore | undefined) {
     if (state) {
       // Cache the result so getItem doesn't re-read from IndexedDB
       cachedLoadResult = state;
-      // Enable persistence before rehydrate so persist middleware can write
-      persistenceEnabled.value = true;
+      // Arm persistence before rehydrate so persist middleware can write
+      saveCoordinator.arm();
       // Use the persist middleware's built-in rehydrate
       // This will call getItem from our custom storage
       if (store.persist) {

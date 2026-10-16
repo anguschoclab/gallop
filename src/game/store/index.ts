@@ -46,7 +46,7 @@ import {
   createIdbStorage,
   hydrationComplete,
   saveExists,
-  persistenceEnabled,
+  saveCoordinator,
   createRehydrateStore,
 } from "./storage";
 import { createInitialState } from "./initialization";
@@ -55,7 +55,7 @@ import { PERSISTED_KEYS } from "./persistedKeys";
 import { shallow } from "zustand/shallow";
 import { useShallow } from "zustand/react/shallow";
 import { wrap, type Remote } from "comlink";
-import type { EngineWorkerApi } from "@/workers/engine.worker";
+import { initEngineClient, resetEngineClient, getEngineClient } from "./engineClient";
 import type { InitializationWorkerApi } from "@/workers/initialization.worker";
 import { clearDatabase } from "@/services/storage/indexedDbService";
 import type { StoreType, ActionResult } from "./types";
@@ -73,7 +73,7 @@ export type { StoreType, GameStateCreator } from "./types";
  * resets to defaults, keeping only fields that are always safe to carry over
  * (playerNominations, syndicateInvestors).
  */
-export const STORE_STATE_VERSION = 8;
+export const STORE_STATE_VERSION = 9;
 
 // PERSISTED_KEYS lives in ./persistedKeys (single source of truth shared
 // with storage.ts so partialize and the IDB meta bucket cannot drift).
@@ -81,40 +81,15 @@ export const STORE_STATE_VERSION = 8;
 /**
  * Worker instances
  */
-let engineWorker: Remote<EngineWorkerApi> | null = null;
 let initializationWorker: Remote<InitializationWorkerApi> | null = null;
-let engineWorkerInitFailed = false;
 let initializationWorkerInitFailed = false;
 
 /**
- * Initialize engine worker.
- *
- * Creates and wraps the engine worker for race simulation and other computations.
- * Only initializes in browser context where Worker API is available.
- *
- * @returns Promise that resolves when worker is initialized
+ * Initialize the engine (worker-backed if the Worker API is available,
+ * in-process otherwise). Kept under the historical name for call sites.
  */
 export async function initEngineWorker(): Promise<void> {
-  if (engineWorker) return;
-
-  // Only initialize workers in browser context where Worker API is available
-  if (typeof Worker === "undefined") {
-    console.warn("Worker API not available, skipping engine worker initialization");
-    return;
-  }
-
-  // Reset failure flag when attempting a new initialization
-  engineWorkerInitFailed = false;
-
-  const worker = new Worker(new URL("../../workers/engine.worker.ts", import.meta.url), {
-    type: "module",
-  });
-  worker.addEventListener("error", (e) => {
-    console.error("Engine worker failed to load:", e.message, e.filename, e.lineno);
-    engineWorker = null;
-    engineWorkerInitFailed = true;
-  });
-  engineWorker = wrap<EngineWorkerApi>(worker);
+  await initEngineClient();
 }
 
 /**
@@ -149,19 +124,10 @@ export async function initInitializationWorker(): Promise<void> {
 }
 
 /**
- * Get engine worker instance.
- *
- * Returns the initialized engine worker. Throws error if not initialized.
- *
- * @returns Engine worker remote instance
- * @throws Error if engine worker not initialized
+ * Get the engine client singleton. Creates an in-process engine lazily if
+ * the worker has not been initialized — callers never see a null engine.
  */
-export function getEngineWorker(): Remote<EngineWorkerApi> {
-  if (!engineWorker) {
-    throw new Error("Engine worker not initialized. Call initEngineWorker() first.");
-  }
-  return engineWorker;
-}
+export { getEngineClient, resetEngineClient };
 
 /**
  * Get initialization worker instance.
@@ -329,7 +295,9 @@ export const useGame = create<StoreType>()(
         options: NewGameOptions,
         progressCallback?: (stage: number, total: number, name: string) => void,
       ) => {
-        // Initialize workers if not already initialized
+        // Reset the engine authority and start a fresh client so revisions
+        // restart cleanly for the new game generation.
+        resetEngineClient();
         await initEngineWorker();
         await initInitializationWorker();
 
@@ -353,22 +321,28 @@ export const useGame = create<StoreType>()(
           console.warn("Falling back to main-thread state initialization");
           newState = createInitialState(options, progressCallback);
         }
-        set({ ...newState } as Partial<StoreType>);
+        set({
+          ...(newState as Partial<StoreType>),
+          // New game = new generation + revision 0; in-flight results from a
+          // previous game are stale and must be dropped by the CAS guard.
+          engineRevision: 0,
+          engineGeneration: (get().engineGeneration ?? 0) + 1,
+        });
 
-        // Enable persistence before saving
-        persistenceEnabled.value = true;
+        // Arm a fresh persistence session (resets revision tracking) before saving
+        saveCoordinator.disarm();
+        saveCoordinator.arm();
 
         // Force an immediate, awaited save so the state is on disk before navigation.
-        // The persist middleware's setItem is async and not awaited by set(),
-        // so we call saveGameState directly to guarantee persistence.
+        // Route through the coordinator chain: prior in-flight writes land
+        // strictly before this snapshot, so a stale save can't clobber the
+        // fresh game.
         const storeState = get();
         const partial = {} as GameState;
         PERSISTED_KEYS.forEach((key) => {
           (partial as unknown as Record<string, unknown>)[key] = storeState[key];
         });
-        // Use the new IDB-based save path
-        const { saveGameStateToIDB } = await import("./storage");
-        await saveGameStateToIDB(partial);
+        await saveCoordinator.enqueue(partial);
         saveExists.value = true;
       },
     }),
@@ -382,11 +356,11 @@ export const useGame = create<StoreType>()(
         }
 
         // Version mismatch: stored data was written by an older/incompatible schema.
-        // No backward compatibility for v3 — wipe the save and reset.
+        // No backward compatibility — wipe the save and reset.
         if (state?.storeVersion !== STORE_STATE_VERSION) {
           await clearDatabase();
           saveExists.value = false;
-          persistenceEnabled.value = false;
+          saveCoordinator.disarm();
           hydrationComplete.value = true;
           return;
         }
@@ -411,7 +385,7 @@ export const rehydrateStoreMain = createRehydrateStore(useGame);
 export { rehydrateStoreMain as rehydrateStore };
 
 // Export hydrationComplete and saveExists for external consumers
-export { hydrationComplete, saveExists, persistenceEnabled };
+export { hydrationComplete, saveExists, saveCoordinator };
 
 // Export shallow for use in components that need to compare object/array selectors
 export { shallow };

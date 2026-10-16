@@ -23,8 +23,30 @@ export const UUID_PREFIX_LENGTH = 6;
  */
 const HEX_CHARS = "0123456789abcdef";
 
+/**
+ * Ambient deterministic UUID stream. The SimulationExecutor installs a
+ * per-day seeded stream while a transaction runs so every entity id minted
+ * during advancement — across all phases and services — is reproducible
+ * for a given seed. Outside a transaction the ambient is null and UUIDs
+ * fall back to crypto randomness. Safe because the engine is the single
+ * simulation writer; streams are installed/restored synchronously.
+ */
+let ambientUuidRng: Rng | null = null;
+
+export function withUuidStream<T>(rng: Rng, fn: () => T): T {
+  const previous = ambientUuidRng;
+  ambientUuidRng = rng;
+  try {
+    return fn();
+  } finally {
+    ambientUuidRng = previous;
+  }
+}
+
 export function generateUUID(rng?: Rng): string {
-  if (rng) {
+  const stream = rng ?? ambientUuidRng ?? undefined;
+  if (stream) {
+    rng = stream;
     let chars = "";
     for (let i = 0; i < 31; i++) {
       const r = (rng.next() * 16) | 0;

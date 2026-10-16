@@ -1,85 +1,101 @@
 import { describe, it, expect, vi } from "vitest";
-import { executePipeline, type PipelineContext, type PipelinePhase } from "@/core/time/pipeline";
-import { STAGE_PHASES } from "@/workers/pipelineStages";
+import type { PipelineContext } from "@/core/time/pipeline";
+import { createPhase } from "@/core/time/pipeline";
+import { describePhase, type PhaseDescriptor } from "@/core/time/scheduler";
+import { SimulationExecutor } from "@/core/time/executor";
+import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
 import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
-import { makePipelineContext } from "@/tests/helpers/sampleGameState";
+import { makeGameState } from "@/tests/helpers/sampleGameState";
+import type { GameState } from "@/game/types";
 
-function makeContext(): PipelineContext {
-  return makePipelineContext({ newDay: 2 }) as PipelineContext;
-}
+describe("Executor exactly-once semantics", () => {
+  it("each due phase executes exactly once per day", () => {
+    const calls = new Map<string, number>();
+    const descriptors: PhaseDescriptor[] = GAME_PIPELINE_PHASES.map((phase) =>
+      describePhase(
+        createPhase(phase.name, phase.order, (ctx: PipelineContext) => {
+          calls.set(phase.name, (calls.get(phase.name) ?? 0) + 1);
+          return ctx;
+        }),
+        {
+          label: phase.name,
+          // Use cadence from production registry so skips mirror reality
+          cadence: GAME_PHASE_DESCRIPTORS.find((d) => d.id === phase.name)?.cadence ?? "daily",
+          lastRunField: GAME_PHASE_DESCRIPTORS.find((d) => d.id === phase.name)?.lastRunField,
+        },
+      ),
+    );
 
-function makeMockPhases(): {
-  spies: Map<string, ReturnType<typeof vi.fn>>;
-  mocks: PipelinePhase[];
-} {
-  const spies = new Map<string, ReturnType<typeof vi.fn>>();
-  const mocks = GAME_PIPELINE_PHASES.map((phase) => {
-    const spy = vi.fn((ctx: PipelineContext) => ctx);
-    spies.set(phase.name, spy);
-    return { name: phase.name, order: phase.order, execute: spy };
-  });
-  return { spies, mocks };
-}
+    const executor = new SimulationExecutor(descriptors);
+    const state = makeGameState({ day: 1 }) as GameState;
+    executor.runDay(state, 2);
 
-function runAllStages(mocks: PipelinePhase[], ctx: PipelineContext): PipelineContext {
-  let current = ctx;
-  for (const stagePhases of STAGE_PHASES) {
-    const stageMocks = mocks.filter((m) => stagePhases.some((sp) => sp.name === m.name));
-    current = executePipeline(stageMocks, current);
-  }
-  return current;
-}
-
-describe("Worker double execution prevention", () => {
-  it("T13: raceResolution phase executes exactly once per advanceDay", () => {
-    const { spies, mocks } = makeMockPhases();
-    runAllStages(mocks, makeContext());
-    expect(spies.get("raceResolution")?.mock.calls.length).toBe(1);
-  });
-
-  it("T14: npcCycle phase executes exactly once per advanceDay", () => {
-    const { spies, mocks } = makeMockPhases();
-    runAllStages(mocks, makeContext());
-    expect(spies.get("npcCycle")?.mock.calls.length).toBe(1);
-  });
-
-  it("T15: impactApplication phase executes exactly once per advanceDay", () => {
-    const { spies, mocks } = makeMockPhases();
-    runAllStages(mocks, makeContext());
-    expect(spies.get("impactApplication")?.mock.calls.length).toBe(1);
-  });
-
-  it("T16: pregnancy phase executes exactly once per advanceDay", () => {
-    const { spies, mocks } = makeMockPhases();
-    runAllStages(mocks, makeContext());
-    expect(spies.get("pregnancy")?.mock.calls.length).toBe(1);
-  });
-
-  it("T17: auctions phase executes exactly once per advanceDay", () => {
-    const { spies, mocks } = makeMockPhases();
-    runAllStages(mocks, makeContext());
-    expect(spies.get("auctions")?.mock.calls.length).toBe(1);
-  });
-
-  it("T18: awards phase executes exactly once per advanceDay", () => {
-    const { spies, mocks } = makeMockPhases();
-    runAllStages(mocks, makeContext());
-    expect(spies.get("awards")?.mock.calls.length).toBe(1);
-  });
-
-  it("T19: scheduler phase executes exactly once per advanceDay", () => {
-    const { spies, mocks } = makeMockPhases();
-    runAllStages(mocks, makeContext());
-    expect(spies.get("scheduler")?.mock.calls.length).toBe(1);
-  });
-
-  it("T20: total phase execution count equals GAME_PIPELINE_PHASES.length per advanceDay", () => {
-    const { spies, mocks } = makeMockPhases();
-    runAllStages(mocks, makeContext());
-    let totalCalls = 0;
-    for (const spy of spies.values()) {
-      totalCalls += spy.mock.calls.length;
+    for (const [name, count] of calls) {
+      expect(count, `phase ${name} ran ${count} times`).toBe(1);
     }
-    expect(totalCalls).toBe(GAME_PIPELINE_PHASES.length);
+    // Every phase either ran once or was cadence-skipped — never 2+.
+    for (const phase of GAME_PIPELINE_PHASES) {
+      expect(calls.get(phase.name) ?? 0).toBeLessThanOrEqual(1);
+    }
+  });
+
+  it("cadence-skipped phases do not run on non-boundary days", () => {
+    const spy = vi.fn((ctx: PipelineContext) => ctx);
+    const descriptors = [
+      describePhase(
+        createPhase("gate", 1, (ctx) => ctx),
+        {
+          label: "gate",
+          cadence: "daily",
+        },
+      ),
+      describePhase(createPhase("weeklyPhase", 2, spy), {
+        label: "weekly",
+        cadence: "weekly",
+        lastRunField: "lastWeeklyRun",
+      }),
+    ];
+    const executor = new SimulationExecutor(descriptors);
+    // day 8: not a weekly boundary; lastWeeklyRun=7 → skipped
+    const state = makeGameState({ day: 7, lastWeeklyRun: 7 } as Partial<GameState>) as GameState;
+    executor.runDay(state, 8);
+    expect(spy).not.toHaveBeenCalled();
+  });
+
+  it("weekly cadence runs on boundary day", () => {
+    const spy = vi.fn((ctx: PipelineContext) => ctx);
+    const descriptors = [
+      describePhase(createPhase("weeklyPhase", 1, spy), {
+        label: "weekly",
+        cadence: "weekly",
+        lastRunField: "lastWeeklyRun",
+      }),
+    ];
+    const executor = new SimulationExecutor(descriptors);
+    const state = makeGameState({ day: 13, lastWeeklyRun: 7 } as Partial<GameState>) as GameState;
+    executor.runDay(state, 14);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it("finalization sets day and clears intents/training each day", () => {
+    const descriptors = [
+      describePhase(
+        createPhase("noop", 1, (ctx) => ctx),
+        {
+          label: "noop",
+          cadence: "daily",
+        },
+      ),
+    ];
+    const executor = new SimulationExecutor(descriptors);
+    const state = makeGameState({
+      day: 5,
+      pendingIntents: [{ kind: "noop" } as never],
+      trainingUsed: { h1: true } as never,
+    }) as GameState;
+    const { state: out } = executor.runDay(state, 6);
+    expect(out.day).toBe(6);
+    expect(out.pendingIntents).toEqual([]);
+    expect(out.trainingUsed).toEqual({});
   });
 });

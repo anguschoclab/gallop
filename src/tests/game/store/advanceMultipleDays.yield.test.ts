@@ -33,16 +33,48 @@ vi.mock("@/services/storage/schemas", () => ({
   bucketPayloadSchema: {},
 }));
 
-const { saveGameStateToIDBMock } = vi.hoisted(() => ({
+const { saveGameStateToIDBMock, savedStates } = vi.hoisted(() => ({
   saveGameStateToIDBMock: vi.fn().mockResolvedValue(undefined),
+  savedStates: [] as any[],
 }));
 
 vi.mock("@/game/store/storage", () => {
   let _saveExists = false;
   let _hydrationComplete = false;
-  let _persistenceEnabled = false;
+  let _armed = false;
+  let _lastWrittenRevision = -1;
   let _cachedLoadResult: any = undefined;
+  let _writeChain: Promise<void> = Promise.resolve();
   const loadGameStateFromIDB = vi.fn();
+
+  const saveCoordinator = {
+    get isArmed() {
+      return _armed;
+    },
+    get lastWrittenRevision() {
+      return _lastWrittenRevision;
+    },
+    arm() {
+      _armed = true;
+    },
+    disarm() {
+      _armed = false;
+      _lastWrittenRevision = -1;
+    },
+    enqueue(state: any) {
+      if (!_armed) return;
+      const rev = state.engineRevision ?? 0;
+      if (rev < _lastWrittenRevision) return;
+      _lastWrittenRevision = rev;
+      _writeChain = _writeChain.then(() => {
+        savedStates.push(state);
+        return saveGameStateToIDBMock(state);
+      });
+    },
+    async flush() {
+      await _writeChain;
+    },
+  };
 
   return {
     createIdbStorage: () => ({
@@ -58,8 +90,7 @@ vi.mock("@/game/store/storage", () => {
         return { state, version: 0 };
       },
       setItem: async (_name: string, value: { state: any }) => {
-        if (!_persistenceEnabled) return;
-        await saveGameStateToIDBMock(value.state);
+        saveCoordinator.enqueue(value.state);
       },
       removeItem: async (_name: string) => {},
     }),
@@ -79,19 +110,14 @@ vi.mock("@/game/store/storage", () => {
         _saveExists = v;
       },
     },
-    persistenceEnabled: {
-      get value() {
-        return _persistenceEnabled;
-      },
-      set value(v: boolean) {
-        _persistenceEnabled = v;
-      },
-    },
+    saveCoordinator,
     _resetSaveExists: () => {
       _saveExists = false;
     },
-    _resetPersistenceEnabled: () => {
-      _persistenceEnabled = false;
+    _resetSaveCoordinator: () => {
+      _armed = false;
+      _lastWrittenRevision = -1;
+      _writeChain = Promise.resolve();
     },
     saveGameStateToIDB: saveGameStateToIDBMock,
     loadGameStateFromIDB,
@@ -103,7 +129,7 @@ vi.mock("@/game/store/storage", () => {
         _saveExists = !!state;
         if (state) {
           _cachedLoadResult = state;
-          _persistenceEnabled = true;
+          saveCoordinator.arm();
           if (store.persist) {
             await store.persist.rehydrate();
           } else {
@@ -118,56 +144,65 @@ vi.mock("@/game/store/storage", () => {
   };
 });
 
-import { persistenceEnabled, _resetPersistenceEnabled } from "@/game/store/storage";
+import { saveCoordinator, _resetSaveCoordinator } from "@/game/store/storage";
 import { useGame } from "@/game/store";
 import { seedStore } from "@/test-utils/renderWithStore";
 
-describe("Yield optimization during advanceMultipleDays", () => {
-  beforeEach(() => {
+/**
+ * Production-path batch tests: advanceMultipleDays submits ONE engine
+ * command; the store commits exactly once; intermediate days never hit
+ * persist middleware.
+ */
+describe("Atomic batch advance through the store", () => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-    _resetPersistenceEnabled();
-    persistenceEnabled.value = true;
-    seedStore({ day: 1, cash: 100000, races: {}, horses: {} });
+    savedStates.length = 0;
+    _resetSaveCoordinator();
+    saveCoordinator.arm();
+    seedStore({
+      day: 1,
+      cash: 100000,
+      races: {},
+      horses: {},
+      engineRevision: 0,
+      engineGeneration: 1,
+    } as never);
+    // Drain the seed write so assertions observe only post-seed writes.
+    await saveCoordinator.flush();
+    savedStates.length = 0;
+    saveGameStateToIDBMock.mockClear();
   });
 
-  it("T34: advanceMultipleDays(5) does not yield (batch size = 5, i % 5 === 0 && i > 0 is false for i=0..4)", async () => {
-    const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
-
-    await useGame.getState().advanceMultipleDays(5, true);
-
-    // i goes 0..4, i % 5 === 0 is true only for i=0, but i > 0 is false for i=0
-    // So no yields should happen
-    expect(setTimeoutSpy).not.toHaveBeenCalled();
-
-    setTimeoutSpy.mockRestore();
-  });
-
-  it("T35: advanceMultipleDays(10) yields once after 5 days", async () => {
-    const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
+  it("advanceMultipleDays(10) commits once with the final day", async () => {
+    const days: number[] = [];
+    const unsub = useGame.subscribe((s, prev) => {
+      if (s.day !== prev.day) days.push(s.day);
+    });
 
     await useGame.getState().advanceMultipleDays(10, true);
+    unsub();
 
-    // i=5 is the only value where i % 5 === 0 && i > 0
-    expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
-
-    setTimeoutSpy.mockRestore();
+    expect(useGame.getState().day).toBe(11);
+    // Exactly one day transition — the batch is a single atomic commit.
+    expect(days).toEqual([11]);
   });
 
-  it("T36: With batch mode, advanceMultipleDays(365) does zero setTimeout calls", async () => {
-    // This test verifies the concept: when batch mode is implemented,
-    // the setTimeout yields are eliminated for large advances.
-    // Currently the fallback loop uses setTimeout every 5 days.
-    // With C1 implemented, this would be 0.
-    // For now, we verify the current behavior: 365/5 - 1 = 72 yields
-    const setTimeoutSpy = vi.spyOn(globalThis, "setTimeout");
-
+  it("intermediate days are never persisted — only the committed checkpoint", async () => {
     await useGame.getState().advanceMultipleDays(10, true);
+    await saveCoordinator.flush();
 
-    // Current behavior: yields every 5 days
-    // When batch mode is fully implemented, this would be 0
-    const currentYields = setTimeoutSpy.mock.calls.length;
-    expect(currentYields).toBe(1); // 10/5 - 1 = 1
+    // Persisted snapshots are the pre-advance state (day 1) or the committed
+    // final state (day 11) — never an intermediate day write.
+    expect(saveGameStateToIDBMock).toHaveBeenCalled();
+    const persistedDays = savedStates.map((s) => s.day);
+    for (const d of persistedDays) expect([1, 11]).toContain(d);
+    expect(persistedDays.at(-1)).toBe(11);
+  });
 
-    setTimeoutSpy.mockRestore();
+  it("advanceMultipleDays reports progress via engine events", async () => {
+    const progress: [number, number][] = [];
+    await useGame.getState().advanceMultipleDays(5, true, (d, t) => progress.push([d, t]));
+    expect(progress.length).toBe(5);
+    expect(progress.at(-1)).toEqual([5, 5]);
   });
 });

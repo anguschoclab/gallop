@@ -1,72 +1,56 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
-import { STAGE_PHASES } from "@/workers/pipelineStages";
-import { createRng, hashStr } from "@/core/common/rng";
 import type { GameState } from "@/game/types";
-import type { Race } from "@/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { makePlayerOwned } from "@/core/horse/ownership";
+import { EngineClient } from "@/core/engine/client";
+import { LocalTransport } from "@/core/engine/transports";
+import { SimulationEngine } from "@/core/engine/engine";
 
-function runPipelineForDay(
-  state: GameState,
-  newDay: number,
-): { state: GameState; logs: { day: number; text: string }[] } {
-  const pipelineContext: PipelineContext = {
-    previousDay: state.day,
-    newDay,
-    state: { ...state },
-    logs: [],
-    dailyRng: createRng(hashStr("daily_" + newDay)),
-    intents: state.pendingIntents || [],
-    impacts: [],
-    impactLog: [],
-    horseMap: new Map(Object.values(state.horses).map((h) => [h.id, h])),
-    raceMap: new Map(Object.values(state.races).map((r) => [r.id, r])),
-    stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
-    jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
-  };
-
-  let currentContext = pipelineContext;
-  for (const stagePhases of STAGE_PHASES) {
-    currentContext = executePipeline(stagePhases, currentContext);
-  }
-
-  return { state: { ...currentContext.state, day: newDay }, logs: currentContext.logs };
+/**
+ * Production-path tests: commands go through the real EngineClient →
+ * LocalTransport → SimulationEngine → SimulationExecutor stack — the same
+ * code that runs in the engine worker.
+ */
+function makeClient() {
+  return new EngineClient(new LocalTransport(new SimulationEngine()));
 }
 
-describe("Worker batch advance", () => {
+describe("Engine batch advance (production path)", () => {
   let baseState: GameState;
 
   beforeEach(() => {
     baseState = makeGameState({ day: 1, cash: 100000 }) as GameState;
   });
 
-  it("T28: advanceDaysBatch(5) advances day by 5", () => {
-    let state = baseState;
-    for (let i = 0; i < 5; i++) {
-      const { state: newState } = runPipelineForDay(state, state.day + 1);
-      state = newState;
+  it("advances day by 5 in a single command", async () => {
+    const client = makeClient();
+    const result = await client.submit({
+      days: 5,
+      headless: true,
+      state: baseState,
+      checksum: true,
+    });
+    expect(result.status).toBe("completed");
+    if (result.status === "completed") {
+      expect(result.daysAdvanced).toBe(5);
+      expect(result.state.day).toBe(6);
+      expect(result.checksum).toMatch(/^[0-9a-f]{8}$/);
     }
-    expect(state.day).toBe(6);
   });
 
-  it("T29: advanceDaysBatch(5) returns accumulated logs from all 5 days", () => {
-    const allLogs: { day: number; text: string }[] = [];
-    let state = baseState;
-    for (let i = 0; i < 5; i++) {
-      const { state: newState, logs } = runPipelineForDay(state, state.day + 1);
-      allLogs.push(...logs);
-      state = newState;
+  it("returns accumulated logs from all days", async () => {
+    const client = makeClient();
+    const result = await client.submit({ days: 5, headless: true, state: baseState });
+    expect(result.status).toBe("completed");
+    if (result.status === "completed") {
+      expect(result.logs.length).toBeGreaterThan(0);
     }
-    // Should have logs from all 5 days
-    expect(allLogs.length).toBeGreaterThan(0);
   });
 
-  it("T30: advanceDaysBatch detects player race on day 3 and stops with daysAdvanced=2", () => {
+  it("stops before a player race day and reports interruption", async () => {
     const state: GameState = {
       ...baseState,
-      day: 1,
       races: {
         "race-1": {
           id: "race-1",
@@ -80,7 +64,7 @@ describe("Worker batch advance", () => {
           fieldSize: 8,
           entries: [{ horseId: "horse-1", ownership: makePlayerOwned(), npc: false }],
           resolved: false,
-        } as any,
+        } as never,
       },
       horses: {
         "horse-1": {
@@ -90,39 +74,19 @@ describe("Worker batch advance", () => {
       },
     };
 
-    const playerRaceDays = new Set([3]);
-    let daysAdvanced = 0;
-    let encounteredPlayerRace = false;
-    let currentState = state;
-
-    for (let i = 0; i < 5; i++) {
-      const nextDay = currentState.day + 1;
-      if (playerRaceDays.has(nextDay)) {
-        const playerRace = Object.values(currentState.races).find(
-          (r: Race) =>
-            !r.resolved &&
-            r.day === nextDay &&
-            r.entries.some((e) => e.ownership?.type === "player"),
-        );
-        if (playerRace) {
-          encounteredPlayerRace = true;
-          break;
-        }
-      }
-      const { state: newState } = runPipelineForDay(currentState, nextDay);
-      currentState = newState;
-      daysAdvanced++;
+    const client = makeClient();
+    const result = await client.submit({ days: 5, headless: false, state });
+    expect(result.status).toBe("interrupted");
+    if (result.status === "interrupted") {
+      expect(result.raceId).toBe("race-1");
+      expect(result.daysAdvanced).toBe(1); // day 2 advanced, stopped at race day 3
+      expect(result.state.day).toBe(2);
     }
-
-    expect(encounteredPlayerRace).toBe(true);
-    // Day 1→2 advanced, day 2→3 player race detected before advancing
-    expect(daysAdvanced).toBe(1);
   });
 
-  it("T31: advanceDaysBatch(5, headless=true) skips player race detection and advances all 5", () => {
+  it("headless=true ignores player races and advances all days", async () => {
     const state: GameState = {
       ...baseState,
-      day: 1,
       races: {
         "race-1": {
           id: "race-1",
@@ -136,7 +100,7 @@ describe("Worker batch advance", () => {
           fieldSize: 8,
           entries: [{ horseId: "horse-1", ownership: makePlayerOwned(), npc: false }],
           resolved: false,
-        } as any,
+        } as never,
       },
       horses: {
         "horse-1": {
@@ -146,46 +110,24 @@ describe("Worker batch advance", () => {
       },
     };
 
-    let currentState = state;
-    for (let i = 0; i < 5; i++) {
-      const { state: newState } = runPipelineForDay(currentState, currentState.day + 1);
-      currentState = newState;
+    const client = makeClient();
+    const result = await client.submit({ days: 5, headless: true, state });
+    expect(result.status).toBe("completed");
+    if (result.status === "completed") {
+      expect(result.daysAdvanced).toBe(5);
+      expect(result.state.day).toBe(6);
     }
-
-    expect(currentState.day).toBe(6);
   });
 
-  it("T32: State is cloned to worker only once for advanceDaysBatch", () => {
-    // This test verifies the concept: a single state object is used
-    // for the entire batch, rather than cloning per day
-    const initialDay = baseState.day;
-    let state = baseState;
-
-    // Simulate batch: single state reference, mutated through pipeline
-    for (let i = 0; i < 5; i++) {
-      const { state: newState } = runPipelineForDay(state, state.day + 1);
-      state = newState;
+  it("serializes sequential commands on one client with ordered revisions", async () => {
+    const client = makeClient();
+    const r1 = client.submit({ days: 3, headless: true, state: baseState });
+    const r2 = client.submit({ days: 2, headless: true, state: baseState });
+    const [res1, res2] = await Promise.all([r1, r2]);
+    expect(res1.status).toBe("completed");
+    expect(res2.status).toBe("completed");
+    if (res1.status === "completed" && res2.status === "completed") {
+      expect(res2.revision).toBeGreaterThan(res1.revision);
     }
-
-    // Verify the state was advanced correctly in a single chain
-    expect(state.day).toBe(initialDay + 5);
-  });
-
-  it("T33: advanceMultipleDays(30) with worker batch calls advanceDaysBatch once instead of 30 advanceDay calls", () => {
-    // This test verifies that when batch mode is used, the worker is called
-    // once for the entire batch rather than once per day.
-    // We verify the concept by checking that the batch loop runs internally.
-    let callCount = 0;
-    let state = baseState;
-
-    // Simulate batch call (single worker round-trip)
-    callCount = 1; // One call to advanceDaysBatch
-    for (let i = 0; i < 30; i++) {
-      const { state: newState } = runPipelineForDay(state, state.day + 1);
-      state = newState;
-    }
-
-    expect(callCount).toBe(1);
-    expect(state.day).toBe(31);
   });
 });

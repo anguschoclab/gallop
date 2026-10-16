@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const { saveGameStateToIDBMock } = vi.hoisted(() => ({
+const { saveGameStateToIDBMock, savedStates } = vi.hoisted(() => ({
   saveGameStateToIDBMock: vi.fn().mockResolvedValue(undefined),
+  savedStates: [] as any[],
 }));
 
 vi.mock("@/services/storage/storageAdapter", () => ({
@@ -40,9 +41,40 @@ vi.mock("@/services/storage/schemas", () => ({
 vi.mock("@/game/store/storage", () => {
   let _saveExists = false;
   let _hydrationComplete = false;
-  let _persistenceEnabled = false;
+  let _armed = false;
+  let _lastWrittenRevision = -1;
   let _cachedLoadResult: any = undefined;
+  let _writeChain: Promise<void> = Promise.resolve();
   const loadGameStateFromIDB = vi.fn();
+
+  const saveCoordinator = {
+    get isArmed() {
+      return _armed;
+    },
+    get lastWrittenRevision() {
+      return _lastWrittenRevision;
+    },
+    arm() {
+      _armed = true;
+    },
+    disarm() {
+      _armed = false;
+      _lastWrittenRevision = -1;
+    },
+    enqueue(state: any) {
+      if (!_armed) return;
+      const rev = state.engineRevision ?? 0;
+      if (rev < _lastWrittenRevision) return;
+      _lastWrittenRevision = rev;
+      _writeChain = _writeChain.then(() => {
+        savedStates.push(state);
+        return saveGameStateToIDBMock(state);
+      });
+    },
+    async flush() {
+      await _writeChain;
+    },
+  };
 
   return {
     createIdbStorage: () => ({
@@ -58,8 +90,7 @@ vi.mock("@/game/store/storage", () => {
         return { state, version: 0 };
       },
       setItem: async (_name: string, value: { state: any }) => {
-        if (!_persistenceEnabled) return;
-        await saveGameStateToIDBMock(value.state);
+        saveCoordinator.enqueue(value.state);
       },
       removeItem: async (_name: string) => {},
     }),
@@ -79,19 +110,14 @@ vi.mock("@/game/store/storage", () => {
         _saveExists = v;
       },
     },
-    persistenceEnabled: {
-      get value() {
-        return _persistenceEnabled;
-      },
-      set value(v: boolean) {
-        _persistenceEnabled = v;
-      },
-    },
+    saveCoordinator,
     _resetSaveExists: () => {
       _saveExists = false;
     },
-    _resetPersistenceEnabled: () => {
-      _persistenceEnabled = false;
+    _resetSaveCoordinator: () => {
+      _armed = false;
+      _lastWrittenRevision = -1;
+      _writeChain = Promise.resolve();
     },
     saveGameStateToIDB: saveGameStateToIDBMock,
     loadGameStateFromIDB,
@@ -103,7 +129,7 @@ vi.mock("@/game/store/storage", () => {
         _saveExists = !!state;
         if (state) {
           _cachedLoadResult = state;
-          _persistenceEnabled = true;
+          saveCoordinator.arm();
           if (store.persist) {
             await store.persist.rehydrate();
           } else {
@@ -118,41 +144,50 @@ vi.mock("@/game/store/storage", () => {
   };
 });
 
-import { persistenceEnabled, _resetPersistenceEnabled } from "@/game/store/storage";
+import { saveCoordinator, _resetSaveCoordinator } from "@/game/store/storage";
 import { useGame } from "@/game/store";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { makePlayerOwned } from "@/core/horse/ownership";
 
-describe("Persistence debouncing during advanceMultipleDays", () => {
-  beforeEach(() => {
+describe("Save coordinator during advanceMultipleDays", () => {
+  beforeEach(async () => {
     vi.clearAllMocks();
-    _resetPersistenceEnabled();
-    persistenceEnabled.value = true;
-    seedStore({ day: 1, cash: 100000, races: {}, horses: {} });
-  });
-
-  it("T23: saveGameStateToIDB is not called during advanceMultipleDays when isAdvancing", async () => {
-    // During advance, persistence should be suppressed.
-    // saveGameStateToIDB should only be called once (from persist middleware after flag restore),
-    // not once per day.
-    await useGame.getState().advanceMultipleDays(3, true);
-
-    // Should be called at most once (the final save via persist middleware), not 3 times
-    expect(saveGameStateToIDBMock.mock.calls.length).toBeLessThanOrEqual(1);
-  });
-
-  it("T24: saveGameStateToIDB is called once after advanceMultipleDays completes", async () => {
-    await useGame.getState().advanceMultipleDays(5, true);
-
-    // After batch completes, at most one save should have been triggered
-    expect(saveGameStateToIDBMock.mock.calls.length).toBeLessThanOrEqual(1);
-  });
-
-  it("T25: If advanceMultipleDays is interrupted, persistenceEnabled is restored and save triggered", async () => {
-    // Set up a player race on day 3
+    savedStates.length = 0;
+    _resetSaveCoordinator();
+    saveCoordinator.arm();
     seedStore({
       day: 1,
       cash: 100000,
+      races: {},
+      horses: {},
+      engineRevision: 0,
+      engineGeneration: 1,
+    } as never);
+    // Drain the seed write, then clear — assertions observe only post-seed writes.
+    await saveCoordinator.flush();
+    savedStates.length = 0;
+    saveGameStateToIDBMock.mockClear();
+  });
+
+  it("batch advance persists only committed checkpoints, never intermediate days", async () => {
+    await useGame.getState().advanceMultipleDays(5, true);
+    await saveCoordinator.flush();
+
+    expect(saveGameStateToIDBMock).toHaveBeenCalled();
+    // Writes are either the pre-advance state (day 1) or the committed final
+    // state (day 6) — never a mid-range checkpoint (days 2–5).
+    for (const s of savedStates) {
+      expect([1, 6]).toContain(s.day);
+    }
+    expect(savedStates.at(-1).day).toBe(6);
+  });
+
+  it("interrupted advance persists only the committed checkpoint", async () => {
+    seedStore({
+      day: 1,
+      cash: 100000,
+      engineRevision: 0,
+      engineGeneration: 1,
       races: {
         "race-1": {
           id: "race-1",
@@ -166,7 +201,7 @@ describe("Persistence debouncing during advanceMultipleDays", () => {
           fieldSize: 8,
           entries: [{ horseId: "horse-1", ownership: makePlayerOwned(), npc: false }],
           resolved: false,
-        } as any,
+        } as never,
       },
       horses: {
         "horse-1": {
@@ -180,33 +215,35 @@ describe("Persistence debouncing during advanceMultipleDays", () => {
           distanceAptitude: 1600,
           surfaceAptitude: { Turf: 1.0, Dirt: 1.0, Synthetic: 1.0 },
           raceHistory: [],
-        } as any,
+        } as never,
       },
-    });
+    } as never);
+    // Drain the re-seed write so only the interrupted advance is observed.
+    await saveCoordinator.flush();
+    savedStates.length = 0;
+    saveGameStateToIDBMock.mockClear();
 
     await useGame.getState().advanceMultipleDays(5, false);
+    await saveCoordinator.flush();
 
-    // Should have stopped early due to player race
-    // Persistence should be restored regardless
-    expect(persistenceEnabled.value).toBe(true);
-    // Saves should be significantly fewer than days advanced (debouncing works)
-    // The persist middleware is async, so 1-2 saves is expected, not 5
-    expect(saveGameStateToIDBMock.mock.calls.length).toBeLessThan(5);
+    // Interrupted at race on day 3 → committed checkpoint is day 2.
+    expect(useGame.getState().day).toBe(2);
+    expect(useGame.getState().execution?.interruptRaceId).toBe("race-1");
+    for (const s of savedStates) {
+      expect(s.day).toBeLessThanOrEqual(2);
+    }
+    expect(Math.max(...savedStates.map((s) => s.day))).toBe(2);
   });
 
-  it("T26: persistenceEnabled flag is restored to true after batch completes", async () => {
+  it("coordinator stays armed after batch completes", async () => {
     await useGame.getState().advanceMultipleDays(3, true);
-
-    expect(persistenceEnabled.value).toBe(true);
+    expect(saveCoordinator.isArmed).toBe(true);
   });
 
-  it("T27: Single advanceDay still triggers persistence (not suppressed)", async () => {
-    // advanceDay should not suppress persistence
-    const beforeCalls = saveGameStateToIDBMock.mock.calls.length;
-
-    await useGame.getState().advanceDay();
-
-    // Persistence should still be enabled after single advance
-    expect(persistenceEnabled.value).toBe(true);
+  it("disarmed coordinator drops writes", async () => {
+    saveCoordinator.disarm();
+    await useGame.getState().advanceMultipleDays(3, true);
+    await saveCoordinator.flush();
+    expect(saveGameStateToIDBMock).not.toHaveBeenCalled();
   });
 });

@@ -53,6 +53,36 @@ import type { WorldSize } from "@/core/stable/worldSizeConfig";
 import { DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
 
 /**
+ * Execution state machine for day advancement. One authoritative record of
+ * the in-flight (or interrupted) advance command — replaces the old scattered
+ * isAdvancing/pendingPlayerRaceId/pendingAdvanceRemaining flags.
+ */
+export type AdvanceStatus = "idle" | "running" | "interrupted" | "cancelling" | "failed";
+
+export interface AdvanceExecution {
+  status: AdvanceStatus;
+  /** Engine command id for the in-flight command. */
+  commandId?: string;
+  /** Engine revision the command was issued against. */
+  baseRevision?: number;
+  /** Progress read-model: days simulated so far / total requested. */
+  daysCompleted: number;
+  totalDays: number;
+  /** Race that interrupted the range (player must watch/resolve). */
+  interruptRaceId?: import("@/core/types/branded").RaceId;
+  /** Days still owed after the interrupting race resolves (auto-resume). */
+  remainingDays?: number;
+  /** Terminal error message when status === "failed". */
+  error?: string;
+}
+
+export const IDLE_EXECUTION: AdvanceExecution = {
+  status: "idle",
+  daysCompleted: 0,
+  totalDays: 0,
+};
+
+/**
  * Systems state for optional subsystems and advanced features.
  * Most properties are optional as these systems may not be initialized yet.
  */
@@ -150,13 +180,15 @@ export interface SystemsState {
   /** Pending intents to be resolved */
   pendingIntents?: AnyIntent[];
 
-  // Multi-day advance system
-  /** Set when a player race interrupts auto-advance */
-  pendingPlayerRaceId?: import("@/core/types/branded").RaceId;
-  /** True while day advancement is in progress (for UI loading state) */
-  isAdvancing?: boolean;
-  /** Remaining days to advance after a player race is resolved (auto-resume) */
-  pendingAdvanceRemaining?: number;
+  // Advance execution state machine — the single source of truth for
+  // whether the engine is running, interrupted at a player race, or idle.
+  /** Execution state for the current/last advance command. */
+  execution?: AdvanceExecution;
+  /** Monotonic engine commit revision — CAS guard against stale commits. */
+  engineRevision?: number;
+  /** Session-scoped generation — bumped on new game/load to invalidate
+   *  in-flight results from a previous game instance. */
+  engineGeneration?: number;
 
   // Global historical records (optional)
   /** Lifetime track records keyed by trackId_surface_distance */

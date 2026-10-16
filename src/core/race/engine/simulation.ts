@@ -13,7 +13,6 @@
 import type { CourseSpecification } from "@/core/data/tracksAccessor";
 import type { Rng } from "@/core/common/types";
 import { clamp } from "@/core/common/math";
-import { compareFinishOrder } from "./compareFinishOrder";
 import type { RaceSnapshot, PaceSnapshot } from "./raceSnapshotTypes";
 import { calculateTacticalAdjustment } from "./tacticalAI";
 import { calculateCoverModifier } from "./draftingAI";
@@ -31,7 +30,6 @@ import {
   NOISE_FATIGUE_SCALE,
   NOISE_BASE_AMPLITUDE,
 } from "@/constants/raceEngineConstants";
-import { computePaceContext } from "./paceContext";
 import { calculateTargetLane, updateLanePosition } from "./lateralMovement";
 import { getSectionAndProgress } from "./trackGeometry";
 import { calculateTrackGeometryModifiers } from "./trackGeometryModifiers";
@@ -46,6 +44,7 @@ import {
 } from "./jockeyEffects";
 import { calculateWindEffect } from "./windEffects";
 import type { FactorKey, RunnerFactorLedger } from "@/core/race/factorLedger";
+import { RaceSimulationSession } from "./raceSession";
 
 export { computePaceContext } from "./paceContext";
 export { calculateWindEffect } from "./windEffects";
@@ -284,138 +283,22 @@ export function runRaceToCompletion(
   paceSnapshots: PaceSnapshot[];
   factorLedgers: Record<string, RunnerFactorLedger>;
 } {
-  let t = 0;
-  const snapshots: RaceSnapshot[] = [];
-  const paceSnapshots: PaceSnapshot[] = [];
-  const paceMilestones = [0.25, 0.5, 0.75];
-  let nextMilestoneIdx = 0;
-  const numRunners = runners.length;
-  let finishedCount = 0;
-
-  // Initialize finishedCount in case some runners start finished (unlikely but safe)
-  for (const r of runners) {
-    if (r.finishTime !== null) finishedCount++;
-  }
-
-  const laneDensity = new Array(12).fill(0);
-  const leadGroupVelocitiesBuffer: number[] = [];
-
-  // Pre-allocate arrays and maps outside the high-frequency loop to prevent excessive garbage collection
-  const sortedField = [...runners];
-  const idToIndex = new Map<string, number>();
-  for (let i = 0; i < numRunners; i++) {
-    idToIndex.set(runners[i].horseId, i);
-  }
-  const ranks = new Int32Array(numRunners);
-
-  while (finishedCount < numRunners && t < maxTime) {
-    const pace = computePaceContext(runners, distance, laneDensity, leadGroupVelocitiesBuffer);
-
-    // Capture pace snapshot at 25/50/75% progress milestones
-    if (
-      nextMilestoneIdx < paceMilestones.length &&
-      pace.progress >= paceMilestones[nextMilestoneIdx]
-    ) {
-      const leader = runners.reduce(
-        (best, r) => {
-          if (r.finishTime !== null) return best;
-          if (best === null || r.position > best.position) return r;
-          return best;
-        },
-        null as Runner | null,
-      );
-      paceSnapshots.push({
-        progress: paceMilestones[nextMilestoneIdx],
-        paceRating: pace.paceRating,
-        leaderVelocity: pace.leaderVelocity,
-        leadGroupCount: pace.leadGroupCount,
-        pacePressure: pace.pacePressure,
-        leaderHorseId: leader?.horseId ?? null,
-      });
-      nextMilestoneIdx++;
-    }
-
-    // Sort runners by position for faster spatial lookups in stepRunner
-    for (let i = 0; i < numRunners; i++) {
-      sortedField[i] = runners[i];
-    }
-    sortedField.sort((a, b) => b.position - a.position);
-
-    // Compute rank-from-front once per tick to avoid O(n²) filter+findIndex
-    let aliveRank = 0;
-    for (let i = 0; i < numRunners; i++) {
-      const o = sortedField[i];
-      if (o.finishTime === null) {
-        // Use pre-computed idToIndex to store rank in the flat ranks array
-        const idx = idToIndex.get(o.horseId);
-        if (idx !== undefined) {
-          ranks[idx] = aliveRank;
-        }
-        aliveRank++;
-      }
-    }
-
-    for (let i = 0; i < numRunners; i++) {
-      const r = runners[i];
-      if (r.finishTime !== null) continue;
-
-      stepRunner(
-        r,
-        dt,
-        t,
-        distance,
-        rng,
-        sortedField,
-        pace,
-        course,
-        ranks[i],
-        aliveRank,
-        windKph,
-        windDirectionDeg,
-        numRunners,
-      );
-
-      if (r.finishTime !== null) {
-        finishedCount++;
-      }
-    }
-
-    if (recordSnapshots) {
-      snapshots.push({
-        t,
-        horses: runners.map((r) => ({
-          horseId: r.horseId,
-          position: r.position,
-          lane: r.lane,
-          velocity: r.velocity,
-          seekContribution: r.lastSeekContribution ?? 0,
-          spurtContribution: r.lastSpurtContribution ?? 0,
-        })),
-      });
-    }
-
-    t += dt;
-  }
-
-  const ranked = [...runners]
-    .map((r) => ({ horseId: r.horseId, time: r.finishTime ?? Infinity, gate: r.gate }))
-    .sort(compareFinishOrder);
-
-  const result = ranked.map((r, idx) => ({
-    horseId: r.horseId,
-    position: idx + 1,
-    time: r.time,
-  }));
-
-  // Finalize factor ledgers
-  const factorLedgers: Record<string, RunnerFactorLedger> = {};
-  for (const r of runners) {
-    if (r.factorLedger) {
-      const finalized = r.factorLedger.finalize();
-      r.finalizedLedger = finalized;
-      factorLedgers[r.horseId] = finalized;
-    }
-  }
-
-  return { result, snapshots, paceSnapshots, factorLedgers };
+  const session = new RaceSimulationSession(runners, {
+    distance,
+    rng,
+    dt,
+    maxTime,
+    course,
+    windKph,
+    windDirectionDeg,
+    snapshotEveryTicks: recordSnapshots ? 1 : 0,
+    recordPaceSnapshots: true,
+  });
+  const outcome = session.runToCompletion();
+  return {
+    result: outcome.result,
+    snapshots: outcome.snapshots,
+    paceSnapshots: outcome.paceSnapshots,
+    factorLedgers: outcome.factorLedgers,
+  };
 }

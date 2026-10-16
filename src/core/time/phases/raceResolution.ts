@@ -88,19 +88,22 @@ export const raceResolutionPhase: PipelinePhase = {
         // Still generate impacts (prize money, form, etc.) using the live results
         const rng = rngForRace(race);
 
-        // We need runners for impact generation — build them from the race field
-        const { runners: impactRunners } = simulateRace(
-          race,
-          horseMap,
-          jockeyMap,
-          state.hiredStaff,
-          npcStableMap,
-          npcAIManager,
-          newDay,
-          undefined,
-          undefined,
-          undefined,
-        );
+        // Reuse the live session's field when the intent carries it —
+        // otherwise fall back to a single headless simulation for context.
+        const impactRunners =
+          liveIntent.runners ??
+          simulateRace(
+            race,
+            horseMap,
+            jockeyMap,
+            state.hiredStaff,
+            npcStableMap,
+            npcAIManager,
+            newDay,
+            undefined,
+            undefined,
+            undefined,
+          ).runners;
 
         // Generate race impacts using the live results
         const raceImpacts = generateRaceImpacts({
@@ -122,7 +125,7 @@ export const raceResolutionPhase: PipelinePhase = {
         for (const impact of raceImpacts) {
           // Player-facing impacts were already applied the moment the race
           // finished live — skip them here to avoid double-counting.
-          if (race.livePlayerImpactsApplied && isLivePlayerImpact(impact)) continue;
+          if (liveIntent.liveImpactsApplied && isLivePlayerImpact(impact)) continue;
           impacts.push(impact);
         }
 

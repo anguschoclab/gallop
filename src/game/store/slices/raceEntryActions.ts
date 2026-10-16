@@ -3,15 +3,12 @@ import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
 import { generateUUID } from "@/core/uuid";
 import { requireOwned, requireHorse } from "../guards";
-import type { StoreSet, StoreGet } from "../types";
+import type { StoreSet, StoreGet, StoreType } from "../types";
 import type { CoreSlice } from "./coreSlice";
 import { isPlayerOwned } from "@/core/horse/ownership";
-import { simulateRace } from "@/services/race/raceFacade";
-import { generateRaceImpacts } from "@/core/race/raceImpactGenerator";
-import { applyImpacts } from "@/core/resolver/resolver";
-import { rngForRace } from "@/core/race/rngForRace";
-import { isLivePlayerImpact } from "@/core/race/liveRaceImpacts";
-import { fillJournalOutcomes } from "@/core/tactics/strategyJournal";
+import { initEngineClient, getEngineClient } from "../engineClient";
+import { snapshotState } from "./advanceDayActions";
+import type { RaceRunner } from "@/core/race/types";
 
 export function createRaceEntryActions(
   set: StoreSet,
@@ -187,95 +184,81 @@ export function createRaceEntryActions(
     resolveRaceWithImpacts: (
       raceId: string,
       result: { horseId: string; position: number; time: number }[],
-      _runners?: Array<{ horseId: string; owned?: boolean }>,
+      liveRunners?: RaceRunner[],
       factorLedgers?: Record<string, import("@/core/race/factorLedger").RunnerFactorLedger>,
       snapshots?: import("@/core/race/engine/raceSnapshotTypes").RaceSnapshot[],
     ) => {
       const s = get();
-      enqueueIntent({
-        id: generateUUID(),
-        entityId: raceId,
-        source: "system",
-        day: s.day,
-        priority: 10,
-        type: "race_resolution",
-        raceId,
-        results: result,
-        factorLedgers,
-        snapshots,
-      });
+      const generation = s.engineGeneration ?? 0;
 
-      // Apply player-facing impacts immediately so cash, prestige and
-      // syndicate stakes update the moment a watched race finishes; the
-      // day-advance pipeline skips re-applying them (livePlayerImpactsApplied).
-      try {
-        const state = get();
-        const race = state.races[raceId];
-        if (race && !race.resolved && !race.livePlayerImpactsApplied && result.length > 0) {
-          const npcAIManager = state.npcAIManager
-            ? {
-                ...state.npcAIManager,
-                stableStates: Object.fromEntries(
-                  Object.entries(state.npcAIManager.stableStates).map(([id, st]) => [
-                    id,
-                    { ...st },
-                  ]),
-                ),
-              }
-            : undefined;
-          const { runners: impactRunners } = simulateRace(
-            race,
-            Object.values(state.horses),
-            state.jockeys ?? [],
-            state.hiredStaff ?? [],
-            state.npcStables ?? [],
-            npcAIManager,
-            state.day,
-          );
-          const raceImpacts = generateRaceImpacts({
-            race,
-            result,
-            runners: impactRunners,
-            horses: Object.values(state.horses),
-            jockeys: state.jockeys ?? [],
-            newDay: state.day,
-            hiredStaff: state.hiredStaff ?? [],
-            rng: rngForRace(race),
-            snapshots: [],
-            calibratedPars: state.calibratedPars || {},
-            raceWeatherState: undefined,
-            syndicates: state.syndicates,
-            narrativeArcs: state.narrativeArcs,
-          });
-          const liveImpacts = raceImpacts.filter(isLivePlayerImpact);
-          const applied = applyImpacts({
-            state,
-            intents: [],
-            impacts: liveImpacts,
-            impactLog: [],
-            day: state.day,
-          });
-          const newState = applied.state;
-          set({
-            ...newState,
-            races: {
-              ...newState.races,
-              [raceId]: {
-                ...newState.races[raceId],
-                livePlayerImpactsApplied: true,
-              },
-            },
-            strategyJournal: fillJournalOutcomes(
-              newState.strategyJournal,
-              newState.horses,
-              newState.cash,
-              newState.day,
-            ),
-          });
+      // Degraded path — engine unavailable or the command rejected: queue the
+      // resolution intent directly so a later advance still resolves the
+      // race. Live impacts were never applied, so the intent carries no
+      // liveImpactsApplied marker and the pipeline applies the full set.
+      const enqueueFallbackIntent = () => {
+        const current = get();
+        if ((current.engineGeneration ?? 0) !== generation) return;
+        const pending = current.pendingIntents ?? [];
+        if (
+          pending.some(
+            (i) => i.type === "race_resolution" && (i as { raceId?: string }).raceId === raceId,
+          )
+        ) {
+          return;
         }
-      } catch {
-        // Fall back to day-advance application if live resolution fails.
-      }
+        enqueueIntent({
+          id: generateUUID(),
+          entityId: raceId,
+          source: "system",
+          day: current.day,
+          priority: 10,
+          type: "race_resolution",
+          raceId,
+          results: result,
+          runners: liveRunners,
+          factorLedgers,
+          snapshots,
+        });
+      };
+
+      const submit = async (): Promise<void> => {
+        let response;
+        try {
+          await initEngineClient();
+          response = await getEngineClient().submit({
+            kind: "resolveLiveRace",
+            raceId,
+            result,
+            runners: liveRunners,
+            factorLedgers,
+            snapshots,
+            state: snapshotState(s),
+          });
+        } catch {
+          enqueueFallbackIntent();
+          return;
+        }
+
+        const current = get();
+        if ((current.engineGeneration ?? 0) !== generation) return;
+        if (response.status === "rejected") {
+          enqueueFallbackIntent();
+          return;
+        }
+        if (response.status !== "resolved") return;
+        // CAS guard: a superseding commit must not be overwritten by a
+        // resolve issued against an older revision.
+        if (response.revision <= (current.engineRevision ?? 0)) return;
+
+        const update: Record<string, unknown> = {
+          ...response.state,
+          engineRevision: response.revision,
+        };
+        delete update.execution;
+        delete update.lastFrameTime;
+        set(update as Partial<StoreType>);
+      };
+      return submit();
     },
 
     submitClaim: (raceId: string, horseId: string) => {

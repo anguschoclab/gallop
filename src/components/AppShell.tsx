@@ -8,8 +8,9 @@ import { AutoSimPanel } from "@/components/race/AutoSimPanel";
 import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";
 import { AwardCeremony } from "./awards";
 import { SidebarNav } from "./SidebarNav";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSkipToNext } from "@/hooks/shared/useSkipToNext";
+import { useAutoResumeAdvance } from "@/hooks/game/useAutoResumeAdvance";
 import { useAwardCeremony } from "@/hooks/awards/useAwardCeremony";
 import { useUnreadCount } from "@/hooks/inbox/useInbox";
 import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/constants";
@@ -23,27 +24,13 @@ export function AppShell() {
   const advanceDay = useGame((s: StoreType) => s.advanceDay);
   const advanceMultipleDays = useGame((s: StoreType) => s.advanceMultipleDays);
   const skipToNext = useSkipToNext();
-  const isAdvancing = useGame((s: StoreType) => s.isAdvancing ?? false);
-  const pendingPlayerRaceId = useGame((s: StoreType) => s.pendingPlayerRaceId);
-  const pendingAdvanceRemaining = useGame((s: StoreType) => s.pendingAdvanceRemaining);
-  const autoResumeRef = useRef(false);
+  const isAdvancing = useGame(
+    (s: StoreType) => s.execution?.status === "running" || s.execution?.status === "cancelling",
+  );
+  const cancelAdvance = useGame((s: StoreType) => s.cancelAdvance);
 
   // Auto-resume batch advancement after player race is resolved
-  useEffect(() => {
-    if (
-      !pendingPlayerRaceId &&
-      pendingAdvanceRemaining !== undefined &&
-      pendingAdvanceRemaining > 0 &&
-      !isAdvancing &&
-      !autoResumeRef.current
-    ) {
-      autoResumeRef.current = true;
-      useGame.setState({ pendingAdvanceRemaining: undefined });
-      advanceMultipleDays(pendingAdvanceRemaining).finally(() => {
-        autoResumeRef.current = false;
-      });
-    }
-  }, [pendingPlayerRaceId, pendingAdvanceRemaining, isAdvancing, advanceMultipleDays]);
+  useAutoResumeAdvance();
 
   // Clear batch progress when advancing finishes
   useEffect(() => {
@@ -161,6 +148,13 @@ export function AppShell() {
                 </p>
               </div>
             )}
+            <button
+              type="button"
+              onClick={() => cancelAdvance?.()}
+              className="mt-4 rounded-md border border-t600 px-3 py-1.5 text-xs text-cream-muted hover:bg-t800 transition-colors"
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}

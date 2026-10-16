@@ -20,6 +20,54 @@ export interface RaceSimulationResult {
 }
 
 /**
+ * Project a physics Runner (from RaceSimulationSession / buildRaceField) into
+ * the slim serializable RaceRunner carried by results and resolution intents.
+ * @param r
+ * @param r.horseId
+ * @param r.name
+ * @param r.silk
+ * @param r.isPlayer
+ * @param r.jockey
+ * @param r.jockey.id
+ * @param r.jockey.name
+ * @param r.gate
+ * @param r.lane
+ * @param r.runningStyle
+ * @param r.jockeyInstructions
+ */
+export function toRaceRunner(r: {
+  horseId: string;
+  name: string;
+  silk: string;
+  isPlayer: boolean;
+  jockey?: { id?: string; name?: string };
+  gate?: number;
+  lane?: number;
+  runningStyle?: RaceRunner["runningStyle"];
+  jockeyInstructions?: RaceRunner["jockeyInstructions"];
+}): RaceRunner {
+  return {
+    horseId: asHorseId(r.horseId),
+    name: r.name,
+    silk: r.silk,
+    ownership: r.isPlayer ? makePlayerOwned() : makeUnowned(),
+    jockeyId: asJockeyId(r.jockey?.id || "ai"),
+    jockeyName: r.jockey?.name || "AI Jockey",
+    gate: r.gate,
+    lane: r.lane,
+    runningStyle: r.runningStyle,
+    jockeyInstructions: r.jockeyInstructions
+      ? {
+          ridingStyle: r.jockeyInstructions.ridingStyle,
+          earlyPosition: r.jockeyInstructions.earlyPosition,
+          moveTiming: r.jockeyInstructions.moveTiming,
+          aggressiveness: r.jockeyInstructions.aggressiveness,
+        }
+      : undefined,
+  };
+}
+
+/**
  * Simulates a race to completion.
  *
  * @param race - The race to simulate
@@ -104,37 +152,7 @@ export function simulateRace(
   return {
     raceId: race.id,
     result,
-    runners: runners.map(
-      ({
-        horseId,
-        name,
-        silk,
-        isPlayer,
-        jockey,
-        gate,
-        lane,
-        runningStyle,
-        jockeyInstructions,
-      }) => ({
-        horseId: asHorseId(horseId),
-        name,
-        silk,
-        ownership: isPlayer ? makePlayerOwned() : makeUnowned(),
-        jockeyId: asJockeyId(jockey?.id || "ai"),
-        jockeyName: jockey?.name || "AI Jockey",
-        gate,
-        lane,
-        runningStyle,
-        jockeyInstructions: jockeyInstructions
-          ? {
-              ridingStyle: jockeyInstructions.ridingStyle,
-              earlyPosition: jockeyInstructions.earlyPosition,
-              moveTiming: jockeyInstructions.moveTiming,
-              aggressiveness: jockeyInstructions.aggressiveness,
-            }
-          : undefined,
-      }),
-    ),
+    runners: runners.map(toRaceRunner),
 
     snapshots,
     paceSnapshots,
