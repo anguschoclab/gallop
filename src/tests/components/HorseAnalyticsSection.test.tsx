@@ -1,3 +1,4 @@
+import { vi } from "vitest";
 import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
@@ -46,6 +47,16 @@ describe("HorseAnalyticsSection — Tipster Insight", () => {
   it("renders insight when horse has a 3-race win streak", () => {
     const horse = createHorse({
       raceHistory: [
+        {
+          raceId: "r0",
+          raceName: "Race 0",
+          position: 2,
+          day: 0,
+          distance: 1200,
+          surface: "Turf",
+          beyer: 70,
+          purse: 1000,
+        },
         {
           raceId: "r1",
           raceName: "Race 1",
