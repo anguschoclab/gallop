@@ -212,6 +212,37 @@ function StableCampaignPage() {
         </CardContent>
       </Card>
 
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-sm uppercase tracking-wide">Automatic goal adjustment</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3 text-sm">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              aria-label="Adjust goals automatically"
+              checked={draft.autoAdjust ?? false}
+              onChange={(e) => setDraft({ ...draft, autoAdjust: e.target.checked })}
+            />
+            Adjust goals automatically each day
+          </label>
+          <p className="text-xs text-muted-foreground">
+            When a class goal is met it rises by half its size (at least one more win). When your
+            net worth reaches the target, the target rises to 125% of your current net worth. A
+            missed deadline is pushed back 90 days.
+          </p>
+          {(saved?.adjustmentLog ?? []).length > 0 && (
+            <ul className="space-y-1 text-xs">
+              {saved!.adjustmentLog!.map((a, i) => (
+                <li key={i}>
+                  <span className="font-mono text-muted-foreground">Day {a.day}</span> · {a.text}
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+
       <div className="flex gap-2">
         <Button onClick={save}>Save goals</Button>
         <Button variant="ghost" onClick={clear}>

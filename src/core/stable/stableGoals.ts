@@ -21,6 +21,10 @@ export interface StableGoals {
   startDay: number;
   /** How hard the goals steer race choice: 0 off … 2 strong. */
   weight: number;
+  /** Raise met goals and extend missed deadlines automatically each day. */
+  autoAdjust?: boolean;
+  /** Recent automatic goal changes, newest first. */
+  adjustmentLog?: GoalAdjustment[];
 }
 
 export const DEFAULT_STABLE_GOALS: StableGoals = { classGoals: {}, startDay: 0, weight: 1 };
@@ -112,4 +116,66 @@ export function goalRaceBonus(
     }
   }
   return { bonus: Math.round(bonus * goals.weight * 10) / 10, reasons };
+}
+
+export interface GoalAdjustment {
+  day: number;
+  text: string;
+}
+
+/** Max adjustment notes kept on the goals object. */
+export const GOAL_ADJUSTMENT_LOG_MAX = 20;
+/** Net-worth target is raised to this multiple of current net worth once reached. */
+export const NET_WORTH_RAISE_FACTOR = 1.25;
+/** Days added to a missed net-worth deadline. */
+export const DEADLINE_EXTENSION_DAYS = 90;
+
+/**
+ * Moves goals forward as the stable progresses: a met class goal is raised by
+ * half its size (min 1), a reached net-worth target is raised to 125% of
+ * current net worth (rounded to $10k), and a missed deadline is extended 90 days.
+ * Returns the same object when nothing changes or auto-adjust is off.
+ */
+export function autoAdjustGoals(
+  goals: StableGoals,
+  progress: GoalProgress,
+  day: number,
+): { goals: StableGoals; adjustments: GoalAdjustment[] } {
+  if (!goals.autoAdjust) return { goals, adjustments: [] };
+  const adjustments: GoalAdjustment[] = [];
+  const classGoals = { ...goals.classGoals };
+  for (const c of GOAL_CLASSES) {
+    const target = classGoals[c] ?? 0;
+    if (target <= 0 || progress.classWins[c] < target) continue;
+    const next = progress.classWins[c] + Math.max(1, Math.ceil(target / 2));
+    classGoals[c] = next;
+    adjustments.push({ day, text: `${c} goal met (${progress.classWins[c]} wins) — raised to ${next}.` });
+  }
+  let { targetNetWorth, targetDay } = goals;
+  if (targetNetWorth && progress.netWorth >= targetNetWorth) {
+    const next = Math.ceil((progress.netWorth * NET_WORTH_RAISE_FACTOR) / 10000) * 10000;
+    adjustments.push({
+      day,
+      text: `Net worth target of $${targetNetWorth.toLocaleString()} reached — raised to $${next.toLocaleString()}.`,
+    });
+    targetNetWorth = next;
+    if (targetDay !== undefined) targetDay = day + DEADLINE_EXTENSION_DAYS;
+  } else if (targetNetWorth && targetDay !== undefined && day > targetDay) {
+    adjustments.push({
+      day,
+      text: `Net worth deadline (day ${targetDay}) missed — extended to day ${day + DEADLINE_EXTENSION_DAYS}.`,
+    });
+    targetDay = day + DEADLINE_EXTENSION_DAYS;
+  }
+  if (adjustments.length === 0) return { goals, adjustments };
+  return {
+    goals: {
+      ...goals,
+      classGoals,
+      targetNetWorth,
+      targetDay,
+      adjustmentLog: [...adjustments, ...(goals.adjustmentLog ?? [])].slice(0, GOAL_ADJUSTMENT_LOG_MAX),
+    },
+    adjustments,
+  };
 }

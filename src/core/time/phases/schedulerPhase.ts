@@ -26,12 +26,28 @@ import type { AnyImpact, RaceEntryImpact } from "@/core/resolver/impacts/index";
 import type { InboxImpact } from "@/core/resolver/impacts/inboxImpacts";
 import { generateUUID } from "@/core/uuid";
 import { calculateAutoRegisterEntries } from "@/core/campaign/autoRegister";
+import { autoAdjustGoals, goalProgress } from "@/core/stable/stableGoals";
+
+/** Raises met stable-campaign goals before auto-entry scores races. */
+function runGoalAutoAdjust(context: PipelineContext): PipelineContext {
+  const { state, newDay } = context;
+  const goals = state.stableGoals;
+  if (!goals?.autoAdjust) return context;
+  const progress = goalProgress(goals, Object.values(state.horses), state.cash);
+  const res = autoAdjustGoals(goals, progress, newDay);
+  if (res.adjustments.length === 0) return context;
+  return {
+    ...context,
+    state: { ...state, stableGoals: res.goals },
+    logs: [...res.adjustments.map((a) => ({ day: newDay, text: `Stable Campaign: ${a.text}` })), ...context.logs],
+  };
+}
 
 export const schedulerPhase = {
   name: "scheduler",
   order: PHASE_ORDER_SCHEDULER,
   execute: (context: PipelineContext): PipelineContext =>
-    runDailyAutoEntry(runCampaignScheduler(context)),
+    runDailyAutoEntry(runGoalAutoAdjust(runCampaignScheduler(context))),
 };
 
 /**
