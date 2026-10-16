@@ -148,10 +148,15 @@ export function getDynamicProfile(
     seekMaxBoost = base.seekMaxBoost * 0.5;
   }
 
+  // Optimization: Explicit property assignment avoids object spread (...base),
+  // which prevents significant GC pressure during high-frequency simulation loops.
   return {
-    ...base,
+    label: base.label,
     preferredFieldFraction,
+    seekMaxDampen: base.seekMaxDampen,
     seekMaxBoost,
+    seekDampenSlope: base.seekDampenSlope,
+    seekBoostSlope: base.seekBoostSlope,
     spurtBuildupExtra,
   };
 }
