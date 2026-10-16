@@ -227,11 +227,40 @@ export function calculateAwardPoints(
   return totalPoints;
 }
 
+/** Per-horse, per-category scoring tallies used for deterministic tie-breaking. */
+interface CategoryTally {
+  points: number;
+  gradedWins: number;
+  earnings: number;
+}
+
+interface AwardCandidate extends CategoryTally {
+  horse: Horse;
+}
+
+/**
+ * Deterministic tie-break comparator for award candidates.
+ *
+ * Sort chain: points (desc) → graded wins on point-scoring entries (desc) →
+ * earnings on point-scoring entries (desc) → horseId (lexicographic asc).
+ * The final horseId comparison makes the outcome independent of input order.
+ *
+ * @param a - First candidate
+ * @param b - Second candidate
+ */
+function compareAwardCandidates(a: AwardCandidate, b: AwardCandidate): number {
+  if (b.points !== a.points) return b.points - a.points;
+  if (b.gradedWins !== a.gradedWins) return b.gradedWins - a.gradedWins;
+  if (b.earnings !== a.earnings) return b.earnings - a.earnings;
+  return a.horse.id < b.horse.id ? -1 : a.horse.id > b.horse.id ? 1 : 0;
+}
+
 /**
  * Determine winners for all awards in a region.
  *
  * Calculates points for all eligible horses in each category and selects
- * the highest-scoring horse as the winner.
+ * the highest-scoring horse as the winner. Ties are resolved deterministically
+ * via {@link compareAwardCandidates}: points → graded wins → earnings → horseId.
  *
  * @param horses - All horses in the game
  * @param year - Award year
@@ -252,13 +281,13 @@ export function determineRegionalWinners(
   const yearStart = (year - 1) * DAYS_PER_YEAR + 1;
   const yearEnd = year * DAYS_PER_YEAR;
 
-  // Per-horse, per-category points and qualifying race IDs
-  const pointsMap = new Map<string, Map<RegionalAwardCategory, number>>();
+  // Per-horse, per-category scoring tallies and qualifying race IDs
+  const tallyMap = new Map<string, Map<RegionalAwardCategory, CategoryTally>>();
   const qualifyingMap = new Map<string, Map<RegionalAwardCategory, string[]>>();
 
   for (const horse of horses) {
     let horseHasAny = false;
-    const catPoints = new Map<RegionalAwardCategory, number>();
+    const catTallies = new Map<RegionalAwardCategory, CategoryTally>();
     const catRaces = new Map<RegionalAwardCategory, string[]>();
 
     for (const entry of horse.raceHistory) {
@@ -272,7 +301,16 @@ export function determineRegionalWinners(
         if (!isEligibleForCategory(horse, category, entry)) continue;
         const pts = calculateRacePoints(entry, weights);
         if (pts > 0) {
-          catPoints.set(category, (catPoints.get(category) ?? 0) + pts);
+          const tally = catTallies.get(category) ?? { points: 0, gradedWins: 0, earnings: 0 };
+          tally.points += pts;
+          if (
+            entry.position === 1 &&
+            (entry.grade === "G1" || entry.grade === "G2" || entry.grade === "G3")
+          ) {
+            tally.gradedWins += 1;
+          }
+          tally.earnings += entry.purseEarned ?? entry.purse ?? 0;
+          catTallies.set(category, tally);
           if (entry.grade) {
             const races = catRaces.get(category) ?? [];
             races.push(entry.raceId);
@@ -284,7 +322,7 @@ export function determineRegionalWinners(
     }
 
     if (horseHasAny) {
-      pointsMap.set(horse.id, catPoints);
+      tallyMap.set(horse.id, catTallies);
       qualifyingMap.set(horse.id, catRaces);
     }
   }
@@ -292,15 +330,15 @@ export function determineRegionalWinners(
   // Pick winner per category
   const winners: Omit<RegionalAward, "id" | "ceremonyDay">[] = [];
   for (const category of categories) {
-    const candidates: Array<{ horse: Horse; points: number }> = [];
+    const candidates: AwardCandidate[] = [];
     for (const horse of horses) {
-      const pts = pointsMap.get(horse.id)?.get(category);
+      const tally = tallyMap.get(horse.id)?.get(category);
       // Unowned world stock cannot win an award: downstream code treats a
       // missing stableId as "the player's award".
-      if (pts && pts > 0 && (isPlayerOwned(horse) || horse.ownership?.type === "npc"))
-        candidates.push({ horse, points: pts });
+      if (tally && tally.points > 0 && (isPlayerOwned(horse) || horse.ownership?.type === "npc"))
+        candidates.push({ horse, ...tally });
     }
-    candidates.sort((a, b) => b.points - a.points);
+    candidates.sort(compareAwardCandidates);
     if (candidates.length > 0) {
       const winner = candidates[0];
       const runnerUp = candidates[1];
