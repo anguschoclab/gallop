@@ -38,7 +38,7 @@ const SORT_KEYS = [
 ] as const;
 type SortKey = (typeof SORT_KEYS)[number]["value"];
 
-export const Route = createFileRoute("/stable-rankings")({
+export const Route = createFileRoute("/stableRankings")({
   head: () => ({
     meta: [
       { title: "Stable Rankings — Position, Points, Reputation & Value Over Time" },
