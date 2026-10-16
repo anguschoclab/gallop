@@ -13,6 +13,16 @@ import { Gavel, History, ShoppingCart, Tag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useGame, useGameWithShallow } from "@/game/store";
 import type { GameState, Horse } from "@/game/types";
 import {
@@ -38,6 +48,11 @@ export function AuctionHouseDesk() {
 
   const [houseId, setHouseId] = useState<string>(AUCTION_HOUSES[0].id);
   const house = AUCTION_HOUSES.find((h) => h.id === houseId) ?? AUCTION_HOUSES[0];
+  const [pendingSell, setPendingSell] = useState<{
+    id: string;
+    name: string;
+    price: number;
+  } | null>(null);
 
   const horseList = useMemo(() => Object.values(horses) as Horse[], [horses]);
 
@@ -238,7 +253,9 @@ export function AuctionHouseDesk() {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => handleSell(horse.id, horse.name, quote.sellPrice)}
+                  onClick={() =>
+                    setPendingSell({ id: horse.id, name: horse.name, price: quote.sellPrice })
+                  }
                 >
                   Sell
                 </Button>
@@ -280,6 +297,34 @@ export function AuctionHouseDesk() {
           </div>
         )}
       </section>
+
+      <AlertDialog open={!!pendingSell} onOpenChange={(o) => !o && setPendingSell(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Sell {pendingSell?.name}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to sell <strong>{pendingSell?.name}</strong> to{" "}
+              {house.shortName}? You will net{" "}
+              <strong>{pendingSell ? formatCurrency(pendingSell.price) : "$0"}</strong>.
+              This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={() => {
+                if (pendingSell) {
+                  handleSell(pendingSell.id, pendingSell.name, pendingSell.price);
+                  setPendingSell(null);
+                }
+              }}
+            >
+              Confirm Sale
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
