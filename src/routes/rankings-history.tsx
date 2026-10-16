@@ -8,6 +8,8 @@ import { useGameWithShallow } from "@/game/store";
 import { formatCurrency } from "@/lib/formatting";
 import type { RankingsHistory, RankingsSnapshot } from "@/core/market/rankingsHistory";
 import type { Horse } from "@/game/types";
+import { Button } from "@/components/ui/button";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { compareRankingsForDay, rankingsComparisonDays, type RankingsComparisonRow } from "@/core/market/rankingsComparison";
 
 const EMPTY_HISTORY: RankingsHistory = {};
@@ -37,10 +39,10 @@ export const Route = createFileRoute("/rankings-history")({
   component: RankingsHistoryPage,
 });
 
-function delta(now: number, then: number | undefined): { text: string; up: boolean } | null {
-  if (then === undefined || then === now) return null;
+function delta(now: number | null, then: number | null | undefined): { text: string; up: boolean } | null {
+  if (now === null || then == null || then === now) return null;
   const d = now - then;
-  return { text: `${d > 0 ? "+" : ""}${d}`, up: d > 0 };
+  return { text: `${d > 0 ? "+" : ""}${d}`, up: d < 0 };
 }
 
 function RankingsHistoryPage() {
@@ -98,26 +100,20 @@ function RankingsHistoryPage() {
       </header>
 
       {comparison ? (
-        <Card className="border-white/5 bg-slate-900/40">
-          <CardContent className="space-y-3 p-4">
+        <section className="space-y-4 border-b border-border pb-5">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h2 className="text-sm font-black text-cream">My horses vs daily leaders</h2>
                 <p className="text-[10px] font-mono uppercase text-cream/40">Gaps compare with that day’s #1</p>
               </div>
-              <select
-                aria-label="Comparison day"
-                value={activeDay}
-                onChange={(e) => setComparisonDay(Number(e.target.value))}
-                className="h-8 rounded-md border border-gold-muted bg-t800 px-2 text-xs text-cream"
-              >
-                {days.map((d) => <option key={d} value={d}>Day {d}</option>)}
-              </select>
+              <Select value={String(activeDay)} onValueChange={(value) => setComparisonDay(Number(value))}>
+                <SelectTrigger aria-label="Comparison day" className="h-8 w-32 text-xs"><SelectValue /></SelectTrigger>
+                <SelectContent>{days.map((d) => <SelectItem key={d} value={String(d)}>Day {d}</SelectItem>)}</SelectContent>
+              </Select>
             </div>
             <ComparisonTable title="Top-ranked horses" rows={comparison.leaders} />
             <ComparisonTable title="My horses" rows={comparison.players} empty="You have no horses to compare." />
-          </CardContent>
-        </Card>
+        </section>
       ) : null}
 
       {rows.length === 0 ? (
@@ -142,11 +138,12 @@ function RankingsHistoryPage() {
                 {filtered.map((r) => {
                   const rankDelta = delta(r.latest.rank, r.prev?.rank);
                   return (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={r.horseId}
                       type="button"
                       onClick={() => setSelectedId(r.horseId)}
-                      className={`flex w-full items-center gap-2 p-2 text-left text-[11px] font-mono transition-colors ${
+                      className={`flex h-auto w-full justify-start items-center gap-2 p-2 text-left text-[11px] font-mono transition-colors ${
                         selected?.horseId === r.horseId
                           ? "bg-white/10 text-cream"
                           : "text-cream/70 hover:bg-white/5"
@@ -164,7 +161,7 @@ function RankingsHistoryPage() {
                           {Math.abs((r.latest.rank ?? 0) - (r.prev?.rank ?? r.latest.rank ?? 0))}
                         </span>
                       ) : null}
-                    </button>
+                    </Button>
                   );
                 })}
                 {filtered.length === 0 ? (
@@ -280,15 +277,6 @@ function ComparisonTable({ title, rows, empty = "No ranked horses that day." }: 
           </tbody>
         </table>
       )}
-    </div>
-  );
-}
-
-function UnusedStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div>
-      <p className="text-[9px] font-mono uppercase tracking-wide text-cream/40">{label}</p>
-      <p className="text-sm font-black tabular-nums text-cream">{value}</p>
     </div>
   );
 }
