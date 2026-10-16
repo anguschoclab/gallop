@@ -16,6 +16,7 @@ const win = (day: number, grade?: string) => ({
 function makeHorse(id: string, wins: number, day: number): Horse {
   return createTestHorse({
     id: asHorseId(id),
+    ownership: { type: "unowned" },
     raceHistory: Array.from({ length: wins }, (_, i) => win(day - i, "G1")),
   });
 }
