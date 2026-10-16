@@ -10,6 +10,7 @@
 import type { Horse } from "@/core/horse/types";
 import { horseMarketValue } from "@/core/horse/pricing";
 import { worldRankings } from "@/core/market/raceForm";
+import { isPlayerOwned } from "@/core/horse/ownership";
 
 /** Days of rankings history kept per horse. */
 export const RANKINGS_HISTORY_MAX_ENTRIES = 120;
@@ -19,7 +20,7 @@ export const RANKINGS_HISTORY_TRACKED = 50;
 export interface RankingsSnapshot {
   day: number;
   /** 1-based position in the world rankings that day. */
-  rank: number;
+  rank: number | null;
   points: number;
   /** Horse fame at snapshot time. */
   reputation: number;
@@ -30,9 +31,8 @@ export interface RankingsSnapshot {
 export type RankingsHistory = Record<string, RankingsSnapshot[]>;
 
 /**
- * Append today's rankings snapshot for every tracked horse; drop horses that
- * fall out of the rankings (their history is retained while they remain
- * tracked, and pruned once they leave the tracked set for good).
+ * Keep daily leaders and all player horses, including unranked horses.
+ * Retain past snapshots when a horse leaves the rankings for daily comparisons.
  * @param history - Existing per-horse snapshot map
  * @param horses - All horses in game
  * @param day - Current game day
@@ -45,10 +45,14 @@ export function recordRankingsHistory(
   const rows = worldRankings(horses, day, 365, RANKINGS_HISTORY_TRACKED);
   const byId = new Map(horses.map((h) => [h.id, h]));
   const next: RankingsHistory = {};
+  for (const [id, entries] of Object.entries(history ?? {})) {
+    const retained = entries.filter((entry) => entry.day > day - RANKINGS_HISTORY_MAX_ENTRIES && entry.day !== day);
+    if (retained.length) next[id] = retained;
+  }
   rows.forEach((row, i) => {
     const horse = byId.get(row.horseId);
     if (!horse) return;
-    const prev = (history?.[row.horseId] ?? []).filter((s) => s.day !== day);
+    const prev = next[row.horseId] ?? [];
     const snapshot: RankingsSnapshot = {
       day,
       rank: i + 1,
@@ -58,5 +62,22 @@ export function recordRankingsHistory(
     };
     next[row.horseId] = [...prev, snapshot].slice(-RANKINGS_HISTORY_MAX_ENTRIES);
   });
+  const rankedIds = new Set(rows.map((row) => row.horseId));
+  const allRows = horses.some((h) => isPlayerOwned(h) && !rankedIds.has(h.id))
+    ? worldRankings(horses, day, 365, horses.length)
+    : [];
+  for (const horse of horses) {
+    if (!isPlayerOwned(horse) || horse.lifecycleStatus === "deceased" || rankedIds.has(horse.id)) continue;
+    // A player horse below the tracked top 50 still has its actual world rank.
+    const index = allRows.findIndex((row) => row.horseId === horse.id);
+    const row = allRows[index];
+    next[horse.id] = [...(next[horse.id] ?? []), {
+      day,
+      rank: index < 0 ? null : index + 1,
+      points: row?.points ?? 0,
+      reputation: Math.round(horse.fame ?? 0),
+      price: horseMarketValue(horse, horses),
+    }].slice(-RANKINGS_HISTORY_MAX_ENTRIES);
+  }
   return next;
 }

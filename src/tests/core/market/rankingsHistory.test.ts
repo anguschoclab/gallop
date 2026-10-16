@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { RANKINGS_HISTORY_MAX_ENTRIES, recordRankingsHistory } from "@/core/market/rankingsHistory";
+import { compareRankingsForDay } from "@/core/market/rankingsComparison";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { asHorseId } from "@/core/types/branded";
 import type { Horse } from "@/core/horse/types";
@@ -15,6 +16,7 @@ const win = (day: number, grade?: string) => ({
 function makeHorse(id: string, wins: number, day: number): Horse {
   return createTestHorse({
     id: asHorseId(id),
+    ownership: { type: "unowned" },
     raceHistory: Array.from({ length: wins }, (_, i) => win(day - i, "G1")),
   });
 }
@@ -47,13 +49,23 @@ describe("recordRankingsHistory", () => {
     expect(hist.a.length).toBeLessThanOrEqual(RANKINGS_HISTORY_MAX_ENTRIES);
   });
 
-  it("drops horses that fall out of the rankings", () => {
+  it("keeps prior snapshots without adding a new day for horses that fall out", () => {
     const winner = makeHorse("a", 1, 5);
     let hist = recordRankingsHistory(undefined, [winner], 5);
     expect(hist.a).toHaveLength(1);
     // Horse loses all form (history outside window) → dropped
     const faded = { ...winner, raceHistory: [] } as Horse;
-    hist = recordRankingsHistory(hist, [faded], 400);
-    expect(hist.a).toBeUndefined();
+    hist = recordRankingsHistory(hist, [faded], 6);
+    expect(hist.a.map((s) => s.day)).toEqual([5]);
+  });
+
+  it("compares an unranked player horse to that day's leader", () => {
+    const leader = makeHorse("leader", 2, 10);
+    const mine = { ...createTestHorse({ id: asHorseId("mine") }), ownership: { type: "player" as const }, fame: 7 };
+    const hist = recordRankingsHistory(undefined, [leader, mine], 10);
+    const result = compareRankingsForDay(hist, [leader, mine], 10);
+    expect(result.leaders[0].horseId).toBe("leader");
+    expect(result.players[0].snapshot?.rank).toBeNull();
+    expect(result.players[0].gap?.points).toBe(-hist.leader[0].points);
   });
 });

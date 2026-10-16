@@ -35,7 +35,8 @@ bun run typecheck:errors
 
 ## Known Gotchas
 
-- NPC career timelines are derived from `raceHistory` and age boundaries rather than separately persisted, so existing saves automatically gain complete off-screen histories.
+- NPC career timelines derive from race history and age boundaries.
+- Rankings comparisons use exact-day snapshots; retain leaders and all player horses (null rank when unranked) to avoid substituting current values.
 
 - The test suite is large but fast. Stderr from `saveManager` error-path tests is expected, not a failure.
 - `bun run build` validates auto-generated `routeTree.gen.ts` — run it after adding/removing routes.
