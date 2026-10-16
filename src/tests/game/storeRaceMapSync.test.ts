@@ -124,8 +124,15 @@ describe("races Record sync through store actions", () => {
         {
           id: "h1",
           ownership: { type: "player" },
-          stats: { speed: 50, stamina: 50, acceleration: 50, agility: 50, jumping: 50, temperament: 50 }
-        } as any
+          stats: {
+            speed: 50,
+            stamina: 50,
+            acceleration: 50,
+            agility: 50,
+            jumping: 50,
+            temperament: 50,
+          },
+        } as any,
       ]),
     });
 
