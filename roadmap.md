@@ -4,3 +4,4 @@
 - [x] Visual milestone timelines in rival career comparison
 - [x] Track history filters for game-day range, race type, and stable
 - [x] NPC horse career timelines with off-screen starts, finishes, payouts, ages, and stage transitions
+- [ ] Daily rankings comparison: player horses versus daily leaders, with rank, points, reputation and price gaps
