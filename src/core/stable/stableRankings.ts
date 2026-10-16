@@ -11,7 +11,7 @@
  *   @/core/horse/ownership, @/core/standings/computeStandings, ./types
  * Related files: src/core/market/rankingsHistory.ts (per-horse equivalent),
  *   src/core/time/phases/dailySnapshotPhase.ts (recorder),
- *   src/routes/stable-rankings.tsx (UI)
+ *   src/routes/stableRankings.tsx (UI)
  */
 
 import type { Horse } from "@/core/horse/types";
