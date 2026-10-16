@@ -1,5 +1,5 @@
 /**
- * stable-rankings.tsx - Stable league table recorded daily.
+ * stableRankings.tsx - Stable league table recorded daily.
  *
  * Shows the player's stable rank, roster ranking points, earned points,
  * windowed earnings, normalized reputation and roster market value against
@@ -38,7 +38,7 @@ const SORT_KEYS = [
 ] as const;
 type SortKey = (typeof SORT_KEYS)[number]["value"];
 
-export const Route = createFileRoute("/stable-rankings")({
+export const Route = createFileRoute("/stableRankings")({
   head: () => ({
     meta: [
       { title: "Stable Rankings — Position, Points, Reputation & Value Over Time" },
