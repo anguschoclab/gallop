@@ -16,6 +16,7 @@ import { recordDailyProgress, type HorseDailyProgress } from "@/core/horse/daily
 import type { Horse } from "@/core/horse/types";
 import { fillJournalOutcomes } from "@/core/tactics/strategyJournal";
 import { recordRankingsHistory } from "@/core/market/rankingsHistory";
+import { recordStableRankingsHistory } from "@/core/stable/stableRankings";
 import { PHASE_ORDER_DAILY_SNAPSHOT } from "@/constants";
 
 /**
@@ -43,9 +44,22 @@ export const dailySnapshotPhase: PipelinePhase = {
       Object.values(state.horses ?? {}) as Horse[],
       newDay,
     );
+    const stableRankingsHistory = recordStableRankingsHistory(state.stableRankingsHistory, {
+      horses: Object.values(state.horses ?? {}) as Horse[],
+      npcStables: state.npcStables ?? [],
+      playerReputationScore: state.reputation?.score ?? 0,
+      playerProfile: state.playerProfile,
+      day: newDay,
+    });
     return {
       ...context,
-      state: { ...state, horseDailyProgress, strategyJournal, rankingsHistory },
+      state: {
+        ...state,
+        horseDailyProgress,
+        strategyJournal,
+        rankingsHistory,
+        stableRankingsHistory,
+      },
     };
   },
 };

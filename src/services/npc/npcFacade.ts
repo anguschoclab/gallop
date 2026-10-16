@@ -14,3 +14,4 @@ export type { NpcCareerTimelineEvent } from "@/core/npc/careerTracker";
 export { buildRivalCareerProfile, buildRivalCareerProfiles } from "@/core/npc/rivalCareerCompare";
 export type { RivalCareerProfile, RivalMilestoneRecord } from "@/core/npc/rivalCareerCompare";
 export { isNotableRival } from "@/core/npc/careerMilestones";
+export type { RivalRankingsColumn } from "@/core/market/rivalRankingsComparison";

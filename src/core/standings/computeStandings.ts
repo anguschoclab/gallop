@@ -132,7 +132,7 @@ export function computeSeasonStandings(
   return { standings: list, playerRank };
 }
 
-function computeFallbackPurse(
+export function computeFallbackPurse(
   r: NonNullable<GameState["horses"][string]["raceHistory"]>[number],
 ): number {
   if (!r.purse || !r.position || r.position < 1) return 0;

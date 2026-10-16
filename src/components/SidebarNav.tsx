@@ -89,6 +89,7 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/calendar", label: "Calendar", icon: Calendar, exact: false },
       { to: "/records", label: "Records", icon: BarChart3, exact: false },
       { to: "/rankings-history", label: "Rankings History", icon: BarChart3, exact: false },
+      { to: "/stable-rankings", label: "Stable Rankings", icon: Building2, exact: false },
       { to: "/almanac", label: "Almanac", icon: BookOpen, exact: false },
       { to: "/track-history", label: "Course Histories", icon: Landmark, exact: false },
       { to: "/market", label: "Market", icon: Store, exact: false },

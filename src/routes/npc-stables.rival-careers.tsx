@@ -30,6 +30,17 @@ import { RivalCareerCompareTable } from "@/components/stable/RivalCareerCompareT
 import { PillToggleGroup } from "@/components/common/PillToggleGroup";
 import { FilterSelect } from "@/components/jockey/FilterSelect";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useGameWithShallow } from "@/game/store";
+import { rankingsComparisonDays } from "@/core/market/rankingsComparison";
+import { stableRankingsDays } from "@/core/stable/stableRankings";
+import { rivalRankingsForDay, type RankingsBaseline } from "@/core/market/rivalRankingsComparison";
+import {
   useRivalCareerFilters,
   type RivalCareerCandidate,
   type RivalCareerSortKey,
@@ -110,6 +121,14 @@ export function NpcStablesRivalCareers() {
   const day = useDay();
   const npcStables = useNpcStables();
   const [selected, setSelected] = useState<string[]>([]);
+  const { rankingsHistory, stableRankingsHistory, playerProfile } = useGameWithShallow((s) => ({
+    rankingsHistory: s.rankingsHistory,
+    stableRankingsHistory: s.stableRankingsHistory,
+    playerProfile: s.playerProfile,
+  }));
+  const [baselineMode, setBaselineMode] = useState<"stable" | "horse">("stable");
+  const [baselineHorseId, setBaselineHorseId] = useState<string | null>(null);
+  const [rankingsDay, setRankingsDay] = useState<number | null>(null);
 
   const stableNames = useMemo(() => {
     const map: Record<string, string> = {};
@@ -151,6 +170,60 @@ export function NpcStablesRivalCareers() {
     const picked = selected.map((id) => byId.get(id)).filter((h): h is Horse => h !== undefined);
     return buildRivalCareerProfiles(picked, day);
   }, [selected, rivals, day]);
+
+  const playerHorses = useMemo(
+    () =>
+      Object.values(horses)
+        .filter(isPlayerOwned)
+        .sort(
+          (a, b) =>
+            (rankingsHistory?.[a.id]?.at(-1)?.rank ?? Infinity) -
+              (rankingsHistory?.[b.id]?.at(-1)?.rank ?? Infinity) || a.name.localeCompare(b.name),
+        ),
+    [horses, rankingsHistory],
+  );
+
+  const comparisonDays = useMemo(() => {
+    const days = new Set<number>([
+      ...rankingsComparisonDays(rankingsHistory ?? {}),
+      ...stableRankingsDays(stableRankingsHistory ?? {}),
+    ]);
+    return [...days].sort((a, b) => b - a);
+  }, [rankingsHistory, stableRankingsHistory]);
+  const activeRankingsDay = rankingsDay ?? comparisonDays[0];
+
+  const baseline: RankingsBaseline = useMemo(
+    () =>
+      baselineMode === "stable"
+        ? { type: "stable" }
+        : { type: "horse", horseId: baselineHorseId ?? playerHorses[0]?.id ?? "" },
+    [baselineMode, baselineHorseId, playerHorses],
+  );
+  const baselineLabel =
+    baseline.type === "stable"
+      ? (playerProfile?.stableName ?? "My stable")
+      : (horses[baseline.horseId]?.name ?? "My horse");
+
+  const rankingsColumns = useMemo(() => {
+    if (activeRankingsDay === undefined || profiles.length === 0) return undefined;
+    const columns = rivalRankingsForDay({
+      rivalIds: profiles.map((p) => p.id),
+      horses,
+      rankingsHistory,
+      stableRankingsHistory,
+      day: activeRankingsDay,
+      baseline,
+    });
+    return { day: activeRankingsDay, baselineLabel, columns };
+  }, [
+    profiles,
+    horses,
+    rankingsHistory,
+    stableRankingsHistory,
+    activeRankingsDay,
+    baseline,
+    baselineLabel,
+  ]);
 
   const toggle = (id: string) =>
     setSelected((prev) =>
@@ -282,11 +355,65 @@ export function NpcStablesRivalCareers() {
       </Card>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex-row items-center justify-between gap-3 flex-wrap">
           <CardTitle className="text-lg">Career Comparison ({profiles.length})</CardTitle>
+          <div className="flex flex-wrap items-center gap-3">
+            <PillToggleGroup
+              label="Baseline"
+              options={[
+                { value: "stable", label: "My stable" },
+                { value: "horse", label: "My horse" },
+              ]}
+              value={baselineMode}
+              onChange={setBaselineMode}
+              ariaLabel="Rankings comparison baseline"
+            />
+            {baselineMode === "horse" && (
+              <Select
+                value={baseline.type === "horse" ? baseline.horseId : ""}
+                onValueChange={(v) => setBaselineHorseId(v)}
+              >
+                <SelectTrigger aria-label="Baseline horse" className="h-8 w-44 text-xs">
+                  <SelectValue placeholder="Pick a horse" />
+                </SelectTrigger>
+                <SelectContent>
+                  {playerHorses.map((h) => {
+                    const rank = rankingsHistory?.[h.id]?.at(-1)?.rank;
+                    return (
+                      <SelectItem key={h.id} value={h.id}>
+                        {h.name}
+                        {rank ? ` · #${rank}` : ""}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            )}
+            {comparisonDays.length > 0 && (
+              <Select
+                value={String(activeRankingsDay)}
+                onValueChange={(v) => setRankingsDay(Number(v))}
+              >
+                <SelectTrigger aria-label="Comparison day" className="h-8 w-32 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {comparisonDays.map((d) => (
+                    <SelectItem key={d} value={String(d)}>
+                      Day {d}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
         </CardHeader>
         <CardContent>
-          <RivalCareerCompareTable profiles={profiles} stableNames={stableNames} />
+          <RivalCareerCompareTable
+            profiles={profiles}
+            stableNames={stableNames}
+            rankings={rankingsColumns}
+          />
         </CardContent>
       </Card>
     </div>

@@ -133,6 +133,7 @@ export const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "cashPressureHistory" as keyof GameState,
   "horseDailyProgress" as keyof GameState,
   "rankingsHistory" as keyof GameState,
+  "stableRankingsHistory" as keyof GameState,
   "strategyJournal" as keyof GameState,
   "stableGoals" as keyof GameState,
   // Bloodstock exchange: open orders, trade tape and price history

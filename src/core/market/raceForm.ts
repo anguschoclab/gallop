@@ -23,7 +23,7 @@ function gradeWeight(grade?: string): number {
   return (grade && GRADE_WEIGHT[grade]) || 1;
 }
 
-function decay(entryDay: number, day: number): number {
+export function decay(entryDay: number, day: number): number {
   const age = Math.max(0, day - entryDay);
   return Math.pow(0.5, age / FORM_HALF_LIFE_DAYS);
 }

@@ -10,12 +10,18 @@
 
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency } from "@/lib/formatting";
-import type { RivalCareerProfile } from "@/services/npc/npcFacade";
+import type { RivalCareerProfile, RivalRankingsColumn } from "@/services/npc/npcFacade";
 import { RivalCareerMilestoneTimeline } from "./RivalCareerMilestoneTimeline";
 
 interface RivalCareerCompareTableProps {
   profiles: RivalCareerProfile[];
   stableNames?: Record<string, string>;
+  /** Same-day rank/points/price comparison vs a baseline; columns align with `profiles`. */
+  rankings?: {
+    day: number;
+    baselineLabel: string;
+    columns: RivalRankingsColumn[];
+  };
 }
 
 const ROW_LABEL_CLASS = "text-xs text-cream-muted font-medium py-2 pr-3 text-right align-top";
@@ -28,7 +34,23 @@ function bestIndex(values: number[]): number {
   return best;
 }
 
-export function RivalCareerCompareTable({ profiles, stableNames }: RivalCareerCompareTableProps) {
+function rankGapText(gap: number | null): string {
+  if (gap === null) return "—";
+  if (gap === 0) return "Level";
+  const n = Math.abs(gap);
+  return `${n} place${n === 1 ? "" : "s"} ${gap < 0 ? "ahead" : "behind"}`;
+}
+
+function signedText(n: number, money = false): string {
+  if (n === 0) return "Level";
+  return `${n > 0 ? "+" : "−"}${money ? formatCurrency(Math.abs(n)) : Math.abs(Math.round(n * 10) / 10)}`;
+}
+
+export function RivalCareerCompareTable({
+  profiles,
+  stableNames,
+  rankings,
+}: RivalCareerCompareTableProps) {
   if (profiles.length === 0) {
     return (
       <div className="py-8 text-center text-sm text-cream-muted">
@@ -94,6 +116,63 @@ export function RivalCareerCompareTable({ profiles, stableNames }: RivalCareerCo
               </tr>
             );
           })}
+
+          {rankings ? (
+            <>
+              <tr className="border-b border-border/50">
+                <td
+                  colSpan={profiles.length + 1}
+                  className="pt-3 pb-1 text-[10px] font-black uppercase tracking-wide text-gold"
+                >
+                  Daily rankings — Day {rankings.day} · vs {rankings.baselineLabel}
+                </td>
+              </tr>
+              {(
+                [
+                  {
+                    label: "Rank",
+                    value: (c: RivalRankingsColumn) =>
+                      c.values ? (c.values.rank ? `#${c.values.rank}` : "Unranked") : null,
+                    gap: (c: RivalRankingsColumn) => (c.gap ? rankGapText(c.gap.rank) : "—"),
+                  },
+                  {
+                    label: "Points",
+                    value: (c: RivalRankingsColumn) =>
+                      c.values ? c.values.points.toFixed(1) : null,
+                    gap: (c: RivalRankingsColumn) => (c.gap ? signedText(c.gap.points) : "—"),
+                  },
+                  {
+                    label: "Value",
+                    value: (c: RivalRankingsColumn) =>
+                      c.values ? formatCurrency(c.values.price) : null,
+                    gap: (c: RivalRankingsColumn) => (c.gap ? signedText(c.gap.price, true) : "—"),
+                  },
+                ] as const
+              ).map((row) => (
+                <tr key={row.label} className="border-b border-border/50">
+                  <td className={ROW_LABEL_CLASS}>{row.label}</td>
+                  {profiles.map((p, i) => {
+                    const col = rankings.columns[i];
+                    const value = col ? row.value(col) : null;
+                    return (
+                      <td key={p.id} className={CELL_CLASS}>
+                        {value === null ? (
+                          <span className="text-cream-muted">No record</span>
+                        ) : (
+                          <>
+                            <div className="font-mono tabular-nums">{value}</div>
+                            <div className="text-[10px] text-cream-muted">
+                              {col ? row.gap(col) : "—"}
+                            </div>
+                          </>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </>
+          ) : null}
 
           <tr className="border-b border-border/50">
             <td className={ROW_LABEL_CLASS}>Career stage</td>

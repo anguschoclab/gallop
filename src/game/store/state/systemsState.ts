@@ -77,6 +77,8 @@ export interface SystemsState {
   horseDailyProgress?: import("@/core/horse/dailyProgress").HorseDailyProgress;
   /** Daily world-rankings snapshots (rank, points, reputation, price) per horse */
   rankingsHistory?: import("@/core/market/rankingsHistory").RankingsHistory;
+  /** Daily stable-rankings snapshots (rank, points, reputation, price) per stable incl. player */
+  stableRankingsHistory?: import("@/core/stable/stableRankings").StableRankingsHistory;
 
   // Breeding programs system
   /** Breeding programs for stables targeting specific archetypes */
