@@ -15,6 +15,13 @@ export default tseslint.config(
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
+      parserOptions: {
+        // Pin the tsconfig root to this config's directory. When an editor's
+        // ESLint server loads multiple copies of this config (e.g. repo
+        // worktrees), typescript-eslint can't infer the root and fails every
+        // parse with "multiple candidate TSConfigRootDirs are present".
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     plugins: {
       "react-hooks": reactHooks,

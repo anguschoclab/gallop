@@ -761,29 +761,29 @@
         "sections": [
           {
             "type": "straight",
-            "length": 526,
-            "gradient": 0.13,
+            "length": 525.9,
+            "gradient": 0.12962073931829093,
             "orientationDeg": 270
           },
           {
             "type": "turn",
-            "length": 516,
-            "radius": 164,
-            "gradient": -0.13,
+            "length": 515.6,
+            "radius": 164.12057731636247,
+            "gradient": -0.12962073931829093,
             "entryOrientationDeg": 270,
             "exitOrientationDeg": 90
           },
           {
             "type": "straight",
-            "length": 526,
-            "gradient": 0.13,
+            "length": 525.9,
+            "gradient": 0.12962073931829093,
             "orientationDeg": 90
           },
           {
             "type": "turn",
-            "length": 516,
-            "radius": 164,
-            "gradient": -0.13,
+            "length": 515.6,
+            "radius": 164.12057731636247,
+            "gradient": -0.12962073931829093,
             "entryOrientationDeg": 90,
             "exitOrientationDeg": 270
           }
@@ -799,29 +799,29 @@
         "sections": [
           {
             "type": "straight",
-            "length": 501,
-            "gradient": 0.13,
+            "length": 501.1,
+            "gradient": 0.1263823064770932,
             "orientationDeg": 270
           },
           {
             "type": "turn",
-            "length": 448,
-            "radius": 143,
-            "gradient": -0.13,
+            "length": 448.4,
+            "radius": 142.73015296481174,
+            "gradient": -0.1263823064770932,
             "entryOrientationDeg": 270,
             "exitOrientationDeg": 90
           },
           {
             "type": "straight",
-            "length": 501,
-            "gradient": 0.13,
+            "length": 501.1,
+            "gradient": 0.1263823064770932,
             "orientationDeg": 90
           },
           {
             "type": "turn",
-            "length": 448,
-            "radius": 143,
-            "gradient": -0.13,
+            "length": 448.4,
+            "radius": 142.73015296481174,
+            "gradient": -0.1263823064770932,
             "entryOrientationDeg": 90,
             "exitOrientationDeg": 270
           }
@@ -1089,24 +1089,30 @@
           {
             "type": "straight",
             "length": 310,
-            "gradient": 0.29
+            "gradient": 0.28804347826086957,
+            "orientationDeg": 270
           },
           {
             "type": "turn",
             "length": 610,
-            "radius": 194,
-            "gradient": -0.29
+            "radius": 194.16903057211232,
+            "gradient": -0.28804347826086957,
+            "entryOrientationDeg": 270,
+            "exitOrientationDeg": 90
           },
           {
             "type": "straight",
             "length": 310,
-            "gradient": 0.29
+            "gradient": 0.28804347826086957,
+            "orientationDeg": 90
           },
           {
             "type": "turn",
             "length": 610,
-            "radius": 194,
-            "gradient": -0.29
+            "radius": 194.16903057211232,
+            "gradient": -0.28804347826086957,
+            "entryOrientationDeg": 90,
+            "exitOrientationDeg": 270
           }
         ],
         "width": 25,
@@ -1120,24 +1126,30 @@
           {
             "type": "straight",
             "length": 308,
-            "gradient": 0.3
+            "gradient": 0.3014065639651708,
+            "orientationDeg": 270
           },
           {
             "type": "turn",
-            "length": 439,
-            "radius": 140,
-            "gradient": -0.3
+            "length": 438.5,
+            "radius": 139.5788850915922,
+            "gradient": -0.3014065639651708,
+            "entryOrientationDeg": 270,
+            "exitOrientationDeg": 90
           },
           {
             "type": "straight",
             "length": 308,
-            "gradient": 0.3
+            "gradient": 0.3014065639651708,
+            "orientationDeg": 90
           },
           {
             "type": "turn",
-            "length": 439,
-            "radius": 140,
-            "gradient": -0.3
+            "length": 438.5,
+            "radius": 139.5788850915922,
+            "gradient": -0.3014065639651708,
+            "entryOrientationDeg": 90,
+            "exitOrientationDeg": 270
           }
         ],
         "width": 25,
@@ -1873,64 +1885,76 @@
     "courses": [
       {
         "surface": "Turf",
+        "circumference": 1899,
+        "straightLength": 430,
+        "sections": [
+          {
+            "type": "straight",
+            "length": 430,
+            "gradient": 0,
+            "orientationDeg": 270
+          },
+          {
+            "type": "turn",
+            "length": 519.5,
+            "radius": 165.36198587247927,
+            "gradient": 0,
+            "entryOrientationDeg": 270,
+            "exitOrientationDeg": 90
+          },
+          {
+            "type": "straight",
+            "length": 430,
+            "gradient": 0,
+            "orientationDeg": 90
+          },
+          {
+            "type": "turn",
+            "length": 519.5,
+            "radius": 165.36198587247927,
+            "gradient": 0,
+            "entryOrientationDeg": 90,
+            "exitOrientationDeg": 270
+          }
+        ],
+        "width": 30.5,
+        "name": "All-Weather Track"
+      },
+      {
+        "surface": "Dirt",
         "circumference": 1560,
         "straightLength": 380,
         "sections": [
           {
             "type": "straight",
             "length": 380,
-            "gradient": 0
+            "gradient": 0,
+            "orientationDeg": 270
           },
           {
             "type": "turn",
             "length": 400,
-            "radius": 127,
-            "gradient": 0
+            "radius": 127.32395447351627,
+            "gradient": 0,
+            "entryOrientationDeg": 270,
+            "exitOrientationDeg": 90
           },
           {
             "type": "straight",
             "length": 380,
-            "gradient": 0
+            "gradient": 0,
+            "orientationDeg": 90
           },
           {
             "type": "turn",
             "length": 400,
-            "radius": 127,
-            "gradient": 0
+            "radius": 127.32395447351627,
+            "gradient": 0,
+            "entryOrientationDeg": 90,
+            "exitOrientationDeg": 270
           }
         ],
         "width": 25,
-        "name": "All-Weather Track"
-      },
-      {
-        "surface": "Dirt",
-        "circumference": 1900,
-        "straightLength": 430,
-        "sections": [
-          {
-            "type": "straight",
-            "length": 430,
-            "gradient": 0
-          },
-          {
-            "type": "turn",
-            "length": 520,
-            "radius": 166,
-            "gradient": 0
-          },
-          {
-            "type": "straight",
-            "length": 430,
-            "gradient": 0
-          },
-          {
-            "type": "turn",
-            "length": 520,
-            "radius": 166,
-            "gradient": 0
-          }
-        ],
-        "width": 30.5,
         "name": "Turf Course (B Course)"
       }
     ],
@@ -2133,30 +2157,36 @@
     "courses": [
       {
         "surface": "Turf",
-        "circumference": 2807,
+        "circumference": 2800,
         "straightLength": 500,
         "sections": [
           {
             "type": "straight",
             "length": 500,
-            "gradient": 0.79
+            "gradient": 0.7928571428571429,
+            "orientationDeg": 270
           },
           {
             "type": "turn",
-            "length": 904,
-            "radius": 288,
-            "gradient": -0.79
+            "length": 900,
+            "radius": 286.4788975654116,
+            "gradient": -0.7928571428571429,
+            "entryOrientationDeg": 270,
+            "exitOrientationDeg": 90
           },
           {
             "type": "straight",
             "length": 500,
-            "gradient": 0.79
+            "gradient": 0.7928571428571429,
+            "orientationDeg": 90
           },
           {
             "type": "turn",
-            "length": 904,
-            "radius": 288,
-            "gradient": -0.79
+            "length": 900,
+            "radius": 286.4788975654116,
+            "gradient": -0.7928571428571429,
+            "entryOrientationDeg": 90,
+            "exitOrientationDeg": 270
           }
         ],
         "width": 30,

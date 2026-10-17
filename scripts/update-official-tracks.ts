@@ -1,10 +1,39 @@
 import fs from "fs";
 import path from "path";
 
-const tracksJsonPath = path.resolve(process.cwd(), "src/game/data/tracks.json");
-const tracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8"));
+interface OfficialCourse {
+  surface: string;
+  circumference: number;
+  straightLength: number;
+  width: number;
+  elevationChange: number;
+}
 
-const officialData = [
+interface TrackCourse {
+  surface: string;
+  circumference: number;
+  straightLength: number;
+  width: number;
+  sections?: {
+    type: string;
+    length: number;
+    radius?: number;
+    gradient: number;
+    orientationDeg?: number;
+    entryOrientationDeg?: number;
+    exitOrientationDeg?: number;
+  }[];
+}
+
+interface TrackData {
+  name: string;
+  courses: TrackCourse[];
+}
+
+const tracksJsonPath = path.resolve(process.cwd(), "src/data/tracks.json");
+const tracks = JSON.parse(fs.readFileSync(tracksJsonPath, "utf-8")) as TrackData[];
+
+const officialData: { name: string; courses: OfficialCourse[] }[] = [
   {
     name: "Tokyo",
     courses: [
@@ -70,16 +99,34 @@ const officialData = [
   },
 ];
 
-function generateOvalSections(circumference, straightLength, elevationChange) {
+function generateOvalSections(
+  circumference: number,
+  straightLength: number,
+  elevationChange: number,
+) {
   const turnLength = (circumference - 2 * straightLength) / 2;
   const radius = turnLength / Math.PI;
   const grad = elevationChange ? (elevationChange / circumference) * 100 : 0; // simplistic gradient dist
 
   return [
-    { type: "straight", length: straightLength, gradient: grad },
-    { type: "turn", length: turnLength, radius: radius, gradient: -grad },
-    { type: "straight", length: straightLength, gradient: grad },
-    { type: "turn", length: turnLength, radius: radius, gradient: -grad },
+    { type: "straight", length: straightLength, gradient: grad, orientationDeg: 270 },
+    {
+      type: "turn",
+      length: turnLength,
+      radius: radius,
+      gradient: -grad,
+      entryOrientationDeg: 270,
+      exitOrientationDeg: 90,
+    },
+    { type: "straight", length: straightLength, gradient: grad, orientationDeg: 90 },
+    {
+      type: "turn",
+      length: turnLength,
+      radius: radius,
+      gradient: -grad,
+      entryOrientationDeg: 90,
+      exitOrientationDeg: 270,
+    },
   ];
 }
 
