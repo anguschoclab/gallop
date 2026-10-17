@@ -116,11 +116,47 @@ describe("races Record sync through store actions", () => {
   });
 
   it("races Record entries reflect resolved status after race resolution", async () => {
-    const dueRace = makeRace("r-due", 1, { resolved: false });
+    const dueRace = makeRace("r-due", 1, {
+      resolved: false,
+      entries: [
+        {
+          horseId: "h1",
+          ownership: { type: "player" },
+          number: 1,
+          strategy: "balanced",
+          form: 50,
+          energy: 100,
+        },
+      ],
+      raceClass: "Maiden",
+      purse: 1000,
+    } as any);
     useGame.setState({
       day: 1,
       races: r2r([dueRace]),
-      horses: h2r([{ id: "h1", ownership: { type: "player" } } as any]),
+      horses: h2r([{
+        id: "h1",
+        ownership: { type: "player" },
+        stats: {
+          speed: 50,
+          stamina: 50,
+          acceleration: 50,
+          temperament: 50,
+          conformation: 50,
+          consistency: 50,
+        },
+        healthStatus: "healthy",
+        lifecycleStatus: "active",
+        racingViable: true,
+        training: {
+          focus: "speed",
+          intensity: "normal"
+        },
+        raceHistory: [],
+      } as any]),
+      player: {
+        cash: 10000,
+      } as any,
     });
 
     await useGame.getState().advanceDay();
