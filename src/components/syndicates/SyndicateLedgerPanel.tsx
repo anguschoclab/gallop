@@ -17,6 +17,7 @@ import {
   type ShareTransaction,
   type SyndicateValueSnapshot,
 } from "@/services/breeding/breedingFacade";
+import { Sparkline } from "@/components/charts/Sparkline";
 import { formatCurrency } from "@/lib/formatting";
 import { TrendingUp } from "lucide-react";
 
@@ -33,7 +34,7 @@ const EVENT_LABELS: Record<string, string> = {
   investor_buyout: "Investor buyout",
 };
 
-function Sparkline({ points }: { points: { day: number; stakeValue: number }[] }) {
+function StakeSparkline({ points }: { points: { day: number; stakeValue: number }[] }) {
   if (points.length < 2) {
     return (
       <div className="flex h-16 items-center justify-center text-[10px] text-cream/40 font-mono">
@@ -43,36 +44,17 @@ function Sparkline({ points }: { points: { day: number; stakeValue: number }[] }
       </div>
     );
   }
-  const W = 320;
-  const H = 64;
-  const PAD = 4;
   const days = points.map((p) => p.day);
   const values = points.map((p) => p.stakeValue);
   const minD = Math.min(...days);
   const maxD = Math.max(...days);
   const minV = Math.min(...values);
   const maxV = Math.max(...values);
-  const spanD = Math.max(1, maxD - minD);
-  const spanV = Math.max(1, maxV - minV);
-  const coords = points
-    .map(
-      (p) =>
-        `${(PAD + ((p.day - minD) / spanD) * (W - 2 * PAD)).toFixed(1)},${(
-          PAD +
-          (1 - (p.stakeValue - minV) / spanV) * (H - 2 * PAD)
-        ).toFixed(1)}`,
-    )
-    .join(" ");
   return (
     <div>
-      <svg
-        viewBox={`0 0 ${W} ${H}`}
-        className="w-full max-w-md h-16"
-        role="img"
-        aria-label="Stake value over time"
-      >
-        <polyline points={coords} fill="none" stroke="rgb(192 132 252)" strokeWidth="1.5" />
-      </svg>
+      <div className="w-full max-w-md" role="img" aria-label="Stake value over time">
+        <Sparkline data={values} height={64} />
+      </div>
       <div className="flex justify-between max-w-md text-[9px] font-mono text-cream/40">
         <span>Day {minD}</span>
         <span>
@@ -122,7 +104,7 @@ export function SyndicateLedgerPanel({ syndicateId }: { syndicateId: string }) {
         </span>
       </div>
 
-      <Sparkline points={series} />
+      <StakeSparkline points={series} />
       {latest && (
         <div className="text-[10px] font-mono text-cream/50">
           Cumulative dividend income: {formatCurrency(latest.cumulativePlayerIncome)} · day {day}

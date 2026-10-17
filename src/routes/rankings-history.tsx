@@ -108,8 +108,10 @@ function RankingsHistoryPage() {
       <header className="flex items-center gap-2">
         <TrendingUp className="h-5 w-5 text-primary" />
         <div>
-          <h1 className="text-lg font-black text-cream">Rankings History</h1>
-          <p className="text-[11px] font-mono uppercase tracking-wide text-cream/40">
+          <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-cream">
+            Rankings History
+          </h1>
+          <p className="text-sm text-cream-muted">
             Position, reputation and auction price over time — recorded daily
           </p>
         </div>
@@ -311,11 +313,11 @@ function ComparisonTable({
           <thead>
             <tr className="text-left text-[9px] uppercase text-cream/40">
               <th className="p-1.5">Horse</th>
-              <th>Rank</th>
-              <th>Points</th>
-              <th>Reputation</th>
-              <th>Price</th>
-              <th>Gap to #1</th>
+              <th className="text-right">Rank</th>
+              <th className="text-right">Points</th>
+              <th className="text-right">Reputation</th>
+              <th className="text-right">Price</th>
+              <th className="pl-3">Gap to #1</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
@@ -328,13 +330,15 @@ function ComparisonTable({
                   {r.name}
                   {r.isPlayer ? " · Yours" : ""}
                 </td>
-                <td>
+                <td className="text-right tabular-nums">
                   {r.snapshot?.rank ? `#${r.snapshot.rank}` : r.snapshot ? "Unranked" : "No record"}
                 </td>
-                <td>{r.snapshot?.points.toFixed(1) ?? "—"}</td>
-                <td>{r.snapshot?.reputation ?? "—"}</td>
-                <td>{r.snapshot ? formatCurrency(r.snapshot.price) : "—"}</td>
-                <td className="text-[10px] text-cream/50">
+                <td className="text-right tabular-nums">{r.snapshot?.points.toFixed(1) ?? "—"}</td>
+                <td className="text-right tabular-nums">{r.snapshot?.reputation ?? "—"}</td>
+                <td className="text-right tabular-nums">
+                  {r.snapshot ? formatCurrency(r.snapshot.price) : "—"}
+                </td>
+                <td className="pl-3 text-[10px] text-cream/50">
                   {r.gap
                     ? `${r.gap.rank === null ? "Unranked" : r.gap.rank === 0 ? "Leader" : `${r.gap.rank} places`} · ${signed(r.gap.points)} pts · ${signed(r.gap.reputation)} rep · ${signed(r.gap.price, true)}`
                     : "—"}

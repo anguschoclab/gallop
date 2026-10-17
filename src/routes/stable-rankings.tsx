@@ -130,8 +130,10 @@ function StableRankingsPage() {
       <header className="flex items-center gap-2">
         <Building2 className="h-5 w-5 text-primary" />
         <div>
-          <h1 className="text-lg font-black text-cream">Stable Rankings</h1>
-          <p className="text-[11px] font-mono uppercase tracking-wide text-cream/40">
+          <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-cream">
+            Stable Rankings
+          </h1>
+          <p className="text-sm text-cream-muted">
             Position, points, reputation and stable value vs every yard — recorded daily
           </p>
         </div>

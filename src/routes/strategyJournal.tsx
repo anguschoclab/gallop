@@ -320,7 +320,7 @@ function JournalCard({
             Result: {e.result.position === 1 ? "Won" : `finished ${e.result.position}`}
             {e.result.fieldSize ? ` of ${e.result.fieldSize}` : ""} · prize money $
             {Math.round(e.result.prizeMoney).toLocaleString()}
-            {e.result.beyer ? ` · speed figure ${e.result.beyer}` : ""} · cash after $
+            {e.result.beyer ? ` · Beyer ${e.result.beyer}` : ""} · cash after $
             {e.result.cashAfter.toLocaleString()} · recorded day {e.result.filledDay}
           </div>
         )}
