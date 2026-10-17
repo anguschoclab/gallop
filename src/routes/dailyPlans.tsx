@@ -11,8 +11,18 @@
  * Related files: src/routes/stableCampaign.tsx, src/routes/strategyJournal.tsx
  */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { FilterX } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useGame, useGameWithShallow } from "@/game/store";
 import { buildCampaignHistory } from "@/core/stable/campaignHistory";
@@ -80,11 +90,33 @@ function DailyPlansPage() {
     return buildDailyPlanTimeline(rows);
   }, [goals, horses, ledger, rankingsHistory, dailyProgress, journal, currentDay]);
 
-  const scored = days.filter((d) => d.score !== null);
+  const [horseFilter, setHorseFilter] = useState("all");
+  const [fromDay, setFromDay] = useState("");
+  const [toDay, setToDay] = useState("");
+
+  const horseOptions = useMemo(() => {
+    const m = new Map<string, string>();
+    for (const d of days) for (const r of d.races) m.set(r.horseId, r.horseName);
+    return [...m.entries()];
+  }, [days]);
+
+  const filteredDays = useMemo(
+    () =>
+      days.filter(
+        (d) =>
+          (horseFilter === "all" || d.races.some((r) => r.horseId === horseFilter)) &&
+          (fromDay === "" || d.day >= Number(fromDay)) &&
+          (toDay === "" || d.day <= Number(toDay)),
+      ),
+    [days, horseFilter, fromDay, toDay],
+  );
+  const filtersActive = horseFilter !== "all" || fromDay !== "" || toDay !== "";
+
+  const scored = filteredDays.filter((d) => d.score !== null);
   const avgScore =
     scored.length > 0 ? Math.round(scored.reduce((s, d) => s + d.score!, 0) / scored.length) : null;
-  const totalPrize = days.reduce((s, d) => s + d.totalPrize, 0);
-  const goalWins = days.reduce((s, d) => s + d.goalsServed.length, 0);
+  const totalPrize = filteredDays.reduce((s, d) => s + d.totalPrize, 0);
+  const goalWins = filteredDays.reduce((s, d) => s + d.goalsServed.length, 0);
 
   return (
     <div className="space-y-6 p-6">
@@ -106,9 +138,73 @@ function DailyPlansPage() {
       </div>
 
       {days.length > 0 && (
+        <Card>
+          <CardContent className="flex flex-wrap items-end gap-3 p-3">
+            <label className="space-y-1 text-[11px] font-semibold uppercase text-muted-foreground">
+              Horse
+              <Select value={horseFilter} onValueChange={setHorseFilter}>
+                <SelectTrigger aria-label="Filter by horse" className="h-8 w-48 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All horses</SelectItem>
+                  {horseOptions.map(([id, name]) => (
+                    <SelectItem key={id} value={id}>
+                      {name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </label>
+            <label className="space-y-1 text-[11px] font-semibold uppercase text-muted-foreground">
+              From day
+              <Input
+                type="number"
+                min={1}
+                value={fromDay}
+                onChange={(e) => setFromDay(e.target.value)}
+                placeholder="First"
+                aria-label="From game day"
+                className="h-8 w-24 text-xs"
+              />
+            </label>
+            <label className="space-y-1 text-[11px] font-semibold uppercase text-muted-foreground">
+              To day
+              <Input
+                type="number"
+                min={1}
+                value={toDay}
+                onChange={(e) => setToDay(e.target.value)}
+                placeholder="Latest"
+                aria-label="To game day"
+                className="h-8 w-24 text-xs"
+              />
+            </label>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              disabled={!filtersActive}
+              onClick={() => {
+                setHorseFilter("all");
+                setFromDay("");
+                setToDay("");
+              }}
+            >
+              <FilterX />
+              Clear filters
+            </Button>
+            <span className="text-xs text-muted-foreground" aria-live="polite">
+              Showing {filteredDays.length} of {days.length} days
+            </span>
+          </CardContent>
+        </Card>
+      )}
+
+      {filteredDays.length > 0 && (
         <div className="flex flex-wrap gap-4 text-sm">
           <span>
-            Days raced: <span className="font-mono">{days.length}</span>
+            Days raced: <span className="font-mono">{filteredDays.length}</span>
           </span>
           <span>
             Avg plan score: <span className="font-mono">{avgScore === null ? "—" : avgScore}</span>
@@ -130,8 +226,14 @@ function DailyPlansPage() {
             here grouped by day once they finish.
           </CardContent>
         </Card>
+      ) : filteredDays.length === 0 ? (
+        <Card>
+          <CardContent className="p-6 text-sm text-muted-foreground">
+            No days match these filters.
+          </CardContent>
+        </Card>
       ) : (
-        days.map((d) => (
+        filteredDays.map((d) => (
           <Card key={d.day}>
             <CardHeader className="pb-2">
               <CardTitle className="flex flex-wrap items-center gap-2 text-sm">
