@@ -70,3 +70,22 @@ describe("Design Bible Compliance: TransportPlanner", () => {
     expect(content).toMatch(/tracking/);
   });
 });
+
+describe("Design Bible Compliance: SyndicateLedgerPanel", () => {
+  const content = readComponent("syndicates/SyndicateLedgerPanel.tsx");
+
+  it("uses font-mono for numeric values", () => {
+    expect(content).toMatch(/font-mono/);
+  });
+
+  it("uses uppercase tracking for labels", () => {
+    expect(content).toMatch(/uppercase/);
+    expect(content).toMatch(/tracking/);
+  });
+
+  it("does not use hardcoded colors — chart strokes come from token-based Sparkline", () => {
+    expect(content.match(/#[0-9a-fA-F]{3,8}\b/g)).toBeNull();
+    expect(content).not.toMatch(/rgba?\(|oklch\(/);
+    expect(content).not.toMatch(/stroke="/);
+  });
+});
