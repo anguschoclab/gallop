@@ -176,6 +176,7 @@ export function ExchangePanel() {
                   content={`Day ${s.day}: ${s.volume} trades · ${formatCurrency(s.turnover)}`}
                 >
                   <div
+                    key={s.day}
                     className="flex-1 rounded-t bg-primary/60"
                     style={{ height: `${Math.max(2, (s.volume / maxVolume) * 100)}%` }}
                   />

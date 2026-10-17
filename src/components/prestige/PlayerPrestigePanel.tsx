@@ -102,6 +102,7 @@ export function PlayerPrestigePanel() {
             {TIER_MARKS.map((mark) => (
               <Hint key={mark.label} content={`${mark.label} tier from ${mark.at}`}>
                 <span
+                  key={mark.label}
                   className="absolute inset-y-0 w-px bg-cream/25"
                   style={{ left: `${mark.at}%` }}
                 />
