@@ -527,6 +527,50 @@ export const detectDistanceVersatility: InsightDetector = (horse) => {
   return null;
 };
 
+// 1.95 Check for Distance Change Specialist (Stretch-Out or Cutback)
+export const detectDistanceChange: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  let stretchOutWins = 0;
+  let stretchOutStarts = 0;
+  let cutbackWins = 0;
+  let cutbackStarts = 0;
+
+  for (let i = 1; i < history.length; i++) {
+    const prev = history[i - 1];
+    const curr = history[i];
+    if (prev.distance == null || curr.distance == null) continue;
+
+    const diff = curr.distance - prev.distance;
+    if (diff >= 200) {
+      stretchOutStarts++;
+      if (curr.position === 1) stretchOutWins++;
+    } else if (diff <= -200) {
+      cutbackStarts++;
+      if (curr.position === 1) cutbackWins++;
+    }
+  }
+
+  if (stretchOutStarts >= 2 && stretchOutWins >= 2 && stretchOutWins / stretchOutStarts >= 0.5) {
+    return {
+      label: "Stretch-Out Specialist",
+      value: "Distance Step-Up Winner",
+      context: `Has won ${stretchOutWins} of ${stretchOutStarts} starts when stepping up 200m+ in distance`,
+      type: "positive",
+    };
+  }
+
+  if (cutbackStarts >= 2 && cutbackWins >= 2 && cutbackWins / cutbackStarts >= 0.5) {
+    return {
+      label: "Cutback Specialist",
+      value: "Distance Cut-Back Winner",
+      context: `Has won ${cutbackWins} of ${cutbackStarts} starts when shortening up 200m+ in distance`,
+      type: "positive",
+    };
+  }
+
+  return null;
+};
+
 // 3.95 Check for Earnings Milestones
 export const detectEarningsMilestone: InsightDetector = (horse) => {
   const earnings = horse.lifetimeEarnings ?? 0;
@@ -672,6 +716,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceSpecialist,
   detectSurfaceAffinity,
   detectDistanceVersatility,
+  detectDistanceChange,
   detectGateAffinity,
   detectEarningsMilestone,
   detectSireValue,
