@@ -1,4 +1,3 @@
-import { TOOLTIP_DELAY_MS } from "@/constants";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,7 +7,7 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
 import { cn } from "@/lib/cn";
 import { usePrivateTrial } from "@/hooks/race/usePrivateTrial";
 import { PrivateTrialForm } from "./PrivateTrialForm";
@@ -70,16 +69,9 @@ export function PrivateTrialDialog({ horse, horses, cash }: PrivateTrialDialogPr
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       {isDisabled ? (
-        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <span tabIndex={0} className="inline-block w-full cursor-not-allowed">
-                {triggerButton}
-              </span>
-            </TooltipTrigger>
-            <TooltipContent>{disabledReason}</TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
+        <DisabledTooltipWrapper reason={disabledReason} wrapperClassName="w-full">
+          {triggerButton}
+        </DisabledTooltipWrapper>
       ) : (
         <DialogTrigger asChild>{triggerButton}</DialogTrigger>
       )}
