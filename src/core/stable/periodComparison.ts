@@ -140,7 +140,12 @@ export function pctChange(a: number, b: number): number | null {
 
 export type CampaignHistoryFilter = "all" | "campaign" | "goal-wins";
 
-/** Filter attributed period starts, preserving their date and ownership boundaries. */
+/**
+ * Filter attributed period starts, preserving their date and ownership boundaries.
+ * @param races
+ * @param filter
+ * @param goals
+ */
 export function filterPeriodCampaignRaces(
   races: PeriodRace[],
   filter: CampaignHistoryFilter,

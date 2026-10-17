@@ -153,7 +153,7 @@ describe("SyndicateStakesPage", () => {
     ).not.toBeInTheDocument();
 
     const toggleButton = screen.getByRole("button", {
-      name: /view reputation events for northern dancer/i,
+      name: /view ledger and reputation events for northern dancer/i,
     });
     fireEvent.click(toggleButton);
 

@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/table";
 import { StatCard } from "@/components/common/StatCard";
 import { PillToggleGroup } from "@/components/common/PillToggleGroup";
+import { SyndicateLedgerPanel } from "@/components/syndicates/SyndicateLedgerPanel";
 import { formatCurrency } from "@/lib/formatting";
 import { cn } from "@/lib/cn";
 import {
@@ -496,32 +497,31 @@ export function SyndicateStakesPage({ stakes: propsStakes, className }: Syndicat
                                     {stake.reputationPointsTotal >= 0 ? "+" : ""}
                                     {stake.reputationPointsTotal} pts
                                   </span>
-                                  {stake.recentEvents.length > 0 && (
-                                    <Button
-                                      type="button"
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() =>
-                                        setExpandedStakeId((curr) =>
-                                          curr === stake.id ? null : stake.id,
-                                        )
-                                      }
-                                      className="h-5 px-1.5 text-[9px] text-purple-300 hover:text-purple-200 hover:bg-purple-950/40"
-                                      aria-label={`${isExpanded ? "Hide" : "View"} reputation events for ${stake.stallionName}`}
-                                    >
-                                      {isExpanded ? (
-                                        <>
-                                          Hide Log <ChevronUp className="h-2.5 w-2.5 ml-1" />
-                                        </>
-                                      ) : (
-                                        <>
-                                          {stake.recentEvents.length}{" "}
-                                          {stake.recentEvents.length === 1 ? "Event" : "Events"}
-                                          <ChevronDown className="h-2.5 w-2.5 ml-1" />
-                                        </>
-                                      )}
-                                    </Button>
-                                  )}
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() =>
+                                      setExpandedStakeId((curr) =>
+                                        curr === stake.id ? null : stake.id,
+                                      )
+                                    }
+                                    className="h-5 px-1.5 text-[9px] text-purple-300 hover:text-purple-200 hover:bg-purple-950/40"
+                                    aria-label={`${isExpanded ? "Hide" : "View"} ledger and reputation events for ${stake.stallionName}`}
+                                  >
+                                    {isExpanded ? (
+                                      <>
+                                        Hide Ledger <ChevronUp className="h-2.5 w-2.5 ml-1" />
+                                      </>
+                                    ) : (
+                                      <>
+                                        Ledger
+                                        {stake.recentEvents.length > 0 &&
+                                          ` · ${stake.recentEvents.length} event${stake.recentEvents.length === 1 ? "" : "s"}`}
+                                        <ChevronDown className="h-2.5 w-2.5 ml-1" />
+                                      </>
+                                    )}
+                                  </Button>
                                 </div>
                                 <p className="text-[10px] text-cream-muted leading-tight line-clamp-2">
                                   {stake.reputationImpactDescription}
@@ -543,45 +543,53 @@ export function SyndicateStakesPage({ stakes: propsStakes, className }: Syndicat
                             </TableCell>
                           </TableRow>
 
-                          {/* Expandable Historical Reputation Event Log */}
+                          {/* Expandable Reputation Event Log + Syndicate Ledger */}
                           {isExpanded && (
                             <TableRow className="bg-purple-950/20 border-b border-purple-500/20">
                               <TableCell colSpan={7} className="py-3 px-6">
                                 <div className="space-y-2">
-                                  <div className="text-[10px] font-black uppercase text-cream/70 tracking-wider flex items-center justify-between">
-                                    <div className="flex items-center gap-1.5">
-                                      <Award className="h-3.5 w-3.5 text-purple-400" />
-                                      Historical Reputation Events · {stake.stallionName}
-                                    </div>
-                                    <span className="font-mono text-[9px] text-purple-300">
-                                      Net: {stake.reputationPointsTotal >= 0 ? "+" : ""}
-                                      {stake.reputationPointsTotal} pts
-                                    </span>
-                                  </div>
-                                  <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
-                                    {stake.recentEvents.map((event) => (
-                                      <div
-                                        key={event.id}
-                                        className="bg-black/40 border border-white/5 p-2 flex items-center justify-between gap-3 text-xs"
-                                      >
-                                        <div className="flex items-center gap-2.5 min-w-0">
-                                          <span className="font-mono text-[9px] text-cream/40 shrink-0">
-                                            Day {event.day}
-                                          </span>
-                                          <span className="text-[11px] text-cream/90 truncate">
-                                            {event.description}
-                                          </span>
+                                  {stake.recentEvents.length > 0 && (
+                                    <>
+                                      <div className="text-[10px] font-black uppercase text-cream/70 tracking-wider flex items-center justify-between">
+                                        <div className="flex items-center gap-1.5">
+                                          <Award className="h-3.5 w-3.5 text-purple-400" />
+                                          Historical Reputation Events · {stake.stallionName}
                                         </div>
-                                        <span
-                                          className={`font-mono font-black text-xs shrink-0 ${
-                                            event.amount > 0 ? "text-emerald-400" : "text-rose-400"
-                                          }`}
-                                        >
-                                          {event.amount > 0 ? `+${event.amount}` : event.amount} pts
+                                        <span className="font-mono text-[9px] text-purple-300">
+                                          Net: {stake.reputationPointsTotal >= 0 ? "+" : ""}
+                                          {stake.reputationPointsTotal} pts
                                         </span>
                                       </div>
-                                    ))}
-                                  </div>
+                                      <div className="space-y-1.5 max-h-48 overflow-y-auto pr-1">
+                                        {stake.recentEvents.map((event) => (
+                                          <div
+                                            key={event.id}
+                                            className="bg-black/40 border border-white/5 p-2 flex items-center justify-between gap-3 text-xs"
+                                          >
+                                            <div className="flex items-center gap-2.5 min-w-0">
+                                              <span className="font-mono text-[9px] text-cream/40 shrink-0">
+                                                Day {event.day}
+                                              </span>
+                                              <span className="text-[11px] text-cream/90 truncate">
+                                                {event.description}
+                                              </span>
+                                            </div>
+                                            <span
+                                              className={`font-mono font-black text-xs shrink-0 ${
+                                                event.amount > 0
+                                                  ? "text-emerald-400"
+                                                  : "text-rose-400"
+                                              }`}
+                                            >
+                                              {event.amount > 0 ? `+${event.amount}` : event.amount}{" "}
+                                              pts
+                                            </span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    </>
+                                  )}
+                                  <SyndicateLedgerPanel syndicateId={stake.id} />
                                 </div>
                               </TableCell>
                             </TableRow>

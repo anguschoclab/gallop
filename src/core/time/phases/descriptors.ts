@@ -283,7 +283,7 @@ export const GAME_PHASE_DESCRIPTORS: PhaseDescriptor[] = [
   describePhase(schedulerPhase, {
     label: "Scheduler",
     cadence: "daily",
-    writes: ["pendingIntents", "campaigns", "log"],
+    writes: ["pendingIntents", "campaigns", "strategyJournal", "log"],
   }),
   describePhase(raceCancellationPhase, {
     label: "Race cancellation",
@@ -416,7 +416,7 @@ export const GAME_PHASE_DESCRIPTORS: PhaseDescriptor[] = [
   describePhase(dailySnapshotPhase, {
     label: "Daily snapshot",
     cadence: "daily",
-    writes: ["dailySnapshots", "log"],
+    writes: ["dailySnapshots", "syndicateValueSnapshots", "log"],
   }),
 ];
 

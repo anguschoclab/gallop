@@ -15,6 +15,10 @@ import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { recordDailyProgress } from "@/core/horse/dailyProgress";
 import type { Horse } from "@/core/horse/types";
 import { playerSyndicateValue } from "@/core/stable/portfolio";
+import {
+  appendSyndicateValueSnapshots,
+  playerSyndicateSnapshots,
+} from "@/core/breeding/syndicateLedger";
 import { fillJournalOutcomes } from "@/core/tactics/strategyJournal";
 import { recordRankingsHistory } from "@/core/market/rankingsHistory";
 import { recordStableRankingsHistory } from "@/core/stable/stableRankings";
@@ -48,6 +52,10 @@ export const dailySnapshotPhase: PipelinePhase = {
       playerProfile: state.playerProfile,
       day: newDay,
     });
+    const syndicateValueSnapshots = appendSyndicateValueSnapshots(
+      state.syndicateValueSnapshots,
+      playerSyndicateSnapshots(state.syndicates, newDay),
+    );
     return {
       ...context,
       state: {
@@ -56,6 +64,7 @@ export const dailySnapshotPhase: PipelinePhase = {
         strategyJournal,
         rankingsHistory,
         stableRankingsHistory,
+        syndicateValueSnapshots,
       },
     };
   },

@@ -145,6 +145,7 @@ const confirmedWiredFields = [
   "syndicateInvestors", // wired in syndicate.$syndicateId.tsx
   "shareTransactions", // wired in syndicate.$syndicateId.tsx Transaction History
   "shareActivityFeed", // wired in ShareActivityFeed.tsx, rendered in syndicate.$syndicateId.tsx
+  "syndicateValueSnapshots", // wired in SyndicateLedgerPanel.tsx on the Portfolio syndicates tab
 ];
 
 // ─── State fields to audit (genuinely suspected orphans) ─────────────────────

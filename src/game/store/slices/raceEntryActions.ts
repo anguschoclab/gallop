@@ -1,6 +1,7 @@
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
 import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
+import { autoCreateJournalEntry } from "@/core/tactics/strategyJournal";
 import { generateUUID } from "@/core/uuid";
 import { requireOwned, requireHorse } from "../guards";
 import type { StoreSet, StoreGet, StoreType } from "../types";
@@ -99,6 +100,17 @@ export function createRaceEntryActions(
           ),
         }));
       }
+
+      set((state) => ({
+        strategyJournal: autoCreateJournalEntry(state.strategyJournal, {
+          horseId,
+          horseName: horse!.name,
+          raceId,
+          raceName: race.name,
+          raceDay: race.day,
+          createdDay: s.day,
+        }),
+      }));
 
       return { ok: true };
     },

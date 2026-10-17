@@ -25,6 +25,7 @@ export * from "@/core/breeding/pregnancy";
 export * from "@/core/breeding/eligibility";
 export * from "@/core/breeding/ports";
 export * from "@/core/breeding/syndicateStakes";
+export * from "@/core/breeding/syndicateLedger";
 
 // Cross-domain re-exports used by breeding components
 export { isPlayerOwned, isNpcOwned, getStableId } from "@/core/horse/ownership";

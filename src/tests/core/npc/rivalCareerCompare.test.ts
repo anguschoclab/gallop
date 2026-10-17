@@ -115,4 +115,59 @@ describe("rival career comparison", () => {
     );
     expect(profiles.map((p) => p.id)).toEqual(["b", "a"]);
   });
+
+  describe("efficiency score", () => {
+    it("computes placeRate from top-3 finishes over starts", () => {
+      const p = buildRivalCareerProfile(
+        horse({ raceHistory: [start(1, 1), start(2, 3), start(3, 4), start(4, 8)] }),
+        10,
+      );
+      expect(p.placeRate).toBeCloseTo(0.5);
+    });
+
+    it("computes avgFinish as the mean position", () => {
+      const p = buildRivalCareerProfile(
+        horse({ raceHistory: [start(1, 1), start(2, 3), start(3, 8)] }),
+        10,
+      );
+      expect(p.avgFinish).toBeCloseTo(4);
+    });
+
+    it("computes prizePerStart from total earnings", () => {
+      const p = buildRivalCareerProfile(
+        horse({ raceHistory: [start(1, 1, undefined, 30_000), start(2, 4, undefined, 10_000)] }),
+        10,
+      );
+      expect(p.prizePerStart).toBe(20_000);
+    });
+
+    it("scores a dominant winner higher than a backmarker", () => {
+      const winner = buildRivalCareerProfile(
+        horse({ raceHistory: [start(1, 1), start(2, 1), start(3, 2)] }),
+        10,
+      );
+      const plodder = buildRivalCareerProfile(
+        horse({ raceHistory: [start(1, 9), start(2, 10), start(3, 8)] }),
+        10,
+      );
+      expect(winner.efficiencyScore).toBeGreaterThan(plodder.efficiencyScore);
+      expect(winner.efficiencyScore).toBeGreaterThan(50);
+      expect(plodder.efficiencyScore).toBeLessThan(25);
+    });
+
+    it("handles a horse with zero starts", () => {
+      const p = buildRivalCareerProfile(horse({ raceHistory: [] }), 10);
+      expect(p.placeRate).toBe(0);
+      expect(p.avgFinish).toBe(0);
+      expect(p.prizePerStart).toBe(0);
+      expect(p.efficiencyScore).toBe(0);
+    });
+
+    it("handles missing fieldSize without breaking the score", () => {
+      const p = buildRivalCareerProfile(horse({ raceHistory: [start(1, 1), start(2, 5)] }), 10);
+      expect(Number.isFinite(p.efficiencyScore)).toBe(true);
+      expect(p.efficiencyScore).toBeGreaterThanOrEqual(0);
+      expect(p.efficiencyScore).toBeLessThanOrEqual(100);
+    });
+  });
 });

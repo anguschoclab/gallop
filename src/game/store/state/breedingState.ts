@@ -15,6 +15,7 @@ import type { Pregnancy, ShareTransaction, ShareActivityFeedItem } from "@/core/
 import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
 import type { BreedingProgram } from "@/core/breeding/programs";
 import type { Syndicate } from "@/core/breeding/types";
+import type { SyndicateValueSnapshot } from "@/core/breeding/syndicateLedger";
 import type { InvestorRecord } from "@/core/breeding/investorTypes";
 import type { HorseId } from "@/core/types/branded";
 
@@ -47,8 +48,10 @@ export interface BreedingState {
   syndicateInvestors: Record<string, InvestorRecord>;
   /** Share transaction history for syndicates */
   shareTransactions: ShareTransaction[];
-  /** Activity feed for syndicate share transactions and devolution events */
+  /** Activity feed for syndicate share transactions, fee distributions and devolution events */
   shareActivityFeed: ShareActivityFeedItem[];
+  /** Daily per-syndicate stake value snapshots for the ledger time series */
+  syndicateValueSnapshots: SyndicateValueSnapshot[];
   /** Saved mating plans for reuse across breeding seasons */
   savedMatingPlans: SavedMatingPlan[];
 }
@@ -67,6 +70,7 @@ export function createDefaultBreedingState(): BreedingState {
     syndicateInvestors: {},
     shareTransactions: [],
     shareActivityFeed: [],
+    syndicateValueSnapshots: [],
     savedMatingPlans: [],
   };
 }

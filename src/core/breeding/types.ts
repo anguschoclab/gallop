@@ -68,7 +68,13 @@ export interface ShareActivityFeedItem {
   id: string;
   syndicateId: string;
   syndicateName: string;
-  type: "share_purchase" | "share_sale" | "devolution" | "investor_solicit" | "investor_buyout";
+  type:
+    | "share_purchase"
+    | "share_sale"
+    | "devolution"
+    | "investor_solicit"
+    | "investor_buyout"
+    | "fee_distribution";
   buyerStableId?: import("@/core/types/branded").OwnerKey;
   sellerStableId?: import("@/core/types/branded").OwnerKey;
   shares: number;
@@ -78,6 +84,8 @@ export interface ShareActivityFeedItem {
   previousOwner?: string;
   newOwner?: string;
   stallionName?: string;
+  /** Full stud fee pool on a fee_distribution item (cashMoved is the player's share). */
+  totalFee?: number;
 }
 
 export interface Syndicate {

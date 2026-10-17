@@ -59,7 +59,12 @@ export function RivalCareerCompareTable({
     );
   }
 
-  const numericRows: { label: string; values: number[]; render: (v: number) => string }[] = [
+  const numericRows: {
+    label: string;
+    values: number[];
+    render: (v: number) => string;
+    invert?: boolean;
+  }[] = [
     { label: "Age", values: profiles.map((p) => p.age), render: (v) => `${v}Y` },
     { label: "Starts", values: profiles.map((p) => p.starts), render: (v) => `${v}` },
     { label: "Wins", values: profiles.map((p) => p.wins), render: (v) => `${v}` },
@@ -69,11 +74,32 @@ export function RivalCareerCompareTable({
       render: (v) => `${Math.round(v * 100)}%`,
     },
     {
+      label: "Place rate",
+      values: profiles.map((p) => p.placeRate),
+      render: (v) => `${Math.round(v * 100)}%`,
+    },
+    {
+      label: "Avg finish",
+      values: profiles.map((p) => p.avgFinish),
+      render: (v) => (v === 0 ? "—" : v.toFixed(1)),
+      invert: true,
+    },
+    {
       label: "Earnings",
       values: profiles.map((p) => p.earnings),
       render: (v) => formatCurrency(v),
     },
+    {
+      label: "Prize / start",
+      values: profiles.map((p) => p.prizePerStart),
+      render: (v) => formatCurrency(v),
+    },
     { label: "Fame", values: profiles.map((p) => p.fame), render: (v) => `${v}` },
+    {
+      label: "Efficiency",
+      values: profiles.map((p) => p.efficiencyScore),
+      render: (v) => `${v}`,
+    },
   ];
 
   return (
@@ -99,7 +125,9 @@ export function RivalCareerCompareTable({
         </thead>
         <tbody>
           {numericRows.map((row) => {
-            const winner = bestIndex(row.values);
+            const winner = bestIndex(
+              row.invert ? row.values.map((v) => (v === 0 ? -Infinity : -v)) : row.values,
+            );
             return (
               <tr key={row.label} className="border-b border-border/50">
                 <td className={ROW_LABEL_CLASS}>{row.label}</td>

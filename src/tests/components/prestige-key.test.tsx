@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { PlayerPrestigePanel } from "@/components/prestige/PlayerPrestigePanel";
 
@@ -8,9 +8,7 @@ describe("PlayerPrestigePanel", () => {
 
   it("renders tier marks without React key warnings", () => {
     renderWithStore(<PlayerPrestigePanel />);
-    const keyWarnings = errSpy.mock.calls.filter((c) =>
-      String(c[0]).includes('unique "key" prop'),
-    );
+    const keyWarnings = errSpy.mock.calls.filter((c) => String(c[0]).includes('unique "key" prop'));
     expect(keyWarnings).toEqual([]);
   });
 });

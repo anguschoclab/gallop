@@ -15,6 +15,10 @@ export interface StableGoals {
   targetNetWorth?: number;
   /** Game day by which to reach the net worth target. */
   targetDay?: number;
+  /** Liquid cash-on-hand target. */
+  targetCash?: number;
+  /** Total prize earnings to accumulate since `startDay`. */
+  targetEarnings?: number;
   /** Wins wanted per race class, counted from `startDay`. */
   classGoals: Partial<Record<GoalClass, number>>;
   /** Day the class-goal count starts from. */
@@ -34,6 +38,10 @@ export interface GoalProgress {
   netWorthGap: number;
   classWins: Record<GoalClass, number>;
   classRemaining: Record<GoalClass, number>;
+  currentCash: number;
+  cashGap: number;
+  totalEarnings: number;
+  earningsGap: number;
 }
 
 export function raceGoalClass(race: Pick<Race, "graded" | "raceClass">): GoalClass | null {
@@ -50,6 +58,15 @@ function historyClass(grade?: string, raceClass?: string): GoalClass | null {
   return raceGoalClass({ raceClass: raceClass as Race["raceClass"] });
 }
 
+/**
+ * Goal class for a completed race-history entry (grade first, then race class).
+ * @param grade - Recorded grade string, e.g. "G1"
+ * @param raceClass - Recorded race class name
+ */
+export function raceHistoryGoalClass(grade?: string, raceClass?: string): GoalClass | null {
+  return historyClass(grade, raceClass);
+}
+
 export function playerNetWorth(horses: Horse[], cash: number): number {
   let total = cash;
   for (const h of horses) {
@@ -62,10 +79,13 @@ export function playerNetWorth(horses: Horse[], cash: number): number {
 export function goalProgress(goals: StableGoals, horses: Horse[], cash: number): GoalProgress {
   const netWorth = playerNetWorth(horses, cash);
   const classWins: Record<GoalClass, number> = { G1: 0, G2: 0, G3: 0, Stakes: 0 };
+  let totalEarnings = 0;
   for (const h of horses) {
     if (!isPlayerOwned(h)) continue;
     for (const r of h.raceHistory ?? []) {
-      if (r.position !== 1 || r.day < goals.startDay) continue;
+      if (r.day < goals.startDay) continue;
+      totalEarnings += r.purseEarned ?? 0;
+      if (r.position !== 1) continue;
       const c = historyClass(r.grade, r.raceClass);
       if (c) classWins[c]++;
     }
@@ -79,6 +99,10 @@ export function goalProgress(goals: StableGoals, horses: Horse[], cash: number):
     netWorthGap: Math.max(0, (goals.targetNetWorth ?? 0) - netWorth),
     classWins,
     classRemaining,
+    currentCash: cash,
+    cashGap: Math.max(0, (goals.targetCash ?? 0) - cash),
+    totalEarnings,
+    earningsGap: Math.max(0, (goals.targetEarnings ?? 0) - totalEarnings),
   };
 }
 
@@ -113,6 +137,23 @@ export function goalRaceBonus(
     if (purseScore >= 1) {
       bonus += purseScore * (0.5 + gapShare);
       reasons.push("Prize money helps close the gap to your net-worth target.");
+    }
+  } else if (progress.cashGap > 0 && goals.targetCash) {
+    // Cash-floor scoring only fires when the net-worth bonus isn't already
+    // rewarding purse — the two measure overlapping liquidity.
+    const gapShare = Math.min(1, progress.cashGap / goals.targetCash);
+    const purseScore = Math.min(10, ((race.purse ?? 0) / 15000) * 3);
+    if (purseScore >= 1) {
+      bonus += purseScore * (0.5 + gapShare);
+      reasons.push("Prize money helps reach your cash-on-hand target.");
+    }
+  }
+  if (progress.earningsGap > 0 && goals.targetEarnings) {
+    const gapShare = Math.min(1, progress.earningsGap / goals.targetEarnings);
+    const purseScore = Math.min(8, ((race.purse ?? 0) / 25000) * 4);
+    if (purseScore >= 1) {
+      bonus += purseScore * (0.5 + gapShare);
+      reasons.push("Prize money counts toward your earnings target.");
     }
   }
   return { bonus: Math.round(bonus * goals.weight * 10) / 10, reasons };
@@ -157,7 +198,7 @@ export function autoAdjustGoals(
       text: `${c} goal met (${progress.classWins[c]} wins) — raised to ${next}.`,
     });
   }
-  let { targetNetWorth, targetDay } = goals;
+  let { targetNetWorth, targetDay, targetCash, targetEarnings } = goals;
   if (targetNetWorth && progress.netWorth >= targetNetWorth) {
     const next = Math.ceil((progress.netWorth * NET_WORTH_RAISE_FACTOR) / 10000) * 10000;
     adjustments.push({
@@ -173,6 +214,22 @@ export function autoAdjustGoals(
     });
     targetDay = day + DEADLINE_EXTENSION_DAYS;
   }
+  if (targetCash && progress.currentCash >= targetCash) {
+    const next = Math.ceil((progress.currentCash * NET_WORTH_RAISE_FACTOR) / 5000) * 5000;
+    adjustments.push({
+      day,
+      text: `Cash target of $${targetCash.toLocaleString()} reached — raised to $${next.toLocaleString()}.`,
+    });
+    targetCash = next;
+  }
+  if (targetEarnings && progress.totalEarnings >= targetEarnings) {
+    const next = Math.ceil((progress.totalEarnings * NET_WORTH_RAISE_FACTOR) / 10000) * 10000;
+    adjustments.push({
+      day,
+      text: `Earnings target of $${targetEarnings.toLocaleString()} reached — raised to $${next.toLocaleString()}.`,
+    });
+    targetEarnings = next;
+  }
   if (adjustments.length === 0) return { goals, adjustments };
   return {
     goals: {
@@ -180,6 +237,8 @@ export function autoAdjustGoals(
       classGoals,
       targetNetWorth,
       targetDay,
+      targetCash,
+      targetEarnings,
       adjustmentLog: [...adjustments, ...(goals.adjustmentLog ?? [])].slice(
         0,
         GOAL_ADJUSTMENT_LOG_MAX,

@@ -78,6 +78,7 @@ const navSections: { label: string; items: NavItem[] }[] = [
       { to: "/race-advisor", label: "Race Advisor", icon: User, exact: false },
       { to: "/stableCampaign", label: "Stable Campaign", icon: User, exact: false },
       { to: "/strategyJournal", label: "Strategy Journal", icon: User, exact: false },
+      { to: "/dailyPlans", label: "Daily Plans", icon: User, exact: false },
       { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
       { to: "/vet", label: "Vet Report", icon: Activity, exact: false },
       { to: "/stewards", label: "Stewards", icon: Scale, exact: false },

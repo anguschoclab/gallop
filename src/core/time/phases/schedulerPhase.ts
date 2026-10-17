@@ -27,6 +27,7 @@ import type { InboxImpact } from "@/core/resolver/impacts/inboxImpacts";
 import { generateUUID } from "@/core/uuid";
 import { calculateAutoRegisterEntries } from "@/core/campaign/autoRegister";
 import { autoAdjustGoals, goalProgress } from "@/core/stable/stableGoals";
+import { autoCreateJournalEntry } from "@/core/tactics/strategyJournal";
 
 /**
  * Raises met stable-campaign goals before auto-entry scores races.
@@ -112,10 +113,22 @@ function runDailyAutoEntry(context: PipelineContext): PipelineContext {
     day: newDay,
     text: `Auto-entered ${e.horseName} in ${e.raceName} (Day ${e.raceDay}).`,
   }));
+  let strategyJournal = state.strategyJournal;
+  for (const e of result.entries) {
+    strategyJournal = autoCreateJournalEntry(strategyJournal, {
+      horseId: e.horseId,
+      horseName: e.horseName,
+      raceId: e.raceId,
+      raceName: e.raceName,
+      raceDay: e.raceDay,
+      createdDay: newDay,
+    });
+  }
   return {
     ...context,
     logs: [...logs, ...context.logs],
     impacts: [...context.impacts, ...impacts],
+    state: { ...state, strategyJournal },
   };
 }
 
@@ -182,6 +195,7 @@ const campaignSchedulerImpl = {
 
     const entryLogs: { day: number; text: string }[] = [];
     const autoEntryImpacts: AnyImpact[] = [];
+    let strategyJournal = state.strategyJournal;
     let cashDelta = 0;
 
     // Collect horse+race pairs already entered via pending impacts from raceEntryResolution.
@@ -227,6 +241,14 @@ const campaignSchedulerImpl = {
             entries: [...race.entries, { horseId, ownership: makePlayerOwned() }],
           });
           cashDelta -= race.entryFee;
+          strategyJournal = autoCreateJournalEntry(strategyJournal, {
+            horseId,
+            horseName: horse.name,
+            raceId,
+            raceName: race.name,
+            raceDay: race.day,
+            createdDay: newDay,
+          });
           entryLogs.push({ day: newDay, text: `Auto-entered ${horse.name} in ${race.name}.` });
           autoEntryImpacts.push({
             id: generateUUID(),
@@ -301,6 +323,7 @@ const campaignSchedulerImpl = {
       state: {
         ...state,
         campaigns: updatedCampaigns,
+        strategyJournal,
       },
     };
   },

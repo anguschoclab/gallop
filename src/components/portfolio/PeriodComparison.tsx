@@ -9,8 +9,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
-import { filterPeriodCampaignRaces, type CampaignHistoryFilter } from "@/services/stable/stableFacade";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  filterPeriodCampaignRaces,
+  type CampaignHistoryFilter,
+} from "@/services/stable/stableFacade";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Link } from "@tanstack/react-router";
 
@@ -99,8 +108,14 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
     () => filterPeriodCampaignRaces(periodRaces(allHorses, b, transactions), campaignFilter, goals),
     [allHorses, b, transactions, campaignFilter, goals],
   );
-  const sa = useMemo(() => periodStats(wins, ledger, a, campaignFilter === "all" ? undefined : racesA), [wins, ledger, a, campaignFilter, racesA]);
-  const sb = useMemo(() => periodStats(wins, ledger, b, campaignFilter === "all" ? undefined : racesB), [wins, ledger, b, campaignFilter, racesB]);
+  const sa = useMemo(
+    () => periodStats(wins, ledger, a, campaignFilter === "all" ? undefined : racesA),
+    [wins, ledger, a, campaignFilter, racesA],
+  );
+  const sb = useMemo(
+    () => periodStats(wins, ledger, b, campaignFilter === "all" ? undefined : racesB),
+    [wins, ledger, b, campaignFilter, racesB],
+  );
   const classes = Array.from(
     new Set([...Object.keys(sa.byClass), ...Object.keys(sb.byClass)]),
   ).sort();
@@ -124,18 +139,28 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
           <RangeInputs label="Period B" value={b} onChange={setB} />
           <div className="space-y-1">
             <Label htmlFor="period-campaign-filter">Campaign history</Label>
-            <Select value={campaignFilter} onValueChange={(value) => {
-              if (value === "all" || value === "campaign" || value === "goal-wins") setCampaignFilter(value);
-            }}>
-              <SelectTrigger id="period-campaign-filter" className="w-56"><SelectValue /></SelectTrigger>
+            <Select
+              value={campaignFilter}
+              onValueChange={(value) => {
+                if (value === "all" || value === "campaign" || value === "goal-wins")
+                  setCampaignFilter(value);
+              }}
+            >
+              <SelectTrigger id="period-campaign-filter" className="w-56">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All races</SelectItem>
                 <SelectItem value="campaign">Since campaign start</SelectItem>
                 <SelectItem value="goal-wins">Campaign class-goal wins</SelectItem>
               </SelectContent>
             </Select>
-            {campaignFilter !== "all" && !goals && <p className="text-xs text-muted-foreground">No saved campaign.</p>}
-            {campaignFilter !== "all" && goals && <p className="text-xs text-muted-foreground">Campaign starts day {goals.startDay}</p>}
+            {campaignFilter !== "all" && !goals && (
+              <p className="text-xs text-muted-foreground">No saved campaign.</p>
+            )}
+            {campaignFilter !== "all" && goals && (
+              <p className="text-xs text-muted-foreground">Campaign starts day {goals.startDay}</p>
+            )}
           </div>
           <div className="flex gap-2">
             {[30, 90, 365].map((n) => (
@@ -266,7 +291,13 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
                           <td className="py-1 pr-2 text-muted-foreground">{r.day}</td>
                           <td className="pr-2 truncate max-w-[8rem]">{r.horseName}</td>
                           <td className="pr-2 max-w-[10rem] break-words">
-                            <Link to="/race/$raceId" params={{ raceId: r.raceId }} className="text-primary hover:underline">{r.raceName}</Link>
+                            <Link
+                              to="/race/$raceId"
+                              params={{ raceId: r.raceId }}
+                              className="text-primary hover:underline"
+                            >
+                              {r.raceName}
+                            </Link>
                             {r.grade && (
                               <span className="ml-1 text-[10px] text-gold">{r.grade}</span>
                             )}

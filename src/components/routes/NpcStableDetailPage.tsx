@@ -10,6 +10,7 @@ import { PrivateSaleOfferDialog } from "@/components/auction/PrivateSaleOfferDia
 import { PersonRaceHistoryTab } from "@/components/person/PersonRaceHistoryTab";
 import { useGame } from "@/game/store";
 import { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
+import { NpcStableCampaignTab } from "@/components/stable/NpcStableCampaignTab";
 import { NpcStableOverviewTab } from "@/components/stable/NpcStableOverviewTab";
 import { NpcStableRosterTab } from "@/components/stable/NpcStableRosterTab";
 import { NpcStableTradingTab } from "@/components/stable/NpcStableTradingTab";
@@ -120,7 +121,14 @@ function NpcStableDetailPage() {
             onValueChange={(v) =>
               navigate({
                 search: {
-                  tab: v as "overview" | "roster" | "staff" | "trading" | "history" | "ai-profile",
+                  tab: v as
+                    | "overview"
+                    | "roster"
+                    | "staff"
+                    | "trading"
+                    | "history"
+                    | "ai-profile"
+                    | "campaign",
                 },
               })
             }
@@ -163,6 +171,12 @@ function NpcStableDetailPage() {
                   className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
                 >
                   Personality
+                </TabsTrigger>
+                <TabsTrigger
+                  value="campaign"
+                  className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-blue-500 data-[state=active]:text-slate-950 h-full px-4 transition-all"
+                >
+                  Campaign
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -238,6 +252,10 @@ function NpcStableDetailPage() {
                   </CardContent>
                 </Card>
               )}
+            </TabsContent>
+
+            <TabsContent value="campaign" className="mt-0 animate-in fade-in duration-300">
+              <NpcStableCampaignTab stableId={stableId} pageData={pageData} />
             </TabsContent>
 
             <TabsContent value="history" className="mt-0 animate-in fade-in duration-300">

@@ -23,6 +23,10 @@ const profile = (id: string, name: string): RivalCareerProfile => ({
   stageLabel: "Prime",
   daysSinceStart: 5,
   milestones: [],
+  placeRate: 0.6,
+  avgFinish: 3.2,
+  prizePerStart: 5000,
+  efficiencyScore: 45,
 });
 
 const column = (rivalId: string, over: Partial<RivalRankingsColumn> = {}): RivalRankingsColumn => ({

@@ -101,6 +101,7 @@ export const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   // Share transaction history for syndicates
   "shareTransactions" as keyof GameState,
   "shareActivityFeed" as keyof GameState,
+  "syndicateValueSnapshots" as keyof GameState,
   // Imperial Expansion: player outposts
   "outposts" as keyof GameState,
   // Sire leaderboards and trend data

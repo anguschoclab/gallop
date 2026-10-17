@@ -190,4 +190,73 @@ describe("trackLedger", () => {
       { stableId, stableName: "Rival Yard", isPlayer: false },
     ]);
   });
+
+  describe("finishers", () => {
+    it("records every runner with name, stable, payout and time", () => {
+      const { horses, stables, result, r } = fixture();
+      const entry = buildTrackLedgerEntry(r, result, horses, stables, "My Stable", r.day)!;
+
+      expect(entry.finishers).toHaveLength(3);
+      expect(entry.finishers![0]).toMatchObject({
+        position: 1,
+        horseId: "h1",
+        horseName: "Player Colt",
+        isPlayer: true,
+        stableName: "My Stable",
+        payout: 60_000, // ungraded PRIZE_SPLIT[0] = 60%
+        time: 95.2,
+      });
+      expect(entry.finishers![1]).toMatchObject({
+        position: 2,
+        horseName: "Rival Filly",
+        stableName: "Rival Yard",
+        isPlayer: false,
+        payout: 25_000,
+      });
+      expect(entry.finishers![2]).toMatchObject({
+        position: 3,
+        horseName: "Free Agent",
+        payout: 10_000,
+      });
+      expect(entry.finishers![2].stableName).toBeUndefined();
+    });
+
+    it("uses GRADED_PRIZE_SPLIT for graded races", () => {
+      const { horses, stables, result } = fixture();
+      const g1 = buildTrackLedgerEntry(
+        race({
+          graded: { key: "k", grade: "G1", track: TRACK.name, trackId: TRACK.id, surface: "Turf" },
+        }),
+        result,
+        horses,
+        stables,
+        "My Stable",
+        40,
+      )!;
+      expect(g1.finishers![0].payout).toBe(70_000);
+      expect(g1.finishers![1].payout).toBe(20_000);
+      expect(g1.finishers![2].payout).toBe(7_500);
+    });
+
+    it("pays nothing for positions beyond the split depth", () => {
+      const { horses, stables, result, r } = fixture();
+      const deep = [
+        ...result,
+        { horseId: "h1", position: 5, time: 99 }, // duplicate id fine for payout math
+      ];
+      const entry = buildTrackLedgerEntry(r, deep, horses, stables, "My Stable", r.day)!;
+      expect(entry.finishers!.find((f) => f.position === 5)!.payout).toBe(0);
+    });
+
+    it("orders finishers by position even when the result arrives unordered", () => {
+      const { horses, stables, r } = fixture();
+      const shuffled = [
+        { horseId: "h3", position: 3, time: 96.4 },
+        { horseId: "h1", position: 1, time: 95.2 },
+        { horseId: "h2", position: 2, time: 95.8 },
+      ];
+      const entry = buildTrackLedgerEntry(r, shuffled, horses, stables, "My Stable", r.day)!;
+      expect(entry.finishers!.map((f) => f.position)).toEqual([1, 2, 3]);
+    });
+  });
 });

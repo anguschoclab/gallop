@@ -149,6 +149,82 @@ function StableCampaignPage() {
 
       <Card>
         <CardHeader>
+          <CardTitle className="text-sm uppercase tracking-wide">
+            Cash &amp; earnings targets
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-end gap-4">
+              <label className="space-y-1 text-xs text-muted-foreground">
+                Target cash on hand ($)
+                <Input
+                  type="number"
+                  aria-label="Target cash on hand"
+                  className="w-48"
+                  value={draft.targetCash ?? ""}
+                  onChange={(e) =>
+                    setDraft({ ...draft, targetCash: Number(e.target.value) || undefined })
+                  }
+                />
+              </label>
+            </div>
+            <div className="text-sm">
+              Cash on hand: <span className="font-mono">{money(progress.currentCash)}</span>
+              {draft.targetCash ? (
+                <>
+                  {" "}
+                  · gap <span className="font-mono">{money(progress.cashGap)}</span>
+                </>
+              ) : null}
+            </div>
+            {draft.targetCash ? (
+              <Progress
+                value={Math.min(100, (progress.currentCash / draft.targetCash) * 100)}
+                aria-label="Cash target progress"
+              />
+            ) : null}
+          </div>
+          <div className="space-y-2 border-t border-border pt-3">
+            <div className="flex flex-wrap items-end gap-4">
+              <label className="space-y-1 text-xs text-muted-foreground">
+                Prize earnings target ($, since day {draft.startDay})
+                <Input
+                  type="number"
+                  aria-label="Prize earnings target"
+                  className="w-48"
+                  value={draft.targetEarnings ?? ""}
+                  onChange={(e) =>
+                    setDraft({ ...draft, targetEarnings: Number(e.target.value) || undefined })
+                  }
+                />
+              </label>
+            </div>
+            <div className="text-sm">
+              Earned so far: <span className="font-mono">{money(progress.totalEarnings)}</span>
+              {draft.targetEarnings ? (
+                <>
+                  {" "}
+                  · gap <span className="font-mono">{money(progress.earningsGap)}</span>
+                </>
+              ) : null}
+            </div>
+            {draft.targetEarnings ? (
+              <Progress
+                value={Math.min(100, (progress.totalEarnings / draft.targetEarnings) * 100)}
+                aria-label="Earnings target progress"
+              />
+            ) : null}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            While a target is unmet, the Race Advisor and Auto-Entry score richer purses higher so
+            entries chase the money you need.
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle className="text-sm uppercase tracking-wide">Class goals (wins)</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
@@ -233,8 +309,9 @@ function StableCampaignPage() {
           </label>
           <p className="text-xs text-muted-foreground">
             When a class goal is met it rises by half its size (at least one more win). When your
-            net worth reaches the target, the target rises to 125% of your current net worth. A
-            missed deadline is pushed back 90 days.
+            net worth reaches the target, the target rises to 125% of your current net worth.
+            Reached cash and earnings targets rise to 125% of current value the same way. A missed
+            deadline is pushed back 90 days.
           </p>
           {(saved?.adjustmentLog ?? []).length > 0 && (
             <ul className="space-y-1 text-xs">

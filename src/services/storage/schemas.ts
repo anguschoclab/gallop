@@ -93,6 +93,7 @@ export const gameStateSchema = z
     lastFounderUpdateDay: z.number().optional(),
     shareTransactions: z.array(z.unknown()).optional(),
     shareActivityFeed: z.array(z.unknown()).optional(),
+    syndicateValueSnapshots: z.array(z.unknown()).optional(),
     playerProfile: z.unknown().optional(),
     outposts: z.array(z.unknown()).optional(),
     weather: z.unknown().optional(),

@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const searchSchema = z.object({
   tab: fallback(
-    z.enum(["overview", "roster", "staff", "trading", "history", "ai-profile"]),
+    z.enum(["overview", "roster", "staff", "trading", "history", "ai-profile", "campaign"]),
     "overview",
   ).default("overview"),
 });

@@ -10,7 +10,7 @@
  * Related files: src/core/time/phases/raceResolution.ts (appends), src/routes/track-history.tsx (reads)
  */
 
-import { DAYS_PER_YEAR } from "@/constants";
+import { DAYS_PER_YEAR, GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants";
 import type { Horse, Race } from "@/game/types";
 import type { Stable } from "@/core/stable/types";
 import { TRACK_BY_ID } from "@/core/data/tracksAccessor";
@@ -38,6 +38,19 @@ export interface StablePrestigeDelta {
   isPlayer: boolean;
 }
 
+export interface TrackLedgerFinisher {
+  position: number;
+  horseId: string;
+  horseName: string;
+  stableId?: string;
+  stableName?: string;
+  isPlayer: boolean;
+  /** Purse share paid for this finishing position. */
+  payout: number;
+  /** Finishing time in seconds. */
+  time: number;
+}
+
 export interface TrackLedgerEntry {
   raceId: string;
   trackId: string;
@@ -61,6 +74,8 @@ export interface TrackLedgerEntry {
   runnerUpName?: string;
   /** Prestige movement per stable represented in the field, largest gain first. */
   prestigeDeltas: StablePrestigeDelta[];
+  /** Full finishing order with payouts; absent on ledger entries recorded before this field existed. */
+  finishers?: TrackLedgerFinisher[];
 }
 
 export interface TrackLedgerFilters {
@@ -162,6 +177,36 @@ export function buildTrackLedgerEntry(
       : undefined;
 
   const runnerUp = result.find((r) => r.position === 2);
+  const splits = race.graded ? GRADED_PRIZE_SPLIT : PRIZE_SPLIT;
+  const finishers: TrackLedgerFinisher[] = [...result]
+    .sort((a, b) => a.position - b.position)
+    .map((finish) => {
+      const horse = horses.get(finish.horseId);
+      const ownership = horse?.ownership;
+      const isPlayer = ownership?.type === "player";
+      const sid = isPlayer
+        ? PLAYER_LEDGER_STABLE_ID
+        : ownership?.type === "npc"
+          ? ownership.stableId
+          : undefined;
+      return {
+        position: finish.position,
+        horseId: finish.horseId,
+        horseName: horse?.name ?? "Unknown",
+        stableId: sid,
+        stableName: sid
+          ? isPlayer
+            ? playerStableName
+            : (stables.get(sid)?.name ?? "Unknown Stable")
+          : undefined,
+        isPlayer,
+        payout:
+          finish.position - 1 < splits.length
+            ? Math.round(race.purse * splits[finish.position - 1])
+            : 0,
+        time: finish.time,
+      };
+    });
 
   return {
     raceId: race.id,
@@ -188,6 +233,7 @@ export function buildTrackLedgerEntry(
     time: winner.time,
     runnerUpName: runnerUp ? (horses.get(runnerUp.horseId)?.name ?? undefined) : undefined,
     prestigeDeltas: Array.from(totals.values()).sort((a, b) => b.delta - a.delta),
+    finishers,
   };
 }
 

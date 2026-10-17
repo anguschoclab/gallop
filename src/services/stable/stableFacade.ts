@@ -26,3 +26,5 @@ export * from "@/core/stable/stableReputationTier";
 export * from "@/core/stable/raceWins";
 export * from "@/core/stable/raceWinsBreakdown";
 export * from "@/core/stable/periodComparison";
+export * from "@/core/stable/stableGoals";
+export * from "@/core/stable/npcCampaignDerived";

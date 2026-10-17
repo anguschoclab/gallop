@@ -266,6 +266,7 @@ export function createInitialState(
     syndicateInvestors: {},
     shareTransactions: [],
     shareActivityFeed: [],
+    syndicateValueSnapshots: [],
     staffPool: [],
     hiredStaff: [],
     breedingPrograms: [],

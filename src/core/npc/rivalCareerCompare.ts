@@ -42,6 +42,14 @@ export interface RivalCareerProfile {
   stageLabel: string;
   daysSinceStart: number | null;
   milestones: RivalMilestoneRecord[];
+  /** Top-3 finishes / starts (0 when unraced). */
+  placeRate: number;
+  /** Mean finishing position (0 when unraced). */
+  avgFinish: number;
+  /** Lifetime earnings / starts (0 when unraced). */
+  prizePerStart: number;
+  /** 0-100 composite of win rate, place rate, finish quality and earnings per start. */
+  efficiencyScore: number;
 }
 
 function orderedHistory(horse: Horse): HorseRaceHistoryEntry[] {
@@ -107,6 +115,51 @@ function milestoneDay(horse: Horse, key: string, currentDay: number): number | n
  * @param day - Current game day
  * @returns Career profile including full milestone history
  */
+/** Assumed field size when a race-history entry lacks one (typical gate). */
+const FALLBACK_FIELD_SIZE = 12;
+
+/**
+ * How efficiently a rival converts starts into results: 40% win rate,
+ * 25% place rate, 20% finish quality (position relative to field),
+ * 15% earnings per start capped at $50k.
+ * @param horse
+ */
+export function rivalEfficiencyScore(horse: Horse): {
+  placeRate: number;
+  avgFinish: number;
+  prizePerStart: number;
+  efficiencyScore: number;
+} {
+  const history = horse.raceHistory ?? [];
+  const starts = history.length;
+  if (starts === 0) {
+    return { placeRate: 0, avgFinish: 0, prizePerStart: 0, efficiencyScore: 0 };
+  }
+  const places = history.filter((e) => e.position <= 3).length;
+  const earnings = history.reduce((s, e) => s + (e.purseEarned ?? 0), 0);
+  const quality =
+    history.reduce((s, e) => {
+      const f = e.fieldSize ?? FALLBACK_FIELD_SIZE;
+      return s + (f > 1 ? 1 - (e.position - 1) / (f - 1) : e.position === 1 ? 1 : 0);
+    }, 0) / starts;
+  const winRate = history.filter((e) => e.position === 1).length / starts;
+  const placeRate = places / starts;
+  const prizePerStart = earnings / starts;
+  const efficiencyScore = Math.round(
+    100 *
+      (0.4 * winRate +
+        0.25 * placeRate +
+        0.2 * quality +
+        0.15 * Math.min(1, prizePerStart / 50_000)),
+  );
+  return {
+    placeRate,
+    avgFinish: history.reduce((s, e) => s + e.position, 0) / starts,
+    prizePerStart,
+    efficiencyScore,
+  };
+}
+
 export function buildRivalCareerProfile(horse: Horse, day: number): RivalCareerProfile {
   const career = summarizeNpcCareer(horse, day);
   const announced = new Set(horse.careerMilestonesAnnounced ?? []);
@@ -121,6 +174,7 @@ export function buildRivalCareerProfile(horse: Horse, day: number): RivalCareerP
       raceName: milestoneRace(horse, m.key)?.raceName,
     }))
     .sort((a, b) => (a.day ?? Number.MAX_SAFE_INTEGER) - (b.day ?? Number.MAX_SAFE_INTEGER));
+  const efficiency = rivalEfficiencyScore(horse);
 
   return {
     id: horse.id,
@@ -136,6 +190,7 @@ export function buildRivalCareerProfile(horse: Horse, day: number): RivalCareerP
     stageLabel: careerStageLabel(careerStage(horse)),
     daysSinceStart: career.daysSinceStart,
     milestones,
+    ...efficiency,
   };
 }
 

@@ -226,11 +226,13 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const feePerShare = totalFee / shareCount;
 
     // Distribute to each shareholder
+    let playerShares = 0;
     for (const [shareholderStableId, shares] of Object.entries(syndicate.shareHolders)) {
       const distribution = feePerShare * shares;
 
       // For player, add to cash
-      if (shareholderStableId === "player") {
+      if (shareholderStableId === "player" || shareholderStableId === "__player__") {
+        playerShares += shares;
         draft.cash += distribution;
       } else {
         // For NPC stables, add to stable's cash
@@ -241,6 +243,25 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
           stable.cash = (stable.cash || 0) + distribution;
         }
       }
+    }
+
+    // Record the distribution in the activity feed so the syndicate ledger
+    // can chart income over time.
+    if (!draft.shareActivityFeed) draft.shareActivityFeed = [];
+    const feedItem: ShareActivityFeedItem = {
+      id: generateUUID(),
+      syndicateId,
+      syndicateName: syndicate.stallionName,
+      type: "fee_distribution",
+      shares: playerShares,
+      pricePerShare: 0,
+      cashMoved: Math.round(feePerShare * playerShares),
+      totalFee,
+      day: impact.day,
+    };
+    draft.shareActivityFeed.push(feedItem);
+    if (draft.shareActivityFeed.length > 200) {
+      draft.shareActivityFeed = draft.shareActivityFeed.slice(-200);
     }
   },
 
