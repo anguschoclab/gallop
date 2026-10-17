@@ -64,4 +64,5 @@ bun run typecheck:errors
 
 <!-- LOVABLE:BEGIN -->
 - Period campaign filters use attributed player race starts and the same race identities for summary totals so drilldowns agree.
+- Mount TooltipProvider in the root shell so full-screen race views and ordinary pages share tooltip context.
 <!-- LOVABLE:END -->
