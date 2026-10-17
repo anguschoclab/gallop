@@ -117,10 +117,20 @@ describe("races Record sync through store actions", () => {
 
   it("races Record entries reflect resolved status after race resolution", async () => {
     const dueRace = makeRace("r-due", 1, { resolved: false });
+    dueRace.entries = [{ horseId: "h1", jockeyId: "j1", form: 1, position: 1 }];
+
     useGame.setState({
       day: 1,
       races: r2r([dueRace]),
-      horses: h2r([{ id: "h1", ownership: { type: "player" } } as any]),
+      horses: h2r([
+        {
+          id: "h1",
+          raceHistory: [],
+          baseStats: { speed: 50, stamina: 50, acceleration: 50, heart: 50 },
+          ownership: { type: "player" },
+          stats: { speed: 50, stamina: 50, acceleration: 50, heart: 50 },
+        } as any,
+      ]),
     });
 
     await useGame.getState().advanceDay();
