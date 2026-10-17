@@ -17,9 +17,11 @@
  */
 import { spawnSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const RESULTS_FILE = resolve(import.meta.dir, "..", "tsc-results.txt");
+const scriptDir = dirname(fileURLToPath(import.meta.url));
+const RESULTS_FILE = resolve(scriptDir, "..", "tsc-results.txt");
 const args = process.argv.slice(2);
 const quiet = args.includes("--quiet") || args.includes("-q");
 
@@ -34,7 +36,7 @@ if (args.includes("--watch") || args.includes("-w")) {
 // --pretty false  → machine-readable output, no ANSI escape codes.
 // --noEmit        → type-check only, no JS output.
 const result = spawnSync("bun", ["x", "tsc", "--noEmit", "--pretty", "false"], {
-  cwd: resolve(import.meta.dir, ".."),
+  cwd: resolve(scriptDir, ".."),
   encoding: "utf-8",
   // Combine stdout + stderr so we capture everything tsc emits.
   maxBuffer: 20 * 1024 * 1024,

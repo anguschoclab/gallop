@@ -16,12 +16,12 @@ const state = withUuidStream(createRng(hashStr(`fixture_${size}`)), () =>
     profile: {
       stableName: `prof-${size}`,
       ownerName: "Prof",
-      silk: { primary: "#c8a24a", secondary: "#1c1c22", pattern: "solid" },
-      backstoryId: "wealthy_dilettante",
+      silk: { primary: "#c8a24a", secondary: "#1c1c22", cap: "#1c1c22", pattern: "solid" },
+      backstoryId: "inheritor",
       founded: 1,
     },
     backstory: {
-      id: "wealthy_dilettante",
+      id: "inheritor",
       label: "Prof",
       blurb: "",
       startingCash: 100000,
@@ -30,10 +30,10 @@ const state = withUuidStream(createRng(hashStr(`fixture_${size}`)), () =>
       facilities: {},
       reputationScore: 50,
       reputation: 50,
-      difficulty: "normal",
+      difficulty: "standard",
     },
     worldSize: size,
-  } as Parameters<typeof createInitialState>[0]),
+  }),
 ) as GameState;
 
 // Warmup

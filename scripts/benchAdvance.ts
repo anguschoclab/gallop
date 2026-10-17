@@ -43,12 +43,12 @@ function makeFixture(def: FixtureDef): GameState {
     profile: {
       stableName: `bench-${def.name}`,
       ownerName: "Bench",
-      silk: { primary: "#c8a24a", secondary: "#1c1c22", pattern: "solid" },
-      backstoryId: "wealthy_dilettante",
+      silk: { primary: "#c8a24a", secondary: "#1c1c22", cap: "#1c1c22", pattern: "solid" },
+      backstoryId: "inheritor",
       founded: 1,
     },
     backstory: {
-      id: "wealthy_dilettante",
+      id: "inheritor",
       label: "Bench",
       blurb: "",
       startingCash: 100000,
@@ -57,10 +57,10 @@ function makeFixture(def: FixtureDef): GameState {
       facilities: {},
       reputationScore: 50,
       reputation: 50,
-      difficulty: "normal",
+      difficulty: "standard",
     },
     worldSize: def.worldSize,
-  } as Parameters<typeof createInitialState>[0]) as GameState;
+  });
 }
 
 function percentile(sorted: number[], p: number): number {

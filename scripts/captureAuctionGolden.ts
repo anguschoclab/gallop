@@ -12,12 +12,12 @@ const state = withUuidStream(createRng(hashStr("fixture_medium")), () =>
     profile: {
       stableName: "golden",
       ownerName: "G",
-      silk: { primary: "#c8a24a", secondary: "#1c1c22", pattern: "solid" },
-      backstoryId: "wealthy_dilettante",
+      silk: { primary: "#c8a24a", secondary: "#1c1c22", cap: "#1c1c22", pattern: "solid" },
+      backstoryId: "inheritor",
       founded: 1,
     },
     backstory: {
-      id: "wealthy_dilettante",
+      id: "inheritor",
       label: "G",
       blurb: "",
       startingCash: 100000,
@@ -26,10 +26,10 @@ const state = withUuidStream(createRng(hashStr("fixture_medium")), () =>
       facilities: {},
       reputationScore: 50,
       reputation: 50,
-      difficulty: "normal",
+      difficulty: "standard",
     },
     worldSize: "medium",
-  } as Parameters<typeof createInitialState>[0]),
+  }),
 ) as GameState;
 
 const horses = Object.values(state.horses);
