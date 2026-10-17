@@ -1,0 +1,3 @@
+## 2025-02-17 - Expanded Commentary Templates
+**Learning:** The number of commentary templates in `src/assets/narrative/templates.ts` was limiting variety, especially for `LEAD_CHANGE` and `SURGE`. Expanding generic narrative pools to have a minimum number of variants (~24) helps prevent the "variety bottleneck" where repetitive lines break immersion.
+**Action:** When acting as Herald, continue to look for narrative/commentary template arrays (like in `templates.ts` or `flavorStories.ts`) and ensure they are populated with 14-24 variants to avoid excessive repetition. Keep changes pure-content without modifying logic.
