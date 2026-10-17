@@ -61,3 +61,7 @@ bun run typecheck:errors
 - **Determinism**: entity ids minted during a day transaction draw from a per-day seeded UUID stream (`withUuidStream` in `src/core/uuid.ts`, installed by the executor). Never call `crypto.randomUUID()` inside simulation code — use `generateUUID()` so same-seed runs stay checksum-identical.
 - **Benchmarks**: `bun run scripts/benchAdvance.ts` measures days/sec for 1/7/30/365-day advances across small/medium/large worlds and hard-fails on same-seed checksum divergence. `bun run bench:race` (`scripts/benchRace.ts`) measures fixed-step tick p95 and per-step heap. `scripts/profilePhases.ts [days] [size]` reports per-phase telemetry shares; `scripts/stateFingerprint.ts [days] [size]` prints a post-advance state checksum for cross-revision determinism comparisons (fixture entity ids are seeded, so checksums are comparable across processes).
 - **Fixture determinism**: `createInitialState` mints entity UUIDs via the ambient stream — any script/test that compares two worlds must wrap fixture creation in `withUuidStream(createRng(hashStr(seed)), ...)` or the comparison measures fixture randomness, not simulation divergence.
+
+<!-- LOVABLE:BEGIN -->
+- Period campaign filters use attributed player race starts and the same race identities for summary totals so drilldowns agree.
+<!-- LOVABLE:END -->

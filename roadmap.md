@@ -5,3 +5,5 @@
 - [x] Track history filters for game-day range, race type, and stable
 - [x] NPC horse career timelines with off-screen starts, finishes, payouts, ages, and stage transitions
 - [x] Daily rankings comparison: player horses versus daily leaders, with rank, points, reputation and price gaps (six tests pass; populated live-game check remains unverified)
+- [ ] Verify Race Advisor save → completed race → Plan Effectiveness win rate and position in the running game
+- [ ] Add Campaign history filtering and contributing races to Compare Periods

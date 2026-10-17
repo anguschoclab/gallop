@@ -6,6 +6,8 @@ import type { Horse } from "@/core/horse/types";
 import type { Transaction } from "@/core/transactions/transactionTypes";
 import { buildPrizeTxMap, isPlayerRaceEntry, type PlayerRaceWinRecord } from "./raceWins";
 import type { TrackLedgerEntry } from "@/core/history/trackLedger";
+import { raceGoalClass, type StableGoals } from "./stableGoals";
+import type { Race } from "@/core/race/types";
 
 export interface DayRange {
   from: number;
@@ -38,7 +40,10 @@ export function periodStats(
   wins: PlayerRaceWinRecord[],
   ledger: TrackLedgerEntry[],
   range: DayRange,
+  includedRaces?: PeriodRace[],
 ): PeriodStats {
+  const starts = includedRaces && new Set(includedRaces.map((r) => `${r.raceId}:${r.horseId}`));
+  const raceIds = includedRaces && new Set(includedRaces.map((r) => r.raceId));
   const out: PeriodStats = {
     wins: 0,
     earnings: 0,
@@ -50,6 +55,7 @@ export function periodStats(
   const cls = (k: string) => (out.byClass[k] ??= { starts: 0, wins: 0, prestige: 0 });
   for (const w of wins) {
     if (!inRange(w.day, range)) continue;
+    if (starts && !starts.has(`${w.raceId}:${w.horseId}`)) continue;
     out.wins++;
     out.earnings += w.payout ?? 0;
     if (w.grade && /^G[123]$/.test(w.grade)) out.gradedWins++;
@@ -57,6 +63,7 @@ export function periodStats(
   }
   for (const e of ledger) {
     if (!inRange(e.day, range)) continue;
+    if (raceIds && !raceIds.has(e.raceId)) continue;
     const mine = e.prestigeDeltas.find((d) => d.isPlayer);
     if (!mine && !e.winnerIsPlayer) continue;
     out.starts++;
@@ -129,4 +136,22 @@ export function periodRaces(
 export function pctChange(a: number, b: number): number | null {
   if (a === 0) return b === 0 ? 0 : null;
   return ((b - a) / Math.abs(a)) * 100;
+}
+
+export type CampaignHistoryFilter = "all" | "campaign" | "goal-wins";
+
+/** Filter attributed period starts, preserving their date and ownership boundaries. */
+export function filterPeriodCampaignRaces(
+  races: PeriodRace[],
+  filter: CampaignHistoryFilter,
+  goals: Pick<StableGoals, "startDay" | "classGoals"> | undefined,
+): PeriodRace[] {
+  if (filter === "all") return races;
+  if (!goals) return [];
+  return races.filter((r) => {
+    if (r.day < goals.startDay) return false;
+    if (filter === "campaign") return true;
+    const goalClass = raceGoalClass({ raceClass: (r.grade || r.raceClass) as Race["raceClass"] });
+    return r.position === 1 && goalClass !== null && (goals.classGoals[goalClass] ?? 0) > 0;
+  });
 }

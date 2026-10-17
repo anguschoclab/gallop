@@ -53,7 +53,7 @@ export const Route = createFileRoute("/portfolio")({
     prestige: z.enum(PRESTIGE_FILTERS).optional(),
     sort: z.enum(SORT_KEYS).optional(),
     dir: z.enum(["asc", "desc"]).optional(),
-    tab: z.enum(["holdings", "bidding", "wins", "syndicates"]).optional(),
+    tab: z.enum(["holdings", "bidding", "wins", "syndicates", "wins-dashboard", "compare-periods"]).optional(),
     page: z.number().int().optional(),
   }),
   head: () => ({
