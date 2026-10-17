@@ -10,16 +10,12 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
-import type { ImpactHandler, LookupMaps } from "./types";
+import type { ImpactHandler, LookupMaps, ImpactHandlerFunction } from "./types";
 import type { InboxImpact } from "../impacts/inboxImpacts";
 import { generateUUID } from "@/core/uuid";
 
-export class InboxHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return type === "inbox_message";
-  }
-
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, _lookupMaps?: LookupMaps): void {
+const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
+  inbox_message: (draft, impact) => {
     const { message } = impact as InboxImpact;
     if (!draft.inbox) draft.inbox = [];
 
@@ -29,5 +25,18 @@ export class InboxHandler implements ImpactHandler {
       id: generateUUID(),
       day: impact.day, // Use the impact day if available, otherwise fallback to message.day
     });
+  },
+};
+
+export class InboxHandler implements ImpactHandler {
+  canHandle(type: string): boolean {
+    return type in IMPACT_HANDLERS;
+  }
+
+  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
+    const handler = IMPACT_HANDLERS[impact.type];
+    if (handler) {
+      handler(draft, impact, lookupMaps);
+    }
   }
 }

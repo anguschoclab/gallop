@@ -10,86 +10,95 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
-import type { ImpactHandler, LookupMaps } from "./types";
+import type { ImpactHandler, LookupMaps, ImpactHandlerFunction } from "./types";
 import type { DiplomaticImpact, CartelImpact } from "../impacts/miscImpacts";
 import type { NpcAIManager } from "@/core/ai/npcCycleAI";
 
-export class DiplomacyHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return type === "diplomatic" || type === "cartel";
-  }
-
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, _lookupMaps?: LookupMaps): void {
+const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
+  diplomatic: (draft, impact) => {
     const aiManager = (draft as unknown as { npcAIManager?: NpcAIManager }).npcAIManager;
     if (!aiManager) return;
+    handleDiplomatic(aiManager, impact as DiplomaticImpact);
+  },
+  cartel: (draft, impact) => {
+    const aiManager = (draft as unknown as { npcAIManager?: NpcAIManager }).npcAIManager;
+    if (!aiManager) return;
+    handleCartel(aiManager, impact as CartelImpact);
+  },
+};
 
-    if (impact.type === "diplomatic") {
-      this.handleDiplomatic(aiManager, impact as DiplomaticImpact);
-    } else if (impact.type === "cartel") {
-      this.handleCartel(aiManager, impact as CartelImpact);
-    }
+export class DiplomacyHandler implements ImpactHandler {
+  canHandle(type: string): boolean {
+    return type in IMPACT_HANDLERS;
   }
 
-  private handleDiplomatic(aiManager: NpcAIManager, impact: DiplomaticImpact): void {
-    const { sourceStableId, targetStableId, action, trustChange } = impact;
-    const sourceState = aiManager.stableStates[sourceStableId];
-    const targetState = aiManager.stableStates[targetStableId];
-    if (!sourceState?.npcRelationships || !targetState?.npcRelationships) return;
-
-    const sourceRel = sourceState.npcRelationships[targetStableId];
-    if (sourceRel) {
-      sourceRel.trust = Math.max(-100, Math.min(100, sourceRel.trust + trustChange));
-      sourceRel.history.push({
-        day: impact.day,
-        type: action as "alliance_formed" | "alliance_broken" | "betrayal" | "cooperation",
-        description: `${action} with ${targetStableId}`,
-      });
-    }
-
-    // Bidirectional: update target's view of source
-    const targetRel = targetState.npcRelationships[sourceStableId];
-    if (targetRel) {
-      targetRel.trust = Math.max(-100, Math.min(100, targetRel.trust + trustChange));
-      targetRel.history.push({
-        day: impact.day,
-        type: action as "alliance_formed" | "alliance_broken" | "betrayal" | "cooperation",
-        description: `${action} with ${sourceStableId}`,
-      });
+  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
+    const handler = IMPACT_HANDLERS[impact.type];
+    if (handler) {
+      handler(draft, impact, lookupMaps);
     }
   }
+}
 
-  private handleCartel(aiManager: NpcAIManager, impact: CartelImpact): void {
-    const { stableIds, action } = impact;
+function handleDiplomatic(aiManager: NpcAIManager, impact: DiplomaticImpact): void {
+  const { sourceStableId, targetStableId, action, trustChange } = impact;
+  const sourceState = aiManager.stableStates[sourceStableId];
+  const targetState = aiManager.stableStates[targetStableId];
+  if (!sourceState?.npcRelationships || !targetState?.npcRelationships) return;
 
-    if (action === "cartel_formed") {
-      // Mark relationships as economic_cartel alliance
-      for (let i = 0; i < stableIds.length; i++) {
-        for (let j = i + 1; j < stableIds.length; j++) {
-          const s1 = aiManager.stableStates[stableIds[i]];
-          const s2 = aiManager.stableStates[stableIds[j]];
-          if (s1?.npcRelationships?.[stableIds[j]]) {
-            s1.npcRelationships[stableIds[j]].allianceType = "economic_cartel";
-          }
-          if (s2?.npcRelationships?.[stableIds[i]]) {
-            s2.npcRelationships[stableIds[i]].allianceType = "economic_cartel";
-          }
+  const sourceRel = sourceState.npcRelationships[targetStableId];
+  if (sourceRel) {
+    sourceRel.trust = Math.max(-100, Math.min(100, sourceRel.trust + trustChange));
+    sourceRel.history.push({
+      day: impact.day,
+      type: action as "alliance_formed" | "alliance_broken" | "betrayal" | "cooperation",
+      description: `${action} with ${targetStableId}`,
+    });
+  }
+
+  // Bidirectional: update target's view of source
+  const targetRel = targetState.npcRelationships[sourceStableId];
+  if (targetRel) {
+    targetRel.trust = Math.max(-100, Math.min(100, targetRel.trust + trustChange));
+    targetRel.history.push({
+      day: impact.day,
+      type: action as "alliance_formed" | "alliance_broken" | "betrayal" | "cooperation",
+      description: `${action} with ${sourceStableId}`,
+    });
+  }
+}
+
+function handleCartel(aiManager: NpcAIManager, impact: CartelImpact): void {
+  const { stableIds, action } = impact;
+
+  if (action === "cartel_formed") {
+    // Mark relationships as economic_cartel alliance
+    for (let i = 0; i < stableIds.length; i++) {
+      for (let j = i + 1; j < stableIds.length; j++) {
+        const s1 = aiManager.stableStates[stableIds[i]];
+        const s2 = aiManager.stableStates[stableIds[j]];
+        if (s1?.npcRelationships?.[stableIds[j]]) {
+          s1.npcRelationships[stableIds[j]].allianceType = "economic_cartel";
+        }
+        if (s2?.npcRelationships?.[stableIds[i]]) {
+          s2.npcRelationships[stableIds[i]].allianceType = "economic_cartel";
         }
       }
-    } else if (action === "cartel_dissolved") {
-      // Remove economic_cartel alliance type
-      for (let i = 0; i < stableIds.length; i++) {
-        for (let j = i + 1; j < stableIds.length; j++) {
-          const s1 = aiManager.stableStates[stableIds[i]];
-          const s2 = aiManager.stableStates[stableIds[j]];
-          if (s1?.npcRelationships?.[stableIds[j]]?.allianceType === "economic_cartel") {
-            s1.npcRelationships[stableIds[j]].allianceType = null;
-          }
-          if (s2?.npcRelationships?.[stableIds[i]]?.allianceType === "economic_cartel") {
-            s2.npcRelationships[stableIds[i]].allianceType = null;
-          }
+    }
+  } else if (action === "cartel_dissolved") {
+    // Remove economic_cartel alliance type
+    for (let i = 0; i < stableIds.length; i++) {
+      for (let j = i + 1; j < stableIds.length; j++) {
+        const s1 = aiManager.stableStates[stableIds[i]];
+        const s2 = aiManager.stableStates[stableIds[j]];
+        if (s1?.npcRelationships?.[stableIds[j]]?.allianceType === "economic_cartel") {
+          s1.npcRelationships[stableIds[j]].allianceType = null;
+        }
+        if (s2?.npcRelationships?.[stableIds[i]]?.allianceType === "economic_cartel") {
+          s2.npcRelationships[stableIds[i]].allianceType = null;
         }
       }
     }
-    // "market_coordinated" is informational only — no state change needed
   }
+  // "market_coordinated" is informational only — no state change needed
 }
