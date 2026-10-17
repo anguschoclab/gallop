@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { periodRaces, periodStats, pctChange } from "@/core/stable/periodComparison";
+import { periodRaces, periodStats, pctChange, filterPeriodCampaignRaces } from "@/core/stable/periodComparison";
 import type { PlayerRaceWinRecord } from "@/core/stable/raceWins";
 import type { TrackLedgerEntry } from "@/core/history/trackLedger";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
@@ -55,6 +55,23 @@ const start = (
 });
 
 describe("periodRaces", () => {
+  it("filters campaign start and goal wins and aligns totals with contributing races", () => {
+    const h = createTestHorse({ id: "h", raceHistory: [
+      start(5, 1, 1000, { grade: "G1" }), start(15, 1, 5000, { grade: "G1" }),
+      start(16, 2, 2000, { grade: "G1" }), start(18, 1, 3000, { grade: "G2" }),
+    ] });
+    const range = { from: 0, to: 20 };
+    const races = periodRaces([h], range);
+    const goals = { startDay: 10, classGoals: { G1: 2 } };
+    expect(filterPeriodCampaignRaces(races, "campaign", goals).map(r => r.day)).toEqual([15, 18, 16]);
+    const filtered = filterPeriodCampaignRaces(races, "goal-wins", goals);
+    expect(filtered.map(r => r.day)).toEqual([15]);
+    const wins = [win(5, 1000, "G1"), win(15, 5000, "G1"), win(18, 3000, "G2")].map(w => ({ ...w, raceId: `r${w.day}-1` }));
+    const ledger = [5, 15, 16].map(day => ({ ...entry(day, 12, "G1"), raceId: `r${day}-${day === 16 ? 2 : 1}` }));
+    expect(periodStats(wins, ledger, range, filtered)).toMatchObject({ wins: 1, earnings: 5000, starts: 1, prestige: 12, gradedWins: 1 });
+    expect(filterPeriodCampaignRaces(races, "campaign", undefined)).toEqual([]);
+    expect(filterPeriodCampaignRaces(races, "all", goals)).toBe(races);
+  });
   it("returns every player start in range, sorted prize-desc then day-desc", () => {
     const h = createTestHorse({
       id: "h1",

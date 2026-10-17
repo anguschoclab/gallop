@@ -9,6 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
+import { filterPeriodCampaignRaces, type CampaignHistoryFilter } from "@/services/stable/stableFacade";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { Link } from "@tanstack/react-router";
 
 const EMPTY: TrackLedgerEntry[] = [];
 const EMPTY_TX: Transaction[] = [];
@@ -73,6 +77,8 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
   const horses = useGame((s) => s.horses);
   const archivedHorses = useGame((s) => s.archive?.horses ?? EMPTY_HORSES);
   const transactions = useGame((s) => s.transactions ?? EMPTY_TX);
+  const goals = useGame((s) => s.stableGoals);
+  const [campaignFilter, setCampaignFilter] = useState<CampaignHistoryFilter>("all");
   const [a, setA] = useState<DayRange>({ from: Math.max(0, day - 60), to: Math.max(0, day - 31) });
   const [b, setB] = useState<DayRange>({ from: Math.max(0, day - 30), to: day });
 
@@ -81,20 +87,20 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
     setA({ from: Math.max(0, day - 2 * len + 1), to: Math.max(0, day - len) });
   };
 
-  const sa = useMemo(() => periodStats(wins, ledger, a), [wins, ledger, a]);
-  const sb = useMemo(() => periodStats(wins, ledger, b), [wins, ledger, b]);
   const allHorses = useMemo(
     () => [...Object.values(horses), ...archivedHorses],
     [horses, archivedHorses],
   );
   const racesA = useMemo(
-    () => periodRaces(allHorses, a, transactions),
-    [allHorses, a, transactions],
+    () => filterPeriodCampaignRaces(periodRaces(allHorses, a, transactions), campaignFilter, goals),
+    [allHorses, a, transactions, campaignFilter, goals],
   );
   const racesB = useMemo(
-    () => periodRaces(allHorses, b, transactions),
-    [allHorses, b, transactions],
+    () => filterPeriodCampaignRaces(periodRaces(allHorses, b, transactions), campaignFilter, goals),
+    [allHorses, b, transactions, campaignFilter, goals],
   );
+  const sa = useMemo(() => periodStats(wins, ledger, a, campaignFilter === "all" ? undefined : racesA), [wins, ledger, a, campaignFilter, racesA]);
+  const sb = useMemo(() => periodStats(wins, ledger, b, campaignFilter === "all" ? undefined : racesB), [wins, ledger, b, campaignFilter, racesB]);
   const classes = Array.from(
     new Set([...Object.keys(sa.byClass), ...Object.keys(sb.byClass)]),
   ).sort();
@@ -116,6 +122,21 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
         <CardContent className="flex flex-wrap items-end gap-6">
           <RangeInputs label="Period A" value={a} onChange={setA} />
           <RangeInputs label="Period B" value={b} onChange={setB} />
+          <div className="space-y-1">
+            <Label htmlFor="period-campaign-filter">Campaign history</Label>
+            <Select value={campaignFilter} onValueChange={(value) => {
+              if (value === "all" || value === "campaign" || value === "goal-wins") setCampaignFilter(value);
+            }}>
+              <SelectTrigger id="period-campaign-filter" className="w-56"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All races</SelectItem>
+                <SelectItem value="campaign">Since campaign start</SelectItem>
+                <SelectItem value="goal-wins">Campaign class-goal wins</SelectItem>
+              </SelectContent>
+            </Select>
+            {campaignFilter !== "all" && !goals && <p className="text-xs text-muted-foreground">No saved campaign.</p>}
+            {campaignFilter !== "all" && goals && <p className="text-xs text-muted-foreground">Campaign starts day {goals.startDay}</p>}
+          </div>
           <div className="flex gap-2">
             {[30, 90, 365].map((n) => (
               <Button key={n} size="sm" variant="outline" onClick={() => preset(n)}>
@@ -244,8 +265,8 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
                         <tr key={`${r.raceId}-${r.horseId}`} className="border-t border-border">
                           <td className="py-1 pr-2 text-muted-foreground">{r.day}</td>
                           <td className="pr-2 truncate max-w-[8rem]">{r.horseName}</td>
-                          <td className="pr-2 truncate max-w-[10rem]">
-                            {r.raceName}
+                          <td className="pr-2 max-w-[10rem] break-words">
+                            <Link to="/race/$raceId" params={{ raceId: r.raceId }} className="text-primary hover:underline">{r.raceName}</Link>
                             {r.grade && (
                               <span className="ml-1 text-[10px] text-gold">{r.grade}</span>
                             )}
