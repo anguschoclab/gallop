@@ -14,7 +14,7 @@ import type { Race } from "@/domains/race/simulation/types";
 import type { AwardRegion } from "@/domains/awards/model/types";
 import { CONTINENT_TO_REGION } from "@/domains/awards/model/types";
 import { getTrackContinent } from "@/shared/data/accessors/gradedRacesAccessor";
-import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";;
+import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
 
 /** Days before a ceremony that invitations are issued. */
 export const CEREMONY_INVITE_LEAD_DAYS = 14;

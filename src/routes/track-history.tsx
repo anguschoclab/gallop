@@ -15,7 +15,7 @@ import {
 import { useGameWithShallow } from "@/platform/game/store";
 import { TrackLedgerRaces } from "@/domains/history/ui/TrackLedgerRaces";
 import { TrackLedgerPrestigeTable } from "@/domains/history/ui/TrackLedgerPrestigeTable";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import {
   filterTrackLedger,
   racesAtTrack,

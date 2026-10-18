@@ -4,7 +4,7 @@ import { JockeyStandingsTable } from "@/domains/jockey/ui/JockeyStandingsTable";
 import type { Jockey } from "@/domains/jockey/model/types";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 
-vi.mock("@/components/leaderboard/LeaderboardPrimitives", () => ({
+vi.mock("@/domains/leaderboard/ui/LeaderboardPrimitives", () => ({
   LeaderboardShell: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="shell">{children}</div>
   ),

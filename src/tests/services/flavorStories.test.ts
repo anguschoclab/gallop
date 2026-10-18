@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { FLAVOR_STORIES, ALL_FLAVOR_STORIES } from "@/domains/narrative/simulation/flavorStories";;
+import { FLAVOR_STORIES, ALL_FLAVOR_STORIES } from "@/domains/narrative/simulation/flavorStories";
 
 describe("flavorStories data", () => {
   it("dictionary has all 6 themes", () => {

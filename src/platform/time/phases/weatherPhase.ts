@@ -24,7 +24,7 @@ import {
   PATTERN_SEVERITY,
 } from "@/domains/weather/simulation";
 import { PHASE_ORDER_WEATHER } from "@/platform/time/pipelineConstants";
-import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS } from "@/shared/constants/weatherConstants";;
+import { WEATHER_HISTORY_DAYS, WEATHER_FORECAST_DAYS } from "@/shared/constants/weatherConstants";
 import { calculateConditionChange } from "@/domains/race/simulation/trackConditions";
 import { generateUUID } from "@/shared/uuid/uuid";
 import type { AnyImpact } from "@/platform/resolver/impacts";

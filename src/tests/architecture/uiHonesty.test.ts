@@ -1,9 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 
 const SRC = join(process.cwd(), "src");
-const SCAN_DIRS = ["components", "routes"];
+const SCAN_DIRS = [
+  "routes",
+  join("shared", "ui"),
+  ...readdirSync(join(SRC, "domains"))
+    .map((domain) => join("domains", domain, "ui"))
+    .filter((dir) => existsSync(join(SRC, dir))),
+];
 
 function collect(dir: string, files: string[] = []): string[] {
   for (const entry of readdirSync(dir)) {

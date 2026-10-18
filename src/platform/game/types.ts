@@ -8,7 +8,7 @@
  * Related files: All game files use these types
  */
 
-export * from "@/core/common/types";
+export * from "@/shared/common/types";
 export * from "@/domains/genetics/model/types";
 export * from "@/domains/horse/simulation/types";
 export * from "@/domains/jockey/model/types";
@@ -47,7 +47,7 @@ export type {
 } from "@/domains/horse/simulation/types";
 
 // Financial types
-export type { Transaction, TransactionType, TransactionSubcategory } from "@/domains/transactions/model/transactionTypes";;
+export type { Transaction, TransactionType, TransactionSubcategory } from "@/domains/transactions/model/transactionTypes";
 export type { Expense, ExpenseCategory } from "@/domains/expenses/model/expenseTypes";;;
 
 // Additional re-exports for commonly used types

@@ -24,7 +24,7 @@ import {
   getCountryByTrackName,
   getCourseSpec,
   getCourseForRace,
-} from "@/data/tracks";
+} from "@/shared/data/tracks";
 import type { Track, CourseSpecification, TrackSchedule, TrackSection } from "@/shared/data/tracks";
 import type { Race } from "@/platform/game/types";
 

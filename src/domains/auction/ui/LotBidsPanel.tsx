@@ -9,7 +9,7 @@
 import { useMemo } from "react";
 import { Gavel, Inbox } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { AuctionBidRecord, Stable } from "@/platform/game/types";
 
 interface LotBidsPanelProps {

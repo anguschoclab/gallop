@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { JockeyLearningInsights } from "@/domains/race/ui/JockeyLearningInsights";
 
-vi.mock("@/lib/cn", () => ({
+vi.mock("@/shared/lib/cn", () => ({
   cn: (...args: any[]) => args.filter(Boolean).join(" "),
 }));
 

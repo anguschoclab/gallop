@@ -1,4 +1,4 @@
-import { PHASE_ORDER_NPC_CLAIMING } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_NPC_CLAIMING } from "@/platform/time/pipelineConstants";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 
 /**

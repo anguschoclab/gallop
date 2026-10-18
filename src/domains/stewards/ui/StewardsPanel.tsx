@@ -3,7 +3,7 @@ import { Badge } from "@/shared/ui/badge";
 import { AlertTriangle, CheckCircle, XCircle, DollarSign, Clock } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useGame } from "@/platform/game/store";
-import { formatInquiryType, formatInquiryOutcome, type StewardsInquiry } from "@/domains/stewards/model/stewardTypes";;
+import { formatInquiryType, formatInquiryOutcome, type StewardsInquiry } from "@/domains/stewards/model/stewardTypes";
 import { cn } from "@/shared/lib/cn";
 
 interface StewardsPanelProps {

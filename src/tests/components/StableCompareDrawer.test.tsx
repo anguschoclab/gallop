@@ -3,7 +3,7 @@ import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 import type { Stable } from "@/platform/game/types";
 
 // Mock the Drawer primitive to always render children (avoid vaul portal complexity)
-vi.mock("@/components/ui/drawer", () => ({
+vi.mock("@/shared/ui/drawer", () => ({
   Drawer: ({ children }: any) => <div>{children}</div>,
   DrawerContent: ({ children }: any) => <div>{children}</div>,
   DrawerHeader: ({ children }: any) => <div>{children}</div>,
@@ -11,19 +11,19 @@ vi.mock("@/components/ui/drawer", () => ({
   DrawerDescription: ({ children }: any) => <p>{children}</p>,
 }));
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector({ cashPressureHistory: {} }),
   useGameWithShallow: (selector: (s: any) => any) => selector({ cashPressureHistory: {} }),
 }));
 
-vi.mock("@/hooks/game/useSystemsState", () => ({
+vi.mock("@/platform/game/hooks/useSystemsState", () => ({
   useNpcStables: () =>
     [
       { id: "s1", name: "Alpha", horses: [], cash: 100000, tier: "mid", personality: "aggressive" },
     ] as unknown as Stable[],
 }));
 
-vi.mock("@/components/stable/StableCompareTable", () => ({
+vi.mock("@/domains/stable/ui/StableCompareTable", () => ({
   StableCompareTable: ({ stables }: { stables: Stable[] }) => (
     <div data-testid="compare-table">Table with {stables.length} stables</div>
   ),

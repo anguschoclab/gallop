@@ -11,7 +11,7 @@
  */
 
 import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
-import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
 import type { Horse, Race } from "@/platform/game/types";
 import type { Stable } from "@/domains/stable/simulation/types";
 import { TRACK_BY_ID } from "@/shared/data/accessors/tracksAccessor";

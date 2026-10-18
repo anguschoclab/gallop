@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { useGame } from "@/platform/game/store";
 import type { PlayerRaceWinRecord, PeriodRace } from "@/domains/stable/application/stableFacade";
 import type { TrackLedgerEntry } from "@/domains/history/application/historyFacade";
-import type { Transaction } from "@/domains/transactions/model/transactionTypes";;
+import type { Transaction } from "@/domains/transactions/model/transactionTypes";
 import type { Horse } from "@/domains/horse/application/horseFacade";
 import { periodRaces, periodStats, pctChange, type DayRange } from "@/domains/stable/application/stableFacade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";

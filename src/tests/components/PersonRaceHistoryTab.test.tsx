@@ -17,7 +17,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 // Mock Radix-based Select with native HTML select for JSDOM compatibility
-vi.mock("@/components/ui/select", () => ({
+vi.mock("@/shared/ui/select", () => ({
   Select: ({ value, onValueChange }: any) =>
     createElement(
       "select",

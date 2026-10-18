@@ -12,7 +12,7 @@
 import type { PipelineContext } from "@/platform/time/pipeline";
 import { runEconomicCycle } from "@/domains/agents/simulation/economyAITracking";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
-import { PHASE_ORDER_ECONOMY } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_ECONOMY } from "@/platform/time/pipelineConstants";
 
 export const economyPhase = {
   name: "economy",

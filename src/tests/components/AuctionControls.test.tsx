@@ -2,15 +2,15 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { AuctionControls } from "@/domains/auction/ui/sub/AuctionControls";
 
-vi.mock("@/services/auction/auctionFacade", () => ({
+vi.mock("@/domains/auction/application/auctionFacade", () => ({
   nextBidAmount: (current: number) => Math.ceil(current * 1.1),
 }));
 
-vi.mock("@/components/auction/sub/BidInputPanel", () => ({
+vi.mock("@/domains/auction/ui/sub/BidInputPanel", () => ({
   BidInputPanel: () => <div data-testid="bid-input-panel" />,
 }));
 
-vi.mock("@/components/auction/sub/MaxBidPanel", () => ({
+vi.mock("@/domains/auction/ui/sub/MaxBidPanel", () => ({
   MaxBidPanel: () => <div data-testid="max-bid-panel" />,
 }));
 

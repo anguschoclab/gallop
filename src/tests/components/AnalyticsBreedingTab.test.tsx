@@ -6,7 +6,7 @@ vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
 }));
 
-vi.mock("@/components/charts", () => ({
+vi.mock("@/shared/ui/charts", () => ({
   ChartCard: ({ title, children }: { title: string; children?: ReactNode }) =>
     createElement("div", null, createElement("h3", null, title), children),
   MiniBar: ({ rows }: { rows: { label: string; value: number }[] }) =>
@@ -22,7 +22,7 @@ vi.mock("@/components/charts", () => ({
 
 const mockAnalyticsData = vi.fn();
 
-vi.mock("@/hooks/analytics/useAnalyticsData", () => ({
+vi.mock("@/domains/analytics/application/hooks/useAnalyticsData", () => ({
   useAnalyticsData: () => mockAnalyticsData(),
 }));
 

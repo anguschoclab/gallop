@@ -7,7 +7,7 @@
 import { useState, useId } from "react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { cn } from "@/shared/lib/cn";
 
 interface MaxBidPanelProps {

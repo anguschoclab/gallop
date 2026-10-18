@@ -8,7 +8,7 @@
 import type { Horse, RaceEntry } from "@/platform/game/types";
 import type { HorseId } from "@/shared/types/branded";
 import { calculateOverallRating } from "@/domains/horse/simulation/stats";
-import { BUMP_RATING_MARGIN } from "@/domains/race/model/raceEntryConstants";;
+import { BUMP_RATING_MARGIN } from "@/domains/race/model/raceEntryConstants";
 
 /**
  * Evaluates race entries to find the weakest NPC entry that can be bumped by a challenger.

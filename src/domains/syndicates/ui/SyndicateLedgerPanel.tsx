@@ -18,7 +18,7 @@ import {
   type SyndicateValueSnapshot,
 } from "@/domains/breeding/application/breedingFacade";
 import { Sparkline } from "@/shared/ui/charts/Sparkline";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { TrendingUp } from "lucide-react";
 
 const EMPTY_SNAPSHOTS: SyndicateValueSnapshot[] = [];

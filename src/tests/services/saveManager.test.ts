@@ -14,14 +14,14 @@ const {
   mockSaveGameStateToIDB: vi.fn(),
 }));
 
-vi.mock("@/services/storage/indexedDbService", () => ({
+vi.mock("@/platform/persistence/storage/indexedDbService", () => ({
   saveSlotState: mockSaveSlotState,
   loadSlotState: mockLoadSlotState,
   deleteSlotState: mockDeleteSlotState,
   isIndexedDbAvailable: mockIsIndexedDbAvailable,
 }));
 
-vi.mock("@/game/store/storage", () => ({
+vi.mock("@/platform/game/store/storage", () => ({
   saveGameStateToIDB: mockSaveGameStateToIDB,
 }));
 

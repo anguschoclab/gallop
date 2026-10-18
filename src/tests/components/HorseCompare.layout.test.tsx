@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 
-vi.mock("@/core/race/headToHead", () => ({
+vi.mock("@/domains/race/simulation/headToHead", () => ({
   calculateHeadToHeadOdds: vi.fn(() => [
     { horseId: "h1", winPct: 0.6, projectedBeyer: 85, projectedFinishTime: 95 },
     { horseId: "h2", winPct: 0.4, projectedBeyer: 78, projectedFinishTime: 98 },

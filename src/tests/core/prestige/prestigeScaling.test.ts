@@ -13,7 +13,7 @@ import {
   HOUSE_PRESTIGE_SPREAD,
 } from "@/domains/prestige/simulation";
 import { netProceeds, commissionAmount } from "@/domains/auction/simulation/engine";
-import { FAME_GAIN_G1_WIN } from "@/domains/prestige/model/fameConstants";;
+import { FAME_GAIN_G1_WIN } from "@/domains/prestige/model/fameConstants";
 import { buildAuctionImpacts } from "@/domains/auction/simulation/auctionRunnerImpacts";
 import type { LotState } from "@/domains/auction/model/auctionRunnerTypes";
 import type { AuctionSale, Horse } from "@/platform/game/types";

@@ -1,6 +1,6 @@
 import type { Horse } from "@/platform/game/types";
 import { parTime } from "@/domains/race/application/raceFacade";
-import { BEYER_BASE, BEYER_FORMULA_SCALE } from "@/domains/race/model/raceSimulationConstants";;
+import { BEYER_BASE, BEYER_FORMULA_SCALE } from "@/domains/race/model/raceSimulationConstants";
 
 /**
  * Format a time in seconds as a human-readable split string.

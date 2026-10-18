@@ -14,7 +14,7 @@ import { isGenderEligible as checkGenderEligibility } from "@/domains/horse/simu
 import { calculateOverallRating, getCareerStats } from "@/domains/horse/simulation/stats";
 import { getCurrentYear } from "@/domains/race/simulation/schedule";
 import { DEFAULT_MIN_AGE_NORTHERN, SOUTHERN_HEMISPHERE_AGE_OFFSET, MIN_ENERGY_TO_RACE } from "@/domains/race/model/raceEntryConstants";
-import { POSITION_WIN } from "@/domains/race/model/raceSimulationConstants";;
+import { POSITION_WIN } from "@/domains/race/model/raceSimulationConstants";
 
 /**
  * Pure race eligibility checking logic

@@ -11,7 +11,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { PRESTIGE_TIER_LABELS } from "@/domains/prestige/application/prestigeFacade";
 import type { PortfolioSortKey, StablePortfolio } from "@/domains/stable/application/stableFacade";
 import { formatYard } from "@/domains/stable/application/stableFacade";

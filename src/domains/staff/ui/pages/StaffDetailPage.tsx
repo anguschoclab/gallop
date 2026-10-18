@@ -7,7 +7,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { PersonRaceHistoryTab } from "@/domains/person/ui/PersonRaceHistoryTab";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/domains/staff/application/staffFacade";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { cn } from "@/shared/lib/cn";
 import { ChevronLeft, User, History, Briefcase, Trophy } from "lucide-react";
 import type { StaffMember } from "@/domains/staff/application/staffFacade";

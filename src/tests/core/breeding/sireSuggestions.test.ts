@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { suggestBestSires } from "@/domains/breeding/simulation/sireSuggestions";
 import { createTestMare, createTestStallion } from "@/tests/helpers";
-import { BREEDING_FEE } from "@/domains/breeding/model/breedingConstants";;
+import { BREEDING_FEE } from "@/domains/breeding/model/breedingConstants";
 import type { StudCareer } from "@/platform/game/types";
 import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 

@@ -4,7 +4,7 @@ import { ShareOwnershipPanel } from "@/domains/market/ui/ShareOwnershipPanel";
 import type { Syndicate } from "@/domains/breeding/model/types";
 import type { Horse, Stable } from "@/platform/game/types";
 
-vi.mock("@/core/breeding/devolutionUtils", () => ({
+vi.mock("@/domains/breeding/simulation/devolutionUtils", () => ({
   simulateShareChange: (
     shareHolders: Record<string, number>,
     totalShares: number,

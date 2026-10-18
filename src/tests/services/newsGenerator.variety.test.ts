@@ -8,7 +8,7 @@ import {
   generateRaceNews,
   generateMarketNews,
   generateFlavorNews,
-} from "@/domains/narrative/application/newsGenerator";
+} from "@/domains/narrative/simulation/newsGenerator";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import type { Race } from "@/platform/game/types";
 

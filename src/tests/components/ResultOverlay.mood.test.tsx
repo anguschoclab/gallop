@@ -15,24 +15,24 @@ vi.mock("@tanstack/react-router", () => ({
     ),
 }));
 
-vi.mock("@/components/ui/button", () => ({
+vi.mock("@/shared/ui/button", () => ({
   Button: ({ children, onClick, className }: any) =>
     createElement("button", { onClick, className }, children),
 }));
 
-vi.mock("@/components/race/PaceGraph", () => ({
+vi.mock("@/domains/race/ui/PaceGraph", () => ({
   PaceGraph: () => createElement("div", { "data-testid": "pace-graph" }),
 }));
 
-vi.mock("@/components/race/SpeedBreakdownChart", () => ({
+vi.mock("@/domains/race/ui/SpeedBreakdownChart", () => ({
   SpeedBreakdownChart: () => createElement("div", { "data-testid": "speed-chart" }),
 }));
 
-vi.mock("@/components/race/JockeyReportPanel", () => ({
+vi.mock("@/domains/race/ui/JockeyReportPanel", () => ({
   JockeyReportPanel: () => createElement("div", { "data-testid": "jockey-report" }),
 }));
 
-vi.mock("@/components/race/RunnerMoodFace", () => ({
+vi.mock("@/domains/race/ui/RunnerMoodFace", () => ({
   RunnerMoodFace: ({ mood, horseName, size, tooltipClassName }: any) =>
     createElement(
       "span",
@@ -47,7 +47,7 @@ vi.mock("@/components/race/RunnerMoodFace", () => ({
     ),
 }));
 
-vi.mock("@/components/ui/collapsible", () => ({
+vi.mock("@/shared/ui/collapsible", () => ({
   Collapsible: ({ children }: any) =>
     createElement("div", { "data-testid": "collapsible" }, children),
   CollapsibleTrigger: ({ children }: any) =>
@@ -60,15 +60,15 @@ vi.mock("@/components/ui/collapsible", () => ({
     ),
 }));
 
-vi.mock("@/core/race/raceVerdict", () => ({
+vi.mock("@/domains/race/simulation/raceVerdict", () => ({
   generateRaceVerdict: () => null,
 }));
 
-vi.mock("@/components/race/RaceVerdictBar", () => ({
+vi.mock("@/domains/race/ui/RaceVerdictBar", () => ({
   RaceVerdictBar: () => createElement("div", { "data-testid": "verdict-bar" }),
 }));
 
-vi.mock("@/core/common/formatting", async (importOriginal) => {
+vi.mock("@/shared/common/formatting", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/shared/common/formatting")>();
   return {
     ...actual,
@@ -76,22 +76,30 @@ vi.mock("@/core/common/formatting", async (importOriginal) => {
   };
 });
 
-vi.mock("@/constants", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/constants")>();
+vi.mock("@/domains/market/model/economicConstants", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/domains/market/model/economicConstants")>();
   return {
     ...actual,
     PRIZE_SPLIT: [0.6, 0.2, 0.1, 0.05],
     GRADED_PRIZE_SPLIT: [0.6, 0.2, 0.1, 0.05],
+  };
+});
+
+vi.mock("@/shared/constants/runnerConditionThresholds", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/shared/constants/runnerConditionThresholds")>();
+  return {
+    ...actual,
     MOOD_FACE_RESULT_OVERLAY_SIZE: 14,
     MOOD_TOOLTIP_OVERLAY_CLASS: "z-[60]",
   };
 });
 
-vi.mock("@/lib/cn", () => ({
+vi.mock("@/shared/lib/cn", () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(" "),
 }));
 
-vi.mock("@/core/race/engine/compareFinishOrder", () => ({
+vi.mock("@/domains/race/simulation/engine/compareFinishOrder", () => ({
   compareFinishOrder: (a: any, b: any) => {
     if (a.finishTime === null && b.finishTime === null) return 0;
     if (a.finishTime === null) return 1;

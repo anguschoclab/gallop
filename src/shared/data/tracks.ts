@@ -58,7 +58,7 @@ export type TrackSchedule = {
   regionalSystem: "north_america" | "europe" | "australia" | "asia" | "south_america" | "japan";
 };
 
-import TRACK_DATA from "@/shared/data/tracks";
+import TRACK_DATA from "./tracks.json";
 
 // All tracks with their UUIDs
 export const TRACKS: Track[] = TRACK_DATA as Track[];

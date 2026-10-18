@@ -4,7 +4,7 @@ import {
   generateGrudgeMatchNews,
   generateRegionLostNews,
   generateRivalryEscalationNews,
-} from "@/domains/narrative/application/rivalryNewsGenerator";
+} from "@/domains/narrative/simulation/rivalryNewsGenerator";
 import { isValidUUID } from "@/shared/uuid/uuid";
 import { createTestRng, createTestStable, createTestHorse } from "@/tests/helpers";
 import type { Race } from "@/platform/game/types";

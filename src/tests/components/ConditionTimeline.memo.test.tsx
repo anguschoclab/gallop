@@ -10,7 +10,7 @@ import { createElement } from "react";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 
 // ── Mock tooltip to avoid Radix overhead ─────────────────────────────────────
-vi.mock("@/components/ui/tooltip", () => ({
+vi.mock("@/shared/ui/tooltip", () => ({
   Tooltip: ({ children }: { children: React.ReactNode }) => createElement("div", null, children),
   TooltipContent: ({ children }: { children: React.ReactNode }) =>
     createElement("div", null, children),
@@ -20,7 +20,7 @@ vi.mock("@/components/ui/tooltip", () => ({
     createElement("div", null, children),
 }));
 
-vi.mock("@/lib/cn", () => ({
+vi.mock("@/shared/lib/cn", () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(" "),
 }));
 

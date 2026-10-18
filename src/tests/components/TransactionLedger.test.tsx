@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { TransactionLedger } from "@/domains/financial/ui/TransactionLedger";
-import { createTransaction } from "@/domains/transactions/model/transactionTypes";;
+import { createTransaction } from "@/domains/transactions/model/transactionTypes";
 import type { Transaction, TransactionSubcategory } from "@/domains/transactions/model/transactionTypes";
 
 vi.mock("@tanstack/react-router", () => ({

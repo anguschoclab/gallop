@@ -14,7 +14,7 @@
  * Related files: src/core/breeding/compatibility.ts (consumer)
  */
 
-import type { calculateGeneticCompatibility } from "@/core/breeding/genotypeMatching";
+import type { calculateGeneticCompatibility } from "@/domains/breeding/simulation/genotypeMatching";
 import type { calculateFounderEffect } from "@/domains/breeding/simulation/inbreedingCalculator";
 import type {
   calculateConformationCompatibility,

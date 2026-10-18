@@ -28,7 +28,7 @@ import type {
   SyndicateFeeDistributionIntent,
   AnyIntent,
 } from "@/platform/resolver/intents";
-import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/domains/breeding/model/breedingConstants";;
+import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/domains/breeding/model/breedingConstants";
 import { asPlayerOwnerId, asHorseId } from "@/shared/types/branded";
 import { getStableId } from "@/domains/horse/simulation/ownership";
 import { requireOwned, requireHorse } from "@/platform/game/store/guards";

@@ -28,7 +28,7 @@ import { generateNpcDiplomaticIntents } from "@/domains/agents/simulation/npc/in
 import { generateNpcInsuranceIntents } from "@/domains/agents/simulation/npc/intents/insuranceIntents";
 import { generateNpcRaceEntryIntents } from "@/domains/agents/simulation/npc/intents/raceEntryIntents";
 import { generateNpcTrainingIntents } from "@/domains/agents/simulation/npc/intents/trainingIntents";
-import { TRAINING_COST, TRAINING_COST_MAP } from "@/shared/constants/workoutConstants";;
+import { TRAINING_COST, TRAINING_COST_MAP } from "@/shared/constants/workoutConstants";
 
 export type NpcActionId =
   | "training"

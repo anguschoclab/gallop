@@ -7,22 +7,22 @@ vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
 }));
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: vi.fn(),
 }));
 
-vi.mock("@/game/store/storage", () => ({
+vi.mock("@/platform/game/store/storage", () => ({
   saveExists: { value: false },
 }));
 
-vi.mock("@/components/ui/button", () => ({
+vi.mock("@/shared/ui/button", () => ({
   Button: ({ children, ...props }: any) => createElement("button", props, children),
 }));
 
-vi.mock("@/assets/hero-racetrack-dashboard.jpg", () => ({ default: "hero1" }));
-vi.mock("@/assets/hero-racetrack-races.jpg", () => ({ default: "hero2" }));
-vi.mock("@/assets/hero-stable.jpg", () => ({ default: "hero3" }));
-vi.mock("@/assets/hero-grandstand.jpg", () => ({ default: "hero4" }));
+vi.mock("@/shared/assets/hero-racetrack-dashboard.jpg", () => ({ default: "hero1" }));
+vi.mock("@/shared/assets/hero-racetrack-races.jpg", () => ({ default: "hero2" }));
+vi.mock("@/shared/assets/hero-stable.jpg", () => ({ default: "hero3" }));
+vi.mock("@/shared/assets/hero-grandstand.jpg", () => ({ default: "hero4" }));
 
 import { StartScreen } from "@/domains/shell/ui/pages/StartScreen";
 import { useGame } from "@/platform/game/store";

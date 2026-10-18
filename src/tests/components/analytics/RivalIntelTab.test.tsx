@@ -3,16 +3,16 @@ import { render, screen } from "@testing-library/react";
 import { RivalIntelTab } from "@/domains/analytics/ui/RivalIntelTab";
 
 // Mock reused components that call useGame internally
-vi.mock("@/components/analytics/EconomicIndicators", () => ({
+vi.mock("@/domains/analytics/ui/EconomicIndicators", () => ({
   EconomicIndicators: () => <div data-testid="economic-indicators">Economic Indicators</div>,
 }));
 
-vi.mock("@/components/briefing/StorylinesTab", () => ({
+vi.mock("@/domains/briefing/ui/StorylinesTab", () => ({
   StorylinesTab: () => <div data-testid="storylines-tab">Active Storylines</div>,
 }));
 
 // Mock the store hook
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGameWithShallow: vi.fn((selector: (s: any) => any) =>
     selector({
       npcAIManager: {

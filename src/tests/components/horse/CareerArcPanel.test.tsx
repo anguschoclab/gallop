@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { CareerArcPanel } from "@/domains/horse/ui/CareerArcPanel";
-import type { CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";;
+import type { CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGameWithShallow: vi.fn(),
   useGame: vi.fn(),
 }));

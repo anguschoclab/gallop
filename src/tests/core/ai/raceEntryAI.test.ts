@@ -12,7 +12,7 @@ import type { Horse, Race, Stable } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeNpcOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";
-import { RECENT_RACES_MAX_COUNT } from "@/shared/constants/storageLimitsConstants";;
+import { RECENT_RACES_MAX_COUNT } from "@/shared/constants/storageLimitsConstants";
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

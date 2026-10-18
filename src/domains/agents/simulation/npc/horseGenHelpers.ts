@@ -10,7 +10,7 @@
 
 import type { StableTier } from "@/platform/game/types";
 import type { Rng } from "@/shared/common/rng";
-import { rand } from "@/shared/common/random";;
+import { rand } from "@/shared/common/random";
 
 export type AgeCategory = "2yo" | "prime" | "veteran" | "breeding";
 

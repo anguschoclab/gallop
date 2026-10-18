@@ -4,7 +4,7 @@ import { SeasonPlannerTab } from "@/domains/breeding/ui/SeasonPlannerTab";
 import { asNpcStableId } from "@/shared/types/branded";
 import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
-vi.mock("@/components/ui/select", () => ({
+vi.mock("@/shared/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (
     <select data-testid="select" value={value} onChange={(e) => onValueChange?.(e.target.value)}>
       {children}
@@ -16,7 +16,7 @@ vi.mock("@/components/ui/select", () => ({
   SelectValue: () => null,
 }));
 
-vi.mock("@/components/ui/checkbox", () => ({
+vi.mock("@/shared/ui/checkbox", () => ({
   Checkbox: ({ checked, onCheckedChange, disabled }: any) => (
     <input
       type="checkbox"
@@ -28,7 +28,7 @@ vi.mock("@/components/ui/checkbox", () => ({
   ),
 }));
 
-vi.mock("@/components/horse/HorseBits", () => ({
+vi.mock("@/domains/horse/ui/HorseBits", () => ({
   NumericValue: ({ value }: any) => <span>{value}</span>,
 }));
 
@@ -67,16 +67,16 @@ const mockStallion = (id: string, name: string, overrides: any = {}) => ({
 
 let mockState: any = {};
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector(mockState),
   useGameWithShallow: (selector: (s: any) => any) => selector(mockState),
 }));
 
-vi.mock("@/core/breeding/stallions", () => ({
+vi.mock("@/domains/breeding/simulation/stallions", () => ({
   getAvailableStallions: (horses: any[]) => horses.filter((h) => h.stud?.atStud),
 }));
 
-vi.mock("@/core/breeding/sireSuggestions", () => ({
+vi.mock("@/domains/breeding/simulation/sireSuggestions", () => ({
   suggestBestSires: (mare: any, stallions: any[], _day: number, limit?: number) => {
     if (!mare) return [];
     const filtered = stallions.filter((s) => s.hemisphere === mare.hemisphere);
@@ -89,12 +89,12 @@ vi.mock("@/core/breeding/sireSuggestions", () => ({
   },
 }));
 
-vi.mock("@/core/calendar/breedingCalendar", () => ({
+vi.mock("@/domains/calendar/simulation/breedingCalendar", () => ({
   inBreedingSeason: (day: number, _hemisphere: string) => day >= 60 && day <= 180,
   nextBreedingSeasonStart: () => 200,
 }));
 
-vi.mock("@/core/horse/gender", () => ({
+vi.mock("@/domains/horse/simulation/gender", () => ({
   isFemaleHorse: (gender: string) => gender === "mare" || gender === "filly",
 }));
 

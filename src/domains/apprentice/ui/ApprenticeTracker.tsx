@@ -3,7 +3,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Link } from "@tanstack/react-router";
 import { GraduationCap, TrendingUp, Award, Clock } from "lucide-react";
 import { useGame } from "@/platform/game/store";
-import { getClaimAllowance, getApprenticeStatus, formatApprenticeStatus, formatWeightAllowance, type ApprenticeStatus } from "@/domains/apprentice/model/apprenticeTypes";;
+import { getClaimAllowance, getApprenticeStatus, formatApprenticeStatus, formatWeightAllowance, type ApprenticeStatus } from "@/domains/apprentice/model/apprenticeTypes";
 import { cn } from "@/shared/lib/cn";
 
 export function ApprenticeTracker() {

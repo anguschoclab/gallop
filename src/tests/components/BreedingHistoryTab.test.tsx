@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { BreedingHistoryTab } from "@/domains/breeding/ui/BreedingHistoryTab";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
-vi.mock("@/components/ui/select", () => ({
+vi.mock("@/shared/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (
     <select data-testid="select" value={value} onChange={(e) => onValueChange?.(e.target.value)}>
       {children}
@@ -15,15 +15,15 @@ vi.mock("@/components/ui/select", () => ({
   SelectValue: () => null,
 }));
 
-vi.mock("@/components/ui/input", () => ({
+vi.mock("@/shared/ui/input", () => ({
   Input: (props: any) => <input data-testid="search-input" {...props} />,
 }));
 
-vi.mock("@/components/breeding/FoalNamingDialog", () => ({
+vi.mock("@/domains/breeding/ui/FoalNamingDialog", () => ({
   FoalNamingDialog: () => <div data-testid="foal-naming-dialog" />,
 }));
 
-vi.mock("@/components/horse/FoalInheritancePanel", () => ({
+vi.mock("@/domains/horse/ui/FoalInheritancePanel", () => ({
   FoalInheritancePanel: () => <div data-testid="foal-inheritance-panel" />,
 }));
 

@@ -24,8 +24,8 @@ import { getCourseForRace } from "@/shared/data/tracks";
 import { formatCurrency } from "@/domains/race/application/raceFacade";
 import { useMemo, useState } from "react";
 import { INSTRUCTION_PRESETS, buildInstructions, type PresetId } from "@/domains/race/application/TacticOptions";
-import { AGGRESSIVENESS_DEFAULT } from "@/shared/constants/tacticsConstants";;
-import { DEFAULT_DT, defaultMaxTime } from "@/domains/race/model/engine/constants";;
+import { AGGRESSIVENESS_DEFAULT } from "@/shared/constants/tacticsConstants";
+import { DEFAULT_DT, defaultMaxTime } from "@/domains/race/model/engine/constants";
 
 export function PlayerRacePrompt() {
   const pendingRaceId = useGame((s) => s.execution?.interruptRaceId);

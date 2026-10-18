@@ -35,7 +35,7 @@ const productionFiles = collectFiles(SRC).filter(
 
 describe("engine architecture guards", () => {
   it("the numeric stage-range machinery is deleted", () => {
-    expect(existsSync(join(SRC, "workers", "pipelineStages.ts"))).toBe(false);
+    expect(existsSync(join(SRC, "platform", "workers", "pipelineStages.ts"))).toBe(false);
     const offenders = productionFiles.filter((f) =>
       /STAGE_RANGES|pipelineStages/.test(readFileSync(f, "utf8")),
     );
@@ -57,14 +57,14 @@ describe("engine architecture guards", () => {
   });
 
   it("the engine worker contains no pipeline semantics of its own", () => {
-    const worker = readFileSync(join(SRC, "workers", "engine.worker.ts"), "utf8");
+    const worker = readFileSync(join(SRC, "platform", "workers", "engine.worker.ts"), "utf8");
     expect(worker).not.toMatch(/GAME_PIPELINE_PHASES|runPipelineForDay|pipeline\.ts/);
     expect(worker).toMatch(/SimulationEngine/);
   });
 
   it("advancement flows through EngineClient — store never executes phases", () => {
     const advance = readFileSync(
-      join(SRC, "game", "store", "slices", "advanceDayActions.ts"),
+      join(SRC, "platform", "game", "store", "slices", "advanceDayActions.ts"),
       "utf8",
     );
     expect(advance).toMatch(/getEngineClient\(\)\.submit|client\.submit/);
@@ -72,7 +72,7 @@ describe("engine architecture guards", () => {
   });
 
   it("the standalone executePipeline runner is decommissioned", () => {
-    const pipeline = readFileSync(join(SRC, "core", "time", "pipeline.ts"), "utf8");
+    const pipeline = readFileSync(join(SRC, "platform", "time", "pipeline.ts"), "utf8");
     expect(pipeline).not.toMatch(/export function executePipeline|function executePipeline/);
     const offenders = productionFiles.filter((f) =>
       /\bexecutePipeline\b/.test(readFileSync(f, "utf8")),

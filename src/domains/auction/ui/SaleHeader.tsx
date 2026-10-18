@@ -7,7 +7,7 @@
 
 import { Badge } from "@/shared/ui/badge";
 import { ArrowLeft } from "lucide-react";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { KIND_LABELS } from "@/domains/auction/application/auctionFacade";
 import { NumericValue } from "@/domains/horse/ui/HorseBits";
 import { cn } from "@/shared/lib/cn";

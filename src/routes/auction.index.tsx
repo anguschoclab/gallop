@@ -7,7 +7,7 @@ import { Badge } from "@/shared/ui/badge";
 import { dayOfYear } from "@/domains/calendar/application/calendarFacade";
 import { SALE_TRIGGERS } from "@/domains/auction/application/auctionFacade";
 import { isLotEligible } from "@/domains/auction/application/auctionFacade";
-import { CONSIGNMENT_COMMISSION } from "@/domains/market/model/economicConstants";;
+import { CONSIGNMENT_COMMISSION } from "@/domains/market/model/economicConstants";
 import { Gavel } from "lucide-react";
 import { NumericValue } from "@/domains/horse/ui/HorseBits";
 import { ConsignDialog } from "@/domains/auction/ui/ConsignDialog";

@@ -6,8 +6,8 @@ import type { ShareActivityFeedItem } from "@/domains/breeding/application/breed
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { ArrowRight, TrendingUp, TrendingDown, Crown, HandCoins, DollarSign } from "lucide-react";
-import { formatCurrency } from "@/shared/common/formatting";;
-import { SHARE_ACTIVITY_FEED_LIMIT } from "@/shared/constants/dashboardConstants";;
+import { formatCurrency } from "@/shared/common/formatting";
+import { SHARE_ACTIVITY_FEED_LIMIT } from "@/shared/constants/dashboardConstants";
 
 interface ShareActivityFeedProps {
   syndicateId?: string;

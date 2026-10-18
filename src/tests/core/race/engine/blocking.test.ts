@@ -3,7 +3,7 @@ import { applyBlockingEffect, detectBlocking } from "@/domains/race/simulation/e
 import { calculateTargetLane } from "@/domains/race/simulation/engine/lateralMovement";
 import { computePaceContext } from "@/domains/race/simulation/engine/paceContext";
 import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
-import { MIN_BLOCK_GAP, LANE_WIDTH } from "@/domains/race/model/engine/constants";;
+import { MIN_BLOCK_GAP, LANE_WIDTH } from "@/domains/race/model/engine/constants";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {

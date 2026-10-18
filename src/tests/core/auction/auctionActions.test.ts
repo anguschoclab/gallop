@@ -8,10 +8,10 @@ import {
   buildAuctionResolutionLogText,
 } from "@/domains/auction/simulation/auctionActions";
 import type { Horse, AuctionSale, AuctionLot } from "@/platform/game/types";
-import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/domains/auction/model/auctionConstants";;
+import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/domains/auction/model/auctionConstants";
 
 // Mock the external pricing function so we don't have to construct full Horse objects
-vi.mock("@/core/horse/pricing", () => ({
+vi.mock("@/domains/horse/simulation/pricing", () => ({
   horseMarketValue: vi.fn(() => 10000),
 }));
 

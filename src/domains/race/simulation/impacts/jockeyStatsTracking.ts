@@ -11,7 +11,7 @@ import { getOrdinalSuffix } from "@/shared/common/ordinal";
 import { updateApprenticeProgression } from "@/domains/apprentice/model/apprenticeTypes";
 import { generatePercentageJockeyFeeImpacts } from "@/domains/race/simulation/impacts/jockeyFees";
 import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
-import { MAX_FAME } from "@/domains/prestige/model/fameConstants";;
+import { MAX_FAME } from "@/domains/prestige/model/fameConstants";
 import type { Race, Horse, Jockey, RaceResult, RaceEntry } from "@/platform/game/types";
 
 export function generateJockeyStatsTrackingImpacts(

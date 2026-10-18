@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { Card, CardContent } from "@/shared/ui/card";
 import { gradeColor } from "@/domains/race/application/raceFacade";
-import { RACE_GRADES } from "@/domains/race/model/raceClassificationConstants";;
+import { RACE_GRADES } from "@/domains/race/model/raceClassificationConstants";
 import type { Race, Horse } from "@/platform/game/types";
 
 interface GradeBreakdownProps {

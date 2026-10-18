@@ -9,7 +9,7 @@ import { createTestColt, createTestNpcHorse } from "@/tests/helpers/createTestHo
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import { createTestRng } from "@/tests/helpers/createTestRng";
 import { MAX_FAME } from "@/domains/prestige/model/fameConstants";
-import { RACE_ENERGY_IMPACT } from "@/domains/race/model/raceSimulationConstants";;
+import { RACE_ENERGY_IMPACT } from "@/domains/race/model/raceSimulationConstants";
 import type { Race } from "@/platform/game/types";
 import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 

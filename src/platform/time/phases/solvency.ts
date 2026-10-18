@@ -18,7 +18,7 @@ import {
   deriveSolvencyState,
   selectForcedSaleHorse,
 } from "@/domains/financial/simulation/solvency";
-import { PHASE_ORDER_SOLVENCY } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_SOLVENCY } from "@/platform/time/pipelineConstants";
 import { isPlayerOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import { asStableId } from "@/shared/types/branded";
 

@@ -16,7 +16,7 @@ import type { Horse } from "@/domains/horse/simulation/types";
 import type { Race } from "@/domains/race/simulation/types";
 import type { Transaction } from "@/domains/transactions/model/transactionTypes";
 import type { Expense } from "@/domains/expenses/model/expenseTypes";
-import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 import type { HallOfFameEntry, SeasonRecord } from "@/domains/history/model/historyTypes";
 import type { Pregnancy } from "@/domains/breeding/model/types";
 import type { InboxMessage } from "@/domains/inbox/model/inboxTypes";

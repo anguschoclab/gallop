@@ -1,4 +1,4 @@
-import { PHASE_ORDER_SEASON_STANDINGS } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_SEASON_STANDINGS } from "@/platform/time/pipelineConstants";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { computeSeasonStandings } from "@/domains/standings/simulation/computeStandings";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";

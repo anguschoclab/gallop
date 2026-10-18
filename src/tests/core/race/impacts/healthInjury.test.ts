@@ -5,15 +5,15 @@ import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import type { InjuryWeatherContext } from "@/domains/health/simulation/healthSystem";
 
 // Mock dependencies to avoid complex logic during these isolated tests
-vi.mock("@/core/health/healthSystem", () => ({
+vi.mock("@/domains/health/simulation/healthSystem", () => ({
   rollForInjury: vi.fn(),
 }));
 
-vi.mock("@/core/horse/pricing", () => ({
+vi.mock("@/domains/horse/simulation/pricing", () => ({
   calculateBaseHorseValue: vi.fn(() => 100000),
 }));
 
-vi.mock("@/core/race/impacts/energyFormFame", () => ({
+vi.mock("@/domains/race/simulation/impacts/energyFormFame", () => ({
   generateEnergyImpact: vi.fn(() => ({ type: "energy_change" })),
 }));
 

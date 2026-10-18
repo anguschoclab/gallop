@@ -1,4 +1,4 @@
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import React, { useRef, useEffect, useMemo, useCallback } from "react";
 import {
   Play,

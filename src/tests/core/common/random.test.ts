@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { rollRunningStyle } from "@/domains/horse/simulation/stats";
 import { randomSilk } from "@/domains/horse/simulation/visuals";
 import { randomWeather } from "@/domains/race/simulation/environment";
-import { rand } from "@/shared/common/random";;
+import { rand } from "@/shared/common/random";
 import { generateProceduralHorseName } from "@/domains/horse/simulation/naming/nameGenerator";
 import { generateProceduralJockeyName } from "@/domains/jockey/simulation/proceduralNaming";
 import { generateRaceName } from "@/domains/race/simulation/naming/raceNameGenerator";

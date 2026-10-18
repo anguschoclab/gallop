@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@/shared/ui/select";
 import { formatProfitLoss } from "@/domains/financial/application/financialFacade";
-import { formatTransactionSubcategory, type TransactionSubcategory, type Transaction } from "@/domains/transactions/model/transactionTypes";;
+import { formatTransactionSubcategory, type TransactionSubcategory, type Transaction } from "@/domains/transactions/model/transactionTypes";
 import { cn } from "@/shared/lib/cn";
 import { ReceiptText, ArrowUpRight, ArrowDownLeft, ChevronRight, ChevronDown } from "lucide-react";
 

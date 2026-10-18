@@ -8,7 +8,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { checkCareerArcTrigger, type CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";;
+import { checkCareerArcTrigger, type CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";
 import { runNarrativeCycle } from "@/domains/agents/simulation/narrativeAI";
 import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import type { Stable, Horse, Race } from "@/platform/game/types";

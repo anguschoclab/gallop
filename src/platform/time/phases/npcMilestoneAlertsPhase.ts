@@ -16,7 +16,7 @@ import type { AnyImpact, InboxImpact } from "@/platform/resolver/impacts";
 import type { InboxCategory, InboxPriority } from "@/domains/inbox/model/inboxTypes";
 import type { RivalMilestoneKind } from "@/domains/agents/simulation/npc/careerMilestones";
 import { isNpcOwned, isPlayerOwned, getStableId } from "@/domains/horse/simulation/ownership";
-import { PHASE_ORDER_NPC_MILESTONE_ALERTS } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_NPC_MILESTONE_ALERTS } from "@/platform/time/pipelineConstants";
 import { generateUUID } from "@/shared/uuid/uuid";
 import {
   detectPlayerMilestones,

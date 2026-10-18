@@ -10,7 +10,7 @@
 
 import type { PipelineContext } from "@/platform/time/pipeline";
 import { isUniversalBirthday } from "@/domains/calendar/simulation/breedingCalendar";
-import { PHASE_ORDER_AGING } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_AGING } from "@/platform/time/pipelineConstants";
 
 /**
  * Phase: Aging

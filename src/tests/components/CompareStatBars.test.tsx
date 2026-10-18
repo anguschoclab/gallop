@@ -4,7 +4,7 @@ import { CompareStatBars } from "@/domains/horse/ui/CompareStatBars";
 import type { Horse } from "@/platform/game/types";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
-vi.mock("@/components/horse/HorseBits", () => ({
+vi.mock("@/domains/horse/ui/HorseBits", () => ({
   HorseStats: ({ horse }: { horse: Horse }) => (
     <div data-testid="horse-stats" data-horse-id={horse.id}>
       <span>Speed: {horse.stats.speed}</span>

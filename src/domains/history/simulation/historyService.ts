@@ -4,7 +4,7 @@ import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "@/domains/histo
 import { trackRecordKey } from "@/domains/history/model/historyTypes";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
-import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";;
+import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
 import type { Rng } from "@/shared/common/rng";
 
 /**

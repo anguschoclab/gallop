@@ -13,7 +13,7 @@
  * Related files: src/game/store/slices/exchangeSlice.ts (player-facing actions)
  */
 
-import { PHASE_ORDER_EXCHANGE_SETTLEMENT } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_EXCHANGE_SETTLEMENT } from "@/platform/time/pipelineConstants";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import { createDefaultExchangeState } from "@/domains/market/simulation/exchange";
 import { runExchangeSettlementDay } from "@/domains/market/simulation/exchangeSettlement";

@@ -25,7 +25,7 @@ import {
   type AwardCeremonyInvitation,
 } from "@/domains/awards/simulation/invitations";
 import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
-import { PHASE_ORDER_AWARD_INVITATIONS } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_AWARD_INVITATIONS } from "@/platform/time/pipelineConstants";
 import type { AnyImpact, InboxImpact } from "@/platform/resolver/impacts";
 import type { InboxPriority } from "@/domains/inbox/model/inboxTypes";
 

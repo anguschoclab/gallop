@@ -1,6 +1,6 @@
 import { Badge } from "@/shared/ui/badge";
 import { WeatherForecastStrip } from "@/domains/race/ui/WeatherForecastStrip";
-import { gradeColor } from "@/shared/common/uiTokens";;
+import { gradeColor } from "@/shared/common/uiTokens";
 import type { Race } from "@/platform/game/types";
 import type { RegionConfig } from "@/domains/calendar/application/calendarFacade";
 

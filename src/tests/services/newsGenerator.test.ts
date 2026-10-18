@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateRaceNews } from "@/domains/narrative/application/newsGenerator";
+import { generateRaceNews } from "@/domains/narrative/simulation/newsGenerator";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import type { Race } from "@/platform/game/types";
 

@@ -17,7 +17,7 @@ import type { AnyImpact } from "@/platform/resolver/impacts";
 import { generateUUID } from "@/shared/uuid/uuid";
 import type { Pregnancy } from "@/platform/game/types";
 import { GESTATION_DAYS } from "@/domains/breeding/model/breedingConstants";
-import { PHASE_ORDER_BREEDING_RESOLUTION } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_BREEDING_RESOLUTION } from "@/platform/time/pipelineConstants";
 import { resolveSyndicationIntent } from "@/platform/resolver/resolvers/syndicateResolver";
 import { canBreed } from "@/domains/breeding/simulation/eligibility";
 

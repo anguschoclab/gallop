@@ -1,7 +1,7 @@
 import { useGame, useGameWithShallow } from "@/platform/game/store";
 import { FacilityCategory } from "@/domains/facilities/ui/FacilityCategory";
 import { Dumbbell, ShieldCheck, Activity, Package } from "lucide-react";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { toast } from "sonner";
 import {
   FACILITY_BONUSES,

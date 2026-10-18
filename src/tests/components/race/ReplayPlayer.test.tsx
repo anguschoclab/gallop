@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { ReplayPlayer } from "@/domains/race/ui/ReplayPlayer";
 import type { Race } from "@/platform/game/types";
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGameWithShallow: vi.fn(),
   useGame: vi.fn(),
 }));

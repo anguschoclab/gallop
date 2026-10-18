@@ -48,7 +48,7 @@ vi.mock("comlink", () => ({
 import { createDefaultGameState } from "@/platform/game/store/state";
 import { useGame } from "@/platform/game/store";
 import type { Horse } from "@/platform/game/types";
-import { DAYS_PER_MONTH } from "@/domains/calendar/model/calendarConstants";;
+import { DAYS_PER_MONTH } from "@/domains/calendar/model/calendarConstants";
 
 describe("Headless Triple Crown Simulation", () => {
   beforeEach(() => {

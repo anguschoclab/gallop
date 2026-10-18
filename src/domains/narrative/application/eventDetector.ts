@@ -2,7 +2,7 @@ import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 import type { Race } from "@/platform/game/types";
 import type { HorseOwnership } from "@/domains/horse/simulation/ownership";
 import { getStableId } from "@/domains/horse/simulation/ownership";
-import { METERS_PER_LENGTH } from "@/domains/race/model/raceSimulationConstants";;
+import { METERS_PER_LENGTH } from "@/domains/race/model/raceSimulationConstants";
 import { NARRATIVE_THRESHOLDS } from "@/domains/narrative/model/narrativeThresholds";
 import { getJockeyTier } from "@/domains/jockey/simulation/jockeyTier";
 import { getCourseForRace } from "@/shared/data/tracks";

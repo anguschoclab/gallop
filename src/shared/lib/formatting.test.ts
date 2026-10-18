@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatCurrency, formatTime } from "@/shared/common/formatting";;
+import { formatCurrency, formatTime } from "@/shared/common/formatting";
 
 describe("layer-agnostic formatting facade", () => {
   it("re-exports stable formatting behavior beside the adapter", () => {

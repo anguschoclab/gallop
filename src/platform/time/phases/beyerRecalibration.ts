@@ -10,7 +10,7 @@
 
 import type { PipelineContext } from "@/platform/time/pipeline";
 import { maybeRecalibratePars } from "@/domains/race/simulation/beyerPars";
-import { PHASE_ORDER_BEYER_RECALIBRATION } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_BEYER_RECALIBRATION } from "@/platform/time/pipelineConstants";
 
 /**
  * Phase: Beyer Par Recalibration

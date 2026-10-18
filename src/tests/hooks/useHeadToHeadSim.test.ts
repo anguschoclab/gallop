@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 
-vi.mock("@/core/race/headToHead", () => ({
+vi.mock("@/domains/race/simulation/headToHead", () => ({
   runHeadToHeadSimulation: vi.fn(() => [
     {
       horseId: "h1",

@@ -6,7 +6,7 @@
  * impact list so new gameplay contracts are audited as soon as they are typed.
  */
 
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { extname, join, relative } from "node:path";
 import * as ts from "typescript";
@@ -399,8 +399,8 @@ export function scanDormantAiFunctions(srcRoot: string) {
 
 /** Check every FacilityType has an outpost slot footprint. */
 export function scanFacilityTypeParity(srcRoot: string) {
-  const facilityPath = join(srcRoot, "core", "facilities", "facilityTypes.ts");
-  const outpostPath = join(srcRoot, "core", "facilities", "outpostTypes.ts");
+  const facilityPath = join(srcRoot, "domains", "facilities", "model", "facilityTypes.ts");
+  const outpostPath = join(srcRoot, "domains", "facilities", "model", "outpostTypes.ts");
   const facilityText = readFileSafe(facilityPath);
   const outpostText = readFileSafe(outpostPath);
   const inputs: SourceInput[] = [{ path: facilityPath, text: facilityText, family: "impact" }];
@@ -423,29 +423,39 @@ export function scanFacilityTypeParity(srcRoot: string) {
  * production source coverage buckets.
  */
 export function runCapabilityAudit(projectRoot = process.cwd()): CapabilityAuditResult {
-  const resolverInputs = sourceInputs(projectRoot, join("src", "core", "resolver"), "intent");
+  const resolverInputs = sourceInputs(projectRoot, join("src", "platform", "resolver"), "intent");
   const declarations = collectDeclarations(resolverInputs);
   const intents = [...new Set(resolveContractLiterals("AnyIntent", declarations))].sort();
 
   const impactInputs = sourceInputs(
     projectRoot,
-    join("src", "core", "resolver", "impacts"),
+    join("src", "platform", "resolver", "impacts"),
     "impact",
   );
   const impactDeclarations = collectDeclarations(impactInputs);
   const impacts = [...new Set(resolveContractLiterals("AnyImpact", impactDeclarations))].sort();
 
+  const domainLayerDirs = (layer: string) =>
+    readdirSync(join(projectRoot, "src", "domains"))
+      .map((domain) => join("domains", domain, layer))
+      .filter(
+        (dir) =>
+          existsSync(join(projectRoot, "src", dir)) &&
+          statSync(join(projectRoot, "src", dir)).isDirectory(),
+      );
+
   const playerSources = collectRuntimeSources(projectRoot, [
-    "components",
     "routes",
-    join("game", "store"),
-    "hooks",
+    join("platform", "game", "store"),
+    ...domainLayerDirs("ui"),
+    ...domainLayerDirs("application"),
+    join("shared", "ui"),
   ]);
   const npcSources = collectRuntimeSources(projectRoot, [join("domains", "agents", "simulation")]);
-  const systemSources = collectRuntimeSources(projectRoot, ["core/time/phases"]);
+  const systemSources = collectRuntimeSources(projectRoot, ["platform/time/phases"]);
   const resolverSources = collectRuntimeSources(projectRoot, [
-    "core/resolver/handlers",
-    "core/time/phases",
+    "platform/resolver/handlers",
+    "platform/time/phases",
   ]);
 
   const registered = GAME_PIPELINE_PHASES.map((phase) => phase.name);
@@ -509,7 +519,10 @@ export function runCapabilityAudit(projectRoot = process.cwd()): CapabilityAudit
       routeCount: collectFiles(join(projectRoot, "src", "routes"), [".tsx"]).filter(
         (path) => !path.endsWith("__root.tsx"),
       ).length,
-      componentCount: collectFiles(join(projectRoot, "src", "components"), [".ts", ".tsx"]).length,
+      componentCount: collectRuntimeSources(projectRoot, [
+        ...domainLayerDirs("ui"),
+        join("shared", "ui"),
+      ]).length,
     },
     summary: {
       totalIntents: intents.length,

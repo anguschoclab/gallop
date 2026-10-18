@@ -1,5 +1,5 @@
 import type { JockeyInstructions } from "@/domains/tactics/application/tacticsFacade";
-import { AGGRESSIVENESS_DEFAULT } from "@/shared/constants/tacticsConstants";;
+import { AGGRESSIVENESS_DEFAULT } from "@/shared/constants/tacticsConstants";
 
 export interface InstructionPreset {
   id: string;

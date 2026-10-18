@@ -15,11 +15,11 @@ vi.mock("@tanstack/react-router", () => ({
   createFileRoute: () => (opts: any) => opts,
 }));
 
-vi.mock("@/core/horse/horseFactory", () => ({
+vi.mock("@/domains/horse/simulation/horseFactory", () => ({
   ensurePhenotypeResolved: (h: Horse) => h,
 }));
 
-vi.mock("@/core/horse/stats", () => ({
+vi.mock("@/domains/horse/simulation/stats", () => ({
   calculateOverallRating: (h: Horse) => h.potential ?? 50,
 }));
 

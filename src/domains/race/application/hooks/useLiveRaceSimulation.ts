@@ -5,7 +5,7 @@ import type { NarrativeGenerator } from "@/domains/narrative/application/narrati
 import type { CommentaryLine } from "@/domains/narrative/application/commentaryGenerator";
 import type { Race, RaceResult } from "@/domains/race/simulation/types";
 import type { Rng } from "@/shared/common/rng";
-import { DEFAULT_DT as FIXED_DT } from "@/domains/race/model/engine/constants";;
+import { DEFAULT_DT as FIXED_DT } from "@/domains/race/model/engine/constants";
 import { SIMULATION_MAX_STEPS_PER_FRAME as MAX_STEPS_PER_FRAME } from "@/domains/race/model/raceSimulationConstants";
 
 import { compareFinishOrder } from "@/domains/race/simulation/engine/compareFinishOrder";

@@ -6,7 +6,7 @@ import {
   type RaceSimulationDependencies,
 } from "@/domains/race/simulation/raceSimulationService";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
-import { DEFAULT_DT, defaultMaxTime } from "@/domains/race/model/engine/constants";;
+import { DEFAULT_DT, defaultMaxTime } from "@/domains/race/model/engine/constants";
 import { compareFinishOrder } from "@/domains/race/simulation/engine/compareFinishOrder";
 import type { Race } from "@/domains/race/simulation/types";
 import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";

@@ -7,17 +7,17 @@ vi.mock("@tanstack/react-router", () => ({
   useNavigate: () => mockNavigate,
 }));
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: vi.fn(),
 }));
 
-vi.mock("@/services/storage/storageAdapter", () => ({
+vi.mock("@/platform/persistence/storage/storageAdapter", () => ({
   loadWizardState: vi.fn(() => null),
   saveWizardState: vi.fn(),
   clearWizardState: vi.fn(),
 }));
 
-vi.mock("@/core/jockey/generator", () => ({
+vi.mock("@/domains/jockey/simulation/generator", () => ({
   generateSilk: vi.fn(() => ({
     pattern: "solid",
     primary: "#FF0000",
@@ -26,16 +26,16 @@ vi.mock("@/core/jockey/generator", () => ({
   })),
 }));
 
-vi.mock("@/data/jockeys", () => ({
+vi.mock("@/shared/data/jockeys", () => ({
   SILK_PATTERNS: ["solid"],
 }));
 
-vi.mock("@/core/stable/stableGeneration", () => ({
+vi.mock("@/domains/stable/simulation/stableGeneration", () => ({
   randomStableName: vi.fn(() => "Test Stable"),
   randomOwnerName: vi.fn(() => "Test Owner"),
 }));
 
-vi.mock("@/core/common/backstories", () => ({
+vi.mock("@/shared/common/backstories", () => ({
   BACKSTORIES: [
     {
       id: "wealthy_dilettante",
@@ -49,7 +49,7 @@ vi.mock("@/core/common/backstories", () => ({
   ],
 }));
 
-vi.mock("@/components/NewGameWizard/steps/helpers", () => ({
+vi.mock("@/domains/onboarding/application/steps/helpers", () => ({
   makeWizardRng: vi.fn(() => ({ next: () => 0.5 })),
 }));
 

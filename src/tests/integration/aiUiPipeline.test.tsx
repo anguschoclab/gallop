@@ -17,7 +17,7 @@ import type {
 import type { PersonalityAIState } from "@/domains/agents/simulation/personalitySystem";
 import type { Stable } from "@/platform/game/types";
 import type { RaceRunner } from "@/domains/race/simulation/types";
-import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function createMockPersonalityState(

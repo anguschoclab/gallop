@@ -24,7 +24,7 @@ vi.mock("@tanstack/react-router", () => ({
   ),
 }));
 
-vi.mock("@/hooks/game/useSystemsState", () => ({
+vi.mock("@/platform/game/hooks/useSystemsState", () => ({
   useNpcStables: () =>
     [
       {
@@ -57,13 +57,13 @@ vi.mock("@/hooks/game/useSystemsState", () => ({
     ] as unknown as Stable[],
 }));
 
-vi.mock("@/components/stable/StableCompareTable", () => ({
+vi.mock("@/domains/stable/ui/StableCompareTable", () => ({
   StableCompareTable: ({ stables }: { stables: Stable[] }) => (
     <div data-testid="compare-table">Table with {stables.length} stables</div>
   ),
 }));
 
-vi.mock("@/components/stable/StableCompareBar", () => ({
+vi.mock("@/domains/stable/ui/StableCompareBar", () => ({
   StableCompareBar: () => <div data-testid="compare-bar" />,
 }));
 

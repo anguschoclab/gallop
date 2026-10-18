@@ -13,7 +13,7 @@ vi.mock("@/domains/agents/simulation/trainingAI", () => ({
 }));
 
 // Mock UUID to avoid random outputs
-vi.mock("@/core/uuid", () => ({
+vi.mock("@/shared/uuid/uuid", () => ({
   generateUUID: vi.fn(() => "mocked-uuid"),
 }));
 

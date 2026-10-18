@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Brain, TrendingUp, Target, Lightbulb, Gauge, BookOpen } from "lucide-react";
 import type { StableAIState } from "@/domains/agents/application/aiFacade";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { getStrategyInsights } from "@/domains/agents/application/aiFacade";
 import { getSuccessRate } from "@/domains/agents/application/aiFacade";
 import { Hint } from "@/shared/ui/Hint";

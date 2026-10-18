@@ -4,7 +4,7 @@ import { AwardCeremony } from "@/domains/awards/ui/AwardCeremony";
 import type { RegionalAward } from "@/domains/awards/model/types";
 import { CATEGORY_DESCRIPTIONS } from "@/domains/awards/model/types";
 
-vi.mock("@/components/ui/dialog", () => ({
+vi.mock("@/shared/ui/dialog", () => ({
   Dialog: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
     open ? children : null,
   DialogContent: ({
@@ -28,7 +28,7 @@ vi.mock("@/components/ui/dialog", () => ({
   ),
 }));
 
-vi.mock("@/components/ui/button", () => ({
+vi.mock("@/shared/ui/button", () => ({
   Button: ({ children, onClick }: { children: React.ReactNode; onClick?: () => void }) => (
     <button data-testid="next-btn" onClick={onClick}>
       {children}
@@ -36,17 +36,17 @@ vi.mock("@/components/ui/button", () => ({
   ),
 }));
 
-vi.mock("@/components/ui/badge", () => ({
+vi.mock("@/shared/ui/badge", () => ({
   Badge: ({ children }: { children: React.ReactNode }) => (
     <span data-testid="badge">{children}</span>
   ),
 }));
 
-vi.mock("@/components/awards/AwardIcon", () => ({
+vi.mock("@/domains/awards/ui/AwardIcon", () => ({
   AwardIcon: () => <span data-testid="award-icon" />,
 }));
 
-vi.mock("@/components/awards/AwardBadge", () => ({
+vi.mock("@/domains/awards/ui/AwardBadge", () => ({
   AwardBadge: () => <span data-testid="award-badge" />,
 }));
 
@@ -62,7 +62,7 @@ vi.mock("@tanstack/react-router", () => ({
   ),
 }));
 
-vi.mock("@/assets/awards", () => ({
+vi.mock("@/domains/awards/ui/assets", () => ({
   REGION_COLORS: {
     north_america: { bg: "#ff0000", accent: "#cc0000" },
     europe: { bg: "#00ff00", accent: "#00cc00" },

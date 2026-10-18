@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "@/platform/game/store/initialization";
 import { BACKSTORIES } from "@/shared/common/backstories";
-import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";;
+import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
 import { isPlayerOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 import { calculateTotalMaintenance } from "@/domains/facilities/simulation/facilityDefaults";
 import { runPipelineForDays } from "@/tests/helpers/runPipeline";

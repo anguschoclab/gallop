@@ -8,7 +8,7 @@
 
 import type { Horse, AuctionSale, AuctionLot } from "@/platform/game/types";
 import { horseMarketValue } from "@/domains/horse/simulation/pricing";
-import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/domains/auction/model/auctionConstants";;
+import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/domains/auction/model/auctionConstants";
 
 export interface ConsignmentValidationInput {
   horse: Horse | undefined;

@@ -1,5 +1,5 @@
 import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
-import { TOP_FINISH_POSITION } from "@/domains/race/model/raceSimulationConstants";;
+import { TOP_FINISH_POSITION } from "@/domains/race/model/raceSimulationConstants";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import type {
   TrackRecordImpact,

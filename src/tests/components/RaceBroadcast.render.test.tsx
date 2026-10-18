@@ -17,92 +17,92 @@ import { afterEach } from "vitest";
 // ── Mock child components to capture received props ──────────────────────────
 
 const TrackMock = vi.fn((_props?: unknown) => createElement("div", { "data-testid": "track" }));
-vi.mock("@/components/race/Track", () => ({
+vi.mock("@/domains/race/ui/Track", () => ({
   Track: (props: unknown) => TrackMock(props),
 }));
 
 const RaceVisualizerMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "race-visualizer" }),
 );
-vi.mock("@/components/race/RaceVisualizer", () => ({
+vi.mock("@/domains/race/ui/RaceVisualizer", () => ({
   RaceVisualizer: (props: unknown) => RaceVisualizerMock(props),
 }));
 
 const BroadcastCommentaryMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "broadcast-commentary" }),
 );
-vi.mock("@/components/race/BroadcastCommentary", () => ({
+vi.mock("@/domains/race/ui/BroadcastCommentary", () => ({
   BroadcastCommentary: (props: unknown) => BroadcastCommentaryMock(props),
 }));
 
 const LeaderboardMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "leaderboard" }),
 );
-vi.mock("@/components/race/Leaderboard", () => ({
+vi.mock("@/domains/race/ui/Leaderboard", () => ({
   Leaderboard: (props: unknown) => LeaderboardMock(props),
 }));
 
 const RaceControlBarMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "race-control-bar" }),
 );
-vi.mock("@/components/race/RaceControlBar", () => ({
+vi.mock("@/domains/race/ui/RaceControlBar", () => ({
   RaceControlBar: (props: unknown) => RaceControlBarMock(props),
 }));
 
 const ResultOverlayMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "result-overlay" }),
 );
-vi.mock("@/components/race/ResultOverlay", () => ({
+vi.mock("@/domains/race/ui/ResultOverlay", () => ({
   ResultOverlay: (props: unknown) => ResultOverlayMock(props),
 }));
 
 const RaceFieldDialogMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "race-field-dialog" }),
 );
-vi.mock("@/components/race/RaceFieldDialog", () => ({
+vi.mock("@/domains/race/ui/RaceFieldDialog", () => ({
   RaceFieldDialog: (props: unknown) => RaceFieldDialogMock(props),
 }));
 
 const WeatherForecastStripMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "weather-forecast-strip" }),
 );
-vi.mock("@/components/race/WeatherForecastStrip", () => ({
+vi.mock("@/domains/race/ui/WeatherForecastStrip", () => ({
   WeatherForecastStrip: (props: unknown) => WeatherForecastStripMock(props),
 }));
 
 const BookmarkButtonMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "bookmark-button" }),
 );
-vi.mock("@/components/bookmarks/BookmarkButton", () => ({
+vi.mock("@/domains/bookmarks/ui/BookmarkButton", () => ({
   BookmarkButton: (props: unknown) => BookmarkButtonMock(props),
 }));
 
 const PostRaceAnalysisMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "post-race-analysis" }),
 );
-vi.mock("@/components/race/PostRaceAnalysis", () => ({
+vi.mock("@/domains/race/ui/PostRaceAnalysis", () => ({
   PostRaceAnalysis: (props: unknown) => PostRaceAnalysisMock(props),
 }));
 
 const ConditionTimelinePanelMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "condition-timeline-panel" }),
 );
-vi.mock("@/components/race/ConditionTimelinePanel", () => ({
+vi.mock("@/domains/race/ui/ConditionTimelinePanel", () => ({
   ConditionTimelinePanel: (props: unknown) => ConditionTimelinePanelMock(props),
 }));
 
 const InRunningSnapshotDialogMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "in-running-snapshot-dialog" }),
 );
-vi.mock("@/components/race/InRunningSnapshotDialog", () => ({
+vi.mock("@/domains/race/ui/InRunningSnapshotDialog", () => ({
   InRunningSnapshotDialog: (props: unknown) => InRunningSnapshotDialogMock(props),
 }));
 
-vi.mock("@/components/race/raceVisualHelpers", () => ({
+vi.mock("@/domains/race/application/raceVisualHelpers", () => ({
   getSkyBackground: vi.fn(() => "url(/sky.png)"),
 }));
 
-vi.mock("@/lib/cn", () => ({
+vi.mock("@/shared/lib/cn", () => ({
   cn: (...args: unknown[]) => args.filter(Boolean).join(" "),
 }));
 

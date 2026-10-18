@@ -9,7 +9,7 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
-import { PHASE_ORDER_STEWARDS } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_STEWARDS } from "@/platform/time/pipelineConstants";
 import { type InquiryOutcome } from "@/domains/stewards/model/stewardTypes";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import type {

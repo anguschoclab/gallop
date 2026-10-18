@@ -15,7 +15,7 @@
 import type { RegionalSystem } from "@/platform/game/types";
 import type { Rng } from "@/shared/common/rng";
 import { nondeterministicRng } from "@/shared/common/rng";
-import namePoolsData from "@/shared/data/namePools";
+import namePoolsData from "@/shared/data/namePools.json";
 
 // Sponsor names for race naming
 export const SPONSORS: Record<RegionalSystem, string[]> = namePoolsData.SPONSORS as Record<

@@ -6,12 +6,12 @@ import { Users, Search, Filter } from "lucide-react";
 import { NumericValue } from "@/domains/horse/ui/HorseBits";
 import { useMemo, useState } from "react";
 import { getG1WinsForStable, countByGrade } from "@/domains/awards/application/awardsFacade";
-import { generateUUID } from "@/shared/uuid/uuid";;
+import { generateUUID } from "@/shared/uuid/uuid";
 import type { StaffRole, StaffTier } from "@/domains/staff/application/staffFacade";
 import { StaffNegotiationDialog } from "@/domains/staff/ui/StaffNegotiationDialog";
 import { StaffTeamList } from "@/domains/staff/ui/StaffTeamList";
 import { RecruitmentPool } from "@/domains/staff/ui/RecruitmentPool";
-import { STAFF_TRAIT_OPTIONS } from "@/domains/genetics/application/traitLabels";;
+import { STAFF_TRAIT_OPTIONS } from "@/domains/genetics/application/traitLabels";
 import {
   Select,
   SelectContent,

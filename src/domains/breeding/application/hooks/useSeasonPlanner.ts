@@ -7,7 +7,7 @@ import { inBreedingSeason, nextBreedingSeasonStart } from "@/domains/calendar/si
 import { isFemaleHorse } from "@/domains/horse/simulation/gender";
 import { getAvailableStallions } from "@/domains/breeding/simulation/stallions";
 import { suggestBestSires, type SireSuggestion } from "@/domains/breeding/simulation/sireSuggestions";
-import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/domains/breeding/model/breedingConstants";;
+import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/domains/breeding/model/breedingConstants";
 import type { MatingPlanEntry } from "@/platform/game/store/state/breedingState";
 import { isPlayerOwned, getStableId } from "@/domains/horse/simulation/ownership";
 

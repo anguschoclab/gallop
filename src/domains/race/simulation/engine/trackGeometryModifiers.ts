@@ -1,7 +1,7 @@
 import type { CourseSpecification } from "@/shared/data/accessors/tracksAccessor";
 import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 import { getTrackSection } from "@/domains/race/simulation/engine/trackGeometry";
-import { AGILITY_MITIGATION_FACTOR, POSITIONING_SKILL_FACTOR, BULLRING_TRAIT_BONUS, MAX_TURN_PENALTY, SURFACE_SPECIALIST_SPEED_BONUS } from "@/domains/race/model/engine/constants";;
+import { AGILITY_MITIGATION_FACTOR, POSITIONING_SKILL_FACTOR, BULLRING_TRAIT_BONUS, MAX_TURN_PENALTY, SURFACE_SPECIALIST_SPEED_BONUS } from "@/domains/race/model/engine/constants";
 
 export function calculateTrackGeometryModifiers(
   r: Runner,

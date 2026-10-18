@@ -13,7 +13,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
-const DATA_ROOT = join(process.cwd(), "src", "data");
+const DATA_ROOT = join(process.cwd(), "src", "shared", "data");
 
 function collectFiles(dir: string, acc: string[] = []): string[] {
   for (const entry of readdirSync(dir)) {
@@ -51,7 +51,7 @@ describe("@/data immutability invariant", () => {
         const matches = content.match(pattern);
         if (matches) {
           for (const match of matches) {
-            violations.push(`${file.replace(DATA_ROOT, "@/data")}: "${match}"`);
+            violations.push(`${file.replace(DATA_ROOT, "@/shared/data")}: "${match}"`);
           }
         }
       }
@@ -67,7 +67,7 @@ describe("@/data immutability invariant", () => {
       // Check for mutable export patterns
       const mutableExport = /^export\s+(let|var)\s/gm;
       if (mutableExport.test(content)) {
-        violations.push(`${file.replace(DATA_ROOT, "@/data")}: exports mutable variable`);
+        violations.push(`${file.replace(DATA_ROOT, "@/shared/data")}: exports mutable variable`);
       }
     }
     expect(violations).toEqual([]);

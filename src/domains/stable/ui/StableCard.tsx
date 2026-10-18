@@ -7,7 +7,7 @@ import { GitCompare } from "lucide-react";
 import { BookmarkButton } from "@/domains/bookmarks/ui/BookmarkButton";
 import { CashPressureBadge } from "@/domains/stable/ui/CashPressureBadge";
 import { RecommendedMaxOfferLine } from "@/domains/stable/ui/RecommendedMaxOfferLine";
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
 import { CashPressureTrend } from "@/domains/stable/ui/CashPressureTrend";
 import { useCompareStables } from "@/domains/stable/application/hooks/useCompareStables";

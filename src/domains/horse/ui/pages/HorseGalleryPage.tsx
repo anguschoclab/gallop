@@ -15,7 +15,7 @@ import { ensurePhenotypeResolved } from "@/domains/horse/application/horseFacade
 import { Zap, TrendingUp, Filter, Search } from "lucide-react";
 import { Input } from "@/shared/ui/input";
 import { useGalleryFilters, COAT_COLORS } from "@/domains/horse/application/hooks/useGalleryFilters";
-import { HORSE_TRAIT_CATEGORY_OPTIONS, HORSE_TRAIT_OPTIONS, type HorseTraitKey } from "@/domains/genetics/application/traitLabels";;
+import { HORSE_TRAIT_CATEGORY_OPTIONS, HORSE_TRAIT_OPTIONS, type HorseTraitKey } from "@/domains/genetics/application/traitLabels";
 
 function HorseGalleryPage() {
   const {

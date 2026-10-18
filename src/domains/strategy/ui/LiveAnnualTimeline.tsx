@@ -17,7 +17,7 @@ import {
   getPrestigeTierBadgeClass,
 } from "@/domains/prestige/application/prestigeFacade";
 import { getTrackById } from "@/shared/data/tracks";
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
 import type { CampaignRaceSlot } from "@/domains/calendar/application/calendarFacade";
 import type { Race } from "@/platform/game/types";

@@ -21,7 +21,7 @@ import { Sparkline } from "@/shared/ui/charts/Sparkline";
 import { SilkDot } from "@/domains/shell/ui/SilkDot";
 import { PillToggleGroup } from "@/shared/ui/common/PillToggleGroup";
 import { useGameWithShallow } from "@/platform/game/store";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { StableRankingsHistory, StableRankingsSnapshot } from "@/domains/stable/simulation/stableRankings";
 import { getStableReputationTierMeta } from "@/domains/stable/simulation/stableReputationTier";
 import { formatReputationTier } from "@/domains/reputation/simulation";

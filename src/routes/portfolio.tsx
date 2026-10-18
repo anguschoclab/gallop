@@ -6,7 +6,7 @@ import { Input } from "@/shared/ui/input";
 import { Card, CardContent } from "@/shared/ui/card";
 import { useGame, useGameWithShallow } from "@/platform/game/store";
 import type { GameState } from "@/platform/game/types";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import {
   buildStablePortfolios,
   portfolioTotals,

@@ -10,7 +10,7 @@
 
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import { PHASE_ORDER_RACE_RESOLUTION } from "@/platform/time/pipelineConstants";
-import { RACE_HISTORY_UNGRADED_RETENTION_DAYS } from "@/shared/constants/storageLimitsConstants";;
+import { RACE_HISTORY_UNGRADED_RETENTION_DAYS } from "@/shared/constants/storageLimitsConstants";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import { rngForRace } from "@/domains/race/simulation/rngForRace";
 import type { Race } from "@/platform/game/types";

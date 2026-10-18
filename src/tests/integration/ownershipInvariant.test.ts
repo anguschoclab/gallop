@@ -5,7 +5,7 @@ import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId, asHorseId } from "@/shared/types/branded";
-import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";;
+import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
 import type { GameState, Horse, Stable } from "@/platform/game/types";
 import type { CashImpact, TransactionImpact, AnyImpact } from "@/platform/resolver/impacts";
 import { calculateTotalMaintenance } from "@/domains/facilities/simulation/facilityDefaults";

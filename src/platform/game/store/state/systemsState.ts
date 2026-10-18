@@ -41,7 +41,7 @@ import type { ReservedNameEntry } from "@/domains/horse/simulation/naming/reserv
 import type { StewardsInquiry } from "@/domains/stewards/model/stewardTypes";
 import type { Outpost } from "@/domains/facilities/model/outpostTypes";
 import type { WeatherState } from "@/domains/weather/model/weatherTypes";
-import type { CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";;
+import type { CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";
 import type { CashPressureHistory } from "@/domains/stable/simulation/cashPressureHistory";
 import type { TutorialState } from "@/domains/tutorial/model/tutorialTypes";
 import { createDefaultTutorialState } from "@/domains/tutorial/model/tutorialTypes";

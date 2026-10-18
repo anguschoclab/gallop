@@ -1,7 +1,7 @@
 import { useGameWithShallow } from "@/platform/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Sparkles, TrendingUp, Flame, Trophy, CheckCircle2 } from "lucide-react";
-import type { CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";;
+import type { CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";
 
 interface CareerArcPanelProps {
   horseId: string;

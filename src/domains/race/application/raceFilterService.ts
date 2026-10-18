@@ -6,7 +6,7 @@ import {
   type RaceFilters,
 } from "@/domains/race/simulation/filtering";
 import { MONTH_NAMES_FULL } from "@/domains/calendar/simulation/dateFormatting";
-import { DAYS_PER_MONTH } from "@/domains/calendar/model/calendarConstants";;
+import { DAYS_PER_MONTH } from "@/domains/calendar/model/calendarConstants";
 
 /**
  * Race filtering orchestration with dependency injection

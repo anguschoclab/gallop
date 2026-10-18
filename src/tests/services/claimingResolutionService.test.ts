@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveClaimingResolution } from "@/domains/auction/simulation/claimingResolutionService";;
+import { resolveClaimingResolution } from "@/domains/auction/simulation/claimingResolutionService";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/shared/uuid/uuid";
 import type { Horse, Race } from "@/platform/game/types";

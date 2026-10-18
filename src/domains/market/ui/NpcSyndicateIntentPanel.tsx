@@ -4,7 +4,7 @@ import type { Horse, Stable } from "@/platform/game/types";
 import { Badge } from "@/shared/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import { Users } from "lucide-react";
 import {
   evaluateSharePurchase,

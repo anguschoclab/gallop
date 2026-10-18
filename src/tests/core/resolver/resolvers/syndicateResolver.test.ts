@@ -7,8 +7,8 @@ import {
   ShareSaleIntent,
 } from "@/platform/resolver/intents";
 
-vi.mock("@/game/uuid", () => ({ generateUUID: () => "test-uuid-1234" }));
-vi.mock("@/core/uuid", () => ({ generateUUID: () => "test-uuid-1234" }));
+vi.mock("@/shared/uuid/uuid", () => ({ generateUUID: () => "test-uuid-1234" }));
+vi.mock("@/shared/uuid/uuid", () => ({ generateUUID: () => "test-uuid-1234" }));
 
 describe("syndicateResolver", () => {
   let state: GameState;

@@ -38,7 +38,7 @@ import {
   isNpcOwned,
   isPlayerOwned,
 } from "@/domains/horse/application/horseFacade";
-import { createDefaultScoutingThresholds, lastScoutDayByHorse, matchesScoutingThresholds, type ScoutingThresholds } from "@/domains/agents/model/scoutingThresholds";;
+import { createDefaultScoutingThresholds, lastScoutDayByHorse, matchesScoutingThresholds, type ScoutingThresholds } from "@/domains/agents/model/scoutingThresholds";
 
 import {
   INSIGHT_METRICS,

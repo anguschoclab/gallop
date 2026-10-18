@@ -42,13 +42,13 @@ const { calculateWinProbabilityMock, probabilityToMorningLineMock, formatOddsMoc
     };
   });
 
-vi.mock("@/core/odds", () => ({
+vi.mock("@/domains/odds/model/oddsTypes", () => ({
   calculateWinProbability: calculateWinProbabilityMock,
   probabilityToMorningLine: probabilityToMorningLineMock,
   formatOdds: formatOddsMock,
 }));
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: vi.fn((selector: (s: unknown) => unknown) => selector(mockStateRef.current)),
   useGameWithShallow: vi.fn((selector: (s: unknown) => unknown) => selector(mockStateRef.current)),
 }));

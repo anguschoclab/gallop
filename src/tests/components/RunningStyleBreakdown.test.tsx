@@ -3,11 +3,11 @@ import { screen, cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestHorse } from "@/tests/helpers";
 
-vi.mock("@/core/race/sectionalAnalysis", () => ({
+vi.mock("@/domains/race/simulation/sectionalAnalysis", () => ({
   derivePaceStyleLabel: vi.fn(() => "Balanced"),
 }));
 
-vi.mock("@/core/horse/paceTendency", () => ({
+vi.mock("@/domains/horse/simulation/paceTendency", () => ({
   classifyTendency: vi.fn(() => "mid"),
   classifyDistanceBucket: vi.fn(() => "mile"),
   distanceBucket: vi.fn(() => "mile"),

@@ -4,7 +4,7 @@
  * Extracted from StableRosterView.tsx for modularity.
  */
 
-import { MAX_COMPARE_HORSES } from "@/shared/constants/uiConstants";;
+import { MAX_COMPARE_HORSES } from "@/shared/constants/uiConstants";
 import { HorseCard } from "@/domains/horse/ui/HorseCard";
 import { Checkbox } from "@/shared/ui/checkbox";
 import { DisabledTooltipWrapper } from "@/shared/ui/DisabledTooltipWrapper";

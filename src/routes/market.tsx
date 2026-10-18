@@ -4,7 +4,7 @@ import { useGame, useGameWithShallow } from "@/platform/game/store";
 import type { GameState } from "@/platform/game/types";
 import { Card, CardContent } from "@/shared/ui/card";
 import { NumericValue } from "@/domains/horse/ui/HorseBits";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { SyndicateMarket } from "@/domains/market/ui/SyndicateMarket";
 import { BloodstockGrid } from "@/domains/market/ui/BloodstockGrid";
 import {

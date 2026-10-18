@@ -1,7 +1,7 @@
 import { useGameWithShallow } from "@/platform/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Trophy, Users, TrendingUp } from "lucide-react";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 
 interface FounderLegacyProps {
   horseId: string;

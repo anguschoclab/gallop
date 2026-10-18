@@ -16,7 +16,7 @@ import type { Race } from "@/domains/race/simulation/types";
 import type { Transaction } from "@/domains/transactions/model/transactionTypes";
 import type { Jockey } from "@/domains/jockey/model/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
-import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
 
 export interface PlayerRaceWinRecord {
   id: string;

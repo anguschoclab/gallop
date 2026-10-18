@@ -8,7 +8,7 @@
  * Related files: proceduralPortrait.ts (procedural generation), portrait.ts (static assets)
  */
 
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 import { getOrDeriveAppearance } from "@/domains/horse/application/horseFacade";
 
 /**

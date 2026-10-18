@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import { Sparkline } from "@/shared/ui/charts/Sparkline";
 import { useGameWithShallow } from "@/platform/game/store";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { RankingsHistory, RankingsSnapshot } from "@/domains/market/simulation/rankingsHistory";
 import type { Horse } from "@/platform/game/types";
 import { Button } from "@/shared/ui/button";

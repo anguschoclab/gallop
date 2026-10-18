@@ -28,7 +28,7 @@ import { GRADED_RACES } from "@/shared/data/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/domains/facilities/simulation";
 import type { FacilityLevel } from "@/domains/facilities/simulation";
 import { STARTING_CASH } from "@/domains/market/model/economicConstants";
-import { MAIDEN_GUARANTEE_START_DAY, MAIDEN_GUARANTEE_END_DAY } from "@/domains/race/model/raceClassificationConstants";;
+import { MAIDEN_GUARANTEE_START_DAY, MAIDEN_GUARANTEE_END_DAY } from "@/domains/race/model/raceClassificationConstants";
 import { createDefaultExchangeState } from "@/domains/market/simulation/exchange";
 import { DEFAULT_MARKET_STRATEGY } from "@/domains/market/simulation/strategy";
 import { seedGazetteNews } from "@/domains/narrative/application/seedNewsGenerator";

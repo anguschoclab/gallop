@@ -27,19 +27,19 @@ vi.mock("@tanstack/react-router", () => ({
   ),
 }));
 
-vi.mock("@/components/horse/HorsePortrait", () => ({
+vi.mock("@/domains/horse/ui/HorsePortrait", () => ({
   HorsePortrait: () => <div data-testid="horse-portrait" />,
 }));
 
-vi.mock("@/components/jockey/JockeyAvatar", () => ({
+vi.mock("@/domains/jockey/ui/JockeyAvatar", () => ({
   JockeyAvatar: () => <div data-testid="jockey-avatar" />,
 }));
 
-vi.mock("@/components/ui/JargonTooltip", () => ({
+vi.mock("@/domains/horse/ui/JargonTooltip", () => ({
   JargonTooltip: ({ children }: any) => <span>{children}</span>,
 }));
 
-vi.mock("@/core/race/transportCost", () => ({
+vi.mock("@/domains/race/simulation/transportCost", () => ({
   getTransportCostForRace: () => 200,
 }));
 

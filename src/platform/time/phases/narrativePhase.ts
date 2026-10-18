@@ -12,7 +12,7 @@
 import type { PipelineContext } from "@/platform/time/pipeline";
 import { runNarrativeCycle, detectRaceBeats } from "@/domains/agents/simulation/narrativeAI";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
-import { PHASE_ORDER_NARRATIVE } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_NARRATIVE } from "@/platform/time/pipelineConstants";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import type { NewsImpact } from "@/platform/resolver/impacts";
 import { generateUUID } from "@/shared/uuid/uuid";

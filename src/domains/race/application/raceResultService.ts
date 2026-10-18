@@ -11,7 +11,7 @@
  * Related files: src/components/race/ResultOverlay.tsx (consumer)
  */
 
-export { generateRaceVerdict } from "@/core/race/raceVerdict";
+export { generateRaceVerdict } from "@/domains/race/simulation/raceVerdict";
 export { compareFinishOrder } from "@/domains/race/simulation/engine/compareFinishOrder";
 export { getStrategyInsights } from "@/domains/agents/simulation/jockeyStrategyRecording";
 export { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";

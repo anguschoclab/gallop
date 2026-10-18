@@ -5,7 +5,7 @@
  */
 
 import { Link } from "@tanstack/react-router";
-import { TOOLTIP_DELAY_MS, MAX_COMPARE_HORSES } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS, MAX_COMPARE_HORSES } from "@/shared/constants/uiConstants";
 import { HorseBit, overall } from "@/domains/horse/ui/HorseBits";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";

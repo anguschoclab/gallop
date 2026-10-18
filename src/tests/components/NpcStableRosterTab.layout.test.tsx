@@ -8,7 +8,7 @@ vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
 }));
 
-vi.mock("@/hooks/horse/useHorseCard", () => ({
+vi.mock("@/domains/horse/application/hooks/useHorseCard", () => ({
   useHorseCard: () => ({
     ovr: 70,
     simpleHorseCards: false,
@@ -32,24 +32,24 @@ vi.mock("@/domains/agents/simulation/npc/scouting", () => ({
   getScoutStatus: () => ({ label: "Fully Scouted", icon: "✓", color: "text-success" }),
 }));
 
-vi.mock("@/core/horse/stats", () => ({
+vi.mock("@/domains/horse/simulation/stats", () => ({
   calculateOverallRating: () => 70,
 }));
 
-vi.mock("@/core/horse/grading", () => ({
+vi.mock("@/domains/horse/simulation/grading", () => ({
   scoutGrade: () => "B+",
 }));
 
-vi.mock("@/core/common/uiTokens", () => ({
+vi.mock("@/shared/common/uiTokens", () => ({
   statGradeColor: () => "text-gold",
 }));
 
-vi.mock("@/core/horse/gender", () => ({
+vi.mock("@/domains/horse/simulation/gender", () => ({
   genderSymbol: () => "♂",
   isMaleHorse: () => true,
 }));
 
-vi.mock("@/core/horse/uiHelpers", () => ({
+vi.mock("@/domains/horse/simulation/uiHelpers", () => ({
   getCoatColor: () => "#000000",
   getInjuryColor: () => "text-cream/40",
   getInjuryLabel: () => "Low",

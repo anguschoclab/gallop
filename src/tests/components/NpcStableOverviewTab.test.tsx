@@ -13,35 +13,35 @@ const mockHistory: CashPressureHistory = {
   })),
 };
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector({ cashPressureHistory: mockHistory }),
   useGameWithShallow: (selector: (s: any) => any) => selector({ cashPressureHistory: mockHistory }),
 }));
 
-vi.mock("@/components/awards", () => ({
+vi.mock("@/domains/awards/ui", () => ({
   TrophyCase: () => <div data-testid="trophy-case">Trophies</div>,
 }));
 
-vi.mock("@/components/horse/HorseBits", () => ({
+vi.mock("@/domains/horse/ui/HorseBits", () => ({
   NumericValue: ({ value }: { value: number }) => <span>{value}</span>,
 }));
 
-vi.mock("@/components/stable/NpcStableCharts", () => ({
+vi.mock("@/domains/stable/ui/NpcStableCharts", () => ({
   NpcStableCharts: () => <div data-testid="stable-charts">Charts</div>,
 }));
 
-vi.mock("@/hooks/stable/useNpcStableDetail", () => ({
+vi.mock("@/domains/stable/application/hooks/useNpcStableDetail", () => ({
   getRivalryStatusLabel: (f: number) => "Neutral",
   getRivalryBadgeColor: (f: number) => "bg-gray-500",
 }));
 
-vi.mock("@/components/charts/Sparkline", () => ({
+vi.mock("@/shared/ui/charts/Sparkline", () => ({
   Sparkline: ({ data }: { data: number[] }) => (
     <div data-testid="sparkline">{data.length} points</div>
   ),
 }));
 
-vi.mock("@/components/stable/CashPressureTrend", () => ({
+vi.mock("@/domains/stable/ui/CashPressureTrend", () => ({
   CashPressureTrend: ({ stableId, variant }: { stableId: string; variant: string }) => (
     <div data-testid="cash-pressure-trend">
       <span>Pressure</span>
@@ -92,8 +92,8 @@ describe("NpcStableOverviewTab", () => {
   });
 
   it("renders fallback when no history exists", () => {
-    vi.doUnmock("@/game/store");
-    vi.mock("@/game/store", () => ({
+    vi.doUnmock("@/platform/game/store");
+    vi.mock("@/platform/game/store", () => ({
       useGame: (selector: (s: any) => any) => selector({ cashPressureHistory: {} }),
       useGameWithShallow: (selector: (s: any) => any) => selector({ cashPressureHistory: {} }),
     }));

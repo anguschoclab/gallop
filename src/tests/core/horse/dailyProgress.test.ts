@@ -6,7 +6,7 @@ import {
 } from "@/domains/horse/simulation/dailyProgress";
 import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 
-vi.mock("@/core/horse/pricing", () => ({
+vi.mock("@/domains/horse/simulation/pricing", () => ({
   horseMarketValue: vi.fn(() => 10000),
 }));
 

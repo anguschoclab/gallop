@@ -9,7 +9,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_PRIVATE_SALE_EXPIRY } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_PRIVATE_SALE_EXPIRY } from "@/platform/time/pipelineConstants";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import type { PrivateSaleOffer } from "@/platform/game/types";
 

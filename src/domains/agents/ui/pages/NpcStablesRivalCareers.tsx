@@ -32,7 +32,7 @@ import {
   type RivalCareerCandidate,
   type RivalCareerSortKey,
 } from "@/domains/stable/application/hooks/useRivalCareerFilters";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { Horse } from "@/platform/game/types";
 
 const MAX_RIVAL_COMPARE = 4;

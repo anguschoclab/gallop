@@ -13,22 +13,22 @@ vi.mock("@tanstack/react-router", () => ({
   Scripts: () => null,
 }));
 
-vi.mock("@/components/AppShell", () => ({
+vi.mock("@/domains/shell/ui/AppShell", () => ({
   AppShell: () => createElement("div", { "data-testid": "app-shell" }),
 }));
 
-vi.mock("@/components/ui/sonner", () => ({
+vi.mock("@/shared/ui/sonner", () => ({
   Toaster: () => null,
 }));
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   rehydrateStore: vi.fn(),
   useGame: vi.fn(() => null),
   initEngineWorker: vi.fn(() => Promise.resolve()),
   initInitializationWorker: vi.fn(() => Promise.resolve()),
 }));
 
-vi.mock("@/game/store/storage", () => ({
+vi.mock("@/platform/game/store/storage", () => ({
   saveExists: { value: false },
   hydrationComplete: { value: false },
 }));

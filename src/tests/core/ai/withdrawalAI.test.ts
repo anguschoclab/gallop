@@ -13,7 +13,7 @@ import {
 } from "@/domains/agents/simulation/withdrawalAIRecording";
 import type { Horse, Race, Stable } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { AI_RISK_TOLERANCE_CONSERVATIVE, AI_RISK_TOLERANCE_AGGRESSIVE, AI_RISK_TOLERANCE_WIN_NOW } from "@/domains/agents/model/aiConstants";;
+import { AI_RISK_TOLERANCE_CONSERVATIVE, AI_RISK_TOLERANCE_AGGRESSIVE, AI_RISK_TOLERANCE_WIN_NOW } from "@/domains/agents/model/aiConstants";
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

@@ -147,8 +147,7 @@ const FILE_OVERRIDES = {
   "src/domains/agents/simulation/npc/scoutingThresholds.ts":
     "src/domains/agents/model/scoutingThresholds.ts",
   // pure display/derivation helpers consumed by UI -> model
-  "src/core/tutorial/deriveTutorialStep.ts":
-    "src/domains/tutorial/model/deriveTutorialStep.ts",
+  "src/core/tutorial/deriveTutorialStep.ts": "src/domains/tutorial/model/deriveTutorialStep.ts",
   "src/core/racing/nominationFees.ts": "src/domains/racing/model/nominationFees.ts",
   "src/core/health/injuryDisplay.ts": "src/domains/health/model/injuryDisplay.ts",
   "src/core/inbox/ctaRoute.ts": "src/domains/inbox/model/ctaRoute.ts",
@@ -591,7 +590,7 @@ function rewriteFile(file, text) {
   const importerNew = moveMap.get(file);
   while ((m = IMPORT_STMT_RE.exec(text))) {
     const isFromImport = m[4] !== undefined;
-    const spec = m[4] ?? m[6] ?? m[9] ?? m[11];
+    const spec = m[4] ?? m[6] ?? m[8] ?? m[10];
     if (!spec) continue;
     if (!spec.startsWith("@/") && !spec.startsWith(".")) continue;
     const t = resolveSpec(spec, file);
@@ -664,7 +663,9 @@ function rewriteFile(file, text) {
       const chased = uniqueBarrelTarget(barrelInfo(t));
       if (chased) target = chased;
       else {
-        unresolvedSymbols.push(`${relative(ROOT, file)}: <${spec}> (deleted barrel, unsplittable specifier)`);
+        unresolvedSymbols.push(
+          `${relative(ROOT, file)}: <${spec}> (deleted barrel, unsplittable specifier)`,
+        );
         continue;
       }
     }

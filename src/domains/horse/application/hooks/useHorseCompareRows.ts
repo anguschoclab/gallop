@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { Horse } from "@/platform/game/types";
 import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import { horseMarketValue } from "@/domains/horse/simulation/pricing";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { ENERGY_MAX } from "@/domains/training/model/energyRecoveryConstants";
 import { STAT_SCALE_MAX, STAT_SCALE_MIN } from "@/domains/horse/model/horseStatConstants";
 import {

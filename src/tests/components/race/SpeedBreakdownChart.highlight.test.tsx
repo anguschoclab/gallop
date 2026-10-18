@@ -36,11 +36,11 @@ vi.mock("recharts", () => {
   };
 });
 
-vi.mock("@/components/SilkDot", () => ({
+vi.mock("@/domains/shell/ui/SilkDot", () => ({
   SilkDot: () => <div data-testid="silk-dot" />,
 }));
 
-vi.mock("@/lib/cn", () => ({
+vi.mock("@/shared/lib/cn", () => ({
   cn: (...args: unknown[]) => String(args.filter(Boolean).join(" ")),
 }));
 

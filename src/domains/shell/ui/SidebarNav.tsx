@@ -40,9 +40,9 @@ import {
   Landmark,
 } from "lucide-react";
 
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { gameCalendarDate } from "@/domains/calendar/application/calendarFacade";
-import { TOOLTIP_DELAY_MS, SIDEBAR_WIDTH_PX } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS, SIDEBAR_WIDTH_PX } from "@/shared/constants/uiConstants";
 import {
   NavSection,
   type InboxPeekMessage,

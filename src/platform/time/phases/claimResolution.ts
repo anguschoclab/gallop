@@ -8,7 +8,7 @@
 
 import type { PipelineContext } from "@/platform/time/pipeline";
 import type { Claim, GameState, Horse } from "@/platform/game/types";
-import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/platform/time/pipelineConstants";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import { applyClaimingFriction } from "@/domains/agents/simulation/diplomacyAI";
 import { trackClaimingActivity } from "@/domains/agents/simulation/economyAITracking";

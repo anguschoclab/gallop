@@ -13,7 +13,7 @@ import type { SectionalSplit } from "@/domains/race/application/raceFacade";
 import { RunnerLegend } from "@/domains/race/ui/RunnerLegend";
 import { cn } from "@/shared/lib/cn";
 import { useRunnerHighlight } from "@/domains/race/ui/useRunnerHighlight";
-import { PACE_GRAPH_HIGHLIGHT_STROKE, PACE_GRAPH_OWNED_STROKE, PACE_GRAPH_DEFAULT_STROKE, PACE_GRAPH_DIM_OPACITY, PACE_GRAPH_FULL_OPACITY, PACE_GRAPH_DOT_RADIUS, PACE_GRAPH_ACTIVE_DOT_RADIUS } from "@/shared/constants/uiConstants";;
+import { PACE_GRAPH_HIGHLIGHT_STROKE, PACE_GRAPH_OWNED_STROKE, PACE_GRAPH_DEFAULT_STROKE, PACE_GRAPH_DIM_OPACITY, PACE_GRAPH_FULL_OPACITY, PACE_GRAPH_DOT_RADIUS, PACE_GRAPH_ACTIVE_DOT_RADIUS } from "@/shared/constants/uiConstants";
 
 interface PaceGraphRunner {
   horseId: string;

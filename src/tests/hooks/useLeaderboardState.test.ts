@@ -13,7 +13,7 @@ import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 import { useLeaderboardState, POS_EPSILON } from "@/domains/race/application/hooks/useLeaderboardState";
 
 // Mock projectedBeyer so tests are deterministic
-vi.mock("@/components/race/raceVisualHelpers", () => ({
+vi.mock("@/domains/race/application/raceVisualHelpers", () => ({
   projectedBeyer: (
     runner: { velocity: number },
     _dist: number,

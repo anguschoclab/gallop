@@ -19,8 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
-import { gradeColor } from "@/shared/common/uiTokens";;
-import { getOrdinalSuffix } from "@/shared/common/ordinal";;
+import { gradeColor } from "@/shared/common/uiTokens";
+import { getOrdinalSuffix } from "@/shared/common/ordinal";
 import { History, ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
 import { PersonFormCharts } from "@/domains/person/ui/PersonFormCharts";

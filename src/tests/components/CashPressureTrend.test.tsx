@@ -13,7 +13,7 @@ const mockHistory: CashPressureHistory = {
   s_empty: [],
 };
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector({ cashPressureHistory: mockHistory }),
   useGameWithShallow: (selector: (s: any) => any) => selector({ cashPressureHistory: mockHistory }),
 }));

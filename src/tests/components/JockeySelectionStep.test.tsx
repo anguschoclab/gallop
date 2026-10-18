@@ -5,7 +5,7 @@ import type { Horse, Jockey } from "@/platform/game/types";
 import type { JockeyStats } from "@/domains/jockey/model/types";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
-vi.mock("@/components/jockey/JockeyCard", () => ({
+vi.mock("@/domains/jockey/ui/JockeyCard", () => ({
   JockeyCard: () => <div data-testid="jockey-card" />,
 }));
 

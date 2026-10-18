@@ -3,14 +3,14 @@ import { renderHook } from "@testing-library/react";
 import { useHorseCompareRows, bestIdx } from "@/domains/horse/application/hooks/useHorseCompareRows";
 import type { Horse } from "@/platform/game/types";
 
-vi.mock("@/core/horse/stats", () => ({
+vi.mock("@/domains/horse/simulation/stats", () => ({
   calculateOverallRating: vi.fn((h: Horse) => {
     const s = h.stats;
     return Math.round((s.speed + s.stamina + s.acceleration + s.consistency) / 4);
   }),
 }));
 
-vi.mock("@/core/horse/pricing", () => ({
+vi.mock("@/domains/horse/simulation/pricing", () => ({
   horseMarketValue: vi.fn((h: Horse) => h.potential * 1000),
 }));
 

@@ -9,7 +9,7 @@
 import { describe, it, expect } from "vitest";
 import { exchangeSettlementPhase } from "@/platform/time/phases/exchangeSettlementPhase";
 import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
-import { PHASE_ORDER_EXCHANGE_SETTLEMENT } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_EXCHANGE_SETTLEMENT } from "@/platform/time/pipelineConstants";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestStable, createTestNpcHorse } from "@/tests/helpers";
 import { createDefaultExchangeState } from "@/domains/market/simulation/exchange";

@@ -1,8 +1,8 @@
 import { Badge } from "@/shared/ui/badge";
-import { gradeColor } from "@/shared/common/uiTokens";;
-import { getOrdinalSuffix } from "@/shared/common/ordinal";;
+import { gradeColor } from "@/shared/common/uiTokens";
+import { getOrdinalSuffix } from "@/shared/common/ordinal";
 import { JargonTooltip } from "@/domains/horse/ui/JargonTooltip";
-import { getCountryFlag } from "@/shared/common/countryFlag";;
+import { getCountryFlag } from "@/shared/common/countryFlag";
 import { Hint } from "@/shared/ui/Hint";
 
 interface GradedHistoryEntry {

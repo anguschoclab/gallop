@@ -15,20 +15,14 @@ import { useMemo, useState } from "react";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { FilterX } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { useGame, useGameWithShallow } from "@/platform/game/store";
 import { buildCampaignHistory } from "@/domains/stable/simulation/campaignHistory";
 import { DEFAULT_STABLE_GOALS } from "@/domains/stable/simulation/stableGoals";
 import { buildDailyPlanTimeline } from "@/domains/tactics/simulation/dailyPlanView";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { Horse } from "@/domains/horse/simulation/types";
 import type { HorseDailyProgress } from "@/domains/horse/simulation/dailyProgress";
 import type { RankingsHistory } from "@/domains/market/simulation/rankingsHistory";

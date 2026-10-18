@@ -12,7 +12,7 @@
  *   src/core/time/phases/privateSaleResolution.ts (trace log emission).
  */
 
-import tuningFile from "@/shared/data/cashPressureTuning";
+import tuningFile from "@/shared/data/cashPressureTuning.json";
 
 export interface CashPressureLabelThresholds {
   desperate: number;

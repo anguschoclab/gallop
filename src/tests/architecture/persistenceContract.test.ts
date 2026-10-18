@@ -7,7 +7,7 @@ import { META_KEYS, PERSISTED_KEYS, TRANSIENT_STATE_KEYS } from "@/platform/game
 const ROOT = process.cwd();
 
 function gameStateKeys(): string[] {
-  const program = ts.createProgram([join(ROOT, "src/game/types.ts")], {
+  const program = ts.createProgram([join(ROOT, "src/platform/game/types.ts")], {
     strict: true,
     target: ts.ScriptTarget.ES2022,
     module: ts.ModuleKind.ESNext,
@@ -19,7 +19,7 @@ function gameStateKeys(): string[] {
     paths: { "@/*": ["src/*"] },
   });
   const checker = program.getTypeChecker();
-  const source = program.getSourceFile(join(ROOT, "src/game/types.ts"));
+  const source = program.getSourceFile(join(ROOT, "src/platform/game/types.ts"));
   const moduleSymbol = checker.getSymbolAtLocation(source!);
   const symbol = checker
     .getExportsOfModule(moduleSymbol!)
@@ -33,7 +33,7 @@ function gameStateKeys(): string[] {
 
 describe("persistence contract", () => {
   it("uses authoritative store keys without transitional casts", () => {
-    const source = readFileSync(join(ROOT, "src/game/store/persistedKeys.ts"), "utf8");
+    const source = readFileSync(join(ROOT, "src/platform/game/store/persistedKeys.ts"), "utf8");
     expect(source).not.toContain("as keyof GameState");
     expect(source).not.toContain('(keyof GameState | "storeVersion")[]');
   });

@@ -5,7 +5,7 @@ import { useNpcStables, useAwards } from "@/platform/game/hooks/useSystemsState"
 import { getStableById } from "@/domains/stable/simulation/stableQueries";
 import { isMaleHorse, isFemaleHorse } from "@/domains/horse/simulation/gender";
 import type { GameState, Horse } from "@/platform/game/types";
-import type { EntityLink } from "@/domains/narrative/model/newsTypes";;
+import type { EntityLink } from "@/domains/narrative/model/newsTypes";
 import { isPlayerOwned, getStableId } from "@/domains/horse/simulation/ownership";
 import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
 

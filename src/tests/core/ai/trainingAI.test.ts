@@ -10,7 +10,7 @@ import {
   updateHorseTraining,
   type HorseTrainingTrack,
 } from "@/domains/agents/simulation/trainingAI";
-import { TRAINING_HISTORY_MAX_SIZE } from "@/shared/constants/storageLimitsConstants";;
+import { TRAINING_HISTORY_MAX_SIZE } from "@/shared/constants/storageLimitsConstants";
 import type { Horse, Stable } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 

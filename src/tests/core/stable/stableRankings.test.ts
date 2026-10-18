@@ -10,7 +10,7 @@ import { PLAYER_OWNER_ID } from "@/domains/horse/simulation/ownership";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { asHorseId, asNpcStableId } from "@/shared/types/branded";
-import { PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import { PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
 import type { Horse, HorseRaceHistoryEntry } from "@/domains/horse/simulation/types";
 import type { Stable, PlayerProfile } from "@/domains/stable/simulation/types";
 

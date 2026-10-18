@@ -1,8 +1,8 @@
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import { useState } from "react";
 import type { EligibleRaceRow } from "@/domains/race/application/hooks/useHorseEligibleRaces";
 import type { Race } from "@/platform/game/types";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { gameCalendarDate } from "@/domains/calendar/application/calendarFacade";
 import { Button } from "@/shared/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";

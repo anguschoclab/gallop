@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { calculateStaminaMultiplier } from "@/domains/race/simulation/engine/staminaFade";
 import type { Runner, PaceContext } from "@/domains/race/simulation/engine/runnerBuilder";
-import { STAMINA_FADE_START, BLEEDER_DISTANCE_THRESHOLD, BLEEDER_PROGRESS_THRESHOLD, ROANER_SPEED_THRESHOLD, EARLY_SPEED_PENALTY_THRESHOLD, EARLY_SPEED_LANE_THRESHOLD, EARLY_SPEED_STAMINA_PENALTY } from "@/domains/race/model/engine/constants";;
+import { STAMINA_FADE_START, BLEEDER_DISTANCE_THRESHOLD, BLEEDER_PROGRESS_THRESHOLD, ROANER_SPEED_THRESHOLD, EARLY_SPEED_PENALTY_THRESHOLD, EARLY_SPEED_LANE_THRESHOLD, EARLY_SPEED_STAMINA_PENALTY } from "@/domains/race/model/engine/constants";
 
 describe("calculateStaminaMultiplier", () => {
   const createMockRunner = (overrides: Partial<Runner> = {}): Runner => {

@@ -1,6 +1,6 @@
 import type { Horse } from "@/platform/game/types";
 import { calculateBreedingCompatibility } from "@/domains/breeding/simulation/compatibility";
-import { BREEDING_FEE } from "@/domains/breeding/model/breedingConstants";;
+import { BREEDING_FEE } from "@/domains/breeding/model/breedingConstants";
 import { inBreedingSeason } from "@/domains/calendar/simulation/breedingCalendar";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 

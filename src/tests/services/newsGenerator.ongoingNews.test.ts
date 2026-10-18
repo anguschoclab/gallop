@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   generateWeeklyFlavorNews,
   generateFollowUpRaceNews,
-} from "@/domains/narrative/application/newsGenerator";
+} from "@/domains/narrative/simulation/newsGenerator";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/shared/uuid/uuid";
 import type { Race, Horse } from "@/platform/game/types";

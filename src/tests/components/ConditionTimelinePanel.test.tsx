@@ -15,7 +15,7 @@ import type { ConditionSegment } from "@/domains/race/application/hooks/useCondi
 
 const useConditionTimelineMock = vi.fn((): ConditionSegment[] => []);
 
-vi.mock("@/hooks/race/useConditionTimeline", () => ({
+vi.mock("@/domains/race/application/hooks/useConditionTimeline", () => ({
   useConditionTimeline: (...args: unknown[]) => useConditionTimelineMock(...(args as [])),
 }));
 
@@ -24,7 +24,7 @@ vi.mock("@/hooks/race/useConditionTimeline", () => ({
 const ConditionTimelineMock = vi.fn((_props?: unknown) =>
   createElement("div", { "data-testid": "condition-timeline" }),
 );
-vi.mock("@/components/race/ConditionTimeline", () => ({
+vi.mock("@/domains/race/ui/ConditionTimeline", () => ({
   ConditionTimeline: (props: unknown) => ConditionTimelineMock(props),
   MemoizedConditionTimeline: (props: unknown) => ConditionTimelineMock(props),
 }));

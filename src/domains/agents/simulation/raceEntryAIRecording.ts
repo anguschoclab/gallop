@@ -5,7 +5,7 @@
  */
 
 import type { Horse, Race, Stable } from "@/platform/game/types";
-import { RECENT_RACES_MAX_COUNT } from "@/shared/constants/storageLimitsConstants";;
+import { RECENT_RACES_MAX_COUNT } from "@/shared/constants/storageLimitsConstants";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import { recordLearningOutcome } from "./learningModule";
 import type { RaceEntryAIState } from "./raceEntryAITypes";

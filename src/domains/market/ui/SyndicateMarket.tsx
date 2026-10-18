@@ -1,11 +1,11 @@
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import { useMemo } from "react";
 import { useGame, useGameWithShallow, type StoreType } from "@/platform/game/store";
 import type { Syndicate } from "@/domains/breeding/application/breedingFacade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
 import { toast } from "sonner";
 import { NpcSyndicateIntentPanel } from "@/domains/market/ui/NpcSyndicateIntentPanel";

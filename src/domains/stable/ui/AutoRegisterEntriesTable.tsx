@@ -6,8 +6,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/ui/table";
-import { formatCurrency } from "@/shared/common/formatting";;
-import type { AutoRegisterEntry } from "@/domains/campaign/simulation/autoRegister";;
+import { formatCurrency } from "@/shared/common/formatting";
+import type { AutoRegisterEntry } from "@/domains/campaign/simulation/autoRegister";
 
 interface Props {
   entries: AutoRegisterEntry[];

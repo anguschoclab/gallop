@@ -10,7 +10,7 @@ vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
 }));
 
-vi.mock("@/components/race/WeatherForecastStrip", () => ({
+vi.mock("@/domains/race/ui/WeatherForecastStrip", () => ({
   WeatherForecastStrip: () => null,
 }));
 

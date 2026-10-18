@@ -40,7 +40,7 @@ import {
 import { StatCard } from "@/shared/ui/common/StatCard";
 import { PillToggleGroup } from "@/shared/ui/common/PillToggleGroup";
 import { SyndicateLedgerPanel } from "@/domains/syndicates/ui/SyndicateLedgerPanel";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { cn } from "@/shared/lib/cn";
 import {
   derivePlayerSyndicateStakes,

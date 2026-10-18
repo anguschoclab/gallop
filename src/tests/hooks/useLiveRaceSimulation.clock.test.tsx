@@ -9,7 +9,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useLiveRaceSimulation } from "@/domains/race/application/hooks/useLiveRaceSimulation";
-import { DEFAULT_DT } from "@/domains/race/model/engine/constants";;
+import { DEFAULT_DT } from "@/domains/race/model/engine/constants";
 import { SIMULATION_MAX_STEPS_PER_FRAME } from "@/domains/race/model/raceSimulationConstants";
 import { createRng } from "@/shared/common/rng";
 import type { Race } from "@/domains/race/simulation/types";

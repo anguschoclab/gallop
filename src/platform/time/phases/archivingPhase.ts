@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_ARCHIVING } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_ARCHIVING } from "@/platform/time/pipelineConstants";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type { Horse, Race, Pregnancy } from "@/platform/game/types";
 

@@ -1,6 +1,6 @@
 import { Badge } from "@/shared/ui/badge";
-import { formatCurrency } from "@/shared/common/formatting";;
-import type { AutoRegisterResult } from "@/domains/campaign/simulation/autoRegister";;
+import { formatCurrency } from "@/shared/common/formatting";
+import type { AutoRegisterResult } from "@/domains/campaign/simulation/autoRegister";
 
 interface Props {
   result: AutoRegisterResult;

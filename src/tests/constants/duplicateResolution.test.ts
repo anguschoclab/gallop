@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import * as barrel from "@/constants";
+import * as econ from "@/domains/market/model/economicConstants";
 import * as raceBroadcast from "@/domains/race/model/raceBroadcastConstants";
 import * as regional from "@/shared/constants/regionalConstants";
 import * as ui from "@/shared/constants/uiConstants";
@@ -7,8 +7,8 @@ import * as calendar from "@/domains/calendar/model/calendarConstants";
 import * as timeWindow from "@/domains/analytics/simulation/timeWindow";
 
 describe("duplicate resolution", () => {
-  it("WINNER_PURSE_SHARE is not exported from barrel", () => {
-    expect((barrel as Record<string, unknown>).WINNER_PURSE_SHARE).toBeUndefined();
+  it("WINNER_PURSE_SHARE is not exported from economicConstants", () => {
+    expect((econ as Record<string, unknown>).WINNER_PURSE_SHARE).toBeUndefined();
   });
 
   it("WIN_POSITION is not exported from regionalConstants", () => {

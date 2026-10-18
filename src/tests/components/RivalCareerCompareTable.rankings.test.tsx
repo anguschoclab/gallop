@@ -4,7 +4,7 @@ import { RivalCareerCompareTable } from "@/domains/stable/ui/RivalCareerCompareT
 import type { RivalCareerProfile } from "@/domains/agents/application/npcFacade";
 import type { RivalRankingsColumn } from "@/domains/market/simulation/rivalRankingsComparison";
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector({}),
   useGameWithShallow: (selector: (s: any) => any) => selector({}),
 }));

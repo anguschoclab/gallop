@@ -18,7 +18,7 @@ import {
 } from "@/shared/ui/table";
 import { StatCard } from "@/shared/ui/common/StatCard";
 import { PillToggleGroup } from "@/shared/ui/common/PillToggleGroup";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { getAuctionHouse } from "@/domains/prestige/application/prestigeFacade";
 import { biddingHistorySummary, type PlayerBiddingRecord } from "@/domains/auction/application/auctionFacade";
 import { Hint } from "@/shared/ui/Hint";

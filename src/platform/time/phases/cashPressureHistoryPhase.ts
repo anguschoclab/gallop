@@ -20,7 +20,7 @@ import {
   pruneCashPressureHistory,
   type CashPressureHistory,
 } from "@/domains/stable/simulation/cashPressureHistory";
-import { PHASE_ORDER_CASH_PRESSURE_HISTORY } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_CASH_PRESSURE_HISTORY } from "@/platform/time/pipelineConstants";
 
 export const cashPressureHistoryPhase: PipelinePhase = {
   name: "cashPressureHistory",

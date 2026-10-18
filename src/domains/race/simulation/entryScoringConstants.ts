@@ -9,7 +9,7 @@
 
 import type { StableTier } from "@/platform/game/types";
 import { BASE_RACE_WEIGHT_LBS } from "@/domains/market/model/economicConstants";
-import { MIN_ENERGY_TO_ENTER, MIN_FORM_TO_ENTER, PREFERRED_DISTANCE_RANGE } from "@/domains/race/model/raceEntryConstants";;
+import { MIN_ENERGY_TO_ENTER, MIN_FORM_TO_ENTER, PREFERRED_DISTANCE_RANGE } from "@/domains/race/model/raceEntryConstants";
 
 // Base purse appeal thresholds by tier (modified by personality)
 export const BASE_PURSE_APPEAL: Record<StableTier, number> = {

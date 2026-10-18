@@ -4,7 +4,7 @@ import {
   filterAlmanacNewsFeed,
   type AlmanacFeedItem,
 } from "@/domains/history/simulation/almanacNewsFeed";
-import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 import type { TrackRecord, SeasonRecord } from "@/domains/history/model/historyTypes";
 import type { Transaction } from "@/domains/transactions/model/transactionTypes";
 import type { Horse } from "@/domains/horse/simulation/types";

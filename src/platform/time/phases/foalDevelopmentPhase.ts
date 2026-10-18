@@ -9,7 +9,7 @@
  * milestone via `resolveFoalMilestone`.
  */
 
-import { PHASE_ORDER_FOAL_DEVELOPMENT } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_FOAL_DEVELOPMENT } from "@/platform/time/pipelineConstants";
 import { generateUUID } from "@/shared/uuid/uuid";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type { AnyImpact, InboxImpact } from "@/platform/resolver/impacts";

@@ -15,7 +15,7 @@ import type { WorldAssessment } from "@/domains/agents/simulation/strategicCoord
 import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { assessFinancialDistressWithPersonality } from "@/domains/agents/simulation/financialDistressAI";
-import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";;
+import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
 
 const PHASE_ORDER_WORLD_ASSESSMENT = 2;
 

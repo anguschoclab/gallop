@@ -7,7 +7,7 @@ import { asHorseId, asJockeyId } from "@/shared/types/branded";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import type { RaceSnapshot, PaceSnapshot } from "@/domains/race/model/engine/raceSnapshotTypes";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
-import { DEFAULT_DT, defaultMaxTime } from "@/domains/race/model/engine/constants";;
+import { DEFAULT_DT, defaultMaxTime } from "@/domains/race/model/engine/constants";
 import type { RunnerFactorLedger } from "@/domains/race/simulation/factorLedger";
 
 export interface RaceSimulationResult {

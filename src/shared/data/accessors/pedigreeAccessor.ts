@@ -20,7 +20,7 @@ import {
   getRandomHorseFromEra as dataGetRandomHorseFromEra,
   getRandomSire as dataGetRandomSire,
   getRandomDam as dataGetRandomDam,
-} from "@/data/pedigreeData";
+} from "@/shared/data/pedigreeData";
 import type { AptitudinalGroup, PedigreeHorse } from "@/shared/data/pedigreeData";
 import {
   stallionResearchData,

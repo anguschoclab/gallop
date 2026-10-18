@@ -21,7 +21,7 @@ import { PlayerPrestigePanel } from "@/domains/prestige/ui/PlayerPrestigePanel";
 import { ApprenticeTracker } from "@/domains/apprentice/ui/ApprenticeTracker";
 import { TutorialNextActionBanner } from "@/domains/tutorial/ui/TutorialNextActionBanner";
 import { DebtBanner } from "@/domains/dashboard/ui/DebtBanner";
-import { deriveNextAction } from "@/domains/dashboard/simulation/nextAction";;
+import { deriveNextAction } from "@/domains/dashboard/simulation/nextAction";
 import { useNextActionBanner } from "@/domains/dashboard/application/hooks/useNextActionBanner";
 
 export const Route = createFileRoute("/")({

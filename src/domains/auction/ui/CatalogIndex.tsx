@@ -7,7 +7,7 @@
 import { Card, CardContent } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import { Search, History } from "lucide-react";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { cn } from "@/shared/lib/cn";
 import { AuctionFilterBar } from "@/domains/auction/ui/AuctionFilterBar";
 import type { AuctionLot, Horse } from "@/platform/game/types";

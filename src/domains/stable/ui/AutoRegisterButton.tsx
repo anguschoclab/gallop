@@ -1,4 +1,4 @@
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 /**
  * AutoRegisterButton.tsx - Smart auto-registration button for stable page
  *

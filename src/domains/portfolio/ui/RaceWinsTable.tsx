@@ -21,8 +21,8 @@ import {
 } from "@/shared/ui/table";
 import { StatCard } from "@/shared/ui/common/StatCard";
 import { PillToggleGroup } from "@/shared/ui/common/PillToggleGroup";
-import { formatCurrency } from "@/shared/common/formatting";;
-import { gradeColor } from "@/shared/common/uiTokens";;
+import { formatCurrency } from "@/shared/common/formatting";
+import { gradeColor } from "@/shared/common/uiTokens";
 import { playerRaceWinsSummary, type PlayerRaceWinRecord } from "@/domains/stable/application/stableFacade";
 
 const GRADE_FILTERS = ["all", "graded", "G1", "G2", "G3", "ungraded"] as const;

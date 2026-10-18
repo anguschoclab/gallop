@@ -11,7 +11,7 @@
 // Claiming Withdrawal Phase
 // Processes WithdrawFromClaimingIntents to mark horses as withdrawn from claiming
 
-import { PHASE_ORDER_CLAIMING_WITHDRAWAL } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_CLAIMING_WITHDRAWAL } from "@/platform/time/pipelineConstants";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type { WithdrawFromClaimingIntent } from "@/platform/resolver/intents";
 import type { AnyImpact, LogImpact } from "@/platform/resolver/impacts";

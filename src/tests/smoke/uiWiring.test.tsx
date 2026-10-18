@@ -30,7 +30,7 @@ vi.hoisted(() => {
 });
 
 import { createElement } from "react";
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { cleanup, screen } from "@testing-library/react";
 import { createRouterMock, NotFoundError } from "@/test-utils/routerMock";
@@ -86,20 +86,26 @@ describe("Phase 1.4 — Empty state rendering", () => {
 
 describe("Phase 1.4 — Design bible: hardcoded hex colors in components", () => {
   const APPROVED_HEX_FILES: Record<string, string> = {
-    "components/jockey/JockeyPortrait.tsx": "procedural silk rendering colors",
-    "components/jockey/JockeyAvatar.stories.tsx": "story fixture silk colors",
-    "components/jockey/JockeyFilterPanel.tsx": "silk color filter options",
-    "components/jockey/FaceFeatures.tsx": "procedural portrait rendering",
-    "components/horse/FullBodySvg.tsx": "procedural horse rendering",
-    "components/horse/HeadSvg.tsx": "procedural horse rendering",
-    "components/race/RaceVisualizer.tsx": "race canvas color encoding",
-    "components/race/InRunningSnapshotDialog.tsx": "race visual color encoding",
-    "components/race/RunnerMoodFace.tsx": "procedural runner rendering",
-    "components/ui/chart.tsx": "chart-library CSS selector",
-    "components/briefing/RecapTab.tsx": "silk color fallback for replay charts",
-    "components/awards/VisualTrophy.tsx": "SVG trophy gradient colors",
-    "components/NewGameWizard/steps/StepSilks.tsx": "new-game silk color options",
+    "domains/jockey/ui/JockeyPortrait.tsx": "procedural silk rendering colors",
+    "domains/jockey/ui/JockeyAvatar.stories.tsx": "story fixture silk colors",
+    "domains/jockey/ui/JockeyFilterPanel.tsx": "silk color filter options",
+    "domains/jockey/ui/FaceFeatures.tsx": "procedural portrait rendering",
+    "domains/horse/ui/FullBodySvg.tsx": "procedural horse rendering",
+    "domains/horse/ui/HeadSvg.tsx": "procedural horse rendering",
+    "domains/race/ui/RaceVisualizer.tsx": "race canvas color encoding",
+    "domains/race/ui/InRunningSnapshotDialog.tsx": "race visual color encoding",
+    "domains/race/ui/RunnerMoodFace.tsx": "procedural runner rendering",
+    "shared/ui/chart.tsx": "chart-library CSS selector",
+    "domains/briefing/ui/RecapTab.tsx": "silk color fallback for replay charts",
+    "domains/awards/ui/VisualTrophy.tsx": "SVG trophy gradient colors",
+    "domains/onboarding/ui/steps/StepSilks.tsx": "new-game silk color options",
   };
+  const UI_SCAN_DIRS = [
+    join("shared", "ui"),
+    ...readdirSync(join(process.cwd(), "src", "domains"))
+      .map((domain) => join("domains", domain, "ui"))
+      .filter((dir) => existsSync(join(process.cwd(), "src", dir))),
+  ];
   const hexPattern = /#[0-9a-fA-F]{3,8}\b/;
 
   function componentFiles(dir: string): string[] {
@@ -111,7 +117,7 @@ describe("Phase 1.4 — Design bible: hardcoded hex colors in components", () =>
   }
 
   it("keeps hardcoded hex usage limited to evidenced rendering/data exceptions", () => {
-    const files = componentFiles(join(process.cwd(), "src", "components"));
+    const files = UI_SCAN_DIRS.flatMap((dir) => componentFiles(join(process.cwd(), "src", dir)));
     const offenders = files.filter((file) => hexPattern.test(readFileSync(file, "utf8")));
     const normalizedOffenders = offenders
       .map((file) => file.replaceAll("\\", "/").replace(/^src\//, ""))

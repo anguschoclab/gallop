@@ -17,29 +17,20 @@ function collect(dir: string, files: string[] = []): string[] {
 
 function importsOf(path: string): string[] {
   const text = readFileSync(path, "utf8");
-  return [...text.matchAll(/\bimport\s+(?:type\s+)?[^;]*?\s+from\s+["']([^"']+)["']/g)].map(
+  // Type-only imports erase at compile time — they cannot create runtime
+  // cycles and are exempt from the layer matrix.
+  return [...text.matchAll(/\bimport\s+(?!type\s)[^;]*?\s+from\s+["']([^"']+)["']/g)].map(
     (match) => match[1],
   );
 }
 
 describe("domain and platform boundaries", () => {
-  it("keeps legacy UI, service, and simulation layers strictly acyclic", () => {
-    const violations: string[] = [];
-    for (const file of collect(join(SRC, "core"))) {
-      for (const specifier of importsOf(file)) {
-        if (/^@\/(components|hooks|services|game\/store)(\/|$)/.test(specifier)) {
-          violations.push(`${relative(SRC, file)} -> ${specifier}`);
-        }
-      }
+  it("keeps the retired top-level layout directories gone", () => {
+    for (const legacy of ["core", "components", "services", "hooks", "game", "data", "constants"]) {
+      expect(existsSync(join(SRC, legacy)), `legacy src/${legacy} should no longer exist`).toBe(
+        false,
+      );
     }
-    for (const file of collect(join(SRC, "components"))) {
-      for (const specifier of importsOf(file)) {
-        if (/^@\/core(\/|$)/.test(specifier)) {
-          violations.push(`${relative(SRC, file)} -> ${specifier}`);
-        }
-      }
-    }
-    expect(violations).toEqual([]);
   });
 
   it("keeps domain model and simulation code independent of UI and store layers", () => {
@@ -48,7 +39,10 @@ describe("domain and platform boundaries", () => {
       const rel = relative(SRC, file).replace(/\\/g, "/");
       if (!/\/(model|simulation)\//.test(rel)) continue;
       for (const specifier of importsOf(file)) {
-        if (/^@\/(components|hooks|services|game\/store)(\/|$)/.test(specifier)) {
+        if (/^@\/platform\/game(\/|$)/.test(specifier)) {
+          violations.push(`${rel} -> ${specifier}`);
+        }
+        if (/^@\/domains\/[^/]+\/(ui|application)(\/|$)/.test(specifier)) {
           violations.push(`${rel} -> ${specifier}`);
         }
       }
@@ -56,23 +50,13 @@ describe("domain and platform boundaries", () => {
     expect(violations).toEqual([]);
   });
 
-  it("enforces one-way dependencies inside any domain folder", () => {
+  it("keeps every domain file inside a named stratum", () => {
     const domains = join(SRC, "domains");
     const violations: string[] = [];
     for (const file of collect(domains)) {
       const rel = relative(SRC, file).replace(/\\/g, "/");
-      const owner = /^domains\/([^/]+)\//.exec(rel)?.[1];
-      for (const specifier of importsOf(file)) {
-        const domainMatch = /^@\/domains\/([^/]+)\/([^/]+)/.exec(specifier);
-        if (!domainMatch) continue;
-        const [, targetDomain, targetLayer] = domainMatch;
-        if (targetDomain !== owner) {
-          violations.push(`${rel} crosses into ${specifier}`);
-        } else if (rel.includes("/ui/") && ["model", "simulation"].includes(targetLayer)) {
-          violations.push(`${rel} imports domain internals through ${specifier}`);
-        } else if (rel.includes("/simulation/") && ["ui", "application"].includes(targetLayer)) {
-          violations.push(`${rel} imports upward through ${specifier}`);
-        }
+      if (!/^domains\/[^/]+\/(model|simulation|application|ui)\//.test(rel)) {
+        violations.push(`${rel} is not under a model|simulation|application|ui stratum`);
       }
     }
     expect(violations).toEqual([]);

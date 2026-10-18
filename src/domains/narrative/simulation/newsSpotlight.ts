@@ -3,7 +3,7 @@ import { createNewsItem } from "@/domains/narrative/simulation/newsGenerator";
 import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 import type { Race, Horse } from "@/platform/game/types";
 import type { Rng } from "@/shared/common/rng";
-import { GRADE_S_THRESHOLD } from "@/domains/horse/model/horseStatConstants";;
+import { GRADE_S_THRESHOLD } from "@/domains/horse/model/horseStatConstants";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 
 /**

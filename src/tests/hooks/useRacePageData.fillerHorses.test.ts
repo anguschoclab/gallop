@@ -13,39 +13,39 @@ import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
 const mockNarrativeGenerator = vi.fn();
-vi.mock("@/services/narrative/narrativeService", () => ({
+vi.mock("@/domains/narrative/application/narrativeService", () => ({
   NarrativeGenerator: vi.fn((...args: unknown[]) => {
     mockNarrativeGenerator(...args);
     return { update: () => [], getHistory: () => [] };
   }),
 }));
 
-vi.mock("@/core/race/raceSimulationService", () => ({
+vi.mock("@/domains/race/simulation/raceSimulationService", () => ({
   buildRaceField: vi.fn(),
   rngForRace: vi.fn(() => ({ next: () => 0 })),
 }));
 
-vi.mock("@/core/odds", () => ({
+vi.mock("@/domains/odds/model/oddsTypes", () => ({
   calculateWinProbability: vi.fn(() => 0.5),
   probabilityToMorningLine: vi.fn(() => 2),
   formatOdds: vi.fn((n: number) => `${n}-1`),
 }));
 
-vi.mock("@/core/common/classBonus", () => ({
+vi.mock("@/shared/common/classBonus", () => ({
   calculateClassBonus: vi.fn(() => 0),
 }));
 
-vi.mock("@/core/common/rng", () => ({
+vi.mock("@/shared/common/rng", () => ({
   createRng: vi.fn(() => ({ next: () => 0 })),
   hashStr: vi.fn(() => 0),
 }));
 
-vi.mock("@/constants/raceBroadcastConstants", () => ({
+vi.mock("@/domains/race/model/raceBroadcastConstants", () => ({
   NARRATIVE_RNG_XOR_MASK: 0x6e61,
 }));
 
 // Store mock — we control the return value per-test.
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: vi.fn((selector: (s: unknown) => unknown) => selector(mockState)),
   useGameWithShallow: vi.fn((selector: (s: unknown) => unknown) => selector(mockState)),
 }));

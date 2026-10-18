@@ -13,7 +13,7 @@ import {
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Horse } from "@/platform/game/types";
 import { INJURY_PRONENESS_LOW_THRESHOLD, INJURY_PRONENESS_HIGH_THRESHOLD } from "@/domains/health/model/healthInjuryConstants";
-import { AGE_YOUNG_THRESHOLD, AGE_OLD_THRESHOLD, AGE_RETIREMENT_THRESHOLD } from "@/domains/horse/model/horseStatConstants";;
+import { AGE_YOUNG_THRESHOLD, AGE_OLD_THRESHOLD, AGE_RETIREMENT_THRESHOLD } from "@/domains/horse/model/horseStatConstants";
 
 function getBaseHorse() {
   return createTestHorse({

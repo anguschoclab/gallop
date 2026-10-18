@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { buildRunner } from "@/domains/race/simulation/engine/runnerBuilder";
 import { generateBeyerAndRecoveryImpacts } from "@/domains/race/simulation/impacts/beyerRecovery";
 import { createTestHorse } from "@/tests/helpers";
-import { STAMINA_DRAIN_DISTANCE_DIVISOR, STAMINA_DRAIN_BEYER_DIVISOR, STAMINA_DRAIN_MAX } from "@/domains/race/model/raceSimulationConstants";;
+import { STAMINA_DRAIN_DISTANCE_DIVISOR, STAMINA_DRAIN_BEYER_DIVISOR, STAMINA_DRAIN_MAX } from "@/domains/race/model/raceSimulationConstants";
 import type { Race, Horse } from "@/platform/game/types";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 

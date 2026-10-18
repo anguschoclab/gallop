@@ -3,7 +3,7 @@ import { venuePayoutMultiplier, applyVenuePayout } from "@/domains/race/simulati
 import { computePayoutSplits } from "@/domains/race/simulation/resolution";
 import { generatePrizeMoneyImpacts } from "@/domains/race/simulation/impacts/prizeMoney";
 import { rankedRacecourses } from "@/domains/prestige/simulation";
-import { PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import { PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
 import { asHorseId, asNpcStableId } from "@/shared/types/branded";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import type { Horse, Race } from "@/platform/game/types";

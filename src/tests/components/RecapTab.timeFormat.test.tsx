@@ -6,7 +6,7 @@ vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => children,
 }));
 
-vi.mock("@/hooks/race/useRecapData", () => ({
+vi.mock("@/domains/race/application/hooks/useRecapData", () => ({
   useRecapData: () => ({
     localHorseMap: new Map([
       [

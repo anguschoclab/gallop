@@ -9,7 +9,7 @@
  *               eliteStablePool.ts, midStablePool.ts, budgetStablePool.ts, stableFillerData.ts
  */
 
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 
 // Base stable info without generated fields.
 // `staff` and `outposts` are optional because generateStableFromTemplate

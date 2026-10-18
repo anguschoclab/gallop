@@ -13,7 +13,7 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => ({}),
 }));
 
-vi.mock("@/hooks/horse/useHorseCard", () => ({
+vi.mock("@/domains/horse/application/hooks/useHorseCard", () => ({
   useHorseCard: () => ({
     ovr: 50,
     scoutStatus: null,

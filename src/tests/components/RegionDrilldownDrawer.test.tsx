@@ -19,7 +19,7 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => ({}),
 }));
 
-vi.mock("@/components/ui/sheet", () => ({
+vi.mock("@/shared/ui/sheet", () => ({
   Sheet: ({ children, open }: { children: React.ReactNode; open: boolean }) =>
     open ? <div data-testid="sheet">{children}</div> : null,
   SheetContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
@@ -27,7 +27,7 @@ vi.mock("@/components/ui/sheet", () => ({
   SheetTitle: ({ children }: { children: React.ReactNode }) => <h2>{children}</h2>,
 }));
 
-vi.mock("@/components/ui/tabs", () => ({
+vi.mock("@/shared/ui/tabs", () => ({
   Tabs: ({ children, defaultValue }: { children: React.ReactNode; defaultValue: string }) => (
     <div data-testid="tabs" data-default={defaultValue}>
       {children}
@@ -42,7 +42,7 @@ vi.mock("@/components/ui/tabs", () => ({
   ),
 }));
 
-vi.mock("@/components/charts", () => ({
+vi.mock("@/shared/ui/charts", () => ({
   DeltaPill: ({ value }: { value: number }) => <span data-testid="delta">{value}</span>,
   MetricInfo: () => <span data-testid="metric-info" />,
   Sparkline: () => <div data-testid="sparkline" />,

@@ -32,7 +32,7 @@ import {
   createBreedingAIState,
 } from "@/domains/agents/simulation/breedingAI";
 import { recordBreedingDecision } from "@/domains/agents/simulation/breedingRecording";
-import { BREEDING_FEE, GESTATION_DAYS } from "@/domains/breeding/model/breedingConstants";;
+import { BREEDING_FEE, GESTATION_DAYS } from "@/domains/breeding/model/breedingConstants";
 import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import {
   BREEDING_MARE_FRACTION,

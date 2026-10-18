@@ -5,7 +5,7 @@
  * for modularity.
  */
 
-import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 import type { Race, Horse, Stable } from "@/platform/game/types";
 import type { PlayerProfile } from "@/domains/stable/simulation/types";
 import type { Rng } from "@/shared/common/rng";

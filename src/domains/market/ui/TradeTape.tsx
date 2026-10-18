@@ -11,7 +11,7 @@
 
 import { Activity, ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { Badge } from "@/shared/ui/badge";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { ExchangeTrade } from "@/domains/market/application/marketFacade";
 import { Hint } from "@/shared/ui/Hint";
 

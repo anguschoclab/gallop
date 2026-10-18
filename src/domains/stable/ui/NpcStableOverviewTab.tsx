@@ -8,7 +8,7 @@ import { NpcCareerTrackerPanel } from "@/domains/stable/ui/NpcCareerTrackerPanel
 import { CashPressureTrend } from "@/domains/stable/ui/CashPressureTrend";
 import { getRivalryStatusLabel, getRivalryBadgeColor } from "@/domains/stable/application/hooks/useNpcStableDetail";
 import type { useNpcStableDetail } from "@/domains/stable/application/hooks/useNpcStableDetail";
-import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 
 interface NpcStableOverviewTabProps {
   stableId: string;

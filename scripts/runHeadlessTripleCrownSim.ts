@@ -13,7 +13,7 @@ import { SimulationExecutor } from "@/platform/time/executor";
 import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
 import { withUuidStream } from "@/shared/uuid/uuid";
 import { createRng, hashStr } from "@/shared/common/rng";
-import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";;
+import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
 import type { GameState, Horse } from "@/platform/game/types";
 import type { HorseId } from "@/shared/types/branded";
 

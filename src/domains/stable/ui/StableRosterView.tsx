@@ -1,4 +1,4 @@
-import { MAX_COMPARE_HORSES } from "@/shared/constants/uiConstants";;
+import { MAX_COMPARE_HORSES } from "@/shared/constants/uiConstants";
 import { useState, useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { TrophyCase } from "@/domains/awards/ui";

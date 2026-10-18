@@ -12,7 +12,7 @@ import type { Horse, Stable } from "@/platform/game/types";
 import type { Rng } from "@/shared/common/rng";
 import { generateNpcHorse as _generateNpcHorse } from "@/domains/horse/simulation/horseFactory";
 import { deriveFanCount } from "@/domains/horse/simulation/fans";
-import { rand } from "@/shared/common/random";;
+import { rand } from "@/shared/common/random";
 import {
   shouldRetireAtStartup,
   calculateRecommendedStudFee,

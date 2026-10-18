@@ -33,12 +33,12 @@ vi.mock("react", () => ({
 }));
 
 // Mock ProceduralHorsePortrait component
-vi.mock("@/components/horse/ProceduralHorsePortrait", () => ({
+vi.mock("@/domains/horse/ui/ProceduralHorsePortrait", () => ({
   ProceduralHorsePortrait: () => null,
 }));
 
 // Mock proceduralPortrait
-vi.mock("@/core/horse/proceduralPortrait", () => ({
+vi.mock("@/domains/horse/simulation/proceduralPortrait", () => ({
   getOrDeriveAppearance: vi.fn(),
 }));
 

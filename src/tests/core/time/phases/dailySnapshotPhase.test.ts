@@ -5,7 +5,7 @@ import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameSt
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";
-import { PHASE_ORDER_DAILY_SNAPSHOT } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_DAILY_SNAPSHOT } from "@/platform/time/pipelineConstants";
 import type { GameState } from "@/platform/game/types";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import type { HorseDailyProgress } from "@/domains/horse/simulation/dailyProgress";

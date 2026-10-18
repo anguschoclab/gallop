@@ -4,7 +4,7 @@ import { getCountry } from "@/shared/data/gradedRaces";
 import { isHorseEligibleForRace } from "@/domains/race/simulation/eligibility";
 import { getStableId } from "@/domains/horse/simulation/ownership";
 import { classifyDistanceBucket } from "@/domains/horse/simulation/paceTendency";
-import { DEFAULT_FIELD_SIZE } from "@/domains/race/model/raceClassificationConstants";;
+import { DEFAULT_FIELD_SIZE } from "@/domains/race/model/raceClassificationConstants";
 
 /**
  * Filter state for races. The optional fields power the quick-filter chips

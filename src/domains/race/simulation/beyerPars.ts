@@ -9,7 +9,7 @@
  *   src/game/store/slices/racingSlice.ts (uses these helpers)
  */
 
-import { SEASON_DAYS } from "@/domains/calendar/model/calendarConstants";;
+import { SEASON_DAYS } from "@/domains/calendar/model/calendarConstants";
 
 export type RecalibrationResult = {
   calibratedPars: Record<number, number> | undefined;

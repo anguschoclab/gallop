@@ -7,7 +7,7 @@ import {
 import { createTestHorse } from "@/tests/helpers";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId, asHorseId } from "@/shared/types/branded";
-import { createTransaction } from "@/domains/transactions/model/transactionTypes";;
+import { createTransaction } from "@/domains/transactions/model/transactionTypes";
 
 describe("derivePlayerRaceWins", () => {
   it("returns an empty array when no horses have race history", () => {

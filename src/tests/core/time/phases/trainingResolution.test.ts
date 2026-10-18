@@ -8,7 +8,7 @@ import { createDefaultGameState } from "@/platform/game/store/state";
 import type { TrainingIntent } from "@/platform/resolver/intents";
 import type { EnergyImpact } from "@/platform/resolver/impacts/horseImpacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { AFFINITY_XP_PER_WORKOUT } from "@/domains/jockey/model/jockeyConstants";;
+import { AFFINITY_XP_PER_WORKOUT } from "@/domains/jockey/model/jockeyConstants";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("trainingResolutionPhase", () => {

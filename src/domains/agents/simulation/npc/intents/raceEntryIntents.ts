@@ -13,7 +13,7 @@ import {
 import { applyAffinityBoost } from "@/domains/agents/simulation/jockeyStrategyAdjustments";
 import type { StableAIState, DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
 import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
-import { MEDIUM_PURSE_THRESHOLD } from "@/domains/prestige/model/fameConstants";;
+import { MEDIUM_PURSE_THRESHOLD } from "@/domains/prestige/model/fameConstants";
 
 export function generateNpcRaceEntryIntents(
   state: GameState,

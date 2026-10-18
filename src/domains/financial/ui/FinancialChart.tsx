@@ -9,7 +9,7 @@ import {
   Legend,
 } from "recharts";
 import { useMemo } from "react";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { Transaction } from "@/platform/game/types";
 
 interface FinancialChartProps {

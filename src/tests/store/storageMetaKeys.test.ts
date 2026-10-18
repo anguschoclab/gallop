@@ -12,7 +12,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";
 
-vi.mock("@/services/storage/storageAdapter", () => ({
+vi.mock("@/platform/persistence/storage/storageAdapter", () => ({
   STORAGE_KEYS: {
     GAME_STATE: "gallop_game_state",
     GAME_STATE_FALLBACK: "gallop_game_state_fallback",
@@ -28,14 +28,14 @@ const mockLoadBuckets = vi.fn().mockResolvedValue(null);
 const mockClearDatabase = vi.fn().mockResolvedValue(undefined);
 let mockIdbAvailable = true;
 
-vi.mock("@/services/storage/indexedDbService", () => ({
+vi.mock("@/platform/persistence/storage/indexedDbService", () => ({
   saveBuckets: (...args: any[]) => mockSaveBuckets(...args),
   loadBuckets: (...args: any[]) => mockLoadBuckets(...args),
   clearDatabase: (...args: any[]) => mockClearDatabase(...args),
   isIndexedDbAvailable: () => mockIdbAvailable,
 }));
 
-vi.mock("@/services/storage/schemas", () => ({
+vi.mock("@/platform/persistence/storage/schemas", () => ({
   safeParseJson: vi.fn((raw: string, _schema: any) => {
     try {
       return JSON.parse(raw);

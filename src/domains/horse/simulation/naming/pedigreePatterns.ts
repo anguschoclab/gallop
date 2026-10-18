@@ -9,7 +9,7 @@
  */
 
 import type { Rng } from "@/shared/common/rng";
-import { PARENT_NAME_MAX_LENGTH } from "@/shared/constants/storageLimitsConstants";;
+import { PARENT_NAME_MAX_LENGTH } from "@/shared/constants/storageLimitsConstants";
 
 /**
  * Generate a portmanteau from sire and dam names.

@@ -13,7 +13,7 @@ import { recommendedMaxOffer } from "@/domains/stable/application/stableFacade";
 import { evaluateCashPressure } from "@/domains/stable/application/stableFacade";
 import { CashPressureMeter } from "@/domains/stable/ui/CashPressureMeter";
 import { CashPressureTrend } from "@/domains/stable/ui/CashPressureTrend";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { Stable } from "@/platform/game/types";
 
 interface StableCompareTableProps {

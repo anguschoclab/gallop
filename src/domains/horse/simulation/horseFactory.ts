@@ -49,7 +49,7 @@ import {
   computeHeterozygosity,
 } from "@/domains/genetics/simulation/phenotype";
 import { rollGender } from "@/domains/horse/simulation/gender";
-import { randomSilk } from "@/domains/horse/simulation/visuals";;
+import { randomSilk } from "@/domains/horse/simulation/visuals";
 import { rollProceduralFamily } from "@/domains/breeding/simulation/bruceLowe";
 import {
   generateProceduralHorseName,
@@ -59,7 +59,7 @@ import { PERSONALITY_CONFIG } from "@/domains/stable/simulation/stableConfig";
 import { getRegionalSystem } from "@/domains/race/simulation/naming/raceNameGenerator";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { POTENTIAL_MIN, POTENTIAL_MAX } from "@/domains/horse/model/horseStatConstants";
-import { CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD, CORNERING_APTITUDE_LARGE_PENALTY, CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD, CORNERING_APTITUDE_SMALL_BONUS } from "@/domains/race/model/raceSimulationConstants";;
+import { CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD, CORNERING_APTITUDE_LARGE_PENALTY, CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD, CORNERING_APTITUDE_SMALL_BONUS } from "@/domains/race/model/raceSimulationConstants";
 
 // Re-export foaling types and functions for backward compatibility
 export type { FoalOutcome } from "@/domains/horse/simulation/foaling";

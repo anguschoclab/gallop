@@ -27,7 +27,7 @@ import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { calculateTheHandBonus } from "@/domains/jockey/simulation/affinity";
 import { getClaimAllowance } from "@/domains/apprentice/model/apprenticeTypes";
 import { getCourseMultiplier } from "@/domains/race/simulation/sectionalAnalysis";
-import { HARSH_CONDITION_SPEED_THRESHOLD, MAX_FORM_ENERGY_MUL, TOP_SPEED_CEILING, LANE_WIDTH, MUD_MASTER_SPEED_BONUS } from "@/domains/race/model/engine/constants";;
+import { HARSH_CONDITION_SPEED_THRESHOLD, MAX_FORM_ENERGY_MUL, TOP_SPEED_CEILING, LANE_WIDTH, MUD_MASTER_SPEED_BONUS } from "@/domains/race/model/engine/constants";
 import type { SimWeatherPattern } from "@/domains/weather/model/weatherTypes";
 import {
   type Runner,

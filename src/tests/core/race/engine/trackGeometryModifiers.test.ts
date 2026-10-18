@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { calculateTrackGeometryModifiers } from "@/domains/race/simulation/engine/trackGeometryModifiers";
 import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 import type { CourseSpecification } from "@/shared/data/accessors/tracksAccessor";
-import { SURFACE_SPECIALIST_SPEED_BONUS } from "@/domains/race/model/engine/constants";;
+import { SURFACE_SPECIALIST_SPEED_BONUS } from "@/domains/race/model/engine/constants";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {

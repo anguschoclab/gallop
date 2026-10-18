@@ -11,12 +11,12 @@ import {
   SelectValue,
 } from "@/shared/ui/select";
 import { cn } from "@/shared/lib/cn";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { Stable } from "@/platform/game/types";
 import type { NpcAIManager } from "@/domains/agents/application/aiFacade";
 import { Search, X, ExternalLink, Flame, Handshake, BookOpen } from "lucide-react";
 import { BankruptcyHistoryPanel } from "@/domains/stable/ui/BankruptcyHistoryPanel";
-import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 import { Hint } from "@/shared/ui/Hint";
 
 type NavigateFn = (opts: {

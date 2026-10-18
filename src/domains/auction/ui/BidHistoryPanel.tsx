@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/shared/lib/cn";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { AuctionBidRecord, Stable } from "@/platform/game/types";
 import {
   Sheet,

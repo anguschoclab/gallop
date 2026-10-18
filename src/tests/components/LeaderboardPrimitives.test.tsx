@@ -11,7 +11,7 @@ import {
 } from "@/domains/leaderboard/ui/LeaderboardPrimitives";
 
 // Mock Select to avoid Radix portal complexity in tests
-vi.mock("@/components/ui/select", () => {
+vi.mock("@/shared/ui/select", () => {
   return {
     Select: ({ value, onValueChange, children }: any) => (
       <select data-testid="select" value={value} onChange={(e) => onValueChange?.(e.target.value)}>
@@ -25,7 +25,7 @@ vi.mock("@/components/ui/select", () => {
   };
 });
 
-vi.mock("@/components/ui/input", () => ({
+vi.mock("@/shared/ui/input", () => ({
   Input: ({ value, onChange, placeholder, ...props }: any) => (
     <input
       data-testid="search-input"

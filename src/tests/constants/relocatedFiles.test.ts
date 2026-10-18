@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 
 describe("relocated files are importable from new locations", () => {
   it("raceEngineConstants is importable from @/constants/raceEngineConstants", async () => {
-    const mod = await import("@/constants/raceEngineConstants");
+    const mod = await import("@/domains/race/model/engine/constants");
     expect(mod.DEFAULT_DT).toBe(0.1);
     expect(mod.defaultMaxTime).toBeDefined();
   });

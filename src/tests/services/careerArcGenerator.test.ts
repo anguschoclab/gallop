@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { checkCareerArcTrigger, type CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";;
+import { checkCareerArcTrigger, type CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/shared/uuid/uuid";
 import type { Race } from "@/platform/game/types";

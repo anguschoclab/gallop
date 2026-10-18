@@ -3,7 +3,7 @@ import { ensureMaidenRaces, ensureMaidenInCard, ensure2yoRaces } from "@/domains
 import { createRng } from "@/shared/common/rng";
 import type { Race } from "@/platform/game/types";
 import type { Track } from "@/shared/data/tracks";
-import { TWOYO_DISTANCE_BANDS, TWOYO_AGE } from "@/domains/race/model/raceClassificationConstants";;
+import { TWOYO_DISTANCE_BANDS, TWOYO_AGE } from "@/domains/race/model/raceClassificationConstants";
 
 function mkRace(overrides: Partial<Race> = {}): Race {
   const base: Race = {

@@ -5,7 +5,7 @@ import { CareerValuationBreakdown } from "@/domains/horse/ui/CareerValuationBrea
 import { horseCareerValuation } from "@/domains/horse/application/horseFacade";
 import { calculateOverallRating, getCareerStats } from "@/domains/horse/application/horseFacade";
 import { pedigreeMultiplier } from "@/domains/breeding/application/breedingFacade";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { Horse } from "@/platform/game/types";
 
 interface CareerProjectionSectionProps {

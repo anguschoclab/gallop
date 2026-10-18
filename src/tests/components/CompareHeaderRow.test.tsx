@@ -4,7 +4,7 @@ import { CompareHeaderRow } from "@/domains/horse/ui/CompareHeaderRow";
 import type { Horse } from "@/platform/game/types";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
-vi.mock("@/components/SilkDot", () => ({
+vi.mock("@/domains/shell/ui/SilkDot", () => ({
   SilkDot: ({ color }: { color: string }) => <span data-testid="silk-dot" data-color={color} />,
 }));
 

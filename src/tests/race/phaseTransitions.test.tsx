@@ -46,7 +46,7 @@ vi.mock("sonner", () => ({
   Toaster: () => null,
 }));
 
-vi.mock("@/hooks/race/useRacePageData", () => ({
+vi.mock("@/domains/race/application/hooks/useRacePageData", () => ({
   useRacePageData: () => ({
     race: {
       id: "test-race-1",
@@ -107,7 +107,7 @@ vi.mock("@/hooks/race/useRacePageData", () => ({
   }),
 }));
 
-vi.mock("@/hooks/race/useCommentaryFeed", () => ({
+vi.mock("@/domains/race/application/hooks/useCommentaryFeed", () => ({
   useCommentaryFeed: () => ({
     announcement: "",
     commentary: [],
@@ -115,7 +115,7 @@ vi.mock("@/hooks/race/useCommentaryFeed", () => ({
   }),
 }));
 
-vi.mock("@/hooks/race/useLeaderboardState", () => ({
+vi.mock("@/domains/race/application/hooks/useLeaderboardState", () => ({
   useLeaderboardState: () => ({
     sorted: [],
     positionRank: new Map(),
@@ -130,7 +130,7 @@ vi.mock("@/hooks/race/useLeaderboardState", () => ({
   }),
 }));
 
-vi.mock("@/hooks/race/useLiveRaceSimulation", () => ({
+vi.mock("@/domains/race/application/hooks/useLiveRaceSimulation", () => ({
   useLiveRaceSimulation: () => ({
     tick: 0,
     speed: 1,
@@ -144,7 +144,7 @@ vi.mock("@/hooks/race/useLiveRaceSimulation", () => ({
   }),
 }));
 
-vi.mock("@/hooks/race/useRacePhase", () => ({
+vi.mock("@/domains/race/application/hooks/useRacePhase", () => ({
   useRacePhase: () => ({
     phase: mockPhase as any,
     setPhase: (next: string) => {
@@ -156,7 +156,7 @@ vi.mock("@/hooks/race/useRacePhase", () => ({
   RacePhase: {} as any,
 }));
 
-vi.mock("@/components/race/raceVisualHelpers", async (importOriginal) => {
+vi.mock("@/domains/race/application/raceVisualHelpers", async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,

@@ -1,4 +1,4 @@
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { HorseCareerValuation } from "@/domains/horse/application/horseFacade";
 import { cn } from "@/shared/lib/cn";
 

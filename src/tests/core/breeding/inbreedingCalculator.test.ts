@@ -4,9 +4,9 @@ import {
   calculateFounderEffect,
 } from "@/domains/breeding/simulation/inbreedingCalculator";
 import * as pedigreeAccessor from "@/shared/data/accessors/pedigreeAccessor";
-import { DEFAULT_GENETIC_DIVERSITY, INBREEDING_EXPECTED_MAX_ANCESTORS, INBREEDING_SCORE_BONUS } from "@/domains/breeding/model/breedingConstants";;
+import { DEFAULT_GENETIC_DIVERSITY, INBREEDING_EXPECTED_MAX_ANCESTORS, INBREEDING_SCORE_BONUS } from "@/domains/breeding/model/breedingConstants";
 
-vi.mock("@/core/data/pedigreeAccessor", async (importOriginal) => {
+vi.mock("@/shared/data/accessors/pedigreeAccessor", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/shared/data/accessors/pedigreeAccessor")>();
   return {
     ...actual,

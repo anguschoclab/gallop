@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { FLAVOR_STORIES, ALL_FLAVOR_STORIES } from "@/domains/narrative/simulation/flavorStories";;
+import { FLAVOR_STORIES, ALL_FLAVOR_STORIES } from "@/domains/narrative/simulation/flavorStories";
 import {
   ATMOSPHERE_LONG_STRAIGHT_TEMPLATES,
   ATMOSPHERE_TIGHT_TURN_TEMPLATES,

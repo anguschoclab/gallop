@@ -4,8 +4,8 @@ import { Button } from "@/shared/ui/button";
 import { Card, CardContent } from "@/shared/ui/card";
 import { ChevronDown, ChevronUp, Crown, Timer } from "lucide-react";
 import { RaceTimeDisplay } from "@/domains/race/ui/RaceTimeDisplay";
-import { gradeColor } from "@/shared/common/uiTokens";;
-import { formatCurrency } from "@/shared/common/formatting";;
+import { gradeColor } from "@/shared/common/uiTokens";
+import { formatCurrency } from "@/shared/common/formatting";
 import type { TrackLedgerEntry } from "@/domains/history/application/historyFacade";
 
 function PrestigeChip({

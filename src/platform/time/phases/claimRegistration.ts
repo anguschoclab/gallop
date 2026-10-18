@@ -1,4 +1,4 @@
-import { PHASE_ORDER_CLAIM_REGISTRATION } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_CLAIM_REGISTRATION } from "@/platform/time/pipelineConstants";
 import type { Claim, GameState } from "@/platform/game/types";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type { ClaimingIntent } from "@/platform/resolver/intents";

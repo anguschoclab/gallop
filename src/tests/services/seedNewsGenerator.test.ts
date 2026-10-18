@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { seedGazetteNews } from "@/domains/narrative/application/seedNewsGenerator";
 import { createTestHorse, createTestStable, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/shared/uuid/uuid";
-import type { NewsCategory, NewsImportance, EntityLink } from "@/domains/narrative/model/newsTypes";;
+import type { NewsCategory, NewsImportance, EntityLink } from "@/domains/narrative/model/newsTypes";
 import type { Race, Stable, Horse } from "@/platform/game/types";
 import type { PlayerProfile } from "@/domains/stable/simulation/types";
 import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";

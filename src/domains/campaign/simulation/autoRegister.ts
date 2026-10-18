@@ -19,7 +19,7 @@ import type { Horse, Race, Jockey, Stable } from "@/platform/game/types";
 import { isHorseEligibleForRace } from "@/domains/race/simulation/eligibility";
 import { calculateRaceSuitability } from "@/domains/race/simulation/entryScoring";
 import { getTransportCostForRace } from "@/domains/race/simulation/transportCost";
-import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/domains/race/model/raceEntryConstants";;
+import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/domains/race/model/raceEntryConstants";
 import { selectBestFreeAgentJockey } from "@/domains/jockey/simulation/selectFreeAgent";
 
 // Virtual player stable for scoring purposes

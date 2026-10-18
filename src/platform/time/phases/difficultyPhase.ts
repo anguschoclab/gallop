@@ -10,7 +10,7 @@
  */
 
 import { DIFFICULTY_ADJUSTMENT_PERIOD } from "@/domains/agents/model/aiConstants";
-import { PHASE_ORDER_DIFFICULTY } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_DIFFICULTY } from "@/platform/time/pipelineConstants";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import type { DifficultyState, NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";

@@ -20,7 +20,7 @@ import { createElement } from "react";
 import { render, screen, cleanup } from "@testing-library/react";
 import { afterEach as afterEachHook } from "vitest";
 
-vi.mock("@/components/race/raceVisualHelpers", async (importOriginal) => {
+vi.mock("@/domains/race/application/raceVisualHelpers", async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,

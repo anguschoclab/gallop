@@ -21,7 +21,7 @@ import type { AwardRegion, RegionalAward } from "@/domains/awards/model/types";
 import { AWARD_CEREMONY_SCHEDULE } from "@/domains/awards/model/types";
 import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
 import { FANS_PER_FAME_POINT } from "@/domains/prestige/model/fameConstants";
-import { PHASE_ORDER_AWARDS } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_AWARDS } from "@/platform/time/pipelineConstants";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import type { FameImpact, FanCountImpact, InboxImpact } from "@/platform/resolver/impacts";
 import { generateAwardInboxMessage } from "@/domains/awards/simulation/awardInboxMessages";

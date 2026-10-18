@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_INDUSTRY_METRICS } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_INDUSTRY_METRICS } from "@/platform/time/pipelineConstants";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import { computeIndustryMeanEarnings } from "@/domains/breeding/simulation/industryMetrics";
 import { formatCurrency } from "@/shared/common/formatting";

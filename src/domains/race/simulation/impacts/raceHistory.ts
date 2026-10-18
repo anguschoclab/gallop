@@ -9,7 +9,7 @@ import type { Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { getCurrentYear } from "@/domains/race/simulation/schedule";
 import { GRADED_RACES_BY_TRIPLECROWN_KEY } from "@/shared/data/accessors/gradedRacesAccessor";
-import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
 import type { Race, Horse } from "@/platform/game/types";
 import type { HorseOwnership } from "@/domains/horse/simulation/ownership";
 

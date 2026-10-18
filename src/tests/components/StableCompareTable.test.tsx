@@ -6,7 +6,7 @@ import type { StablePersonality } from "@/platform/game/types";
 
 const horses = Array.from({ length: 10 }, (_, i) => `h${i}`) as unknown as never[];
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector({ cashPressureHistory: {} }),
   useGameWithShallow: (selector: (s: any) => any) => selector({ cashPressureHistory: {} }),
 }));

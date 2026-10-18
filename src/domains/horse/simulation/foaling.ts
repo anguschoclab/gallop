@@ -20,7 +20,7 @@ import {
   generateProceduralHorseName,
   type NamingContext,
 } from "@/domains/horse/simulation/naming/nameGenerator";
-import { FOALING_AGE_RISK_THRESHOLD, FOALING_AGE_RISK_MULTIPLIER, FOALING_BASE_COMPLICATION_RATE, LETHAL_RECESSIVE_CHANCE, TWIN_REDUCTION_CHANCE } from "@/domains/breeding/model/breedingConstants";;
+import { FOALING_AGE_RISK_THRESHOLD, FOALING_AGE_RISK_MULTIPLIER, FOALING_BASE_COMPLICATION_RATE, LETHAL_RECESSIVE_CHANCE, TWIN_REDUCTION_CHANCE } from "@/domains/breeding/model/breedingConstants";
 import { createHorseFromDNA, ensurePhenotypeResolved, resolvePhenotype } from "@/domains/horse/simulation/horseFactory";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 

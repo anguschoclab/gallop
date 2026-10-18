@@ -5,7 +5,7 @@ import { Input } from "@/shared/ui/input";
 import { JockeyArchetype, JockeySilkPattern } from "@/platform/game/types";
 import { FilterSelect } from "@/domains/jockey/ui/FilterSelect";
 import { Search, Filter } from "lucide-react";
-import { JOCKEY_TRAIT_OPTIONS } from "@/domains/genetics/application/traitLabels";;
+import { JOCKEY_TRAIT_OPTIONS } from "@/domains/genetics/application/traitLabels";
 import type { JockeyTrait } from "@/domains/jockey/application/jockeyFacade";
 
 interface JockeyFilterPanelProps {

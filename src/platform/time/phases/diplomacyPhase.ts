@@ -18,7 +18,7 @@ import {
   initializeRelationships,
 } from "@/domains/agents/simulation/diplomacyAI";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
-import { PHASE_ORDER_DIPLOMACY } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_DIPLOMACY } from "@/platform/time/pipelineConstants";
 import { generateUUID } from "@/shared/uuid/uuid";
 
 export const diplomacyPhase = {

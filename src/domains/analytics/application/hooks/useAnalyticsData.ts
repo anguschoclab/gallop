@@ -7,7 +7,7 @@ import { useGame, useGameWithShallow } from "@/platform/game/store";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
 import { analyzeStableTrends } from "@/domains/analytics/simulation/stableTrends";
-import { ANALYTICS_CASH_LOOKBACK_DAYS, ANALYTICS_RECENT_RACES_COUNT, ANALYTICS_EARNINGS_WEEKS, ANALYTICS_EXPENSE_LOOKBACK_DAYS, ANALYTICS_EXPENSE_TOP_N, ANALYTICS_SIRE_TREND_DAYS, ANALYTICS_ENERGY_BUCKET_COUNT, ANALYTICS_ENERGY_BUCKET_WIDTH } from "@/shared/constants/analyticsConstants";;
+import { ANALYTICS_CASH_LOOKBACK_DAYS, ANALYTICS_RECENT_RACES_COUNT, ANALYTICS_EARNINGS_WEEKS, ANALYTICS_EXPENSE_LOOKBACK_DAYS, ANALYTICS_EXPENSE_TOP_N, ANALYTICS_SIRE_TREND_DAYS, ANALYTICS_ENERGY_BUCKET_COUNT, ANALYTICS_ENERGY_BUCKET_WIDTH } from "@/shared/constants/analyticsConstants";
 
 export function useAnalyticsData() {
   const day = useGame((s) => s.day);

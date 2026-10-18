@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { LeaderboardTable } from "@/domains/history/ui/LeaderboardTable";
 import { TrackRecordsTable } from "@/domains/history/ui/TrackRecordsTable";
 import { DollarSign, Zap, Timer, RefreshCw } from "lucide-react";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { TrackRecord } from "@/domains/history/application/historyFacade";
 import type { ProgenyLeaderboard } from "@/domains/breeding/application/breedingFacade";
 import { Card, CardContent } from "@/shared/ui/card";

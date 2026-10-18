@@ -2,7 +2,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
 import { Wallet } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { type CashPressure } from "@/domains/stable/application/stableFacade";
 import { evaluatePrivateSaleThresholds } from "@/domains/stable/application/stableFacade";
 import { CashPressureMeter } from "@/domains/stable/ui/CashPressureMeter";

@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { TrophyFullView } from "@/domains/awards/ui/TrophyFullView";
 import type { RegionalAward } from "@/domains/awards/model/types";
 
-vi.mock("@/components/ui/card", () => ({
+vi.mock("@/shared/ui/card", () => ({
   Card: ({ children }: { children?: React.ReactNode }) => <div data-testid="card">{children}</div>,
   CardHeader: ({ children }: { children?: React.ReactNode }) => (
     <div data-testid="header">{children}</div>
@@ -12,7 +12,7 @@ vi.mock("@/components/ui/card", () => ({
   CardContent: ({ children }: { children?: React.ReactNode }) => <div>{children}</div>,
 }));
 
-vi.mock("@/components/ui/tabs", () => ({
+vi.mock("@/shared/ui/tabs", () => ({
   Tabs: ({ children, defaultValue }: { children: React.ReactNode; defaultValue: string }) => (
     <div data-testid="tabs" data-default={defaultValue}>
       {children}
@@ -27,13 +27,13 @@ vi.mock("@/components/ui/tabs", () => ({
   ),
 }));
 
-vi.mock("@/components/ui/badge", () => ({
+vi.mock("@/shared/ui/badge", () => ({
   Badge: ({ children }: { children?: React.ReactNode }) => (
     <span data-testid="badge">{children}</span>
   ),
 }));
 
-vi.mock("@/components/ui/select", () => ({
+vi.mock("@/shared/ui/select", () => ({
   Select: ({
     value,
     onValueChange,
@@ -55,7 +55,7 @@ vi.mock("@/components/ui/select", () => ({
   SelectValue: () => null,
 }));
 
-vi.mock("@/components/awards/AwardsGrid", () => ({
+vi.mock("@/domains/awards/ui/AwardsGrid", () => ({
   AwardsGrid: ({ awards }: { awards: RegionalAward[] }) => (
     <div data-testid="grid">
       {awards.map((a, i) => (

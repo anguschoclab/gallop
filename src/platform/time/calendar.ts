@@ -5,7 +5,7 @@
  * boundary, every 30 days a season ("month") boundary, every 365 a year.
  */
 
-import { DAYS_PER_WEEK, SEASON_DAYS, DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";;
+import { DAYS_PER_WEEK, SEASON_DAYS, DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
 import { getCurrentYear } from "@/domains/race/simulation/schedule";
 
 export type PhaseCadence = "daily" | "weekly" | "seasonal" | "yearly" | "interval" | "event";

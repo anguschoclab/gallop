@@ -7,7 +7,7 @@ import {
 import { STAFF_CONFIG } from "@/domains/staff/simulation/staffConfig";
 import type { Rng } from "@/shared/common/rng";
 
-vi.mock("@/core/uuid", () => ({
+vi.mock("@/shared/uuid/uuid", () => ({
   generateUUID: vi.fn(() => "mocked-uuid"),
 }));
 

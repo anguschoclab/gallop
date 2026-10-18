@@ -4,16 +4,16 @@ import type { Horse } from "@/domains/horse/simulation/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestGenotype } from "@/tests/helpers/createTestGenotype";
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector(mockState),
   useGameWithShallow: (selector: (s: any) => any) => selector(mockState),
 }));
 
-vi.mock("@/core/horse/horseFactory", () => ({
+vi.mock("@/domains/horse/simulation/horseFactory", () => ({
   ensurePhenotypeResolved: (h: Horse) => h,
 }));
 
-vi.mock("@/core/horse/stats", () => ({
+vi.mock("@/domains/horse/simulation/stats", () => ({
   calculateOverallRating: (h: Horse) => h.potential ?? 50,
 }));
 

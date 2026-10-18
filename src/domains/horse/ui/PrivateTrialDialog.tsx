@@ -1,4 +1,4 @@
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import { Button } from "@/shared/ui/button";
 import {
   Dialog,

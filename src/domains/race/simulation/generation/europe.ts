@@ -9,11 +9,11 @@ import type { Track } from "@/shared/data/accessors/tracksAccessor";
 import type { Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { randomWeather } from "@/domains/race/simulation/environment";
-import { rand } from "@/shared/common/random";;
+import { rand } from "@/shared/common/random";
 import { randomTrackConditionWithClimateBias } from "@/domains/race/simulation/trackConditions";
 import { generateRaceName } from "@/domains/race/simulation/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "@/domains/race/simulation/generation/raceGen";
-import { EUROPE_PURSE_MULTIPLIER, EUROPE_MIN_DISTANCE, EUROPE_FIELD_SIZE_MIN, EUROPE_FIELD_SIZE_MAX } from "@/domains/race/model/raceClassificationConstants";;
+import { EUROPE_PURSE_MULTIPLIER, EUROPE_MIN_DISTANCE, EUROPE_FIELD_SIZE_MIN, EUROPE_FIELD_SIZE_MAX } from "@/domains/race/model/raceClassificationConstants";
 
 const EUROPE_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "Maiden", probability: 0.25 },

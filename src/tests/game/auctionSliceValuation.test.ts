@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { useGame } from "@/platform/game/store";
 import { createDefaultGameState } from "@/platform/game/store/state";
 import { horseMarketValue, horseCareerValuation } from "@/domains/horse/simulation/pricing";
-import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/domains/auction/model/auctionConstants";;
+import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/domains/auction/model/auctionConstants";
 import {
   createTestColt,
   createTestStallion,

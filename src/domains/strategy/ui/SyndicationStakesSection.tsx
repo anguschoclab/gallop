@@ -3,7 +3,7 @@ import {
   evaluateSyndicationEligibility,
   evaluateInvestorAppetite,
 } from "@/domains/breeding/application/breedingFacade";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";

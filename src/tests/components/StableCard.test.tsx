@@ -13,13 +13,13 @@ const mockState: Record<string, any> = {
   cashPressureHistory: {},
 };
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector(mockState),
   useGameWithShallow: (selector: (s: any) => any) => selector(mockState),
 }));
 
 const mockToggle = vi.fn();
-vi.mock("@/hooks/stable/useCompareStables", () => ({
+vi.mock("@/domains/stable/application/hooks/useCompareStables", () => ({
   useCompareStables: () => ({
     ids: [],
     toggle: mockToggle,
@@ -28,11 +28,11 @@ vi.mock("@/hooks/stable/useCompareStables", () => ({
 }));
 
 // Mock the heavy valuation/attachment functions so we don't need full Horse objects
-vi.mock("@/core/auction/engine", () => ({
+vi.mock("@/domains/auction/simulation/engine", () => ({
   calculateLotValuation: () => 100_000,
 }));
 
-vi.mock("@/core/horse/attachment", () => ({
+vi.mock("@/domains/horse/simulation/attachment", () => ({
   evaluateHorseAttachment: () => ({ score: 50, label: "moderate" }),
   attachmentAdjustedAsk: () => 120_000,
 }));

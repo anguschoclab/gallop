@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateGeneticCompatibility } from "@/domains/breeding/simulation/genotypeMatching";;
+import { calculateGeneticCompatibility } from "@/domains/breeding/simulation/genotypeMatching";
 import type { Horse } from "@/platform/game/types";
 
 describe("genotypeMatching", () => {

@@ -1,6 +1,7 @@
-/* eslint-disable react-refresh/only-export { createRng, hashStr } from "@/shared/common/rng";;
-import type { Backstory } from "@/shared/common/backstories";;
-import { generateUUID } from "@/shared/uuid/uuid";;
+/* eslint-disable react-refresh/only-export-components */
+import { createRng, hashStr } from "@/shared/common/rng";
+import type { Backstory } from "@/shared/common/backstories";
+import { generateUUID } from "@/shared/uuid/uuid";
 
 export function makeWizardRng(seed: string) {
   return createRng(hashStr(`wizard_${seed}_${Date.now()}_${generateUUID()}`));

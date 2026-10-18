@@ -29,7 +29,7 @@ import { findMajorityOwner } from "@/domains/breeding/simulation/devolutionUtils
 import { generateFillerStable } from "@/domains/stable/simulation/stableGeneration";
 import { generateStableHorses } from "@/domains/agents/simulation/npc/horseGenerator";
 import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
-import { PHASE_ORDER_NPC_BANKRUPTCY } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_NPC_BANKRUPTCY } from "@/platform/time/pipelineConstants";
 import { DEFAULT_WORLD_SIZE } from "@/domains/stable/simulation/worldSizeConfig";
 import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";

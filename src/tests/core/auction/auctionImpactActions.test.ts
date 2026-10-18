@@ -8,7 +8,7 @@ import type { InboxMessage } from "@/domains/inbox/model/inboxTypes";
 import { asStableId, asHorseId, asNpcStableId, asOwnerKey } from "@/shared/types/branded";
 import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
-vi.mock("@/core/uuid", () => ({
+vi.mock("@/shared/uuid/uuid", () => ({
   generateUUID: vi.fn(() => "mocked-uuid"),
 }));
 

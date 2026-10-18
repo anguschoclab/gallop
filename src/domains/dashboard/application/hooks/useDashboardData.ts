@@ -5,7 +5,7 @@ import type { InboxMessage } from "@/domains/inbox/model/inboxTypes";
 import type { Horse } from "@/domains/horse/simulation/types";
 import { getStableId } from "@/domains/horse/simulation/ownership";
 import { ENERGY_LOW_THRESHOLD } from "@/domains/training/model/energyRecoveryConstants";
-import { DASHBOARD_UPCOMING_RACES_LIMIT, DASHBOARD_URGENT_MESSAGES_LIMIT, DASHBOARD_TOP_RIVALS_LIMIT, DASHBOARD_RIVAL_FRICTION_THRESHOLD, HEAD_TO_HEAD_LOOKBACK_DAYS } from "@/shared/constants/dashboardConstants";;
+import { DASHBOARD_UPCOMING_RACES_LIMIT, DASHBOARD_URGENT_MESSAGES_LIMIT, DASHBOARD_TOP_RIVALS_LIMIT, DASHBOARD_RIVAL_FRICTION_THRESHOLD, HEAD_TO_HEAD_LOOKBACK_DAYS } from "@/shared/constants/dashboardConstants";
 
 export function useDashboardData() {
   const day = useGame((s) => s.day);

@@ -15,7 +15,7 @@
 import type { Horse } from "@/platform/game/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { getCurrentYear } from "@/domains/race/simulation/schedule";
-import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";;
+import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
 
 /**
  * Filter horses' winAndYouInQualified entries when the year rolls over.

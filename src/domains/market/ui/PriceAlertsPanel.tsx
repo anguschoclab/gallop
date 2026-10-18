@@ -36,7 +36,7 @@ import {
 } from "@/domains/market/application/marketFacade";
 import { createDefaultExchangeState } from "@/domains/market/application/marketFacade";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 
 type ScopeKind = "market" | "grade" | "track";
 

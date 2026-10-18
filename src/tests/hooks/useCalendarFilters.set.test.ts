@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector(mockState),
 }));
 
-vi.mock("@/core/calendar/regions", () => ({
+vi.mock("@/domains/calendar/simulation/regions", () => ({
   getRegion: (id: string) => mockRegion,
 }));
 

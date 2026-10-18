@@ -4,7 +4,7 @@
  */
 import { Info } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
-import { TOOLTIP_DELAY_SHORT_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_SHORT_MS } from "@/shared/constants/uiConstants";
 import { cn } from "@/shared/lib/cn";
 
 interface MetricInfoProps {

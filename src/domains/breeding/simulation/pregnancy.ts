@@ -29,7 +29,7 @@ import { getStableId } from "@/domains/horse/simulation/ownership";
 import { getRegionalSystem } from "@/domains/race/simulation/naming/raceNameGenerator";
 import { PERSONALITY_CONFIG } from "@/domains/stable/simulation/stableConfig";
 import { formatCurrency } from "@/shared/common/formatting";
-import { BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE } from "@/domains/breeding/model/breedingConstants";;
+import { BREEDING_FEE, GESTATION_DAYS, LIVE_FOAL_GUARANTEE_FEE } from "@/domains/breeding/model/breedingConstants";
 import type { NamingContext } from "@/domains/horse/simulation/naming/nameGenerator";
 import type { UserSettings } from "@/domains/settings/model/settingsTypes";
 import type { ReservedNameEntry } from "@/domains/horse/simulation/naming/reservedNames";

@@ -9,7 +9,7 @@ import {
   type TransportMode,
 } from "@/domains/transportation/model/transportationTypes";
 
-vi.mock("@/core/uuid", () => ({
+vi.mock("@/shared/uuid/uuid", () => ({
   generateUUID: () => "test-uuid-id",
 }));
 

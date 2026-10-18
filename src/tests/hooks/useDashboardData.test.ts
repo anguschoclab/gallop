@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { useDashboardData } from "@/domains/dashboard/application/hooks/useDashboardData";
-import { ENERGY_LOW_THRESHOLD } from "@/domains/training/model/energyRecoveryConstants";;
+import { ENERGY_LOW_THRESHOLD } from "@/domains/training/model/energyRecoveryConstants";
 import type { Horse } from "@/domains/horse/simulation/types";
 import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 

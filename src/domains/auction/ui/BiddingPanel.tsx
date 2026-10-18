@@ -1,4 +1,4 @@
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 /**
  * BiddingPanel.tsx - Auction bidding controls
  *
@@ -8,7 +8,7 @@ import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
 
 import { Button } from "@/shared/ui/button";
 import { Gavel, Activity } from "lucide-react";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { BuyNowDialog } from "@/domains/auction/ui/BuyNowDialog";
 import { BidInputPanel } from "@/domains/auction/ui/sub/BidInputPanel";
 import { MaxBidPanel } from "@/domains/auction/ui/sub/MaxBidPanel";

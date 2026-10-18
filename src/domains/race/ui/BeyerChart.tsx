@@ -8,7 +8,7 @@ import {
   CartesianGrid,
   ReferenceLine,
 } from "recharts";
-import { BEYER_CHART_HISTORY_LIMIT } from "@/shared/constants/dashboardConstants";;
+import { BEYER_CHART_HISTORY_LIMIT } from "@/shared/constants/dashboardConstants";
 
 type Entry = { raceName: string; day: number; beyer?: number; position: number };
 

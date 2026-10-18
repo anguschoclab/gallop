@@ -19,7 +19,7 @@ import { createAuctionRunner } from "@/domains/auction/simulation/runner";
 import { dayOfYear } from "@/domains/calendar/simulation/dateFormatting";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { PHASE_ORDER_AUCTIONS } from "@/platform/time/pipelineConstants";
-import { AUCTION_RETENTION_DAYS } from "@/shared/constants/storageLimitsConstants";;
+import { AUCTION_RETENTION_DAYS } from "@/shared/constants/storageLimitsConstants";
 import { trackAuctionPrices } from "@/domains/agents/simulation/economyAITracking";
 import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";

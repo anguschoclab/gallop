@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Activity } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
-import type { NewsItem, NewsCategory } from "@/domains/narrative/model/newsTypes";;
+import type { NewsItem, NewsCategory } from "@/domains/narrative/model/newsTypes";
 
 interface AiActivityFeedProps {
   news: NewsItem[];

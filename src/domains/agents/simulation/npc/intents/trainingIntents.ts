@@ -10,7 +10,7 @@ import {
 import type { StableAIState, DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
 import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import { TRAINING_CAUTION_MIN_ENERGY } from "@/domains/financial/model/financialDistressConstants";
-import { TRAINING_COST, TRAINING_COST_MAP } from "@/shared/constants/workoutConstants";;
+import { TRAINING_COST, TRAINING_COST_MAP } from "@/shared/constants/workoutConstants";
 
 export function generateNpcTrainingIntents(
   state: GameState,

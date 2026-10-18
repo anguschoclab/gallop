@@ -2,8 +2,9 @@ import { describe, it, expect, vi } from "vitest";
 import { calculateGeneticCompatibility } from "@/domains/breeding/simulation/genotypeMatching";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
-vi.mock("@/constants", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/constants")>();
+vi.mock("@/domains/breeding/model/breedingConstants", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/domains/breeding/model/breedingConstants")>();
   return {
     ...actual,
     GENETIC_TRAIT_WEIGHT: 0.25,

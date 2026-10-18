@@ -16,7 +16,7 @@ import type { Horse, Race, Stable, Jockey } from "@/platform/game/types";
 import type { Rng } from "@/shared/common/rng";
 import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
 import { calculateAssignedWeight } from "@/domains/race/simulation/entryScoring";
-import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/domains/race/model/raceEntryConstants";;
+import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/domains/race/model/raceEntryConstants";
 import { findBumpableEntryIndex } from "@/domains/race/simulation/entry/bumpResolver";
 import { calculateOptimalTactics } from "@/domains/agents/simulation/jockeyStrategyAI";
 import { applyAffinityBoost } from "@/domains/agents/simulation/jockeyStrategyAdjustments";

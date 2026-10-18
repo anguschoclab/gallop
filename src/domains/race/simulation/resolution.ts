@@ -10,7 +10,7 @@
  * Related files: src/game/store/slices/coreSlice.ts (uses race resolution helpers)
  */
 
-import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
 import { compareFinishOrder } from "@/domains/race/simulation/engine/compareFinishOrder";
 import { applyVenuePayout, type VenueLike } from "@/domains/race/simulation/venuePayout";
 

@@ -23,9 +23,9 @@ import {
   type AlmanacFeedItem,
 } from "@/domains/history/application/historyFacade";
 import type { TrackRecord, SeasonRecord } from "@/domains/history/application/historyFacade";
-import type { Transaction } from "@/domains/transactions/model/transactionTypes";;
+import type { Transaction } from "@/domains/transactions/model/transactionTypes";
 import type { Horse } from "@/domains/horse/application/horseFacade";
-import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 import { cn } from "@/shared/lib/cn";
 
 const EMPTY_ARRAY: never[] = [];

@@ -4,7 +4,7 @@ import { render, screen } from "@testing-library/react";
 vi.mock("@tanstack/react-router", async () =>
   (await import("@/test-utils/routerMock")).createRouterMock(),
 );
-vi.mock("@/game/store", () => {
+vi.mock("@/platform/game/store", () => {
   const state = {
     races: { r1: { id: "r1", trackId: "t1", name: "Debut Stakes" } },
     trackLedger: [],

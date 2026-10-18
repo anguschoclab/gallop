@@ -15,7 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/ui/select";
-import { THRESHOLD_FIELDS, type ScoutingThresholds } from "@/domains/agents/model/scoutingThresholds";;
+import { THRESHOLD_FIELDS, type ScoutingThresholds } from "@/domains/agents/model/scoutingThresholds";
 
 interface Props {
   value: ScoutingThresholds;

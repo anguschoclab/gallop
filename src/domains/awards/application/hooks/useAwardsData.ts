@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGame, useGameWithShallow } from "@/platform/game/store";
-import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";;
+import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
 
 export function useAwardsData() {
   const awards = useGame((s) => s.awards);

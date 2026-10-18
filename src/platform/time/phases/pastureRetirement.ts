@@ -20,7 +20,7 @@ import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { AGE_RETIREMENT_THRESHOLD } from "@/domains/horse/model/horseStatConstants";
 import { FAME_LOW_THRESHOLD } from "@/domains/prestige/model/fameConstants";
 import { PHASE_ORDER_PASTURE_RETIREMENT } from "@/platform/time/pipelineConstants";
-import { INACTIVITY_RETIREMENT_DAYS } from "@/shared/constants/storageLimitsConstants";;
+import { INACTIVITY_RETIREMENT_DAYS } from "@/shared/constants/storageLimitsConstants";
 import type {
   AnyImpact,
   PastureRetirementImpact,

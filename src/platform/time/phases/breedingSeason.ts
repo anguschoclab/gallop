@@ -10,7 +10,7 @@
 
 import type { PipelineContext } from "@/platform/time/pipeline";
 import { isBreedingSeasonStart } from "@/domains/calendar/simulation/breedingCalendar";
-import { PHASE_ORDER_BREEDING_SEASON } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_BREEDING_SEASON } from "@/platform/time/pipelineConstants";
 
 /**
  * Phase: Breeding Season Reset

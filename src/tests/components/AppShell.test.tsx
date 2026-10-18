@@ -11,25 +11,25 @@ vi.mock("@tanstack/react-router", () => ({
   Outlet: () => createElement("div", { "data-testid": "outlet" }),
 }));
 
-vi.mock("@/hooks/game/useAutoSave", () => ({
+vi.mock("@/platform/game/hooks/useAutoSave", () => ({
   useAutoSave: () => ({}),
 }));
 
-vi.mock("@/hooks/game/useCoreState", () => ({
+vi.mock("@/platform/game/hooks/useCoreState", () => ({
   useDay: () => 1,
   useCash: () => 50000,
   useHorses: () => [],
 }));
 
-vi.mock("@/hooks/game/useSystemsState", () => ({
+vi.mock("@/platform/game/hooks/useSystemsState", () => ({
   useAwards: () => [],
 }));
 
-vi.mock("@/hooks/shared/useSkipToNext", () => ({
+vi.mock("@/platform/game/hooks/useSkipToNext", () => ({
   useSkipToNext: () => () => {},
 }));
 
-vi.mock("@/hooks/awards/useAwardCeremony", () => ({
+vi.mock("@/domains/awards/application/hooks/useAwardCeremony", () => ({
   useAwardCeremony: () => ({
     showCeremony: false,
     setShowCeremony: () => {},
@@ -38,19 +38,19 @@ vi.mock("@/hooks/awards/useAwardCeremony", () => ({
   }),
 }));
 
-vi.mock("@/components/race/PlayerRacePrompt", () => ({
+vi.mock("@/domains/race/ui/PlayerRacePrompt", () => ({
   PlayerRacePrompt: () => null,
 }));
 
-vi.mock("@/components/race/AutoSimPanel", () => ({
+vi.mock("@/domains/race/ui/AutoSimPanel", () => ({
   AutoSimPanel: () => null,
 }));
 
-vi.mock("@/components/awards", () => ({
+vi.mock("@/domains/awards/ui", () => ({
   AwardCeremony: () => null,
 }));
 
-vi.mock("@/components/SidebarNav", () => ({
+vi.mock("@/domains/shell/ui/SidebarNav", () => ({
   SidebarNav: (props: Record<string, unknown>) =>
     createElement(
       "div",

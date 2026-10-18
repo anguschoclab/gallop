@@ -1,4 +1,4 @@
-import { TRAINING_COST_MAP, TRAINING_ENERGY_MAP } from "@/shared/constants/workoutConstants";;
+import { TRAINING_COST_MAP, TRAINING_ENERGY_MAP } from "@/shared/constants/workoutConstants";
 
 export const BASIC_TRAINING_TYPES = ["speed", "stamina", "acceleration"] as const;
 

@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector({ cashPressureHistory: {}, npcStables: [] }),
   useGameWithShallow: (selector: (s: any) => any) =>
     selector({ cashPressureHistory: {}, npcStables: [] }),
 }));
 
-vi.mock("@/components/stable/StableCompareDrawer", () => ({
+vi.mock("@/domains/stable/ui/StableCompareDrawer", () => ({
   StableCompareDrawer: ({ open }: { open: boolean }) => (
     <div data-testid="drawer">{open ? "open" : "closed"}</div>
   ),

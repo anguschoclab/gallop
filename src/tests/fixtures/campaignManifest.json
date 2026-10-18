@@ -8,7 +8,7 @@
     "impacts": 80,
     "phases": 57,
     "routes": 75,
-    "components": 460,
+    "components": 473,
     "unhandledIntents": 0,
     "unproducedIntents": 0,
     "unhandledImpacts": 0,
@@ -146,7 +146,9 @@
       "workstream": "test-harness-and-ci",
       "redGate": "testHarnessPlacement failed before hybrid discovery, redirect, Bun pin, and E2E CI changes",
       "greenGate": "bunx vitest run src/tests/architecture/testHarnessPlacement.test.ts",
-      "testFiles": ["src/tests/architecture/testHarnessPlacement.test.ts"],
+      "testFiles": [
+        "src/tests/architecture/testHarnessPlacement.test.ts"
+      ],
       "productionScopes": [
         "vitest.config.ts",
         "tsconfig.json",
@@ -189,7 +191,9 @@
         "src/tests/core/npc/facilityIntents.test.ts",
         "src/tests/core/npc/npcCycleFacilityPath.test.ts"
       ],
-      "productionScopes": ["src/domains/agents/simulation/**"]
+      "productionScopes": [
+        "src/domains/agents/simulation/**"
+      ]
     },
     {
       "workstream": "resolver-ownership",
@@ -246,7 +250,10 @@
         "src/tests/routes/rootRedirect.test.tsx",
         "src/tests/routes/startScreenSaveDetection.test.tsx"
       ],
-      "productionScopes": ["src/routes/**", "src/components/routes/**"]
+      "productionScopes": [
+        "src/routes/**",
+        "src/components/routes/**"
+      ]
     },
     {
       "workstream": "ui-honesty-and-agent-surfacing",
@@ -256,7 +263,10 @@
         "src/tests/architecture/uiHonesty.test.ts",
         "src/tests/components/analytics/RivalIntelTab.test.tsx"
       ],
-      "productionScopes": ["src/components/**", "src/routes/**"]
+      "productionScopes": [
+        "src/components/**",
+        "src/routes/**"
+      ]
     },
     {
       "workstream": "protected-artifacts-and-cleanup",
@@ -280,7 +290,11 @@
         "src/tests/core/time/checksum.test.ts",
         "src/tests/performance/simulationBenchmarks.test.ts"
       ],
-      "productionScopes": ["src/core/time/**", "src/core/race/**", "src/domains/agents/simulation/**"]
+      "productionScopes": [
+        "src/core/time/**",
+        "src/core/race/**",
+        "src/domains/agents/simulation/**"
+      ]
     },
     {
       "workstream": "canonical-claiming-lifecycle",
@@ -334,8 +348,13 @@
       "workstream": "weather-regional-fidelity",
       "redGate": "seasonalPatterns failed to find Gulfstream hurricane/rain modifiers before track-level regional lookup existed",
       "greenGate": "bunx vitest run src/tests/core/weather/seasonalPatterns.test.ts",
-      "testFiles": ["src/tests/core/weather/seasonalPatterns.test.ts"],
-      "productionScopes": ["src/core/weather/**", "src/core/data/tracksAccessor.ts"]
+      "testFiles": [
+        "src/tests/core/weather/seasonalPatterns.test.ts"
+      ],
+      "productionScopes": [
+        "src/core/weather/**",
+        "src/core/data/tracksAccessor.ts"
+      ]
     },
     {
       "workstream": "phase-descriptor-runtime-contract",
@@ -396,7 +415,9 @@
       ]
     }
   ],
-  "moveManifests": ["src/tests/fixtures/agentDomainMoveManifest.json"],
+  "moveManifests": [
+    "src/tests/fixtures/agentDomainMoveManifest.json"
+  ],
   "deletionManifest": [
     {
       "path": "src/core/ai/**",

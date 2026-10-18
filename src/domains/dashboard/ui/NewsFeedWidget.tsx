@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { useGame } from "@/platform/game/store";
 import { Activity } from "lucide-react";
 import { NewsContent } from "@/domains/narrative/ui/NewsContent";
-import { DASHBOARD_NEWS_FEED_LIMIT } from "@/shared/constants/dashboardConstants";;
+import { DASHBOARD_NEWS_FEED_LIMIT } from "@/shared/constants/dashboardConstants";
 
 export function NewsFeedWidget() {
   const log = useGame((s) => s.log);

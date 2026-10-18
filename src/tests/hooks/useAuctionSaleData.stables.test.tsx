@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector(mockState),
   useGameWithShallow: (selector: (s: any) => any) => selector(mockState),
 }));
@@ -10,7 +10,7 @@ vi.mock("@/domains/agents/simulation/npc/scouting", () => ({
   getDisplayableStats: () => ({ stats: null, overallEstimate: null }),
 }));
 
-vi.mock("@/services/auction/auctionLotFilter", () => ({
+vi.mock("@/domains/auction/application/auctionLotFilter", () => ({
   filterAndSortLots: (lots: any[]) => lots,
 }));
 

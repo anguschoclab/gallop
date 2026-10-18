@@ -1,6 +1,6 @@
 import { useGame } from "@/platform/game/store";
 import { isPlayerOwned } from "@/domains/breeding/application/breedingFacade";
-import { asHorseId } from "@/shared/types/branded";;
+import { asHorseId } from "@/shared/types/branded";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Progress } from "@/shared/ui/progress";

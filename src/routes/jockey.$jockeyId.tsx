@@ -9,7 +9,7 @@ import { BookmarkButton } from "@/domains/bookmarks/ui/BookmarkButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { PersonRaceHistoryTab } from "@/domains/person/ui/PersonRaceHistoryTab";
 import { ChevronLeft, User, History, Sparkles } from "lucide-react";
-import { formatJockeyTrait } from "@/domains/genetics/application/traitLabels";;
+import { formatJockeyTrait } from "@/domains/genetics/application/traitLabels";
 import type { JockeyTrait } from "@/domains/jockey/application/jockeyFacade";
 import {
   TRAIT_XP_UNLOCK_THRESHOLD,

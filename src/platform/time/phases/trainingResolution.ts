@@ -16,14 +16,14 @@ import type { TrainingIntent } from "@/platform/resolver/intents";
 import type { Outpost } from "@/domains/facilities/model/outpostTypes";
 import type { StaffRole, StaffMember } from "@/domains/staff/model/staffTypes";
 import { PHASE_ORDER_TRAINING_RESOLUTION } from "@/platform/time/pipelineConstants";
-import { TRAINING_COST, TRAINING_COST_MAP, TRAINING_ENERGY_MAP, TRAINING_ENERGY_REST, TRAINING_MIN_ENERGY_THRESHOLD } from "@/shared/constants/workoutConstants";;
+import { TRAINING_COST, TRAINING_COST_MAP, TRAINING_ENERGY_MAP, TRAINING_ENERGY_REST, TRAINING_MIN_ENERGY_THRESHOLD } from "@/shared/constants/workoutConstants";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import type { FitnessImpact, FatigueImpact, CashImpact } from "@/platform/resolver/impacts";
 import { createRng, hashStr } from "@/shared/common/rng";
 import { getFacilityBonus } from "@/domains/facilities/simulation";
 import { createExpense } from "@/domains/expenses/model/expenseTypes";;;
 import { generateUUID } from "@/shared/uuid/uuid";
-import { createTransaction } from "@/domains/transactions/model/transactionTypes";;
+import { createTransaction } from "@/domains/transactions/model/transactionTypes";
 import {
   getOrCreateStableAIState,
   type NpcAIManager,

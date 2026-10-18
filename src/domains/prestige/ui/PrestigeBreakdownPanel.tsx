@@ -1,7 +1,7 @@
 import { Card, CardContent } from "@/shared/ui/card";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/shared/ui/tooltip";
 import { PrestigeBadge } from "@/domains/prestige/ui/PrestigeBadge";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import {
   housePrestigeMultiplier,
   houseCommissionRate,
@@ -16,7 +16,7 @@ import {
 } from "@/domains/prestige/application/prestigeFacade";
 import type { AuctionHouse } from "@/domains/prestige/application/prestigeFacade";
 import { CONSIGNMENT_COMMISSION } from "@/domains/market/model/economicConstants";
-import { FAME_GAIN_G1_WIN } from "@/domains/prestige/model/fameConstants";;
+import { FAME_GAIN_G1_WIN } from "@/domains/prestige/model/fameConstants";
 import { cn } from "@/shared/lib/cn";
 
 /** Sample base reserve used in worked examples. */

@@ -14,7 +14,7 @@ import { GitCompare, X } from "lucide-react";
 import { useCompareStables } from "@/domains/stable/application/hooks/useCompareStables";
 import { StableCompareDrawer } from "@/domains/stable/ui/StableCompareDrawer";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 
 /**
  * Sticky bottom bar that shows the count of selected stables and opens the

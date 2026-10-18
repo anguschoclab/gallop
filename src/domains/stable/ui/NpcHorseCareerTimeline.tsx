@@ -6,7 +6,7 @@ import {
   careerStageLabel,
   type NpcCareerTimelineEvent,
 } from "@/domains/agents/application/npcFacade";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { Horse } from "@/platform/game/types";
 import { cn } from "@/shared/lib/cn";
 

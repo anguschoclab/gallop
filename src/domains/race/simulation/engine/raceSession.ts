@@ -17,7 +17,7 @@ import type { RaceSnapshot, PaceSnapshot, HorseSnapshot } from "@/domains/race/m
 import { stepRunner, computePaceContext } from "@/domains/race/simulation/engine/simulation";
 import type { Runner, PaceContext } from "@/domains/race/simulation/engine/runnerBuilder";
 import type { RunnerFactorLedger } from "@/domains/race/simulation/factorLedger";
-import { DEFAULT_DT } from "@/domains/race/model/engine/constants";;
+import { DEFAULT_DT } from "@/domains/race/model/engine/constants";
 import { SPLIT_FRACTIONS } from "@/domains/race/model/raceBroadcastConstants";
 
 export interface RaceSessionOptions {

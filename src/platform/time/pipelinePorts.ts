@@ -21,7 +21,7 @@
  *               src/core/time/phases/upkeep.ts (port consumer)
  */
 
-import { simulateRace } from "@/core/race/raceSimulationExecutor";
+import { simulateRace } from "@/domains/race/simulation/raceSimulationExecutor";
 import { generateRaceImpacts } from "@/domains/race/simulation/raceImpactGenerator";
 import { resolveClaimingResolution } from "@/domains/auction/simulation/claimingResolutionService";
 import {

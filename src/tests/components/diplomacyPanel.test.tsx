@@ -41,7 +41,7 @@ const mockStateWithHistory = {
 
 const mockState = mockStateWithHistory;
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector(mockState),
   useGameWithShallow: (selector: (s: any) => any) => selector(mockState),
 }));

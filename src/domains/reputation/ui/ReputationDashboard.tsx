@@ -7,7 +7,7 @@ import {
   formatReputationTier,
   type ManagerReputation,
 } from "@/domains/reputation/application/reputationFacade";
-import { reputationColor } from "@/shared/common/uiTokens";;
+import { reputationColor } from "@/shared/common/uiTokens";
 import { cn } from "@/shared/lib/cn";
 import { NewsContent } from "@/domains/narrative/ui/NewsContent";
 

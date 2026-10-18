@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase)
  */
 
-import { PHASE_ORDER_RACES } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_RACES } from "@/platform/time/pipelineConstants";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import type { Race } from "@/domains/race/simulation/types";
 import { generateUpcomingScheduledRaces, pruneOldRaces } from "@/domains/market/simulation/marketRefresh";

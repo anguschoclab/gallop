@@ -13,7 +13,7 @@ import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type { Horse } from "@/platform/game/types";
 import type { StableTier } from "@/domains/stable/simulation/types";
 import { isNpcOwned, getStableId } from "@/domains/horse/simulation/ownership";
-import { PHASE_ORDER_NPC_CAREER_TRACKER } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_NPC_CAREER_TRACKER } from "@/platform/time/pipelineConstants";
 import {
   isDueForOffscreenStart,
   simulateOffscreenStart,

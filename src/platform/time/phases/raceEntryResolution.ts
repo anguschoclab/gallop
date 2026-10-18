@@ -11,7 +11,7 @@
 // Race Entry Resolution Phase
 // Converts RaceEntryIntents into impacts (race entry, cash changes)
 
-import { PHASE_ORDER_RACE_ENTRY_RESOLUTION } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_RACE_ENTRY_RESOLUTION } from "@/platform/time/pipelineConstants";
 import { findBumpableEntryIndex } from "@/domains/race/simulation/entry/bumpResolver";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type { RaceEntryIntent, RaceWithdrawalIntent } from "@/platform/resolver/intents";
@@ -23,7 +23,7 @@ import type {
 } from "@/platform/resolver/impacts";
 import type { InboxImpact } from "@/platform/resolver/impacts/inboxImpacts";
 import { createTransportRequest } from "@/domains/transportation/model/transportationTypes";;;
-import { createTransaction } from "@/domains/transactions/model/transactionTypes";;
+import { createTransaction } from "@/domains/transactions/model/transactionTypes";
 import { generateUUID } from "@/shared/uuid/uuid";
 import {
   selectBestJockey,

@@ -14,9 +14,9 @@ import { EngineClient, type EngineTransport } from "@/platform/engine/client";
 import type { AdvanceCommand, EngineEvent } from "@/platform/engine/protocol";
 import { _setEngineClientForTests } from "@/platform/game/store/engineClient";
 import type { GameState } from "@/platform/game/types";
-import { DAYS_PER_WEEK, DAYS_PER_MONTH, DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";;
+import { DAYS_PER_WEEK, DAYS_PER_MONTH, DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
 
-vi.mock("@/services/storage/storageAdapter", () => ({
+vi.mock("@/platform/persistence/storage/storageAdapter", () => ({
   STORAGE_KEYS: {
     GAME_STATE: "gallop_game_state",
     GAME_STATE_FALLBACK: "gallop_game_state_fallback",
@@ -27,14 +27,14 @@ vi.mock("@/services/storage/storageAdapter", () => ({
   },
 }));
 
-vi.mock("@/services/storage/indexedDbService", () => ({
+vi.mock("@/platform/persistence/storage/indexedDbService", () => ({
   clearDatabase: vi.fn().mockResolvedValue(undefined),
   isIndexedDbAvailable: vi.fn(() => false),
   saveBuckets: vi.fn().mockResolvedValue(undefined),
   loadBuckets: vi.fn().mockResolvedValue(null),
 }));
 
-vi.mock("@/game/store/storage", async (importActual) => {
+vi.mock("@/platform/game/store/storage", async (importActual) => {
   const actual = await importActual<typeof import("@/platform/game/store/storage")>();
   return {
     ...actual,

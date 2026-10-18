@@ -11,7 +11,7 @@
 // Hall of Fame Phase
 // Inducts legendary horses into the Hall of Fame based on career achievements
 
-import { PHASE_ORDER_HALL_OF_FAME } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_HALL_OF_FAME } from "@/platform/time/pipelineConstants";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";

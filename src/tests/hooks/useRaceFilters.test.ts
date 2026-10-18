@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useRaceFilters, type RaceFilters } from "@/domains/race/application/hooks/useRaceFilters";
-import { DEFAULT_FIELD_SIZE } from "@/domains/race/model/raceClassificationConstants";;
+import { DEFAULT_FIELD_SIZE } from "@/domains/race/model/raceClassificationConstants";
 import type { Race, Horse } from "@/platform/game/types";
 import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 

@@ -5,7 +5,7 @@ const { saveGameStateToIDBMock, savedStates } = vi.hoisted(() => ({
   savedStates: [] as any[],
 }));
 
-vi.mock("@/services/storage/storageAdapter", () => ({
+vi.mock("@/platform/persistence/storage/storageAdapter", () => ({
   STORAGE_KEYS: {
     GAME_STATE: "gallop_game_state",
     GAME_STATE_FALLBACK: "gallop_game_state_fallback",
@@ -16,29 +16,29 @@ vi.mock("@/services/storage/storageAdapter", () => ({
   },
 }));
 
-vi.mock("@/services/storage/indexedDbService", () => ({
+vi.mock("@/platform/persistence/storage/indexedDbService", () => ({
   clearDatabase: vi.fn().mockResolvedValue(undefined),
   isIndexedDbAvailable: vi.fn(() => false),
   saveBuckets: vi.fn().mockResolvedValue(undefined),
   loadBuckets: vi.fn().mockResolvedValue(null),
 }));
 
-vi.mock("@/core/persistence/npcCompression", () => ({
+vi.mock("@/platform/persistence/npcCompression", () => ({
   splitHorsesForPersistence: vi.fn(() => ({ playerHorses: {}, npcSummaries: [] })),
   mergeHorses: vi.fn((a: any, b: any) => ({ ...a, ...b })),
   regenerateNpcHorses: vi.fn(() => ({})),
 }));
 
-vi.mock("@/core/persistence/pedigreePrune", () => ({
+vi.mock("@/platform/persistence/pedigreePrune", () => ({
   prunePedigree: vi.fn((p: any) => p),
 }));
 
-vi.mock("@/services/storage/schemas", () => ({
+vi.mock("@/platform/persistence/storage/schemas", () => ({
   safeParseJson: vi.fn(),
   bucketPayloadSchema: {},
 }));
 
-vi.mock("@/game/store/storage", () => {
+vi.mock("@/platform/game/store/storage", () => {
   let _saveExists = false;
   let _hydrationComplete = false;
   let _armed = false;

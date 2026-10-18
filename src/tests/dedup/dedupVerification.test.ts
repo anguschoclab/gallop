@@ -21,7 +21,7 @@ import { describe, it, expect } from "vitest";
 import { formatCurrency as formatCurrencyFinancial } from "@/domains/financial/model/financialTypes";
 import { formatCurrency as formatCurrencyCommon } from "@/shared/common/formatting";
 import { defaultMaxTime as defaultMaxTimeEngine } from "@/domains/race/model/engine/constants";
-import { defaultMaxTime as defaultMaxTimeConstants } from "@/domains/race/model/engine/constants";;
+import { defaultMaxTime as defaultMaxTimeConstants } from "@/domains/race/model/engine/constants";
 import { distanceBucket as distanceBucketBeyer } from "@/domains/race/simulation/beyer";
 import { classifyDistanceBucket as distanceBucketPace } from "@/domains/horse/simulation/paceTendency";
 import { jockeyGradeColorClass as gradeColorJockey } from "@/domains/race/simulation/jockeyReport";

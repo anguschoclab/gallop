@@ -1,4 +1,4 @@
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 /**
  * AuctionControls.tsx - Bidding and management controls
  *
@@ -7,7 +7,7 @@ import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
 
 import type { Ref } from "react";
 import { Button } from "@/shared/ui/button";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { Gavel, Pause, Play, FastForward, X } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
 import { nextBidAmount } from "@/domains/auction/application/auctionFacade";

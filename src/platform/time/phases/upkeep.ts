@@ -31,7 +31,7 @@ import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/domains/agents/model/aiConstants";
 import { DAYS_PER_WEEK } from "@/domains/calendar/model/calendarConstants";
 import { NEWS_FLAVOR_DAILY_PROBABILITY } from "@/domains/inbox/model/newsConstants";
 import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
-import { PHASE_ORDER_UPKEEP } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_UPKEEP } from "@/platform/time/pipelineConstants";
 
 /**
  * Phase: Upkeep

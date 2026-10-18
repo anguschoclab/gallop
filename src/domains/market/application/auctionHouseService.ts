@@ -11,7 +11,7 @@
  * Related files: src/components/market/AuctionHouseDesk.tsx (consumer)
  */
 
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/shared/common/formatting";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { createDefaultExchangeState } from "@/domains/market/simulation/exchange";
 import { AUCTION_HOUSES, type AuctionHouse } from "@/domains/prestige/simulation/auctionHouses";

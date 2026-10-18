@@ -3,7 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Activity, AlertCircle } from "lucide-react";
 import { useVetReport, type VetSortBy } from "@/domains/health/application/hooks/useVetReport";
-import { formatRecoveryDays } from "@/domains/health/model/injuryDisplay";;
+import { formatRecoveryDays } from "@/domains/health/model/injuryDisplay";
 import { cn } from "@/shared/lib/cn";
 
 const STATUS_COLORS: Record<string, string> = {

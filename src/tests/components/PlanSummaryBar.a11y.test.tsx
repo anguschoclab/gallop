@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { PlanSummaryBar } from "@/domains/breeding/ui/PlanSummaryBar";
 import type { SavedMatingPlan } from "@/platform/game/store/state/breedingState";
 
-vi.mock("@/components/ui/select", () => ({
+vi.mock("@/shared/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (
     <select
       data-testid="plan-select"
@@ -19,7 +19,7 @@ vi.mock("@/components/ui/select", () => ({
   SelectValue: () => null,
 }));
 
-vi.mock("@/components/ui/DisabledTooltipWrapper", () => ({
+vi.mock("@/shared/ui/DisabledTooltipWrapper", () => ({
   DisabledTooltipWrapper: ({ children }: any) => <>{children}</>,
 }));
 

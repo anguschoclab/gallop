@@ -9,9 +9,9 @@ import { Sun, Cloud, CloudDrizzle, CloudRain, CloudLightning, Snowflake, Wind } 
 import { Badge } from "@/shared/ui/badge";
 import { JargonTooltip } from "@/domains/horse/ui/JargonTooltip";
 import { useGame } from "@/platform/game/store";
-import type { SimWeatherPattern, WeatherState } from "@/domains/weather/simulation";;
+import type { SimWeatherPattern, WeatherState } from "@/domains/weather/simulation";
 import type { TrackCondition } from "@/platform/game/types";
-import { WEATHER_FORECAST_STRIP_DAYS } from "@/shared/constants/dashboardConstants";;
+import { WEATHER_FORECAST_STRIP_DAYS } from "@/shared/constants/dashboardConstants";
 
 const ICONS: Record<SimWeatherPattern, typeof Sun> = {
   clear: Sun,

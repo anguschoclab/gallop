@@ -12,7 +12,7 @@ import { isMaleHorse, isFemaleHorse } from "@/domains/horse/simulation/gender";
 import type { Horse, Stable } from "@/platform/game/types";
 import type { AuctionTickEvent } from "@/domains/auction/simulation/runner";
 import type { Rng } from "@/shared/common/rng";
-import { JOCKEY_FAME_HOUSEHOLD_NAME, JOCKEY_FAME_TALKED_ABOUT } from "@/domains/jockey/model/jockeyConstants";;
+import { JOCKEY_FAME_HOUSEHOLD_NAME, JOCKEY_FAME_TALKED_ABOUT } from "@/domains/jockey/model/jockeyConstants";
 
 // ---------------------------------------------------------------------------
 // Public API

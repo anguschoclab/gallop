@@ -4,7 +4,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import { RealWorldBenchmarks } from "@/domains/history/ui/RealWorldBenchmarks";
 import type { TrackRecord } from "@/domains/history/model/historyTypes";
 
-vi.mock("@/components/history/HorseBenchmarkDialog", () => ({
+vi.mock("@/domains/history/ui/HorseBenchmarkDialog", () => ({
   HorseBenchmarkDialog: ({
     horseName,
     open,

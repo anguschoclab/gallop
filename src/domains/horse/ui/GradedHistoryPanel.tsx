@@ -2,10 +2,10 @@ import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { JargonTooltip } from "@/domains/horse/ui/JargonTooltip";
 import { Badge } from "@/shared/ui/badge";
-import { gradeColor } from "@/shared/common/uiTokens";;
+import { gradeColor } from "@/shared/common/uiTokens";
 import { GradedStatsChart } from "@/domains/race/ui/GradedStatsChart";
 import { GRADED_RACES, getRaceCountry } from "@/shared/data/gradedRaces";
-import { getCountryFlag } from "@/shared/common/countryFlag";;
+import { getCountryFlag } from "@/shared/common/countryFlag";
 import { VisualTrophy, TrophyShelf } from "@/domains/awards/ui/VisualTrophy";
 import { RaceHistoryGroup } from "@/domains/horse/ui/RaceHistoryGroup";
 

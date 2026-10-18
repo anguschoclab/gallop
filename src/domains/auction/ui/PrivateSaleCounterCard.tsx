@@ -12,7 +12,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/shared/ui/alert-dialog";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { CashPressureBadge } from "@/domains/stable/ui/CashPressureBadge";
 import { toast } from "sonner";
 import type { Horse, Stable, PrivateSaleOffer } from "@/platform/game/types";

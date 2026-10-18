@@ -1,8 +1,8 @@
 import { Trash2, Clock, ChevronRight } from "lucide-react";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { cn } from "@/shared/lib/cn";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/shared/ui/tooltip";
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import type { SaveSlotMetadata } from "@/platform/persistence/storage/saveManager";
 
 export interface LedgerEntryProps {

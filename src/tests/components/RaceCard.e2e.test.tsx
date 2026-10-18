@@ -22,7 +22,7 @@ let _mockWeatherByTrack: Record<string, any[]> = {};
 let _mockForecast: Record<string, any[]> = {};
 let _mockHorses: any[] = [];
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => {
     const mockState = {
       weather: {

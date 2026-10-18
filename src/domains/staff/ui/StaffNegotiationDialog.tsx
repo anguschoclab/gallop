@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/shared/ui/dialog";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/domains/staff/application/staffFacade";
 import type { StaffMember } from "@/domains/staff/application/staffFacade";
 import { useStaffNegotiation } from "@/domains/staff/application/hooks/useStaffNegotiation";

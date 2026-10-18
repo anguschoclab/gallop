@@ -4,7 +4,7 @@ import { createElement, type ReactNode } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/platform/game/store/state";
 import { AlmanacNewsFeed } from "@/domains/history/ui/AlmanacNewsFeed";
-import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 import type { TrackRecord, SeasonRecord } from "@/domains/history/model/historyTypes";
 import type { Transaction } from "@/domains/transactions/model/transactionTypes";
 

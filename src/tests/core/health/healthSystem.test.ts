@@ -6,7 +6,7 @@ import type { Rng } from "@/shared/common/rng";
 import type { Horse } from "@/platform/game/types";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 
-vi.mock("@/core/uuid", () => ({
+vi.mock("@/shared/uuid/uuid", () => ({
   generateUUID: () => "test-uuid",
 }));
 

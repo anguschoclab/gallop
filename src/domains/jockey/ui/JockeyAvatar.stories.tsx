@@ -5,7 +5,7 @@ import {
   JOCKEY_AVATAR_ASPECT,
   type JockeyAvatarSize,
 } from "@/domains/jockey/ui/JockeyAvatar";
-import { asJockeyId } from "@/shared/types/branded";;
+import { asJockeyId } from "@/shared/types/branded";
 
 const stubJockey = {
   id: asJockeyId("test-jockey-1"),

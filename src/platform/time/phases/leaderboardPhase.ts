@@ -12,12 +12,12 @@ import type { PipelineContext } from "@/platform/time/pipeline";
 import { computeAllLeaderboards } from "@/domains/breeding/simulation/leaderboardService";
 import { computeDamsireLeaderboard } from "@/domains/breeding/simulation/damsireLeaderboard";
 import { computeBlueHenLeaderboard } from "@/domains/breeding/simulation/blueHenLeaderboard";
-import { PHASE_ORDER_LEADERBOARD } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_LEADERBOARD } from "@/platform/time/pipelineConstants";
 import { computeProgenyLeaderboards } from "@/domains/breeding/simulation/progenyLeaderboards";
 import { identifyFounders, computeFounderInfluence } from "@/domains/history/simulation/lineageCrawler";
 import type { SireTrendData } from "@/domains/breeding/model/leaderboardTypes";
 import type { FounderRecord } from "@/domains/history/model/historyTypes";
-import { SEASON_DAYS } from "@/domains/calendar/model/calendarConstants";;
+import { SEASON_DAYS } from "@/domains/calendar/model/calendarConstants";
 
 /**
  * Phase: Leaderboard Update

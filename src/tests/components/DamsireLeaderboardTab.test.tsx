@@ -4,7 +4,7 @@ import { seedStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/platform/game/store/state";
 import { DamsireLeaderboardTab } from "@/domains/breeding/ui/DamsireLeaderboardTab";
 
-vi.mock("@/components/ui/select", () => ({
+vi.mock("@/shared/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (
     <select data-testid="select" value={value} onChange={(e) => onValueChange?.(e.target.value)}>
       {children}
@@ -16,7 +16,7 @@ vi.mock("@/components/ui/select", () => ({
   SelectValue: () => null,
 }));
 
-vi.mock("@/components/ui/input", () => ({
+vi.mock("@/shared/ui/input", () => ({
   Input: (props: any) => <input data-testid="search-input" {...props} />,
 }));
 

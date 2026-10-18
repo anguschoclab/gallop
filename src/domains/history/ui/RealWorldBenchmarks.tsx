@@ -5,7 +5,10 @@ import { Badge } from "@/shared/ui/badge";
 import { Input } from "@/shared/ui/input";
 import { RaceTimeDisplay } from "@/domains/race/ui/RaceTimeDisplay";
 import { HorseBenchmarkDialog } from "@/domains/history/ui/HorseBenchmarkDialog";
-import { compareToRealWorld, type BenchmarkComparison } from "@/domains/history/application/historyFacade";
+import {
+  compareToRealWorld,
+  type BenchmarkComparison,
+} from "@/domains/history/application/historyFacade";
 import {
   type RealWorldRecordSource,
   type TripCategory,

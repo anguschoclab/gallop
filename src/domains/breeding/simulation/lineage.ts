@@ -10,7 +10,7 @@
  */
 
 import type { Horse, GameState } from "@/platform/game/types";
-import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
 
 // Memoization cache for lineage lookups

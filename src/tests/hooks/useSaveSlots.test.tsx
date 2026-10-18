@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { renderHook, act, waitFor } from "@testing-library/react";
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: vi.fn(),
 }));
 
-vi.mock("@/services/storage/saveManager", () => ({
+vi.mock("@/platform/persistence/storage/saveManager", () => ({
   getSaveSlots: vi.fn().mockResolvedValue([]),
   deleteSaveSlot: vi.fn().mockResolvedValue(undefined),
   saveToSlot: vi.fn().mockResolvedValue(undefined),

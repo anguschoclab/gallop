@@ -6,15 +6,15 @@ import { calculateClassBonus } from "@/shared/common/classBonus";
 import { expectedBeyer } from "@/domains/race/simulation/beyer";
 import { getCourseForRace } from "@/shared/data/accessors/tracksAccessor";
 
-vi.mock("@/core/common/classBonus", () => ({
+vi.mock("@/shared/common/classBonus", () => ({
   calculateClassBonus: vi.fn(() => 5),
 }));
 
-vi.mock("@/core/race/beyer", () => ({
+vi.mock("@/domains/race/simulation/beyer", () => ({
   expectedBeyer: vi.fn(() => 100),
 }));
 
-vi.mock("@/core/data/tracksAccessor", () => ({
+vi.mock("@/shared/data/accessors/tracksAccessor", () => ({
   getCourseForRace: vi.fn(() => ({ name: "Mock Track" })),
 }));
 

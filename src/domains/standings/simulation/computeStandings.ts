@@ -1,6 +1,6 @@
 import type { GameState } from "@/platform/game/types";
 import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
-import { STANDINGS_RECENT_RESULTS_LIMIT } from "@/shared/constants/dashboardConstants";;
+import { STANDINGS_RECENT_RESULTS_LIMIT } from "@/shared/constants/dashboardConstants";
 
 const PLAYER_ID = "__player__";
 

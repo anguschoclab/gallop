@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/services/storage/indexedDbService", () => ({
+vi.mock("@/platform/persistence/storage/indexedDbService", () => ({
   clearDatabase: vi.fn().mockResolvedValue(undefined),
   isIndexedDbAvailable: vi.fn(() => false),
   saveBuckets: vi.fn().mockResolvedValue(undefined),
   loadBuckets: vi.fn().mockResolvedValue(null),
 }));
 
-vi.mock("@/game/store/initialization", () => ({
+vi.mock("@/platform/game/store/initialization", () => ({
   createInitialState: vi.fn((options) => ({
     day: 1,
     cash: 1000,
@@ -17,7 +17,7 @@ vi.mock("@/game/store/initialization", () => ({
   })),
 }));
 
-vi.mock("@/game/store/storage", () => {
+vi.mock("@/platform/game/store/storage", () => {
   let _saveExistsValue = false;
   let _persistenceEnabledValue = false;
   const saveMock = vi.fn().mockResolvedValue(undefined);
@@ -64,8 +64,8 @@ vi.mock("@/game/store/storage", () => {
   };
 });
 
-vi.mock("@/workers/engine.worker", () => ({}));
-vi.mock("@/workers/initialization.worker", () => ({}));
+vi.mock("@/platform/workers/engine.worker", () => ({}));
+vi.mock("@/platform/workers/initialization.worker", () => ({}));
 
 vi.mock("comlink", () => ({
   wrap: vi.fn(() => ({})),

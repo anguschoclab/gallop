@@ -4,7 +4,7 @@ import {
   sanitizeAndRankResults,
   detectPhotoFinish,
 } from "@/domains/race/simulation/resolution";
-import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
 
 describe("resolution", () => {
   describe("computePayoutSplits", () => {

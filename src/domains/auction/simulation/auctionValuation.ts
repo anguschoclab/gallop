@@ -4,7 +4,7 @@ import { calculateNpcHorseValue } from "@/domains/horse/simulation/pricing";
 import { PERSONALITY_CONFIG } from "@/domains/stable/simulation/stableConfig";
 import { pedigreeMultiplier } from "@/domains/breeding/simulation/pedigreePricing";
 import { AUCTION_AGGRESSIVE_PREMIUM, AUCTION_2YO_TRAINING_PREMIUM, AUCTION_CONSERVATIVE_DISCOUNT, AUCTION_YEARLING_PREMIUM, AUCTION_WEANLING_PREMIUM, AUCTION_RACING_AGE_DISCOUNT, AUCTION_WEANLING_DISCOUNT, AUCTION_BROODMARE_DISCOUNT, AUCTION_FILLY_PREMIUM, AUCTION_BROODMARE_PREMIUM, AUCTION_RACING_AGE_PREMIUM } from "@/domains/auction/model/auctionConstants";
-import { FAN_VALUATION_DIVISOR, FAN_AUCTION_RACING_AGE_THRESHOLD } from "@/domains/prestige/model/fameConstants";;
+import { FAN_VALUATION_DIVISOR, FAN_AUCTION_RACING_AGE_THRESHOLD } from "@/domains/prestige/model/fameConstants";
 
 export interface ValuationContext {
   horse: Horse;

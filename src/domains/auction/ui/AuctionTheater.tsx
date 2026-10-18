@@ -10,7 +10,7 @@ import { useEffect, useRef } from "react";
 import { useGame } from "@/platform/game/store";
 import { useRouter, useNavigate } from "@tanstack/react-router";
 import { Card, CardContent } from "@/shared/ui/card";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { useScoreboard } from "@/domains/auction/application/hooks/useScoreboard";
 import { BidHistoryPanel } from "@/domains/auction/ui/BidHistoryPanel";
 import { WinOverlay } from "@/domains/auction/ui/WinOverlay";

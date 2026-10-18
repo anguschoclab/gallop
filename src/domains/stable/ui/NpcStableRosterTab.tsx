@@ -10,7 +10,7 @@ import { HorseCard } from "@/domains/horse/ui/HorseCard";
 import { PrivateSaleCounterCard } from "@/domains/auction/ui/PrivateSaleCounterCard";
 import { overall } from "@/domains/horse/ui/HorseBits";
 import { calculateScoutCost } from "@/domains/agents/application/npcFacade";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { evaluateHorseAttachment } from "@/domains/horse/application/horseFacade";
 import { toast } from "sonner";
 import type { Horse, PrivateSaleOffer } from "@/platform/game/types";

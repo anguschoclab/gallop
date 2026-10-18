@@ -9,7 +9,7 @@ import { useMemo } from "react";
 import { AreaTrend, MiniBar, chartColors } from "@/shared/ui/charts";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { housePriceSeries } from "@/domains/market/application/marketFacade";
 import type { ExchangeTrade } from "@/domains/market/application/marketFacade";
 import { Activity, TrendingDown, TrendingUp } from "lucide-react";

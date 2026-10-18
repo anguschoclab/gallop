@@ -17,7 +17,7 @@ import {
   FACILITY_ENABLED_WORKOUTS,
 } from "@/domains/facilities/model/facilityTypes";
 import { TRAINING_FACILITY_REQUIREMENTS } from "@/shared/constants/workoutConstants";
-import { FACILITY_UPGRADE_BASE_COST, FACILITY_UPGRADE_MULTIPLIER } from "@/domains/market/model/economicConstants";;
+import { FACILITY_UPGRADE_BASE_COST, FACILITY_UPGRADE_MULTIPLIER } from "@/domains/market/model/economicConstants";
 
 /**
  * Create a default facility at a given level.

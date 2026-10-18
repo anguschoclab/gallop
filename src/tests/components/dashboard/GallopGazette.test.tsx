@@ -2,11 +2,11 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { GallopGazette } from "@/domains/dashboard/ui/GallopGazette";
-import type { NewsItem, NewsImportance } from "@/domains/narrative/model/newsTypes";;
+import type { NewsItem, NewsImportance } from "@/domains/narrative/model/newsTypes";
 
 let mockNews: NewsItem[] = [];
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector({ day: 50, news: mockNews }),
 }));
 
@@ -15,7 +15,7 @@ vi.mock("@tanstack/react-router", () => ({
     createElement("a", { to }, children),
 }));
 
-vi.mock("@/components/narrative/NewsContent", () => ({
+vi.mock("@/domains/narrative/ui/NewsContent", () => ({
   NewsContent: ({ text }: { text: string }) => createElement("span", null, text),
 }));
 

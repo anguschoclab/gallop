@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase), @/core/resolver/handlers/* (applies impacts)
  */
 
-import { PHASE_ORDER_PREGNANCY } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_PREGNANCY } from "@/platform/time/pipelineConstants";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import type { Horse, Pregnancy, Stable } from "@/platform/game/types";
 import { type PregnancyResult, resolvePregnancies } from "@/domains/breeding/simulation/pregnancy";

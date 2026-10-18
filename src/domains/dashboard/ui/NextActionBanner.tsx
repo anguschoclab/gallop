@@ -11,7 +11,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { useRef, useEffect, useCallback } from "react";
-import type { NextAction, NextActionKind } from "@/domains/dashboard/simulation/nextAction";;
+import type { NextAction, NextActionKind } from "@/domains/dashboard/simulation/nextAction";
 import { trackEvent } from "@/domains/analytics/application/tracker";
 
 const ICONS: Record<NextActionKind, LucideIcon> = {

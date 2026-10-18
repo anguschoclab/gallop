@@ -9,7 +9,7 @@ import type { Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { beyerFigure } from "@/domains/race/simulation/beyer";
 import { getPeakingBeyerMultiplier } from "@/domains/health/simulation/banister";
-import { STAMINA_DRAIN_DISTANCE_DIVISOR, STAMINA_DRAIN_BEYER_DIVISOR, STAMINA_DRAIN_MAX } from "@/domains/race/model/raceSimulationConstants";;
+import { STAMINA_DRAIN_DISTANCE_DIVISOR, STAMINA_DRAIN_BEYER_DIVISOR, STAMINA_DRAIN_MAX } from "@/domains/race/model/raceSimulationConstants";
 import {
   detectInbreedingPattern,
   inbreedingPerformanceDampener,

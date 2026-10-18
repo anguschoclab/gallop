@@ -8,7 +8,7 @@
  */
 
 import type { StablePersonality } from "@/platform/game/types";
-import tuningFile from "@/shared/data/syndicationTuning";
+import tuningFile from "@/shared/data/syndicationTuning.json";
 
 export interface SyndicationTuningEntry {
   stakeCapMultiplier?: number;

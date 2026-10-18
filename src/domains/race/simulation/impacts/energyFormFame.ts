@@ -8,7 +8,7 @@ import type { EnergyImpact, FormImpact, FameImpact } from "@/platform/resolver/i
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import type { Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
-import { RACE_ENERGY_IMPACT } from "@/domains/race/model/raceSimulationConstants";;
+import { RACE_ENERGY_IMPACT } from "@/domains/race/model/raceSimulationConstants";
 import type { Horse } from "@/platform/game/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 

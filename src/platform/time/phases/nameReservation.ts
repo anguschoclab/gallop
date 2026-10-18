@@ -8,7 +8,7 @@
  * Related files: ../pipeline.ts (uses phase), ../phases/index.ts (phase registration)
  */
 
-import { PHASE_ORDER_NAME_RESERVATION } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_NAME_RESERVATION } from "@/platform/time/pipelineConstants";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import { cleanupExpiredReservations } from "@/domains/horse/simulation/naming/reservedNames";
 

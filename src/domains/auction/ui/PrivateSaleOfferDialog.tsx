@@ -10,7 +10,7 @@ import {
   DialogFooter,
 } from "@/shared/ui/dialog";
 import { toast } from "sonner";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { calculateLotValuation } from "@/domains/auction/application/auctionFacade";
 import { Badge } from "@/shared/ui/badge";
 import {

@@ -8,7 +8,7 @@
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Trophy } from "lucide-react";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { resolveSaleHouse } from "@/domains/prestige/application/prestigeFacade";
 import { SalePrestigeBreakdown } from "@/domains/prestige/ui/PrestigeBreakdownPanel";
 import type { useScoreboard } from "@/domains/auction/application/hooks/useScoreboard";

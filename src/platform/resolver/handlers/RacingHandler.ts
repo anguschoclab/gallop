@@ -35,7 +35,7 @@ import { awardTraitXp, checkTraitUnlock, checkTraitAtrophy } from "@/domains/joc
 import type { JockeyTrait } from "@/domains/jockey/model/types";
 import { isPlayerOwned, makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";
-import { createTransaction } from "@/domains/transactions/model/transactionTypes";;
+import { createTransaction } from "@/domains/transactions/model/transactionTypes";
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   race_entry: (draft, impact, lookupMaps) => {

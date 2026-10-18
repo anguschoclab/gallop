@@ -1,4 +1,4 @@
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import React, { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
@@ -8,7 +8,7 @@ import { OUTPOST_CONSTANTS } from "@/domains/facilities/application/facilitiesFa
 import { FACILITY_NAMES, facilityLevelToTierLabel } from "@/domains/facilities/application/facilitiesFacade";
 import { MapPin, Users, Globe, Hammer, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
 
 export function ImperialOutpostManager() {

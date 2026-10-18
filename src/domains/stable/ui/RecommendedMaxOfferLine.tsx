@@ -10,7 +10,7 @@
  */
 
 import { recommendedMaxOffer } from "@/domains/stable/application/stableFacade";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { cn } from "@/shared/lib/cn";
 import type { Stable } from "@/platform/game/types";
 

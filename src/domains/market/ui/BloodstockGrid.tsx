@@ -6,7 +6,7 @@ import { BookmarkButton } from "@/domains/bookmarks/ui/BookmarkButton";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { HorseStats, overall } from "@/domains/horse/ui/HorseBits";
 import { CareerValuationBreakdown } from "@/domains/horse/ui/CareerValuationBreakdown";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { horseMarketValue, horseCareerValuation } from "@/domains/horse/application/horseFacade";
 import { useGameWithShallow } from "@/platform/game/store";
 import { SilkDot } from "@/domains/shell/ui/SilkDot";

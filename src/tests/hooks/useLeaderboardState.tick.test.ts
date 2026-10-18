@@ -69,7 +69,7 @@ const LIVE_UPDATE_OVERTAKE_B = 400;
 
 // ─── Mock ───────────────────────────────────────────────────────────────────
 
-vi.mock("@/components/race/raceVisualHelpers", () => ({
+vi.mock("@/domains/race/application/raceVisualHelpers", () => ({
   projectedBeyer: (
     runner: { velocity: number },
     _dist: number,

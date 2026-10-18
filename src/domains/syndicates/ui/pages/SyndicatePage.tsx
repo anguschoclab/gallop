@@ -16,7 +16,7 @@ import { BackLink } from "@/shared/ui/charts/BackLink";
 import { ShareActivityFeed } from "@/domains/market/ui/ShareActivityFeed";
 import { NpcSyndicateIntentPanel } from "@/domains/market/ui/NpcSyndicateIntentPanel";
 import { evaluateCounteroffer } from "@/domains/agents/application/aiFacade";
-import { asPlayerOwnerId, asHorseId } from "@/shared/types/branded";;
+import { asPlayerOwnerId, asHorseId } from "@/shared/types/branded";
 
 function SyndicatePage() {
   const { syndicateId } = useParams({ from: "/syndicate/$syndicateId" });

@@ -13,7 +13,7 @@
 
 import type { Horse, HorseStats, ScoutReport, Stable, Rng } from "@/platform/game/types";
 import { calculateOverallRating } from "@/domains/horse/simulation/stats";
-import { FAME_LOW_THRESHOLD } from "@/domains/prestige/model/fameConstants";;
+import { FAME_LOW_THRESHOLD } from "@/domains/prestige/model/fameConstants";
 import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
 
 // Scouting costs

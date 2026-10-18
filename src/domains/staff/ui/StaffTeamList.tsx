@@ -2,11 +2,11 @@ import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/domains/staff/application/staffFacade";
 import { cn } from "@/shared/lib/cn";
 import { Briefcase, ShieldCheck, Trophy } from "lucide-react";
-import { formatStaffTrait } from "@/domains/genetics/application/traitLabels";;
+import { formatStaffTrait } from "@/domains/genetics/application/traitLabels";
 
 interface StaffMember {
   id: string;

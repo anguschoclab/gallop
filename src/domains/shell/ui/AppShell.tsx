@@ -13,7 +13,7 @@ import { useSkipToNext } from "@/platform/game/hooks/useSkipToNext";
 import { useAutoResumeAdvance } from "@/platform/game/hooks/useAutoResumeAdvance";
 import { useAwardCeremony } from "@/domains/awards/application/hooks/useAwardCeremony";
 import { useUnreadCount } from "@/domains/inbox/application/hooks/useInbox";
-import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/domains/calendar/model/calendarConstants";;
+import { DAYS_PER_WEEK, DAYS_PER_MONTH } from "@/domains/calendar/model/calendarConstants";
 
 export function AppShell() {
   useAutoSave();

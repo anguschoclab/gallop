@@ -1,7 +1,7 @@
 import { Button } from "@/shared/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
-import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import { useNewGameWizard, type Step } from "@/domains/onboarding/application/useNewGameWizard";
 import { StepIdentity } from "@/domains/onboarding/ui/steps/StepIdentity";
 import { StepSilks } from "@/domains/onboarding/ui/steps/StepSilks";

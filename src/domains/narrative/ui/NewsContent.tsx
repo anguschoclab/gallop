@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "@tanstack/react-router";
-import type { EntityLink } from "@/domains/narrative/model/newsTypes";;
+import type { EntityLink } from "@/domains/narrative/model/newsTypes";
 import { useEntityLinks } from "@/platform/game/hooks/useEntityLinks";
 import { cn } from "@/shared/lib/cn";
 

@@ -14,7 +14,7 @@ import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { useGame } from "@/platform/game/store";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import {
   DEFAULT_STABLE_GOALS,
   goalProgress,

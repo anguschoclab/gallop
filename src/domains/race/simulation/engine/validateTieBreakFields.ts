@@ -1,5 +1,5 @@
 import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
-import { MIN_GATE } from "@/domains/race/model/gateConstants";;
+import { MIN_GATE } from "@/domains/race/model/gateConstants";
 
 /** Finish time must be strictly positive — a zero or negative time is invalid. */
 const MIN_FINISH_TIME = 0;

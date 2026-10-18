@@ -3,7 +3,7 @@ import { Badge } from "@/shared/ui/badge";
 import { SilkDot } from "@/domains/shell/ui/SilkDot";
 import { Link } from "@tanstack/react-router";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/shared/ui/collapsible";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import { cn } from "@/shared/lib/cn";
 import { ChevronDown, Trophy } from "lucide-react";
 import { useState } from "react";

@@ -2,8 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { useGame } from "@/platform/game/store";
 import { usePregnancies } from "@/platform/game/hooks/useBreedingState";
 import { isPlayerOwned } from "@/domains/horse/application/horseFacade";
-import { asPlayerOwnerId } from "@/shared/types/branded";;
-import { formatCurrency } from "@/shared/common/formatting";;
+import { asPlayerOwnerId } from "@/shared/types/branded";
+import { formatCurrency } from "@/shared/common/formatting";
 import { Activity, Heart, Briefcase, Zap } from "lucide-react";
 
 export function OperationsTicker() {

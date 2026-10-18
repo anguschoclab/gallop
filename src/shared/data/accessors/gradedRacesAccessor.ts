@@ -17,7 +17,7 @@ import {
   getRaceCountry,
   getTrackContinent,
   getDefaultFieldSize,
-} from "@/data/gradedRaces";
+} from "@/shared/data/gradedRaces";
 import type { GradedRace, Grade, Continent } from "@/shared/data/gradedRaces";
 
 export type { GradedRace, Grade, Continent };

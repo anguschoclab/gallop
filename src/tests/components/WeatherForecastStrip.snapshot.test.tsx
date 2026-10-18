@@ -22,7 +22,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 let _mockForecast: any[] = [];
 let _mockCurrent: any = undefined;
 
-vi.mock("@/game/store", () => {
+vi.mock("@/platform/game/store", () => {
   return {
     useGame: (selector: (s: any) => any) => {
       const mockState = {

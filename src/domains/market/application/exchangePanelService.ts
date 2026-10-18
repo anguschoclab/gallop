@@ -10,7 +10,7 @@
  * Related files: src/components/market/ExchangePanel.tsx (consumer)
  */
 
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/shared/common/formatting";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import {
   buildMarketDepth,

@@ -14,7 +14,7 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/shared/ui
 import { RaceVerdictBar } from "@/domains/race/ui/RaceVerdictBar";
 import { RaceTimeDisplay } from "@/domains/race/ui/RaceTimeDisplay";
 import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
-import { MOOD_FACE_RESULT_OVERLAY_SIZE, MOOD_TOOLTIP_OVERLAY_CLASS } from "@/shared/constants/runnerConditionThresholds";;
+import { MOOD_FACE_RESULT_OVERLAY_SIZE, MOOD_TOOLTIP_OVERLAY_CLASS } from "@/shared/constants/runnerConditionThresholds";
 import { Trophy, ChevronRight, ChevronDown } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
 import { useGame } from "@/platform/game/store";

@@ -11,7 +11,7 @@
 import type { PipelineContext } from "@/platform/time/pipeline";
 import { runNpcCycle } from "@/domains/agents/simulation/npc/npcCycle";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
-import { PHASE_ORDER_NPC_CYCLE } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_NPC_CYCLE } from "@/platform/time/pipelineConstants";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import type {
   NewsImpact,

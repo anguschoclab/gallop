@@ -24,7 +24,7 @@ import {
   SPURT_BUILDUP_END_M,
   SPURT_BUILDUP_PEAK,
 } from "@/domains/race/simulation/engine/runningStyleProfiles";
-import { DECEL_FACTOR, NOISE_BIAS, NOISE_FATIGUE_SCALE, NOISE_BASE_AMPLITUDE } from "@/domains/race/model/engine/constants";;
+import { DECEL_FACTOR, NOISE_BIAS, NOISE_FATIGUE_SCALE, NOISE_BASE_AMPLITUDE } from "@/domains/race/model/engine/constants";
 import { calculateTargetLane, updateLanePosition } from "@/domains/race/simulation/engine/lateralMovement";
 import { getSectionAndProgress } from "@/domains/race/simulation/engine/trackGeometry";
 import { calculateTrackGeometryModifiers } from "@/domains/race/simulation/engine/trackGeometryModifiers";

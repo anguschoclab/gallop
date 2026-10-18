@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { AreaTrend } from "@/shared/ui/charts";
 
-vi.mock("@/components/charts", () => ({
+vi.mock("@/shared/ui/charts", () => ({
   AreaTrend: vi.fn(() => null),
   formatCurrencyCompact: (n: number) => `$${n.toLocaleString()}`,
 }));

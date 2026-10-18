@@ -16,7 +16,7 @@ import {
   formatDay,
 } from "@/shared/ui/charts";
 import { StatCard } from "@/shared/ui/common/StatCard";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import {
   cumulativeEarnings,
   playerRaceWinsSummary,

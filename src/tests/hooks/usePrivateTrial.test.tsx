@@ -2,11 +2,11 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import type { Horse } from "@/platform/game/types";
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: vi.fn(),
 }));
 
-vi.mock("@/core/horse/trialFeedback", () => ({
+vi.mock("@/domains/horse/simulation/trialFeedback", () => ({
   generateRiderFeedback: vi.fn(() => "mock feedback"),
 }));
 

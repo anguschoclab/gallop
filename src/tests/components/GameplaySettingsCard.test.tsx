@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 
-vi.mock("@/components/ui/slider", () => ({
+vi.mock("@/shared/ui/slider", () => ({
   Slider: ({ onValueChange, value, id, ...props }: any) =>
     createElement("input", {
       type: "range",

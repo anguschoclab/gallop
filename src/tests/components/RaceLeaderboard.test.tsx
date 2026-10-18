@@ -4,7 +4,7 @@ import { Leaderboard } from "@/domains/race/ui/Leaderboard";
 import { TIE_BREAK_HINT_TEXT } from "@/domains/race/model/raceBroadcastConstants";
 import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
-vi.mock("@/components/ui/select", () => ({
+vi.mock("@/shared/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (
     <select data-testid="select" value={value} onChange={(e) => onValueChange?.(e.target.value)}>
       {children}
@@ -16,7 +16,7 @@ vi.mock("@/components/ui/select", () => ({
   SelectValue: () => null,
 }));
 
-vi.mock("@/components/ui/input", () => ({
+vi.mock("@/shared/ui/input", () => ({
   Input: (props: any) => <input data-testid="search-input" {...props} />,
 }));
 
@@ -24,7 +24,7 @@ vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
 }));
 
-vi.mock("@/components/ui/slider", () => ({
+vi.mock("@/shared/ui/slider", () => ({
   Slider: ({ value, onValueChange, ...props }: any) => (
     <input
       type="range"
@@ -36,7 +36,7 @@ vi.mock("@/components/ui/slider", () => ({
   ),
 }));
 
-vi.mock("@/components/ui/JargonTooltip", () => ({
+vi.mock("@/domains/horse/ui/JargonTooltip", () => ({
   JargonTooltip: ({ children }: any) => <span>{children}</span>,
 }));
 

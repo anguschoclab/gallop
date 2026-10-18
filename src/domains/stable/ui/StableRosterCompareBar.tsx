@@ -4,7 +4,7 @@
  * Extracted from StableRosterView.tsx for modularity.
  */
 
-import { TOOLTIP_DELAY_MS, MAX_COMPARE_HORSES } from "@/shared/constants/uiConstants";;
+import { TOOLTIP_DELAY_MS, MAX_COMPARE_HORSES } from "@/shared/constants/uiConstants";
 import { Button } from "@/shared/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
 import { DisabledTooltipWrapper } from "@/shared/ui/DisabledTooltipWrapper";

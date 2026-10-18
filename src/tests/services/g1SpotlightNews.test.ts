@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateG1SpotlightNews } from "@/domains/narrative/application/newsGenerator";
+import { generateG1SpotlightNews } from "@/domains/narrative/simulation/newsGenerator";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/shared/uuid/uuid";
 import type { Race } from "@/platform/game/types";

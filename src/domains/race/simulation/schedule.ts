@@ -24,7 +24,7 @@ import { generateAustralianRaceCard } from "@/domains/race/simulation/generation
 import { generateAsianRaceCard } from "@/domains/race/simulation/generation/asia";
 import { generateSouthAmericanRaceCard } from "@/domains/race/simulation/generation/southAmerica";
 import { ensureMaidenInCard, ensure2yoRaces } from "@/domains/race/simulation/maidenGuarantee";
-import { TWOYO_GUARANTEE_LOOKAHEAD_DAYS } from "@/domains/race/model/raceClassificationConstants";;
+import { TWOYO_GUARANTEE_LOOKAHEAD_DAYS } from "@/domains/race/model/raceClassificationConstants";
 
 // Breeders' Cup rotation pool
 const BREEDERS_CUP_TRACKS = [
@@ -44,7 +44,7 @@ function getBreedersCupTrack(year: number): { trackId: string; name: string } {
   return BREEDERS_CUP_TRACKS[index];
 }
 
-import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";;
+import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
 import { dayOfYear } from "@/domains/calendar/simulation/dateFormatting";
 
 /**

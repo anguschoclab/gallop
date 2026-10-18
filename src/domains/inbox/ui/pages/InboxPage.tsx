@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Check, CheckCheck, Trash2, Pin, Bell, ExternalLink } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
 import { useInbox } from "@/domains/inbox/application/hooks/useInbox";
-import { interpolateCtaRoute } from "@/domains/inbox/model/ctaRoute";;
+import { interpolateCtaRoute } from "@/domains/inbox/model/ctaRoute";
 import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import {
   UNREAD_BADGE_CLASSES,

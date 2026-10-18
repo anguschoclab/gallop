@@ -24,8 +24,8 @@ import {
 import { ScoutingThresholdControls } from "@/domains/insights/ui/ScoutingThresholdControls";
 import { useGame, useGameWithShallow } from "@/platform/game/store";
 import type { GameState } from "@/platform/game/types";
-import { SCOUTING_PRIORITIES, describeScoutingThresholds, type ScoutingAssignment, type ScoutingPriority } from "@/domains/agents/model/scoutingThresholds";;
-import { formatCurrency } from "@/shared/common/formatting";;
+import { SCOUTING_PRIORITIES, describeScoutingThresholds, type ScoutingAssignment, type ScoutingPriority } from "@/domains/agents/model/scoutingThresholds";
+import { formatCurrency } from "@/shared/common/formatting";
 import { ClipboardList, Play, Plus, Trash2 } from "lucide-react";
 
 export function ScoutingAssignmentsPanel() {

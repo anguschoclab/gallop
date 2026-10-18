@@ -10,7 +10,7 @@
  * Related files: src/components/stable/StableCard.tsx (consumer)
  */
 
-import { getReputationStars } from "@/core/stable/uiHelpers";
+import { getReputationStars } from "@/domains/stable/simulation/uiHelpers";
 import { stableTierColor } from "@/shared/common/uiTokens";
 import { findPendingOfferForStable } from "@/domains/stable/simulation/pendingOfferForStable";
 import { calculateLotValuation } from "@/domains/auction/simulation/engine";

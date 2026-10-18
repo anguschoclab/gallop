@@ -39,7 +39,7 @@ function findNamingViolations(files: string[]): string[] {
     const stem = basename.replace(/\.(test\.)?(ts|tsx)$/, "");
     const isComponent = basename.endsWith(".tsx");
     // Allow kebab-case only for shadcn/ui components (components/ui/*)
-    const isShadcnUi = file.includes("components/ui/");
+    const isShadcnUi = file.includes("shared/ui/");
     if (stem.includes("-") && !isShadcnUi) {
       violations.push(`${file}: kebab-case not allowed; use camelCase`);
     }
@@ -81,7 +81,11 @@ describe("file naming conventions", () => {
 });
 
 describe("vague token audit", () => {
-  const coreFiles = collectFiles(join(SRC_ROOT, "core"));
+  // The audit covers the strata that replaced src/core: domain model +
+  // simulation code (pure logic), not UI/application presentation code.
+  const coreFiles = collectFiles(join(SRC_ROOT, "domains")).filter((file) =>
+    /\/(model|simulation)\//.test(file.replace(/\\/g, "/")),
+  );
 
   it("no exported function in src/core is named process*", () => {
     const processFuncs: string[] = [];

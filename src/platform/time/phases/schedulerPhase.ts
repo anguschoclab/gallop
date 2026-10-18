@@ -12,7 +12,7 @@
 // Runs campaign planner and auto-entry runner for all auto-managed campaigns.
 // Order 85 — after races are generated (60) but before state serialization (100).
 
-import { PHASE_ORDER_SCHEDULER } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_SCHEDULER } from "@/platform/time/pipelineConstants";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import type { HorseCampaign } from "@/platform/game/types";

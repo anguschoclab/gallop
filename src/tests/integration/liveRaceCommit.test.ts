@@ -7,7 +7,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-vi.mock("@/services/storage/storageAdapter", () => ({
+vi.mock("@/platform/persistence/storage/storageAdapter", () => ({
   STORAGE_KEYS: {
     GAME_STATE: "gallop_game_state",
     GAME_STATE_FALLBACK: "gallop_game_state_fallback",
@@ -18,14 +18,14 @@ vi.mock("@/services/storage/storageAdapter", () => ({
   },
 }));
 
-vi.mock("@/services/storage/indexedDbService", () => ({
+vi.mock("@/platform/persistence/storage/indexedDbService", () => ({
   clearDatabase: vi.fn().mockResolvedValue(undefined),
   isIndexedDbAvailable: vi.fn(() => false),
   saveBuckets: vi.fn().mockResolvedValue(undefined),
   loadBuckets: vi.fn().mockResolvedValue(null),
 }));
 
-vi.mock("@/game/store/storage", () => ({
+vi.mock("@/platform/game/store/storage", () => ({
   createIdbStorage: () => ({
     getItem: vi.fn().mockResolvedValue(null),
     setItem: vi.fn().mockResolvedValue(undefined),
@@ -44,7 +44,7 @@ vi.mock("@/game/store/storage", () => ({
   createRehydrateStore: () => vi.fn().mockResolvedValue(undefined),
 }));
 
-vi.mock("@/core/race/raceSimulationExecutor", async (importActual) => {
+vi.mock("@/domains/race/simulation/raceSimulationExecutor", async (importActual) => {
   const actual = await importActual<typeof import("@/domains/race/simulation/raceSimulationExecutor")>();
   return { ...actual, simulateRace: vi.fn(actual.simulateRace) };
 });

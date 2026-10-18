@@ -22,7 +22,7 @@ const useRealStore = create(() => ({
   },
 }));
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: (selector: (s: unknown) => unknown) => useRealStore(selector as never),
   useGameWithShallow: (selector: (s: unknown) => unknown) => useRealStore(selector as never),
 }));

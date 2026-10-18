@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useGame } from "@/platform/game/store";
-import type { EntityLink } from "@/domains/narrative/model/newsTypes";;
+import type { EntityLink } from "@/domains/narrative/model/newsTypes";
 import type { Jockey } from "@/domains/jockey/model/types";
 
 function escapeRegExp(string: string) {

@@ -11,7 +11,7 @@
 
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import { MINIMUM_RACE_ENTRIES } from "@/domains/race/model/raceClassificationConstants";
-import { PHASE_ORDER_RACE_CANCELLATION } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_RACE_CANCELLATION } from "@/platform/time/pipelineConstants";
 import { generateUUID } from "@/shared/uuid/uuid";
 import type {
   AnyImpact,

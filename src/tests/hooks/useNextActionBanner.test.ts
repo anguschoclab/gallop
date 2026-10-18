@@ -3,7 +3,7 @@ import { renderHook, act } from "@testing-library/react";
 import { useNextActionBanner } from "@/domains/dashboard/application/hooks/useNextActionBanner";
 import { useGame, type StoreType } from "@/platform/game/store";
 
-vi.mock("@/game/store", () => ({
+vi.mock("@/platform/game/store", () => ({
   useGame: vi.fn(),
 }));
 

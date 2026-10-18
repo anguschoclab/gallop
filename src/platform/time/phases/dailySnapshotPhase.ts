@@ -22,7 +22,7 @@ import {
 import { fillJournalOutcomes } from "@/domains/tactics/simulation/strategyJournal";
 import { recordRankingsHistory } from "@/domains/market/simulation/rankingsHistory";
 import { recordStableRankingsHistory } from "@/domains/stable/simulation/stableRankings";
-import { PHASE_ORDER_DAILY_SNAPSHOT } from "@/platform/time/pipelineConstants";;
+import { PHASE_ORDER_DAILY_SNAPSHOT } from "@/platform/time/pipelineConstants";
 
 /**
  * Phase: Daily Snapshot

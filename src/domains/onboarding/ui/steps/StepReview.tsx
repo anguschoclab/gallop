@@ -1,5 +1,5 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import {
   facilityLevelToTierLabel,
   FACILITY_NAMES,
@@ -7,7 +7,7 @@ import {
   type FacilityType,
 } from "@/domains/facilities/application/facilitiesFacade";
 import type { JockeySilk } from "@/platform/game/types";
-import type { Backstory } from "@/shared/common/backstories";;
+import type { Backstory } from "@/shared/common/backstories";
 import type { WorldSize } from "@/domains/stable/application/stableFacade";
 import { WORLD_SIZE_CONFIGS } from "@/domains/stable/application/stableFacade";
 import { SilkPreview } from "@/domains/onboarding/ui/SilkPreview";

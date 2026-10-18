@@ -12,7 +12,7 @@ import {
   generateGrudgeMatchNews,
   generateRegionLostNews,
   generateRivalryEscalationNews,
-} from "@/domains/narrative/application/rivalryNewsGenerator";
+} from "@/domains/narrative/simulation/rivalryNewsGenerator";
 import { createTestRng, createTestStable, createTestHorse } from "@/tests/helpers";
 import type { Race } from "@/platform/game/types";
 

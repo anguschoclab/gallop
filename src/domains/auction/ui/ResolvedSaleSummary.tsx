@@ -6,7 +6,7 @@
  */
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { formatCurrency } from "@/shared/common/formatting";;
+import { formatCurrency } from "@/shared/common/formatting";
 import type { AuctionLot, Horse, AuctionSale } from "@/platform/game/types";
 import { resolveSaleHouse } from "@/domains/prestige/application/prestigeFacade";
 import { SalePrestigeBreakdown } from "@/domains/prestige/ui/PrestigeBreakdownPanel";

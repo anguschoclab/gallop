@@ -23,7 +23,7 @@ import {
   CONTINENT_TO_REGION,
 } from "@/domains/awards/model/types";
 import { getTrackContinent } from "@/shared/data/accessors/gradedRacesAccessor";
-import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";;
+import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
 import { isMaleHorse, isFemaleHorse } from "@/domains/horse/simulation/gender";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 
