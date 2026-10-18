@@ -17,45 +17,45 @@ function expectComponentFile(relativePath: string) {
 
 describe("Phase 14: UI feedback completeness", () => {
   it("strategic directives have a player-facing surface (Phase 6)", () => {
-    expectComponentFile("components/npc/StrategicDirectivesPanel.tsx");
+    expectComponentFile("domains/agents/ui/StrategicDirectivesPanel.tsx");
   });
 
   it("AI personality has a player-facing surface (Phase 6)", () => {
-    expectComponentFile("components/npc/AIPersonalityCard.tsx");
+    expectComponentFile("domains/agents/ui/AIPersonalityCard.tsx");
   });
 
   it("diplomacy has a player-facing surface (Phase 7)", () => {
-    expectComponentFile("components/npc/DiplomacyPanel.tsx");
+    expectComponentFile("domains/agents/ui/DiplomacyPanel.tsx");
   });
 
   it("relationship graph has a player-facing surface (Phase 7)", () => {
-    expectComponentFile("components/npc/RelationshipGraph.tsx");
+    expectComponentFile("domains/agents/ui/RelationshipGraph.tsx");
   });
 
   it("narrative arcs have a player-facing surface (Phase 9)", () => {
-    expectComponentFile("components/narrative/NarrativeArcCard.tsx");
+    expectComponentFile("domains/narrative/ui/NarrativeArcCard.tsx");
   });
 
   it("race AI tactics have a player-facing surface (Phase 10)", () => {
-    expectComponentFile("components/race/JockeyStrategyBreakdown.tsx");
+    expectComponentFile("domains/race/ui/JockeyStrategyBreakdown.tsx");
   });
 
   it("pace map visualization has a player-facing surface (Phase 10)", () => {
-    expectComponentFile("components/race/PaceMap.tsx");
+    expectComponentFile("domains/race/ui/PaceMap.tsx");
   });
 
   it("AI activity feed has a player-facing surface (Phase 11)", () => {
-    expectComponentFile("components/dashboard/AIActivityStrip.tsx");
+    expectComponentFile("domains/dashboard/ui/AIActivityStrip.tsx");
   });
 });
 
 describe("Phase 14: Architecture validation", () => {
   it("raceResolution phase module exists (no direct state mutation)", () => {
-    expectComponentFile("core/time/phases/raceResolution.ts");
+    expectComponentFile("platform/time/phases/raceResolution.ts");
   });
 
   it("runnerBuilder module exists with optional fields (backward compatible)", () => {
-    expectComponentFile("core/race/engine/runnerBuilder.ts");
+    expectComponentFile("domains/race/simulation/engine/runnerBuilder.ts");
   });
 
   it("economyAI child modules exist with pruning logic", () => {

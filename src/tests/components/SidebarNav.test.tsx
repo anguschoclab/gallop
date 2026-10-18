@@ -86,7 +86,7 @@ describe("SidebarNav", () => {
 
   it("navSections includes /calendar in The World section", () => {
     const content = readFileSync(
-      join(__dirname, "..", "..", "components", "SidebarNav.tsx"),
+      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
       "utf-8",
     );
     expect(content).toMatch(/to:\s*"\/calendar"/);
@@ -94,7 +94,7 @@ describe("SidebarNav", () => {
 
   it("navSections includes /gazette in Headquarters section", () => {
     const content = readFileSync(
-      join(__dirname, "..", "..", "components", "SidebarNav.tsx"),
+      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
       "utf-8",
     );
     expect(content).toMatch(/to:\s*"\/gazette"/);
@@ -102,7 +102,7 @@ describe("SidebarNav", () => {
 
   it("navSections includes /recap in Headquarters section", () => {
     const content = readFileSync(
-      join(__dirname, "..", "..", "components", "SidebarNav.tsx"),
+      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
       "utf-8",
     );
     expect(content).toMatch(/to:\s*"\/recap"/);
@@ -110,7 +110,7 @@ describe("SidebarNav", () => {
 
   it("navSections includes /records in The World section", () => {
     const content = readFileSync(
-      join(__dirname, "..", "..", "components", "SidebarNav.tsx"),
+      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
       "utf-8",
     );
     expect(content).toMatch(/to:\s*"\/records"/);
@@ -118,7 +118,7 @@ describe("SidebarNav", () => {
 
   it("navSections includes /hall-of-fame in My Stable section", () => {
     const content = readFileSync(
-      join(__dirname, "..", "..", "components", "SidebarNav.tsx"),
+      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
       "utf-8",
     );
     expect(content).toMatch(/to:\s*"\/hall-of-fame"/);
@@ -126,7 +126,7 @@ describe("SidebarNav", () => {
 
   it("navSections includes /awards in My Stable section", () => {
     const content = readFileSync(
-      join(__dirname, "..", "..", "components", "SidebarNav.tsx"),
+      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
       "utf-8",
     );
     expect(content).toMatch(/to:\s*"\/awards"/);

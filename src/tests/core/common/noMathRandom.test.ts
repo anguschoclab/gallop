@@ -5,7 +5,7 @@ import { join, extname, sep } from "node:path";
 const SRC_ROOT = join(process.cwd(), "src");
 
 // Files/directories where Math.random() is allowed (cosmetic-only or test infra)
-const ALLOWED: string[] = ["components/awards/AwardCeremony.tsx", "tests/"];
+const ALLOWED: string[] = ["domains/awards/ui/AwardCeremony.tsx", "tests/"];
 
 function isAllowed(filePath: string): boolean {
   return ALLOWED.some((allowed) => filePath.includes(allowed));

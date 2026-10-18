@@ -10,7 +10,7 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "fs";
 import { join } from "path";
 
-const STABLE_ROUTE_PATH = join(__dirname, "..", "..", "components", "routes", "HorseDetail.tsx");
+const STABLE_ROUTE_PATH = join(__dirname, "..", "..", "domains", "horse", "ui", "pages", "HorseDetail.tsx");
 
 describe("TransportPlanner Wiring", () => {
   it("TransportPlanner is imported in the stable detail route", () => {

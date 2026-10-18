@@ -96,9 +96,11 @@ const allCoreTsFiles = collectFiles(join(srcRoot, "core"), [".ts"], []);
 const agentsSimulationRoot = join(srcRoot, "domains", "agents", "simulation");
 const allAgentTsFiles = collectFiles(agentsSimulationRoot, [".ts"], []);
 const agentIntentGeneratorsPath = join(agentsSimulationRoot, "npc", "intentGenerators.ts");
-const allGameTsFiles = collectFiles(join(srcRoot, "game"), [".ts"], []);
-const allHooksTsFiles = collectFiles(join(srcRoot, "hooks"), [".ts", ".tsx"], []);
-const allServicesTsFiles = collectFiles(join(srcRoot, "services"), [".ts"], []);
+const allGameTsFiles = collectFiles(join(srcRoot, "platform", "game"), [".ts"], []);
+// Hooks live under domains/*/application/hooks + shared/hooks; services folded
+// into domains/*/application — all covered by allTsxFiles + allCoreTsFiles.
+const allHooksTsFiles: string[] = [];
+const allServicesTsFiles: string[] = [];
 
 /** All non-test .tsx files (UI layer) */
 const tsxFileContents = allTsxFiles
@@ -370,7 +372,7 @@ describe("Orphan Scan: Intent Type Coverage", () => {
 
 // ─── Store slice action audit ────────────────────────────────────────────────
 
-const storeSlices = readdirSync(join(srcRoot, "game", "store", "slices"))
+const storeSlices = readdirSync(join(srcRoot, "platform", "game", "store", "slices"))
   .filter((file) => file.endsWith("Slice.ts"))
   .map((file) => file.replace(/\.ts$/, ""))
   .sort();
@@ -382,7 +384,7 @@ describe("Orphan Scan: Store Slice Imports", () => {
   for (const slice of storeSlices) {
     const importPath = `./slices/${slice}`;
     it(`${slice} is imported by store/index.ts`, () => {
-      const storeText = readFileSafe(join(srcRoot, "game", "store", "index.ts"));
+      const storeText = readFileSafe(join(srcRoot, "platform", "game", "store", "index.ts"));
       const imported = storeText.includes(importPath);
 
       if (imported) {
@@ -403,8 +405,9 @@ describe("Orphan Scan: Store Slice Imports", () => {
 // ─── Hook selector audit ─────────────────────────────────────────────────────
 
 describe("Orphan Scan: Hook Selectors", () => {
-  const hooksDir = join(srcRoot, "hooks");
-  const hookFiles = collectFiles(hooksDir, [".ts", ".tsx"], [])
+  const hookFiles = ["domains", "shared", "platform"]
+    .flatMap((d) => collectFiles(join(srcRoot, d), [".ts", ".tsx"], []))
+    .filter((f) => f.includes(`${sep}hooks${sep}`))
     .filter((f) => !f.includes(".test."))
     .map((f) => relative(srcRoot, f));
 
@@ -536,7 +539,7 @@ describe("Orphan Scan: Dormant AI Functions", () => {
 
 describe("Orphan Scan: Facility Type Parity", () => {
   it("FacilityType includes imperial facilities (jockey_academy, museum)", () => {
-    const facilityTypesText = readFileSafe(join(srcRoot, "core", "facilities", "facilityTypes.ts"));
+    const facilityTypesText = readFileSafe(join(srcRoot, "domains", "facilities", "model", "facilityTypes.ts"));
     expect(facilityTypesText.includes('"jockey_academy"')).toBe(true);
     expect(facilityTypesText.includes('"museum"')).toBe(true);
   });

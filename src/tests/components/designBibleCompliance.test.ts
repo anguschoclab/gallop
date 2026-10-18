@@ -12,7 +12,12 @@ import { readFileSync } from "fs";
 import { join } from "path";
 
 function readComponent(name: string): string {
-  return readFileSync(join(__dirname, "..", "..", "components", name), "utf-8");
+  const [domain, file] = name.split("/");
+  const targetDomain = domain === "npc" ? "agents" : domain;
+  return readFileSync(
+    join(__dirname, "..", "..", "domains", targetDomain, "ui", file),
+    "utf-8",
+  );
 }
 
 describe("Design Bible Compliance: EconomicIndicators", () => {

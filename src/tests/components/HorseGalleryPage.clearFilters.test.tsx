@@ -9,7 +9,7 @@ describe("HorseGalleryPage Clear Filters button (#359)", () => {
     // (useGalleryFilters hook, store, phenotype resolution, etc.), but the source-level
     // check confirms the a11y feature is present.
     const source = readFileSync(
-      resolve(process.cwd(), "src/components/routes/HorseGalleryPage.tsx"),
+      resolve(process.cwd(), "src/domains/horse/ui/pages/HorseGalleryPage.tsx"),
       "utf-8",
     );
     expect(source).toContain("Clear Filters");
