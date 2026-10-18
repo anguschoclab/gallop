@@ -842,6 +842,78 @@ describe("Tipster: Gate Affinity insights", () => {
   });
 });
 
+describe("Tipster: Earnings Per Start insight", () => {
+  it("returns null when horse has fewer than 5 starts", () => {
+    const horse = {
+      careerStarts: 4,
+      lifetimeEarnings: 400000,
+      raceHistory: [
+        { position: 1, day: 1 },
+        { position: 1, day: 2 },
+        { position: 1, day: 3 },
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight?.label).not.toBe("Lucrative Career");
+    expect(insight?.label).not.toBe("Money Pit");
+  });
+
+  it("detects Lucrative Career when earnings per start is >= 50k", () => {
+    const horse = {
+      careerStarts: 5,
+      lifetimeEarnings: 250000,
+      raceHistory: [
+        { position: 1, day: 1 },
+        { position: 5, day: 2 },
+        { position: 1, day: 3 },
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Lucrative Career");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("detects Money Pit when earnings per start is < 1.5k with >= 10 starts", () => {
+    const horse = {
+      careerStarts: 10,
+      lifetimeEarnings: 14000,
+      raceHistory: [
+        { position: 5, day: 1 },
+        { position: 5, day: 2 },
+        { position: 5, day: 3 },
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Money Pit");
+    expect(insight!.type).toBe("negative");
+  });
+
+  it("returns null for moderate earnings per start", () => {
+    const horse = {
+      careerStarts: 10,
+      lifetimeEarnings: 50000,
+      raceHistory: [
+        { position: 5, day: 1 },
+        { position: 5, day: 2 },
+        { position: 5, day: 3 },
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight?.label).not.toBe("Lucrative Career");
+    expect(insight?.label).not.toBe("Money Pit");
+  });
+});
+
 describe("Tipster: Sire Value insight", () => {
   it("detects Value Sire when stakes rate >= 8% and fee <= 20k", () => {
     const horse = {

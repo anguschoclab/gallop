@@ -528,6 +528,33 @@ export const detectDistanceVersatility: InsightDetector = (horse) => {
 };
 
 // 3.95 Check for Earnings Milestones
+export const detectEarningsPerStart: InsightDetector = (horse) => {
+  const starts = horse.careerStarts ?? 0;
+  if (starts < 5) return null;
+  const earnings = horse.lifetimeEarnings ?? 0;
+  const eps = earnings / starts;
+
+  if (eps >= 50000) {
+    return {
+      label: "Lucrative Career",
+      value: "Elite Yield",
+      context: `Averaging $${Math.round(eps).toLocaleString()} in earnings per start`,
+      type: "positive",
+    };
+  }
+
+  if (starts >= 10 && eps < 1500) {
+    return {
+      label: "Money Pit",
+      value: "Low Yield",
+      context: `Averaging only $${Math.round(eps).toLocaleString()} in earnings per start`,
+      type: "negative",
+    };
+  }
+
+  return null;
+};
+
 export const detectEarningsMilestone: InsightDetector = (horse) => {
   const earnings = horse.lifetimeEarnings ?? 0;
 
@@ -674,5 +701,6 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceVersatility,
   detectGateAffinity,
   detectEarningsMilestone,
+  detectEarningsPerStart,
   detectSireValue,
 ];
