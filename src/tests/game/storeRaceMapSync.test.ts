@@ -154,9 +154,7 @@ describe("races Record sync through store actions", () => {
         },
         raceHistory: [],
       } as any]),
-      player: {
-        cash: 10000,
-      } as any,
+      cash: 10000,
     });
 
     await useGame.getState().advanceDay();
