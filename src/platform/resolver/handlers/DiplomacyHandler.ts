@@ -10,27 +10,40 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/platform/game/types";
 import type { AnyImpact } from "@/platform/resolver/impacts";
-import type { ImpactHandler, LookupMaps } from "@/platform/resolver/handlers/types";
+import type {
+  ImpactHandler,
+  LookupMaps,
+  ImpactHandlerFunction,
+} from "@/platform/resolver/handlers/types";
 import type { DiplomaticImpact, CartelImpact } from "@/platform/resolver/impacts/miscImpacts";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
-export class DiplomacyHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return type === "diplomatic" || type === "cartel";
-  }
-
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, _lookupMaps?: LookupMaps): void {
+const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
+  diplomatic: (draft, impact) => {
     const aiManager = (draft as unknown as { npcAIManager?: NpcAIManager }).npcAIManager;
     if (!aiManager) return;
+    DiplomacyHandler.handleDiplomatic(aiManager, impact as DiplomaticImpact);
+  },
+  cartel: (draft, impact) => {
+    const aiManager = (draft as unknown as { npcAIManager?: NpcAIManager }).npcAIManager;
+    if (!aiManager) return;
+    DiplomacyHandler.handleCartel(aiManager, impact as CartelImpact);
+  },
+};
 
-    if (impact.type === "diplomatic") {
-      this.handleDiplomatic(aiManager, impact as DiplomaticImpact);
-    } else if (impact.type === "cartel") {
-      this.handleCartel(aiManager, impact as CartelImpact);
+export class DiplomacyHandler implements ImpactHandler {
+  canHandle(type: string): boolean {
+    return Object.hasOwn(IMPACT_HANDLERS, type);
+  }
+
+  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
+    const handler = IMPACT_HANDLERS[impact.type];
+    if (handler) {
+      handler(draft, impact, lookupMaps);
     }
   }
 
-  private handleDiplomatic(aiManager: NpcAIManager, impact: DiplomaticImpact): void {
+  static handleDiplomatic(aiManager: NpcAIManager, impact: DiplomaticImpact): void {
     const { sourceStableId, targetStableId, action, trustChange } = impact;
     const sourceState = aiManager.stableStates[sourceStableId];
     const targetState = aiManager.stableStates[targetStableId];
@@ -58,7 +71,7 @@ export class DiplomacyHandler implements ImpactHandler {
     }
   }
 
-  private handleCartel(aiManager: NpcAIManager, impact: CartelImpact): void {
+  static handleCartel(aiManager: NpcAIManager, impact: CartelImpact): void {
     const { stableIds, action } = impact;
 
     if (action === "cartel_formed") {
