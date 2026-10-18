@@ -25,6 +25,13 @@ import {
 import { generateDirectiveChangeNews } from "@/core/narrative/directiveNewsGenerator";
 import { generateNpcActions } from "@/domains/agents/simulation/npcActionRegistry";
 import {
+  buildNpcObservation,
+  buildPublicWorldView,
+  prepareObservationWorkspace,
+} from "@/domains/agents/simulation/agentObservation";
+import { deriveBeliefs } from "@/domains/agents/simulation/agentBeliefs";
+import { repairAgentGoals } from "@/domains/agents/simulation/agentGoals";
+import {
   buildRaceCompetitorIndex,
   type RaceCompetitorIndex,
 } from "@/domains/agents/simulation/raceEntryAIScoring";
@@ -76,12 +83,17 @@ export function generateNpcIntentsDetailed(
       }
     : undefined;
 
-  // Cross-System Coordination: use cached world assessment if available, otherwise compute
-  const worldAssessment: WorldAssessment | undefined =
-    cachedWorldAssessment ?? (aiManager ? assessWorldState(state, aiManager) : undefined);
-
   // Index horses by stable for fast lookup — use pre-built map if available
   const horseMap = prebuiltHorseMap ?? new Map(Object.entries(state.horses));
+
+  // Hidden-information boundary: world assessment and every action generator
+  // observe a sanitized public world view — never the authoritative state.
+  const observationWorkspace = prepareObservationWorkspace(state, horseMap.values());
+  const worldView = buildPublicWorldView(state, observationWorkspace);
+
+  // Cross-System Coordination: use cached world assessment if available, otherwise compute
+  const worldAssessment: WorldAssessment | undefined =
+    cachedWorldAssessment ?? (aiManager ? assessWorldState(worldView, aiManager) : undefined);
   const horsesByStable = new Map<string, Horse[]>();
   for (const horse of horseMap.values()) {
     if (horse.ownership?.type === "npc") {
@@ -128,10 +140,15 @@ export function generateNpcIntentsDetailed(
 
   // Pre-index competitor quality once per race: the entry-scoring path would
   // otherwise re-rate every field once per (stable, horse) evaluation.
+  // Competitor evaluation rates the field on observable form — never on
+  // rivals' hidden condition or unrealized potential.
   const raceCompetitorIndex = new Map<string, RaceCompetitorIndex>();
   for (const race of upcomingRaces) {
     if (race.entries.length > 0) {
-      raceCompetitorIndex.set(race.id, buildRaceCompetitorIndex(race, horseMap));
+      raceCompetitorIndex.set(
+        race.id,
+        buildRaceCompetitorIndex(race, observationWorkspace.publicHorseViews),
+      );
     }
   }
 
@@ -186,8 +203,39 @@ export function generateNpcIntentsDetailed(
       const weights = stableAI?.subsystemWeights;
       const distressLevel = stableAI?.financialDistress?.level ?? "healthy";
 
+      // Per-stable observation: public world + own internals. Generators
+      // receive this — never the authoritative state.
+      const observation = buildNpcObservation(state, stable.id, observationWorkspace);
+      const observedHorseMap = new Map(observationWorkspace.publicHorseViews);
+      for (const horse of ownedHorses) {
+        observedHorseMap.set(horse.id, horse);
+      }
+
+      // Beliefs refresh from the day's observation; goals validate against it
+      // and repair in place (surviving goals keep identity and age).
+      if (stableAI) {
+        const beliefs = deriveBeliefs(
+          observation,
+          stable,
+          worldAssessment,
+          day,
+          distressLevel,
+          stableAI.beliefs,
+        );
+        const goals = repairAgentGoals(stableAI.goals, {
+          observation,
+          stable,
+          beliefs,
+          distressLevel,
+          ownedHorseCount: ownedHorses.length,
+          eligibleHorseCount: ownedHorses.filter((horse) => horse.age >= 2).length,
+          day,
+        });
+        stableAI = { ...stableAI, beliefs, goals };
+      }
+
       const actionResult = generateNpcActions({
-        state,
+        state: observation,
         stable,
         stableAI,
         day,
@@ -196,12 +244,12 @@ export function generateNpcIntentsDetailed(
         activePregnanciesByDam,
         raceEntrySets,
         raceCompetitorIndex,
-        horseMap,
+        horseMap: observedHorseMap,
         weights,
         distressLevel,
         difficultyModulator: aiManager?.difficultyModulator,
-        aiManager,
-        npcFacilities: state.npcFacilities,
+        aiManager: observation.npcAIManager,
+        npcFacilities: observation.npcFacilities,
       });
       intents.push(...actionResult.intents);
       if (stableAI) {

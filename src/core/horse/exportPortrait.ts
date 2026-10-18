@@ -9,7 +9,7 @@
  */
 
 import type { Horse } from "@/game/types";
-import { getOrDeriveAppearance } from "@/core/horse/proceduralPortrait";
+import { getOrDeriveAppearance } from "@/services/horse/horseFacade";
 
 /**
  * Render a procedural horse portrait to a PNG and trigger a download.

@@ -7,6 +7,8 @@
  * - the `livePlayerImpactsApplied` double-application workaround
  * - a second synchronous simulation path on the main thread (store actions
  *   must always submit through EngineClient)
+ * - the legacy standalone `executePipeline` runner (SimulationExecutor owns
+ *   phase iteration via the compiled schedule)
  */
 
 import { describe, it, expect } from "vitest";
@@ -67,5 +69,14 @@ describe("engine architecture guards", () => {
     );
     expect(advance).toMatch(/getEngineClient\(\)\.submit|client\.submit/);
     expect(advance).not.toMatch(/executePipeline|GAME_PIPELINE_PHASES|SimulationExecutor/);
+  });
+
+  it("the standalone executePipeline runner is decommissioned", () => {
+    const pipeline = readFileSync(join(SRC, "core", "time", "pipeline.ts"), "utf8");
+    expect(pipeline).not.toMatch(/export function executePipeline|function executePipeline/);
+    const offenders = productionFiles.filter((f) =>
+      /\bexecutePipeline\b/.test(readFileSync(f, "utf8")),
+    );
+    expect(offenders).toEqual([]);
   });
 });

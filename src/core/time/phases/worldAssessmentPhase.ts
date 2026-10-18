@@ -10,6 +10,7 @@
 
 import type { PipelineContext } from "../pipeline";
 import { assessWorldState } from "@/domains/agents/simulation/strategicCoordinator";
+import { buildPublicWorldView } from "@/domains/agents/simulation/agentObservation";
 import type { WorldAssessment } from "@/domains/agents/simulation/strategicCoordinator";
 import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
@@ -33,7 +34,12 @@ export const worldAssessmentPhase = {
       return context;
     }
 
-    const worldAssessment: WorldAssessment = assessWorldState(state, aiManager);
+    // The shared world model is built from the public view — agents never
+    // see exact player cash or rival bankrolls.
+    const worldAssessment: WorldAssessment = assessWorldState(
+      buildPublicWorldView(state),
+      aiManager,
+    );
 
     // Compute financial distress for each NPC stable and store on AI state.
     // This runs early (order 2) so all downstream phases have access.

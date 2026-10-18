@@ -1,5 +1,8 @@
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import type { AnyIntent } from "@/core/resolver/intents";
+import type { NpcObservation } from "./agentObservation";
+import { beliefConfidence, beliefFreshnessDays } from "./agentBeliefs";
+import { ACTION_GOAL_MAP } from "./agentGoals";
 import type { PlayerFacilities } from "@/core/facilities";
 import type { StableId } from "@/core/types/branded";
 import type { RaceCompetitorIndex } from "./raceEntryAIScoring";
@@ -41,7 +44,13 @@ export type NpcActionId =
   | "outpost";
 
 export interface NpcActionContext {
-  state: GameState;
+  /**
+   * The acting stable's bounded world view — produced by
+   * `buildNpcObservation`, never the raw authoritative state. Hidden fields
+   * (player ledgers, rival AI internals, unscouted horse condition) are
+   * already redacted.
+   */
+  state: NpcObservation;
   stable: Stable;
   stableAI?: StableAIState;
   day: number;
@@ -94,7 +103,12 @@ export interface NpcActionTrace {
 
 export interface NpcActionPlan {
   actionId: NpcActionId;
+  /** Capability label (kept for trace/ledger compatibility). */
   goal: string;
+  /** Active goal type this action serves, when one exists on the stable. */
+  goalId?: string;
+  /** Horizon of the linked goal, when present. */
+  goalHorizon?: "short" | "medium" | "long";
   beliefs: {
     stableId: string;
     day: number;
@@ -471,6 +485,24 @@ export function generateNpcActions(context: NpcActionContext): {
 
     const intentTypes = [...new Set(actionIntents.map((intent) => intent.type))];
     const intentIds = actionIntents.map((intent) => intent.id);
+
+    // Typed belief model preferred; fall back to the world-assessment
+    // heuristic for contexts built without a belief store.
+    const beliefSet = context.stableAI?.beliefs;
+    const confidence = beliefSet
+      ? beliefConfidence(beliefSet.playerDominance, context.day)
+      : context.stableAI?.worldAssessment
+        ? 1
+        : 0.6;
+    const freshnessDays = beliefSet
+      ? beliefFreshnessDays(beliefSet.playerDominance, context.day)
+      : Math.max(0, context.day - (context.stableAI?.lastUpdateDay ?? context.day));
+
+    const goalType = ACTION_GOAL_MAP[action.id];
+    const activeGoal = context.stableAI?.goals?.find(
+      (goal) => goal.type === goalType && goal.status === "active",
+    );
+
     traces.push({
       stableId: context.stable.id,
       day: context.day,
@@ -486,11 +518,13 @@ export function generateNpcActions(context: NpcActionContext): {
     plans.push({
       actionId: action.id,
       goal: action.capability,
+      goalId: activeGoal?.id,
+      goalHorizon: activeGoal?.horizon,
       beliefs: {
         stableId: context.stable.id,
         day: context.day,
-        confidence: context.stableAI?.worldAssessment ? 1 : 0.6,
-        freshnessDays: Math.max(0, context.day - (context.stableAI?.lastUpdateDay ?? context.day)),
+        confidence,
+        freshnessDays,
         personality: context.stable.personality,
         distressLevel: context.distressLevel ?? "healthy",
         worldAssessmentAvailable: context.stableAI?.worldAssessment !== undefined,

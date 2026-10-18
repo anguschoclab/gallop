@@ -40,6 +40,8 @@ import type {
 import type { EconomicTrend } from "./strategicCoordinator";
 import type { FinancialDistressState } from "./financialDistressAI";
 import type { NpcActionPlan, NpcActionTrace } from "./npcActionRegistry";
+import type { AgentBeliefs } from "./agentBeliefs";
+import type { AgentGoal } from "./agentGoals";
 
 /**
  * Per-stable AI state that persists across all NPC decision-making
@@ -85,6 +87,10 @@ export interface StableAIState {
   decisionTraces?: NpcActionTrace[];
   /** Latest bounded action plan snapshot for each registered action. */
   actionPlans?: NpcActionPlan[];
+  /** Typed belief store — confidence/freshness-weighted world model. */
+  beliefs?: AgentBeliefs;
+  /** Ranked short/medium/long goals with validation and repair history. */
+  goals?: AgentGoal[];
 }
 
 /**

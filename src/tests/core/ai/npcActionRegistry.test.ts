@@ -7,6 +7,10 @@ import {
   NPC_ACTION_REGISTRY,
   type NpcActionContext,
 } from "@/domains/agents/simulation/npcActionRegistry";
+import {
+  buildNpcObservation,
+  ensureNpcObservation,
+} from "@/domains/agents/simulation/agentObservation";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { AuctionSale, GameState, Race } from "@/game/types";
 import { createInitialState } from "@/game/store/initialization";
@@ -25,11 +29,15 @@ function gameStateFor(overrides: Partial<GameState>): GameState {
   return state;
 }
 
+function observe(state: GameState, stableId: string) {
+  return buildNpcObservation(state, stableId);
+}
+
 function createContext(overrides: Partial<NpcActionContext> = {}): NpcActionContext {
   const stable = createTestStable({ id: "stable-1" });
   const state = gameStateFor({ day: 10, npcStables: [stable] });
-  return {
-    state,
+  const context: NpcActionContext = {
+    state: buildNpcObservation(state, stable.id),
     stable,
     stableAI: createStableAIState(stable, 10),
     day: 10,
@@ -42,6 +50,9 @@ function createContext(overrides: Partial<NpcActionContext> = {}): NpcActionCont
     aiManager: state.npcAIManager,
     ...overrides,
   };
+  // Overrides may pass a raw GameState — normalize through the boundary.
+  context.state = ensureNpcObservation(context.state, context.stable.id);
+  return context;
 }
 
 function weightsFor(overrides: Partial<NonNullable<NpcActionContext["weights"]>> = {}) {
@@ -104,7 +115,10 @@ function scenarioForAction(actionId: NpcActionId): NpcActionContext {
         energy: 100,
       });
       return createContext({
-        state: gameStateFor({ day: 10, npcStables: [stable], horses: { [horse.id]: horse } }),
+        state: observe(
+          gameStateFor({ day: 10, npcStables: [stable], horses: { [horse.id]: horse } }),
+          stable.id,
+        ),
         stable,
         stableAI: createStableAIState(stable, 10),
         ownedHorses: [horse],
@@ -119,13 +133,16 @@ function scenarioForAction(actionId: NpcActionId): NpcActionContext {
       const jockey = createTestJockey({ id: asJockeyId("act-entry-jockey"), stableId: stable.id });
       const race = makeRace({ id: asRaceId("act-entry-race") });
       return createContext({
-        state: gameStateFor({
-          day: 10,
-          npcStables: [stable],
-          horses: { [horse.id]: horse },
-          races: { [race.id]: race },
-          jockeys: [jockey],
-        }),
+        state: observe(
+          gameStateFor({
+            day: 10,
+            npcStables: [stable],
+            horses: { [horse.id]: horse },
+            races: { [race.id]: race },
+            jockeys: [jockey],
+          }),
+          stable.id,
+        ),
         stable,
         stableAI: createStableAIState(stable, 10),
         ownedHorses: [horse],
@@ -156,12 +173,15 @@ function scenarioForAction(actionId: NpcActionId): NpcActionContext {
         entries: [{ horseId: target.id, ownership: target.ownership }],
       });
       return createContext({
-        state: gameStateFor({
-          day: 10,
-          npcStables: [stable],
-          horses: { [target.id]: target },
-          races: { [race.id]: race },
-        }),
+        state: observe(
+          gameStateFor({
+            day: 10,
+            npcStables: [stable],
+            horses: { [target.id]: target },
+            races: { [race.id]: race },
+          }),
+          stable.id,
+        ),
         stable,
         stableAI: {
           ...createStableAIState(stable, 10),
@@ -185,12 +205,15 @@ function scenarioForAction(actionId: NpcActionId): NpcActionContext {
         entries: [{ horseId: horse.id, ownership: horse.ownership }],
       });
       return createContext({
-        state: gameStateFor({
-          day: 10,
-          npcStables: [stable],
-          horses: { [horse.id]: horse },
-          races: { [race.id]: race },
-        }),
+        state: observe(
+          gameStateFor({
+            day: 10,
+            npcStables: [stable],
+            horses: { [horse.id]: horse },
+            races: { [race.id]: race },
+          }),
+          stable.id,
+        ),
         stable,
         stableAI: createStableAIState(stable, 10),
         ownedHorses: [horse],
@@ -216,7 +239,10 @@ function scenarioForAction(actionId: NpcActionId): NpcActionContext {
         },
       });
       return createContext({
-        state: gameStateFor({ day: 10, npcStables: [stable], horses: { [horse.id]: horse } }),
+        state: observe(
+          gameStateFor({ day: 10, npcStables: [stable], horses: { [horse.id]: horse } }),
+          stable.id,
+        ),
         stable,
         stableAI: createStableAIState(stable, 10),
         ownedHorses: [horse],
@@ -227,7 +253,7 @@ function scenarioForAction(actionId: NpcActionId): NpcActionContext {
       const stable = createTestStable({ id: "act-diplomat", cash: 200000 });
       const day = 7 - (stableHash(stable.id) % 7);
       return createContext({
-        state: gameStateFor({ day, npcStables: [stable] }),
+        state: observe(gameStateFor({ day, npcStables: [stable] }), stable.id),
         stable,
         stableAI: {
           ...createStableAIState(stable, day),
@@ -254,12 +280,15 @@ function scenarioForAction(actionId: NpcActionId): NpcActionContext {
         resolved: false,
       };
       return createContext({
-        state: gameStateFor({
-          day: 10,
-          npcStables: [stable],
-          horses: { [horse.id]: horse },
-          auctions: [sale],
-        }),
+        state: observe(
+          gameStateFor({
+            day: 10,
+            npcStables: [stable],
+            horses: { [horse.id]: horse },
+            auctions: [sale],
+          }),
+          stable.id,
+        ),
         stable,
         stableAI: createStableAIState(stable, 10),
         ownedHorses: [horse],
@@ -305,11 +334,14 @@ function scenarioForAction(actionId: NpcActionId): NpcActionContext {
         surfaceAptitude: { Turf: 80, Dirt: 20, Synthetic: 50 },
       });
       return createContext({
-        state: gameStateFor({
-          day: 10,
-          npcStables: [stable],
-          horses: { [ownedHorse.id]: ownedHorse },
-        }),
+        state: observe(
+          gameStateFor({
+            day: 10,
+            npcStables: [stable],
+            horses: { [ownedHorse.id]: ownedHorse },
+          }),
+          stable.id,
+        ),
         stable,
         stableAI: createStableAIState(stable, 10),
         ownedHorses: [ownedHorse],
@@ -323,11 +355,14 @@ function scenarioForAction(actionId: NpcActionId): NpcActionContext {
         personality: "aggressive",
       });
       return createContext({
-        state: gameStateFor({
-          day: 10,
-          npcStables: [stable],
-          npcFacilities: { [stable.id]: createDefaultPlayerFacilities(1) },
-        }),
+        state: observe(
+          gameStateFor({
+            day: 10,
+            npcStables: [stable],
+            npcFacilities: { [stable.id]: createDefaultPlayerFacilities(1) },
+          }),
+          stable.id,
+        ),
         stable,
         stableAI: {
           ...createStableAIState(stable, 10),
@@ -355,7 +390,10 @@ function scenarioForAction(actionId: NpcActionId): NpcActionContext {
         },
       });
       return createContext({
-        state: gameStateFor({ day: 10, npcStables: [stable], horses: { [horse.id]: horse } }),
+        state: observe(
+          gameStateFor({ day: 10, npcStables: [stable], horses: { [horse.id]: horse } }),
+          stable.id,
+        ),
         stable,
         stableAI: createStableAIState(stable, 10),
         ownedHorses: [horse],
@@ -365,7 +403,7 @@ function scenarioForAction(actionId: NpcActionId): NpcActionContext {
       const stable = createTestStable({ id: "act-expander", cash: 100000, outposts: [] });
       const day = 14 - (stableHash(stable.id) % 14);
       return createContext({
-        state: gameStateFor({ day, npcStables: [stable] }),
+        state: observe(gameStateFor({ day, npcStables: [stable] }), stable.id),
         stable,
         stableAI: {
           ...createStableAIState(stable, day),
@@ -526,7 +564,7 @@ describe("NPC action registry", () => {
       },
     };
     const context = createContext({
-      state,
+      state: observe(state, claimant.id),
       stable: claimant,
       stableAI,
       relevantRaces: [race],
@@ -599,7 +637,7 @@ describe("NPC action registry", () => {
     const state = gameStateFor({ day: 10, npcStables: [stable] });
     const context: NpcActionContext = {
       ...createContext(),
-      state,
+      state: observe(state, stable.id),
       stable,
       ownedHorses: horses,
       horseMap: new Map(horses.map((horse) => [horse.id, horse])),

@@ -3,12 +3,14 @@
  *
  * Verifies that:
  * 1. Context maps match what each phase previously built locally
- * 2. executePipeline passes maps through to phases
+ * 2. SimulationExecutor passes maps through to phases
  * 3. Maps work correctly with both array and record state shapes
  */
 
 import { describe, it, expect } from "vitest";
-import { executePipeline, type PipelinePhase } from "@/core/time/pipeline";
+import { type PipelinePhase } from "@/core/time/pipeline";
+import { describePhase } from "@/core/time/scheduler";
+import { SimulationExecutor } from "@/core/time/executor";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
@@ -88,7 +90,7 @@ describe("PipelineContext shared maps", () => {
     expect(fromMap).toBe(fromArray);
   });
 
-  it("executePipeline passes maps through to each phase", () => {
+  it("the executor passes maps through to each phase", () => {
     const state = makeState();
     const receivedMaps: { horse: boolean; race: boolean; stable: boolean; jockey: boolean }[] = [];
 
@@ -106,8 +108,10 @@ describe("PipelineContext shared maps", () => {
       },
     };
 
-    const ctx = createMockPipelineContext({ state });
-    executePipeline([spyPhase], ctx);
+    const executor = new SimulationExecutor([
+      describePhase(spyPhase, { id: "spy", label: "spy", cadence: "daily" }),
+    ]);
+    executor.runDay(state, state.day + 1);
 
     expect(receivedMaps).toHaveLength(1);
     expect(receivedMaps[0]).toEqual({ horse: true, race: true, stable: true, jockey: true });
@@ -126,8 +130,10 @@ describe("PipelineContext shared maps", () => {
       },
     };
 
-    const ctx = createMockPipelineContext({ state });
-    executePipeline([readerPhase], ctx);
+    const executor = new SimulationExecutor([
+      describePhase(readerPhase, { id: "reader", label: "reader", cadence: "daily" }),
+    ]);
+    executor.runDay(state, state.day + 1);
 
     expect(capturedHorse).toEqual(horse1);
   });

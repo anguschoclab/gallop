@@ -1,11 +1,14 @@
 /**
- * pipeline.ts - Pipeline execution framework
+ * pipeline.ts - Pipeline context and phase types
  *
- * This file provides the pipeline execution framework for day advancement,
- * including PipelineContext, PipelinePhase, and executePipeline function.
+ * This file provides the shared types for day advancement:
+ * PipelineContext (the per-day transaction context) and PipelinePhase.
+ * Execution is owned by SimulationExecutor — there is no standalone
+ * pipeline runner; phases only run inside a compiled, cadence-gated
+ * schedule.
  *
  * Dependencies: @/game/types (GameState), @/game/rng (Rng), @/core/resolver/intents (AnyIntent), @/core/resolver/impacts/index (AnyImpact), @/core/resolver/resolver (ImpactLogEntry)
- * Related files: advance.ts (uses pipeline), phases/index.ts (provides phases)
+ * Related files: executor.ts (executes phases), phases/index.ts (provides phases)
  */
 
 import type { GameState } from "@/game/types";
@@ -54,40 +57,6 @@ export interface PipelinePhase {
   order: number;
   execute: (context: PipelineContext) => PipelineContext;
   skipIf?: (context: PipelineContext) => boolean;
-}
-
-/**
- * Execute pipeline phases in order.
- *
- * Phases are sorted by order field before execution.
- *
- * @param phases - Array of phases to execute
- * @param context - Initial pipeline context
- * @returns Final pipeline context after all phases execute
- */
-export function executePipeline(
-  phases: PipelinePhase[],
-  context: PipelineContext,
-): PipelineContext {
-  const sortedPhases = isSorted(phases) ? phases : [...phases].sort((a, b) => a.order - b.order);
-  let currentContext = context;
-
-  for (const phase of sortedPhases) {
-    if (phase.skipIf && phase.skipIf(currentContext)) {
-      continue;
-    }
-
-    currentContext = phase.execute(currentContext);
-  }
-
-  return currentContext;
-}
-
-function isSorted(phases: PipelinePhase[]): boolean {
-  for (let i = 0; i < phases.length - 1; i++) {
-    if (phases[i].order > phases[i + 1].order) return false;
-  }
-  return true;
 }
 
 /**

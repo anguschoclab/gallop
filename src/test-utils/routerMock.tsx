@@ -11,6 +11,7 @@ export const MOCK_PARAMS: Record<string, string> = {
   stallionId: "mock-stallion-id",
   syndicateId: "mock-syndicate-id",
   category: "horse_of_the_year",
+  invitationId: "mock-invitation-id",
 };
 
 const noop = () => {};
