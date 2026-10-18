@@ -3,10 +3,10 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const PROJECT_ROOT = join(__dirname, "..", "..", "..", "..", "..");
-const marketPath = join(PROJECT_ROOT, "src", "core", "time", "phases", "market.ts");
+const marketPath = join(PROJECT_ROOT, "src", "platform", "time", "phases", "market.ts");
 const marketText = readFileSync(marketPath, "utf-8");
 
-const npcCyclePath = join(PROJECT_ROOT, "src", "core", "time", "phases", "npcCycle.ts");
+const npcCyclePath = join(PROJECT_ROOT, "src", "platform", "time", "phases", "npcCycle.ts");
 const npcCycleText = readFileSync(npcCyclePath, "utf-8");
 
 describe("Cross-Phase Data Flow (economicTrend consumption)", () => {
