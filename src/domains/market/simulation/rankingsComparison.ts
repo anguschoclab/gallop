@@ -26,7 +26,7 @@ export function compareRankingsForDay(
   day: number,
   topCount = 5,
 ) {
-  const byId = new Map(horses.map((horse) => [horse.id as string, horse]));
+  const byId = new Map(horses.map((horse) => [horse.id, horse]));
   const snapshots = Object.entries(history).flatMap(([horseId, entries]) => {
     const snapshot = entries.find((entry) => entry.day === day);
     return snapshot ? [{ horseId, snapshot }] : [];
