@@ -7,6 +7,7 @@
  */
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
+import { execSync } from "node:child_process";
 import { extname, join, relative } from "node:path";
 import * as ts from "typescript";
 import { GAME_PHASE_DESCRIPTORS } from "../src/core/time/phases/descriptors";
@@ -78,36 +79,76 @@ interface ContractDeclaration {
   file: SourceInput;
 }
 
-function collectFiles(dir: string, extensions: string[], results: string[] = []): string[] {
-  let entries: string[];
+const trackedFileCache = new Map<string, Set<string>>();
+
+/**
+ * Files tracked by git under the repository containing `dir`, or null when the
+ * path is not inside a git worktree. The capability graph must describe the
+ * repository, so ignored or untracked leftovers on a local filesystem must not
+ * change audit results.
+ */
+function trackedFilesFor(dir: string): Set<string> | null {
+  let root: string;
   try {
-    entries = readdirSync(dir);
+    root = execSync("git rev-parse --show-toplevel", { cwd: dir, encoding: "utf8" }).trim();
   } catch {
-    return results;
+    return null;
   }
-  for (const entry of entries) {
-    const fullPath = join(dir, entry);
-    let stat;
+  let files = trackedFileCache.get(root);
+  if (!files) {
     try {
-      stat = statSync(fullPath);
+      const output = execSync("git ls-files", { cwd: root, encoding: "utf8" });
+      files = new Set(
+        output
+          .split("\n")
+          .filter(Boolean)
+          .map((path) => join(root, path)),
+      );
+    } catch {
+      return null;
+    }
+    trackedFileCache.set(root, files);
+  }
+  return files;
+}
+
+function collectFiles(dir: string, extensions: string[], results: string[] = []): string[] {
+  const found: string[] = [];
+  const pending = [dir];
+  while (pending.length > 0) {
+    const current = pending.pop()!;
+    let entries: string[];
+    try {
+      entries = readdirSync(current);
     } catch {
       continue;
     }
-    if (stat.isDirectory()) {
-      if (
-        entry === "node_modules" ||
-        entry === ".git" ||
-        entry === "dist" ||
-        entry === "test-results" ||
-        entry === ".output"
-      ) {
+    for (const entry of entries) {
+      const fullPath = join(current, entry);
+      let stat;
+      try {
+        stat = statSync(fullPath);
+      } catch {
         continue;
       }
-      collectFiles(fullPath, extensions, results);
-    } else if (extensions.includes(extname(entry))) {
-      results.push(fullPath);
+      if (stat.isDirectory()) {
+        if (
+          entry === "node_modules" ||
+          entry === ".git" ||
+          entry === "dist" ||
+          entry === "test-results" ||
+          entry === ".output"
+        ) {
+          continue;
+        }
+        pending.push(fullPath);
+      } else if (extensions.includes(extname(entry))) {
+        found.push(fullPath);
+      }
     }
   }
+  const tracked = trackedFilesFor(dir);
+  results.push(...(tracked ? found.filter((file) => tracked.has(file)) : found));
   return results;
 }
 
