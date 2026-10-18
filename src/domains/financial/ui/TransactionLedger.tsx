@@ -2,15 +2,13 @@ import { Fragment, useMemo, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/shared/ui/select";
 import { formatProfitLoss } from "@/domains/financial/application/financialFacade";
-import { formatTransactionSubcategory, type TransactionSubcategory, type Transaction } from "@/domains/transactions/model/transactionTypes";
+import {
+  formatTransactionSubcategory,
+  type TransactionSubcategory,
+  type Transaction,
+} from "@/domains/transactions/model/transactionTypes";
 import { cn } from "@/shared/lib/cn";
 import { ReceiptText, ArrowUpRight, ArrowDownLeft, ChevronRight, ChevronDown } from "lucide-react";
 

@@ -5,7 +5,10 @@ import { HorsePortrait } from "@/domains/horse/ui/HorsePortrait";
 import { formatCurrency } from "@/shared/common/formatting";
 import { netProceeds, commissionAmount } from "@/domains/auction/application/auctionFacade";
 import { CONSIGNMENT_COMMISSION } from "@/domains/market/model/economicConstants";
-import { resolveSaleHouse, houseCommissionRate } from "@/domains/prestige/application/prestigeFacade";
+import {
+  resolveSaleHouse,
+  houseCommissionRate,
+} from "@/domains/prestige/application/prestigeFacade";
 import type { AuctionLot, Horse, Stable, AuctionSale } from "@/platform/game/types";
 
 /**

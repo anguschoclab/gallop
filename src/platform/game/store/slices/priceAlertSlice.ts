@@ -23,7 +23,10 @@ import {
   type PriceAlertDirection,
   type PriceAlertScope,
 } from "@/domains/market/simulation/priceAlerts";
-import { priceAlertMessage, tradeNotificationMessage } from "@/domains/market/simulation/priceAlertMessages";
+import {
+  priceAlertMessage,
+  tradeNotificationMessage,
+} from "@/domains/market/simulation/priceAlertMessages";
 import { DEFAULT_MARKET_STRATEGY, type MarketStrategy } from "@/domains/market/simulation/strategy";
 import type { StoreSet, StoreGet } from "@/platform/game/store/types";
 

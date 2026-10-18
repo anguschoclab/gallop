@@ -9,7 +9,22 @@
 import type { Horse, Race } from "@/platform/game/types";
 import { racecoursePrestigeMultiplier } from "@/domains/prestige/simulation/racecoursePrestige";
 import { MIN_FAME_GAIN } from "@/domains/prestige/model/prestigeTypes";
-import { FAME_GAIN_G1_WIN, FAME_GAIN_G2_WIN, FAME_GAIN_G3_WIN, FAME_GAIN_OTHER_WIN, FAME_GAIN_G1_TOP3, FAME_GAIN_G2_TOP3, FAME_GAIN_G3_TOP3, FAME_GAIN_OTHER_TOP3, FAME_GAIN_TOP5, FAME_BONUS_LARGE_PURSE, FAME_BONUS_MEDIUM_PURSE, LARGE_PURSE_THRESHOLD, MEDIUM_PURSE_THRESHOLD, MAX_FAME } from "@/domains/prestige/model/fameConstants";
+import {
+  FAME_GAIN_G1_WIN,
+  FAME_GAIN_G2_WIN,
+  FAME_GAIN_G3_WIN,
+  FAME_GAIN_OTHER_WIN,
+  FAME_GAIN_G1_TOP3,
+  FAME_GAIN_G2_TOP3,
+  FAME_GAIN_G3_TOP3,
+  FAME_GAIN_OTHER_TOP3,
+  FAME_GAIN_TOP5,
+  FAME_BONUS_LARGE_PURSE,
+  FAME_BONUS_MEDIUM_PURSE,
+  LARGE_PURSE_THRESHOLD,
+  MEDIUM_PURSE_THRESHOLD,
+  MAX_FAME,
+} from "@/domains/prestige/model/fameConstants";
 
 /**
  * Calculate fame gains for horses based on race results.

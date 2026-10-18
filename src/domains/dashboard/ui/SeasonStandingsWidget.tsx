@@ -17,9 +17,26 @@ import { cn } from "@/shared/lib/cn";
 import { Trophy, Bell, Coins, Award } from "lucide-react";
 import { useGameWithShallow } from "@/platform/game/store";
 import { STANDINGS_RECENT_AWARDS_LIMIT } from "@/domains/awards/model/awardsConstants";
-import { DASHBOARD_SEASON_STANDINGS_LIMIT, DASHBOARD_WEALTH_STANDINGS_LIMIT, STANDINGS_RANGE_SHORT_DAYS, STANDINGS_RANGE_MEDIUM_DAYS, STANDINGS_RANGE_LONG_DAYS, STANDINGS_DEFAULT_RANGE_DAYS, STANDINGS_SKELETON_ROW_COUNT, WEALTH_TAB_VALUE, EARNINGS_TAB_VALUE } from "@/shared/constants/dashboardConstants";
-import { SPARKLINE_WIDTH, SPARKLINE_HEIGHT, SPARKLINE_STROKE_WIDTH } from "@/shared/constants/uiConstants";
-import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/domains/awards/application/awardsFacade";
+import {
+  DASHBOARD_SEASON_STANDINGS_LIMIT,
+  DASHBOARD_WEALTH_STANDINGS_LIMIT,
+  STANDINGS_RANGE_SHORT_DAYS,
+  STANDINGS_RANGE_MEDIUM_DAYS,
+  STANDINGS_RANGE_LONG_DAYS,
+  STANDINGS_DEFAULT_RANGE_DAYS,
+  STANDINGS_SKELETON_ROW_COUNT,
+  WEALTH_TAB_VALUE,
+  EARNINGS_TAB_VALUE,
+} from "@/shared/constants/dashboardConstants";
+import {
+  SPARKLINE_WIDTH,
+  SPARKLINE_HEIGHT,
+  SPARKLINE_STROKE_WIDTH,
+} from "@/shared/constants/uiConstants";
+import {
+  CATEGORY_DISPLAY_NAMES,
+  CATEGORY_DESCRIPTIONS,
+} from "@/domains/awards/application/awardsFacade";
 
 const RANGES = [
   { label: "7D", days: STANDINGS_RANGE_SHORT_DAYS },

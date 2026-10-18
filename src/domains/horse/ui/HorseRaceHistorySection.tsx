@@ -1,13 +1,7 @@
 import { Card, CardContent } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { History } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { GradedHistoryPanel } from "@/domains/horse/ui/GradedHistoryPanel";
 import { cn } from "@/shared/lib/cn";
 import type { Horse } from "@/platform/game/types";

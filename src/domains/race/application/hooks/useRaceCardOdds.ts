@@ -1,6 +1,10 @@
 import { useMemo } from "react";
 import { useGameWithShallow } from "@/platform/game/store";
-import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/domains/odds/model/oddsTypes";;;
+import {
+  calculateWinProbability,
+  probabilityToMorningLine,
+  formatOdds,
+} from "@/domains/odds/model/oddsTypes";
 import { calculateClassBonus } from "@/shared/common/classBonus";
 import type { Race } from "@/platform/game/types";
 

@@ -6,7 +6,10 @@ import {
   priceWeight,
   syndicationStakeReputation,
 } from "@/domains/reputation/simulation/commerceReputation";
-import { applyReputationEvents, emptyReputation } from "@/domains/reputation/simulation/reputationEvents";
+import {
+  applyReputationEvents,
+  emptyReputation,
+} from "@/domains/reputation/simulation/reputationEvents";
 
 const base = {
   horseName: "Silver Comet",

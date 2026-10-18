@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { compareRankingsForDay, rankingsComparisonDays } from "@/domains/market/simulation/rankingsComparison";
+import {
+  compareRankingsForDay,
+  rankingsComparisonDays,
+} from "@/domains/market/simulation/rankingsComparison";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { asHorseId } from "@/shared/types/branded";
 

@@ -9,7 +9,10 @@ export { type Archetype } from "@/domains/breeding/model/archetypeTypes";
 
 export { ORIGINAL_ARCHETYPES } from "@/domains/breeding/simulation/archetypeOriginal";
 
-export { TRIPLE_CROWN_ARCHETYPES, TRIPLE_CROWN_SERIES_TO_ARCHETYPE } from "@/domains/breeding/simulation/archetypeTripleCrown";
+export {
+  TRIPLE_CROWN_ARCHETYPES,
+  TRIPLE_CROWN_SERIES_TO_ARCHETYPE,
+} from "@/domains/breeding/simulation/archetypeTripleCrown";
 
 export {
   ALL_ARCHETYPES,

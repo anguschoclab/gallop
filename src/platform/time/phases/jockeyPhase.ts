@@ -14,7 +14,10 @@ import { generateJockey } from "@/domains/jockey/simulation/generator";
 import { selectBestJockey, createJockeyAIState } from "@/domains/agents/simulation/jockeyAI";
 import { shouldRetainJockey } from "@/domains/agents/simulation/jockeyAIRetention";
 import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
-import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/domains/stable/simulation/worldSizeConfig";
+import {
+  getWorldSizeConfig,
+  DEFAULT_WORLD_SIZE,
+} from "@/domains/stable/simulation/worldSizeConfig";
 import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS } from "@/domains/jockey/model/jockeyConstants";
 import { PHASE_ORDER_JOCKEY_PHASE } from "@/platform/time/pipelineConstants";
 import { generateUUID } from "@/shared/uuid/uuid";

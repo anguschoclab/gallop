@@ -6,7 +6,12 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { trackAccessors, TRACKS, TRACK_BY_NAME, TRACK_BY_ID } from "@/shared/data/accessors/tracksAccessor";
+import {
+  trackAccessors,
+  TRACKS,
+  TRACK_BY_NAME,
+  TRACK_BY_ID,
+} from "@/shared/data/accessors/tracksAccessor";
 import {
   gradedRaceAccessors,
   GRADED_RACES,

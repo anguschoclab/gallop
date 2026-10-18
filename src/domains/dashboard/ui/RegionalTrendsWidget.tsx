@@ -18,7 +18,10 @@ import {
 import { TimeWindowSelect } from "@/domains/analytics/ui/TimeWindowSelect";
 import { useTimeWindow } from "@/domains/analytics/application/hooks/useTimeWindow";
 import { timeWindowLabel } from "@/domains/analytics/application/analyticsFacade";
-import { computeRegionTrends, type RegionKey } from "@/domains/analytics/application/analyticsFacade";
+import {
+  computeRegionTrends,
+  type RegionKey,
+} from "@/domains/analytics/application/analyticsFacade";
 import { useRegionalComparisonParams } from "@/domains/analytics/application/hooks/useRegionalComparisonParams";
 import { RegionDrilldownDrawer } from "@/domains/dashboard/ui/RegionDrilldownDrawer";
 import { Globe2 } from "lucide-react";

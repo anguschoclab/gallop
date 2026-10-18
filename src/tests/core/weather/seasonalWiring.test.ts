@@ -11,7 +11,12 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { stepWeather, generateForecast, PATTERN_SEVERITY, type WeatherState } from "@/domains/weather/simulation";
+import {
+  stepWeather,
+  generateForecast,
+  PATTERN_SEVERITY,
+  type WeatherState,
+} from "@/domains/weather/simulation";
 
 // Real track IDs from trackKoppenMappings.ts
 const TOKYO = "09aea125-88e4-4e51-b8d7-0475869c6269"; // Japan, Cfa

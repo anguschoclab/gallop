@@ -4,12 +4,7 @@
  * Extracted from claimingResolutionService.ts.
  */
 
-import type {
-  AnyImpact,
-  CashImpact,
-  ClaimingImpact,
-  LogImpact,
-} from "@/platform/resolver/impacts";
+import type { AnyImpact, CashImpact, ClaimingImpact, LogImpact } from "@/platform/resolver/impacts";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { formatCurrency } from "@/shared/common/formatting";
 import type { Rng } from "@/shared/common/rng";

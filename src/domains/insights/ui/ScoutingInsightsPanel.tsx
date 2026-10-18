@@ -12,18 +12,8 @@ import { toast } from "sonner";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
-import {
-  ContextMenuItem,
-  ContextMenuLabel,
-  ContextMenuSeparator,
-} from "@/shared/ui/context-menu";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
+import { ContextMenuItem, ContextMenuLabel, ContextMenuSeparator } from "@/shared/ui/context-menu";
 import { HorseScatterPlot } from "@/domains/insights/ui/HorseScatterPlot";
 import { InsightsCompareDialog } from "@/domains/insights/ui/InsightsCompareDialog";
 import { ScoutingThresholdControls } from "@/domains/insights/ui/ScoutingThresholdControls";
@@ -38,7 +28,12 @@ import {
   isNpcOwned,
   isPlayerOwned,
 } from "@/domains/horse/application/horseFacade";
-import { createDefaultScoutingThresholds, lastScoutDayByHorse, matchesScoutingThresholds, type ScoutingThresholds } from "@/domains/agents/model/scoutingThresholds";
+import {
+  createDefaultScoutingThresholds,
+  lastScoutDayByHorse,
+  matchesScoutingThresholds,
+  type ScoutingThresholds,
+} from "@/domains/agents/model/scoutingThresholds";
 
 import {
   INSIGHT_METRICS,

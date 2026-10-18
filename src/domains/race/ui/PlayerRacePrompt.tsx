@@ -1,21 +1,9 @@
 import { useGame, useGameWithShallow } from "@/platform/game/store";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/shared/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/shared/ui/dialog";
 import { Button } from "@/shared/ui/button";
 import { Thermometer, Wind } from "lucide-react";
 import { WeatherForecastStrip } from "@/domains/race/ui/WeatherForecastStrip";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { useNavigate } from "@tanstack/react-router";
 import { gameCalendarDate } from "@/domains/race/application/raceFacade";
 import { buildRaceField, rngForRace } from "@/domains/race/application/raceFacade";
@@ -23,7 +11,11 @@ import { runRaceToCompletion, toRaceRunner } from "@/domains/race/application/ra
 import { getCourseForRace } from "@/shared/data/tracks";
 import { formatCurrency } from "@/domains/race/application/raceFacade";
 import { useMemo, useState } from "react";
-import { INSTRUCTION_PRESETS, buildInstructions, type PresetId } from "@/domains/race/application/TacticOptions";
+import {
+  INSTRUCTION_PRESETS,
+  buildInstructions,
+  type PresetId,
+} from "@/domains/race/application/TacticOptions";
 import { AGGRESSIVENESS_DEFAULT } from "@/shared/constants/tacticsConstants";
 import { DEFAULT_DT, defaultMaxTime } from "@/domains/race/model/engine/constants";
 

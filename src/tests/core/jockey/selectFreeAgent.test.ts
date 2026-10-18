@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { scoreJockeyChemistry, selectBestFreeAgentJockey } from "@/domains/jockey/simulation/selectFreeAgent";
+import {
+  scoreJockeyChemistry,
+  selectBestFreeAgentJockey,
+} from "@/domains/jockey/simulation/selectFreeAgent";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
 
 function mkHorse(overrides: Partial<ReturnType<typeof createTestHorse>> = {}) {

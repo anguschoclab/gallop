@@ -1,7 +1,10 @@
 import { useCallback } from "react";
 import { useNavigate, useSearch } from "@tanstack/react-router";
 import type { RegionKey } from "@/domains/analytics/simulation/regionalTrends";
-import { TIME_WINDOW_OPTIONS, type TimeWindowWeeks } from "@/domains/analytics/simulation/timeWindow";
+import {
+  TIME_WINDOW_OPTIONS,
+  type TimeWindowWeeks,
+} from "@/domains/analytics/simulation/timeWindow";
 import {
   ALL_SURFACES,
   DEFAULT_WEEKS_A,

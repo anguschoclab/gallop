@@ -22,7 +22,7 @@ import type {
   CashImpact,
 } from "@/platform/resolver/impacts";
 import type { InboxImpact } from "@/platform/resolver/impacts/inboxImpacts";
-import { createTransportRequest } from "@/domains/transportation/model/transportationTypes";;;
+import { createTransportRequest } from "@/domains/transportation/model/transportationTypes";
 import { createTransaction } from "@/domains/transactions/model/transactionTypes";
 import { generateUUID } from "@/shared/uuid/uuid";
 import {

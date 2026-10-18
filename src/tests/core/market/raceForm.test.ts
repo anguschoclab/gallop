@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { raceFormPremium, worldRankings, RACE_FORM_PREMIUM_CAP } from "@/domains/market/simulation/raceForm";
+import {
+  raceFormPremium,
+  worldRankings,
+  RACE_FORM_PREMIUM_CAP,
+} from "@/domains/market/simulation/raceForm";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { asHorseId } from "@/shared/types/branded";
 

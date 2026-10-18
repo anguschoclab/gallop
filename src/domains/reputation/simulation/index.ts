@@ -32,7 +32,10 @@ export {
   syndicationStakeReputation,
   CHURN_WINDOW_DAYS,
 } from "@/domains/reputation/simulation/commerceReputation";
-export type { MarketTradeReputationArgs, SyndicationReputationArgs } from "@/domains/reputation/simulation/commerceReputation";
+export type {
+  MarketTradeReputationArgs,
+  SyndicationReputationArgs,
+} from "@/domains/reputation/simulation/commerceReputation";
 
 export {
   canUpgradeFacility,

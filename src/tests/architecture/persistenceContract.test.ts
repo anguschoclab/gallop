@@ -2,7 +2,11 @@ import { describe, expect, it } from "vitest";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import * as ts from "typescript";
-import { META_KEYS, PERSISTED_KEYS, TRANSIENT_STATE_KEYS } from "@/platform/game/store/persistedKeys";
+import {
+  META_KEYS,
+  PERSISTED_KEYS,
+  TRANSIENT_STATE_KEYS,
+} from "@/platform/game/store/persistedKeys";
 
 const ROOT = process.cwd();
 

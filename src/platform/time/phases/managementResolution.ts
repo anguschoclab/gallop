@@ -11,7 +11,10 @@
 import { PHASE_ORDER_MANAGEMENT_RESOLUTION } from "@/platform/time/pipelineConstants";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type { AnyImpact } from "@/platform/resolver/impacts";
-import { resolveManagementIntent, applyInsurancePremiums } from "@/platform/time/phases/managementResolutionHelpers";
+import {
+  resolveManagementIntent,
+  applyInsurancePremiums,
+} from "@/platform/time/phases/managementResolutionHelpers";
 
 /**
  * Management Resolution Phase (Order 10)

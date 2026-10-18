@@ -7,7 +7,11 @@ import {
 } from "@/domains/race/simulation/runnerConditions";
 import type { MoodSignal } from "@/domains/race/simulation/runnerConditions";
 import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
-import { MOOD_BASE_SCORE, MOOD_DEFAULT_SIGNAL_LABEL, MOOD_DEFAULT_SIGNAL_CONTRIBUTION } from "@/shared/constants/runnerConditionThresholds";
+import {
+  MOOD_BASE_SCORE,
+  MOOD_DEFAULT_SIGNAL_LABEL,
+  MOOD_DEFAULT_SIGNAL_CONTRIBUTION,
+} from "@/shared/constants/runnerConditionThresholds";
 
 function horse(temperament = 50, injured = false) {
   return {

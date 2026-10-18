@@ -12,8 +12,15 @@
 import type { Horse, Race, Stable } from "@/platform/game/types";
 import { isFemaleHorse } from "@/domains/horse/simulation/gender";
 
-import { BASE_PURSE_APPEAL, SCORING_CONSTANTS, GRADED_BONUS_BASE } from "@/domains/race/simulation/entryScoringConstants";
-import { SUITABILITY_SCORERS, buildSuitabilityContext } from "@/domains/race/simulation/raceSuitabilityScorers";
+import {
+  BASE_PURSE_APPEAL,
+  SCORING_CONSTANTS,
+  GRADED_BONUS_BASE,
+} from "@/domains/race/simulation/entryScoringConstants";
+import {
+  SUITABILITY_SCORERS,
+  buildSuitabilityContext,
+} from "@/domains/race/simulation/raceSuitabilityScorers";
 
 // Re-export for existing importers
 export { BASE_PURSE_APPEAL, SCORING_CONSTANTS, GRADED_BONUS_BASE };

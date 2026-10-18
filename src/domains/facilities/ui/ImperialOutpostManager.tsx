@@ -5,7 +5,10 @@ import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import { useGame, useGameWithShallow } from "@/platform/game/store";
 import { OUTPOST_CONSTANTS } from "@/domains/facilities/application/facilitiesFacade";
-import { FACILITY_NAMES, facilityLevelToTierLabel } from "@/domains/facilities/application/facilitiesFacade";
+import {
+  FACILITY_NAMES,
+  facilityLevelToTierLabel,
+} from "@/domains/facilities/application/facilitiesFacade";
 import { MapPin, Users, Globe, Hammer, ArrowRightLeft } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
 import { formatCurrency } from "@/shared/common/formatting";

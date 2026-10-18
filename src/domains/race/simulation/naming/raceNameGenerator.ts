@@ -8,8 +8,15 @@
 
 import type { RaceClass } from "@/platform/game/types";
 import type { Track } from "@/shared/data/accessors/tracksAccessor";
-import { getRegionalSystem, type RaceNameParams } from "@/domains/race/simulation/naming/raceNameUtils";
-import { selectNamingPattern, generateNameByPattern, ensureUnique } from "@/domains/race/simulation/naming/raceNamePatterns";
+import {
+  getRegionalSystem,
+  type RaceNameParams,
+} from "@/domains/race/simulation/naming/raceNameUtils";
+import {
+  selectNamingPattern,
+  generateNameByPattern,
+  ensureUnique,
+} from "@/domains/race/simulation/naming/raceNamePatterns";
 
 // Re-export utilities and types for backward compatibility
 export {

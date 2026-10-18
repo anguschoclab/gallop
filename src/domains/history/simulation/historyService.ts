@@ -1,6 +1,10 @@
 import type { Race, Horse, RaceRunner } from "@/platform/game/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
-import type { SeasonRecord, HallOfFameEntry, TrackRecord } from "@/domains/history/model/historyTypes";
+import type {
+  SeasonRecord,
+  HallOfFameEntry,
+  TrackRecord,
+} from "@/domains/history/model/historyTypes";
 import { trackRecordKey } from "@/domains/history/model/historyTypes";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { getCareerStats } from "@/domains/horse/simulation/stats";

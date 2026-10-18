@@ -1,7 +1,10 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ReputationBadge } from "@/domains/shell/ui/ReputationBadge";
 import { withGameState } from "@/test-utils/storyDecorators";
-import { getReputationTier, type ManagerReputation } from "@/domains/reputation/application/reputationFacade";
+import {
+  getReputationTier,
+  type ManagerReputation,
+} from "@/domains/reputation/application/reputationFacade";
 
 const meta: Meta<typeof ReputationBadge> = {
   title: "Components/ReputationBadge",

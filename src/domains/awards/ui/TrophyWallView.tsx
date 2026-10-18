@@ -4,7 +4,10 @@ import { cn } from "@/shared/lib/cn";
 import { Link } from "@tanstack/react-router";
 import { Trophy, Star } from "lucide-react";
 import type { RegionalAward } from "@/domains/awards/application/awardsFacade";
-import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/domains/awards/application/awardsFacade";
+import {
+  CATEGORY_DISPLAY_NAMES,
+  CATEGORY_DESCRIPTIONS,
+} from "@/domains/awards/application/awardsFacade";
 
 interface TrophyWallViewProps {
   awards: RegionalAward[];

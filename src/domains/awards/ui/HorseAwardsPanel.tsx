@@ -6,8 +6,14 @@ import { AwardBadge } from "@/domains/awards/ui/AwardBadge";
 import { cn } from "@/shared/lib/cn";
 import { Link } from "@tanstack/react-router";
 import type { Horse } from "@/platform/game/types";
-import type { RegionalAward, RegionalAwardCategory } from "@/domains/awards/application/awardsFacade";
-import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/domains/awards/application/awardsFacade";
+import type {
+  RegionalAward,
+  RegionalAwardCategory,
+} from "@/domains/awards/application/awardsFacade";
+import {
+  CATEGORY_DISPLAY_NAMES,
+  CATEGORY_DESCRIPTIONS,
+} from "@/domains/awards/application/awardsFacade";
 import { getRegionFlag, getRegionCountryLabel } from "@/shared/common/countryFlag";
 import { Trophy, Award, Star } from "lucide-react";
 import { VisualTrophy, TrophyShelf } from "@/domains/awards/ui/VisualTrophy";

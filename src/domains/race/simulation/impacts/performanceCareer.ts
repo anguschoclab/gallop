@@ -8,10 +8,16 @@ import type { AnyImpact, DistanceAptitudeImpact } from "@/platform/resolver/impa
 import { generateUUID } from "@/shared/uuid/uuid";
 import type { Rng } from "@/shared/common/rng";
 import { computeDistanceScaling } from "@/domains/race/simulation/engine/runnerBuilder";
-import { generateFormImpact, generateFameImpact } from "@/domains/race/simulation/impacts/energyFormFame";
+import {
+  generateFormImpact,
+  generateFameImpact,
+} from "@/domains/race/simulation/impacts/energyFormFame";
 import { generateBeyerAndRecoveryImpacts } from "@/domains/race/simulation/impacts/beyerRecovery";
 import { generatePatternJumpImpact } from "@/domains/race/simulation/impacts/patternJump";
-import { generateRaceHistoryImpact, generateTripleCrownProgressImpact } from "@/domains/race/simulation/impacts/raceHistory";
+import {
+  generateRaceHistoryImpact,
+  generateTripleCrownProgressImpact,
+} from "@/domains/race/simulation/impacts/raceHistory";
 import { generateTrainerStatsImpact } from "@/domains/race/simulation/impacts/trainerStats";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import type { Race, Horse, RaceResult, RaceEntry } from "@/platform/game/types";

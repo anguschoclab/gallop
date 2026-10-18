@@ -4,7 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import { TrendingUp } from "lucide-react";
-import { getSireAnalytics, type SireClassification } from "@/domains/breeding/application/breedingFacade";
+import {
+  getSireAnalytics,
+  type SireClassification,
+} from "@/domains/breeding/application/breedingFacade";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,

@@ -3,13 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Card } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { cn } from "@/shared/lib/cn";
 import { formatCurrency } from "@/shared/common/formatting";
 import type { Stable } from "@/platform/game/types";

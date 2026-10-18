@@ -1,6 +1,9 @@
 import { useCallback, useState } from "react";
 import type { Horse } from "@/platform/game/types";
-import { runHeadToHeadSimulation, type MonteCarloResult } from "@/domains/race/simulation/headToHead";
+import {
+  runHeadToHeadSimulation,
+  type MonteCarloResult,
+} from "@/domains/race/simulation/headToHead";
 import { SIM_ITERATIONS } from "@/shared/constants/uiConstants";
 
 export interface UseHeadToHeadSimReturn {

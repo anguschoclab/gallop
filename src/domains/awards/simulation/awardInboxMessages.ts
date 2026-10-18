@@ -1,4 +1,8 @@
-import type { RegionalAward, AwardRegion, RegionalAwardCategory } from "@/domains/awards/model/types";
+import type {
+  RegionalAward,
+  AwardRegion,
+  RegionalAwardCategory,
+} from "@/domains/awards/model/types";
 import { CATEGORY_DISPLAY_NAMES } from "@/domains/awards/model/types";
 import type { InboxMessage } from "@/domains/inbox/model/inboxTypes";
 

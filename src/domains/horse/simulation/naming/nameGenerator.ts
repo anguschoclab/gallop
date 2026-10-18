@@ -18,7 +18,10 @@ import {
   generateReverseHomage,
 } from "@/domains/horse/simulation/naming/pedigreePatterns";
 import { generateAncestorHomage } from "@/domains/horse/simulation/naming/ancestorHomage";
-import { generateThematicName, type NamingTheme } from "@/domains/horse/simulation/naming/thematicNaming";
+import {
+  generateThematicName,
+  type NamingTheme,
+} from "@/domains/horse/simulation/naming/thematicNaming";
 import { generateRegionalName } from "@/domains/horse/simulation/naming/regionalConventions";
 import { validateHorseName } from "@/domains/horse/simulation/naming/jockeyClubRules";
 import type { ReservedNameEntry } from "@/domains/horse/simulation/naming/reservedNames";

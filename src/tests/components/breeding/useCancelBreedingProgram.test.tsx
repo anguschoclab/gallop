@@ -4,7 +4,10 @@ import { useGame } from "@/platform/game/store";
 import { createDefaultGameState } from "@/platform/game/store/state";
 import { useCancelBreedingProgram } from "@/domains/breeding/ui/useCancelBreedingProgram";
 import { makeBreedingProgram } from "@/tests/helpers/sampleGameState";
-import { TOAST_PROGRAM_CANCELLED, ERR_NO_ACTIVE_PROGRAM } from "@/domains/breeding/model/breedingConstants";
+import {
+  TOAST_PROGRAM_CANCELLED,
+  ERR_NO_ACTIVE_PROGRAM,
+} from "@/domains/breeding/model/breedingConstants";
 
 vi.mock("sonner", () => ({
   toast: { info: vi.fn(), error: vi.fn() },

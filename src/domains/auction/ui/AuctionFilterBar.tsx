@@ -1,11 +1,5 @@
 import { ToggleGroup, ToggleGroupItem } from "@/shared/ui/toggle-group";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Button } from "@/shared/ui/button";
 import type { AuctionBrowseSearch } from "@/domains/auction/ui/auctionSearchSchema";
 

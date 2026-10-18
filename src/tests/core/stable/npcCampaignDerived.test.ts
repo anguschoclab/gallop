@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { compareWithPlayer, deriveNpcCampaignProgress } from "@/domains/stable/simulation/npcCampaignDerived";
+import {
+  compareWithPlayer,
+  deriveNpcCampaignProgress,
+} from "@/domains/stable/simulation/npcCampaignDerived";
 import type { GoalProgress } from "@/domains/stable/simulation/stableGoals";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers";

@@ -42,4 +42,8 @@ export type {
   PrestigeLadderEntry,
   PrestigeEntityKind,
 } from "@/domains/prestige/simulation/playerPrestige";
-export { playerPrestigeScore, playerPrestigeStanding, prestigeLadder } from "@/domains/prestige/simulation/playerPrestige";
+export {
+  playerPrestigeScore,
+  playerPrestigeStanding,
+  prestigeLadder,
+} from "@/domains/prestige/simulation/playerPrestige";

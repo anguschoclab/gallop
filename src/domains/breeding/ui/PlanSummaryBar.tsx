@@ -1,13 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Check, Save, Trash2, Sparkles, Eraser } from "lucide-react";
 import { formatCurrency } from "@/domains/breeding/application/breedingFacade";
 import { DisabledTooltipWrapper } from "@/shared/ui/DisabledTooltipWrapper";

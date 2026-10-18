@@ -6,7 +6,11 @@
  * enriching them with real-world calendar dates, relative day timestamps, and entity metadata.
  */
 
-import { gameCalendarDate, gameYearNumber, relativeDayLabel } from "@/domains/calendar/simulation/dateFormatting";
+import {
+  gameCalendarDate,
+  gameYearNumber,
+  relativeDayLabel,
+} from "@/domains/calendar/simulation/dateFormatting";
 import { formatCurrency, formatTime } from "@/shared/common/formatting";
 import type { NewsItem, EntityLink } from "@/domains/narrative/model/newsTypes";
 import type { TrackRecord, SeasonRecord } from "@/domains/history/model/historyTypes";

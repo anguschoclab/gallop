@@ -18,8 +18,14 @@ import type { Rng } from "@/shared/common/rng";
 import { STABLE_CONFIG } from "@/domains/stable/simulation/stableConfig";
 import type { WorldSizeStableConfig } from "@/domains/stable/simulation/worldSizeConfig";
 import { shuffleAndPick } from "@/domains/stable/simulation/stableSelection";
-import { generateFillerStable, generateStableFromTemplate } from "@/domains/stable/simulation/stableGeneration";
-import { ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES } from "@/domains/breeding/simulation/archetypes";
+import {
+  generateFillerStable,
+  generateStableFromTemplate,
+} from "@/domains/stable/simulation/stableGeneration";
+import {
+  ORIGINAL_ARCHETYPES,
+  TRIPLE_CROWN_ARCHETYPES,
+} from "@/domains/breeding/simulation/archetypes";
 import { ELITE_POOL, MID_POOL, BUDGET_POOL } from "@/domains/stable/simulation/stablePoolData";
 import { SECONDARY_POOL } from "@/domains/stable/simulation/secondaryStablePool";
 import { resolveStableYard } from "@/domains/stable/simulation/stableYard";

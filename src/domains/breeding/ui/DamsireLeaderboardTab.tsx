@@ -1,7 +1,10 @@
 import { useGame } from "@/platform/game/store";
 import { Badge } from "@/shared/ui/badge";
 import { Heart } from "lucide-react";
-import type { DamsireRanking, DamsireLeaderboard } from "@/domains/breeding/application/breedingFacade";
+import type {
+  DamsireRanking,
+  DamsireLeaderboard,
+} from "@/domains/breeding/application/breedingFacade";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,

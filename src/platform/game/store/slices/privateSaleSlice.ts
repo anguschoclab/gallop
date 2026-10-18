@@ -13,9 +13,15 @@ import { makePlayerOwned, isPlayerOwned, getStableId } from "@/domains/horse/sim
 import { generateUUID } from "@/shared/uuid/uuid";
 import type { StoreSet, StoreGet } from "@/platform/game/store/types";
 import type { AnyIntent } from "@/platform/resolver/intents";
-import { evaluateHorseAttachment, attachmentAdjustedAsk } from "@/domains/horse/simulation/attachment";
+import {
+  evaluateHorseAttachment,
+  attachmentAdjustedAsk,
+} from "@/domains/horse/simulation/attachment";
 import { calculateLotValuation } from "@/domains/auction/simulation/engine";
-import { computePremiumBuyout, computeDiplomaticPressure } from "@/domains/horse/simulation/overrideNegotiation";
+import {
+  computePremiumBuyout,
+  computeDiplomaticPressure,
+} from "@/domains/horse/simulation/overrideNegotiation";
 
 export type PrivateSaleSlice = {
   /** Proposes a private sale offer to an NPC stable for one of its horses */

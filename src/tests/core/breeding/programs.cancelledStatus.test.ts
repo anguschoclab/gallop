@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { createBreedingProgram, updateProgramProgress } from "@/domains/breeding/simulation/programs";
+import {
+  createBreedingProgram,
+  updateProgramProgress,
+} from "@/domains/breeding/simulation/programs";
 import { getArchetypeById } from "@/domains/breeding/simulation/archetypes";
 import { createTestHorse } from "@/tests/helpers";
 import {

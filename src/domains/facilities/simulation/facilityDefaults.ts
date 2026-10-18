@@ -10,14 +10,22 @@
 
 // Facility Defaults - Default facility creation and helper functions
 
-import type { Facility, FacilityType, FacilityLevel, PlayerFacilities } from "@/domains/facilities/model/facilityTypes";
+import type {
+  Facility,
+  FacilityType,
+  FacilityLevel,
+  PlayerFacilities,
+} from "@/domains/facilities/model/facilityTypes";
 import {
   FACILITY_MAINTENANCE_COSTS,
   FACILITY_UPGRADE_COSTS,
   FACILITY_ENABLED_WORKOUTS,
 } from "@/domains/facilities/model/facilityTypes";
 import { TRAINING_FACILITY_REQUIREMENTS } from "@/shared/constants/workoutConstants";
-import { FACILITY_UPGRADE_BASE_COST, FACILITY_UPGRADE_MULTIPLIER } from "@/domains/market/model/economicConstants";
+import {
+  FACILITY_UPGRADE_BASE_COST,
+  FACILITY_UPGRADE_MULTIPLIER,
+} from "@/domains/market/model/economicConstants";
 
 /**
  * Create a default facility at a given level.

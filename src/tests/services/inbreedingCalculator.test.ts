@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { calculateFounderEffect, checkDirectInbreeding } from "@/domains/breeding/simulation/inbreedingCalculator";
+import {
+  calculateFounderEffect,
+  checkDirectInbreeding,
+} from "@/domains/breeding/simulation/inbreedingCalculator";
 import { DEFAULT_GENETIC_DIVERSITY } from "@/domains/breeding/model/breedingConstants";
 
 describe("inbreedingCalculator", () => {

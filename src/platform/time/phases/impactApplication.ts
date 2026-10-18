@@ -13,7 +13,13 @@
 
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import { PHASE_ORDER_IMPACT_APPLICATION } from "@/platform/time/pipelineConstants";
-import { HALL_OF_FAME_MAX_SIZE, SEASON_RECORDS_MAX_SIZE, SCOUT_REPORTS_MAX_SIZE, TRIPLE_CROWN_HISTORY_MAX_SIZE, PACE_SAMPLES_MAX_SIZE } from "@/shared/constants/storageLimitsConstants";
+import {
+  HALL_OF_FAME_MAX_SIZE,
+  SEASON_RECORDS_MAX_SIZE,
+  SCOUT_REPORTS_MAX_SIZE,
+  TRIPLE_CROWN_HISTORY_MAX_SIZE,
+  PACE_SAMPLES_MAX_SIZE,
+} from "@/shared/constants/storageLimitsConstants";
 import { applyImpacts, type ResolverContext } from "@/platform/resolver/resolver";
 
 /**

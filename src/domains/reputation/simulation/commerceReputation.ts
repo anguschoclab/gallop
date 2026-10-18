@@ -21,7 +21,10 @@
  *   src/game/store/slices/exchangeSlice.ts
  */
 
-import { createReputationEvent, type ReputationEvent } from "@/domains/reputation/model/reputationTypes";
+import {
+  createReputationEvent,
+  type ReputationEvent,
+} from "@/domains/reputation/model/reputationTypes";
 
 /** A horse sold again within this many days counts as a flip. */
 export const CHURN_WINDOW_DAYS = 30;

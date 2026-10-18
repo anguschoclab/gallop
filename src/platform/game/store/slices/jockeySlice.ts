@@ -14,7 +14,12 @@ import { generateUUID } from "@/shared/uuid/uuid";
 import type { ActionResult, SliceCreator } from "@/platform/game/store/types";
 import { requireOwned, requireHorse } from "@/platform/game/store/guards";
 import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
-import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, JOCKEY_RETAINER_BONUS_MULTIPLIER, JOCKEY_PER_RACE_BONUS_MULTIPLIER } from "@/domains/jockey/model/jockeyConstants";
+import {
+  JOCKEY_CONTRACT_DAYS,
+  JOCKEY_RETAINER_DAYS,
+  JOCKEY_RETAINER_BONUS_MULTIPLIER,
+  JOCKEY_PER_RACE_BONUS_MULTIPLIER,
+} from "@/domains/jockey/model/jockeyConstants";
 
 export type JockeySlice = {
   hireJockey: (jockeyId: string, contractType: "standard" | "retainer") => ActionResult;

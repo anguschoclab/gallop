@@ -7,7 +7,11 @@ import type { Horse } from "@/domains/horse/simulation/types";
 import type { TrackLedgerEntry } from "@/domains/history/simulation/trackLedger";
 import { PLAYER_LEDGER_STABLE_ID } from "@/domains/history/simulation/trackLedger";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
-import { raceGoalClass, type GoalClass, type StableGoals } from "@/domains/stable/simulation/stableGoals";
+import {
+  raceGoalClass,
+  type GoalClass,
+  type StableGoals,
+} from "@/domains/stable/simulation/stableGoals";
 import {
   journalOutcome,
   type JournalOutcome,

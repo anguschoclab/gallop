@@ -6,7 +6,11 @@ import {
   chartColors,
   formatCurrencyCompact,
 } from "@/shared/ui/charts";
-import { ANALYTICS_ROI_RANKING_DISPLAY, ANALYTICS_FORM_CHART_DISPLAY, ANALYTICS_FORM_CHART_RECENT_RACES } from "@/shared/constants/analyticsConstants";
+import {
+  ANALYTICS_ROI_RANKING_DISPLAY,
+  ANALYTICS_FORM_CHART_DISPLAY,
+  ANALYTICS_FORM_CHART_RECENT_RACES,
+} from "@/shared/constants/analyticsConstants";
 
 export function AnalyticsStableTab() {
   const d = useAnalyticsData();

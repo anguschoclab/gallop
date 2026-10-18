@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { calculateBeyerProjections, formatProjectionMessage } from "@/domains/race/simulation/projections";
+import {
+  calculateBeyerProjections,
+  formatProjectionMessage,
+} from "@/domains/race/simulation/projections";
 import type { Horse, Race } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import { makeUnowned } from "@/domains/horse/simulation/ownership";

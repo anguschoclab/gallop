@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildFinancialPeriod, buildProfitLossReport } from "@/domains/financial/simulation/reportBuilder";
+import {
+  buildFinancialPeriod,
+  buildProfitLossReport,
+} from "@/domains/financial/simulation/reportBuilder";
 import { createTransaction } from "@/domains/transactions/model/transactionTypes";
 
 describe("financial report builder", () => {

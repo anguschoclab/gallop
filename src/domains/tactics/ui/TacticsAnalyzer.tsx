@@ -19,7 +19,12 @@ import {
 import { cn } from "@/shared/lib/cn";
 import { useState } from "react";
 import { toast } from "sonner";
-import { AGGRESSIVENESS_MIN, AGGRESSIVENESS_MAX, AGGRESSIVENESS_STEP, TACTICS_SAVED_FEEDBACK_MS } from "@/shared/constants/tacticsConstants";
+import {
+  AGGRESSIVENESS_MIN,
+  AGGRESSIVENESS_MAX,
+  AGGRESSIVENESS_STEP,
+  TACTICS_SAVED_FEEDBACK_MS,
+} from "@/shared/constants/tacticsConstants";
 
 interface TacticsAnalyzerProps {
   horseId: string;

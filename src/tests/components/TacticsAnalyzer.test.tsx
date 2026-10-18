@@ -5,7 +5,10 @@ import { createDefaultGameState } from "@/platform/game/store/state";
 import { useGame } from "@/platform/game/store";
 import { TacticsAnalyzer } from "@/domains/tactics/ui/TacticsAnalyzer";
 import type { Horse, Race } from "@/platform/game/types";
-import { AGGRESSIVENESS_DEFAULT, TACTICS_SAVED_FEEDBACK_MS } from "@/shared/constants/tacticsConstants";
+import {
+  AGGRESSIVENESS_DEFAULT,
+  TACTICS_SAVED_FEEDBACK_MS,
+} from "@/shared/constants/tacticsConstants";
 
 vi.mock("sonner", () => ({
   toast: { success: vi.fn() },

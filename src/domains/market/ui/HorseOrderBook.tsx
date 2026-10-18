@@ -2,7 +2,10 @@ import { useMemo } from "react";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { formatCurrency } from "@/shared/common/formatting";
-import { netProceeds, type HorseOrderBook as Book } from "@/domains/market/application/marketFacade";
+import {
+  netProceeds,
+  type HorseOrderBook as Book,
+} from "@/domains/market/application/marketFacade";
 import { sellerStandingBidFactor } from "@/domains/market/application/marketFacade";
 import { useGame, useGameWithShallow } from "@/platform/game/store";
 import { formatYard, resolveStableYard } from "@/domains/stable/application/stableFacade";

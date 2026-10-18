@@ -20,14 +20,23 @@ import type {
 import { TRAIT_VALUES, fiberDistanceModifier } from "@/domains/genetics/simulation/phenotype";
 import { clamp } from "@/shared/common/math";
 import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
-import { REGIONAL_LINE_BIAS, type Bloodline } from "@/domains/breeding/simulation/populationGenetics";
+import {
+  REGIONAL_LINE_BIAS,
+  type Bloodline,
+} from "@/domains/breeding/simulation/populationGenetics";
 import { calculateDosageMetrics } from "@/domains/race/simulation/dosage";
 import { calculateOptimalRunningStyle } from "@/domains/agents/simulation/jockeyStyleSelection";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { calculateTheHandBonus } from "@/domains/jockey/simulation/affinity";
 import { getClaimAllowance } from "@/domains/apprentice/model/apprenticeTypes";
 import { getCourseMultiplier } from "@/domains/race/simulation/sectionalAnalysis";
-import { HARSH_CONDITION_SPEED_THRESHOLD, MAX_FORM_ENERGY_MUL, TOP_SPEED_CEILING, LANE_WIDTH, MUD_MASTER_SPEED_BONUS } from "@/domains/race/model/engine/constants";
+import {
+  HARSH_CONDITION_SPEED_THRESHOLD,
+  MAX_FORM_ENERGY_MUL,
+  TOP_SPEED_CEILING,
+  LANE_WIDTH,
+  MUD_MASTER_SPEED_BONUS,
+} from "@/domains/race/model/engine/constants";
 import type { SimWeatherPattern } from "@/domains/weather/model/weatherTypes";
 import {
   type Runner,
@@ -41,7 +50,12 @@ import {
 import { FactorLedgerCollector } from "@/domains/race/simulation/factorLedger";
 
 // Re-export shared types and utilities for backward compatibility
-export type { Runner, RunnerBonuses, ConditionsModifier, PaceContext } from "@/domains/race/model/engine/runnerTypes";
+export type {
+  Runner,
+  RunnerBonuses,
+  ConditionsModifier,
+  PaceContext,
+} from "@/domains/race/model/engine/runnerTypes";
 export {
   paceShapeMul,
   styleStaminaFactor,

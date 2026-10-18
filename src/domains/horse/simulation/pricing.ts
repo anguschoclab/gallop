@@ -16,9 +16,19 @@ import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import { raceFormPremium } from "@/domains/market/simulation/raceForm";
 import { pedigreeMultiplier } from "@/domains/breeding/simulation/pedigreePricing";
 import { SIRE_GENDERS, DAM_GENDERS } from "@/domains/horse/simulation/gender";
-import { INJURY_PRONENESS_LOW_THRESHOLD, INJURY_PRONENESS_HIGH_THRESHOLD } from "@/domains/health/model/healthInjuryConstants";
-import { AGE_YOUNG_THRESHOLD, AGE_OLD_THRESHOLD, AGE_RETIREMENT_THRESHOLD } from "@/domains/horse/model/horseStatConstants";
-import { FAN_VALUATION_DIVISOR, FAN_BREEDING_VALUATION_DIVISOR } from "@/domains/prestige/model/fameConstants";
+import {
+  INJURY_PRONENESS_LOW_THRESHOLD,
+  INJURY_PRONENESS_HIGH_THRESHOLD,
+} from "@/domains/health/model/healthInjuryConstants";
+import {
+  AGE_YOUNG_THRESHOLD,
+  AGE_OLD_THRESHOLD,
+  AGE_RETIREMENT_THRESHOLD,
+} from "@/domains/horse/model/horseStatConstants";
+import {
+  FAN_VALUATION_DIVISOR,
+  FAN_BREEDING_VALUATION_DIVISOR,
+} from "@/domains/prestige/model/fameConstants";
 
 /**
  * Canonical base valuation formula shared by horsePrice() and stallions.valueOf().

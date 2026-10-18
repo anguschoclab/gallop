@@ -1,5 +1,9 @@
 import type { Horse } from "@/platform/game/types";
-import { DAYS_PER_YEAR, DAYS_PER_MONTH, DAYS_PER_WEEK } from "@/domains/calendar/model/calendarConstants";
+import {
+  DAYS_PER_YEAR,
+  DAYS_PER_MONTH,
+  DAYS_PER_WEEK,
+} from "@/domains/calendar/model/calendarConstants";
 import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
 import { getEngineClient, initEngineClient } from "@/platform/game/store/engineClient";
 import { clearLineageCache } from "@/domains/breeding/simulation/lineage";

@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { useGame } from "@/platform/game/store";
 import { toast } from "sonner";
-import { CANCEL_REASON_USER, TOAST_PROGRAM_CANCELLED } from "@/domains/breeding/model/breedingConstants";
+import {
+  CANCEL_REASON_USER,
+  TOAST_PROGRAM_CANCELLED,
+} from "@/domains/breeding/model/breedingConstants";
 
 export function useCancelBreedingProgram() {
   const activeBreedingProgram = useGame((s) => s.activeBreedingProgram);

@@ -2,11 +2,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { AwardIconWithYear } from "@/domains/awards/ui/AwardIcon";
 import { Link } from "@tanstack/react-router";
-import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/domains/awards/application/awardsFacade";
+import {
+  CATEGORY_DISPLAY_NAMES,
+  CATEGORY_DESCRIPTIONS,
+} from "@/domains/awards/application/awardsFacade";
 import { getRegionCountryLabel } from "@/shared/common/countryFlag";
 import { Trophy } from "lucide-react";
 import type { RegionalAward } from "@/domains/awards/application/awardsFacade";
-import { AWARD_COMPACT_THRESHOLD, TROPHY_COMPACT_MAX_DISPLAY } from "@/domains/awards/model/awardsConstants";
+import {
+  AWARD_COMPACT_THRESHOLD,
+  TROPHY_COMPACT_MAX_DISPLAY,
+} from "@/domains/awards/model/awardsConstants";
 
 interface TrophyCompactViewProps {
   awards: RegionalAward[];

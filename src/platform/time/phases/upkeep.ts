@@ -10,7 +10,7 @@
 
 import type { PipelineContext } from "@/platform/time/pipeline";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
-import { createExpense } from "@/domains/expenses/model/expenseTypes";;;
+import { createExpense } from "@/domains/expenses/model/expenseTypes";
 import { calculateTotalMaintenance } from "@/domains/facilities/simulation";
 import { resolveNarrativePort } from "@/platform/time/pipelinePorts";
 import { generateUUID } from "@/shared/uuid/uuid";

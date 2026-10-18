@@ -33,7 +33,10 @@ import { asPlayerOwnerId, asHorseId } from "@/shared/types/branded";
 import { getStableId } from "@/domains/horse/simulation/ownership";
 import { requireOwned, requireHorse } from "@/platform/game/store/guards";
 import type { StoreSet, StoreGet } from "@/platform/game/store/types";
-import { createSyndicateActions, createBreedingBatchActions } from "@/platform/game/store/slices/breedingActions";
+import {
+  createSyndicateActions,
+  createBreedingBatchActions,
+} from "@/platform/game/store/slices/breedingActions";
 
 export type BreedingSlice = BreedingState & {
   breed: (

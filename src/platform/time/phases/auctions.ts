@@ -14,7 +14,10 @@ import type { HorseCreationImpact } from "@/platform/resolver/impacts";
 import type { AuctionSale } from "@/platform/game/types";
 import { generateAuctionLots } from "@/domains/auction/simulation/engine";
 import { SALE_TRIGGERS } from "@/domains/auction/simulation/data";
-import { getAuctionHouse, housePrestigeMultiplier } from "@/domains/prestige/simulation/auctionHouses";
+import {
+  getAuctionHouse,
+  housePrestigeMultiplier,
+} from "@/domains/prestige/simulation/auctionHouses";
 import { createAuctionRunner } from "@/domains/auction/simulation/runner";
 import { dayOfYear } from "@/domains/calendar/simulation/dateFormatting";
 import { generateUUID } from "@/shared/uuid/uuid";

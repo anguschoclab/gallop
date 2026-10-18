@@ -123,6 +123,7 @@ const COAT_TO_SPRITE_SHEET: Record<string, SpriteSheet> = {
 
 /**
  * Returns the full sprite sheet descriptor for a coat color.
+ * @param coatColor
  */
 export function getSpriteSheet(coatColor?: string): SpriteSheet | undefined {
   if (!coatColor) return undefined;
@@ -169,6 +170,8 @@ const MAX_INFERRED_FRAMES = 24;
  * Assumes horizontally-stacked, square-ish frames: picks the frame count whose
  * resulting frame width is closest to the sheet height (or half of it, for
  * sheets that reserve vertical head-room above the horse).
+ * @param width
+ * @param height
  */
 export function inferSpriteLayout(
   width: number,
@@ -193,6 +196,8 @@ export function inferSpriteLayout(
  * Resolves the metrics used to render a sheet: registry metadata when the coat
  * is known, otherwise inferred from the measured image. Measured dimensions
  * always win for the sheet width/height so odd-sized future assets crop right.
+ * @param url
+ * @param declared
  */
 export function getSpriteMetrics(
   url: string,

@@ -4,13 +4,7 @@
  * surface selectors. Used in the stable roster and race entry flow.
  */
 import { Button } from "@/shared/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { cn } from "@/shared/lib/cn";
 import { Gauge } from "lucide-react";
 import {

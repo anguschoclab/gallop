@@ -8,7 +8,12 @@
  * Form = Fitness - Fatigue
  */
 
-import { BANISTER_FITNESS_TAU, BANISTER_FATIGUE_TAU, BANISTER_FITNESS_K, BANISTER_FATIGUE_K } from "@/domains/training/model/banisterConstants";
+import {
+  BANISTER_FITNESS_TAU,
+  BANISTER_FATIGUE_TAU,
+  BANISTER_FITNESS_K,
+  BANISTER_FATIGUE_K,
+} from "@/domains/training/model/banisterConstants";
 import { WORKOUT_INTENSITIES } from "@/shared/constants/workoutConstants";
 
 export const BANISTER_CONSTANTS = {

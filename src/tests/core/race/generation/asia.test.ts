@@ -2,7 +2,10 @@ import { describe, it, expect } from "vitest";
 import { generateAsianRace } from "@/domains/race/simulation/generation/asia";
 import { createRng } from "@/shared/common/rng";
 import type { Track } from "@/shared/data/tracks";
-import { MINSTAT_ALLOWANCE, MINSTAT_STAKES } from "@/domains/race/model/raceClassificationConstants";
+import {
+  MINSTAT_ALLOWANCE,
+  MINSTAT_STAKES,
+} from "@/domains/race/model/raceClassificationConstants";
 
 function mkAsianTrack(overrides: Partial<Track> = {}): Track {
   return {

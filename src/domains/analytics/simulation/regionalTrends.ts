@@ -8,7 +8,11 @@
 import { REGION_LIST, type RegionId } from "@/domains/calendar/simulation/regions";
 import type { Horse, HorseRaceHistoryEntry } from "@/domains/horse/simulation/types";
 import type { Race } from "@/domains/race/simulation/types";
-import { isInWindow, weekBucket, type TimeWindowWeeks } from "@/domains/analytics/simulation/timeWindow";
+import {
+  isInWindow,
+  weekBucket,
+  type TimeWindowWeeks,
+} from "@/domains/analytics/simulation/timeWindow";
 import { FALLBACK_WEEK_BUCKETS } from "@/shared/constants/regionalConstants";
 import {
   POSITION_WIN as WIN_POSITION,

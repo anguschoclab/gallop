@@ -12,7 +12,10 @@ import type { KoppenCode } from "@/domains/weather/model/koppenTypes";
 import { KOPPEN_PROFILES } from "@/domains/weather/simulation/koppenProfiles";
 import { getTrackKoppen } from "@/domains/weather/simulation/trackKoppenMappings";
 import { getTrackHemisphere } from "@/domains/weather/simulation/trackClimate";
-import { getSeasonalModifiersForTrack, applyModifiers } from "@/domains/weather/simulation/seasonalModifiers";
+import {
+  getSeasonalModifiersForTrack,
+  applyModifiers,
+} from "@/domains/weather/simulation/seasonalModifiers";
 import {
   type SimWeatherPattern,
   SIM_WEATHER_PATTERNS,

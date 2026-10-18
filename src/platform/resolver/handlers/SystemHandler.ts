@@ -12,8 +12,15 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/platform/game/types";
 import type { AnyImpact, ReputationImpact } from "@/platform/resolver/impacts";
-import type { ImpactHandler, LookupMaps, ImpactHandlerFunction } from "@/platform/resolver/handlers/types";
-import type { HallOfFameInductionImpact, SeasonHistoryImpact } from "@/platform/resolver/impacts/horseImpacts";
+import type {
+  ImpactHandler,
+  LookupMaps,
+  ImpactHandlerFunction,
+} from "@/platform/resolver/handlers/types";
+import type {
+  HallOfFameInductionImpact,
+  SeasonHistoryImpact,
+} from "@/platform/resolver/impacts/horseImpacts";
 import type {
   CampaignSlotImpact,
   CampaignFlagImpact,

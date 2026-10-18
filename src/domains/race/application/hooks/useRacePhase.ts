@@ -21,6 +21,7 @@ function coerce(value: unknown, fallback: RacePhase): RacePhase {
  * Reads `?phase=preshow|live|review` from the route search; falls back to
  * `review` for resolved races and `preshow` otherwise. Writes use
  * `replace: true` so phase transitions don't pollute browser history.
+ * @param resolved
  */
 export function useRacePhase(resolved: boolean): {
   phase: RacePhase;

@@ -6,7 +6,12 @@
  */
 import type { Horse } from "@/platform/game/types";
 import type { Race } from "@/domains/race/simulation/types";
-import type { EarlyPosition, MoveTiming, RidingStyle, JockeyInstructions } from "@/domains/tactics/model/tacticsTypes";
+import type {
+  EarlyPosition,
+  MoveTiming,
+  RidingStyle,
+  JockeyInstructions,
+} from "@/domains/tactics/model/tacticsTypes";
 import { getHorseTendencyStats } from "@/domains/horse/simulation/paceTendency";
 
 export interface RaceAdvice {

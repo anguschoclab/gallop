@@ -14,17 +14,16 @@ import { Badge } from "@/shared/ui/badge";
 import { Input } from "@/shared/ui/input";
 import { Label } from "@/shared/ui/label";
 import { Switch } from "@/shared/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { ScoutingThresholdControls } from "@/domains/insights/ui/ScoutingThresholdControls";
 import { useGame, useGameWithShallow } from "@/platform/game/store";
 import type { GameState } from "@/platform/game/types";
-import { SCOUTING_PRIORITIES, describeScoutingThresholds, type ScoutingAssignment, type ScoutingPriority } from "@/domains/agents/model/scoutingThresholds";
+import {
+  SCOUTING_PRIORITIES,
+  describeScoutingThresholds,
+  type ScoutingAssignment,
+  type ScoutingPriority,
+} from "@/domains/agents/model/scoutingThresholds";
 import { formatCurrency } from "@/shared/common/formatting";
 import { ClipboardList, Play, Plus, Trash2 } from "lucide-react";
 

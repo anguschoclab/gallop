@@ -1,13 +1,7 @@
 import { useId } from "react";
 import { Button } from "@/shared/ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Dice5 } from "lucide-react";
 import { generateSilk } from "@/domains/jockey/application/jockeyFacade";
 import { SILK_PALETTE, SILK_PATTERNS } from "@/shared/data/jockeys";

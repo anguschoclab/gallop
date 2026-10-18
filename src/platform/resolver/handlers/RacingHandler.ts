@@ -12,7 +12,11 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/platform/game/types";
 import type { AnyImpact } from "@/platform/resolver/impacts";
-import type { ImpactHandler, LookupMaps, ImpactHandlerFunction } from "@/platform/resolver/handlers/types";
+import type {
+  ImpactHandler,
+  LookupMaps,
+  ImpactHandlerFunction,
+} from "@/platform/resolver/handlers/types";
 import type {
   RaceEntryImpact,
   RaceWithdrawalImpact,
@@ -31,7 +35,11 @@ import type {
   JockeyAffinityImpact,
 } from "@/platform/resolver/impacts/jockeyImpacts";
 import type { TripleCrownProgressImpact } from "@/platform/resolver/impacts/campaignImpacts";
-import { awardTraitXp, checkTraitUnlock, checkTraitAtrophy } from "@/domains/jockey/simulation/traitProgression";
+import {
+  awardTraitXp,
+  checkTraitUnlock,
+  checkTraitAtrophy,
+} from "@/domains/jockey/simulation/traitProgression";
 import type { JockeyTrait } from "@/domains/jockey/model/types";
 import { isPlayerOwned, makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";

@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { computeRegionDrilldown, type RegionKey } from "@/domains/analytics/simulation/regionalTrends";
+import {
+  computeRegionDrilldown,
+  type RegionKey,
+} from "@/domains/analytics/simulation/regionalTrends";
 import type { Race } from "@/domains/race/simulation/types";
 import type { Horse } from "@/domains/horse/simulation/types";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";

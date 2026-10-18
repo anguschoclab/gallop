@@ -14,7 +14,11 @@ import {
   Target,
   AlertTriangle,
 } from "lucide-react";
-import type { NpcAIManager, DifficultyState, StableAIState } from "@/domains/agents/application/aiFacade";
+import type {
+  NpcAIManager,
+  DifficultyState,
+  StableAIState,
+} from "@/domains/agents/application/aiFacade";
 import type { DistressLevel } from "@/domains/agents/application/aiFacade";
 import { EconomicIndicators } from "@/domains/analytics/ui/EconomicIndicators";
 import { StorylinesTab } from "@/domains/briefing/ui/StorylinesTab";

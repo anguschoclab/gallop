@@ -11,8 +11,16 @@
 
 import type { Horse } from "@/platform/game/types";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
-import type { SireAnalytics, SurfaceBias, DistancePreference } from "@/domains/breeding/simulation/sireAnalytics";
-import type { Leaderboard, LeaderboardType, SireTrendData } from "@/domains/breeding/model/leaderboardTypes";
+import type {
+  SireAnalytics,
+  SurfaceBias,
+  DistancePreference,
+} from "@/domains/breeding/simulation/sireAnalytics";
+import type {
+  Leaderboard,
+  LeaderboardType,
+  SireTrendData,
+} from "@/domains/breeding/model/leaderboardTypes";
 
 export function computeAllLeaderboards(
   horses: Horse[],

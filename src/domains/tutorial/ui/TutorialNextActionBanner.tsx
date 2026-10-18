@@ -4,7 +4,10 @@ import { ChevronRight, GraduationCap, X } from "lucide-react";
 import { useCallback } from "react";
 import type { NextAction } from "@/domains/dashboard/simulation/nextAction";
 import { useGame } from "@/platform/game/store";
-import { deriveTutorialStep, tutorialStepToAction } from "@/domains/tutorial/model/deriveTutorialStep";
+import {
+  deriveTutorialStep,
+  tutorialStepToAction,
+} from "@/domains/tutorial/model/deriveTutorialStep";
 import { NextActionBanner } from "@/domains/dashboard/ui/NextActionBanner";
 import { trackEvent } from "@/domains/analytics/application/tracker";
 

@@ -1,6 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { useHorseCompareRows, bestIdx } from "@/domains/horse/application/hooks/useHorseCompareRows";
+import {
+  useHorseCompareRows,
+  bestIdx,
+} from "@/domains/horse/application/hooks/useHorseCompareRows";
 import type { Horse } from "@/platform/game/types";
 
 vi.mock("@/domains/horse/simulation/stats", () => ({

@@ -11,7 +11,13 @@
  */
 
 import type { GameState } from "@/platform/game/types";
-import type { CommandId, EngineCommand, EngineEvent, Revision, TerminalEvent } from "@/platform/engine/protocol";
+import type {
+  CommandId,
+  EngineCommand,
+  EngineEvent,
+  Revision,
+  TerminalEvent,
+} from "@/platform/engine/protocol";
 /** Transport abstraction: worker-backed or in-process. */
 export interface EngineTransport {
   submit(message: EngineCommand | { kind: "cancel"; commandId: CommandId }): void;
@@ -38,7 +44,10 @@ export type SubmitOptions =
       raceId: string;
       result: { horseId: string; position: number; time: number }[];
       runners?: import("@/domains/race/simulation/types").RaceRunner[];
-      factorLedgers?: Record<string, import("@/domains/race/simulation/factorLedger").RunnerFactorLedger>;
+      factorLedgers?: Record<
+        string,
+        import("@/domains/race/simulation/factorLedger").RunnerFactorLedger
+      >;
       snapshots?: import("@/domains/race/model/engine/raceSnapshotTypes").RaceSnapshot[];
     }
   | {

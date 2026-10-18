@@ -1,11 +1,5 @@
 import { Card, CardContent } from "@/shared/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import {
   GRADE_OPTIONS,
   DISTANCE_OPTIONS,

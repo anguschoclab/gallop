@@ -2,13 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/shared/lib/cn";
 import { formatCurrency } from "@/shared/common/formatting";
 import type { AuctionBidRecord, Stable } from "@/platform/game/types";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/shared/ui/sheet";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/shared/ui/sheet";
 import { Button } from "@/shared/ui/button";
 import {
   Gavel,

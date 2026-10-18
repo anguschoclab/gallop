@@ -15,7 +15,10 @@ import type { StoreSet, StoreGet } from "@/platform/game/store/types";
 import type { AnyIntent } from "@/platform/resolver/intents";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import { requireHorse, requireOwned } from "@/platform/game/store/guards";
-import { buildBiddingRecord, mergeBiddingHistory } from "@/domains/auction/simulation/biddingHistory";
+import {
+  buildBiddingRecord,
+  mergeBiddingHistory,
+} from "@/domains/auction/simulation/biddingHistory";
 import { applyAuctionImpacts } from "@/domains/auction/simulation/auctionImpactActions";
 import {
   validateConsignment,

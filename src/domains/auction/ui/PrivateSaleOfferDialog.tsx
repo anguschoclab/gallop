@@ -2,13 +2,7 @@ import { useState, useId } from "react";
 import { useGame } from "@/platform/game/store";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/shared/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/shared/ui/dialog";
 import { toast } from "sonner";
 import { formatCurrency } from "@/shared/common/formatting";
 import { calculateLotValuation } from "@/domains/auction/application/auctionFacade";
@@ -19,7 +13,10 @@ import {
   knownBuyerPremiumMultiplier,
   suggestedOfferTiers,
 } from "@/domains/horse/application/horseFacade";
-import { getReputationTier, formatReputationTier } from "@/domains/reputation/application/reputationFacade";
+import {
+  getReputationTier,
+  formatReputationTier,
+} from "@/domains/reputation/application/reputationFacade";
 import { AttachmentBreakdown } from "@/domains/auction/ui/AttachmentBreakdown";
 import { CashPressureBadge } from "@/domains/stable/ui/CashPressureBadge";
 import { OverrideNegotiationPanel } from "@/domains/auction/ui/OverrideNegotiationPanel";

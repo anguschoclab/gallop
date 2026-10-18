@@ -8,7 +8,10 @@
  * `birthDay + <offset>` and resolved via the `resolveFoalMilestone` store action.
  */
 
-import { FOAL_BREAKING_IN_DAY, FOAL_EARLY_WORKOUTS_DAY } from "@/domains/race/model/raceEntryConstants";
+import {
+  FOAL_BREAKING_IN_DAY,
+  FOAL_EARLY_WORKOUTS_DAY,
+} from "@/domains/race/model/raceEntryConstants";
 import type { HorseStats } from "@/domains/horse/simulation/types";
 
 export type FoalMilestoneKey = "breaking_in" | "early_workouts";

@@ -27,7 +27,10 @@ import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { type AgeCategory, getAgeFromCategory, calculateStartingFame } from "./horseGenHelpers";
 
 import type { WorldSize } from "@/domains/stable/simulation/worldSizeConfig";
-import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/domains/stable/simulation/worldSizeConfig";
+import {
+  getWorldSizeConfig,
+  DEFAULT_WORLD_SIZE,
+} from "@/domains/stable/simulation/worldSizeConfig";
 import { getStableId } from "@/domains/horse/simulation/ownership";
 
 // ─── Stable horse generation ──────────────────────────────────────────────────

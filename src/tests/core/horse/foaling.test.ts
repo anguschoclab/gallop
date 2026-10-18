@@ -2,7 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { resolveFoaling } from "@/domains/horse/simulation/foaling";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Pregnancy } from "@/platform/game/types";
-import { FOALING_AGE_RISK_THRESHOLD, FOALING_AGE_RISK_MULTIPLIER, FOALING_BASE_COMPLICATION_RATE } from "@/domains/breeding/model/breedingConstants";
+import {
+  FOALING_AGE_RISK_THRESHOLD,
+  FOALING_AGE_RISK_MULTIPLIER,
+  FOALING_BASE_COMPLICATION_RATE,
+} from "@/domains/breeding/model/breedingConstants";
 
 let mockSequence: number[] = [];
 

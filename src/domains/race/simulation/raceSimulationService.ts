@@ -1,7 +1,11 @@
 import type { Horse, Race, Jockey, Stable } from "@/platform/game/types";
 import { getStableId } from "@/domains/horse/simulation/ownership";
 import { stepRunner, computePaceContext } from "@/domains/race/simulation/engine/simulation";
-import { buildRunner, getConditionsModifier, type Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import {
+  buildRunner,
+  getConditionsModifier,
+  type Runner,
+} from "@/domains/race/simulation/engine/runnerBuilder";
 import type { CourseSpecification } from "@/shared/data/accessors/tracksAccessor";
 import { generateHorse } from "@/domains/horse/simulation/horseFactory";
 import { generateJockey } from "@/domains/jockey/simulation/generator";

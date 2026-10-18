@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { calculateTrackGeometryScore, calculateGradientScore } from "@/domains/race/simulation/trackGeometry";
+import {
+  calculateTrackGeometryScore,
+  calculateGradientScore,
+} from "@/domains/race/simulation/trackGeometry";
 import type { Horse, Race } from "@/platform/game/types";
 
 describe("trackGeometry", () => {

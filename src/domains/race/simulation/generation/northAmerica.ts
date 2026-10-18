@@ -21,7 +21,13 @@ import { rand } from "@/shared/common/random";
 import { randomTrackConditionWithClimateBias } from "@/domains/race/simulation/trackConditions";
 import { generateRaceName } from "@/domains/race/simulation/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "@/domains/race/simulation/generation/raceGen";
-import { NA_FIELD_SIZE_MIN, NA_FIELD_SIZE_MAX, CLAIMING_PURSE_MULTIPLIER, OPTIONAL_CLAIMING_PURSE_MULTIPLIER, CLAIMING_PURSE_BONUS_MAX } from "@/domains/race/model/raceClassificationConstants";
+import {
+  NA_FIELD_SIZE_MIN,
+  NA_FIELD_SIZE_MAX,
+  CLAIMING_PURSE_MULTIPLIER,
+  OPTIONAL_CLAIMING_PURSE_MULTIPLIER,
+  CLAIMING_PURSE_BONUS_MAX,
+} from "@/domains/race/model/raceClassificationConstants";
 
 // Configuration for North American race distribution
 // Matches NA_CLAIMING_RACE_PERCENTAGE (70%) as per real-world statistics

@@ -1,11 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/shared/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { useStallionFilters } from "@/domains/stable/application/hooks/useStallionFilters";
 import { toast } from "sonner";

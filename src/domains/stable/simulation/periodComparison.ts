@@ -4,7 +4,11 @@
  */
 import type { Horse } from "@/domains/horse/simulation/types";
 import type { Transaction } from "@/domains/transactions/model/transactionTypes";
-import { buildPrizeTxMap, isPlayerRaceEntry, type PlayerRaceWinRecord } from "@/domains/stable/simulation/raceWins";
+import {
+  buildPrizeTxMap,
+  isPlayerRaceEntry,
+  type PlayerRaceWinRecord,
+} from "@/domains/stable/simulation/raceWins";
 import type { TrackLedgerEntry } from "@/domains/history/simulation/trackLedger";
 import { raceGoalClass, type StableGoals } from "@/domains/stable/simulation/stableGoals";
 import type { Race } from "@/domains/race/simulation/types";

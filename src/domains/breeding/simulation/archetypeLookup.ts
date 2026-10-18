@@ -6,7 +6,10 @@
 
 import type { Archetype } from "@/domains/breeding/model/archetypeTypes";
 import { ORIGINAL_ARCHETYPES } from "@/domains/breeding/simulation/archetypeOriginal";
-import { TRIPLE_CROWN_ARCHETYPES, TRIPLE_CROWN_SERIES_TO_ARCHETYPE } from "@/domains/breeding/simulation/archetypeTripleCrown";
+import {
+  TRIPLE_CROWN_ARCHETYPES,
+  TRIPLE_CROWN_SERIES_TO_ARCHETYPE,
+} from "@/domains/breeding/simulation/archetypeTripleCrown";
 
 export const ALL_ARCHETYPES: Archetype[] = [...ORIGINAL_ARCHETYPES, ...TRIPLE_CROWN_ARCHETYPES];
 

@@ -45,7 +45,8 @@ vi.mock("@/platform/game/store/storage", () => ({
 }));
 
 vi.mock("@/domains/race/simulation/raceSimulationExecutor", async (importActual) => {
-  const actual = await importActual<typeof import("@/domains/race/simulation/raceSimulationExecutor")>();
+  const actual =
+    await importActual<typeof import("@/domains/race/simulation/raceSimulationExecutor")>();
   return { ...actual, simulateRace: vi.fn(actual.simulateRace) };
 });
 

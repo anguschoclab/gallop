@@ -15,7 +15,11 @@
  *   src/components/stable/NpcCareerTrackerPanel.tsx (surfaces it)
  */
 
-import type { Horse, HorseRaceHistoryEntry, NpcCareerStage } from "@/domains/horse/simulation/types";
+import type {
+  Horse,
+  HorseRaceHistoryEntry,
+  NpcCareerStage,
+} from "@/domains/horse/simulation/types";
 import type { StableTier } from "@/domains/stable/simulation/types";
 import type { Rng } from "@/shared/common/rng";
 import { calculateRaceRating } from "@/domains/horse/simulation/stats";

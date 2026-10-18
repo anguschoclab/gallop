@@ -98,7 +98,10 @@ describe("Phase 1.4 — Design bible: hardcoded hex colors in components", () =>
     "shared/ui/chart.tsx": "chart-library CSS selector",
     "domains/briefing/ui/RecapTab.tsx": "silk color fallback for replay charts",
     "domains/awards/ui/VisualTrophy.tsx": "SVG trophy gradient colors",
+    "domains/awards/ui/assets/shared.tsx": "award SVG asset colors",
+    "domains/awards/ui/assets/north-america/category.tsx": "award category SVG colors",
     "domains/onboarding/ui/steps/StepSilks.tsx": "new-game silk color options",
+    "shared/ui/charts/Sparkline.stories.tsx": "story fixture chart colors",
   };
   const UI_SCAN_DIRS = [
     join("shared", "ui"),

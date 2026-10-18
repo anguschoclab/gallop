@@ -1,6 +1,10 @@
 import { useMemo } from "react";
 import { useGame } from "@/platform/game/store";
-import type { StewardsInquiry, InquiryOutcome, InquiryType } from "@/domains/stewards/model/stewardTypes";
+import type {
+  StewardsInquiry,
+  InquiryOutcome,
+  InquiryType,
+} from "@/domains/stewards/model/stewardTypes";
 
 const EMPTY_INQUIRIES: StewardsInquiry[] = [];
 

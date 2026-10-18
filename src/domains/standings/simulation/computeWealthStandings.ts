@@ -1,6 +1,9 @@
 import type { GameState } from "@/platform/game/types";
 import { horseMarketValue } from "@/domains/horse/simulation/pricing";
-import { WEALTH_PLAYER_ID, WEALTH_PLAYER_FALLBACK_NAME } from "@/shared/constants/dashboardConstants";
+import {
+  WEALTH_PLAYER_ID,
+  WEALTH_PLAYER_FALLBACK_NAME,
+} from "@/shared/constants/dashboardConstants";
 
 const PLAYER_ID = WEALTH_PLAYER_ID;
 

@@ -12,13 +12,7 @@ import type { GameState, Horse } from "@/platform/game/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { gradeColor } from "@/shared/common/uiTokens";
 import { getOrdinalSuffix } from "@/shared/common/ordinal";
 import { History, ArrowDownWideNarrow, ArrowUpNarrowWide } from "lucide-react";

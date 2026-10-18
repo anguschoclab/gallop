@@ -13,6 +13,8 @@ import {
  *
  * Extracted from useRaceUIState.ts to separate commentary pacing from
  * leaderboard derivation.
+ * @param messageQueue
+ * @param finished
  */
 export function useCommentaryFeed(
   messageQueue: React.MutableRefObject<CommentaryLine[]>,

@@ -12,13 +12,7 @@ import { StaffNegotiationDialog } from "@/domains/staff/ui/StaffNegotiationDialo
 import { StaffTeamList } from "@/domains/staff/ui/StaffTeamList";
 import { RecruitmentPool } from "@/domains/staff/ui/RecruitmentPool";
 import { STAFF_TRAIT_OPTIONS } from "@/domains/genetics/application/traitLabels";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 
 export const Route = createFileRoute("/staff")({
   component: StaffManagement,

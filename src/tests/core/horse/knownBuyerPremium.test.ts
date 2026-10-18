@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { knownBuyerPremiumMultiplier, attachmentAdjustedAsk } from "@/domains/horse/simulation/attachment";
+import {
+  knownBuyerPremiumMultiplier,
+  attachmentAdjustedAsk,
+} from "@/domains/horse/simulation/attachment";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import type { Horse, Stable } from "@/platform/game/types";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";

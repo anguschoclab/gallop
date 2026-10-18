@@ -8,9 +8,20 @@
  * Related files: Used throughout game initialization and breeding systems
  */
 
-import type { Horse, Genotype, HorseGender, Hemisphere, Stable, StableTier } from "@/platform/game/types";
+import type {
+  Horse,
+  Genotype,
+  HorseGender,
+  Hemisphere,
+  Stable,
+  StableTier,
+} from "@/platform/game/types";
 import type { Rng } from "@/shared/common/types";
-import { makeNpcOwned, makeUnowned, type HorseOwnership } from "@/domains/horse/simulation/ownership";
+import {
+  makeNpcOwned,
+  makeUnowned,
+  type HorseOwnership,
+} from "@/domains/horse/simulation/ownership";
 import { asNpcStableId, asHorseId } from "@/shared/types/branded";
 
 import { hashStr, nondeterministicRng } from "@/shared/common/rng";
@@ -59,7 +70,12 @@ import { PERSONALITY_CONFIG } from "@/domains/stable/simulation/stableConfig";
 import { getRegionalSystem } from "@/domains/race/simulation/naming/raceNameGenerator";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { POTENTIAL_MIN, POTENTIAL_MAX } from "@/domains/horse/model/horseStatConstants";
-import { CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD, CORNERING_APTITUDE_LARGE_PENALTY, CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD, CORNERING_APTITUDE_SMALL_BONUS } from "@/domains/race/model/raceSimulationConstants";
+import {
+  CORNERING_APTITUDE_SIZE_LARGE_THRESHOLD,
+  CORNERING_APTITUDE_LARGE_PENALTY,
+  CORNERING_APTITUDE_SIZE_SMALL_THRESHOLD,
+  CORNERING_APTITUDE_SMALL_BONUS,
+} from "@/domains/race/model/raceSimulationConstants";
 
 // Re-export foaling types and functions for backward compatibility
 export type { FoalOutcome } from "@/domains/horse/simulation/foaling";

@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { ensureMaidenRaces, ensureMaidenInCard, ensure2yoRaces } from "@/domains/race/simulation/maidenGuarantee";
+import {
+  ensureMaidenRaces,
+  ensureMaidenInCard,
+  ensure2yoRaces,
+} from "@/domains/race/simulation/maidenGuarantee";
 import { createRng } from "@/shared/common/rng";
 import type { Race } from "@/platform/game/types";
 import type { Track } from "@/shared/data/tracks";

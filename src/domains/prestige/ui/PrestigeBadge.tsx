@@ -7,7 +7,10 @@
 
 import { Badge } from "@/shared/ui/badge";
 import { cn } from "@/shared/lib/cn";
-import { getPrestigeTier, PRESTIGE_TIER_LABELS } from "@/domains/prestige/application/prestigeFacade";
+import {
+  getPrestigeTier,
+  PRESTIGE_TIER_LABELS,
+} from "@/domains/prestige/application/prestigeFacade";
 
 const TIER_CLASSES = {
   world: "bg-gold/20 text-gold border-gold/40",

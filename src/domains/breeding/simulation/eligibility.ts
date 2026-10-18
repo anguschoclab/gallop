@@ -10,9 +10,16 @@
  */
 
 import type { Horse, Pregnancy } from "@/platform/game/types";
-import { inBreedingSeason, nextBreedingSeasonStart } from "@/domains/calendar/simulation/breedingCalendar";
+import {
+  inBreedingSeason,
+  nextBreedingSeasonStart,
+} from "@/domains/calendar/simulation/breedingCalendar";
 import { dayOfYear, formatDate } from "@/domains/calendar/simulation/dateFormatting";
-import { MARE_RECOVERY_DAYS, MIN_BREEDING_AGE, MAX_DAM_AGE } from "@/domains/breeding/model/breedingConstants";
+import {
+  MARE_RECOVERY_DAYS,
+  MIN_BREEDING_AGE,
+  MAX_DAM_AGE,
+} from "@/domains/breeding/model/breedingConstants";
 
 /**
  * Result of breeding eligibility check with optional reason for failure.

@@ -55,7 +55,11 @@ import { PERSISTED_KEYS } from "@/platform/game/store/persistedKeys";
 import { shallow } from "zustand/shallow";
 import { useShallow } from "zustand/react/shallow";
 import { wrap, type Remote } from "comlink";
-import { initEngineClient, resetEngineClient, getEngineClient } from "@/platform/game/store/engineClient";
+import {
+  initEngineClient,
+  resetEngineClient,
+  getEngineClient,
+} from "@/platform/game/store/engineClient";
 import type { InitializationWorkerApi } from "@/platform/workers/initialization.worker";
 import { clearDatabase } from "@/platform/persistence/storage/indexedDbService";
 import type { StoreType, ActionResult } from "@/platform/game/store/types";
@@ -299,7 +303,8 @@ export const useGame = create<StoreType>()(
         await initInitializationWorker();
 
         // Clear IndexedDB storage when starting a new game
-        const { clearDatabase: clearIDB } = await import("@/platform/persistence/storage/indexedDbService");
+        const { clearDatabase: clearIDB } =
+          await import("@/platform/persistence/storage/indexedDbService");
         await clearIDB();
 
         // Route through initialization worker if available, fall back to main thread

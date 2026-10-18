@@ -13,7 +13,14 @@ import { rand } from "@/shared/common/random";
 import { randomTrackConditionWithClimateBias } from "@/domains/race/simulation/trackConditions";
 import { generateRaceName } from "@/domains/race/simulation/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "@/domains/race/simulation/generation/raceGen";
-import { AUSTRALIA_PURSE_MULTIPLIER, AUSTRALIA_SPRINT_PROBABILITY, AUSTRALIA_SPRINT_DIST_MIN, AUSTRALIA_SPRINT_DIST_MAX, AUSTRALIA_FIELD_SIZE_MIN, AUSTRALIA_FIELD_SIZE_MAX } from "@/domains/race/model/raceClassificationConstants";
+import {
+  AUSTRALIA_PURSE_MULTIPLIER,
+  AUSTRALIA_SPRINT_PROBABILITY,
+  AUSTRALIA_SPRINT_DIST_MIN,
+  AUSTRALIA_SPRINT_DIST_MAX,
+  AUSTRALIA_FIELD_SIZE_MIN,
+  AUSTRALIA_FIELD_SIZE_MAX,
+} from "@/domains/race/model/raceClassificationConstants";
 
 const AUSTRALIA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "Maiden", probability: 0.3 },

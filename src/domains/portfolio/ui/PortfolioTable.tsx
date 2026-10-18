@@ -1,16 +1,12 @@
 import { Fragment, useState } from "react";
 import { ArrowDown, ArrowUp, ChevronDown, ChevronRight, Crown, Home } from "lucide-react";
-import { useCompareStables, MAX_COMPARE } from "@/domains/stable/application/hooks/useCompareStables";
+import {
+  useCompareStables,
+  MAX_COMPARE,
+} from "@/domains/stable/application/hooks/useCompareStables";
 import { Link } from "@tanstack/react-router";
 import { Badge } from "@/shared/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/shared/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { formatCurrency } from "@/shared/common/formatting";
 import { PRESTIGE_TIER_LABELS } from "@/domains/prestige/application/prestigeFacade";
 import type { PortfolioSortKey, StablePortfolio } from "@/domains/stable/application/stableFacade";

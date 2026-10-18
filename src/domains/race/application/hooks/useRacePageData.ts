@@ -8,7 +8,11 @@ import {
   rngForRace,
   type RaceSimulationDependencies,
 } from "@/domains/race/application/raceFacade";
-import { calculateWinProbability, probabilityToMorningLine, formatOdds } from "@/domains/odds/model/oddsTypes";;;
+import {
+  calculateWinProbability,
+  probabilityToMorningLine,
+  formatOdds,
+} from "@/domains/odds/model/oddsTypes";
 import { calculateClassBonus } from "@/shared/common/classBonus";
 import { NarrativeGenerator } from "@/domains/narrative/application/narrativeService";
 import { buildRaceContext } from "@/domains/narrative/application/raceContextBuilder";

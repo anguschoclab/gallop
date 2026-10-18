@@ -11,7 +11,11 @@
 
 import type { InboxMessage } from "@/domains/inbox/model/inboxTypes";
 import { TRACK_BY_ID } from "@/shared/data/accessors/tracksAccessor";
-import { scopeLabel, type PriceAlertTrigger, type TradeNotification } from "@/domains/market/simulation/priceAlerts";
+import {
+  scopeLabel,
+  type PriceAlertTrigger,
+  type TradeNotification,
+} from "@/domains/market/simulation/priceAlerts";
 
 export type NewInboxMessage = Omit<InboxMessage, "id" | "readAt">;
 

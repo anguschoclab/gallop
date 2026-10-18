@@ -25,7 +25,14 @@ import { pedigreeMultiplier } from "@/domains/breeding/simulation/pedigreePricin
 import { calculateMaxBid, shouldBidOnHorse } from "@/domains/agents/simulation/auctionBidding";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/domains/agents/model/aiConstants";
-import { AUCTION_RESERVE_AGGRESSIVE, AUCTION_RESERVE_SPECIALIST_LOW, AUCTION_RESERVE_BREEDER, AUCTION_RESERVE_ELITE, AUCTION_AGGRESSIVE_BID_MIN_PERCENT, AUCTION_AGGRESSIVE_BID_VARIANCE } from "@/domains/auction/model/auctionConstants";
+import {
+  AUCTION_RESERVE_AGGRESSIVE,
+  AUCTION_RESERVE_SPECIALIST_LOW,
+  AUCTION_RESERVE_BREEDER,
+  AUCTION_RESERVE_ELITE,
+  AUCTION_AGGRESSIVE_BID_MIN_PERCENT,
+  AUCTION_AGGRESSIVE_BID_VARIANCE,
+} from "@/domains/auction/model/auctionConstants";
 import { CONSIGNMENT_COMMISSION } from "@/domains/market/model/economicConstants";
 import type { AuctionHouse } from "@/domains/prestige/simulation";
 import { houseCommissionRate, housePrestigeMultiplier } from "@/domains/prestige/simulation";
@@ -423,4 +430,7 @@ export function generateAuctionLots(
 // ---------------------------------------------------------------------------
 
 // Sale resolution extracted to auctionResolution.ts
-export { resolveAuctionSale, type ResolvedSale } from "@/domains/auction/simulation/auctionResolution";
+export {
+  resolveAuctionSale,
+  type ResolvedSale,
+} from "@/domains/auction/simulation/auctionResolution";

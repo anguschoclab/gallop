@@ -1,6 +1,13 @@
 import type { Horse, GeneticMarkers } from "@/platform/game/types";
 import { TRAIT_SCORE } from "@/domains/genetics/simulation/phenotype";
-import { GENETIC_TRAIT_WEIGHT, DEFAULT_GENETIC_DIVERSITY, GENETIC_COMPATIBILITY_EXCELLENT_THRESHOLD, GENETIC_COMPATIBILITY_GOOD_THRESHOLD, GENETIC_COMPATIBILITY_MODERATE_THRESHOLD, DEFAULT_TRAIT_SCORE } from "@/domains/breeding/model/breedingConstants";
+import {
+  GENETIC_TRAIT_WEIGHT,
+  DEFAULT_GENETIC_DIVERSITY,
+  GENETIC_COMPATIBILITY_EXCELLENT_THRESHOLD,
+  GENETIC_COMPATIBILITY_GOOD_THRESHOLD,
+  GENETIC_COMPATIBILITY_MODERATE_THRESHOLD,
+  DEFAULT_TRAIT_SCORE,
+} from "@/domains/breeding/model/breedingConstants";
 
 /**
  * Calculate genetic compatibility based on horse genome research.

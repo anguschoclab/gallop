@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { deriveEligibleRaces, findFirstEligibleRace } from "@/domains/race/application/hooks/useHorseEligibleRaces";
+import {
+  deriveEligibleRaces,
+  findFirstEligibleRace,
+} from "@/domains/race/application/hooks/useHorseEligibleRaces";
 import type { Horse, Race, Jockey } from "@/platform/game/types";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";

@@ -1,5 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { recordRaceHistory, checkTrackRecord, checkTrackRecords, ageBucket, genderBucket } from "@/domains/history/simulation/historyService";
+import {
+  recordRaceHistory,
+  checkTrackRecord,
+  checkTrackRecords,
+  ageBucket,
+  genderBucket,
+} from "@/domains/history/simulation/historyService";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
 import { isValidUUID } from "@/shared/uuid/uuid";

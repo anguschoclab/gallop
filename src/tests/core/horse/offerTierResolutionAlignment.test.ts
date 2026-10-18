@@ -2,7 +2,13 @@ import { describe, it, expect } from "vitest";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import type { GameState, PrivateSaleOffer, Horse, Stable, StablePersonality } from "@/platform/game/types";
+import type {
+  GameState,
+  PrivateSaleOffer,
+  Horse,
+  Stable,
+  StablePersonality,
+} from "@/platform/game/types";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId, asHorseId, asStableId } from "@/shared/types/branded";
 import { calculateLotValuation } from "@/domains/auction/simulation/engine";

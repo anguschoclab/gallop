@@ -9,7 +9,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { interpolateSnapshots, getReplayDuration } from "@/domains/race/application/racePlaybackService";
+import {
+  interpolateSnapshots,
+  getReplayDuration,
+} from "@/domains/race/application/racePlaybackService";
 import type { RaceSnapshot } from "@/domains/race/application/raceFacade";
 import { useRaceReplay } from "@/domains/race/application/hooks/useRaceReplay";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/shared/ui/tooltip";

@@ -4,15 +4,15 @@ import type { GameState } from "@/platform/game/types";
 import type { Race } from "@/domains/race/application/raceFacade";
 import type { Horse } from "@/domains/horse/application/horseFacade";
 import { Link } from "@tanstack/react-router";
-import { calculateNominationFee, getNominationTier, getRaceGrade, type NominationRecord, type NominationTier } from "@/domains/racing/model/nominationFees";
-import { Button } from "@/shared/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+  calculateNominationFee,
+  getNominationTier,
+  getRaceGrade,
+  type NominationRecord,
+  type NominationTier,
+} from "@/domains/racing/model/nominationFees";
+import { Button } from "@/shared/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Badge } from "@/shared/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { toast } from "sonner";

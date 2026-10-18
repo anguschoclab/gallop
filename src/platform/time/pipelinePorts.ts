@@ -29,7 +29,10 @@ import {
   checkHallOfFameInduction,
   checkTrackRecords,
 } from "@/domains/history/simulation/historyService";
-import { generateFlavorNews, generateWeeklyFlavorNews } from "@/domains/narrative/simulation/newsGenerator";
+import {
+  generateFlavorNews,
+  generateWeeklyFlavorNews,
+} from "@/domains/narrative/simulation/newsGenerator";
 
 /**
  * Ports for race resolution phase functions.

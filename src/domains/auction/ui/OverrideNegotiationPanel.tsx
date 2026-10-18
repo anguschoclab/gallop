@@ -12,7 +12,10 @@ import {
 } from "@/shared/ui/alert-dialog";
 import { DisabledTooltipWrapper } from "@/shared/ui/DisabledTooltipWrapper";
 import { formatCurrency } from "@/shared/common/formatting";
-import { computePremiumBuyout, computeDiplomaticPressure } from "@/domains/horse/application/horseFacade";
+import {
+  computePremiumBuyout,
+  computeDiplomaticPressure,
+} from "@/domains/horse/application/horseFacade";
 import { evaluateHorseAttachment } from "@/domains/horse/application/horseFacade";
 import type { Horse, Stable } from "@/platform/game/types";
 

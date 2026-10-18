@@ -148,14 +148,12 @@ describe("planScoutingRun", () => {
 
 describe("lastScoutDayByHorse", () => {
   it("returns an empty map for no reports", async () => {
-    const { lastScoutDayByHorse } =
-      await import("@/domains/agents/model/scoutingThresholds");
+    const { lastScoutDayByHorse } = await import("@/domains/agents/model/scoutingThresholds");
     expect(lastScoutDayByHorse([]).size).toBe(0);
   });
 
   it("keeps the latest report day per horse", async () => {
-    const { lastScoutDayByHorse } =
-      await import("@/domains/agents/model/scoutingThresholds");
+    const { lastScoutDayByHorse } = await import("@/domains/agents/model/scoutingThresholds");
     const reports = [
       { horseId: "h1", day: 5 } as any,
       { horseId: "h1", day: 20 } as any,

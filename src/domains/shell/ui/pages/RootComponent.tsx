@@ -1,7 +1,12 @@
 import { useNavigate } from "@tanstack/react-router";
 import { AppShell } from "@/domains/shell/ui/AppShell";
 import { useCallback, useEffect, useState } from "react";
-import { rehydrateStore, useGame, initEngineWorker, initInitializationWorker } from "@/platform/game/store";
+import {
+  rehydrateStore,
+  useGame,
+  initEngineWorker,
+  initInitializationWorker,
+} from "@/platform/game/store";
 import { saveExists, hydrationComplete } from "@/platform/game/store/storage";
 
 export function RootComponent() {

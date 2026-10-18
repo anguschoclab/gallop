@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { computeRegionTrends, regionKeyForRace } from "@/domains/analytics/simulation/regionalTrends";
+import {
+  computeRegionTrends,
+  regionKeyForRace,
+} from "@/domains/analytics/simulation/regionalTrends";
 import { isInWindow, weekBucket } from "@/domains/analytics/simulation/timeWindow";
 import type { Race } from "@/domains/race/simulation/types";
 import type { Horse } from "@/domains/horse/simulation/types";

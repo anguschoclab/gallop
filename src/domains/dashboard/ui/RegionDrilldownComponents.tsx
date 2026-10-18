@@ -3,7 +3,10 @@ import { DeltaPill, MetricInfo, Sparkline, chartColors } from "@/shared/ui/chart
 import { cn } from "@/shared/lib/cn";
 import { ArrowUpDown } from "lucide-react";
 import { timeWindowLabel } from "@/domains/analytics/application/analyticsFacade";
-import type { DrilldownEntity, RegionRunRow } from "@/domains/analytics/application/analyticsFacade";
+import type {
+  DrilldownEntity,
+  RegionRunRow,
+} from "@/domains/analytics/application/analyticsFacade";
 import type { EntityKind, Lookups } from "@/shared/constants/regionalConstants";
 import type { TimeWindowWeeks } from "@/domains/analytics/application/analyticsFacade";
 import { EntityDetailPanel } from "@/domains/dashboard/ui/EntityDetailPanel";

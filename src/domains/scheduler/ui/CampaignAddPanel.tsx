@@ -1,12 +1,6 @@
 import { Card, CardContent } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Plus, X } from "lucide-react";
 import type { CampaignGoalType, Horse } from "@/platform/game/types";
 import { useState } from "react";

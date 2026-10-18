@@ -139,7 +139,10 @@ export type Race = {
   weather?: Weather;
   trackCondition?: TrackCondition;
   sectionalSplits?: SectionalSplit[];
-  factorLedgers?: Record<string, import("@/domains/race/simulation/factorLedger").RunnerFactorLedger>;
+  factorLedgers?: Record<
+    string,
+    import("@/domains/race/simulation/factorLedger").RunnerFactorLedger
+  >;
 };
 
 // Sectional timing types

@@ -79,7 +79,8 @@ describe("stableStandingAskReaction", () => {
 
 describe("sellerStandingFactor", () => {
   it("returns the table factor and tier label for the player's reputation", async () => {
-    const { sellerStandingFactor } = await import("@/domains/stable/simulation/stableReputationTier");
+    const { sellerStandingFactor } =
+      await import("@/domains/stable/simulation/stableReputationTier");
     const unknown = sellerStandingFactor(0);
     expect(unknown.factor).toBe(0.8);
     expect(unknown.tier).toBe("unknown");
@@ -91,7 +92,8 @@ describe("sellerStandingFactor", () => {
   });
 
   it("falls back to factor 1 for an unrecognized tier", async () => {
-    const { sellerStandingFactor } = await import("@/domains/stable/simulation/stableReputationTier");
+    const { sellerStandingFactor } =
+      await import("@/domains/stable/simulation/stableReputationTier");
     // Negative scores still resolve to "unknown" tier
     const result = sellerStandingFactor(-100);
     expect(result.factor).toBe(0.8);

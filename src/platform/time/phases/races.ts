@@ -11,7 +11,10 @@
 import { PHASE_ORDER_RACES } from "@/platform/time/pipelineConstants";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import type { Race } from "@/domains/race/simulation/types";
-import { generateUpcomingScheduledRaces, pruneOldRaces } from "@/domains/market/simulation/marketRefresh";
+import {
+  generateUpcomingScheduledRaces,
+  pruneOldRaces,
+} from "@/domains/market/simulation/marketRefresh";
 import { generateAnnualCalendar, getCurrentYear } from "@/domains/race/simulation/schedule";
 import { generateUUID } from "@/shared/uuid/uuid";
 import type { AnyImpact, InboxImpact } from "@/platform/resolver/impacts";

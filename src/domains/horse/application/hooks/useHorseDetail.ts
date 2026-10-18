@@ -1,7 +1,10 @@
 import { useState, useEffect, useCallback, useMemo, type MouseEvent } from "react";
 import { useGame, useGameWithShallow } from "@/platform/game/store";
 import { usePregnancies } from "@/platform/game/hooks/useBreedingState";
-import { loadRaceHistoryLimit, saveRaceHistoryLimit } from "@/platform/persistence/storage/storageAdapter";
+import {
+  loadRaceHistoryLimit,
+  saveRaceHistoryLimit,
+} from "@/platform/persistence/storage/storageAdapter";
 import { getAffinityLevel, calculateTheHandBonus } from "@/domains/jockey/simulation/affinity";
 import { getPeakingBeyerMultiplier } from "@/domains/health/simulation/banister";
 import type { Pregnancy } from "@/domains/breeding/model/types";

@@ -4,7 +4,12 @@ import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory
 import { calculateNpcHorseValue } from "@/domains/horse/simulation/pricing";
 import { pedigreeMultiplier } from "@/domains/breeding/simulation/pedigreePricing";
 import type { Rng } from "@/shared/common/rng";
-import { AUCTION_RESERVE_SPECIALIST, AUCTION_RESERVE_BREEDER, AUCTION_RESERVE_CONSERVATIVE, AUCTION_RESERVE_ELITE } from "@/domains/auction/model/auctionConstants";
+import {
+  AUCTION_RESERVE_SPECIALIST,
+  AUCTION_RESERVE_BREEDER,
+  AUCTION_RESERVE_CONSERVATIVE,
+  AUCTION_RESERVE_ELITE,
+} from "@/domains/auction/model/auctionConstants";
 import { isLotEligible } from "@/domains/auction/simulation/engine";
 
 export interface ConsignmentContext {

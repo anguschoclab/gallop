@@ -12,7 +12,10 @@
  */
 
 import type { Horse } from "@/platform/game/types";
-import type { FoalDevelopmentArc, MilestoneChoice } from "@/domains/horse/simulation/foalDevelopment";
+import type {
+  FoalDevelopmentArc,
+  MilestoneChoice,
+} from "@/domains/horse/simulation/foalDevelopment";
 
 /** Result of resolving a milestone — the patch to apply to the horse. */
 export interface MilestoneResolution {

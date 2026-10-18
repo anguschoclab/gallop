@@ -22,4 +22,8 @@ export {
   calculateProgenyWinPercentage,
 } from "@/domains/breeding/simulation/sireAnalyticsMetrics";
 
-export { getSireAnalytics, classifyStallion, generateSireNarrative } from "@/domains/breeding/simulation/sireAnalyticsSummary";
+export {
+  getSireAnalytics,
+  classifyStallion,
+  generateSireNarrative,
+} from "@/domains/breeding/simulation/sireAnalyticsSummary";

@@ -3,8 +3,14 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { applyTradeToExchange, buildSettleTradePatch } from "@/domains/market/simulation/exchangeActions";
-import { createDefaultExchangeState, type ExchangeTrade } from "@/domains/market/simulation/exchange";
+import {
+  applyTradeToExchange,
+  buildSettleTradePatch,
+} from "@/domains/market/simulation/exchangeActions";
+import {
+  createDefaultExchangeState,
+  type ExchangeTrade,
+} from "@/domains/market/simulation/exchange";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";

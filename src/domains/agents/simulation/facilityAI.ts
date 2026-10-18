@@ -16,7 +16,10 @@ import type {
 import type { Stable } from "@/platform/game/types";
 import { getSuccessRate, getAdaptiveThreshold } from "./learningModule";
 import { FACILITY_UPGRADE_COSTS } from "@/domains/facilities/model/facilityTypes";
-import { FACILITY_UPGRADE_BASE_THRESHOLD, DEFAULT_SUBSYSTEM_WEIGHT } from "@/domains/agents/model/aiConstants";
+import {
+  FACILITY_UPGRADE_BASE_THRESHOLD,
+  DEFAULT_SUBSYSTEM_WEIGHT,
+} from "@/domains/agents/model/aiConstants";
 import type { FacilityAIState } from "./facilityAITypes";
 
 /**

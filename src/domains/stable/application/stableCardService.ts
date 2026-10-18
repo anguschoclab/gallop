@@ -14,7 +14,10 @@ import { getReputationStars } from "@/domains/stable/simulation/uiHelpers";
 import { stableTierColor } from "@/shared/common/uiTokens";
 import { findPendingOfferForStable } from "@/domains/stable/simulation/pendingOfferForStable";
 import { calculateLotValuation } from "@/domains/auction/simulation/engine";
-import { evaluateHorseAttachment, attachmentAdjustedAsk } from "@/domains/horse/simulation/attachment";
+import {
+  evaluateHorseAttachment,
+  attachmentAdjustedAsk,
+} from "@/domains/horse/simulation/attachment";
 
 export {
   getReputationStars,

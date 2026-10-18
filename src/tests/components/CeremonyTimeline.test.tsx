@@ -1,7 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { CeremonyTimeline } from "@/domains/awards/ui/CeremonyTimeline";
-import type { AwardCeremonyInvitation, InvitationAuditEntry } from "@/domains/awards/simulation/invitations";
+import type {
+  AwardCeremonyInvitation,
+  InvitationAuditEntry,
+} from "@/domains/awards/simulation/invitations";
 
 function mkEntry(overrides: Partial<InvitationAuditEntry> = {}): InvitationAuditEntry {
   return { day: 290, kind: "rsvp_change", note: "Test note", ...overrides };

@@ -5,7 +5,10 @@ import {
   npcAskPrice,
   resolveNpcExchangeTrades,
 } from "@/domains/market/simulation/exchangeAI";
-import { createDefaultExchangeState, type ExchangeState } from "@/domains/market/simulation/exchange";
+import {
+  createDefaultExchangeState,
+  type ExchangeState,
+} from "@/domains/market/simulation/exchange";
 import { createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import type { Stable, StablePersonality } from "@/domains/stable/simulation/types";

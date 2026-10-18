@@ -3,8 +3,15 @@ import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { AlertTriangle, CheckCircle, XCircle, Clock, Scale } from "lucide-react";
-import { useStewardsLog, type UseStewardsLogFilters } from "@/domains/stewards/application/hooks/useStewardsLog";
-import { formatInquiryType, formatInquiryOutcome, type InquiryOutcome } from "@/domains/stewards/model/stewardTypes";
+import {
+  useStewardsLog,
+  type UseStewardsLogFilters,
+} from "@/domains/stewards/application/hooks/useStewardsLog";
+import {
+  formatInquiryType,
+  formatInquiryOutcome,
+  type InquiryOutcome,
+} from "@/domains/stewards/model/stewardTypes";
 import { cn } from "@/shared/lib/cn";
 
 const OUTCOME_FILTERS: (InquiryOutcome | "all")[] = [

@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { calculateHeadToHeadOdds, runHeadToHeadSimulation } from "@/domains/race/simulation/headToHead";
+import {
+  calculateHeadToHeadOdds,
+  runHeadToHeadSimulation,
+} from "@/domains/race/simulation/headToHead";
 import type { Horse } from "@/platform/game/types";
 import { asHorseId } from "@/shared/types/branded";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";

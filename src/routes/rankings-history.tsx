@@ -6,16 +6,13 @@ import { Input } from "@/shared/ui/input";
 import { Sparkline } from "@/shared/ui/charts/Sparkline";
 import { useGameWithShallow } from "@/platform/game/store";
 import { formatCurrency } from "@/shared/common/formatting";
-import type { RankingsHistory, RankingsSnapshot } from "@/domains/market/simulation/rankingsHistory";
+import type {
+  RankingsHistory,
+  RankingsSnapshot,
+} from "@/domains/market/simulation/rankingsHistory";
 import type { Horse } from "@/platform/game/types";
 import { Button } from "@/shared/ui/button";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/shared/ui/select";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/shared/ui/select";
 import {
   compareRankingsForDay,
   rankingsComparisonDays,

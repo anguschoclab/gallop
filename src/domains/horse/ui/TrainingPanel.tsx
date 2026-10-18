@@ -4,7 +4,10 @@ import { TRAINING_COST } from "@/shared/constants/workoutConstants";
 import { BASIC_TRAINING_TYPES, ADVANCED_WORKOUTS } from "@/domains/training/model/trainingTypes";
 import { TRAINING_FACILITY_REQUIREMENTS } from "@/shared/constants/workoutConstants";
 import { getAvailableTrainingTypes } from "@/domains/facilities/application/facilitiesFacade";
-import { FACILITY_NAMES, facilityLevelToTierLabel } from "@/domains/facilities/application/facilitiesFacade";
+import {
+  FACILITY_NAMES,
+  facilityLevelToTierLabel,
+} from "@/domains/facilities/application/facilitiesFacade";
 import type { Horse, PlayerFacilities } from "@/platform/game/types";
 import type { TrainingIntent } from "@/platform/resolver/facade/resolverFacade";
 import { useCallback, memo, useMemo } from "react";

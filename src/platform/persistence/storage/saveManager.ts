@@ -14,7 +14,11 @@ import {
 } from "@/platform/persistence/storage/indexedDbService";
 import { saveGameStateToIDB } from "@/platform/game/store/storage";
 import type { GameState } from "@/platform/game/types";
-import { safeParseJson, gameStateSchema, saveSlotMetadataArraySchema } from "@/platform/persistence/storage/schemas";
+import {
+  safeParseJson,
+  gameStateSchema,
+  saveSlotMetadataArraySchema,
+} from "@/platform/persistence/storage/schemas";
 
 export interface SaveSlotMetadata {
   id: string;

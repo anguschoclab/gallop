@@ -13,7 +13,11 @@ import {
   getRandomEvent,
   getRandomAdjective,
 } from "@/domains/race/simulation/naming/namePools";
-import { formatClaimingPrice, formatWinCondition, type RaceNameParams } from "@/domains/race/simulation/naming/raceNameUtils";
+import {
+  formatClaimingPrice,
+  formatWinCondition,
+  type RaceNameParams,
+} from "@/domains/race/simulation/naming/raceNameUtils";
 
 export type NamingPattern =
   | "price_based"

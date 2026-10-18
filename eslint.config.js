@@ -64,7 +64,7 @@ export default tseslint.config(
   },
   // Exclude hooks and component utilities from JSDoc — internal implementation
   {
-    files: ["src/hooks/**/*.ts", "src/components/**/*.ts"],
+    files: ["src/**/hooks/**/*.ts", "src/**/ui/**/*.ts"],
     rules: {
       "jsdoc/require-jsdoc": "off",
       "jsdoc/require-param": "off",
@@ -117,28 +117,28 @@ export default tseslint.config(
   },
   // Exclude hooks (hooks often use any for type assertions)
   {
-    files: ["src/hooks/**/*.ts"],
+    files: ["src/**/hooks/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
     },
   },
   // Exclude services (services often use any for type assertions)
   {
-    files: ["src/services/**/*.ts"],
+    files: ["src/domains/**/application/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
     },
   },
   // Exclude components (already handled in TSX rule)
   {
-    files: ["src/components/**/*.ts"],
+    files: ["src/**/ui/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
     },
   },
   // Exclude core (core often uses any for type assertions)
   {
-    files: ["src/core/**/*.ts", "src/domains/**/*.ts"],
+    files: ["src/platform/**/*.ts", "src/domains/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "jsdoc/require-returns": "off",
@@ -149,7 +149,7 @@ export default tseslint.config(
   },
   // Exclude game (game often uses any for type assertions)
   {
-    files: ["src/game/**/*.ts"],
+    files: ["src/platform/game/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "jsdoc/require-returns": "off",
@@ -168,18 +168,20 @@ export default tseslint.config(
       "@typescript-eslint/no-require-imports": "off",
     },
   },
-  // Exclude utils (utils often use any for type assertions)
+  // Exclude shared (shared utilities use any for type assertions and lazy
+  // require() to break module cycles)
   {
-    files: ["src/utils/**/*.ts"],
+    files: ["src/shared/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "jsdoc/require-returns": "off",
       "jsdoc/require-jsdoc": "off",
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
   // Exclude lib (lib often uses any for type assertions)
   {
-    files: ["src/lib/**/*.ts"],
+    files: ["src/shared/common/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "jsdoc/require-returns": "off",
@@ -187,7 +189,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ["src/workers/**/*.ts"],
+    files: ["src/platform/workers/**/*.ts"],
     rules: {
       "jsdoc/require-jsdoc": "off",
       "jsdoc/require-param": "off",
@@ -258,65 +260,85 @@ export default tseslint.config(
       ],
     },
   },
-  // ── Layering guardrails (warn initially; baseline tracked in
-  //    layering-violations.baseline.json — count can only go down) ──────
-  // core may NOT import from game/store, services, components, hooks
+  // ── Layering guardrails — enforced statically by
+  //    src/tests/architecture/layeringRules.test.ts (zero-violation gate).
+  //    These ESLint rules mirror the same matrix for editor feedback.
+  // model/simulation may NOT reach the game store, UI, or application strata
   {
-    files: ["src/core/**/*.ts", "src/domains/**/*.ts"],
-    ignores: ["src/core/**/*.test.ts"],
+    files: ["src/domains/**/model/**/*.ts", "src/domains/**/simulation/**/*.ts"],
+    ignores: ["**/*.test.ts", "**/*.test.tsx"],
     rules: {
       "no-restricted-syntax": [
         "warn",
         {
-          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/game\\/store/]",
+          selector:
+            "ImportDeclaration[importKind='value'][source.type='Literal'][source.value=/^@\\/platform\\/game/]",
           message:
-            "Layering violation: core must not import from @/game/store. Move the pure logic down into core, or inject via a port interface.",
+            "Layering violation: model/simulation must not import from @/platform/game. Move the pure logic down, or inject via a port interface.",
         },
         {
-          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/services/]",
+          selector:
+            "ImportDeclaration[importKind='value'][source.type='Literal'][source.value=/^@\\/domains\\/[^/]+\\/application/]",
           message:
-            "Layering violation: core must not import from @/services. Invert the dependency via a port interface injected at the composition root.",
+            "Layering violation: model/simulation must not import from an application stratum. Invert the dependency via a port interface injected at the composition root.",
         },
         {
-          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/components/]",
-          message: "Layering violation: core must not import from @/components.",
-        },
-        {
-          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/hooks/]",
-          message: "Layering violation: core must not import from @/hooks.",
+          selector:
+            "ImportDeclaration[importKind='value'][source.type='Literal'][source.value=/^@\\/(domains\\/[^/]+\\/ui|shared\\/ui)/]",
+          message: "Layering violation: model/simulation must not import from UI strata.",
         },
       ],
     },
   },
-  // services may NOT import from components, hooks
+  // platform (engine/time/resolver/persistence/workers) may NOT import UI or
+  // route code — the store/game subtree is exempt as the composition root
   {
-    files: ["src/services/**/*.ts"],
-    ignores: ["src/services/**/*.test.ts"],
+    files: ["src/platform/**/*.ts"],
+    ignores: ["src/platform/game/**", "**/*.test.ts", "**/*.test.tsx"],
     rules: {
       "no-restricted-syntax": [
         "warn",
         {
-          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/components/]",
-          message: "Layering violation: services must not import from @/components.",
+          selector:
+            "ImportDeclaration[importKind='value'][source.type='Literal'][source.value=/^@\\/(domains\\/[^/]+\\/ui|shared\\/ui)/]",
+          message: "Layering violation: platform code must not import from UI strata.",
         },
         {
-          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/hooks/]",
-          message: "Layering violation: services must not import from @/hooks.",
+          selector:
+            "ImportDeclaration[importKind='value'][source.type='Literal'][source.value=/^@\\/routes/]",
+          message: "Layering violation: platform code must not import from @/routes.",
         },
       ],
     },
   },
-  // components may NOT import from core directly (route through services/hooks)
+  // application may NOT import from UI strata
   {
-    files: ["src/components/**/*.ts", "src/components/**/*.tsx"],
-    ignores: ["src/components/**/*.test.ts", "src/components/**/*.test.tsx"],
+    files: ["src/domains/**/application/**/*.ts"],
+    ignores: ["**/*.test.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "warn",
+        {
+          selector:
+            "ImportDeclaration[importKind='value'][source.type='Literal'][source.value=/^@\\/(domains\\/[^/]+\\/ui|shared\\/ui)/]",
+          message: "Layering violation: application code must not import from UI strata.",
+        },
+      ],
+    },
+  },
+  // UI strata may NOT import from simulation internals (route through
+  // application facades/hooks)
+  {
+    files: ["src/**/ui/**/*.ts", "src/**/ui/**/*.tsx"],
+    ignores: ["**/*.test.ts", "**/*.test.tsx"],
     rules: {
       "no-restricted-syntax": [
         "error",
         {
-          selector: "ImportDeclaration[source.type='Literal'][source.value=/^@\\/core/]",
+          selector:
+            "ImportDeclaration[importKind='value'][source.type='Literal'][source.value=/^@\\/domains\\/[^/]+\\/simulation/]",
           message:
-            "Layering violation: components must not import from @/core directly. Route through a service or hook.",
+            "Layering violation: UI must not import from simulation internals directly. Route through an application facade or hook.",
         },
       ],
     },

@@ -11,19 +11,15 @@ import { Link } from "@tanstack/react-router";
 import { ArrowDown, ArrowUp, Search, Trophy } from "lucide-react";
 import { Badge } from "@/shared/ui/badge";
 import { Input } from "@/shared/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/shared/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { StatCard } from "@/shared/ui/common/StatCard";
 import { PillToggleGroup } from "@/shared/ui/common/PillToggleGroup";
 import { formatCurrency } from "@/shared/common/formatting";
 import { gradeColor } from "@/shared/common/uiTokens";
-import { playerRaceWinsSummary, type PlayerRaceWinRecord } from "@/domains/stable/application/stableFacade";
+import {
+  playerRaceWinsSummary,
+  type PlayerRaceWinRecord,
+} from "@/domains/stable/application/stableFacade";
 
 const GRADE_FILTERS = ["all", "graded", "G1", "G2", "G3", "ungraded"] as const;
 type GradeFilter = (typeof GRADE_FILTERS)[number];

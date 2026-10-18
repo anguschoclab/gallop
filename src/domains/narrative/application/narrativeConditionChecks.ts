@@ -2,7 +2,10 @@ import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 import type { Race } from "@/platform/game/types";
 import type { NarrativeEvent, CommentaryLine } from "@/domains/narrative/model/types";
 import type { NarrativeState } from "@/domains/narrative/application/narrativeState";
-import { buildFieldContext, deriveRunnerConditions } from "@/domains/race/simulation/runnerConditions";
+import {
+  buildFieldContext,
+  deriveRunnerConditions,
+} from "@/domains/race/simulation/runnerConditions";
 import type { RunnerHistory } from "@/domains/race/simulation/runnerConditions";
 import {
   CONDITION_TO_EVENT,

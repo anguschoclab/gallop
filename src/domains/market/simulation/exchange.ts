@@ -20,7 +20,12 @@ import { horseMarketValue } from "@/domains/horse/simulation/pricing";
 import { isNpcOwned, isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { createRng } from "@/shared/common/rng";
 import { prestigeMultiplier } from "@/domains/prestige/model/prestigeTypes";
-import { npcAskPrice, npcBidQuote, sellerStance, type ExchangeIntent } from "@/domains/market/simulation/exchangeAI";
+import {
+  npcAskPrice,
+  npcBidQuote,
+  sellerStance,
+  type ExchangeIntent,
+} from "@/domains/market/simulation/exchangeAI";
 import { stableStandingAskReaction } from "@/domains/stable/simulation/stableReputationTier";
 import { dailyTradeSeries } from "@/domains/market/simulation/tradeSeries";
 

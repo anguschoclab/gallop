@@ -17,6 +17,9 @@ export {
   type RunnerMood,
 } from "@/domains/race/model/runnerConditionTypes";
 
-export { buildFieldContext, deriveRunnerConditions } from "@/domains/race/simulation/runnerConditionDerivation";
+export {
+  buildFieldContext,
+  deriveRunnerConditions,
+} from "@/domains/race/simulation/runnerConditionDerivation";
 
 export { deriveRunnerMood, captureRunnerMoods } from "@/domains/race/simulation/runnerMood";

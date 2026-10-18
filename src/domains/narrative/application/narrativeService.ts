@@ -4,7 +4,10 @@ import type { Horse, Race, Stable } from "@/platform/game/types";
 import { getStableId } from "@/domains/horse/simulation/ownership";
 import type { Rng } from "@/shared/common/rng";
 import type { NarrativeEvent, CommentaryLine } from "@/domains/narrative/model/types";
-import { generateCommentaryLine, generateExpertInsight } from "@/domains/narrative/application/commentaryGenerator";
+import {
+  generateCommentaryLine,
+  generateExpertInsight,
+} from "@/domains/narrative/application/commentaryGenerator";
 import {
   detectLeadChange,
   detectPositionChange,

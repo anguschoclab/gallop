@@ -6,13 +6,20 @@
  * Dependencies: @/game/types (RunningStyle, Race), @/core/common/math (clamp), @/core/race/types (TrackCondition, Weather), @/core/tactics/tacticsTypes (JockeyInstructions), @/constants/raceEngineConstants, @/constants/gateConstants, @/core/race/runnerConditions (RunnerMood)
  */
 
-import type { Horse as HorseT, Race as RaceT, RunningStyle as RunningStyleT } from "@/platform/game/types";
+import type {
+  Horse as HorseT,
+  Race as RaceT,
+  RunningStyle as RunningStyleT,
+} from "@/platform/game/types";
 import type { TrackCondition, Weather } from "@/domains/race/simulation/types";
 import { clamp } from "@/shared/common/math";
 import type { JockeyInstructions } from "@/domains/tactics/model/tacticsTypes";
 import { DEFAULT_GATE } from "@/domains/race/model/gateConstants";
 import type { RunnerMood } from "@/domains/race/simulation/runnerConditions";
-import type { FactorLedgerCollector, RunnerFactorLedger } from "@/domains/race/simulation/factorLedger";
+import type {
+  FactorLedgerCollector,
+  RunnerFactorLedger,
+} from "@/domains/race/simulation/factorLedger";
 
 export type RunnerBonuses = {
   farrier?: number;

@@ -14,7 +14,10 @@
 
 import type { Horse } from "@/platform/game/types";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
-import type { DamsireLeaderboard, DamsireAnalytics } from "@/domains/breeding/model/leaderboardTypes";
+import type {
+  DamsireLeaderboard,
+  DamsireAnalytics,
+} from "@/domains/breeding/model/leaderboardTypes";
 
 /**
  * Compute the damsire (broodmare sire) leaderboard.

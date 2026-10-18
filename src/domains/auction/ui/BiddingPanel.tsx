@@ -16,7 +16,10 @@ import { cn } from "@/shared/lib/cn";
 import type { AuctionLot } from "@/platform/game/types";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
 import { PrestigeBadge } from "@/domains/prestige/ui/PrestigeBadge";
-import { housePrestigeMultiplier, type AuctionHouse } from "@/domains/prestige/application/prestigeFacade";
+import {
+  housePrestigeMultiplier,
+  type AuctionHouse,
+} from "@/domains/prestige/application/prestigeFacade";
 
 interface BiddingPanelProps {
   currentLot: AuctionLot;

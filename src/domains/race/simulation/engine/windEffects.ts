@@ -1,7 +1,15 @@
 import type { CourseSpecification, TrackSection } from "@/shared/data/accessors/tracksAccessor";
 import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 import { getSectionOrientation } from "@/domains/race/simulation/engine/trackGeometry";
-import { WIND_EFFECT_SCALE, SPRINTER_WIND_MULTIPLIER, MIN_WIND_SPEED_MOD, MAX_WIND_SPEED_MOD, HEADWIND_STAMINA_PENALTY, TAILWIND_STAMINA_RELIEF, LONG_STRAIGHT_THRESHOLD } from "@/domains/race/model/engine/constants";
+import {
+  WIND_EFFECT_SCALE,
+  SPRINTER_WIND_MULTIPLIER,
+  MIN_WIND_SPEED_MOD,
+  MAX_WIND_SPEED_MOD,
+  HEADWIND_STAMINA_PENALTY,
+  TAILWIND_STAMINA_RELIEF,
+  LONG_STRAIGHT_THRESHOLD,
+} from "@/domains/race/model/engine/constants";
 
 export function calculateWindEffect(
   r: Runner,

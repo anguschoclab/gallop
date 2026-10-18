@@ -8,8 +8,14 @@ import {
 } from "@/tests/helpers/createTestHorse";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import type { Race } from "@/platform/game/types";
-import { RACE_ENERGY_IMPACT, STAMINA_DRAIN_MAX } from "@/domains/race/model/raceSimulationConstants";
-import { AFFINITY_XP_PER_RACE, AFFINITY_XP_PER_WIN_BONUS } from "@/domains/jockey/model/jockeyConstants";
+import {
+  RACE_ENERGY_IMPACT,
+  STAMINA_DRAIN_MAX,
+} from "@/domains/race/model/raceSimulationConstants";
+import {
+  AFFINITY_XP_PER_RACE,
+  AFFINITY_XP_PER_WIN_BONUS,
+} from "@/domains/jockey/model/jockeyConstants";
 import { asNpcStableId } from "@/shared/types/branded";
 import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 

@@ -28,7 +28,10 @@ import { Switch } from "@/shared/ui/switch";
 import { Label } from "@/shared/ui/label";
 import { Button } from "@/shared/ui/button";
 import { toast } from "sonner";
-import { useCompareStables, MAX_COMPARE } from "@/domains/stable/application/hooks/useCompareStables";
+import {
+  useCompareStables,
+  MAX_COMPARE,
+} from "@/domains/stable/application/hooks/useCompareStables";
 
 const PAGE_SIZE = 10;
 

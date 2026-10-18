@@ -1,11 +1,5 @@
 import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Button } from "@/shared/ui/button";
 import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from "@/shared/ui/tooltip";
 import { Camera, Pause, Play, Thermometer, Wind } from "lucide-react";

@@ -2,7 +2,11 @@ import { useMemo, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/shared/ui/dialog";
 import { Badge } from "@/shared/ui/badge";
 import { RaceTimeDisplay } from "@/domains/race/ui/RaceTimeDisplay";
-import { REAL_WORLD_RECORDS, getTripCategory, type TripCategory } from "@/shared/data/realWorldRecords";
+import {
+  REAL_WORLD_RECORDS,
+  getTripCategory,
+  type TripCategory,
+} from "@/shared/data/realWorldRecords";
 import { useImportedRealWorld } from "@/platform/persistence/storage/importedRealWorldService";
 import {
   runsForHorse,

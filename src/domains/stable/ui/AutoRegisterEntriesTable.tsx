@@ -1,11 +1,4 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/shared/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { formatCurrency } from "@/shared/common/formatting";
 import type { AutoRegisterEntry } from "@/domains/campaign/simulation/autoRegister";
 

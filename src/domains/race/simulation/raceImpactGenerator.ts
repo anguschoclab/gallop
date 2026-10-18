@@ -12,7 +12,10 @@ import {
   generateG1SpotlightNews,
   generateFollowUpRaceNews,
 } from "@/domains/narrative/simulation/newsGenerator";
-import { checkCareerArcTrigger, type CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";
+import {
+  checkCareerArcTrigger,
+  type CareerArcState,
+} from "@/domains/narrative/simulation/careerArcGenerator";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import type { Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";

@@ -4,7 +4,10 @@ import { createTestStable } from "@/tests/helpers/createTestStable";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId, asHorseId } from "@/shared/types/branded";
 import { calculateLotValuation } from "@/domains/auction/simulation/engine";
-import { evaluateHorseAttachment, attachmentAdjustedAsk } from "@/domains/horse/simulation/attachment";
+import {
+  evaluateHorseAttachment,
+  attachmentAdjustedAsk,
+} from "@/domains/horse/simulation/attachment";
 import {
   computePrivateSaleDecision,
   buildPrivateSaleDecisionTrace,

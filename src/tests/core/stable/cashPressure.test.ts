@@ -1,5 +1,8 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { evaluateCashPressure, applyCashPressureToThreshold } from "@/domains/stable/simulation/cashPressure";
+import {
+  evaluateCashPressure,
+  applyCashPressureToThreshold,
+} from "@/domains/stable/simulation/cashPressure";
 import {
   setCashPressureTuningOverrides,
   resetCashPressureTuningOverrides,

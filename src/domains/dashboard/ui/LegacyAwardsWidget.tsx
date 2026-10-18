@@ -2,7 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { useGame } from "@/platform/game/store";
 import { Link } from "@tanstack/react-router";
 import { Trophy, ChevronRight } from "lucide-react";
-import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/domains/awards/application/awardsFacade";
+import {
+  CATEGORY_DISPLAY_NAMES,
+  CATEGORY_DESCRIPTIONS,
+} from "@/domains/awards/application/awardsFacade";
 
 export function LegacyAwardsWidget() {
   const awards = useGame((s) => s.awards);

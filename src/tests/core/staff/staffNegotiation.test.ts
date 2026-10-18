@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { evaluateOffer, FLOOR_BY_TIER, PATIENCE_BY_TIER } from "@/domains/staff/simulation/staffNegotiation";
+import {
+  evaluateOffer,
+  FLOOR_BY_TIER,
+  PATIENCE_BY_TIER,
+} from "@/domains/staff/simulation/staffNegotiation";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 
 function makeStaff(tier: "budget" | "mid" | "elite" = "mid"): StaffMember {

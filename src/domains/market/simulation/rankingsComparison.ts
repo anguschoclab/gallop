@@ -1,6 +1,9 @@
 import type { Horse } from "@/domains/horse/simulation/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
-import type { RankingsHistory, RankingsSnapshot } from "@/domains/market/simulation/rankingsHistory";
+import type {
+  RankingsHistory,
+  RankingsSnapshot,
+} from "@/domains/market/simulation/rankingsHistory";
 
 export interface RankingsComparisonRow {
   horseId: string;

@@ -28,14 +28,20 @@ import { GRADED_RACES } from "@/shared/data/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/domains/facilities/simulation";
 import type { FacilityLevel } from "@/domains/facilities/simulation";
 import { STARTING_CASH } from "@/domains/market/model/economicConstants";
-import { MAIDEN_GUARANTEE_START_DAY, MAIDEN_GUARANTEE_END_DAY } from "@/domains/race/model/raceClassificationConstants";
+import {
+  MAIDEN_GUARANTEE_START_DAY,
+  MAIDEN_GUARANTEE_END_DAY,
+} from "@/domains/race/model/raceClassificationConstants";
 import { createDefaultExchangeState } from "@/domains/market/simulation/exchange";
 import { DEFAULT_MARKET_STRATEGY } from "@/domains/market/simulation/strategy";
 import { seedGazetteNews } from "@/domains/narrative/application/seedNewsGenerator";
 import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { generateUpcomingScheduledRaces } from "@/domains/market/simulation/marketRefresh";
 import { ensureMaidenRaces } from "@/domains/race/simulation/maidenGuarantee";
-import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/domains/stable/simulation/worldSizeConfig";
+import {
+  getWorldSizeConfig,
+  DEFAULT_WORLD_SIZE,
+} from "@/domains/stable/simulation/worldSizeConfig";
 import { createDefaultTutorialState } from "@/domains/tutorial/model/tutorialTypes";
 
 /**

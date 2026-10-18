@@ -2,13 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { Badge } from "@/shared/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { AwardsGrid } from "@/domains/awards/ui/AwardsGrid";
 import { groupByRegion } from "@/domains/awards/ui/awardUtils";
 import type { AwardRegion, RegionalAward } from "@/domains/awards/application/awardsFacade";

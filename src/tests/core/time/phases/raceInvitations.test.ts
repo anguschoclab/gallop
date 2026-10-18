@@ -4,7 +4,10 @@
 
 import { describe, it, expect } from "vitest";
 import { raceInvitationsPhase } from "@/platform/time/phases/raceInvitations";
-import { isHorseEligibleForRace, isHorseInvitedToRace } from "@/domains/race/simulation/eligibility";
+import {
+  isHorseEligibleForRace,
+  isHorseInvitedToRace,
+} from "@/domains/race/simulation/eligibility";
 import { RacingValidator } from "@/platform/resolver/validators/RacingValidator";
 import { makeGradedRace } from "@/domains/race/simulation/generation/raceGen";
 import type { Horse, Race, GameState } from "@/platform/game/types";

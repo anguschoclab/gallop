@@ -30,7 +30,12 @@ import {
   stableStandingBidReaction,
   type StableReputationTier,
 } from "@/domains/stable/simulation/stableReputationTier";
-import type { ExchangeAsk, ExchangeBid, ExchangeState, ExchangeTrade } from "@/domains/market/simulation/exchange";
+import type {
+  ExchangeAsk,
+  ExchangeBid,
+  ExchangeState,
+  ExchangeTrade,
+} from "@/domains/market/simulation/exchange";
 
 /** How a stable is behaving on the exchange right now. */
 export type ExchangeIntent = "accumulating" | "opportunistic" | "flipping" | "raising cash";

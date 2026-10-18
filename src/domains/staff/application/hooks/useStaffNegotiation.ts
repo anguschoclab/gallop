@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useGame } from "@/platform/game/store";
 import { toast } from "sonner";
 import { formatCurrency } from "@/shared/common/formatting";
-import { evaluateOffer, PATIENCE_BY_TIER, FLOOR_BY_TIER } from "@/domains/staff/simulation/staffNegotiation";
+import {
+  evaluateOffer,
+  PATIENCE_BY_TIER,
+  FLOOR_BY_TIER,
+} from "@/domains/staff/simulation/staffNegotiation";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 
 export function useStaffNegotiation(staff: StaffMember, onClose: () => void) {

@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { runRaceToCompletion, calculateWindEffect } from "@/domains/race/simulation/engine/simulation";
+import {
+  runRaceToCompletion,
+  calculateWindEffect,
+} from "@/domains/race/simulation/engine/simulation";
 import { buildRunner, getConditionsModifier } from "@/domains/race/simulation/engine/runnerBuilder";
 import { createRng } from "@/shared/common/rng";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";

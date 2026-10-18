@@ -61,7 +61,11 @@ export {
   stableTierColor,
   conditionColor,
 } from "@/shared/common/uiTokens";
-export { formatDate, getMonthName, gameCalendarDate } from "@/domains/calendar/simulation/dateFormatting";
+export {
+  formatDate,
+  getMonthName,
+  gameCalendarDate,
+} from "@/domains/calendar/simulation/dateFormatting";
 export { getCompatibility } from "@/domains/jockey/simulation/compatibility";
 export * from "@/domains/race/simulation/raceSimulationService";
 export * from "@/domains/race/simulation/raceImpactGenerator";

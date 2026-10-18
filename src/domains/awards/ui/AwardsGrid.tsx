@@ -3,7 +3,10 @@ import { AwardBadge } from "@/domains/awards/ui/AwardBadge";
 import { Trophy } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { RegionalAward } from "@/domains/awards/application/awardsFacade";
-import { CATEGORY_DISPLAY_NAMES, CATEGORY_DESCRIPTIONS } from "@/domains/awards/application/awardsFacade";
+import {
+  CATEGORY_DISPLAY_NAMES,
+  CATEGORY_DESCRIPTIONS,
+} from "@/domains/awards/application/awardsFacade";
 import { getRegionFlag, getRegionCountryLabel } from "@/shared/common/countryFlag";
 import { AWARD_COMPACT_THRESHOLD } from "@/domains/awards/model/awardsConstants";
 import { Hint } from "@/shared/ui/Hint";

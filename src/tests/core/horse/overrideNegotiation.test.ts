@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { computePremiumBuyout, computeDiplomaticPressure } from "@/domains/horse/simulation/overrideNegotiation";
+import {
+  computePremiumBuyout,
+  computeDiplomaticPressure,
+} from "@/domains/horse/simulation/overrideNegotiation";
 import type { HorseAttachment, AttachmentTier } from "@/domains/horse/simulation/attachment";
 
 function mkAttachment(tier: AttachmentTier, score: number): HorseAttachment {

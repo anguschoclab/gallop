@@ -13,7 +13,11 @@
 import { MAX_REPUTATION_SCORE } from "@/domains/reputation/model/reputationTypes";
 import { AUCTION_HOUSES } from "@/domains/prestige/simulation/auctionHouses";
 import { rankedRacecourses } from "@/domains/prestige/simulation/racecoursePrestige";
-import { getPrestigeTier, MAX_PRESTIGE_SCORE, type PrestigeTier } from "@/domains/prestige/model/prestigeTypes";
+import {
+  getPrestigeTier,
+  MAX_PRESTIGE_SCORE,
+  type PrestigeTier,
+} from "@/domains/prestige/model/prestigeTypes";
 
 export type PrestigeEntityKind = "player" | "auction_house" | "racecourse";
 

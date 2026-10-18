@@ -10,7 +10,11 @@
  * Related files: ../pipeline.ts (uses phase), raceEntryResolution.ts (validates invites)
  */
 
-import { DISTANCE_INVITE_THRESHOLD, DEFAULT_INVITE_DAYS_AHEAD, INVITE_AT_LARGE_MULTIPLIER } from "@/domains/race/model/raceEntryConstants";
+import {
+  DISTANCE_INVITE_THRESHOLD,
+  DEFAULT_INVITE_DAYS_AHEAD,
+  INVITE_AT_LARGE_MULTIPLIER,
+} from "@/domains/race/model/raceEntryConstants";
 import { PHASE_ORDER_RACE_INVITATIONS } from "@/platform/time/pipelineConstants";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type { AnyImpact, InboxImpact } from "@/platform/resolver/impacts";

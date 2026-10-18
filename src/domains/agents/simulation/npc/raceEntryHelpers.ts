@@ -12,7 +12,10 @@ import type { Horse, Race, Stable } from "@/platform/game/types";
 import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
 import { isHorseEligibleForRace } from "@/domains/race/simulation/eligibility";
 import { calculateRaceSuitability } from "@/domains/race/simulation/entryScoring";
-import { MAX_HORSES_PER_STABLE_PER_RACE, MIN_ENERGY_TO_ENTER } from "@/domains/race/model/raceEntryConstants";
+import {
+  MAX_HORSES_PER_STABLE_PER_RACE,
+  MIN_ENERGY_TO_ENTER,
+} from "@/domains/race/model/raceEntryConstants";
 import { getFormTolerance } from "@/domains/stable/simulation/personalityModifiers";
 import { PERSONALITY_CONFIG } from "@/domains/stable/simulation/stableConfig";
 

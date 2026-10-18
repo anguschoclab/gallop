@@ -3,7 +3,10 @@ import { useGame, useGameWithShallow } from "@/platform/game/store";
 import { usePregnancies } from "@/platform/game/hooks/useBreedingState";
 import type { GameState, Horse } from "@/platform/game/types";
 import type { Pregnancy } from "@/domains/breeding/model/types";
-import { inBreedingSeason, nextBreedingSeasonStart } from "@/domains/calendar/simulation/breedingCalendar";
+import {
+  inBreedingSeason,
+  nextBreedingSeasonStart,
+} from "@/domains/calendar/simulation/breedingCalendar";
 import { isFemaleHorse } from "@/domains/horse/simulation/gender";
 import { getAvailableStallions } from "@/domains/breeding/simulation/stallions";
 import { useBreedingCompatibility } from "@/domains/breeding/application/hooks/useBreedingCompatibility";

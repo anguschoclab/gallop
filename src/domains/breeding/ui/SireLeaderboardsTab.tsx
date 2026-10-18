@@ -1,7 +1,11 @@
 import { useGame } from "@/platform/game/store";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { Trophy, Target, Award, DollarSign, TrendingUp, Globe } from "lucide-react";
-import type { LeaderboardType, Leaderboard, SireRanking } from "@/domains/breeding/application/breedingFacade";
+import type {
+  LeaderboardType,
+  Leaderboard,
+  SireRanking,
+} from "@/domains/breeding/application/breedingFacade";
 import {
   LeaderboardControlsBar,
   LeaderboardEmpty,

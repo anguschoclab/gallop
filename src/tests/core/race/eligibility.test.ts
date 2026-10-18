@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { getMinimumAgeForHemisphere, isHorseEligibleForRace } from "@/domains/race/simulation/eligibility";
+import {
+  getMinimumAgeForHemisphere,
+  isHorseEligibleForRace,
+} from "@/domains/race/simulation/eligibility";
 import type { Horse, Race } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";

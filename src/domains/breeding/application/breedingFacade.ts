@@ -29,7 +29,12 @@ export * from "@/domains/breeding/simulation/syndicateLedger";
 
 // Cross-domain re-exports used by breeding components
 export { isPlayerOwned, isNpcOwned, getStableId } from "@/domains/horse/simulation/ownership";
-export { isFemaleHorse, isMaleHorse, genderSymbol, genderLabel } from "@/domains/horse/simulation/gender";
+export {
+  isFemaleHorse,
+  isMaleHorse,
+  genderSymbol,
+  genderLabel,
+} from "@/domains/horse/simulation/gender";
 export { getCoatColor } from "@/domains/horse/simulation/uiHelpers";
 export { generateProceduralHorseName } from "@/domains/horse/simulation/naming/nameGenerator";
 export { validateHorseName } from "@/domains/horse/simulation/naming/jockeyClubRules";

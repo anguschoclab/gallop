@@ -10,7 +10,22 @@ import { calculateFanGainsForRaces } from "@/domains/horse/simulation/fans";
 import { createRng } from "@/shared/common/rng";
 import type { Horse, Race, Stable, Jockey } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { FAME_GAIN_G1_WIN, FAME_GAIN_G2_WIN, FAME_GAIN_G3_WIN, FAME_GAIN_OTHER_WIN, FAME_GAIN_G1_TOP3, FAME_GAIN_G2_TOP3, FAME_GAIN_TOP5, FAME_BONUS_LARGE_PURSE, FAME_BONUS_MEDIUM_PURSE, LARGE_PURSE_THRESHOLD, MEDIUM_PURSE_THRESHOLD, MAX_FAME, FAN_GAIN_G1_WIN, FAN_GAIN_G2_WIN } from "@/domains/prestige/model/fameConstants";
+import {
+  FAME_GAIN_G1_WIN,
+  FAME_GAIN_G2_WIN,
+  FAME_GAIN_G3_WIN,
+  FAME_GAIN_OTHER_WIN,
+  FAME_GAIN_G1_TOP3,
+  FAME_GAIN_G2_TOP3,
+  FAME_GAIN_TOP5,
+  FAME_BONUS_LARGE_PURSE,
+  FAME_BONUS_MEDIUM_PURSE,
+  LARGE_PURSE_THRESHOLD,
+  MEDIUM_PURSE_THRESHOLD,
+  MAX_FAME,
+  FAN_GAIN_G1_WIN,
+  FAN_GAIN_G2_WIN,
+} from "@/domains/prestige/model/fameConstants";
 import {
   prestigeMultiplier,
   RACECOURSE_FLOOR_PRESTIGE,

@@ -15,8 +15,16 @@ import { inBreedingSeason } from "@/domains/calendar/simulation/breedingCalendar
 import { calculateBaseHorseValue } from "@/domains/horse/simulation/pricing";
 import { isMaleHorse } from "@/domains/horse/simulation/gender";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
-import { STUD_FEE_MID, STUD_BOOK_SIZE_MID, STUD_FEE_ROUNDING, STUD_FEE_MIN } from "@/domains/breeding/model/breedingConstants";
-import { AGE_STUD_DECLINE, AGE_STUD_SEVERE_DECLINE } from "@/domains/horse/model/horseStatConstants";
+import {
+  STUD_FEE_MID,
+  STUD_BOOK_SIZE_MID,
+  STUD_FEE_ROUNDING,
+  STUD_FEE_MIN,
+} from "@/domains/breeding/model/breedingConstants";
+import {
+  AGE_STUD_DECLINE,
+  AGE_STUD_SEVERE_DECLINE,
+} from "@/domains/horse/model/horseStatConstants";
 
 const SIRE_GENDERS: Horse["gender"][] = ["colt", "horse"];
 

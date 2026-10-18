@@ -8,7 +8,11 @@ import type {
   TransactionType,
   TransactionSubcategory,
 } from "@/domains/transactions/model/transactionTypes";
-import type { SireRanking, Leaderboard, SireTrendData } from "@/domains/breeding/model/leaderboardTypes";
+import type {
+  SireRanking,
+  Leaderboard,
+  SireTrendData,
+} from "@/domains/breeding/model/leaderboardTypes";
 import type { SireAnalytics } from "@/domains/breeding/simulation/sireAnalytics";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";

@@ -23,5 +23,8 @@ export { isNotableRival } from "@/domains/agents/simulation/npc/careerMilestones
 export { rankingsComparisonDays } from "@/domains/market/simulation/rankingsComparison";
 export { stableRankingsDays } from "@/domains/stable/simulation/stableRankings";
 export { rivalRankingsForDay } from "@/domains/market/simulation/rivalRankingsComparison";
-export type { RankingsBaseline, RivalRankingsColumn } from "@/domains/market/simulation/rivalRankingsComparison";
+export type {
+  RankingsBaseline,
+  RivalRankingsColumn,
+} from "@/domains/market/simulation/rivalRankingsComparison";
 export type { NpcCareerStage } from "@/domains/horse/simulation/types";

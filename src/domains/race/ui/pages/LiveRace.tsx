@@ -100,7 +100,10 @@ function LiveRace() {
       raceId: string,
       result: { horseId: string; position: number; time: number }[],
       runners?: import("@/domains/race/simulation/types").RaceRunner[],
-      factorLedgers?: Record<string, import("@/domains/race/simulation/factorLedger").RunnerFactorLedger>,
+      factorLedgers?: Record<
+        string,
+        import("@/domains/race/simulation/factorLedger").RunnerFactorLedger
+      >,
       snapshots?: import("@/domains/race/model/engine/raceSnapshotTypes").RaceSnapshot[],
     ) => {
       resolveRaceBase(raceId, result, runners, factorLedgers, snapshots);

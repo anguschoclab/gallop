@@ -9,7 +9,11 @@ export { G1WinnerHistory } from "@/domains/awards/ui/G1WinnerHistory";
 export { VisualTrophy, TrophyShelf } from "@/domains/awards/ui/VisualTrophy";
 export type { TrophyTone } from "@/domains/awards/ui/VisualTrophy";
 export { CeremonyInvitations } from "@/domains/awards/ui/CeremonyInvitations";
-export { CeremonyRsvpControls, CeremonyRsvpBadge, InboxCeremonyRsvp } from "@/domains/awards/ui/CeremonyRsvpControls";
+export {
+  CeremonyRsvpControls,
+  CeremonyRsvpBadge,
+  InboxCeremonyRsvp,
+} from "@/domains/awards/ui/CeremonyRsvpControls";
 export { CeremonyRsvpStatusIndicator } from "@/domains/awards/ui/CeremonyRsvpStatusIndicator";
 export { CeremonyTimeline } from "@/domains/awards/ui/CeremonyTimeline";
 export { BulkRsvpControls } from "@/domains/awards/ui/BulkRsvpControls";

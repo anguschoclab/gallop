@@ -2,7 +2,12 @@ import { describe, it, expect } from "vitest";
 import { applyJockeyEffects } from "@/domains/race/simulation/engine/jockeyEffects";
 import { stepRunner } from "@/domains/race/simulation/engine/simulation";
 import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
-import { GATE_SKILL_PROGRESS_THRESHOLD, MATCHED_ARCHETYPE_PROGRESS_THRESHOLD, VIGOR_PROGRESS_THRESHOLD, FRONT_RUNNER_STALKER_MISMATCH_STAMINA_PENALTY } from "@/domains/race/model/engine/constants";
+import {
+  GATE_SKILL_PROGRESS_THRESHOLD,
+  MATCHED_ARCHETYPE_PROGRESS_THRESHOLD,
+  VIGOR_PROGRESS_THRESHOLD,
+  FRONT_RUNNER_STALKER_MISMATCH_STAMINA_PENALTY,
+} from "@/domains/race/model/engine/constants";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {

@@ -2,7 +2,10 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
 import { formatCurrency } from "@/shared/common/formatting";
 import { BACKSTORIES } from "@/shared/common/backstories";
 import type { BackstoryId } from "@/platform/game/types";
-import { TOTAL_HORSES, FACILITY_UPGRADE_COUNT } from "@/domains/onboarding/application/steps/helpers";
+import {
+  TOTAL_HORSES,
+  FACILITY_UPGRADE_COUNT,
+} from "@/domains/onboarding/application/steps/helpers";
 
 interface StepBackstoryProps {
   backstoryId: BackstoryId | undefined;

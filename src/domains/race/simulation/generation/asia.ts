@@ -13,7 +13,13 @@ import { rand } from "@/shared/common/random";
 import { randomTrackConditionWithClimateBias } from "@/domains/race/simulation/trackConditions";
 import { generateRaceName } from "@/domains/race/simulation/naming/raceNameGenerator";
 import { CLASS_CONFIG } from "@/domains/race/simulation/generation/raceGen";
-import { ASIA_ENTRY_FEE_MULTIPLIER, ASIA_PURSE_MULTIPLIER, ASIA_MINSTAT_BONUS, ASIA_FIELD_SIZE_MIN, ASIA_FIELD_SIZE_MAX } from "@/domains/race/model/raceClassificationConstants";
+import {
+  ASIA_ENTRY_FEE_MULTIPLIER,
+  ASIA_PURSE_MULTIPLIER,
+  ASIA_MINSTAT_BONUS,
+  ASIA_FIELD_SIZE_MIN,
+  ASIA_FIELD_SIZE_MAX,
+} from "@/domains/race/model/raceClassificationConstants";
 
 const ASIA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
   { class: "Maiden", probability: 0.15 },

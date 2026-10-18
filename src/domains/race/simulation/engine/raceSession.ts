@@ -13,7 +13,11 @@
 import type { CourseSpecification } from "@/shared/data/accessors/tracksAccessor";
 import type { Rng } from "@/shared/common/types";
 import { compareFinishOrder } from "@/domains/race/simulation/engine/compareFinishOrder";
-import type { RaceSnapshot, PaceSnapshot, HorseSnapshot } from "@/domains/race/model/engine/raceSnapshotTypes";
+import type {
+  RaceSnapshot,
+  PaceSnapshot,
+  HorseSnapshot,
+} from "@/domains/race/model/engine/raceSnapshotTypes";
 import { stepRunner, computePaceContext } from "@/domains/race/simulation/engine/simulation";
 import type { Runner, PaceContext } from "@/domains/race/simulation/engine/runnerBuilder";
 import type { RunnerFactorLedger } from "@/domains/race/simulation/factorLedger";

@@ -23,6 +23,7 @@ export interface LiveFreshness {
  * Tracks a live timestamp and reports whether the data is fresh, slowing, or stale.
  * The returned values update every second so the UI can shift from green -> yellow -> red
  * automatically as time passes without a new update.
+ * @param timestamp
  */
 export function useLiveFreshness(timestamp: number = Date.now()): LiveFreshness {
   const [now, setNow] = useState(Date.now());

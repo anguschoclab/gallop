@@ -1,6 +1,9 @@
 import { generateProceduralHorseName } from "@/domains/horse/simulation/naming/nameGenerator";
 import { createRng, hashStr } from "@/shared/common/rng";
-import { computeCoiFromSnapshot, classifyCoi } from "@/domains/breeding/simulation/populationGenetics";
+import {
+  computeCoiFromSnapshot,
+  classifyCoi,
+} from "@/domains/breeding/simulation/populationGenetics";
 import type { Horse, HorseGender } from "@/domains/horse/simulation/types";
 import type { CoatColor } from "@/domains/horse/simulation/types";
 import type { Node, Edge } from "@xyflow/react";

@@ -1,6 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { makeUnowned } from "@/domains/horse/simulation/ownership";
-import { buildFieldContext, deriveRunnerConditions } from "@/domains/race/simulation/runnerConditionDerivation";
+import {
+  buildFieldContext,
+  deriveRunnerConditions,
+} from "@/domains/race/simulation/runnerConditionDerivation";
 import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 
 function horse(temperament = 50, injured = false) {

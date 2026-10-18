@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { createFacility, calculateTotalMaintenance } from "@/domains/facilities/simulation/facilityDefaults";
+import {
+  createFacility,
+  calculateTotalMaintenance,
+} from "@/domains/facilities/simulation/facilityDefaults";
 import { FACILITY_MAINTENANCE_COSTS } from "@/domains/facilities/model/facilityTypes";
 import type { PlayerFacilities } from "@/domains/facilities/model/facilityTypes";
 

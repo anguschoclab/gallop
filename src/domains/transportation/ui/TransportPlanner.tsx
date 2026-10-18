@@ -4,7 +4,10 @@ import { Badge } from "@/shared/ui/badge";
 import { useMemo } from "react";
 import { Truck, Plane, Train, X, CheckCircle, Clock } from "lucide-react";
 import { useGame, useGameWithShallow } from "@/platform/game/store";
-import { formatTransportMode, type TransportRequest } from "@/domains/transportation/model/transportationTypes";
+import {
+  formatTransportMode,
+  type TransportRequest,
+} from "@/domains/transportation/model/transportationTypes";
 import { formatCurrency } from "@/shared/common/formatting";
 import { toast } from "sonner";
 import { cn } from "@/shared/lib/cn";

@@ -11,7 +11,11 @@
 // Breeding State - Reproduction and lineage tracking
 // Includes pregnancies, stud careers, and breeding history
 
-import type { Pregnancy, ShareTransaction, ShareActivityFeedItem } from "@/domains/breeding/model/types";
+import type {
+  Pregnancy,
+  ShareTransaction,
+  ShareActivityFeedItem,
+} from "@/domains/breeding/model/types";
 import type { TripleCrownProgress } from "@/domains/calendar/model/campaignTypes";
 import type { BreedingProgram } from "@/domains/breeding/simulation/programs";
 import type { Syndicate } from "@/domains/breeding/model/types";

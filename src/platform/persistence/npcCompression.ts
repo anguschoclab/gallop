@@ -17,7 +17,10 @@ import type { Hemisphere } from "@/domains/weather/simulation/trackClimate";
 import type { Stable, StableTier } from "@/domains/stable/simulation/types";
 import { createRng, hashStr } from "@/shared/common/rng";
 import { generateNpcHorse } from "@/domains/horse/simulation/horseFactory";
-import { calculateRecommendedStudFee, defaultStudParams } from "@/domains/breeding/simulation/stallions";
+import {
+  calculateRecommendedStudFee,
+  defaultStudParams,
+} from "@/domains/breeding/simulation/stallions";
 import type { HorseId, NpcStableId } from "@/shared/types/branded";
 
 export interface NpcHorseSummary {

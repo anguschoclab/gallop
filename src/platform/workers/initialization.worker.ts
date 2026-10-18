@@ -25,6 +25,7 @@ export type InitializeOutput = {
 /**
  * Creates the initial game state for a new game in the worker.
  * Delegates to the main-thread createInitialState to ensure output parity.
+ * @param input
  */
 async function createInitialState(input: InitializeInput): Promise<InitializeOutput> {
   const { options, progressCallback } = input;

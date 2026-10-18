@@ -9,7 +9,10 @@
 import type { Horse } from "@/domains/horse/simulation/types";
 import { calculateDosageMetrics } from "@/domains/race/simulation/dosage";
 import { findHorseByName, type PedigreeHorse } from "@/shared/data/accessors/pedigreeAccessor";
-import { NICKING_AFFINITIES, CROSS_FAMILY_AFFINITIES } from "@/domains/breeding/model/breedingAffinityData";
+import {
+  NICKING_AFFINITIES,
+  CROSS_FAMILY_AFFINITIES,
+} from "@/domains/breeding/model/breedingAffinityData";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
 
 export function calculateBlueHenContribution(dam: Horse): {

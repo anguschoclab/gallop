@@ -12,7 +12,12 @@
 // Facilities affect training, recovery, injury healing, and racing operations
 
 // Type exports
-export type { Facility, FacilityType, FacilityLevel, PlayerFacilities } from "@/domains/facilities/model/facilityTypes";
+export type {
+  Facility,
+  FacilityType,
+  FacilityLevel,
+  PlayerFacilities,
+} from "@/domains/facilities/model/facilityTypes";
 
 // Constant exports
 export {

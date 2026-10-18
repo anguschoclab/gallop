@@ -26,7 +26,10 @@ import { KIND_LABELS } from "@/domains/auction/application/auctionFacade";
 import { formatCurrency } from "@/shared/common/formatting";
 import { horseMarketValue, horseCareerValuation } from "@/domains/horse/application/horseFacade";
 import { CareerValuationBreakdown } from "@/domains/horse/ui/CareerValuationBreakdown";
-import { resolveSaleHouse, houseCommissionRate } from "@/domains/prestige/application/prestigeFacade";
+import {
+  resolveSaleHouse,
+  houseCommissionRate,
+} from "@/domains/prestige/application/prestigeFacade";
 import type { Horse, AuctionSale } from "@/platform/game/types";
 
 type Props = {

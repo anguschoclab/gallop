@@ -13,7 +13,12 @@
 // Includes market horses, auctions, and scouting reports
 
 import type { Horse } from "@/domains/horse/simulation/types";
-import type { AuctionSale, ScoutReport, PrivateSaleOffer, Claim } from "@/domains/market/model/types";
+import type {
+  AuctionSale,
+  ScoutReport,
+  PrivateSaleOffer,
+  Claim,
+} from "@/domains/market/model/types";
 import type { ExchangeState } from "@/domains/market/simulation/exchange";
 import { createDefaultExchangeState } from "@/domains/market/simulation/exchange";
 import type { ScoutingAssignment } from "@/domains/agents/model/scoutingThresholds";

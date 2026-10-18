@@ -10,7 +10,11 @@ import {
 import dagre from "@dagrejs/dagre";
 import "@xyflow/react/dist/style.css";
 import { useGame } from "@/platform/game/store";
-import { buildPedigreeGraph, NODE_WIDTH, NODE_HEIGHT } from "@/domains/breeding/application/breedingFacade";
+import {
+  buildPedigreeGraph,
+  NODE_WIDTH,
+  NODE_HEIGHT,
+} from "@/domains/breeding/application/breedingFacade";
 import { PedigreeNodeCard } from "@/domains/breeding/ui/PedigreeNodeCard";
 import { cn } from "@/shared/lib/cn";
 import type { PedigreeFlowNode, PedigreeEdge } from "@/domains/breeding/application/breedingFacade";

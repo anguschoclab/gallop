@@ -2,7 +2,10 @@ import { describe, it, expect } from "vitest";
 import { createRng } from "@/shared/common/rng";
 import { generateGenotype } from "@/domains/genetics/simulation/generation";
 import { inheritDNA } from "@/domains/genetics/simulation/inheritance";
-import { INDEPENDENTLY_ASSORTING_LOCI, LINKAGE_MAP } from "@/domains/genetics/simulation/linkageMap";
+import {
+  INDEPENDENTLY_ASSORTING_LOCI,
+  LINKAGE_MAP,
+} from "@/domains/genetics/simulation/linkageMap";
 
 // ─── Bug 1: inheritTrait order-dependency ────────────────────────────────────
 
@@ -69,7 +72,8 @@ describe("inheritTrait — order independence", () => {
 
 describe("breedingSimulator — RNG diversity", () => {
   it("produces statistically diverse foal stats across 250 simulations", async () => {
-    const { runBreedingSimulation } = await import("@/domains/genetics/simulation/breedingSimulator");
+    const { runBreedingSimulation } =
+      await import("@/domains/genetics/simulation/breedingSimulator");
     const rng = createRng(42);
 
     // Use contrasting parents to guarantee variance in offspring

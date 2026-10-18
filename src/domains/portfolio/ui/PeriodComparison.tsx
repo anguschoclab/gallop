@@ -4,7 +4,12 @@ import type { PlayerRaceWinRecord, PeriodRace } from "@/domains/stable/applicati
 import type { TrackLedgerEntry } from "@/domains/history/application/historyFacade";
 import type { Transaction } from "@/domains/transactions/model/transactionTypes";
 import type { Horse } from "@/domains/horse/application/horseFacade";
-import { periodRaces, periodStats, pctChange, type DayRange } from "@/domains/stable/application/stableFacade";
+import {
+  periodRaces,
+  periodStats,
+  pctChange,
+  type DayRange,
+} from "@/domains/stable/application/stableFacade";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
@@ -13,13 +18,7 @@ import {
   filterPeriodCampaignRaces,
   type CampaignHistoryFilter,
 } from "@/domains/stable/application/stableFacade";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Label } from "@/shared/ui/label";
 import { Link } from "@tanstack/react-router";
 

@@ -57,6 +57,8 @@ function minOf(value: string): number {
  * Narrow and sort rival candidates. All numeric filters are inclusive
  * minimums; age supports an exact year or a "7+" floor; name sorts ascending,
  * every numeric sort key descending.
+ * @param candidates
+ * @param filters
  */
 export function filterAndSortRivalCandidates(
   candidates: RivalCareerCandidate[],
@@ -92,7 +94,10 @@ export function filterAndSortRivalCandidates(
   });
 }
 
-/** True when any filter differs from its default (drives the Reset button). */
+/**
+ * True when any filter differs from its default (drives the Reset button).
+ * @param filters
+ */
 export function hasActiveRivalCareerFilters(filters: RivalCareerFilterState): boolean {
   const d = DEFAULT_RIVAL_CAREER_FILTERS;
   return (

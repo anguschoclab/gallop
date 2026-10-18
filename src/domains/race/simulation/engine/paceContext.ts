@@ -1,6 +1,14 @@
 import { clamp } from "@/shared/common/math";
 import type { Runner, PaceContext } from "@/domains/race/simulation/engine/runnerBuilder";
-import { LANE_DENSITY_BUCKETS, LANE_BUCKET_WIDTH, LEAD_GROUP_GAP, PACE_BASE_VELOCITY, PACE_REFERENCE_DISTANCE, PACE_DISTANCE_FACTOR, EP_PACE_PRESSURE_WEIGHT } from "@/domains/race/model/engine/constants";
+import {
+  LANE_DENSITY_BUCKETS,
+  LANE_BUCKET_WIDTH,
+  LEAD_GROUP_GAP,
+  PACE_BASE_VELOCITY,
+  PACE_REFERENCE_DISTANCE,
+  PACE_DISTANCE_FACTOR,
+  EP_PACE_PRESSURE_WEIGHT,
+} from "@/domains/race/model/engine/constants";
 
 export function computePaceContext(
   runners: Runner[],

@@ -1,6 +1,9 @@
 import type { Horse, Race } from "@/platform/game/types";
 import { calculateWinProbability } from "@/domains/odds/model/oddsTypes";
-import { computeDistanceScaling, buildRunner } from "@/domains/race/simulation/engine/runnerBuilder";
+import {
+  computeDistanceScaling,
+  buildRunner,
+} from "@/domains/race/simulation/engine/runnerBuilder";
 import { runRaceToCompletion } from "@/domains/race/simulation/engine/simulation";
 import { calculateProjectedBeyer } from "@/domains/race/simulation/beyerProjections";
 import { generateHorse } from "@/domains/horse/simulation/horseFactory";

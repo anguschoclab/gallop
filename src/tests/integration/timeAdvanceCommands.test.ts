@@ -14,7 +14,11 @@ import { EngineClient, type EngineTransport } from "@/platform/engine/client";
 import type { AdvanceCommand, EngineEvent } from "@/platform/engine/protocol";
 import { _setEngineClientForTests } from "@/platform/game/store/engineClient";
 import type { GameState } from "@/platform/game/types";
-import { DAYS_PER_WEEK, DAYS_PER_MONTH, DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
+import {
+  DAYS_PER_WEEK,
+  DAYS_PER_MONTH,
+  DAYS_PER_YEAR,
+} from "@/domains/calendar/model/calendarConstants";
 
 vi.mock("@/platform/persistence/storage/storageAdapter", () => ({
   STORAGE_KEYS: {

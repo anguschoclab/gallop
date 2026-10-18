@@ -17,7 +17,10 @@ import type { Rng } from "@/shared/common/types";
 import { createRng, hashStr } from "@/shared/common/rng";
 import { getTrackById } from "@/shared/data/accessors/tracksAccessor";
 import { generateRace, makeGradedRace } from "@/domains/race/simulation/generation/raceGen";
-import { GRADED_RACES, GRADED_RACES_BY_DAY_OF_YEAR } from "@/shared/data/accessors/gradedRacesAccessor";
+import {
+  GRADED_RACES,
+  GRADED_RACES_BY_DAY_OF_YEAR,
+} from "@/shared/data/accessors/gradedRacesAccessor";
 import { generateNorthAmericanRaceCard } from "@/domains/race/simulation/generation/northAmerica";
 import { generateEuropeanRaceCard } from "@/domains/race/simulation/generation/europe";
 import { generateAustralianRaceCard } from "@/domains/race/simulation/generation/australia";

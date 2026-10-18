@@ -2,7 +2,10 @@ import { useState, useMemo } from "react";
 import { useGame } from "@/platform/game/store";
 import { useHorses, useRaces, useCash, useDay } from "@/platform/game/hooks/useCoreState";
 import { useJockeys } from "@/platform/game/hooks/useSystemsState";
-import { useHorseEligibleRaces, findFirstEligibleRace } from "@/domains/race/application/hooks/useHorseEligibleRaces";
+import {
+  useHorseEligibleRaces,
+  findFirstEligibleRace,
+} from "@/domains/race/application/hooks/useHorseEligibleRaces";
 import { HorsePickerPanel } from "@/domains/racing/ui/HorsePickerPanel";
 import { EligibleRaceList } from "@/domains/racing/ui/EligibleRaceList";
 import { Flag } from "lucide-react";

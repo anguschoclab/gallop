@@ -2,7 +2,10 @@ import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
-import { FACILITY_NAMES, type FacilityType } from "@/domains/facilities/application/facilitiesFacade";
+import {
+  FACILITY_NAMES,
+  type FacilityType,
+} from "@/domains/facilities/application/facilitiesFacade";
 import { ArrowUp, Check, HardDrive } from "lucide-react";
 import { formatCurrency } from "@/shared/common/formatting";
 import { cn } from "@/shared/lib/cn";

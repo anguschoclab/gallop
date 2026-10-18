@@ -11,7 +11,10 @@
 import type { Stable, StableTier } from "@/platform/game/types";
 import type { Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
-import { selectPersonality, getSpecialistPreferences } from "@/domains/stable/simulation/stableSelection";
+import {
+  selectPersonality,
+  getSpecialistPreferences,
+} from "@/domains/stable/simulation/stableSelection";
 import { randomSilk } from "@/domains/horse/simulation/visuals";
 import {
   FILLER_PREFIXES,

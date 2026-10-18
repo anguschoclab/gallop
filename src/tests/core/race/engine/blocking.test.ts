@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { applyBlockingEffect, detectBlocking } from "@/domains/race/simulation/engine/jockeyEffects";
+import {
+  applyBlockingEffect,
+  detectBlocking,
+} from "@/domains/race/simulation/engine/jockeyEffects";
 import { calculateTargetLane } from "@/domains/race/simulation/engine/lateralMovement";
 import { computePaceContext } from "@/domains/race/simulation/engine/paceContext";
 import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";

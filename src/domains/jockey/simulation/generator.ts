@@ -10,11 +10,26 @@
 
 import { generateUUID } from "@/shared/uuid/uuid";
 import type { Rng } from "@/shared/common/rng";
-import type { Jockey, JockeyArchetype, JockeyStats, JockeyTrait, JockeySilk } from "@/domains/jockey/model/types";
+import type {
+  Jockey,
+  JockeyArchetype,
+  JockeyStats,
+  JockeyTrait,
+  JockeySilk,
+} from "@/domains/jockey/model/types";
 import { generateProceduralJockeyName } from "@/domains/jockey/simulation/proceduralNaming";
 import type { RegionalSystem } from "@/domains/race/simulation/types";
 import { createApprenticeProgression } from "@/domains/apprentice/model/apprenticeTypes";
-import { JOCKEY_SALARY_ELITE_MIN, JOCKEY_SALARY_ELITE_MAX, JOCKEY_SALARY_MID_MIN, JOCKEY_SALARY_MID_MAX, JOCKEY_SALARY_BUDGET_MIN, JOCKEY_SALARY_BUDGET_MAX, JOCKEY_AGE_MIN, JOCKEY_AGE_MAX } from "@/domains/jockey/model/jockeyConstants";
+import {
+  JOCKEY_SALARY_ELITE_MIN,
+  JOCKEY_SALARY_ELITE_MAX,
+  JOCKEY_SALARY_MID_MIN,
+  JOCKEY_SALARY_MID_MAX,
+  JOCKEY_SALARY_BUDGET_MIN,
+  JOCKEY_SALARY_BUDGET_MAX,
+  JOCKEY_AGE_MIN,
+  JOCKEY_AGE_MAX,
+} from "@/domains/jockey/model/jockeyConstants";
 import { ARCHETYPES, SILK_PALETTE, SILK_PATTERNS } from "@/shared/data/jockeys";
 export { ARCHETYPES, SILK_PALETTE, SILK_PATTERNS };
 

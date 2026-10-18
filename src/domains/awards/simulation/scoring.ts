@@ -13,7 +13,11 @@
 
 import type { Horse } from "@/domains/horse/simulation/types";
 import type { Race } from "@/domains/race/simulation/types";
-import type { AwardRegion, RegionalAwardCategory, RegionalAward } from "@/domains/awards/model/types";
+import type {
+  AwardRegion,
+  RegionalAwardCategory,
+  RegionalAward,
+} from "@/domains/awards/model/types";
 import {
   REGIONAL_SCORING,
   NORTH_AMERICAN_CATEGORIES,

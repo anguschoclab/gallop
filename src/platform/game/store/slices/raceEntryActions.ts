@@ -197,7 +197,10 @@ export function createRaceEntryActions(
       raceId: string,
       result: { horseId: string; position: number; time: number }[],
       liveRunners?: RaceRunner[],
-      factorLedgers?: Record<string, import("@/domains/race/simulation/factorLedger").RunnerFactorLedger>,
+      factorLedgers?: Record<
+        string,
+        import("@/domains/race/simulation/factorLedger").RunnerFactorLedger
+      >,
       snapshots?: import("@/domains/race/model/engine/raceSnapshotTypes").RaceSnapshot[],
     ) => {
       const s = get();

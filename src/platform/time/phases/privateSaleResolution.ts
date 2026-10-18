@@ -11,7 +11,10 @@
 
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import { calculateLotValuation } from "@/domains/auction/simulation/engine";
-import { attachmentAdjustedAsk, evaluateHorseAttachment } from "@/domains/horse/simulation/attachment";
+import {
+  attachmentAdjustedAsk,
+  evaluateHorseAttachment,
+} from "@/domains/horse/simulation/attachment";
 import { computeDiplomaticPressure } from "@/domains/horse/simulation/overrideNegotiation";
 import { DIPLOMATIC_FAILURE_FRICTION_PENALTY } from "@/domains/market/model/privateSaleConstants";
 import { calculateFrictionChange } from "@/domains/stable/simulation/rivalry";

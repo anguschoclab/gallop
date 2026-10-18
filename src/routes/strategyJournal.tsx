@@ -5,13 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { useGame } from "@/platform/game/store";
 import { PlanEffectivenessCard } from "@/domains/journal/ui/PlanEffectivenessCard";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";

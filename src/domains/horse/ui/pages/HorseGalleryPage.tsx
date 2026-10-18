@@ -2,20 +2,21 @@ import { Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { HorsePortrait } from "@/domains/horse/ui/HorsePortrait";
 import { calculateOverallRating } from "@/domains/horse/application/horseFacade";
 import { ensurePhenotypeResolved } from "@/domains/horse/application/horseFacade";
 import { Zap, TrendingUp, Filter, Search } from "lucide-react";
 import { Input } from "@/shared/ui/input";
-import { useGalleryFilters, COAT_COLORS } from "@/domains/horse/application/hooks/useGalleryFilters";
-import { HORSE_TRAIT_CATEGORY_OPTIONS, HORSE_TRAIT_OPTIONS, type HorseTraitKey } from "@/domains/genetics/application/traitLabels";
+import {
+  useGalleryFilters,
+  COAT_COLORS,
+} from "@/domains/horse/application/hooks/useGalleryFilters";
+import {
+  HORSE_TRAIT_CATEGORY_OPTIONS,
+  HORSE_TRAIT_OPTIONS,
+  type HorseTraitKey,
+} from "@/domains/genetics/application/traitLabels";
 
 function HorseGalleryPage() {
   const {

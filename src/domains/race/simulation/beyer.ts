@@ -15,7 +15,15 @@
 // Output is clamped 30..125 (Beyer "Big Figs" rarely exceed 120).
 import type { Horse } from "@/domains/horse/simulation/types";
 import type { CourseSpecification } from "@/shared/data/accessors/tracksAccessor";
-import { BEYER_MIN, BEYER_MAX, BEYER_BASE, BEYER_FORMULA_SCALE, PATTERN_JUMP_AVG_THRESHOLD, PATTERN_JUMP_BEST_THRESHOLD, PATTERN_JUMP_MIN_HISTORY } from "@/domains/race/model/raceSimulationConstants";
+import {
+  BEYER_MIN,
+  BEYER_MAX,
+  BEYER_BASE,
+  BEYER_FORMULA_SCALE,
+  PATTERN_JUMP_AVG_THRESHOLD,
+  PATTERN_JUMP_BEST_THRESHOLD,
+  PATTERN_JUMP_MIN_HISTORY,
+} from "@/domains/race/model/raceSimulationConstants";
 
 export type BeyerInput = {
   distance: number; // meters

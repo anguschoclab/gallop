@@ -1,5 +1,10 @@
 import type { Jockey, JockeyTier } from "@/domains/jockey/model/types";
-import { JOCKEY_TIER_ORDER, JOCKEY_TIER_LABELS, JOCKEY_TIER_POTENTIAL_ELITE_MIN, JOCKEY_TIER_POTENTIAL_MID_MIN } from "@/domains/jockey/model/jockeyConstants";
+import {
+  JOCKEY_TIER_ORDER,
+  JOCKEY_TIER_LABELS,
+  JOCKEY_TIER_POTENTIAL_ELITE_MIN,
+  JOCKEY_TIER_POTENTIAL_MID_MIN,
+} from "@/domains/jockey/model/jockeyConstants";
 
 export { JOCKEY_TIER_ORDER, JOCKEY_TIER_LABELS };
 

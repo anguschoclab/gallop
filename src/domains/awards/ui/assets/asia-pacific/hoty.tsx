@@ -1,5 +1,10 @@
 import { useId } from "react";
-import { SvgProps, AwardSvgShell, HotyBanner, REGION_AWARD_CONFIG } from "@/domains/awards/ui/assets/shared";
+import {
+  SvgProps,
+  AwardSvgShell,
+  HotyBanner,
+  REGION_AWARD_CONFIG,
+} from "@/domains/awards/ui/assets/shared";
 
 export const HotyIcon = ({ width, height, className }: SvgProps) => {
   const id = useId();

@@ -18,12 +18,20 @@ export interface RaceProgressState {
  * - Clears the sessionStorage entry once the race finishes.
  *
  * @param options.raceId - Unique race identifier (used as storage key suffix)
+ * @param root0
+ * @param root0.raceId
  * @param options.phase - Current race phase (preshow | live | review)
+ * @param root0.phase
  * @param options.finished - Whether the simulation has finished
+ * @param root0.finished
  * @param options.simTime - Current simulation time in seconds
+ * @param root0.simTime
  * @param options.paused - Whether the simulation is paused
+ * @param root0.paused
  * @param options.speed - Current playback speed multiplier
+ * @param root0.speed
  * @param options.tick - RAF tick counter (drives the persistence effect)
+ * @param root0.tick
  */
 export function useRaceProgress({
   raceId,

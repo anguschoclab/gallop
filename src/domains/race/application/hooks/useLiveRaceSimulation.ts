@@ -110,6 +110,14 @@ export function recordFinish(
  * @param options.narrativeRef - Reference to the narrative generator service
  * @param options.messageQueue - Reference to the commentary message queue
  * @param options.rngRef - Reference to the random number generator for the race
+ * @param options.course
+ * @param options.windKph
+ * @param options.windDirectionDeg
+ * @param options.running
+ * @param options.resumeAtSimTime
+ * @param options.initialPaused
+ * @param options.initialSpeed
+ * @param options.onTick
  * @returns An object containing simulation state (tick, finished, paused, speed) and controls
  */
 export function useLiveRaceSimulation({

@@ -2,7 +2,11 @@ import { describe, it, expect, vi } from "vitest";
 import { createBreedingSlice } from "@/platform/game/store/slices/breedingSlice";
 import type { StoreGet } from "@/platform/game/store/types";
 import { createTestMare, createTestStallion } from "@/tests/helpers";
-import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE, MAX_BATCH_BREEDING } from "@/domains/breeding/model/breedingConstants";
+import {
+  BREEDING_FEE,
+  LIVE_FOAL_GUARANTEE_FEE,
+  MAX_BATCH_BREEDING,
+} from "@/domains/breeding/model/breedingConstants";
 import type { Horse, StudCareer, Pregnancy } from "@/platform/game/types";
 import type { MatingPlanEntry } from "@/platform/game/store/state/breedingState";
 import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";

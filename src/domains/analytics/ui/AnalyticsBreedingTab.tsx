@@ -1,7 +1,11 @@
 import { useMemo } from "react";
 import { useAnalyticsData } from "@/domains/analytics/application/hooks/useAnalyticsData";
 import { ChartCard, MiniBar, Sparkline, chartColors } from "@/shared/ui/charts";
-import { ANALYTICS_SIRE_TREND_DAYS, ANALYTICS_TOP_SIRES_DISPLAY, ANALYTICS_TOP_SIRE_TREND_DISPLAY } from "@/shared/constants/analyticsConstants";
+import {
+  ANALYTICS_SIRE_TREND_DAYS,
+  ANALYTICS_TOP_SIRES_DISPLAY,
+  ANALYTICS_TOP_SIRE_TREND_DISPLAY,
+} from "@/shared/constants/analyticsConstants";
 
 export function AnalyticsBreedingTab() {
   const d = useAnalyticsData();

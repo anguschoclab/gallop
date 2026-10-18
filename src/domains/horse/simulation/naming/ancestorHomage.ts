@@ -12,7 +12,11 @@
 import type { Rng } from "@/shared/common/rng";
 import { NAME_MIN_WORD_LENGTH } from "@/shared/constants/storageLimitsConstants";
 import { findHorseByName } from "@/shared/data/accessors/pedigreeAccessor";
-import { ABSTRACT_TERMS, RACING_SPIRIT_NOUNS, RACING_SPIRIT_ADJECTIVES } from "@/domains/horse/simulation/naming/nameDatabase";
+import {
+  ABSTRACT_TERMS,
+  RACING_SPIRIT_NOUNS,
+  RACING_SPIRIT_ADJECTIVES,
+} from "@/domains/horse/simulation/naming/nameDatabase";
 
 /**
  * Extracts a significant key word from a horse name.

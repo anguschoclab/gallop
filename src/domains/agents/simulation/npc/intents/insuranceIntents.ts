@@ -11,7 +11,10 @@ import type { GameState, Horse, Stable } from "@/platform/game/types";
 import { generateUUID } from "@/shared/uuid/uuid";
 import type { StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { calculateBaseHorseValue } from "@/domains/horse/simulation/pricing";
-import { calculateDailyPremium, type InsurancePolicyType } from "@/domains/insurance/model/insuranceTypes";
+import {
+  calculateDailyPremium,
+  type InsurancePolicyType,
+} from "@/domains/insurance/model/insuranceTypes";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
 
 function safeHorseValue(horse: Horse): number {

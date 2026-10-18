@@ -11,7 +11,10 @@
 import type { Genotype, MarkerGenotype } from "@/domains/genetics/model/types";
 import type { Locus } from "@/shared/common/types";
 import type { Rng } from "@/shared/common/types";
-import { crossoverAllChromosomes, type ChromosomeId } from "@/domains/genetics/simulation/chromosomes";
+import {
+  crossoverAllChromosomes,
+  type ChromosomeId,
+} from "@/domains/genetics/simulation/chromosomes";
 import { LINKAGE_MAP, getLociByChromosome } from "@/domains/genetics/simulation/linkageMap";
 
 /**

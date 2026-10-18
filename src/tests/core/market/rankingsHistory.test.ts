@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { RANKINGS_HISTORY_MAX_ENTRIES, recordRankingsHistory } from "@/domains/market/simulation/rankingsHistory";
+import {
+  RANKINGS_HISTORY_MAX_ENTRIES,
+  recordRankingsHistory,
+} from "@/domains/market/simulation/rankingsHistory";
 import { compareRankingsForDay } from "@/domains/market/simulation/rankingsComparison";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { asHorseId } from "@/shared/types/branded";

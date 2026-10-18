@@ -11,7 +11,11 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/platform/game/types";
 import type { AnyImpact } from "@/platform/resolver/impacts";
-import type { ImpactHandler, LookupMaps, ImpactHandlerFunction } from "@/platform/resolver/handlers/types";
+import type {
+  ImpactHandler,
+  LookupMaps,
+  ImpactHandlerFunction,
+} from "@/platform/resolver/handlers/types";
 import type { Syndicate, ShareActivityFeedItem } from "@/domains/breeding/model/types";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { findMajorityOwner } from "@/domains/breeding/simulation/devolutionUtils";

@@ -12,7 +12,11 @@ import { PHASE_ORDER_ENERGY } from "@/platform/time/pipelineConstants";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import { getFacilityBonus } from "@/domains/facilities/simulation";
 import { resolveEpmRisk } from "@/domains/genetics/simulation/phenotype";
-import { BANISTER_CONSTANTS, decayValue, calculatePeakingIndex } from "@/domains/health/simulation/banister";
+import {
+  BANISTER_CONSTANTS,
+  decayValue,
+  calculatePeakingIndex,
+} from "@/domains/health/simulation/banister";
 import type { Outpost } from "@/domains/facilities/model/outpostTypes";
 import type { StaffRole, StaffMember } from "@/domains/staff/model/staffTypes";
 

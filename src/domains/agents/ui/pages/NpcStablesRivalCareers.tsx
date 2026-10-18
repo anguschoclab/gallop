@@ -4,7 +4,11 @@ import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
 import { useHorses, useDay } from "@/platform/game/hooks/useCoreState";
 import { useNpcStables } from "@/platform/game/hooks/useSystemsState";
-import { isPlayerOwned, getStableId, ensurePhenotypeResolved } from "@/domains/horse/application/horseFacade";
+import {
+  isPlayerOwned,
+  getStableId,
+  ensurePhenotypeResolved,
+} from "@/domains/horse/application/horseFacade";
 import {
   isNotableRival,
   buildRivalCareerProfiles,
@@ -19,13 +23,7 @@ import {
 import { RivalCareerCompareTable } from "@/domains/stable/ui/RivalCareerCompareTable";
 import { PillToggleGroup } from "@/shared/ui/common/PillToggleGroup";
 import { FilterSelect } from "@/domains/jockey/ui/FilterSelect";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { useGameWithShallow } from "@/platform/game/store";
 import {
   useRivalCareerFilters,

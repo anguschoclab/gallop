@@ -1,6 +1,9 @@
 import { getAwardSvg } from "@/domains/awards/ui/assets";
 import type { AwardRegion, RegionalAwardCategory } from "@/domains/awards/application/awardsFacade";
-import { CATEGORY_DISPLAY_NAMES, REGION_AWARD_NAMES } from "@/domains/awards/application/awardsFacade";
+import {
+  CATEGORY_DISPLAY_NAMES,
+  REGION_AWARD_NAMES,
+} from "@/domains/awards/application/awardsFacade";
 import { cn } from "@/shared/lib/cn";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
 import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";

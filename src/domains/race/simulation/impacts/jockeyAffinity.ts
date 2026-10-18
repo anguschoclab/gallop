@@ -8,7 +8,10 @@ import type { JockeyAffinityImpact } from "@/platform/resolver/impacts";
 import type { Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { getOrdinalSuffix } from "@/shared/common/ordinal";
-import { AFFINITY_CONSTANTS, calculateTraitAffinitySynergy } from "@/domains/jockey/simulation/affinity";
+import {
+  AFFINITY_CONSTANTS,
+  calculateTraitAffinitySynergy,
+} from "@/domains/jockey/simulation/affinity";
 import type { Race, Horse, Jockey } from "@/platform/game/types";
 
 export function generateJockeyAffinityImpact(

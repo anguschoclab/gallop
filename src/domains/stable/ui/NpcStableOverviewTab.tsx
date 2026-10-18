@@ -6,7 +6,10 @@ import { PERSONALITY_CONFIG } from "@/domains/stable/application/stableFacade";
 import { NpcStableCharts } from "@/domains/stable/ui/NpcStableCharts";
 import { NpcCareerTrackerPanel } from "@/domains/stable/ui/NpcCareerTrackerPanel";
 import { CashPressureTrend } from "@/domains/stable/ui/CashPressureTrend";
-import { getRivalryStatusLabel, getRivalryBadgeColor } from "@/domains/stable/application/hooks/useNpcStableDetail";
+import {
+  getRivalryStatusLabel,
+  getRivalryBadgeColor,
+} from "@/domains/stable/application/hooks/useNpcStableDetail";
 import type { useNpcStableDetail } from "@/domains/stable/application/hooks/useNpcStableDetail";
 import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 

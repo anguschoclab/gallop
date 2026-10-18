@@ -1,21 +1,81 @@
 import { describe, it, expect } from "vitest";
-import { AI_RISK_TOLERANCE_CONSERVATIVE, DEFAULT_SUBSYSTEM_WEIGHT, NPC_HORSE_COUNT_ELITE_MIN } from "@/domains/agents/model/aiConstants";
-import { AUCTION_AGGRESSIVE_PREMIUM, AUCTION_RESERVE_ELITE, DEFAULT_PLAYER_RESERVE_RATIO } from "@/domains/auction/model/auctionConstants";
-import { AUTOSIM_DAYS_OPTIONS, DAYS_PER_WEEK, DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";
+import {
+  AI_RISK_TOLERANCE_CONSERVATIVE,
+  DEFAULT_SUBSYSTEM_WEIGHT,
+  NPC_HORSE_COUNT_ELITE_MIN,
+} from "@/domains/agents/model/aiConstants";
+import {
+  AUCTION_AGGRESSIVE_PREMIUM,
+  AUCTION_RESERVE_ELITE,
+  DEFAULT_PLAYER_RESERVE_RATIO,
+} from "@/domains/auction/model/auctionConstants";
+import {
+  AUTOSIM_DAYS_OPTIONS,
+  DAYS_PER_WEEK,
+  DAYS_PER_YEAR,
+} from "@/domains/calendar/model/calendarConstants";
 import { FACILITY_NAMES, FACILITY_TIER_LABELS } from "@/domains/facilities/model/facilityTypes";
-import { INJURY_PRONENESS_LOW_THRESHOLD, INJURY_RECOVERY_MIN, INJURY_SEVERITY_THRESHOLD } from "@/domains/health/model/healthInjuryConstants";
-import { AGE_RETIREMENT_THRESHOLD, GRADE_S_THRESHOLD, STAT_SCALE_MAX } from "@/domains/horse/model/horseStatConstants";
-import { NEWS_FLAVOR_DAILY_PROBABILITY, NEWS_HIGH_IMPORTANCE_PRICE_THRESHOLD } from "@/domains/inbox/model/newsConstants";
-import { PRIZE_SPLIT, STARTING_CASH, UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
-import { FAME_GAIN_G1_WIN, HALL_OF_FAME_FAME_THRESHOLD, MAX_FAME } from "@/domains/prestige/model/fameConstants";
+import {
+  INJURY_PRONENESS_LOW_THRESHOLD,
+  INJURY_RECOVERY_MIN,
+  INJURY_SEVERITY_THRESHOLD,
+} from "@/domains/health/model/healthInjuryConstants";
+import {
+  AGE_RETIREMENT_THRESHOLD,
+  GRADE_S_THRESHOLD,
+  STAT_SCALE_MAX,
+} from "@/domains/horse/model/horseStatConstants";
+import {
+  NEWS_FLAVOR_DAILY_PROBABILITY,
+  NEWS_HIGH_IMPORTANCE_PRICE_THRESHOLD,
+} from "@/domains/inbox/model/newsConstants";
+import {
+  PRIZE_SPLIT,
+  STARTING_CASH,
+  UPKEEP_PER_HORSE,
+} from "@/domains/market/model/economicConstants";
+import {
+  FAME_GAIN_G1_WIN,
+  HALL_OF_FAME_FAME_THRESHOLD,
+  MAX_FAME,
+} from "@/domains/prestige/model/fameConstants";
 import { DEFAULT_DT, TOP_SPEED_CEILING } from "@/domains/race/model/engine/constants";
-import { DEFAULT_FIELD_SIZE, ENTRY_MAIDEN, MINIMUM_RACE_ENTRIES, PURSE_STAKES, RACE_GRADES } from "@/domains/race/model/raceClassificationConstants";
-import { FOAL_BREAKING_IN_DAY, MAX_HORSES_PER_STABLE_PER_RACE, MIN_ENERGY_TO_ENTER } from "@/domains/race/model/raceEntryConstants";
-import { BEYER_MIN, BEYER_NULL_SENTINEL, PHOTO_FINISH_THRESHOLD_SECONDS, POSITION_WIN, SIMULATION_MAX_STEPS_PER_FRAME, TOP_FINISH_POSITION } from "@/domains/race/model/raceSimulationConstants";
-import { DEFAULT_RECOVERY_POINTS, ENERGY_LOW_THRESHOLD, ENERGY_MAX } from "@/domains/training/model/energyRecoveryConstants";
-import { DASHBOARD_NEWS_FEED_LIMIT, DASHBOARD_UPCOMING_RACES_LIMIT, STANDINGS_RANGE_SHORT_DAYS } from "@/shared/constants/dashboardConstants";
+import {
+  DEFAULT_FIELD_SIZE,
+  ENTRY_MAIDEN,
+  MINIMUM_RACE_ENTRIES,
+  PURSE_STAKES,
+  RACE_GRADES,
+} from "@/domains/race/model/raceClassificationConstants";
+import {
+  FOAL_BREAKING_IN_DAY,
+  MAX_HORSES_PER_STABLE_PER_RACE,
+  MIN_ENERGY_TO_ENTER,
+} from "@/domains/race/model/raceEntryConstants";
+import {
+  BEYER_MIN,
+  BEYER_NULL_SENTINEL,
+  PHOTO_FINISH_THRESHOLD_SECONDS,
+  POSITION_WIN,
+  SIMULATION_MAX_STEPS_PER_FRAME,
+  TOP_FINISH_POSITION,
+} from "@/domains/race/model/raceSimulationConstants";
+import {
+  DEFAULT_RECOVERY_POINTS,
+  ENERGY_LOW_THRESHOLD,
+  ENERGY_MAX,
+} from "@/domains/training/model/energyRecoveryConstants";
+import {
+  DASHBOARD_NEWS_FEED_LIMIT,
+  DASHBOARD_UPCOMING_RACES_LIMIT,
+  STANDINGS_RANGE_SHORT_DAYS,
+} from "@/shared/constants/dashboardConstants";
 import { DIST_SPRINT_MAX, METRIC_MODES } from "@/shared/constants/regionalConstants";
-import { HALL_OF_FAME_MAX_SIZE, RACE_HISTORY_LIMIT_LOW, RECENT_RACES_MAX_COUNT } from "@/shared/constants/storageLimitsConstants";
+import {
+  HALL_OF_FAME_MAX_SIZE,
+  RACE_HISTORY_LIMIT_LOW,
+  RECENT_RACES_MAX_COUNT,
+} from "@/shared/constants/storageLimitsConstants";
 import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 
 describe("barrel exports — all domain files re-exported", () => {

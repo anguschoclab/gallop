@@ -4,15 +4,14 @@
  * Extracted from raceImpactGenerator.ts.
  */
 
-import type {
-  CashImpact,
-  TransactionImpact,
-  ReputationImpact,
-} from "@/platform/resolver/impacts";
+import type { CashImpact, TransactionImpact, ReputationImpact } from "@/platform/resolver/impacts";
 import type { Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { getOrdinalSuffix } from "@/shared/common/ordinal";
-import { calculateRaceWinReputation, calculateRaceLossReputation } from "@/domains/reputation/simulation";
+import {
+  calculateRaceWinReputation,
+  calculateRaceLossReputation,
+} from "@/domains/reputation/simulation";
 import type { Race, Horse } from "@/platform/game/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { getPrizeSplitForRace } from "@/domains/race/simulation/utils";

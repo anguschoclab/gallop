@@ -7,13 +7,7 @@
 import { useMemo, useState } from "react";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Gauge, GitCompare, X } from "lucide-react";
 import type { Horse, RunningStyle } from "@/platform/game/types";
 import { isPlayerOwned } from "@/domains/horse/application/horseFacade";

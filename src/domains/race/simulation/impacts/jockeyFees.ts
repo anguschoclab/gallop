@@ -7,7 +7,10 @@
 import type { CashImpact, TransactionImpact } from "@/platform/resolver/impacts";
 import type { Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
-import { JOCKEY_FEE_PERCENTAGE, BASE_JOCKEY_RIDING_FEE } from "@/domains/jockey/model/jockeyConstants";
+import {
+  JOCKEY_FEE_PERCENTAGE,
+  BASE_JOCKEY_RIDING_FEE,
+} from "@/domains/jockey/model/jockeyConstants";
 import type { Horse, Jockey } from "@/platform/game/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 

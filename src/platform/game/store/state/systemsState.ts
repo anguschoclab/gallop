@@ -30,9 +30,9 @@ import type { AnyIntent } from "@/platform/resolver/intents";
 import type { FacilityType, FacilityLevel } from "@/domains/facilities/simulation";
 import type { PlayerFacilities } from "@/domains/facilities/simulation";
 import type { UserSettings } from "@/domains/settings/model/settingsTypes";
-import type { RaceReplay } from "@/domains/replays/model/replayTypes";;;
+import type { RaceReplay } from "@/domains/replays/model/replayTypes";
 import type { ManagerReputation } from "@/domains/reputation/simulation";
-import type { TransportRequest } from "@/domains/transportation/model/transportationTypes";;;
+import type { TransportRequest } from "@/domains/transportation/model/transportationTypes";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import type { TrackRecord, FounderRecord } from "@/domains/history/model/historyTypes";
@@ -45,7 +45,10 @@ import type { CareerArcState } from "@/domains/narrative/simulation/careerArcGen
 import type { CashPressureHistory } from "@/domains/stable/simulation/cashPressureHistory";
 import type { TutorialState } from "@/domains/tutorial/model/tutorialTypes";
 import { createDefaultTutorialState } from "@/domains/tutorial/model/tutorialTypes";
-import { createFacility, createDefaultPlayerFacilities } from "@/domains/facilities/simulation/facilityDefaults";
+import {
+  createFacility,
+  createDefaultPlayerFacilities,
+} from "@/domains/facilities/simulation/facilityDefaults";
 import { createDefaultUserSettings } from "@/domains/settings/model/settingsTypes";
 import { getReputationTier } from "@/domains/reputation/simulation";
 import type { NewGameOptions } from "@/platform/game/store/state";

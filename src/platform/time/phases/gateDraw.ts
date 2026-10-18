@@ -7,7 +7,11 @@
  * Late entries and filler horses get remaining gates at simulation time.
  */
 
-import { G1_GATE_DRAW_LEAD_DAYS, STANDARD_GATE_DRAW_LEAD_DAYS, MIN_GATE } from "@/domains/race/model/gateConstants";
+import {
+  G1_GATE_DRAW_LEAD_DAYS,
+  STANDARD_GATE_DRAW_LEAD_DAYS,
+  MIN_GATE,
+} from "@/domains/race/model/gateConstants";
 import { PHASE_ORDER_GATE_DRAW } from "@/platform/time/pipelineConstants";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type { Race } from "@/domains/race/simulation/types";

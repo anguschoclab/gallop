@@ -7,7 +7,18 @@ import { randomTrackConditionWithClimateBias } from "@/domains/race/simulation/t
 import { randomRaceName } from "@/domains/race/simulation/naming/legacyFallback";
 import { CLASS_CONFIG } from "@/domains/race/simulation/generation/raceGen";
 import { dayOfYear } from "@/domains/calendar/simulation/dateFormatting";
-import { MAIDEN_GUARANTEE_DAY_OF_YEAR_LIMIT, MAIDEN_FIELD_SIZE_MIN, MAIDEN_FIELD_SIZE_MAX, TWOYO_AGE, TWOYO_DISTANCE_BANDS, TWOYO_RACE_FIELD_SIZE_MIN, TWOYO_RACE_FIELD_SIZE_MAX, TWOYO_MSW_MIN_STAT, TWOYO_RACE_ENTRY_FEE, TWOYO_RACE_PURSE } from "@/domains/race/model/raceClassificationConstants";
+import {
+  MAIDEN_GUARANTEE_DAY_OF_YEAR_LIMIT,
+  MAIDEN_FIELD_SIZE_MIN,
+  MAIDEN_FIELD_SIZE_MAX,
+  TWOYO_AGE,
+  TWOYO_DISTANCE_BANDS,
+  TWOYO_RACE_FIELD_SIZE_MIN,
+  TWOYO_RACE_FIELD_SIZE_MAX,
+  TWOYO_MSW_MIN_STAT,
+  TWOYO_RACE_ENTRY_FEE,
+  TWOYO_RACE_PURSE,
+} from "@/domains/race/model/raceClassificationConstants";
 
 function isStarterEligibleMaiden(race: Race): boolean {
   return race.raceClass.toLowerCase().includes("maiden") && race.minStat === undefined;

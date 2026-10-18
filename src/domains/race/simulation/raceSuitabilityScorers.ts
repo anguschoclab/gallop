@@ -16,7 +16,10 @@ import type { Horse, Race, Stable } from "@/platform/game/types";
 import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import { PERSONALITY_CONFIG } from "@/domains/stable/simulation/stableConfig";
 import { getSuggestedClaimingPriceRange } from "@/domains/market/simulation/claiming";
-import { calculateTrackGeometryScore, calculateGradientScore } from "@/domains/race/simulation/trackGeometry";
+import {
+  calculateTrackGeometryScore,
+  calculateGradientScore,
+} from "@/domains/race/simulation/trackGeometry";
 import {
   pickAtMostTier,
   pickAtLeastTier,

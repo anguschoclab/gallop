@@ -6,7 +6,10 @@
  * via completedBeats and derived from real game state.
  */
 
-import { createDefaultTutorialState, TOTAL_TUTORIAL_BEATS } from "@/domains/tutorial/model/tutorialTypes";
+import {
+  createDefaultTutorialState,
+  TOTAL_TUTORIAL_BEATS,
+} from "@/domains/tutorial/model/tutorialTypes";
 import type { GameStateCreator } from "@/platform/game/store/types";
 
 export type TutorialSlice = {

@@ -3,9 +3,17 @@ import type { NewsItem, NewsCategory, NewsImportance } from "@/domains/narrative
 import { ALL_FLAVOR_STORIES } from "@/domains/narrative/simulation/flavorStories";
 import type { Race, Horse } from "@/platform/game/types";
 import type { Rng } from "@/shared/common/rng";
-import { NEWS_HIGH_IMPORTANCE_PRICE_THRESHOLD, NEWS_LONG_DISTANCE_THRESHOLD, NEWS_SPRINT_DISTANCE_THRESHOLD, NEWS_DOMINANT_MARGIN_SECONDS } from "@/domains/inbox/model/newsConstants";
+import {
+  NEWS_HIGH_IMPORTANCE_PRICE_THRESHOLD,
+  NEWS_LONG_DISTANCE_THRESHOLD,
+  NEWS_SPRINT_DISTANCE_THRESHOLD,
+  NEWS_DOMINANT_MARGIN_SECONDS,
+} from "@/domains/inbox/model/newsConstants";
 import { PHOTO_FINISH_THRESHOLD_SECONDS } from "@/domains/race/model/raceSimulationConstants";
-export { generateG1SpotlightNews, generateFollowUpRaceNews } from "@/domains/narrative/simulation/newsSpotlight";
+export {
+  generateG1SpotlightNews,
+  generateFollowUpRaceNews,
+} from "@/domains/narrative/simulation/newsSpotlight";
 
 /**
  * Creates a new news item with a unique identifier.

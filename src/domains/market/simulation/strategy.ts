@@ -19,7 +19,11 @@ import { TRACK_BY_ID } from "@/shared/data/accessors/tracksAccessor";
 import { getRacecoursePrestige } from "@/domains/prestige/simulation/racecoursePrestige";
 import { AUCTION_HOUSES } from "@/domains/prestige/simulation/auctionHouses";
 import { buildHouseCatalogue } from "@/domains/market/simulation/houseQuotes";
-import { horseGradeSegment, horseTrackSegment, GRADE_SEGMENTS } from "@/domains/market/simulation/priceAlerts";
+import {
+  horseGradeSegment,
+  horseTrackSegment,
+  GRADE_SEGMENTS,
+} from "@/domains/market/simulation/priceAlerts";
 import type { ExchangeState } from "@/domains/market/simulation/exchange";
 
 export type MarketStrategy = {

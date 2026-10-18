@@ -5,13 +5,7 @@ import { Card, CardContent } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/shared/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { useGameWithShallow } from "@/platform/game/store";
 import { TrackLedgerRaces } from "@/domains/history/ui/TrackLedgerRaces";
 import { TrackLedgerPrestigeTable } from "@/domains/history/ui/TrackLedgerPrestigeTable";

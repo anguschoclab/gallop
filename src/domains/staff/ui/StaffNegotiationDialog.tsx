@@ -1,13 +1,7 @@
 import { useId } from "react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/shared/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/shared/ui/dialog";
 import { formatCurrency } from "@/shared/common/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/domains/staff/application/staffFacade";
 import type { StaffMember } from "@/domains/staff/application/staffFacade";

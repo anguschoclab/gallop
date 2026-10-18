@@ -26,7 +26,12 @@ export type { Pregnancy } from "@/domains/breeding/model/types";
 export type { TripleCrownProgress } from "@/domains/calendar/model/campaignTypes";
 export type { Horse, HorseRaceHistoryEntry } from "@/domains/horse/simulation/types";
 export type { Race, RaceRunner } from "@/domains/race/simulation/types";
-export type { AuctionSale, ScoutReport, PrivateSaleOffer, Claim } from "@/domains/market/model/types";
+export type {
+  AuctionSale,
+  ScoutReport,
+  PrivateSaleOffer,
+  Claim,
+} from "@/domains/market/model/types";
 export type { PlayerProfile } from "@/domains/stable/simulation/types";
 
 // Re-export specific external dependencies
@@ -47,8 +52,12 @@ export type {
 } from "@/domains/horse/simulation/types";
 
 // Financial types
-export type { Transaction, TransactionType, TransactionSubcategory } from "@/domains/transactions/model/transactionTypes";
-export type { Expense, ExpenseCategory } from "@/domains/expenses/model/expenseTypes";;;
+export type {
+  Transaction,
+  TransactionType,
+  TransactionSubcategory,
+} from "@/domains/transactions/model/transactionTypes";
+export type { Expense, ExpenseCategory } from "@/domains/expenses/model/expenseTypes";
 
 // Additional re-exports for commonly used types
 export type { RaceClass } from "@/domains/race/model/sharedTypes";
@@ -56,8 +65,15 @@ export type { PedigreeNode as Pedigree } from "@/domains/breeding/model/types";
 export type { Track } from "@/shared/data/tracks";
 export type { JockeyInstructions } from "@/domains/tactics/model/tacticsTypes";
 export type { ApprenticeProgression } from "@/domains/apprentice/model/apprenticeTypes";
-export type { StewardsInquiry, InquiryType, InquiryOutcome } from "@/domains/stewards/model/stewardTypes";
-export type { InsurancePolicy, InsurancePolicyType } from "@/domains/insurance/model/insuranceTypes";
+export type {
+  StewardsInquiry,
+  InquiryType,
+  InquiryOutcome,
+} from "@/domains/stewards/model/stewardTypes";
+export type {
+  InsurancePolicy,
+  InsurancePolicyType,
+} from "@/domains/insurance/model/insuranceTypes";
 
 // Type alias for facilities
 export type FacilityState = Partial<

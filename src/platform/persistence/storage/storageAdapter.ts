@@ -4,7 +4,11 @@
  * and exports STORAGE_KEYS for use by other modules.
  */
 
-import { safeParseJson, raceFiltersSchema, wizardStateSchema } from "@/platform/persistence/storage/schemas";
+import {
+  safeParseJson,
+  raceFiltersSchema,
+  wizardStateSchema,
+} from "@/platform/persistence/storage/schemas";
 
 export const STORAGE_KEYS = {
   GAME_STATE: "gallop_game_state",

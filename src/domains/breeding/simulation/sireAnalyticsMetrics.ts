@@ -9,7 +9,11 @@
 import type { Horse } from "@/platform/game/types";
 import { getRunnersBy, foalLifetimeEarnings } from "@/domains/breeding/simulation/lineage";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
-import type { SireClassification, SurfaceBias, DistancePreference } from "@/domains/breeding/model/sireAnalyticsTypes";
+import type {
+  SireClassification,
+  SurfaceBias,
+  DistancePreference,
+} from "@/domains/breeding/model/sireAnalyticsTypes";
 
 /**
  * Calculate Average Earnings Index (AEI) for a stallion.

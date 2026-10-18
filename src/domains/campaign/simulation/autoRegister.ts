@@ -1,4 +1,8 @@
-import { goalProgress, goalRaceBonus, type StableGoals } from "@/domains/stable/simulation/stableGoals";
+import {
+  goalProgress,
+  goalRaceBonus,
+  type StableGoals,
+} from "@/domains/stable/simulation/stableGoals";
 /**
  * autoRegister.ts - Smart auto-registration for player horses
  *

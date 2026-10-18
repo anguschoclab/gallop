@@ -1,6 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { createDefaultFoalDevelopmentArc } from "@/domains/horse/simulation/foalDevelopment";
-import { FOAL_BREAKING_IN_DAY, FOAL_EARLY_WORKOUTS_DAY } from "@/domains/race/model/raceEntryConstants";
+import {
+  FOAL_BREAKING_IN_DAY,
+  FOAL_EARLY_WORKOUTS_DAY,
+} from "@/domains/race/model/raceEntryConstants";
 
 describe("createDefaultFoalDevelopmentArc", () => {
   it("creates an arc with two pending milestones", () => {

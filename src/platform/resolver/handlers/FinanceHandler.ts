@@ -10,7 +10,11 @@
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/platform/game/types";
 import type { AnyImpact } from "@/platform/resolver/impacts";
-import type { ImpactHandler, LookupMaps, ImpactHandlerFunction } from "@/platform/resolver/handlers/types";
+import type {
+  ImpactHandler,
+  LookupMaps,
+  ImpactHandlerFunction,
+} from "@/platform/resolver/handlers/types";
 import type { CashImpact, TransactionImpact } from "@/platform/resolver/impacts/financialImpacts";
 import { createTransaction } from "@/domains/transactions/model/transactionTypes";
 import type { HorseTransferImpact } from "@/platform/resolver/impacts/horseImpacts";

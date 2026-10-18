@@ -1,5 +1,8 @@
 import { Tabs, TabsList, TabsTrigger } from "@/shared/ui/tabs";
-import { useLedgerTransactions, type PeriodKey } from "@/domains/financial/application/hooks/useLedgerTransactions";
+import {
+  useLedgerTransactions,
+  type PeriodKey,
+} from "@/domains/financial/application/hooks/useLedgerTransactions";
 import { NumericValue } from "@/domains/horse/ui/HorseBits";
 import { FinancialChart } from "@/domains/financial/ui/FinancialChart";
 import { FinancialSummaryCards } from "@/domains/financial/ui/FinancialSummaryCards";

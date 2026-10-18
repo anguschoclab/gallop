@@ -26,6 +26,11 @@ const LIVE_SIM_TIME = 0;
  *
  * Extracted from useRaceUIState.ts to separate leaderboard derivation from
  * commentary message pacing.
+ * @param runners
+ * @param race
+ * @param classBonus
+ * @param calibratedPars
+ * @param tick
  */
 export function useLeaderboardState(
   runners: Runner[],

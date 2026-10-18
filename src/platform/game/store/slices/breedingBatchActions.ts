@@ -10,7 +10,11 @@ import { getStableId } from "@/domains/horse/simulation/ownership";
 import { asPlayerOwnerId } from "@/shared/types/branded";
 import { generateUUID } from "@/shared/uuid/uuid";
 import type { BreedingIntent, AnyIntent } from "@/platform/resolver/intents";
-import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE, MAX_BATCH_BREEDING } from "@/domains/breeding/model/breedingConstants";
+import {
+  BREEDING_FEE,
+  LIVE_FOAL_GUARANTEE_FEE,
+  MAX_BATCH_BREEDING,
+} from "@/domains/breeding/model/breedingConstants";
 import type { StoreSet, StoreGet } from "@/platform/game/store/types";
 import type { BreedingSlice, BatchBreedResult } from "@/platform/game/store/slices/breedingSlice";
 

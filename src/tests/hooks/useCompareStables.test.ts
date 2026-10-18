@@ -1,6 +1,9 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useCompareStables, MAX_COMPARE } from "@/domains/stable/application/hooks/useCompareStables";
+import {
+  useCompareStables,
+  MAX_COMPARE,
+} from "@/domains/stable/application/hooks/useCompareStables";
 
 describe("useCompareStables", () => {
   beforeEach(() => {
