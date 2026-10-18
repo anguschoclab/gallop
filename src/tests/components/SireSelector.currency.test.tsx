@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
-import { SireSelector } from "@/components/breeding/SireSelector";
-import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { SireSelector } from "@/domains/breeding/ui/SireSelector";
+import { generateHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("SireSelector — currency formatting", () => {
   it("does not show double $ for standing fee", () => {

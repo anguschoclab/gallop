@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
-import { useGame, useGameWithShallow } from "@/game/store";
-import type { GameState } from "@/game/types";
-import { Card, CardContent } from "@/components/ui/card";
-import { NumericValue } from "@/components/horse/HorseBits";
-import { formatCurrency } from "@/lib/formatting";
-import { SyndicateMarket } from "@/components/market/SyndicateMarket";
-import { BloodstockGrid } from "@/components/market/BloodstockGrid";
+import { useGame, useGameWithShallow } from "@/platform/game/store";
+import type { GameState } from "@/platform/game/types";
+import { Card, CardContent } from "@/shared/ui/card";
+import { NumericValue } from "@/domains/horse/ui/HorseBits";
+import { formatCurrency } from "@/shared/common/formatting";;
+import { SyndicateMarket } from "@/domains/market/ui/SyndicateMarket";
+import { BloodstockGrid } from "@/domains/market/ui/BloodstockGrid";
 import {
   Store,
   ChevronRight,
@@ -17,12 +17,12 @@ import {
   Gavel,
   Bell,
 } from "lucide-react";
-import { ExchangePanel } from "@/components/market/ExchangePanel";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AuctionHouseDesk } from "@/components/market/AuctionHouseDesk";
-import { PriceAlertsPanel } from "@/components/market/PriceAlertsPanel";
-import { MarketStrategyPanel } from "@/components/market/MarketStrategyPanel";
-import { useTabParam } from "@/hooks/ui/useTabParam";
+import { ExchangePanel } from "@/domains/market/ui/ExchangePanel";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { AuctionHouseDesk } from "@/domains/market/ui/AuctionHouseDesk";
+import { PriceAlertsPanel } from "@/domains/market/ui/PriceAlertsPanel";
+import { MarketStrategyPanel } from "@/domains/market/ui/MarketStrategyPanel";
+import { useTabParam } from "@/shared/hooks/ui/useTabParam";
 
 const MARKET_TABS = [
   "houses",

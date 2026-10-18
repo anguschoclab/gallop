@@ -15,9 +15,9 @@ import {
 } from "@/domains/agents/simulation/agentGoals";
 import { NPC_ACTION_REGISTRY } from "@/domains/agents/simulation/npcActionRegistry";
 import { buildNpcObservation } from "@/domains/agents/simulation/agentObservation";
-import { createInitialState } from "@/game/store/initialization";
+import { createInitialState } from "@/platform/game/store/initialization";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 
 function makeState(overrides: Partial<GameState> = {}): GameState {
   const base = createInitialState();

@@ -11,13 +11,13 @@
  * Related files: npc/intentGenerators.ts (calls coordinator before generating intents)
  */
 
-import type { GameState, Stable, StablePersonality } from "@/game/types";
+import type { GameState, Stable, StablePersonality } from "@/platform/game/types";
 import type { NpcAIManager } from "./npcCycleAI";
-import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import { PERSONALITY_CONFIG } from "@/domains/stable/simulation/stableConfig";
 import type { FinancialDistressState } from "./financialDistressAI";
 import { getDistressDirective } from "./financialDistressAI";
-import { DISTRESS_BUDGET_MULTIPLIER } from "@/constants/financialDistressConstants";
-import { isPlayerOwned, isNpcOwned } from "@/core/horse/ownership";
+import { DISTRESS_BUDGET_MULTIPLIER } from "@/domains/financial/model/financialDistressConstants";
+import { isPlayerOwned, isNpcOwned } from "@/domains/horse/simulation/ownership";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 

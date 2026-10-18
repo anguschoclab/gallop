@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { AIPersonalityCard } from "@/components/npc/AIPersonalityCard";
-import { StrategicDirectivesPanel } from "@/components/npc/StrategicDirectivesPanel";
+import { AIPersonalityCard } from "@/domains/agents/ui/AIPersonalityCard";
+import { StrategicDirectivesPanel } from "@/domains/agents/ui/StrategicDirectivesPanel";
 import type { StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import type {
   StrategicDirective,

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { filterAndSortLots } from "@/services/auction/auctionLotFilter";
+import { filterAndSortLots } from "@/domains/auction/application/auctionLotFilter";
 import { createTestHorse } from "@/tests/helpers";
-import type { AuctionLot, Horse } from "@/game/types";
+import type { AuctionLot, Horse } from "@/platform/game/types";
 
 function mkLot(
   id: string,

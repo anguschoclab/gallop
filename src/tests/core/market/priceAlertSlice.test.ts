@@ -6,14 +6,14 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import {
   createDefaultExchangeState,
   type ExchangeAsk,
   type ExchangeTrade,
-} from "@/core/market/exchange";
-import { DEFAULT_MARKET_STRATEGY } from "@/core/market/strategy";
+} from "@/domains/market/simulation/exchange";
+import { DEFAULT_MARKET_STRATEGY } from "@/domains/market/simulation/strategy";
 
 function seedStore(overrides: Record<string, unknown> = {}) {
   useGame.setState({ ...createDefaultGameState(), ...overrides } as any);

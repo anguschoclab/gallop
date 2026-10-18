@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeIndustryMeanEarnings } from "@/core/breeding/industryMetrics";
+import { computeIndustryMeanEarnings } from "@/domains/breeding/simulation/industryMetrics";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 describe("industryMetrics", () => {

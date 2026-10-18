@@ -1,9 +1,9 @@
-import type { Stable, Horse } from "@/game/types";
+import type { Stable, Horse } from "@/platform/game/types";
 import type { UpkeepAIState, BudgetDecision } from "./upkeepAI";
 import { UPKEEP_STRATEGIES } from "./upkeepAI";
 import { recordLearningOutcome, trimHistory } from "./learningModule";
 import { recordPersonalityOutcome } from "./personalitySystem";
-import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
+import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/domains/agents/model/aiConstants";
 
 export function calculateTargetReserveRatio(personality: Stable["personality"]): number {
   return UPKEEP_STRATEGIES[personality].targetReserveRatio;

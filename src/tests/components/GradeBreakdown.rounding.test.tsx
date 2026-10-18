@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import { GradeBreakdown } from "@/components/race/GradeBreakdown";
-import type { Race, Horse } from "@/game/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { GradeBreakdown } from "@/domains/race/ui/GradeBreakdown";
+import type { Race, Horse } from "@/platform/game/types";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(id: string, speed: number, acceleration: number): Horse {
   return {

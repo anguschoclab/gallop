@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { awardsPhase } from "@/core/time/phases/awards";
-import { createRng } from "@/core/common/rng";
+import { awardsPhase } from "@/platform/time/phases/awards";
+import { createRng } from "@/shared/common/rng";
 import { createTestHorse } from "@/tests/helpers";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("awardsPhase", () => {
   const createTestState = (): GameState => ({

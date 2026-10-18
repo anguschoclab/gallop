@@ -1,13 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { npcCareerTrackerPhase } from "@/core/time/phases/npcCareerTrackerPhase";
+import { npcCareerTrackerPhase } from "@/platform/time/phases/npcCareerTrackerPhase";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
-import { createRng } from "@/core/common/rng";
-import type { GameState } from "@/game/types";
-import type { Stable } from "@/core/stable/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { createRng } from "@/shared/common/rng";
+import type { GameState } from "@/platform/game/types";
+import type { Stable } from "@/domains/stable/simulation/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 function mkContext(
   overrides: Partial<GameState> = {},

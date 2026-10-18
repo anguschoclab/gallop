@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
+import { impactApplicationPhase } from "@/platform/time/phases/impactApplication";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 describe("impactApplicationPhase", () => {
   it("should apply impacts and return updated state", () => {

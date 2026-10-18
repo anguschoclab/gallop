@@ -7,8 +7,8 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
-import type { Horse, Race } from "@/game/types";
+import { useGame } from "@/platform/game/store";
+import type { Horse, Race } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import {
   NOMINATION_FEE_G1_EARLY,
@@ -16,9 +16,9 @@ import {
   NOMINATION_FEE_G2_EARLY,
   NOMINATION_FEE_G2_STANDARD,
   NOMINATION_FEE_G3_LATE,
-} from "@/core/racing/nominationFees";
+} from "@/domains/racing/model/nominationFees";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function makeGradedRace(
   id: string,

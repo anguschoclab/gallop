@@ -25,7 +25,7 @@ describe("TransportPlanner Wiring", () => {
   });
 
   it.skip("TransportPlanner component exists and is exported", async () => {
-    const mod = await import("@/components/transportation/TransportPlanner");
+    const mod = await import("@/domains/transportation/ui/TransportPlanner");
     expect(mod.TransportPlanner).toBeDefined();
     expect(typeof mod.TransportPlanner).toBe("function");
   });

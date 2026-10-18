@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { PrivateSaleCounterCard } from "@/components/auction/PrivateSaleCounterCard";
-import type { Horse, Stable, PrivateSaleOffer } from "@/game/types";
+import { PrivateSaleCounterCard } from "@/domains/auction/ui/PrivateSaleCounterCard";
+import type { Horse, Stable, PrivateSaleOffer } from "@/platform/game/types";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
   id: "offer1",

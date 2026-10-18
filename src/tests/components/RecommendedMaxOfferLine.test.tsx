@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { RecommendedMaxOfferLine } from "@/components/stable/RecommendedMaxOfferLine";
+import { RecommendedMaxOfferLine } from "@/domains/stable/ui/RecommendedMaxOfferLine";
 import { createTestStable } from "@/tests/helpers";
-import type { StablePersonality } from "@/game/types";
+import type { StablePersonality } from "@/platform/game/types";
 
 const horses = Array.from({ length: 10 }, (_, i) => `h${i}`) as unknown as never[];
 

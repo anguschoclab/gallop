@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { KeyRivalsWidget } from "@/components/dashboard/KeyRivalsWidget";
+import { KeyRivalsWidget } from "@/domains/dashboard/ui/KeyRivalsWidget";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

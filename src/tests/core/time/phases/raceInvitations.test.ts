@@ -3,15 +3,15 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { raceInvitationsPhase } from "@/core/time/phases/raceInvitations";
-import { isHorseEligibleForRace, isHorseInvitedToRace } from "@/core/race/eligibility";
-import { RacingValidator } from "@/core/resolver/validators/RacingValidator";
-import { makeGradedRace } from "@/core/race/generation/raceGen";
-import type { Horse, Race, GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GradedRace } from "@/data/gradedRaces";
+import { raceInvitationsPhase } from "@/platform/time/phases/raceInvitations";
+import { isHorseEligibleForRace, isHorseInvitedToRace } from "@/domains/race/simulation/eligibility";
+import { RacingValidator } from "@/platform/resolver/validators/RacingValidator";
+import { makeGradedRace } from "@/domains/race/simulation/generation/raceGen";
+import type { Horse, Race, GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GradedRace } from "@/shared/data/gradedRaces";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function makeHorse(overrides: Partial<Horse> = {}): Horse {
   return {

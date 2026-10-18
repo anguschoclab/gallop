@@ -18,8 +18,8 @@ import {
   detectComebackBeats,
   detectAllianceDramaBeats,
 } from "@/domains/agents/simulation/narrativeAI";
-import type { Stable, Horse } from "@/game/types";
-import type { Race } from "@/core/race/types";
+import type { Stable, Horse } from "@/platform/game/types";
+import type { Race } from "@/domains/race/simulation/types";
 import type {
   NpcAIManager,
   StableAIState,
@@ -27,7 +27,7 @@ import type {
   NarrativeState,
 } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
-import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { makeNpcOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({

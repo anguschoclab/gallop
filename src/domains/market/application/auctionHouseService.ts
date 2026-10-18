@@ -1,0 +1,75 @@
+/**
+ * auctionHouseService.ts - Service facade for auction house desk operations.
+ *
+ * Wraps core market/prestige functions so components don't import core directly.
+ * This reduces component→core layering violations and centralizes the
+ * auction house business logic in one service boundary.
+ *
+ * Dependencies: @/core/market/houseQuotes, @/core/market/exchangeAI,
+ *              @/core/prestige/auctionHouses, @/core/horse/ownership,
+ *              @/shared/common/formatting
+ * Related files: src/components/market/AuctionHouseDesk.tsx (consumer)
+ */
+
+import { formatCurrency } from "@/core/common/formatting";
+import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
+import { createDefaultExchangeState } from "@/domains/market/simulation/exchange";
+import { AUCTION_HOUSES, type AuctionHouse } from "@/domains/prestige/simulation/auctionHouses";
+import { buildHouseCatalogue, houseQuote } from "@/domains/market/simulation/houseQuotes";
+import { sellerStandingBidFactor } from "@/domains/market/simulation/exchangeAI";
+import { worldRankings } from "@/domains/market/simulation/raceForm";
+import type { Horse } from "@/platform/game/types";
+
+/** Re-export types and constants for component consumption. */
+export type { AuctionHouse };
+export { AUCTION_HOUSES, createDefaultExchangeState, formatCurrency, isPlayerOwned };
+
+/**
+ * Build a catalogue of available horses for an auction house.
+ * @param args - Day, house, and horse list.
+ * @param args.day
+ * @param args.house
+ * @param args.horses
+ * @returns The house catalogue.
+ */
+export function getHouseCatalogue(args: { day: number; house: AuctionHouse; horses: Horse[] }) {
+  return buildHouseCatalogue(args);
+}
+
+/**
+ * Get a sell/buy quote for a horse at a specific auction house.
+ * @param horse - The horse to quote.
+ * @param allHorses - All horses for market context.
+ * @param house - The auction house.
+ * @param reputationScore - Player's reputation score.
+ * @returns The house quote with sell/buy prices.
+ */
+export function getHouseQuote(
+  horse: Horse,
+  allHorses: Horse[],
+  house: AuctionHouse,
+  reputationScore: number,
+) {
+  return houseQuote(horse, allHorses, house, reputationScore);
+}
+
+/**
+ * Get the seller standing bid factor based on reputation.
+ * @param reputationScore - Player's reputation score.
+ * @returns The standing bid factor.
+ */
+export function getSellerStandingBidFactor(reputationScore: number) {
+  return sellerStandingBidFactor(reputationScore);
+}
+
+/**
+ * World rankings from recent race results, with form price premium.
+ * @param horses - All horses.
+ * @param day - Current day.
+ * @param windowDays - Lookback window.
+ * @param limit - Max rows.
+ * @returns Ranked rows with form-adjusted premium applied.
+ */
+export function getWorldRankings(horses: Horse[], day: number, windowDays = 365, limit = 25) {
+  return worldRankings(horses, day, windowDays, limit);
+}

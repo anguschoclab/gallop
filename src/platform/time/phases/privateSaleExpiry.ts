@@ -1,0 +1,69 @@
+/**
+ * phases/privateSaleExpiry.ts - Private sale expiry phase
+ *
+ * This file provides the private sale expiry phase that transitions pending/countered
+ * offers to 'expired' when their expiry day is reached and prunes expired offers
+ * older than 7 game days.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (PrivateSaleOffer)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
+import { PHASE_ORDER_PRIVATE_SALE_EXPIRY } from "@/platform/time/pipelineConstants";;
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { PrivateSaleOffer } from "@/platform/game/types";
+
+/**
+ * Phase: Private Sale Expiry
+ * Transition pending/countered offers to 'expired' when their expiry day is reached.
+ * Runs before other day-advance effects so the UI always reflects current status.
+ * Prunes expired offers older than 7 game days.
+ */
+export const privateSaleExpiryPhase = {
+  name: "privateSaleExpiry",
+  order: PHASE_ORDER_PRIVATE_SALE_EXPIRY, // Very early in the pipeline, before most other phases
+  execute: (context: PipelineContext): PipelineContext => {
+    const { state, newDay, logs } = context;
+    const offers: PrivateSaleOffer[] = state.privateSaleOffers ?? [];
+    if (offers.length === 0) return context;
+
+    const newLogs = [...logs];
+    const { horseMap, stableMap } = context;
+    const updatedOffers = offers
+      .map((o) => {
+        // Expire pending/countered offers that have hit their expiry day
+        if (
+          (o.status === "pending" || o.status === "countered" || o.status === "override_pending") &&
+          newDay >= o.expiresDay
+        ) {
+          // Find horse name for the toast/log
+          const horse = horseMap.get(o.horseId);
+          const stable = o.toStableId ? stableMap.get(o.toStableId) : undefined;
+          const horseName = horse?.name ?? "horse";
+          const stableName = stable?.name ?? "stable";
+          newLogs.push({
+            day: newDay,
+            text: `Your offer on ${horseName} from ${stableName} expired without a response.`,
+          });
+          return { ...o, status: "expired" as const };
+        }
+        return o;
+      })
+      // Prune expired/declined offers older than 7 days
+      .filter((o) => {
+        if (o.status === "expired" || o.status === "declined" || o.status === "override_failed") {
+          return newDay - o.createdDay <= 7;
+        }
+        return true;
+      });
+
+    return {
+      ...context,
+      state: {
+        ...state,
+        privateSaleOffers: updatedOffers,
+      },
+      logs: newLogs,
+    };
+  },
+};

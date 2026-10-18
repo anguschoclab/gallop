@@ -10,10 +10,10 @@ import {
   foalLifetimeEarnings,
   totalEarningsBy,
   getRunnersBy,
-} from "@/core/breeding/lineage";
+} from "@/domains/breeding/simulation/lineage";
 import { createTestHorse } from "@/tests/helpers";
-import { PRIZE_SPLIT } from "@/constants";
-import type { GameState } from "@/game/types";
+import { PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import type { GameState } from "@/platform/game/types";
 
 describe("breeding lineage utils", () => {
   beforeEach(() => {

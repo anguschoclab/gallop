@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import type { Horse } from "@/game/types";
-import { computeAllLeaderboards } from "@/core/breeding/leaderboardService";
-import type { SireTrendData } from "@/core/breeding/leaderboardTypes";
-import type { LeaderboardType } from "@/core/breeding/leaderboardTypes";
+import type { Horse } from "@/platform/game/types";
+import { computeAllLeaderboards } from "@/domains/breeding/simulation/leaderboardService";
+import type { SireTrendData } from "@/domains/breeding/model/leaderboardTypes";
+import type { LeaderboardType } from "@/domains/breeding/model/leaderboardTypes";
 
 function makeRaceEntry(
   position: number,

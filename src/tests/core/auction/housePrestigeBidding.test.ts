@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { calculateLotValuation, calculateNpcBid } from "@/core/auction/engine";
-import { createRng } from "@/core/common/rng";
-import { AUCTION_HOUSE_BY_ID, housePrestigeMultiplier } from "@/core/prestige";
-import type { Horse, Stable } from "@/game/types";
-import type { StaffRole } from "@/core/staff/staffTypes";
+import { calculateLotValuation, calculateNpcBid } from "@/domains/auction/simulation/engine";
+import { createRng } from "@/shared/common/rng";
+import { AUCTION_HOUSE_BY_ID, housePrestigeMultiplier } from "@/domains/prestige/simulation";
+import type { Horse, Stable } from "@/platform/game/types";
+import type { StaffRole } from "@/domains/staff/model/staffTypes";
 import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {

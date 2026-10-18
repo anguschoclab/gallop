@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { CeremonyRsvpStatusIndicator } from "@/components/awards/CeremonyRsvpStatusIndicator";
-import type { AwardCeremonyInvitation } from "@/core/awards/invitations";
+import { CeremonyRsvpStatusIndicator } from "@/domains/awards/ui/CeremonyRsvpStatusIndicator";
+import type { AwardCeremonyInvitation } from "@/domains/awards/simulation/invitations";
 
 function mkInvitation(overrides: Partial<AwardCeremonyInvitation> = {}): AwardCeremonyInvitation {
   return {

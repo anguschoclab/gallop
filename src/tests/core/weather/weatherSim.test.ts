@@ -8,7 +8,7 @@ import {
   SIM_WEATHER_PATTERNS,
   PATTERN_SEVERITY,
   type WeatherState,
-} from "@/core/weather";
+} from "@/domains/weather/simulation";
 
 describe("weatherSim — determinism", () => {
   // Use actual track IDs from tracks.json

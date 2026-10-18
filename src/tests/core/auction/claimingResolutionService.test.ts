@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { resolveClaimingResolution } from "@/core/auction/claimingResolutionService";
-import type { Race } from "@/game/types";
-import type { ClaimResolutionInput } from "@/core/market/claimingImpacts";
-import { createRng } from "@/core/common/rng";
+import { resolveClaimingResolution } from "@/domains/auction/simulation/claimingResolutionService";
+import type { Race } from "@/platform/game/types";
+import type { ClaimResolutionInput } from "@/domains/market/simulation/claimingImpacts";
+import { createRng } from "@/shared/common/rng";
 import { createTestHorse } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 function mkRace(
   entries: { horseId: string; withdrawnFromClaiming?: boolean }[],

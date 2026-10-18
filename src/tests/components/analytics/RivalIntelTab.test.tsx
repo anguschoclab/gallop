@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { RivalIntelTab } from "@/components/analytics/RivalIntelTab";
+import { RivalIntelTab } from "@/domains/analytics/ui/RivalIntelTab";
 
 // Mock reused components that call useGame internally
 vi.mock("@/components/analytics/EconomicIndicators", () => ({

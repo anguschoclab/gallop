@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { StrategicDirectivesPanel } from "@/components/npc/StrategicDirectivesPanel";
+import { StrategicDirectivesPanel } from "@/domains/agents/ui/StrategicDirectivesPanel";
 import type { StrategicDirective } from "@/domains/agents/simulation/strategicCoordinator";
 
 describe("StrategicDirectivesPanel", () => {

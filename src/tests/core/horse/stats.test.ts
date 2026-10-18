@@ -6,11 +6,11 @@ import {
   getAbility,
   abilityGrade,
   rollRunningStyle,
-} from "@/core/horse/stats";
-import { resolvePhenotype } from "@/core/horse/horseFactory";
-import type { Horse } from "@/game/types";
+} from "@/domains/horse/simulation/stats";
+import { resolvePhenotype } from "@/domains/horse/simulation/horseFactory";
+import type { Horse } from "@/platform/game/types";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
-import { makeUnowned } from "@/core/horse/ownership";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(
   speed: number,

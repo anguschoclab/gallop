@@ -4,12 +4,12 @@
  * Extracted from raceEntryAI.ts for modularity.
  */
 
-import type { Horse, Race, Stable } from "@/game/types";
-import { calculateOverallRating } from "@/core/horse/stats";
+import type { Horse, Race, Stable } from "@/platform/game/types";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import { getSuccessRate } from "./learningModule";
-import { calculateRaceSuitability } from "@/core/race/entryScoring";
-import { calculateTrackGeometryScore, calculateGradientScore } from "@/core/race/trackGeometry";
-import { applyPersonalityModifiers } from "@/core/stable/personalityModifiers";
+import { calculateRaceSuitability } from "@/domains/race/simulation/entryScoring";
+import { calculateTrackGeometryScore, calculateGradientScore } from "@/domains/race/simulation/trackGeometry";
+import { applyPersonalityModifiers } from "@/domains/stable/simulation/personalityModifiers";
 import type { RaceEntryAIState } from "./raceEntryAITypes";
 
 /**

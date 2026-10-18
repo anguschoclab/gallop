@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { resolveClaimingResolution } from "@/services/auction/claimingResolutionService";
+import { resolveClaimingResolution } from "@/domains/auction/simulation/claimingResolutionService";;
 import { createTestHorse, createTestRng } from "@/tests/helpers";
-import { isValidUUID } from "@/core/uuid";
-import type { Horse, Race } from "@/game/types";
-import type { ClaimResolutionInput } from "@/core/market/claimingImpacts";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { isValidUUID } from "@/shared/uuid/uuid";
+import type { Horse, Race } from "@/platform/game/types";
+import type { ClaimResolutionInput } from "@/domains/market/simulation/claimingImpacts";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 const DAY = 10;
 

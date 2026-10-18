@@ -12,7 +12,7 @@ vi.mock("@/game/store", () => {
   return { useGame: (sel: (s: typeof state) => unknown) => sel(state) };
 });
 
-import { RivalCareerMilestoneTimeline } from "@/components/stable/RivalCareerMilestoneTimeline";
+import { RivalCareerMilestoneTimeline } from "@/domains/stable/ui/RivalCareerMilestoneTimeline";
 
 describe("RivalCareerMilestoneTimeline links", () => {
   it("links milestones to race result, course and horse record", () => {

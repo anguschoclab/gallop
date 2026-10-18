@@ -1,8 +1,8 @@
 import "@/tests/setup";
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { RealWorldBenchmarks } from "@/components/history/RealWorldBenchmarks";
-import type { TrackRecord } from "@/core/history/historyTypes";
+import { RealWorldBenchmarks } from "@/domains/history/ui/RealWorldBenchmarks";
+import type { TrackRecord } from "@/domains/history/model/historyTypes";
 
 vi.mock("@/components/history/HorseBenchmarkDialog", () => ({
   HorseBenchmarkDialog: ({

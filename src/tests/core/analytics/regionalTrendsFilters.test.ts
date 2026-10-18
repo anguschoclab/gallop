@@ -3,10 +3,10 @@ import {
   collectRegionRuns,
   computeRegionDrilldown,
   type RegionKey,
-} from "@/core/analytics/regionalTrends";
-import type { Race } from "@/core/race/types";
-import type { Horse } from "@/core/horse/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+} from "@/domains/analytics/simulation/regionalTrends";
+import type { Race } from "@/domains/race/simulation/types";
+import type { Horse } from "@/domains/horse/simulation/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const race = (id: string, track?: string, grade?: "G1") =>
   ({

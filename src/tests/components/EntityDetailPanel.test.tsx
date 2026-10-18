@@ -1,14 +1,14 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { AreaTrend } from "@/components/charts";
+import { AreaTrend } from "@/shared/ui/charts";
 
 vi.mock("@/components/charts", () => ({
   AreaTrend: vi.fn(() => null),
   formatCurrencyCompact: (n: number) => `$${n.toLocaleString()}`,
 }));
 
-import { EntityDetailPanel } from "@/components/dashboard/EntityDetailPanel";
-import type { RegionRunRow } from "@/core/analytics/regionalTrends";
+import { EntityDetailPanel } from "@/domains/dashboard/ui/EntityDetailPanel";
+import type { RegionRunRow } from "@/domains/analytics/simulation/regionalTrends";
 
 const makeRun = (
   horseId: string,

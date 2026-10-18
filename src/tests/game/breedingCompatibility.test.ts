@@ -10,10 +10,10 @@ import {
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
   calculateBreedingCompatibility,
-} from "@/core/breeding/compatibility";
-import type { Horse } from "@/game/types";
-import { generateDeterministicGenotype } from "@/core/genetics/generation";
-import { makeUnowned } from "@/core/horse/ownership";
+} from "@/domains/breeding/simulation/compatibility";
+import type { Horse } from "@/platform/game/types";
+import { generateDeterministicGenotype } from "@/domains/genetics/simulation/generation";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return {

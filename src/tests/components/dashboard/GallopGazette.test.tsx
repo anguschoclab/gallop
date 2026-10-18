@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
-import { GallopGazette } from "@/components/dashboard/GallopGazette";
-import type { NewsItem, NewsImportance } from "@/services/narrative/newsTypes";
+import { GallopGazette } from "@/domains/dashboard/ui/GallopGazette";
+import type { NewsItem, NewsImportance } from "@/domains/narrative/model/newsTypes";;
 
 let mockNews: NewsItem[] = [];
 

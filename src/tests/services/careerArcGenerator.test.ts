@@ -1,12 +1,9 @@
 import { describe, it, expect } from "vitest";
-import {
-  checkCareerArcTrigger,
-  type CareerArcState,
-} from "@/services/narrative/careerArcGenerator";
+import { checkCareerArcTrigger, type CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";;
 import { createTestHorse, createTestRng } from "@/tests/helpers";
-import { isValidUUID } from "@/core/uuid";
-import type { Race } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { isValidUUID } from "@/shared/uuid/uuid";
+import type { Race } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function createG1Race(): Race {
   return {

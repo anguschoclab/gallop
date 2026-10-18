@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { evaluateCounteroffer } from "@/domains/agents/simulation/syndicationAIDecisions";
-import type { Horse, Stable, StablePersonality } from "@/game/types";
-import type { Syndicate } from "@/core/breeding/types";
+import type { Horse, Stable, StablePersonality } from "@/platform/game/types";
+import type { Syndicate } from "@/domains/breeding/model/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 type GradedWins = number | { g1?: number; g2?: number; g3?: number };
 

@@ -12,10 +12,10 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => ({}),
 }));
 
-import { JockeyRosterTabs, type JockeyRosterTabsProps } from "@/components/jockey/JockeyRosterTabs";
-import type { Jockey } from "@/core/jockey/types";
+import { JockeyRosterTabs, type JockeyRosterTabsProps } from "@/domains/jockey/ui/JockeyRosterTabs";
+import type { Jockey } from "@/domains/jockey/model/types";
 import { createTestJockey } from "@/tests/helpers";
-import { asJockeyId } from "@/core/types/branded";
+import { asJockeyId } from "@/shared/types/branded";
 
 function mkJockey(id: string, overrides: Partial<Jockey> = {}) {
   return createTestJockey({

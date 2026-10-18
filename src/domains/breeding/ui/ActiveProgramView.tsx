@@ -1,0 +1,306 @@
+import { useGame } from "@/platform/game/store";
+import { isPlayerOwned } from "@/domains/breeding/application/breedingFacade";
+import { asHorseId } from "@/shared/types/branded";;
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Button } from "@/shared/ui/button";
+import { Progress } from "@/shared/ui/progress";
+import { useMemo } from "react";
+import { cn } from "@/shared/lib/cn";
+import { ALL_ARCHETYPES } from "@/domains/breeding/application/breedingFacade";
+import { calculateGeneticDistance } from "@/domains/breeding/application/breedingFacade";
+import { toast } from "sonner";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/shared/ui/alert-dialog";
+import { DistanceBadge } from "@/domains/breeding/ui/DistanceBadge";
+import { archetypeMeta } from "@/domains/breeding/ui/ArchetypeMeta";
+import { useCancelBreedingProgram } from "@/domains/breeding/ui/useCancelBreedingProgram";
+import { TrendingDown, CheckCircle2, Circle, Plus, X, Dna, Award } from "lucide-react";
+import type { Horse } from "@/domains/horse/application/horseFacade";
+import {
+  CANCEL_DIALOG_TITLE,
+  CANCEL_DIALOG_DESCRIPTION,
+  CANCEL_DIALOG_KEEP,
+  CANCEL_DIALOG_CONFIRM,
+  CANCEL_BUTTON_ARIA_LABEL,
+  MIN_BREEDING_AGE,
+  DISTANCE_MAX,
+  PERCENTAGE_MULTIPLIER,
+  MAX_ELIGIBLE_MARES_DISPLAY,
+  MAX_HISTORY_ENTRIES_DISPLAY,
+} from "@/domains/breeding/model/breedingConstants";
+
+function getBestSurface(mare: Horse) {
+  const best = Object.entries((mare.surfaceAptitude || {}) as Record<string, number>).sort(
+    (a, b) => b[1] - a[1],
+  )[0];
+  return best ? `${best[0]} (${Math.round(best[1])})` : "—";
+}
+
+export function ActiveProgramView() {
+  const program = useGame((s) => s.activeBreedingProgram);
+  const horses = useGame((s) => s.horses);
+  const enrollDamInProgram = useGame((s) => s.enrollDamInProgram);
+  const unenrollDamFromProgram = useGame((s) => s.unenrollDamFromProgram);
+  const { isOpen, openCancelDialog, handleDialogCancel, handleConfirm } =
+    useCancelBreedingProgram();
+
+  // ⚡ Bolt Optimization:
+  // Pre-calculate a Set for O(1) membership checks instead of running O(M) .includes() inside the .filter() loop.
+  // Impact: Reduces complexity from O(N*M) to O(N+M), improving render performance when lists are large.
+  const enrolledDamSet = useMemo(
+    () => new Set(program?.enrolledDamIds ?? []),
+    [program?.enrolledDamIds],
+  );
+
+  if (!program) return null;
+
+  const archetype = ALL_ARCHETYPES.find((a) => a.id === program.archetypeId);
+  const meta = archetypeMeta(program.archetypeId);
+
+  const eligibleMares = Object.values(horses).filter(
+    (h) =>
+      isPlayerOwned(h) &&
+      (h.gender === "mare" || h.gender === "filly") &&
+      h.age >= MIN_BREEDING_AGE &&
+      !enrolledDamSet.has(h.id),
+  );
+
+  const enrolledMares = Object.values(horses).filter((h) => enrolledDamSet.has(h.id));
+  const progressPct = Math.round((DISTANCE_MAX - program.geneticDistance) * PERCENTAGE_MULTIPLIER);
+
+  const handleEnroll = (damId: string) => {
+    const result = enrollDamInProgram(damId);
+    if (!result.ok) toast.error(result.reason);
+  };
+
+  return (
+    <div className="space-y-4">
+      <Card className={cn("border-2", meta.color)}>
+        <CardHeader className="pb-2">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">{meta.emoji}</span>
+              <div>
+                <CardTitle className="font-[family-name:var(--font-display)] text-base">
+                  {archetype?.name ?? program.archetypeId}
+                </CardTitle>
+                <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+                  Generation {program.generationCount} · {enrolledMares.length} mare
+                  {enrolledMares.length !== 1 ? "s" : ""} enrolled
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <DistanceBadge distance={program.geneticDistance} />
+              <AlertDialog open={isOpen} onOpenChange={(open) => !open && handleDialogCancel()}>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 w-7 p-0 text-cream-muted hover:text-red-400"
+                    onClick={openCancelDialog}
+                    aria-label={CANCEL_BUTTON_ARIA_LABEL}
+                    disabled={isOpen}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="bg-slate-950 border-destructive/30 rounded-none">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="text-destructive uppercase font-black tracking-wide">
+                      {CANCEL_DIALOG_TITLE}
+                    </AlertDialogTitle>
+                    <AlertDialogDescription className="text-cream/60 font-mono text-xs uppercase tracking-tighter">
+                      {CANCEL_DIALOG_DESCRIPTION(archetype?.name ?? program.archetypeId)}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel
+                      onClick={handleDialogCancel}
+                      className="rounded-none font-black text-[10px] uppercase tracking-wide border-white/10 hover:bg-white/5"
+                    >
+                      {CANCEL_DIALOG_KEEP}
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleConfirm}
+                      className="bg-destructive text-white hover:bg-destructive/90 rounded-none font-black text-[10px] uppercase tracking-wide"
+                    >
+                      {CANCEL_DIALOG_CONFIRM}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <div className="space-y-1">
+            <div className="flex justify-between text-xs text-cream-muted font-[family-name:var(--font-mono)]">
+              <span>Archetype Match</span>
+              <span>{progressPct}%</span>
+            </div>
+            <Progress value={progressPct} className="h-2" />
+          </div>
+          <p className="text-xs text-cream-muted font-[family-name:var(--font-body)] line-clamp-2">
+            {archetype?.description}
+          </p>
+        </CardContent>
+      </Card>
+
+      <Card className="border-gold-muted">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-[family-name:var(--font-display)] flex items-center gap-2">
+            <Award className="h-4 w-4 text-gold" />
+            Milestones
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1.5">
+          {program.milestones.map((m) => (
+            <div key={m.id} className="flex items-center gap-2 text-sm">
+              {m.achieved ? (
+                <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
+              ) : (
+                <Circle className="h-4 w-4 text-cream-muted shrink-0" />
+              )}
+              <span
+                className={cn(
+                  "font-[family-name:var(--font-body)]",
+                  m.achieved ? "text-cream" : "text-cream-muted",
+                )}
+              >
+                {m.description}
+              </span>
+              {m.achieved && m.achievedDay !== undefined && (
+                <span className="ml-auto text-xs text-cream-muted font-[family-name:var(--font-mono)]">
+                  Day {m.achievedDay}
+                </span>
+              )}
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      <Card className="border-gold-muted">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-[family-name:var(--font-display)] flex items-center gap-2">
+            <Dna className="h-4 w-4 text-gold" />
+            Enrolled Mares
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          {enrolledMares.length === 0 && (
+            <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+              No mares enrolled yet. Add eligible mares below.
+            </p>
+          )}
+          {enrolledMares.map((mare) => {
+            const dist = archetype
+              ? calculateGeneticDistance(mare, archetype)
+              : program.geneticDistance;
+            return (
+              <div
+                key={mare.id}
+                className="flex items-center justify-between gap-2 py-1 border-b border-gold-muted/30 last:border-0"
+              >
+                <div>
+                  <p className="text-sm font-[family-name:var(--font-display)] text-cream">
+                    {mare.name}
+                  </p>
+                  <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+                    Age {mare.age} · {Math.round(mare.distanceAptitude)}m · {getBestSurface(mare)}
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <DistanceBadge distance={dist} />
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-6 w-6 p-0 text-cream-muted hover:text-red-400"
+                    onClick={() => unenrollDamFromProgram(mare.id)}
+                    aria-label={`Remove ${mare.name} from program`}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </div>
+              </div>
+            );
+          })}
+
+          {eligibleMares.length > 0 && (
+            <div className="pt-1">
+              <p className="text-xs text-cream-muted mb-1.5 font-[family-name:var(--font-body)]">
+                Add mare to program:
+              </p>
+              <div className="space-y-1">
+                {eligibleMares.slice(0, MAX_ELIGIBLE_MARES_DISPLAY).map((mare) => {
+                  const dist = archetype ? calculateGeneticDistance(mare, archetype) : DISTANCE_MAX;
+                  return (
+                    <button
+                      key={mare.id}
+                      onClick={() => handleEnroll(mare.id)}
+                      className="w-full flex items-center justify-between gap-2 px-2 py-1 rounded hover:bg-t700 text-left transition-colors"
+                    >
+                      <div>
+                        <span className="text-sm text-cream font-[family-name:var(--font-display)]">
+                          {mare.name}
+                        </span>
+                        <p className="text-[10px] text-cream-muted font-[family-name:var(--font-body)]">
+                          {Math.round(mare.distanceAptitude)}m · {getBestSurface(mare)}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <DistanceBadge distance={dist} />
+                        <Plus className="h-3.5 w-3.5 text-cream-muted" />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {program.history.length > 0 && (
+        <Card className="border-gold-muted">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-[family-name:var(--font-display)] flex items-center gap-2">
+              <TrendingDown className="h-4 w-4 text-gold" />
+              Progress History
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              {[...program.history]
+                .reverse()
+                .slice(0, MAX_HISTORY_ENTRIES_DISPLAY)
+                .map((entry, i) => {
+                  const horse = horses[asHorseId(entry.horseId)];
+                  return (
+                    <div
+                      key={i}
+                      className="flex items-center justify-between text-xs font-[family-name:var(--font-mono)]"
+                    >
+                      <span className="text-cream-muted">
+                        Day {entry.day} · {horse?.name ?? entry.horseId}
+                      </span>
+                      <DistanceBadge distance={entry.distance} />
+                    </div>
+                  );
+                })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  );
+}

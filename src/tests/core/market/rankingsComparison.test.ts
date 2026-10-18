@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { compareRankingsForDay, rankingsComparisonDays } from "@/core/market/rankingsComparison";
+import { compareRankingsForDay, rankingsComparisonDays } from "@/domains/market/simulation/rankingsComparison";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { asHorseId } from "@/core/types/branded";
+import { asHorseId } from "@/shared/types/branded";
 
 describe("daily rankings comparison", () => {
   const mine = createTestHorse({ id: asHorseId("mine"), ownership: { type: "player" } });

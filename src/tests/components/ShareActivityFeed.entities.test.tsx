@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { ShareActivityFeed } from "@/components/market/ShareActivityFeed";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { ShareActivityFeed } from "@/domains/market/ui/ShareActivityFeed";
 import { createTestStable } from "@/tests/helpers";
-import type { ShareActivityFeedItem } from "@/core/breeding/types";
+import type { ShareActivityFeedItem } from "@/domains/breeding/model/types";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

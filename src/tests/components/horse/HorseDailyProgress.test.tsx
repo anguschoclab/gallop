@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
-import { HorseDailyProgress } from "@/components/horse/HorseDailyProgress";
+import { HorseDailyProgress } from "@/domains/horse/ui/HorseDailyProgress";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { HorseDailySnapshot } from "@/core/horse/dailyProgress";
+import type { HorseDailySnapshot } from "@/domains/horse/simulation/dailyProgress";
 
 const snap = (day: number, netWorth?: number): HorseDailySnapshot => ({
   day,

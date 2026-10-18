@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { cashPressureHistoryPhase } from "@/core/time/phases/cashPressureHistoryPhase";
+import { cashPressureHistoryPhase } from "@/platform/time/phases/cashPressureHistoryPhase";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import { createTestStable } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { CashPressureHistory } from "@/core/stable/cashPressureHistory";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { CashPressureHistory } from "@/domains/stable/simulation/cashPressureHistory";
 
 const horses = Array.from({ length: 10 }, (_, i) => `h${i}`) as unknown as never[];
 

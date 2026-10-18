@@ -5,8 +5,8 @@
  * Types, state creation, value/risk, and recording in dedicated child modules.
  */
 
-import type { Horse, Stable } from "@/game/types";
-import { calculateOverallRating } from "@/core/horse/stats";
+import type { Horse, Stable } from "@/platform/game/types";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 
 // ─── Post-Claim Plan ─────────────────────────────────────────────────────────
 

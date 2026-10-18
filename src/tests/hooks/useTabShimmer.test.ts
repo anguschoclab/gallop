@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useTabShimmer } from "@/hooks/leaderboard/useTabShimmer";
+import { useTabShimmer } from "@/domains/leaderboard/application/hooks/useTabShimmer";
 
 describe("useTabShimmer", () => {
   afterEach(() => {

@@ -10,8 +10,8 @@ import {
   raceProgressSchema,
   bookmarkArraySchema,
   analyticsEventArraySchema,
-} from "@/services/storage/schemas";
-import { createDefaultGameState } from "@/game/store/state";
+} from "@/platform/persistence/storage/schemas";
+import { createDefaultGameState } from "@/platform/game/store/state";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

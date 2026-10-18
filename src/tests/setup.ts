@@ -1,6 +1,6 @@
 import { beforeEach } from "vitest";
 import "@testing-library/jest-dom/vitest";
-import { resetCache } from "@/hooks/shared/useBookmarks";
+import { resetCache } from "@/platform/game/hooks/useBookmarks";
 
 // Mock localStorage globally for Node/JSDOM environment compatibility
 const store = new Map<string, string>();

@@ -12,20 +12,20 @@
 // Evaluates races 1-3 days ahead and enters eligible, competitive horses
 // Refactored to use modular scoring, geometry, and AI systems
 
-import type { Horse, Race, Stable, Jockey } from "@/game/types";
-import type { Rng } from "@/core/common/rng";
-import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { calculateAssignedWeight } from "@/core/race/entryScoring";
-import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/constants";
-import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
+import type { Horse, Race, Stable, Jockey } from "@/platform/game/types";
+import type { Rng } from "@/shared/common/rng";
+import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import { calculateAssignedWeight } from "@/domains/race/simulation/entryScoring";
+import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/domains/race/model/raceEntryConstants";;
+import { findBumpableEntryIndex } from "@/domains/race/simulation/entry/bumpResolver";
 import { calculateOptimalTactics } from "@/domains/agents/simulation/jockeyStrategyAI";
 import { applyAffinityBoost } from "@/domains/agents/simulation/jockeyStrategyAdjustments";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { shouldEnterHorse } from "./raceEntryHelpers";
-import { isHatedRival } from "@/core/stable/rivalry";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
-import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
+import { isHatedRival } from "@/domains/stable/simulation/rivalry";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { selectBestFreeAgentJockey } from "@/domains/jockey/simulation/selectFreeAgent";
 
 /**
  * AI decision: Enter horses from a stable into a specific race.

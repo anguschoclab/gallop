@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import { horseMarketValue, horseCareerValuation } from "@/core/horse/pricing";
-import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { horseMarketValue, horseCareerValuation } from "@/domains/horse/simulation/pricing";
+import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/domains/auction/model/auctionConstants";;
 import {
   createTestColt,
   createTestStallion,
@@ -10,8 +10,8 @@ import {
   createTestGelding,
   createTestFilly,
 } from "@/tests/helpers/createTestHorse";
-import type { Horse, AuctionSale } from "@/game/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import type { Horse, AuctionSale } from "@/platform/game/types";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mkSale(overrides: Partial<AuctionSale> = {}): AuctionSale {
   return {

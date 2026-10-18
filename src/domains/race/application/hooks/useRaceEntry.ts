@@ -1,0 +1,144 @@
+import { useState, useMemo } from "react";
+import { useGame, useGameWithShallow } from "@/platform/game/store";
+import type { Horse, Race, Jockey } from "@/platform/game/types";
+import type { WeatherState } from "@/domains/weather/model/weatherTypes";
+import { getCurrentYear } from "@/domains/race/simulation/schedule";
+import { isHorseEligibleForRace } from "@/domains/race/simulation/eligibility";
+import { buildInstructions, type PresetId } from "@/domains/race/application/TacticOptions";
+import { toast } from "sonner";
+import { formatCurrency } from "@/shared/common/formatting";
+import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
+
+export function useRaceEntry(race: Race) {
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+  const [selectedHorseId, setSelectedHorseId] = useState<string | null>(null);
+  const [selectedJockeyId, setSelectedJockeyId] = useState<string | null>(null);
+  const [selectedPreset, setSelectedPreset] = useState<PresetId>("default");
+
+  const allHorses = useGameWithShallow((s) => s.horses);
+  const horses = useMemo(() => Object.values(allHorses) as Horse[], [allHorses]);
+  const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
+  const enterRace = useGame((s) => s.enterRace);
+  const enterClaimingRace = useGame((s) => s.enterClaimingRace);
+  const withdrawFromClaimingRace = useGame((s) => s.withdrawFromClaimingRace);
+  const assignJockey = useGame((s) => s.assignJockey);
+  const setRaceTactics = useGame((s) => s.setRaceTactics);
+  const withdrawRace = useGame((s) => s.withdrawRace);
+  const withdrawClaim = useGame((s) => s.withdrawClaim);
+  const completeTutorialBeat = useGame((s) => s.completeTutorialBeat);
+  const cash = useGame((s) => s.cash);
+  const day = useGame((s) => s.day);
+  const raceWeather = useGame((s) => {
+    const trackId = race.trackId ?? race.graded?.trackId;
+    if (!trackId) return undefined;
+    const buf = s.weather?.byTrack?.[trackId];
+    if (!buf || !buf.length) return undefined;
+    return buf.find((w: WeatherState) => w.day === race.day) ?? buf[buf.length - 1];
+  });
+
+  const claimingPrice = race.claimingPrice;
+  const isNewClaimingRace = claimingPrice !== undefined;
+
+  const selectedHorse = useMemo(
+    () => (selectedHorseId ? allHorses[selectedHorseId] : undefined),
+    [allHorses, selectedHorseId],
+  );
+  const selectedJockey = useMemo(
+    () => jockeys.find((j: Jockey) => j.id === selectedJockeyId),
+    [jockeys, selectedJockeyId],
+  );
+
+  const isHorseQualifiedForRace = (horse: Horse, race: Race): boolean => {
+    if (!race.graded?.key || !horse.winAndYouInQualified) return false;
+    const currentYear = getCurrentYear(day);
+    return horse.winAndYouInQualified.some(
+      (q) => q.raceKey === race.graded!.key && q.year === currentYear,
+    );
+  };
+
+  const eligibleHorses = useMemo(() => {
+    return horses
+      .filter((h) => isPlayerOwned(h))
+      .map((h: Horse) => ({
+        horse: h,
+        eligible: isHorseEligibleForRace(h, race, new Set(), day),
+      }));
+  }, [horses, race, day]);
+
+  const marketJockeys = useMemo(() => {
+    return jockeys.filter((j: Jockey) => !j.stableId || j.contractUntil);
+  }, [jockeys]);
+
+  const handleConfirm = (onClose: () => void) => {
+    if (selectedHorseId && selectedJockeyId) {
+      const wasFull = race.entries.length >= race.fieldSize;
+      const res = isNewClaimingRace
+        ? enterClaimingRace(race.id, selectedHorseId)
+        : enterRace(race.id, selectedHorseId);
+      if (res.ok) {
+        // Tutorial beat 1: player entered their first race
+        completeTutorialBeat(1);
+        assignJockey(race.id, selectedHorseId, selectedJockeyId);
+        const instructions = buildInstructions(
+          {
+            id: selectedPreset,
+            name: "",
+            desc: "",
+            instructions: {
+              horseId: selectedHorseId,
+              raceId: race.id,
+              ridingStyle: "tactical",
+              earlyPosition: "midpack",
+              moveTiming: "mid",
+              aggressiveness: 50,
+            },
+          },
+          selectedHorseId,
+          race.id,
+        );
+        setRaceTactics(race.id, selectedHorseId, instructions);
+
+        if (isNewClaimingRace) {
+          const horse = horses.find((h: Horse) => h.id === selectedHorseId);
+          toast.info(
+            `${horse?.name ?? "Horse"} entered in claiming race at ${formatCurrency(claimingPrice!)}.`,
+          );
+        } else if (wasFull) {
+          const horse = horses.find((h: Horse) => h.id === selectedHorseId);
+          toast.info(`${horse?.name ?? "Horse"} bumped a weaker entry to join ${race.name}.`);
+        }
+
+        onClose();
+      } else {
+        toast.error(res.reason);
+      }
+    }
+  };
+
+  return {
+    step,
+    setStep,
+    selectedHorseId,
+    setSelectedHorseId,
+    selectedJockeyId,
+    setSelectedJockeyId,
+    selectedPreset,
+    setSelectedPreset,
+    horses,
+    jockeys,
+    cash,
+    day,
+    raceWeather,
+    isNewClaimingRace,
+    claimingPrice,
+    selectedHorse,
+    selectedJockey,
+    isHorseQualifiedForRace,
+    eligibleHorses,
+    marketJockeys,
+    handleConfirm,
+    withdrawFromClaimingRace,
+    withdrawRace,
+    withdrawClaim,
+  };
+}

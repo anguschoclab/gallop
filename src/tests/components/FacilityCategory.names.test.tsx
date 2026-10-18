@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { FacilityCategory } from "@/components/facilities/FacilityCategory";
+import { FacilityCategory } from "@/domains/facilities/ui/FacilityCategory";
 import { Dumbbell } from "lucide-react";
-import type { PlayerFacilities, FacilityType } from "@/core/facilities";
-import { createFacility, FACILITY_NAMES } from "@/core/facilities";
+import type { PlayerFacilities, FacilityType } from "@/domains/facilities/simulation";
+import { createFacility, FACILITY_NAMES } from "@/domains/facilities/simulation";
 
 function makeFacilities(): PlayerFacilities {
   const types: FacilityType[] = [

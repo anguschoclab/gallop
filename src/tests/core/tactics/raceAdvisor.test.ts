@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { adviseRace } from "@/core/tactics/raceAdvisor";
-import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { generateRace } from "@/core/race/generation/raceGen";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { adviseRace } from "@/domains/tactics/simulation/raceAdvisor";
+import { generateHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import { generateRace } from "@/domains/race/simulation/generation/raceGen";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("raceAdvisor", () => {
   it("evaluates a hot pace scenario for a low-stamina front-runner", () => {

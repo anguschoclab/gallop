@@ -3,10 +3,10 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { beyerRecalibrationPhase } from "@/core/time/phases/beyerRecalibration";
+import { beyerRecalibrationPhase } from "@/platform/time/phases/beyerRecalibration";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
 
 describe("beyerRecalibrationPhase", () => {
   it("should call maybeRecalibratePars and update state", () => {

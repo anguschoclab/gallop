@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { createDefaultGameState } from "@/game/store/state";
-import { createDefaultTutorialState } from "@/core/tutorial/tutorialTypes";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { createDefaultTutorialState } from "@/domains/tutorial/model/tutorialTypes";
 
 describe("createDefaultGameState includes tutorial state", () => {
   it("includes tutorial field in default game state", () => {

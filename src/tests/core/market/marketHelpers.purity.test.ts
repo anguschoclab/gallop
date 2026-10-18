@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { ageHorses, refreshMarket } from "@/core/market/marketRefresh";
-import { generateHorse } from "@/core/horse/horseFactory";
-import { makeUnowned } from "@/core/horse/ownership";
-import { createRng, hashStr } from "@/core/common/rng";
-import type { Horse } from "@/game/types";
+import { ageHorses, refreshMarket } from "@/domains/market/simulation/marketRefresh";
+import { generateHorse } from "@/domains/horse/simulation/horseFactory";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
+import { createRng, hashStr } from "@/shared/common/rng";
+import type { Horse } from "@/platform/game/types";
 
 /**
  * Purity tests for market helper functions.

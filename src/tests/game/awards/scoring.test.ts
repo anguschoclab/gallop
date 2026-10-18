@@ -7,10 +7,10 @@ import {
   calculateAwardPoints,
   determineRegionalWinners,
   determineAllRegionalWinners,
-} from "@/core/awards/scoring";
-import type { Race } from "@/game/types";
+} from "@/domains/awards/simulation/scoring";
+import type { Race } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("calculateAwardPoints", () => {
   it("should return 0 for races outside the award year", () => {

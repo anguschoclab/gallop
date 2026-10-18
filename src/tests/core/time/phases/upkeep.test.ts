@@ -3,15 +3,15 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { upkeepPhase } from "@/core/time/phases/upkeep";
+import { upkeepPhase } from "@/platform/time/phases/upkeep";
 import { createTestHorse, createTestStable, createUnownedHorse } from "@/tests/helpers";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
-import type { CashImpact, TransactionImpact } from "@/core/resolver/impacts/financialImpacts";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { CashImpact, TransactionImpact } from "@/platform/resolver/impacts/financialImpacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("upkeepPhase", () => {
   it("should emit cash_change and transaction impacts for player upkeep", () => {

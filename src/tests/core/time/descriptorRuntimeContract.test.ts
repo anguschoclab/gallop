@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
-import { SimulationExecutor } from "@/core/time/executor";
-import { createInitialState } from "@/game/store/initialization";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
+import { SimulationExecutor } from "@/platform/time/executor";
+import { createInitialState } from "@/platform/game/store/initialization";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 const BASE_STATE = createInitialState();
 

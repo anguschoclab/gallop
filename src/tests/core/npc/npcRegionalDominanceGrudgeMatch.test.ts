@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { resolveRegionalDominance } from "@/domains/agents/simulation/npc/npcRegionalDominance";
-import { createRng } from "@/core/common/rng";
-import type { Horse, Race, Stable } from "@/game/types";
+import { createRng } from "@/shared/common/rng";
+import type { Horse, Race, Stable } from "@/platform/game/types";
 import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 const DAY = 100;
 const REGION = "North America (East)";

@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { JockeyCard } from "@/components/jockey/JockeyCard";
-import type { Jockey, Horse } from "@/game/types";
+import { JockeyCard } from "@/domains/jockey/ui/JockeyCard";
+import type { Jockey, Horse } from "@/platform/game/types";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) =>

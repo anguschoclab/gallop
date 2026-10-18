@@ -7,7 +7,7 @@ import {
   ALL_ARCHETYPES,
   TRIPLE_CROWN_ARCHETYPES,
   ORIGINAL_ARCHETYPES,
-} from "@/core/breeding/archetypes";
+} from "@/domains/breeding/simulation/archetypes";
 
 describe("archetypes", () => {
   it("exports ALL_ARCHETYPES combining original and triple crown archetypes", () => {

@@ -3,7 +3,7 @@ import {
   snapshotHorse,
   recordDailyProgress,
   DAILY_PROGRESS_MAX_ENTRIES,
-} from "@/core/horse/dailyProgress";
+} from "@/domains/horse/simulation/dailyProgress";
 import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 
 vi.mock("@/core/horse/pricing", () => ({

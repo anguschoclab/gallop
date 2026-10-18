@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import { TrainingPanel } from "@/components/horse/TrainingPanel";
-import type { Horse, PlayerFacilities } from "@/game/types";
-import { createFacility } from "@/core/facilities";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { TrainingPanel } from "@/domains/horse/ui/TrainingPanel";
+import type { Horse, PlayerFacilities } from "@/platform/game/types";
+import { createFacility } from "@/domains/facilities/simulation";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeHorse(): Horse {
   return {

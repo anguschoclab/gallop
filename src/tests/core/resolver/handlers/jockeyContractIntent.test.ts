@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { RacingHandler } from "@/core/resolver/handlers/RacingHandler";
+import { RacingHandler } from "@/platform/resolver/handlers/RacingHandler";
 import type {
   JockeyContractImpact,
   JockeyReleaseImpact,
-} from "@/core/resolver/impacts/jockeyImpacts";
-import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
+} from "@/platform/resolver/impacts/jockeyImpacts";
+import type { GameState } from "@/platform/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
 
 describe("RacingHandler: jockey_contract and jockey_release impacts", () => {
   it("handles jockey_contract impact by updating jockey contract details", () => {

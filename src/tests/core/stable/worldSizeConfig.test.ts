@@ -5,16 +5,9 @@ import {
   getStableConfig,
   DEFAULT_WORLD_SIZE,
   type WorldSize,
-} from "@/core/stable/worldSizeConfig";
-import { STABLE_CONFIG } from "@/core/stable/stableConfig";
-import {
-  NPC_HORSE_COUNT_ELITE_MIN,
-  NPC_HORSE_COUNT_ELITE_MAX,
-  NPC_HORSE_COUNT_MID_MIN,
-  NPC_HORSE_COUNT_MID_MAX,
-  NPC_HORSE_COUNT_BUDGET_MIN,
-  NPC_HORSE_COUNT_BUDGET_MAX,
-} from "@/constants";
+} from "@/domains/stable/simulation/worldSizeConfig";
+import { STABLE_CONFIG } from "@/domains/stable/simulation/stableConfig";
+import { NPC_HORSE_COUNT_ELITE_MIN, NPC_HORSE_COUNT_ELITE_MAX, NPC_HORSE_COUNT_MID_MIN, NPC_HORSE_COUNT_MID_MAX, NPC_HORSE_COUNT_BUDGET_MIN, NPC_HORSE_COUNT_BUDGET_MAX } from "@/domains/agents/model/aiConstants";;
 
 describe("WORLD_SIZE_CONFIGS", () => {
   it("has entries for small, medium, and large", () => {

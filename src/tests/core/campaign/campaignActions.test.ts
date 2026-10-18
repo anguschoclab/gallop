@@ -7,8 +7,8 @@ import {
   buildCampaignIntent,
   upsertCampaign,
   buildAutoCampaign,
-} from "@/core/campaign/campaignActions";
-import type { HorseCampaign } from "@/game/types";
+} from "@/domains/campaign/simulation/campaignActions";
+import type { HorseCampaign } from "@/platform/game/types";
 
 describe("buildCampaignIntent", () => {
   it("builds an intent with the common envelope fields", () => {

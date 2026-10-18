@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createRng } from "@/core/common/rng";
+import { createRng } from "@/shared/common/rng";
 import {
   calculateScoutCost,
   getVisibleStats,
@@ -8,10 +8,10 @@ import {
   getScoutStatus,
   getIntelSummary,
 } from "@/domains/agents/simulation/npc/scouting";
-import type { Horse, Stable, ScoutReport } from "@/game/types";
+import type { Horse, Stable, ScoutReport } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import { makeUnowned } from "@/core/horse/ownership";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

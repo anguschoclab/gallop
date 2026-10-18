@@ -3,12 +3,12 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { purchaseResolutionPhase } from "@/core/time/phases/purchaseResolution";
+import { purchaseResolutionPhase } from "@/platform/time/phases/purchaseResolution";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
-import type { PurchaseIntent } from "@/core/resolver/intents";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { PurchaseIntent } from "@/platform/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { h2r } from "@/tests/helpers/sampleGameState";
 

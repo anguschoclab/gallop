@@ -5,7 +5,7 @@ import {
   calculatePeakingIndex,
   getPeakingBeyerMultiplier,
   BANISTER_CONSTANTS,
-} from "@/core/health/banister";
+} from "@/domains/health/simulation/banister";
 
 describe("banister health model", () => {
   describe("decayValue", () => {

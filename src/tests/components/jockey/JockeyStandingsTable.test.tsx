@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { JockeyStandingsTable } from "@/components/jockey/JockeyStandingsTable";
-import type { Jockey } from "@/core/jockey/types";
+import { JockeyStandingsTable } from "@/domains/jockey/ui/JockeyStandingsTable";
+import type { Jockey } from "@/domains/jockey/model/types";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 
 vi.mock("@/components/leaderboard/LeaderboardPrimitives", () => ({

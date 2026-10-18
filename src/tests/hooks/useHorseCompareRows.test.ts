@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { useHorseCompareRows, bestIdx } from "@/hooks/horse/useHorseCompareRows";
-import type { Horse } from "@/game/types";
+import { useHorseCompareRows, bestIdx } from "@/domains/horse/application/hooks/useHorseCompareRows";
+import type { Horse } from "@/platform/game/types";
 
 vi.mock("@/core/horse/stats", () => ({
   calculateOverallRating: vi.fn((h: Horse) => {
@@ -14,8 +14,8 @@ vi.mock("@/core/horse/pricing", () => ({
   horseMarketValue: vi.fn((h: Horse) => h.potential * 1000),
 }));
 
-import { horseMarketValue } from "@/core/horse/pricing";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { horseMarketValue } from "@/domains/horse/simulation/pricing";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({

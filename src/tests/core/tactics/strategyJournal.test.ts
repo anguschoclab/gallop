@@ -6,7 +6,7 @@ import {
   hasJournalEntryForRace,
   STRATEGY_JOURNAL_MAX,
   type StrategyJournalEntry,
-} from "@/core/tactics/strategyJournal";
+} from "@/domains/tactics/simulation/strategyJournal";
 
 const params = {
   horseId: "h1",

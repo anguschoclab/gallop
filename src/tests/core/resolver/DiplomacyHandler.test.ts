@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { DiplomacyHandler } from "@/core/resolver/handlers/DiplomacyHandler";
-import type { GameState } from "@/game/types";
+import { DiplomacyHandler } from "@/platform/resolver/handlers/DiplomacyHandler";
+import type { GameState } from "@/platform/game/types";
 import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 
 function createMockAIState(stableId: string): StableAIState {

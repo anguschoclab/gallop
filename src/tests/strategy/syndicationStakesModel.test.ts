@@ -3,9 +3,9 @@ import {
   calculateSyndicationBreakdown,
   evaluateSyndicationEligibility,
   evaluateInvestorAppetite,
-} from "@/core/breeding/strategySyndicationHelpers";
+} from "@/domains/breeding/simulation/strategySyndicationHelpers";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { asHorseId } from "@/core/types/branded";
+import { asHorseId } from "@/shared/types/branded";
 
 describe("Syndication Stakes Model & Commercial Projections", () => {
   it("calculates 40-share syndication breakdown from breeding valuation", () => {

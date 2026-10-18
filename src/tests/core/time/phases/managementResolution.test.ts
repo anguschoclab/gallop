@@ -3,13 +3,13 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { managementResolutionPhase } from "@/core/time/phases/managementResolution";
+import { managementResolutionPhase } from "@/platform/time/phases/managementResolution";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
-import { createRng } from "@/core/common/rng";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import { createRng } from "@/shared/common/rng";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 import type {
   FacilityUpgradeIntent,
   InsuranceCancelIntent,
@@ -17,8 +17,8 @@ import type {
   InsurancePurchaseIntent,
   StaffIntent,
   StudRetirementIntent,
-} from "@/core/resolver/intents";
-import type { StaffMember } from "@/core/staff/staffTypes";
+} from "@/platform/resolver/intents";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("managementResolutionPhase — N+1 optimization coverage", () => {

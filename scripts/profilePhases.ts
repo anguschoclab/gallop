@@ -1,11 +1,11 @@
-import { createInitialState } from "../src/game/store/initialization";
-import type { GameState } from "../src/game/types";
-import { SimulationExecutor } from "../src/core/time/executor";
-import { GAME_PHASE_DESCRIPTORS } from "../src/core/time/phases/descriptors";
-import { buildAdvancePlan } from "../src/core/time/advancePlan";
-import { createTelemetry } from "../src/core/time/telemetry";
-import { withUuidStream } from "../src/core/uuid";
-import { createRng, hashStr } from "../src/core/common/rng";
+import { createInitialState } from "@/platform/game/store/initialization";
+import type { GameState } from "@/platform/game/types";
+import { SimulationExecutor } from "@/platform/time/executor";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
+import { buildAdvancePlan } from "@/platform/time/advancePlan";
+import { createTelemetry } from "@/platform/time/telemetry";
+import { withUuidStream } from "@/shared/uuid/uuid";
+import { createRng, hashStr } from "@/shared/common/rng";
 
 const days = Number(process.argv[2] ?? 30);
 const size = (process.argv[3] ?? "medium") as "small" | "medium" | "large";

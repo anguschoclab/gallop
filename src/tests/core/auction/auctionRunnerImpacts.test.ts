@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildAuctionImpacts } from "@/core/auction/auctionRunnerImpacts";
-import type { AuctionSale, Horse, AuctionLot } from "@/game/types";
-import type { LotState } from "@/core/auction/auctionRunnerTypes";
-import { asOwnerKey } from "@/core/types/branded";
+import { buildAuctionImpacts } from "@/domains/auction/simulation/auctionRunnerImpacts";
+import type { AuctionSale, Horse, AuctionLot } from "@/platform/game/types";
+import type { LotState } from "@/domains/auction/model/auctionRunnerTypes";
+import { asOwnerKey } from "@/shared/types/branded";
 
 describe("buildAuctionImpacts", () => {
   const mockSale: AuctionSale = {

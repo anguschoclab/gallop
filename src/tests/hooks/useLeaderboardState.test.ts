@@ -7,10 +7,10 @@
  */
 import { describe, it, expect, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 
 // Import after mocks — the module doesn't exist yet, so this will fail (RED).
-import { useLeaderboardState, POS_EPSILON } from "@/hooks/race/useLeaderboardState";
+import { useLeaderboardState, POS_EPSILON } from "@/domains/race/application/hooks/useLeaderboardState";
 
 // Mock projectedBeyer so tests are deterministic
 vi.mock("@/components/race/raceVisualHelpers", () => ({

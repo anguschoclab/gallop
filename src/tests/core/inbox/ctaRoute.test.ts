@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { interpolateCtaRoute } from "@/core/inbox/ctaRoute";
+import { interpolateCtaRoute } from "@/domains/inbox/model/ctaRoute";
 
 describe("interpolateCtaRoute", () => {
   it("interpolates a single $param", () => {

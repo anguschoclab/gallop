@@ -2,13 +2,13 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/game/types";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
-import type { PipelineContext } from "@/core/time/pipeline";
-import { createRng } from "@/core/common/rng";
-import { privateSaleResolutionPhase } from "@/core/time/phases/privateSaleResolution";
-import { privateSaleExpiryPhase } from "@/core/time/phases/privateSaleExpiry";
+import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/platform/game/types";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asHorseId, asStableId } from "@/shared/types/branded";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import { createRng } from "@/shared/common/rng";
+import { privateSaleResolutionPhase } from "@/platform/time/phases/privateSaleResolution";
+import { privateSaleExpiryPhase } from "@/platform/time/phases/privateSaleExpiry";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   createTestNpcHorse({

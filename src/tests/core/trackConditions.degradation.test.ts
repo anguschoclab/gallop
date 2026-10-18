@@ -3,7 +3,7 @@
  * critical track-degradation paths feeding the weather phase.
  */
 import { describe, it, expect } from "vitest";
-import { calculateConditionChange } from "@/core/race/trackConditions";
+import { calculateConditionChange } from "@/domains/race/simulation/trackConditions";
 
 describe("calculateConditionChange", () => {
   it("is a no-op on dry weather with low race count and good maintenance", () => {

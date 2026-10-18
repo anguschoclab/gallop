@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildCampaignHistory } from "@/core/stable/campaignHistory";
-import type { Horse } from "@/core/horse/types";
-import type { TrackLedgerEntry } from "@/core/history/trackLedger";
-import type { StrategyJournalEntry } from "@/core/tactics/strategyJournal";
+import { buildCampaignHistory } from "@/domains/stable/simulation/campaignHistory";
+import type { Horse } from "@/domains/horse/simulation/types";
+import type { TrackLedgerEntry } from "@/domains/history/simulation/trackLedger";
+import type { StrategyJournalEntry } from "@/domains/tactics/simulation/strategyJournal";
 
 const horse = {
   id: "h1",

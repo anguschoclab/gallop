@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { createElement } from "react";
-import { useGame } from "@/game/store";
-import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";
-import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
+import { useGame } from "@/platform/game/store";
+import { StewardsDigestToast } from "@/domains/stewards/ui/StewardsDigestToast";
+import type { StewardsInquiry } from "@/domains/stewards/model/stewardTypes";
 
 function makeInquiry(overrides: Partial<StewardsInquiry> = {}): StewardsInquiry {
   return {

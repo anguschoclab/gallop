@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { screen, fireEvent, cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import type { Jockey } from "@/core/jockey/types";
-import type { JockeyTrait } from "@/game/types";
+import type { Jockey } from "@/domains/jockey/model/types";
+import type { JockeyTrait } from "@/platform/game/types";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -11,9 +11,9 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => ({}),
 }));
 
-import { JockeyRoster } from "@/components/jockey/JockeyRoster";
+import { JockeyRoster } from "@/domains/jockey/ui/JockeyRoster";
 import { createTestJockey } from "@/tests/helpers";
-import { asJockeyId, asStableId } from "@/core/types/branded";
+import { asJockeyId, asStableId } from "@/shared/types/branded";
 
 function mkJockey(id: string, overrides: Partial<Jockey> = {}): Jockey {
   return createTestJockey({

@@ -1,14 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { FinanceHandler } from "@/core/resolver/handlers/FinanceHandler";
-import type { GameState } from "@/game/store/state";
+import { FinanceHandler } from "@/platform/resolver/handlers/FinanceHandler";
+import type { GameState } from "@/platform/game/store/state";
 import type {
   CashImpact,
   HorseTransferImpact,
   TransactionImpact,
-} from "@/core/resolver/impacts/index";
+} from "@/platform/resolver/impacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("FinanceHandler", () => {
   it("cash_change with entityId='player' updates draft.cash", () => {

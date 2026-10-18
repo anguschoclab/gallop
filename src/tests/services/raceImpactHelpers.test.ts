@@ -4,13 +4,14 @@ import {
   generatePerformanceCareerImpacts,
   generateFinancialBreedingImpacts,
   generateJockeyStatsTrackingImpacts,
-} from "@/core/race/impacts";
+} from "@/domains/race/simulation/impacts";
 import { createTestColt, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import { createTestRng } from "@/tests/helpers/createTestRng";
-import { RACE_ENERGY_IMPACT, MAX_FAME } from "@/constants";
-import type { Race } from "@/game/types";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { MAX_FAME } from "@/domains/prestige/model/fameConstants";
+import { RACE_ENERGY_IMPACT } from "@/domains/race/model/raceSimulationConstants";;
+import type { Race } from "@/platform/game/types";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeOpenRace(overrides: Partial<Race> = {}): Race {
   return {

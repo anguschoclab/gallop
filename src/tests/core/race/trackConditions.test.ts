@@ -9,8 +9,8 @@ import {
   getStaminaDrainModifier,
   getTurfRailPosition,
   isMaintenanceApplicable,
-} from "@/core/race/trackConditions";
-import { createRng } from "@/core/common/rng";
+} from "@/domains/race/simulation/trackConditions";
+import { createRng } from "@/shared/common/rng";
 
 describe("trackConditions", () => {
   describe("getRailBias", () => {

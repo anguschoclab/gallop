@@ -5,7 +5,7 @@ import {
   preloadHorseSprites,
   getSpriteLoadStatus,
   _resetSpriteLoadCache,
-} from "@/components/race/raceVisualHelpers";
+} from "@/domains/race/application/raceVisualHelpers";
 
 describe("getAllSpriteUrls", () => {
   it("returns exactly 14 URLs", () => {

@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import type { Horse, Stable, GameState } from "@/game/types";
+import type { Horse, Stable, GameState } from "@/platform/game/types";
 import { runNpcBreeding } from "@/domains/agents/simulation/npc/breeding";
-import { createRng } from "@/core/common/rng";
-import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
+import { createRng } from "@/shared/common/rng";
+import type { Leaderboard } from "@/domains/breeding/model/leaderboardTypes";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 describe("leaderboardNpcBreeding integration", () => {
   let state: Pick<GameState, "horses" | "npcStables" | "pregnancies" | "day" | "sireLeaderboards">;

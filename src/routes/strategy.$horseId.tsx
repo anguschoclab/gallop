@@ -1,19 +1,19 @@
 import { useState, useMemo } from "react";
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useGame } from "@/platform/game/store";
+import { Button } from "@/shared/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { ArrowLeft, Compass, Sparkles } from "lucide-react";
-import { StrategyHeader } from "@/components/strategy/StrategyHeader";
-import { TargetGradesSection } from "@/components/strategy/TargetGradesSection";
-import { TrackPrestigeSection } from "@/components/strategy/TrackPrestigeSection";
-import { LiveAnnualTimeline } from "@/components/strategy/LiveAnnualTimeline";
-import { SyndicationStakesSection } from "@/components/strategy/SyndicationStakesSection";
-import { CampaignAlertsFeed } from "@/components/strategy/CampaignAlertsFeed";
-import { SyndicateDialog } from "@/components/market/SyndicateDialog";
+import { StrategyHeader } from "@/domains/strategy/ui/StrategyHeader";
+import { TargetGradesSection } from "@/domains/strategy/ui/TargetGradesSection";
+import { TrackPrestigeSection } from "@/domains/strategy/ui/TrackPrestigeSection";
+import { LiveAnnualTimeline } from "@/domains/strategy/ui/LiveAnnualTimeline";
+import { SyndicationStakesSection } from "@/domains/strategy/ui/SyndicationStakesSection";
+import { CampaignAlertsFeed } from "@/domains/strategy/ui/CampaignAlertsFeed";
+import { SyndicateDialog } from "@/domains/market/ui/SyndicateDialog";
 import { toast } from "sonner";
-import type { CampaignGoalType, CampaignRaceSlot } from "@/services/calendar/calendarFacade";
-import type { Race } from "@/game/types";
+import type { CampaignGoalType, CampaignRaceSlot } from "@/domains/calendar/application/calendarFacade";
+import type { Race } from "@/platform/game/types";
 
 export const Route = createFileRoute("/strategy/$horseId")({
   component: StrategyPage,

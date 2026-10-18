@@ -7,7 +7,7 @@
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-import { DiplomacyPanel } from "@/components/npc/DiplomacyPanel";
+import { DiplomacyPanel } from "@/domains/agents/ui/DiplomacyPanel";
 
 const mockStateWithHistory = {
   npcAIManager: {

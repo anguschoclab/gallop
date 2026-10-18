@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { RivalCareerCompareTable } from "@/components/stable/RivalCareerCompareTable";
-import type { RivalCareerProfile } from "@/services/npc/npcFacade";
-import type { RivalRankingsColumn } from "@/core/market/rivalRankingsComparison";
+import { RivalCareerCompareTable } from "@/domains/stable/ui/RivalCareerCompareTable";
+import type { RivalCareerProfile } from "@/domains/agents/application/npcFacade";
+import type { RivalRankingsColumn } from "@/domains/market/simulation/rivalRankingsComparison";
 
 vi.mock("@/game/store", () => ({
   useGame: (selector: (s: any) => any) => selector({}),

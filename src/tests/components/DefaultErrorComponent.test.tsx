@@ -15,7 +15,7 @@ vi.mock("@tanstack/react-router", () => ({
   useRouter: () => ({ invalidate }),
 }));
 
-import { DefaultErrorComponent } from "@/components/DefaultErrorComponent";
+import { DefaultErrorComponent } from "@/domains/shell/ui/DefaultErrorComponent";
 
 describe("DefaultErrorComponent", () => {
   beforeEach(() => {

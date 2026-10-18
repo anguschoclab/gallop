@@ -1,4 +1,4 @@
-import type { ProgenyLeaderboard, ProgenyRanking } from "@/core/breeding/leaderboardTypes";
+import type { ProgenyLeaderboard, ProgenyRanking } from "@/domains/breeding/model/leaderboardTypes";
 
 export function createProgenyRanking(overrides?: Partial<ProgenyRanking>): ProgenyRanking {
   return {

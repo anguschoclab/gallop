@@ -3,10 +3,10 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createElement, type ReactNode } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { SeasonStandingsWidget } from "@/components/dashboard/SeasonStandingsWidget";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { SeasonStandingsWidget } from "@/domains/dashboard/ui/SeasonStandingsWidget";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 async function clickTab(name: string) {
   const tab = screen.getByRole("tab", { name: new RegExp(name, "i") });

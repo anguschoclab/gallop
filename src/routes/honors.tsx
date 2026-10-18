@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { HallOfFameTab } from "@/components/honors/HallOfFameTab";
-import { RecordsTab } from "@/components/honors/RecordsTab";
-import { AwardsTab } from "@/components/honors/AwardsTab";
-import { useTabParam } from "@/hooks/ui/useTabParam";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { HallOfFameTab } from "@/domains/honors/ui/HallOfFameTab";
+import { RecordsTab } from "@/domains/honors/ui/RecordsTab";
+import { AwardsTab } from "@/domains/honors/ui/AwardsTab";
+import { useTabParam } from "@/shared/hooks/ui/useTabParam";
 import { Trophy, Medal, Award } from "lucide-react";
 
 const HONORS_TABS = ["hall-of-fame", "records", "awards"] as const;

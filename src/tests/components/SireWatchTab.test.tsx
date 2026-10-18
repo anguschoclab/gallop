@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { screen, fireEvent, cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import type { Horse } from "@/game/types";
-import type { StudCareer } from "@/core/horse/types";
+import type { Horse } from "@/platform/game/types";
+import type { StudCareer } from "@/domains/horse/simulation/types";
 
 const navigate = vi.fn();
 
@@ -13,7 +13,7 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => ({}),
 }));
 
-import { SireWatchTab } from "@/components/breeding/SireWatchTab";
+import { SireWatchTab } from "@/domains/breeding/ui/SireWatchTab";
 import { createTestHorse } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
 

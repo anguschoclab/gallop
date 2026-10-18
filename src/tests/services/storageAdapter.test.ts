@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach, beforeAll } from "vitest";
 
-import * as storageAdapter from "@/services/storage/storageAdapter";
+import * as storageAdapter from "@/platform/persistence/storage/storageAdapter";
 
 function mockLocalStorage() {
   const store = new Map<string, string>();

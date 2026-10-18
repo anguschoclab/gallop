@@ -8,19 +8,19 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { runExchangeSettlementDay } from "@/core/market/exchangeSettlement";
+import { runExchangeSettlementDay } from "@/domains/market/simulation/exchangeSettlement";
 import {
   createDefaultExchangeState,
   exchangeCommission,
   netProceeds,
   type ExchangeAsk,
   type ExchangeBid,
-} from "@/core/market/exchange";
+} from "@/domains/market/simulation/exchange";
 import { createTestStable, createTestNpcHorse } from "@/tests/helpers";
-import { isPlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { isPlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
 
 const DAY = 10;
 

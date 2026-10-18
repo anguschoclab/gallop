@@ -15,13 +15,13 @@ import {
   compareToRealWorld,
   runsForHorse,
   computeHorseBenchmarkStanding,
-} from "@/core/history/almanacInsights";
+} from "@/domains/history/simulation/almanacInsights";
 import {
   getTripCategory,
   getRealWorldRecords,
   type RealWorldRecord,
-} from "@/data/realWorldRecords";
-import type { TrackRecord, SeasonRecord } from "@/core/history/historyTypes";
+} from "@/shared/data/realWorldRecords";
+import type { TrackRecord, SeasonRecord } from "@/domains/history/model/historyTypes";
 
 function mkRecord(
   overrides: Partial<TrackRecord> & { trackId: string; horseId: string },

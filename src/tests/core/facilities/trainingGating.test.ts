@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { TRAINING_FACILITY_REQUIREMENTS } from "@/constants/workoutConstants";
+import { TRAINING_FACILITY_REQUIREMENTS } from "@/shared/constants/workoutConstants";
 import {
   getAvailableTrainingTypes,
   createDefaultPlayerFacilities,
   createFacility,
-} from "@/core/facilities";
+} from "@/domains/facilities/simulation";
 
 describe("TRAINING_FACILITY_REQUIREMENTS", () => {
   it("bullet requires barn elite", () => {

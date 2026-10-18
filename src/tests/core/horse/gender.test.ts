@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { isGenderEligible, getGenderRestrictionLabel } from "@/core/horse/gender";
-import type { Horse } from "@/game/types";
+import { isGenderEligible, getGenderRestrictionLabel } from "@/domains/horse/simulation/gender";
+import type { Horse } from "@/platform/game/types";
 
 type Gender = Horse["gender"];
 const GENDERS: Gender[] = ["colt", "filly", "horse", "mare"];

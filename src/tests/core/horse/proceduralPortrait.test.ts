@@ -13,8 +13,8 @@ import {
   getOrDeriveAppearance,
   isFeminine,
   type PortraitPalette,
-} from "@/core/horse/proceduralPortrait";
-import type { CoatColor, HorseMarkings } from "@/game/types";
+} from "@/domains/horse/simulation/proceduralPortrait";
+import type { CoatColor, HorseMarkings } from "@/platform/game/types";
 
 // ---------------------------------------------------------------------------
 // Helpers

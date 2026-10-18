@@ -4,10 +4,10 @@ import {
   generateGrudgeMatchNews,
   generateRegionLostNews,
   generateRivalryEscalationNews,
-} from "@/services/narrative/rivalryNewsGenerator";
-import { isValidUUID } from "@/core/uuid";
+} from "@/domains/narrative/application/rivalryNewsGenerator";
+import { isValidUUID } from "@/shared/uuid/uuid";
 import { createTestRng, createTestStable, createTestHorse } from "@/tests/helpers";
-import type { Race } from "@/game/types";
+import type { Race } from "@/platform/game/types";
 
 const DAY = 42;
 

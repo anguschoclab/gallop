@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { getG1WinsForStable } from "@/core/awards/connectionTrophies";
+import { getG1WinsForStable } from "@/domains/awards/simulation/connectionTrophies";
 import { createTestHorse, createTestNpcHorse, createUnownedHorse } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import type { GameState } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const G1_RACE = {
   raceId: "g1-test",

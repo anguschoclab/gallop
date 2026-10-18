@@ -11,8 +11,8 @@ import {
   tradeSeries,
   createDefaultExchangeState,
   type ExchangeTrade,
-} from "@/core/market/exchange";
-import { housePriceSeries } from "@/core/market/houseQuotes";
+} from "@/domains/market/simulation/exchange";
+import { housePriceSeries } from "@/domains/market/simulation/houseQuotes";
 
 function trade(overrides: Partial<ExchangeTrade> & { id: string; day: number }): ExchangeTrade {
   return {

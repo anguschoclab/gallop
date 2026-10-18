@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { trackEvent, flushEvents } from "@/services/analytics/tracker";
+import { trackEvent, flushEvents } from "@/domains/analytics/application/tracker";
 
 const ANALYTICS_KEY = "gallop_analytics_events";
 

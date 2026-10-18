@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { runCapabilityAudit } from "../../../scripts/orphan-audit";
-import { STORE_STATE_VERSION } from "@/game/store/stateVersion";
+import { STORE_STATE_VERSION } from "@/platform/game/store/stateVersion";
 
 const ROOT = process.cwd();
 const manifestPath = join(ROOT, "src/tests/fixtures/campaignManifest.json");

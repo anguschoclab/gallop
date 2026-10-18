@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
+import { intentCollectionPhase } from "@/platform/time/phases/intentCollection";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("intentCollectionPhase", () => {
   it("should collect player pendingIntents into intents array", () => {

@@ -8,9 +8,9 @@
  * Related files: npcCycleAI.ts (uses personality state), learningModule.ts (provides learning infrastructure)
  */
 
-import type { StablePersonality } from "@/game/types";
-import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
-import { STRATEGY_ALTERNATIVES } from "@/data/personalityTraits";
+import type { StablePersonality } from "@/platform/game/types";
+import { PERSONALITY_CONFIG } from "@/domains/stable/simulation/stableConfig";
+import { STRATEGY_ALTERNATIVES } from "@/shared/data/personalityTraits";
 import {
   createLearningState,
   recordLearningOutcome,
@@ -29,7 +29,7 @@ import {
   CONSERVATISM_AVOID_FACTOR,
   INNOVATION_COMPETE_FACTOR,
   LEARNING_MIN_DATA_POINTS,
-} from "@/constants/aiConstants";
+} from "@/domains/agents/model/aiConstants";
 
 /**
  * Hybrid AI Personality System

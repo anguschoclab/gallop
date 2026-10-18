@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useRunnerHighlight } from "@/components/race/useRunnerHighlight";
+import { useRunnerHighlight } from "@/domains/race/ui/useRunnerHighlight";
 
 const runners = [
   { horseId: "h1", owned: true },

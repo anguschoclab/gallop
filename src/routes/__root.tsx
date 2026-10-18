@@ -1,7 +1,7 @@
 import { Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
-import { Toaster } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { RootComponent } from "@/components/routes/RootComponent";
+import { Toaster } from "@/shared/ui/sonner";
+import { TooltipProvider } from "@/shared/ui/tooltip";
+import { RootComponent } from "@/domains/shell/ui/pages/RootComponent";
 
 import appCss from "../styles.css?url";
 

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
-import { HorseAwardsPanel } from "@/components/awards/HorseAwardsPanel";
+import { HorseAwardsPanel } from "@/domains/awards/ui/HorseAwardsPanel";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import type { Horse } from "@/game/types";
-import type { RegionalAward } from "@/core/awards/types";
-import { CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
+import type { Horse } from "@/platform/game/types";
+import type { RegionalAward } from "@/domains/awards/model/types";
+import { CATEGORY_DESCRIPTIONS } from "@/domains/awards/model/types";
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() } }));
 

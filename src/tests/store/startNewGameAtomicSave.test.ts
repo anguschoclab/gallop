@@ -72,10 +72,10 @@ vi.mock("comlink", () => ({
   expose: vi.fn(),
 }));
 
-import { useGame, STORE_STATE_VERSION } from "@/game/store";
-import { saveGameStateToIDB, saveExists, _resetSaveExists } from "@/game/store/storage";
-import { clearDatabase } from "@/services/storage/indexedDbService";
-import type { NewGameOptions } from "@/game/store/state";
+import { useGame, STORE_STATE_VERSION } from "@/platform/game/store";
+import { saveGameStateToIDB, saveExists, _resetSaveExists } from "@/platform/game/store/storage";
+import { clearDatabase } from "@/platform/persistence/storage/indexedDbService";
+import type { NewGameOptions } from "@/platform/game/store/state";
 
 const mockProfile = {
   stableName: "Test Stable",

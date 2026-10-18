@@ -8,10 +8,10 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => ({}),
 }));
 
-import { ClaimingRacePanel } from "@/components/race/ClaimingRacePanel";
-import type { Race, Horse } from "@/game/types";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { ClaimingRacePanel } from "@/domains/race/ui/ClaimingRacePanel";
+import type { Race, Horse } from "@/platform/game/types";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({

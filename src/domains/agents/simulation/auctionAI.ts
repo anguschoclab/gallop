@@ -9,10 +9,10 @@
  * Related files: auctionBidding.ts, auctionRecording.ts
  */
 
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
 import { getPersonalityAIState } from "./personalitySystem";
 import { createLearningState, type LearningState } from "./learningModule";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import type { DistressLevel } from "./financialDistressAI";
 import {
   CONSIGN_UNDERPERFORMER_RATING_THRESHOLD,
@@ -20,12 +20,12 @@ import {
   CONSIGN_RATING_RELAXATION_PER_WEIGHT,
   CONSIGN_AGE_RELAXATION_PER_WEIGHT,
   DEFAULT_SUBSYSTEM_WEIGHT,
-} from "@/constants/aiConstants";
+} from "@/domains/agents/model/aiConstants";
 import {
   DISTRESS_CONSIGN_RATING_REDUCTION,
   DISTRESS_CONSIGN_AGE_REDUCTION,
   DISTRESS_EMERGENCY_CONSIGN_RATING_THRESHOLD,
-} from "@/constants/financialDistressConstants";
+} from "@/domains/financial/model/financialDistressConstants";
 
 export interface AuctionAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

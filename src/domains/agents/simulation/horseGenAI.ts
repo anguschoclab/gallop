@@ -13,7 +13,7 @@
  * Personality-driven stock generation, roster composition, learning from outcomes
  */
 
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 import { getPersonalityAIState } from "./personalitySystem";
 import { createLearningState, type LearningState } from "./learningModule";
 

@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { solvencyPhase } from "@/core/time/phases/solvency";
-import { SOLVENCY_THRESHOLDS } from "@/core/financial/solvency";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { AnyImpact, CashImpact } from "@/core/resolver/impacts/index";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { solvencyPhase } from "@/platform/time/phases/solvency";
+import { SOLVENCY_THRESHOLDS } from "@/domains/financial/simulation/solvency";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { AnyImpact, CashImpact } from "@/platform/resolver/impacts";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 /**
  * Integration tests for the solvencyPhase — verifies day-over-day escalation

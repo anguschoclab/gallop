@@ -1,4 +1,4 @@
-import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/game/types";
+import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/platform/game/types";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import { recordLearningOutcome, trimHistory } from "./learningModule";
 import { buildStrategyContextKey } from "./strategyContextKey";

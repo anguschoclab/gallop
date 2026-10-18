@@ -26,9 +26,9 @@ vi.mock("@/hooks/analytics/useAnalyticsData", () => ({
   useAnalyticsData: () => mockAnalyticsData(),
 }));
 
-import { AnalyticsBreedingTab } from "@/components/analytics/AnalyticsBreedingTab";
-import type { SireRanking, Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
-import type { SireAnalytics } from "@/core/breeding/sireAnalytics";
+import { AnalyticsBreedingTab } from "@/domains/analytics/ui/AnalyticsBreedingTab";
+import type { SireRanking, Leaderboard, SireTrendData } from "@/domains/breeding/model/leaderboardTypes";
+import type { SireAnalytics } from "@/domains/breeding/simulation/sireAnalytics";
 
 function mkSireAnalytics(stallionId: string): SireAnalytics {
   return {

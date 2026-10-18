@@ -7,11 +7,11 @@ import type {
   HorseMarkings,
   HealthStatus,
   CoatColor,
-} from "@/game/types";
+} from "@/platform/game/types";
 import { createTestGenotype } from "./createTestGenotype";
 import { createTestAppearance } from "./createTestAppearance";
-import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId } from "@/core/types/branded";
+import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asHorseId } from "@/shared/types/branded";
 
 /**
  * Creates valid test horse stats.

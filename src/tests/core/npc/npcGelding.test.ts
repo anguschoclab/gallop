@@ -1,14 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { createGeldingAIState, shouldGeldHorse } from "@/domains/agents/simulation/geldingAI";
 import { generateNpcIntents } from "@/domains/agents/simulation/npc/intentGenerators";
-import { BreedingValidator } from "@/core/resolver/validators/BreedingValidator";
-import { HorseHandler } from "@/core/resolver/handlers/HorseHandler";
+import { BreedingValidator } from "@/platform/resolver/validators/BreedingValidator";
+import { HorseHandler } from "@/platform/resolver/handlers/HorseHandler";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 import { produce } from "immer";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("NPC Gelding AI & Intent Generation", () => {
   it("should evaluate gelding eligibility based on stable personality and horse potential", () => {

@@ -15,7 +15,7 @@ import {
   deleteSlotState,
   _resetForTest,
   type AllBuckets,
-} from "@/services/storage/indexedDbService";
+} from "@/platform/persistence/storage/indexedDbService";
 
 // ─── Minimal in-memory IDB mock ─────────────────────────────────────────────
 

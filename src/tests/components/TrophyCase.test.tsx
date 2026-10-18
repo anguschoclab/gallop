@@ -6,8 +6,8 @@
 
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-import { TrophyCase, TrophyStats } from "@/components/awards/TrophyCase";
-import type { RegionalAward } from "@/core/awards/types";
+import { TrophyCase, TrophyStats } from "@/domains/awards/ui/TrophyCase";
+import type { RegionalAward } from "@/domains/awards/model/types";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => {

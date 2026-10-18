@@ -1,0 +1,442 @@
+/**
+ * phases/trainingResolution.ts - Training resolution phase
+ *
+ * This file provides the training resolution phase that converts TrainingIntents
+ * into impacts (stat changes, energy changes, cash changes).
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, TrainingIntent), @/core/resolver/impacts/index (AnyImpact), @/game/rng (createRng, hashStr), @/core/facilities (getFacilityBonus), @/core/expenses (createExpense), @/game/uuid (generateUUID), @/core/transactions (createTransaction), @/domains/agents/simulation/npcCycleAI (getOrCreateStableAIState), @/domains/agents/simulation/trainingAI (recordTrainingOutcome)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
+// Training Resolution Phase
+// Converts TrainingIntents into impacts (stat changes, energy changes, cash changes)
+
+import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
+import type { TrainingIntent } from "@/platform/resolver/intents";
+import type { Outpost } from "@/domains/facilities/model/outpostTypes";
+import type { StaffRole, StaffMember } from "@/domains/staff/model/staffTypes";
+import { PHASE_ORDER_TRAINING_RESOLUTION } from "@/platform/time/pipelineConstants";
+import { TRAINING_COST, TRAINING_COST_MAP, TRAINING_ENERGY_MAP, TRAINING_ENERGY_REST, TRAINING_MIN_ENERGY_THRESHOLD } from "@/shared/constants/workoutConstants";;
+import type { AnyImpact } from "@/platform/resolver/impacts";
+import type { FitnessImpact, FatigueImpact, CashImpact } from "@/platform/resolver/impacts";
+import { createRng, hashStr } from "@/shared/common/rng";
+import { getFacilityBonus } from "@/domains/facilities/simulation";
+import { createExpense } from "@/domains/expenses/model/expenseTypes";;;
+import { generateUUID } from "@/shared/uuid/uuid";
+import { createTransaction } from "@/domains/transactions/model/transactionTypes";;
+import {
+  getOrCreateStableAIState,
+  type NpcAIManager,
+} from "@/domains/agents/simulation/npcCycleAI";
+import { recordTrainingOutcome } from "@/domains/agents/simulation/trainingAI";
+import { BANISTER_CONSTANTS, calculateImpulse } from "@/domains/health/simulation/banister";
+import { getOutpostSpecialty } from "@/domains/facilities/model/outpostTypes";
+import { getBranchModifiers } from "@/domains/facilities/simulation/facilityBranching";
+import { generateWorkoutAffinityImpact } from "@/domains/race/simulation/impacts/jockeyAffinity";
+
+/**
+ * Training Resolution Phase (Order 45)
+ * Resolves TrainingIntents into impacts:
+ * - Stat gains (speed, stamina, acceleration)
+ * - Energy changes
+ * - Cash changes (already deducted when intent was enqueued)
+ * - Health status changes (OCD risk)
+ * - Banister impulses (fitness and fatigue)
+ * - Outpost Specialization bonuses
+ */
+export const trainingResolutionPhase: PipelinePhase = {
+  name: "trainingResolution",
+  order: PHASE_ORDER_TRAINING_RESOLUTION,
+  execute: (context: PipelineContext): PipelineContext => {
+    const { intents, state, newDay } = context;
+    const impacts: AnyImpact[] = [];
+    const newExpenses: typeof state.expenses = [];
+    const newTransactions: typeof state.transactions = [];
+
+    // Filter for training intents
+    const trainingIntents = intents.filter((i): i is TrainingIntent => i.type === "training");
+
+    const { horseMap, stableMap, jockeyMap } = context;
+    const outpostMap = new Map<string, Outpost>();
+
+    // Clone NPC AI manager so we never mutate the input state's stableStates.
+    const aiManager: NpcAIManager = state.npcAIManager
+      ? {
+          ...state.npcAIManager,
+          stableStates: Object.fromEntries(
+            Object.entries(state.npcAIManager.stableStates).map(([id, s]) => [id, { ...s }]),
+          ),
+        }
+      : { stableStates: {}, globalDay: newDay, regionalKings: {} };
+    let aiManagerUpdated = false;
+    for (const s of state.npcStables ?? []) {
+      for (const o of s.outposts ?? []) {
+        outpostMap.set(o.id, o);
+      }
+    }
+    const playerOutpostMap = new Map<string, Outpost>((state.outposts ?? []).map((o) => [o.id, o]));
+
+    const hiredStaffByStableAndRole = new Map<string, Map<StaffRole, StaffMember>>();
+    if (state.hiredStaff) {
+      for (const staff of state.hiredStaff) {
+        if (!staff.stableId) continue;
+        if (!hiredStaffByStableAndRole.has(staff.stableId)) {
+          hiredStaffByStableAndRole.set(staff.stableId, new Map());
+        }
+        hiredStaffByStableAndRole.get(staff.stableId)!.set(staff.role, staff);
+      }
+    }
+
+    for (const intent of trainingIntents) {
+      const horse = horseMap.get(intent.horseId);
+      if (!horse) continue;
+
+      // Skip training for retired or deceased horses
+      if (horse.lifecycleStatus === "retired" || horse.lifecycleStatus === "deceased") continue;
+
+      // Check if horse is eligible for training (energy, health)
+      if (horse.energy < TRAINING_MIN_ENERGY_THRESHOLD) continue;
+      if (
+        horse.healthStatus === "covering_sickness" ||
+        horse.healthStatus === "recovering" ||
+        horse.healthStatus === "other_illness"
+      )
+        continue;
+
+      // Get staff bonuses for this stable
+      const stableId = horse.ownership?.type === "npc" ? horse.ownership.stableId : "";
+      const roleMap = hiredStaffByStableAndRole.get(stableId);
+
+      const trainer = roleMap?.get("trainer");
+      const trainerBonus = trainer ? trainer.bonusValue : 0;
+
+      const nutritionist = roleMap?.get("nutritionist");
+      const nutritionistBonus = nutritionist ? nutritionist.bonusValue : 0;
+
+      // --- BANISTER IMPULSES ---
+      if (intent.trainingType !== "rest") {
+        const intensity = BANISTER_CONSTANTS.WORKOUT_INTENSITY[intent.trainingType] ?? 10;
+        const fitnessDelta = calculateImpulse(intensity, BANISTER_CONSTANTS.FITNESS_K);
+        const fatigueDelta = calculateImpulse(intensity, BANISTER_CONSTANTS.FATIGUE_K);
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "trainingResolution",
+          logLevel: "conditional",
+          type: "fitness_change",
+          horseId: horse.id,
+          delta: fitnessDelta,
+          reason: `${intent.trainingType} training impulse`,
+        } as FitnessImpact);
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "trainingResolution",
+          logLevel: "conditional",
+          type: "fatigue_change",
+          horseId: horse.id,
+          delta: fatigueDelta,
+          reason: `${intent.trainingType} training impulse`,
+        } as FatigueImpact);
+      }
+      // --- END BANISTER IMPULSES ---
+      if (intent.trainingType !== "rest") {
+        // Different workout types have different costs
+        const cost = TRAINING_COST_MAP[intent.trainingType] ?? TRAINING_COST;
+        const ownerId = horse.ownership?.type === "npc" ? horse.ownership.stableId : "player";
+
+        if (ownerId === "player") {
+          newExpenses.push(
+            createExpense(
+              "training",
+              cost,
+              `${intent.trainingType} training for ${horse.name}`,
+              newDay,
+              { horseId: horse.id },
+            ),
+          );
+
+          // Record transaction for training expense
+          newTransactions.push(
+            createTransaction(
+              "expense",
+              "training",
+              -cost,
+              `${intent.trainingType} training for ${horse.name}`,
+              newDay,
+              state.cash - cost,
+              { horseId: horse.id },
+            ),
+          );
+        }
+
+        // Add cash change impact
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "trainingResolution",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: ownerId,
+          amount: -cost,
+          reason: `${intent.trainingType} training cost`,
+        } as CashImpact);
+      }
+
+      // Deduct energy (only for actual training, not rest)
+      if (intent.trainingType !== "rest") {
+        // Different workout types have different energy costs
+        const energyDelta =
+          (TRAINING_ENERGY_MAP[intent.trainingType] ?? -18) * (1 - nutritionistBonus);
+
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "trainingResolution",
+          logLevel: "conditional",
+          type: "energy_change",
+          horseId: intent.horseId,
+          delta: energyDelta,
+          reason: `${intent.trainingType} training`,
+        });
+      } else {
+        // Rest adds energy
+        impacts.push({
+          id: generateUUID(),
+          intentId: intent.id,
+          day: newDay,
+          phase: "trainingResolution",
+          logLevel: "conditional",
+          type: "energy_change",
+          horseId: intent.horseId,
+          delta: TRAINING_ENERGY_REST,
+          reason: "Rest",
+        });
+      }
+
+      // Apply stat gains based on workout type
+      let totalGain = 0;
+      if (intent.trainingType !== "rest") {
+        // Generate RNG for this training session
+        const trainingRng = createRng(hashStr(`training_${intent.horseId}_${newDay}`));
+
+        // Map workout types to primary/secondary stats and modifiers
+        const workoutConfig: Record<
+          string,
+          {
+            primary: keyof typeof horse.stats;
+            secondary?: keyof typeof horse.stats;
+            energyCost: number;
+            injuryRisk: number;
+            gainBonus: number;
+          }
+        > = {
+          speed: { primary: "speed", energyCost: -18, injuryRisk: 1.0, gainBonus: 1.0 },
+          stamina: { primary: "stamina", energyCost: -18, injuryRisk: 1.0, gainBonus: 1.0 },
+          acceleration: {
+            primary: "acceleration",
+            energyCost: -18,
+            injuryRisk: 1.0,
+            gainBonus: 1.0,
+          },
+          bullet: {
+            primary: "speed",
+            secondary: "acceleration",
+            energyCost: -25,
+            injuryRisk: 1.5,
+            gainBonus: 1.3,
+          }, // High intensity
+          breeze: {
+            primary: "speed",
+            secondary: "stamina",
+            energyCost: -20,
+            injuryRisk: 1.1,
+            gainBonus: 1.1,
+          }, // Moderate
+          gate_work: {
+            primary: "acceleration",
+            secondary: "speed",
+            energyCost: -22,
+            injuryRisk: 0.8,
+            gainBonus: 1.2,
+          }, // Gate breaking
+          swimming: { primary: "stamina", energyCost: -15, injuryRisk: 0.3, gainBonus: 0.9 }, // Low injury risk
+          gallop: {
+            primary: "stamina",
+            secondary: "speed",
+            energyCost: -16,
+            injuryRisk: 0.7,
+            gainBonus: 1.0,
+          }, // Base building
+          treadmill: {
+            primary: "stamina",
+            secondary: "acceleration",
+            energyCost: -14,
+            injuryRisk: 0.2,
+            gainBonus: 0.95,
+          }, // Low-impact controlled environment
+        };
+
+        const config = workoutConfig[intent.trainingType] ?? workoutConfig.speed;
+
+        const primaryStat = horse.stats[config.primary];
+        const ageRatio = Math.min(1, horse.age / horse.peakAge);
+        const effectivePotential = horse.potential * ageRatio;
+        const gap = effectivePotential - primaryStat;
+
+        // Apply main_track facility bonus and trainer bonus to training chance
+        const facilities = state.facilities;
+        const trackBonus = facilities ? getFacilityBonus(facilities, "main_track") : 0;
+
+        // --- OUTPOST SPECIALIZATION (Imperial Expansion) ---
+        let branchMod = null;
+        if (horse.outpostId) {
+          const outpost =
+            horse.ownership?.type === "npc"
+              ? outpostMap.get(horse.outpostId)
+              : playerOutpostMap.get(horse.outpostId);
+          if (outpost) {
+            const specialty = getOutpostSpecialty(outpost);
+            branchMod = getBranchModifiers(specialty);
+          }
+        }
+        // --- END SPECIALIZATION ---
+
+        const trainingChance = 0.65 * horse.trainability * (1 + trackBonus + trainerBonus);
+
+        if (gap > 0 && trainingRng.next() < trainingChance) {
+          // Base gain with facility and workout bonuses
+          let gain = Math.min(gap, trainingRng.next() < 0.2 ? 2 : 1);
+          gain = Math.round(gain * (1 + trackBonus) * config.gainBonus);
+
+          // Apply branch multiplier
+          if (branchMod) {
+            if (
+              config.primary === "stamina" &&
+              "staminaGain" in branchMod &&
+              branchMod.staminaGain
+            ) {
+              gain *= branchMod.staminaGain;
+            }
+            if (config.primary === "speed" && "speedGain" in branchMod && branchMod.speedGain) {
+              gain *= branchMod.speedGain;
+            }
+            gain = Math.round(gain);
+          }
+
+          totalGain += gain;
+
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "trainingResolution",
+            logLevel: "conditional",
+            type: "horse_stat_change",
+            horseId: intent.horseId,
+            stat: config.primary,
+            delta: gain,
+            reason: `${intent.trainingType} gain`,
+          });
+
+          // Secondary stat gains (smaller)
+          if (config.secondary && trainingRng.next() < 0.4) {
+            const secondaryGap = effectivePotential - horse.stats[config.secondary];
+            if (secondaryGap > 0) {
+              const secondaryGain = Math.round(Math.min(secondaryGap, 1));
+              totalGain += secondaryGain;
+              impacts.push({
+                id: generateUUID(),
+                intentId: intent.id,
+                day: newDay,
+                phase: "trainingResolution",
+                logLevel: "conditional",
+                type: "horse_stat_change",
+                horseId: intent.horseId,
+                stat: config.secondary,
+                delta: secondaryGain,
+                reason: `${intent.trainingType} secondary gain`,
+              });
+            }
+          }
+        }
+
+        // Check for OCD injury (2yo only, risk varies by workout type)
+        const ocdRisk = horse.ocdRisk ?? 0;
+        if (horse.age <= 2 && ocdRisk > 0 && trainingRng.next() < ocdRisk * config.injuryRisk) {
+          // OCD injury occurred - emit HealthStatusImpact
+          const recoveryDuration = 30 + Math.floor(trainingRng.next() * 30); // 30-60 days
+          impacts.push({
+            id: generateUUID(),
+            intentId: intent.id,
+            day: newDay,
+            phase: "trainingResolution",
+            logLevel: "always",
+            type: "health_status_change",
+            horseId: horse.id,
+            status: "recovering",
+            previousStatus: horse.healthStatus ?? "healthy",
+            recoveryDay: newDay + recoveryDuration,
+            reason: `OCD injury during ${intent.trainingType} - ${recoveryDuration} day recovery`,
+          });
+        }
+      }
+
+      // Generate jockey affinity XP for non-rest workouts
+      if (intent.trainingType !== "rest" && horse.ownership?.type === "npc") {
+        const horseStableId = horse.ownership.stableId;
+        const jockey = jockeyMap
+          ? [...jockeyMap.values()].find((j) => j.stableId === horseStableId)
+          : undefined;
+        if (jockey) {
+          impacts.push(generateWorkoutAffinityImpact(horse, jockey, intent.trainingType, newDay));
+        }
+      }
+
+      // Record training outcome for NPC AI
+      if (aiManager && horse.ownership?.type === "npc") {
+        const stable = stableMap.get(horse.ownership.stableId);
+        if (stable) {
+          const stableAI = getOrCreateStableAIState(aiManager, stable, newDay);
+          if (stableAI.trainingAI) {
+            stableAI.trainingAI = recordTrainingOutcome(
+              stableAI.trainingAI,
+              horse,
+              intent.trainingType,
+              totalGain > 0,
+              totalGain,
+              newDay,
+            );
+            aiManager.stableStates[stable.id] = stableAI;
+            aiManagerUpdated = true;
+          }
+        }
+      }
+    }
+
+    const newTrainingUsed = { ...state.trainingUsed };
+    for (const intent of trainingIntents) {
+      if (intent.trainingType !== "rest") {
+        newTrainingUsed[intent.horseId] = (newTrainingUsed[intent.horseId] || 0) + 1;
+      }
+    }
+
+    return {
+      ...context,
+      state: {
+        ...state,
+        npcAIManager: aiManagerUpdated ? aiManager : state.npcAIManager,
+        trainingUsed: newTrainingUsed,
+        expenses: [...(state.expenses ?? []), ...newExpenses],
+        transactions: [...(state.transactions ?? []), ...newTransactions],
+      },
+      impacts: [...context.impacts, ...impacts],
+    };
+  },
+};

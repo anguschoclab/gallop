@@ -10,8 +10,8 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { RaceResolutionPorts, NarrativePorts } from "@/core/time/pipelinePorts";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { RaceResolutionPorts, NarrativePorts } from "@/platform/time/pipelinePorts";
 
 describe("PipelineContext ports field", () => {
   it("accepts an optional ports field", () => {
@@ -94,20 +94,20 @@ describe("NarrativePorts", () => {
 
 describe("port resolution helper", () => {
   it("returns injected race port when available", async () => {
-    const { resolveRacePort } = await import("@/core/time/pipelinePorts");
+    const { resolveRacePort } = await import("@/platform/time/pipelinePorts");
     const fakeFn = vi.fn();
     const port = resolveRacePort({ raceResolution: { simulate: fakeFn } } as never, "simulate");
     expect(port).toBe(fakeFn);
   });
 
   it("falls back to default race implementation when port is not injected", async () => {
-    const { resolveRacePort } = await import("@/core/time/pipelinePorts");
+    const { resolveRacePort } = await import("@/platform/time/pipelinePorts");
     const port = resolveRacePort(undefined, "simulate");
     expect(port).toBeTypeOf("function");
   });
 
   it("returns injected narrative port when available", async () => {
-    const { resolveNarrativePort } = await import("@/core/time/pipelinePorts");
+    const { resolveNarrativePort } = await import("@/platform/time/pipelinePorts");
     const fakeFn = vi.fn();
     const port = resolveNarrativePort(
       { narrative: { generateFlavor: fakeFn } } as never,
@@ -117,7 +117,7 @@ describe("port resolution helper", () => {
   });
 
   it("falls back to default narrative implementation when port is not injected", async () => {
-    const { resolveNarrativePort } = await import("@/core/time/pipelinePorts");
+    const { resolveNarrativePort } = await import("@/platform/time/pipelinePorts");
     const port = resolveNarrativePort(undefined, "generateFlavor");
     expect(port).toBeTypeOf("function");
   });

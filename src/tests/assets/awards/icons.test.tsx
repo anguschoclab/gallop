@@ -1,14 +1,14 @@
 import { describe, it, expect } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
 import { createElement } from "react";
-import { CategoryIcon as ApacCategoryIcon } from "@/assets/awards/asia-pacific/category";
-import { HotyIcon as ApacHotyIcon } from "@/assets/awards/asia-pacific/hoty";
-import { CategoryIcon as EuCategoryIcon } from "@/assets/awards/europe/category";
-import { HotyIcon as EuHotyIcon } from "@/assets/awards/europe/hoty";
-import { CategoryIcon as NaCategoryIcon } from "@/assets/awards/north-america/category";
-import { HotyIcon as NaHotyIcon } from "@/assets/awards/north-america/hoty";
-import { CategoryIcon as SaCategoryIcon } from "@/assets/awards/south-america/category";
-import { HotyIcon as SaHotyIcon } from "@/assets/awards/south-america/hoty";
+import { CategoryIcon as ApacCategoryIcon } from "@/domains/awards/ui/assets/asia-pacific/category";
+import { HotyIcon as ApacHotyIcon } from "@/domains/awards/ui/assets/asia-pacific/hoty";
+import { CategoryIcon as EuCategoryIcon } from "@/domains/awards/ui/assets/europe/category";
+import { HotyIcon as EuHotyIcon } from "@/domains/awards/ui/assets/europe/hoty";
+import { CategoryIcon as NaCategoryIcon } from "@/domains/awards/ui/assets/north-america/category";
+import { HotyIcon as NaHotyIcon } from "@/domains/awards/ui/assets/north-america/hoty";
+import { CategoryIcon as SaCategoryIcon } from "@/domains/awards/ui/assets/south-america/category";
+import { HotyIcon as SaHotyIcon } from "@/domains/awards/ui/assets/south-america/hoty";
 
 const ICONS = [
   {

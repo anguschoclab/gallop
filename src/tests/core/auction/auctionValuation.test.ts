@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateLotValuation } from "@/core/auction/auctionValuation";
+import { calculateLotValuation } from "@/domains/auction/simulation/auctionValuation";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 describe("calculateLotValuation", () => {

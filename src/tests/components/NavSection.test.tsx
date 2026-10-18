@@ -15,9 +15,9 @@ vi.mock("@tanstack/react-router", () => ({
       : { location: { pathname: mockPathname } },
 }));
 
-import { NavSection } from "@/components/NavSection";
-import { SidebarNav } from "@/components/SidebarNav";
-import { STORAGE_PREFIX, clearAllSidebarStorage } from "@/components/NavSection";
+import { NavSection } from "@/domains/shell/ui/NavSection";
+import { SidebarNav } from "@/domains/shell/ui/SidebarNav";
+import { STORAGE_PREFIX, clearAllSidebarStorage } from "@/domains/shell/ui/NavSection";
 
 const icon = () => createElement("span", { "data-testid": "icon" });
 

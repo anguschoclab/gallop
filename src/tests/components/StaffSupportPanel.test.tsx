@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { screen, cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { StaffSupportPanel } from "@/components/horse/StaffSupportPanel";
-import type { StaffMember } from "@/core/staff/staffTypes";
-import { createDefaultGameState } from "@/game/store/state";
-import { useGame } from "@/game/store";
+import { StaffSupportPanel } from "@/domains/horse/ui/StaffSupportPanel";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useGame } from "@/platform/game/store";
 
 function mkStaff(role: StaffMember["role"], stableId: string, bonusValue = 0.25): StaffMember {
   return {

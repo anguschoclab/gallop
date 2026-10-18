@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { nameReservationPhase } from "@/core/time/phases/nameReservation";
+import { nameReservationPhase } from "@/platform/time/phases/nameReservation";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 describe("nameReservationPhase", () => {
   it("should cleanup expired name reservations", () => {

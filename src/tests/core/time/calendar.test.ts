@@ -5,7 +5,7 @@ import {
   isYearBoundary,
   isPhaseDue,
   boundaryDaysInRange,
-} from "@/core/time/calendar";
+} from "@/platform/time/calendar";
 
 describe("calendar cadence boundaries", () => {
   it("weekly boundary on every 7th day", () => {

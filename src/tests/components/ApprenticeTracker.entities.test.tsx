@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { ApprenticeTracker } from "@/components/apprentice/ApprenticeTracker";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { ApprenticeTracker } from "@/domains/apprentice/ui/ApprenticeTracker";
 import { createTestJockey } from "@/tests/helpers";
 
 vi.mock("@tanstack/react-router", () => ({

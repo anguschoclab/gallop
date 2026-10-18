@@ -1,6 +1,6 @@
 import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
-import { DefaultErrorComponent } from "./components/DefaultErrorComponent";
+import { DefaultErrorComponent } from "@/domains/shell/ui/DefaultErrorComponent";
 
 export const getRouter = () => {
   const router = createRouter({

@@ -8,10 +8,10 @@ import {
   formatWinCondition,
   getRaceClassAbbreviation,
   getRegionalSystem,
-} from "@/core/race/naming/raceNameGenerator";
-import { createRng } from "@/core/common/rng";
-import type { RaceClass } from "@/game/types";
-import type { Track } from "@/data/tracks";
+} from "@/domains/race/simulation/naming/raceNameGenerator";
+import { createRng } from "@/shared/common/rng";
+import type { RaceClass } from "@/platform/game/types";
+import type { Track } from "@/shared/data/tracks";
 
 describe("formatClaimingPrice", () => {
   it("formats claiming price correctly", () => {

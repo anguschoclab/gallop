@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { PaceMap } from "@/components/race/PaceMap";
-import type { PaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import { PaceMap } from "@/domains/race/ui/PaceMap";
+import type { PaceSnapshot } from "@/domains/race/model/engine/raceSnapshotTypes";
 
 function createMockPaceSnapshot(overrides: Partial<PaceSnapshot> = {}): PaceSnapshot {
   return {

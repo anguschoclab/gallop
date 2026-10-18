@@ -22,11 +22,11 @@ vi.mock("@/core/race/headToHead", () => ({
   ]),
 }));
 
-import { useHeadToHeadSim } from "@/hooks/horse/useHeadToHeadSim";
-import { runHeadToHeadSimulation } from "@/core/race/headToHead";
-import { SIM_ITERATIONS } from "@/constants/uiConstants";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { useHeadToHeadSim } from "@/domains/horse/application/hooks/useHeadToHeadSim";
+import { runHeadToHeadSimulation } from "@/domains/race/simulation/headToHead";
+import { SIM_ITERATIONS } from "@/shared/constants/uiConstants";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const mkHorse = (id: string): Horse =>
   ({

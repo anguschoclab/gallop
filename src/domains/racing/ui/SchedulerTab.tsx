@@ -1,0 +1,88 @@
+import { useGame, useGameWithShallow } from "@/platform/game/store";
+import { useMemo } from "react";
+import type { GameState, Horse, HorseCampaign } from "@/platform/game/types";
+import { Badge } from "@/shared/ui/badge";
+import { Card, CardContent } from "@/shared/ui/card";
+import { CalendarClock, Flag } from "lucide-react";
+import { gameCalendarDate } from "@/domains/calendar/application/calendarFacade";
+import { CampaignAddPanel } from "@/domains/scheduler/ui/CampaignAddPanel";
+import { CampaignCard } from "@/domains/scheduler/ui/CampaignCard";
+import { isPlayerOwned } from "@/domains/horse/application/horseFacade";
+
+export function SchedulerTab() {
+  const day = useGame((s: GameState) => s.day);
+  const horses = useGameWithShallow((s: GameState) => s.horses);
+  const races = useGameWithShallow((s: GameState) => s.races);
+  const campaigns = useGameWithShallow((s: GameState) => s.campaigns ?? []);
+  const generateAutoCampaign = useGame((s) => s.generateAutoCampaign);
+  const deleteCampaign = useGame((s) => s.deleteCampaign);
+  const dismissCampaignFlag = useGame((s) => s.dismissCampaignFlag);
+
+  const { ownedHorses, horsesWithoutCampaign } = useMemo(() => {
+    const owned = Object.values(horses).filter((h: Horse) => isPlayerOwned(h));
+    const campaignIds = new Set(campaigns.map((c: HorseCampaign) => c.horseId));
+    const withoutCampaign = owned.filter((h: Horse) => !campaignIds.has(h.id));
+    return { ownedHorses: owned, horsesWithoutCampaign: withoutCampaign };
+  }, [horses, campaigns]);
+
+  const getRace = (raceId: string) => races[raceId];
+  const getHorse = (horseId: string) => horses[horseId];
+
+  const totalActiveFlags = campaigns.reduce(
+    (acc: number, c: HorseCampaign) => acc + c.flags.filter((f) => !f.dismissed).length,
+    0,
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight font-[family-name:var(--font-display)]">
+            Campaign Scheduler
+          </h2>
+          <p className="text-sm text-cream-muted mt-1 font-[family-name:var(--font-body)]">
+            Plan race campaigns for your horses · {gameCalendarDate(day)}
+          </p>
+        </div>
+        {totalActiveFlags > 0 && (
+          <Badge variant="destructive" className="gap-1">
+            <Flag className="h-3 w-3" />
+            {totalActiveFlags} flags need attention
+          </Badge>
+        )}
+      </div>
+
+      <CampaignAddPanel
+        horsesWithoutCampaign={horsesWithoutCampaign}
+        onCreate={(horseId, goal) => generateAutoCampaign(horseId, goal)}
+      />
+
+      {campaigns.length === 0 && (
+        <Card className="border-gold-muted">
+          <CardContent className="py-12 text-center text-cream-muted">
+            <CalendarClock className="h-10 w-10 mx-auto mb-3 opacity-30" />
+            <p className="font-medium">No campaigns yet</p>
+            <p className="text-sm mt-1">
+              Add a campaign above to start planning your horses' race schedules.
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {campaigns.map((campaign: HorseCampaign) => {
+        const horse = getHorse(campaign.horseId);
+        if (!horse) return null;
+        return (
+          <CampaignCard
+            key={campaign.horseId}
+            campaign={campaign}
+            horse={horse}
+            getRace={getRace}
+            onDelete={deleteCampaign}
+            onDismissFlag={dismissCampaignFlag}
+          />
+        );
+      })}
+    </div>
+  );
+}

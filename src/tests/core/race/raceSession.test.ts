@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { runRaceToCompletion } from "@/core/race/engine/simulation";
-import { RaceSimulationSession } from "@/core/race/engine/raceSession";
-import { createRng } from "@/core/common/rng";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { runRaceToCompletion } from "@/domains/race/simulation/engine/simulation";
+import { RaceSimulationSession } from "@/domains/race/simulation/engine/raceSession";
+import { createRng } from "@/shared/common/rng";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 import { createTestJockey } from "@/tests/helpers";
-import { asJockeyId } from "@/core/types/branded";
+import { asJockeyId } from "@/shared/types/branded";
 
 function makeJockey() {
   return createTestJockey({

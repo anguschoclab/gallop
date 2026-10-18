@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import { useReplaysLibrary } from "@/hooks/replays/useReplaysLibrary";
-import type { Race, GameState } from "@/game/types";
-import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useReplaysLibrary } from "@/domains/replays/application/hooks/useReplaysLibrary";
+import type { Race, GameState } from "@/platform/game/types";
+import type { RaceSnapshot } from "@/domains/race/model/engine/raceSnapshotTypes";
 
 function makeRace(overrides: Partial<Race> & { id: string }): Race {
   return {

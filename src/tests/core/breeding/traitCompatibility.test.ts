@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   calculateConformationCompatibility,
   calculateTemperamentCompatibility,
-} from "@/core/breeding/traitCompatibility";
+} from "@/domains/breeding/simulation/traitCompatibility";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 describe("traitCompatibility", () => {

@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { FacilitiesPanel } from "@/components/facilities/FacilitiesPanel";
-import type { PlayerFacilities, FacilityType } from "@/core/facilities";
-import { createFacility } from "@/core/facilities";
+import { FacilitiesPanel } from "@/domains/facilities/ui/FacilitiesPanel";
+import type { PlayerFacilities, FacilityType } from "@/domains/facilities/simulation";
+import { createFacility } from "@/domains/facilities/simulation";
 
 function makeFacilities(): PlayerFacilities {
   const types: FacilityType[] = [

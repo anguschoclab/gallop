@@ -54,9 +54,9 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 // ── Import after mocks ────────────────────────────────────────────────────────
-import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
-import type { SimWeatherPattern } from "@/core/weather";
-import type { TrackCondition } from "@/game/types";
+import { WeatherForecastStrip } from "@/domains/race/ui/WeatherForecastStrip";
+import type { SimWeatherPattern } from "@/domains/weather/simulation";
+import type { TrackCondition } from "@/platform/game/types";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 

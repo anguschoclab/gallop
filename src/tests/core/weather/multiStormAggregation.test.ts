@@ -11,10 +11,10 @@
  */
 import { describe, it, expect } from "vitest";
 import { produce } from "immer";
-import { weatherPhase } from "@/core/time/phases/weatherPhase";
-import { InboxHandler } from "@/core/resolver/handlers/InboxHandler";
-import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/core/weather";
-import { createRng } from "@/core/common/rng";
+import { weatherPhase } from "@/platform/time/phases/weatherPhase";
+import { InboxHandler } from "@/platform/resolver/handlers/InboxHandler";
+import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/domains/weather/simulation";
+import { createRng } from "@/shared/common/rng";
 import { r2r } from "@/tests/helpers/sampleGameState";
 
 // ─── helpers ────────────────────────────────────────────────────────────────

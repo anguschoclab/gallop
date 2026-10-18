@@ -6,9 +6,9 @@ import { describe, it, expect, beforeEach } from "vitest";
 import {
   generateNorthAmericanRace,
   generateNorthAmericanRaceCard,
-} from "@/core/race/generation/northAmerica";
-import { createRng } from "@/core/common/rng";
-import type { Track } from "@/game/types";
+} from "@/domains/race/simulation/generation/northAmerica";
+import { createRng } from "@/shared/common/rng";
+import type { Track } from "@/platform/game/types";
 
 describe("generateNorthAmericanRace", () => {
   let mockTrack: Track;

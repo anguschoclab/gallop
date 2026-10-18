@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { createFacility, calculateTotalMaintenance } from "@/core/facilities/facilityDefaults";
-import { FACILITY_MAINTENANCE_COSTS } from "@/core/facilities/facilityTypes";
-import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
+import { createFacility, calculateTotalMaintenance } from "@/domains/facilities/simulation/facilityDefaults";
+import { FACILITY_MAINTENANCE_COSTS } from "@/domains/facilities/model/facilityTypes";
+import type { PlayerFacilities } from "@/domains/facilities/model/facilityTypes";
 
 describe("Imperial Outpost Facilities (jockey_academy, museum)", () => {
   it("creates jockey_academy facility with maintenance and upgrade costs", () => {

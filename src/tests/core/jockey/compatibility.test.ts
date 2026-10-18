@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { getCompatibility } from "@/core/jockey/compatibility";
+import { getCompatibility } from "@/domains/jockey/simulation/compatibility";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
-import type { Jockey, JockeyTrait } from "@/core/jockey/types";
-import type { Horse } from "@/game/types";
+import type { Jockey, JockeyTrait } from "@/domains/jockey/model/types";
+import type { Horse } from "@/platform/game/types";
 
 function mkJockey(overrides: Partial<Jockey> = {}): Jockey {
   return createTestJockey({ id: "j1", archetype: "versatile", traits: [], ...overrides });

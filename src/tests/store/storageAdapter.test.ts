@@ -9,8 +9,8 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 vi.mock("@/services/storage/storageAdapter", () => ({
   STORAGE_KEYS: {
@@ -56,7 +56,7 @@ import {
   saveCoordinator,
   _resetSaveExists,
   _resetSaveCoordinator,
-} from "@/game/store/storage";
+} from "@/platform/game/store/storage";
 
 function makeMockHorse(id: string, owned: boolean, stableId?: string): any {
   return {

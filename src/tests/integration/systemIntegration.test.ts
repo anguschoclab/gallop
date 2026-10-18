@@ -10,15 +10,15 @@
  * 7. Storage/persistence test
  */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
 import { runPipelineForDay, runPipelineForDays } from "@/tests/helpers/runPipeline";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
-import { createDefaultGameState } from "@/game/store/state";
-import { useGame } from "@/game/store";
-import type { GameState, Horse } from "@/game/types";
-import type { AnyIntent } from "@/core/resolver/intents";
-import { makeUnowned } from "@/core/horse/ownership";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useGame } from "@/platform/game/store";
+import type { GameState, Horse } from "@/platform/game/types";
+import type { AnyIntent } from "@/platform/resolver/intents";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 // ---------------------------------------------------------------------------
 // 1. Full Pipeline Test — All 50+ Phases Execute in Order

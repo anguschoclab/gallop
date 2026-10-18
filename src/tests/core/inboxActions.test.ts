@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
-import type { InboxMessage } from "@/core/inbox/inboxTypes";
+import { useGame } from "@/platform/game/store";
+import type { InboxMessage } from "@/domains/inbox/model/inboxTypes";
 
 describe("Inbox Persistence & State", () => {
   beforeEach(() => {

@@ -1,5 +1,5 @@
-import type { Stable, StableTier, StablePersonality } from "@/game/types";
-import { asStableId } from "@/core/types/branded";
+import type { Stable, StableTier, StablePersonality } from "@/platform/game/types";
+import { asStableId } from "@/shared/types/branded";
 
 /**
  * Create a complete Stable object for testing.

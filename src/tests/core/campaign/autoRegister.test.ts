@@ -2,11 +2,11 @@ import { describe, it, expect } from "vitest";
 import {
   calculateAutoRegisterEntries,
   calculateTransportCostForRace,
-} from "@/core/campaign/autoRegister";
-import type { Horse, Race, Jockey } from "@/game/types";
+} from "@/domains/campaign/simulation/autoRegister";
+import type { Horse, Race, Jockey } from "@/platform/game/types";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

@@ -3,10 +3,10 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { buildRaceField } from "@/core/race/raceSimulationService";
-import type { Horse, Race, RaceEntry } from "@/game/types";
+import { buildRaceField } from "@/domains/race/simulation/raceSimulationService";
+import type { Horse, Race, RaceEntry } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse(overrides);

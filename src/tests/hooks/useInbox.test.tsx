@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { useInbox, useUnreadCount } from "@/hooks/inbox/useInbox";
-import { getCategoryIcon, getPriorityColor } from "@/core/inbox/inboxUtils";
-import { useGame } from "@/game/store";
-import type { InboxMessage } from "@/core/inbox/inboxTypes";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useInbox, useUnreadCount } from "@/domains/inbox/application/hooks/useInbox";
+import { getCategoryIcon, getPriorityColor } from "@/domains/inbox/simulation/inboxUtils";
+import { useGame } from "@/platform/game/store";
+import type { InboxMessage } from "@/domains/inbox/model/inboxTypes";
 
 function mkMsg(id: string, overrides: Partial<InboxMessage> = {}): InboxMessage {
   return {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { PlanSummaryBar } from "@/components/breeding/PlanSummaryBar";
-import type { SavedMatingPlan } from "@/game/store/state/breedingState";
+import { PlanSummaryBar } from "@/domains/breeding/ui/PlanSummaryBar";
+import type { SavedMatingPlan } from "@/platform/game/store/state/breedingState";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (

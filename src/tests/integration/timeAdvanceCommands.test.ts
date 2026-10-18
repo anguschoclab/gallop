@@ -7,14 +7,14 @@
  * transport.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { useGame } from "@/game/store";
+import { useGame } from "@/platform/game/store";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import { EngineClient, type EngineTransport } from "@/core/engine/client";
-import type { AdvanceCommand, EngineEvent } from "@/core/engine/protocol";
-import { _setEngineClientForTests } from "@/game/store/engineClient";
-import type { GameState } from "@/game/types";
-import { DAYS_PER_WEEK, DAYS_PER_MONTH, DAYS_PER_YEAR } from "@/constants";
+import { EngineClient, type EngineTransport } from "@/platform/engine/client";
+import type { AdvanceCommand, EngineEvent } from "@/platform/engine/protocol";
+import { _setEngineClientForTests } from "@/platform/game/store/engineClient";
+import type { GameState } from "@/platform/game/types";
+import { DAYS_PER_WEEK, DAYS_PER_MONTH, DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";;
 
 vi.mock("@/services/storage/storageAdapter", () => ({
   STORAGE_KEYS: {
@@ -35,7 +35,7 @@ vi.mock("@/services/storage/indexedDbService", () => ({
 }));
 
 vi.mock("@/game/store/storage", async (importActual) => {
-  const actual = await importActual<typeof import("@/game/store/storage")>();
+  const actual = await importActual<typeof import("@/platform/game/store/storage")>();
   return {
     ...actual,
     createIdbStorage: () => ({
@@ -142,7 +142,7 @@ describe("time-advance commands across scales", () => {
   it("engineRevision is session-transient — never persisted across reloads", async () => {
     // A persisted high revision would make the fresh post-reload engine (rev 0)
     // reject every advance as stale_base_revision. Guard the boundary.
-    const { PERSISTED_KEYS } = await import("@/game/store/persistedKeys");
+    const { PERSISTED_KEYS } = await import("@/platform/game/store/persistedKeys");
     expect(PERSISTED_KEYS).not.toContain("engineRevision");
     expect(PERSISTED_KEYS).not.toContain("engineGeneration");
     expect(PERSISTED_KEYS).not.toContain("execution");

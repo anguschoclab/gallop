@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeWeatherInjuryMultiplier } from "@/core/health/healthSystem";
+import { computeWeatherInjuryMultiplier } from "@/domains/health/simulation/healthSystem";
 
 describe("computeWeatherInjuryMultiplier", () => {
   it("should return 1.0 when context is undefined", () => {

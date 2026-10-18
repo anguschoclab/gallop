@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 interface MockEntry {
   horseId: string;

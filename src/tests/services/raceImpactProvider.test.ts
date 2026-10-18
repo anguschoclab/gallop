@@ -8,13 +8,13 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateRaceImpacts } from "@/core/race/raceImpactGenerator";
-import { isValidUUID } from "@/core/uuid";
-import { UUIDProvider } from "@/core/uuidProvider";
-import { createRng } from "@/core/common/rng";
+import { generateRaceImpacts } from "@/domains/race/simulation/raceImpactGenerator";
+import { isValidUUID } from "@/shared/uuid/uuid";
+import { UUIDProvider } from "@/shared/uuid/uuidProvider";
+import { createRng } from "@/shared/common/rng";
 import { createTestColt } from "@/tests/helpers/createTestHorse";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
-import type { Race } from "@/game/types";
+import type { Race } from "@/platform/game/types";
 
 function makeGradedRace(overrides: Partial<Race> = {}): Race {
   return {

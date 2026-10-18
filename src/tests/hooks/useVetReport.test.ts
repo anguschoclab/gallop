@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import { useVetReport } from "@/hooks/health/useVetReport";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useVetReport } from "@/domains/health/application/hooks/useVetReport";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { ActiveInjury } from "@/game/types";
+import type { ActiveInjury } from "@/platform/game/types";
 
 function seedHorses(horses: ReturnType<typeof createTestHorse>[]) {
   useGame.setState({ ...createDefaultGameState(), horses: h2r(horses) });

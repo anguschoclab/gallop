@@ -3,13 +3,13 @@ import { screen, cleanup, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { createElement } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { PersonRaceHistoryTab } from "@/components/person/PersonRaceHistoryTab";
+import { PersonRaceHistoryTab } from "@/domains/person/ui/PersonRaceHistoryTab";
 import { createTestHorse } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import type { Horse, GameState } from "@/game/types";
-import type { StaffMember } from "@/core/staff/staffTypes";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { Horse, GameState } from "@/platform/game/types";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, to, params, ...props }: any) =>

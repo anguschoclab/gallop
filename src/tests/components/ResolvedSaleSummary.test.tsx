@@ -6,8 +6,8 @@
 
 import { describe, it, expect, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-import { ResolvedSaleSummary } from "@/components/auction/ResolvedSaleSummary";
-import type { AuctionLot, Horse, AuctionSale } from "@/game/types";
+import { ResolvedSaleSummary } from "@/domains/auction/ui/ResolvedSaleSummary";
+import type { AuctionLot, Horse, AuctionSale } from "@/platform/game/types";
 
 function mkLot(overrides: Partial<AuctionLot> = {}): AuctionLot {
   return {

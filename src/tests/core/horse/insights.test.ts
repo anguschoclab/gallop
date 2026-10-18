@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { getHorseInsight } from "@/core/horse/insights";
-import type { Horse } from "@/core/horse/types";
+import { getHorseInsight } from "@/domains/horse/simulation/insights";
+import type { Horse } from "@/domains/horse/simulation/types";
 
 describe("getHorseInsight", () => {
   it("detects Undefeated when a horse has won all starts (min 3)", () => {
@@ -466,7 +466,7 @@ describe("Play Style Success insights", () => {
         { position: 3, day: 3, pacePositions: [2, 2, 3], fieldSize: 8 },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Catch Me If You Can");
     expect(insight!.type).toBe("positive");
@@ -480,7 +480,7 @@ describe("Play Style Success insights", () => {
         { position: 1, day: 3, pacePositions: [3, 2, 1] },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Closing Kick");
     expect(insight!.type).toBe("positive");
@@ -498,7 +498,7 @@ describe("Tipster: Closing Kick insight", () => {
         { position: 5, day: 3, pacePositions: [5, 4, 5], fieldSize: 8 },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Closing Kick");
   });
@@ -513,7 +513,7 @@ describe("Tipster: From the Clouds insight", () => {
         { position: 5, day: 3, pacePositions: [3, 3, 5], fieldSize: 8 },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("From the Clouds");
   });
@@ -528,7 +528,7 @@ describe("Tipster: Late Bloomer insight", () => {
         { position: 5, day: 3, pacePositions: [3, 3, 5], fieldSize: 8 },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Late Bloomer");
   });
@@ -543,7 +543,7 @@ describe("Tipster: Surface Versatility insight", () => {
         { position: 5, day: 3, surface: "Turf", beyer: 70 },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Dual-Surface Threat");
   });
@@ -559,7 +559,7 @@ describe("Tipster: Tactical Versatility insight", () => {
         { position: 5, day: 3, pacePositions: [3, 3, 5] },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Tactical Versatility");
   });
@@ -574,7 +574,7 @@ describe("Tipster: Late Charge insight", () => {
         { position: 5, day: 3, pacePositions: [3, 3, 5] },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Late Charge");
   });
@@ -589,7 +589,7 @@ describe("Deep Closer insights", () => {
         { position: 3, day: 3, fieldSize: 10, pacePositions: [2, 2, 3] },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("From the Clouds");
     expect(insight!.type).toBe("positive");
@@ -602,7 +602,7 @@ describe("Deep Closer insights", () => {
         { position: 1, day: 2, fieldSize: 3, pacePositions: [3, 2, 1] },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight?.label).not.toBe("From the Clouds");
   });
 
@@ -613,7 +613,7 @@ describe("Deep Closer insights", () => {
         { position: 1, day: 2, fieldSize: 10, pacePositions: [4, 3, 1] },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight?.label).not.toBe("From the Clouds");
   });
 });
@@ -627,7 +627,7 @@ describe("Late Bloomer insights", () => {
         { position: 3, day: 3, fieldSize: 8, pacePositions: [2, 2, 3] },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Late Bloomer");
     expect(insight!.type).toBe("positive");
@@ -643,7 +643,7 @@ describe("Versatility insights", () => {
         { position: 1, day: 3, surface: "Dirt" },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Dual-Surface Threat");
     expect(insight!.type).toBe("positive");
@@ -659,7 +659,7 @@ describe("Versatility insights", () => {
         { position: 1, day: 5, surface: "Synthetic" },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("All-Surface Master");
     expect(insight!.type).toBe("positive");
@@ -677,7 +677,7 @@ describe("Stakes Performance insights", () => {
         { position: 5, day: 5, beyer: 86, grade: undefined },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Big Stage Performer");
     expect(insight!.type).toBe("positive");
@@ -693,7 +693,7 @@ describe("Stakes Performance insights", () => {
         { position: 4, day: 5, beyer: 93, grade: undefined },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Stage Fright");
     expect(insight!.type).toBe("negative");
@@ -709,7 +709,7 @@ describe("Distance Versatility insights", () => {
         { position: 1, day: 3, distance: 1800 },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Distance Versatility");
     expect(insight!.type).toBe("positive");
@@ -723,7 +723,7 @@ describe("Distance Versatility insights", () => {
         { position: 5, day: 3, distance: 1800 },
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight?.label).not.toBe("Distance Versatility");
   });
 });
@@ -742,7 +742,7 @@ describe("Tipster: Gate Affinity insights", () => {
         { position: 5, day: 6, gate: 8, fieldSize: 10, beyer: 82 }, // avg outside = 80
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Rail Skimmer");
     expect(insight!.type).toBe("positive");
@@ -761,7 +761,7 @@ describe("Tipster: Gate Affinity insights", () => {
         { position: 1, day: 6, gate: 8, fieldSize: 10, beyer: 92 }, // avg outside = 90
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Free Running");
     expect(insight!.type).toBe("positive");
@@ -778,7 +778,7 @@ describe("Tipster: Gate Affinity insights", () => {
         { position: 3, day: 6, gate: 8, fieldSize: 10, beyer: 83 }, // avg outside = 83
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight?.label).not.toBe("Rail Skimmer");
     expect(insight?.label).not.toBe("Free Running");
   });
@@ -793,7 +793,7 @@ describe("Tipster: Gate Affinity insights", () => {
         { position: 4, day: 5, gate: 10, fieldSize: 10, beyer: 78 }, // only 2 outside
       ],
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight?.label).not.toBe("Rail Skimmer");
   });
 });
@@ -813,7 +813,7 @@ describe("Tipster: Sire Value insight", () => {
         standingFee: 15000,
       },
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight).not.toBeNull();
     expect(insight!.label).toBe("Value Sire");
     expect(insight!.type).toBe("positive");
@@ -833,7 +833,7 @@ describe("Tipster: Sire Value insight", () => {
         standingFee: 60000,
       },
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight!.label).toBe("Overpriced Sire");
     expect(insight!.type).toBe("negative");
   });
@@ -852,7 +852,7 @@ describe("Tipster: Sire Value insight", () => {
         standingFee: 100000,
       },
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight!.label).toBe("Elite Sire");
     expect(insight!.type).toBe("positive");
   });
@@ -871,7 +871,7 @@ describe("Tipster: Sire Value insight", () => {
         standingFee: 15000,
       },
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight?.label).not.toBe("Elite Sire");
     expect(insight?.label).not.toBe("Value Sire");
   });
@@ -890,7 +890,7 @@ describe("Tipster: Sire Value insight", () => {
         standingFee: 15000,
       },
     };
-    const insight = getHorseInsight(horse as unknown as import("@/core/horse/types").Horse);
+    const insight = getHorseInsight(horse as unknown as import("@/domains/horse/simulation/types").Horse);
     expect(insight?.label).not.toBe("Elite Sire");
     expect(insight?.label).not.toBe("Value Sire");
   });

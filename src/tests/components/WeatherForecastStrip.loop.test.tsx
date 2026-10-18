@@ -31,7 +31,7 @@ vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
 }));
 
-import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
+import { WeatherForecastStrip } from "@/domains/race/ui/WeatherForecastStrip";
 
 afterEach(() => cleanup());
 

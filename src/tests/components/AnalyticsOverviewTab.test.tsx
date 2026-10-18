@@ -1,10 +1,10 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { cleanup, screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { AnalyticsOverviewTab } from "@/components/analytics/AnalyticsOverviewTab";
+import { AnalyticsOverviewTab } from "@/domains/analytics/ui/AnalyticsOverviewTab";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("AnalyticsOverviewTab", () => {
   afterEach(() => {

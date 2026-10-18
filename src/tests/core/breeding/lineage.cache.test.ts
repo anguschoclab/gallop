@@ -7,9 +7,9 @@ import {
   getG1FoalsBy,
   totalEarningsBy,
   getRunnersBy,
-} from "@/core/breeding/lineage";
+} from "@/domains/breeding/simulation/lineage";
 import { createTestHorse } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 
 describe("lineage cache invalidation", () => {
   beforeEach(() => {

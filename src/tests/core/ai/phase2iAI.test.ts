@@ -21,7 +21,7 @@ import {
   shouldCreateSyndicateWithLearning,
 } from "@/domains/agents/simulation/syndicationAI";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("identifyCostOptimizationOpportunities", () => {
   it("returns empty array for healthy roster", () => {

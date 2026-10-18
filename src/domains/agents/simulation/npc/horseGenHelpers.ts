@@ -8,9 +8,9 @@
  * Related files: npcHorseGen.ts (uses these helpers)
  */
 
-import type { StableTier } from "@/game/types";
-import type { Rng } from "@/core/common/rng";
-import { rand } from "@/core/common/random";
+import type { StableTier } from "@/platform/game/types";
+import type { Rng } from "@/shared/common/rng";
+import { rand } from "@/shared/common/random";;
 
 export type AgeCategory = "2yo" | "prime" | "veteran" | "breeding";
 

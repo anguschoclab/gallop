@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import * as barrel from "@/constants";
-import * as raceBroadcast from "@/constants/raceBroadcastConstants";
-import * as regional from "@/constants/regionalConstants";
-import * as ui from "@/constants/uiConstants";
-import * as calendar from "@/constants/calendarConstants";
-import * as timeWindow from "@/core/analytics/timeWindow";
+import * as raceBroadcast from "@/domains/race/model/raceBroadcastConstants";
+import * as regional from "@/shared/constants/regionalConstants";
+import * as ui from "@/shared/constants/uiConstants";
+import * as calendar from "@/domains/calendar/model/calendarConstants";
+import * as timeWindow from "@/domains/analytics/simulation/timeWindow";
 
 describe("duplicate resolution", () => {
   it("WINNER_PURSE_SHARE is not exported from barrel", () => {

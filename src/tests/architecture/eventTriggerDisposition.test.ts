@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
-import { eventTriggersPhase } from "@/core/time/phases/eventTriggersPhase";
+import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
+import { eventTriggersPhase } from "@/platform/time/phases/eventTriggersPhase";
 import manifest from "@/tests/fixtures/campaignManifest.json";
 
 describe("event trigger disposition", () => {

@@ -8,8 +8,8 @@
  * Related files: strategicCoordinator.ts (provides world assessment), npcCycle.ts (calls runNarrativeCycle)
  */
 
-import type { Stable } from "@/game/types";
-import { generateUUID } from "@/core/uuid";
+import type { Stable } from "@/platform/game/types";
+import { generateUUID } from "@/shared/uuid/uuid";
 import type { NpcAIManager, NarrativeState, NarrativeArc, StoryBeat } from "./npcCycleAI";
 
 // ─── Constants ───────────────────────────────────────────────────────────────

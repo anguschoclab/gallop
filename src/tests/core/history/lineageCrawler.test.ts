@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 import {
   computePedigreeFounderInfluence,
   computeFounderInfluence,
-} from "@/core/history/lineageCrawler";
+} from "@/domains/history/simulation/lineageCrawler";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { PedigreeNode } from "@/core/breeding/types";
+import type { PedigreeNode } from "@/domains/breeding/model/types";
 
 describe("lineageCrawler", () => {
   describe("computePedigreeFounderInfluence", () => {

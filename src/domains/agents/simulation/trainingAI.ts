@@ -13,8 +13,8 @@
  * Personality-driven training priorities with learning from effectiveness
  */
 
-import type { Horse, Stable } from "@/game/types";
-import { TRAINING_HISTORY_MAX_SIZE } from "@/constants";
+import type { Horse, Stable } from "@/platform/game/types";
+import { TRAINING_HISTORY_MAX_SIZE } from "@/shared/constants/storageLimitsConstants";;
 import { getPersonalityAIState, calculateUtilityAdjustment } from "./personalitySystem";
 import {
   createLearningState,
@@ -22,7 +22,7 @@ import {
   getSuccessRate,
   type LearningState,
 } from "./learningModule";
-import { calculateRaceRating } from "@/core/horse/stats";
+import { calculateRaceRating } from "@/domains/horse/simulation/stats";
 
 export interface TrainingAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

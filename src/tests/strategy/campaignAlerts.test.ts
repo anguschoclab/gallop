@@ -1,15 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { schedulerPhase } from "@/core/time/phases/schedulerPhase";
-import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
-import { HorseHandler } from "@/core/resolver/handlers/HorseHandler";
+import { schedulerPhase } from "@/platform/time/phases/schedulerPhase";
+import { raceEntryResolutionPhase } from "@/platform/time/phases/raceEntryResolution";
+import { HorseHandler } from "@/platform/resolver/handlers/HorseHandler";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Race, HorseCampaign, GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { RaceEntryIntent } from "@/core/resolver/intents";
-import type { InjuryImpact, HealthStatusImpact } from "@/core/resolver/impacts/index";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asHorseId, asNpcStableId } from "@/core/types/branded";
-import { createRng } from "@/core/common/rng";
+import type { Race, HorseCampaign, GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { RaceEntryIntent } from "@/platform/resolver/intents";
+import type { InjuryImpact, HealthStatusImpact } from "@/platform/resolver/impacts";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asHorseId, asNpcStableId } from "@/shared/types/branded";
+import { createRng } from "@/shared/common/rng";
 
 describe("Campaign Alerts: Field Full Bumping & Injury Notifications", () => {
   it("emits an urgent inbox message and campaign flag when auto-entry skips due to full field", () => {

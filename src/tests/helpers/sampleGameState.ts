@@ -6,12 +6,12 @@
  * tests should extend the returned object with whatever fields they assert on.
  */
 
-import type { BreedingProgram } from "@/core/breeding/programs";
-import type { GameState, Horse, Race } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import { createBreedingProgram } from "@/core/breeding/programs";
-import { createRng } from "@/core/common/rng";
-import { PROGRAM_STATUS_ACTIVE } from "@/constants/breedingConstants";
+import type { BreedingProgram } from "@/domains/breeding/simulation/programs";
+import type { GameState, Horse, Race } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import { createBreedingProgram } from "@/domains/breeding/simulation/programs";
+import { createRng } from "@/shared/common/rng";
+import { PROGRAM_STATUS_ACTIVE } from "@/domains/breeding/model/breedingConstants";
 
 /**
  * Converts a Horse array to Record<string, Horse> for use in test state fixtures.

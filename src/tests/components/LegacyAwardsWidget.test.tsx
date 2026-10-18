@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { screen, cleanup } from "@testing-library/react";
-import { LegacyAwardsWidget } from "@/components/dashboard/LegacyAwardsWidget";
+import { LegacyAwardsWidget } from "@/domains/dashboard/ui/LegacyAwardsWidget";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import type { RegionalAward } from "@/core/awards/types";
-import { CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
+import type { RegionalAward } from "@/domains/awards/model/types";
+import { CATEGORY_DESCRIPTIONS } from "@/domains/awards/model/types";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, to, params, search }: any) => (

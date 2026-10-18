@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createRef } from "react";
 import { act, render, screen, fireEvent, cleanup } from "@testing-library/react";
-import { BidInputPanel, type BidInputPanelHandle } from "@/components/auction/sub/BidInputPanel";
+import { BidInputPanel, type BidInputPanelHandle } from "@/domains/auction/ui/sub/BidInputPanel";
 
 describe("BidInputPanel", () => {
   beforeEach(() => {

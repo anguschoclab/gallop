@@ -3,10 +3,10 @@ import { createElement, type ReactNode } from "react";
 import { screen, fireEvent, cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
-import type { Horse } from "@/core/horse/types";
-import type { Jockey } from "@/core/jockey/types";
-import type { JockeyTrait } from "@/game/types";
-import type { StaffMember } from "@/core/staff/staffTypes";
+import type { Horse } from "@/domains/horse/simulation/types";
+import type { Jockey } from "@/domains/jockey/model/types";
+import type { JockeyTrait } from "@/platform/game/types";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -23,8 +23,8 @@ vi.mock("@/core/horse/stats", () => ({
   calculateOverallRating: (h: Horse) => h.potential ?? 50,
 }));
 
-import { JockeyRoster } from "@/components/jockey/JockeyRoster";
-import { StaffTeamList } from "@/components/staff/StaffTeamList";
+import { JockeyRoster } from "@/domains/jockey/ui/JockeyRoster";
+import { StaffTeamList } from "@/domains/staff/ui/StaffTeamList";
 
 describe("Trait Search Integration", () => {
   beforeEach(() => {

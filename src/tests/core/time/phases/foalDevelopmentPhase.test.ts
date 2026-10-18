@@ -12,15 +12,15 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { foalDevelopmentPhase } from "@/core/time/phases/foalDevelopmentPhase";
-import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
+import { foalDevelopmentPhase } from "@/platform/time/phases/foalDevelopmentPhase";
+import { createDefaultFoalDevelopmentArc } from "@/domains/horse/simulation/foalDevelopment";
 import { createTestHorse } from "@/tests/helpers";
-import { createRng } from "@/core/common/rng";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
-import type { InboxImpact } from "@/core/resolver/impacts/index";
+import { createRng } from "@/shared/common/rng";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { InboxImpact } from "@/platform/resolver/impacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function makeContext(state: Partial<GameState>, newDay: number): PipelineContext {
   const fullState: GameState = {

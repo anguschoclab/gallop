@@ -8,20 +8,20 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import {
   createDefaultExchangeState,
   netProceeds,
   EXCHANGE_ORDER_TTL_DAYS,
   type ExchangeAsk,
   type ExchangeBid,
-} from "@/core/market/exchange";
+} from "@/domains/market/simulation/exchange";
 import { createTestHorse } from "@/tests/helpers";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
-import { AUCTION_HOUSES } from "@/core/prestige/auctionHouses";
-import type { Horse, Stable } from "@/game/types";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { AUCTION_HOUSES } from "@/domains/prestige/simulation/auctionHouses";
+import type { Horse, Stable } from "@/platform/game/types";
 
 function mkStable(overrides: Partial<Stable> & { id: string }): Stable {
   return {

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
-import type { Horse } from "@/game/types";
-import { asNpcStableId } from "@/core/types/branded";
-import type { useNpcStableDetail } from "@/hooks/stable/useNpcStableDetail";
+import type { Horse } from "@/platform/game/types";
+import { asNpcStableId } from "@/shared/types/branded";
+import type { useNpcStableDetail } from "@/domains/stable/application/hooks/useNpcStableDetail";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
@@ -59,8 +59,8 @@ vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
-import { NpcStableRosterTab } from "@/components/stable/NpcStableRosterTab";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { NpcStableRosterTab } from "@/domains/stable/ui/NpcStableRosterTab";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({

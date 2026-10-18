@@ -8,13 +8,13 @@
  * Related files: npcRaceEntry.ts (uses these helpers)
  */
 
-import type { Horse, Race, Stable } from "@/game/types";
-import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { isHorseEligibleForRace } from "@/core/race/eligibility";
-import { calculateRaceSuitability } from "@/core/race/entryScoring";
-import { MAX_HORSES_PER_STABLE_PER_RACE, MIN_ENERGY_TO_ENTER } from "@/constants";
-import { getFormTolerance } from "@/core/stable/personalityModifiers";
-import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import type { Horse, Race, Stable } from "@/platform/game/types";
+import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import { isHorseEligibleForRace } from "@/domains/race/simulation/eligibility";
+import { calculateRaceSuitability } from "@/domains/race/simulation/entryScoring";
+import { MAX_HORSES_PER_STABLE_PER_RACE, MIN_ENERGY_TO_ENTER } from "@/domains/race/model/raceEntryConstants";;
+import { getFormTolerance } from "@/domains/stable/simulation/personalityModifiers";
+import { PERSONALITY_CONFIG } from "@/domains/stable/simulation/stableConfig";
 
 /**
  * Check if a horse should enter a race (basic eligibility + suitability).

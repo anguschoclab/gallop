@@ -13,16 +13,16 @@
 // Pool-based system: Large pools of named stables, config determines how many spawn
 // Refactored to use modular configuration and generation systems
 
-import type { Stable } from "@/game/types";
-import type { Rng } from "@/core/common/rng";
-import { STABLE_CONFIG } from "@/core/stable/stableConfig";
-import type { WorldSizeStableConfig } from "@/core/stable/worldSizeConfig";
-import { shuffleAndPick } from "@/core/stable/stableSelection";
-import { generateFillerStable, generateStableFromTemplate } from "@/core/stable/stableGeneration";
-import { ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES } from "@/core/breeding/archetypes";
-import { ELITE_POOL, MID_POOL, BUDGET_POOL } from "@/core/stable/stablePoolData";
-import { SECONDARY_POOL } from "@/core/stable/secondaryStablePool";
-import { resolveStableYard } from "@/core/stable/stableYard";
+import type { Stable } from "@/platform/game/types";
+import type { Rng } from "@/shared/common/rng";
+import { STABLE_CONFIG } from "@/domains/stable/simulation/stableConfig";
+import type { WorldSizeStableConfig } from "@/domains/stable/simulation/worldSizeConfig";
+import { shuffleAndPick } from "@/domains/stable/simulation/stableSelection";
+import { generateFillerStable, generateStableFromTemplate } from "@/domains/stable/simulation/stableGeneration";
+import { ORIGINAL_ARCHETYPES, TRIPLE_CROWN_ARCHETYPES } from "@/domains/breeding/simulation/archetypes";
+import { ELITE_POOL, MID_POOL, BUDGET_POOL } from "@/domains/stable/simulation/stablePoolData";
+import { SECONDARY_POOL } from "@/domains/stable/simulation/secondaryStablePool";
+import { resolveStableYard } from "@/domains/stable/simulation/stableYard";
 
 /**
  * Generates all NPC stables for the game world, including both named template-based stables and procedural filler stables.

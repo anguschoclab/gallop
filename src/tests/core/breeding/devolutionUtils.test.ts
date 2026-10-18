@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { findMajorityOwner, simulateShareChange } from "@/core/breeding/devolutionUtils";
+import { findMajorityOwner, simulateShareChange } from "@/domains/breeding/simulation/devolutionUtils";
 
 describe("devolutionUtils", () => {
   describe("findMajorityOwner", () => {

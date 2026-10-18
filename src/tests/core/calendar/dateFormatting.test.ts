@@ -5,7 +5,7 @@ import {
   dayOfYear,
   gameYearNumber,
   gameCalendarDate,
-} from "@/core/calendar/dateFormatting";
+} from "@/domains/calendar/simulation/dateFormatting";
 
 describe("dayOfYear", () => {
   it("day 1 → 1", () => expect(dayOfYear(1)).toBe(1));

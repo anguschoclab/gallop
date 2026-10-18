@@ -7,10 +7,10 @@
 
 import { describe, it, expect } from "vitest";
 import { generateNpcIntents } from "@/domains/agents/simulation/npc/intentGenerators";
-import type { GameState, Stable, Horse } from "@/game/types";
+import type { GameState, Stable, Horse } from "@/platform/game/types";
 import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({

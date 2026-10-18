@@ -1,19 +1,19 @@
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import { describe, it, expect } from "vitest";
 import {
   generateCommentaryLine,
   generateExpertInsight,
-} from "@/services/narrative/commentaryGenerator";
-import { NarrativeGenerator } from "@/services/narrative/narrativeService";
-import type { Race, Horse, Stable } from "@/game/types";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { createRng, hashStr } from "@/core/common/rng";
+} from "@/domains/narrative/application/commentaryGenerator";
+import { NarrativeGenerator } from "@/domains/narrative/application/narrativeService";
+import type { Race, Horse, Stable } from "@/platform/game/types";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { createRng, hashStr } from "@/shared/common/rng";
 import {
   TEMPLATES,
   BIOGRAPHICAL_TEMPLATES,
   EXPERT_INSIGHT_TEMPLATES,
   FRAGMENTS,
-} from "@/assets/narrative/templates";
+} from "@/shared/assets/narrative/templates";
 
 // ---------------------------------------------------------------------------
 // Fixtures

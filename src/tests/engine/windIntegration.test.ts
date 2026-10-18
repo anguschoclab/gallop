@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { runRaceToCompletion, calculateWindEffect } from "@/core/race/engine/simulation";
-import { buildRunner, getConditionsModifier } from "@/core/race/engine/runnerBuilder";
-import { createRng } from "@/core/common/rng";
+import { runRaceToCompletion, calculateWindEffect } from "@/domains/race/simulation/engine/simulation";
+import { buildRunner, getConditionsModifier } from "@/domains/race/simulation/engine/runnerBuilder";
+import { createRng } from "@/shared/common/rng";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { CourseSpecification, TrackSection } from "@/data/tracks";
+import type { CourseSpecification, TrackSection } from "@/shared/data/tracks";
 
 const distance = 1200;
 const conditions = getConditionsModifier({});

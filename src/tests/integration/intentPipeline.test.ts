@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
+import type { GameState } from "@/platform/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { runPipelineForDay } from "@/tests/helpers/runPipeline";
-import type { TrainingIntent } from "@/core/resolver/intents";
+import type { TrainingIntent } from "@/platform/resolver/intents";
 
 describe("Intent/Resolution Pipeline Integration", () => {
   const createTestState = (): GameState => ({

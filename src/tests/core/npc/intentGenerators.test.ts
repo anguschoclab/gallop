@@ -11,10 +11,10 @@ import {
 } from "@/domains/agents/simulation/strategicCoordinator";
 import { updateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { NPC_ACTION_REGISTRY } from "@/domains/agents/simulation/npcActionRegistry";
-import type { GameState, Stable } from "@/game/types";
+import type { GameState, Stable } from "@/platform/game/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
+import { makeNpcOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 // Define a mock instance variable to control throw behavior
 let shouldThrowForStable1 = false;

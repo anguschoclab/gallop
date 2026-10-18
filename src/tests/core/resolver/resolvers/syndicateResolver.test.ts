@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
-import { GameState, Horse, Syndicate } from "@/game/types";
+import { resolveSyndicationIntent } from "@/platform/resolver/resolvers/syndicateResolver";
+import { GameState, Horse, Syndicate } from "@/platform/game/types";
 import {
   SyndicateCreationIntent,
   SharePurchaseIntent,
   ShareSaleIntent,
-} from "@/core/resolver/intents";
+} from "@/platform/resolver/intents";
 
 vi.mock("@/game/uuid", () => ({ generateUUID: () => "test-uuid-1234" }));
 vi.mock("@/core/uuid", () => ({ generateUUID: () => "test-uuid-1234" }));

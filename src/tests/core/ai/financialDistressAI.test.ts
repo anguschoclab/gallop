@@ -16,11 +16,11 @@ import {
   PRESTIGE_STUD_FEE_RESISTANCE,
   TRADER_STUD_FEE_AGGRESSION,
   BREEDING_MARE_FRACTION,
-} from "@/constants/financialDistressConstants";
+} from "@/domains/financial/model/financialDistressConstants";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
-import type { Horse } from "@/game/types";
-import type { Syndicate } from "@/core/breeding/types";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import type { Horse } from "@/platform/game/types";
+import type { Syndicate } from "@/domains/breeding/model/types";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 // ─── assessFinancialDistress ─────────────────────────────────────────────────
 

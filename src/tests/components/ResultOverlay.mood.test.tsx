@@ -2,8 +2,8 @@ import { describe, it, expect, vi } from "vitest";
 import { createElement } from "react";
 import { render, screen, cleanup } from "@testing-library/react";
 import { afterEach } from "vitest";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { RunnerMood } from "@/core/race/runnerConditions";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import type { RunnerMood } from "@/domains/race/simulation/runnerConditions";
 
 // Mock child components that make network/router calls
 vi.mock("@tanstack/react-router", () => ({
@@ -69,7 +69,7 @@ vi.mock("@/components/race/RaceVerdictBar", () => ({
 }));
 
 vi.mock("@/core/common/formatting", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/core/common/formatting")>();
+  const actual = await importOriginal<typeof import("@/shared/common/formatting")>();
   return {
     ...actual,
     formatCurrency: (n: number) => `$${n.toLocaleString()}`,
@@ -103,7 +103,7 @@ vi.mock("@/core/race/engine/compareFinishOrder", () => ({
 }));
 
 // Import after mocks
-import { ResultOverlay } from "@/components/race/ResultOverlay";
+import { ResultOverlay } from "@/domains/race/ui/ResultOverlay";
 
 function makeMood(overrides: Partial<RunnerMood> = {}): RunnerMood {
   return {

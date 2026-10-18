@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { PregnancyTimeline } from "@/components/breeding/PregnancyTimeline";
-import { useBroodmareData } from "@/hooks/breeding/useBroodmareData";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Button } from "@/shared/ui/button";
+import { Badge } from "@/shared/ui/badge";
+import { PregnancyTimeline } from "@/domains/breeding/ui/PregnancyTimeline";
+import { useBroodmareData } from "@/domains/breeding/application/hooks/useBroodmareData";
 import { FileText, Heart } from "lucide-react";
 
 export const Route = createFileRoute("/broodmares")({

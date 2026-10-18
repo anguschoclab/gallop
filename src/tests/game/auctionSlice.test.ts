@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import type { AuctionSale, AuctionLot } from "@/game/types";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { AuctionSale, AuctionLot } from "@/platform/game/types";
 
 function mkLot(overrides: Partial<AuctionLot> = {}): AuctionLot {
   return {

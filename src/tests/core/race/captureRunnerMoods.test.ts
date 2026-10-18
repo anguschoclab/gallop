@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { captureRunnerMoods } from "@/core/race/runnerConditions";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { makeUnowned } from "@/core/horse/ownership";
+import { captureRunnerMoods } from "@/domains/race/simulation/runnerConditions";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function horse(temperament = 50, injured = false) {
   return {

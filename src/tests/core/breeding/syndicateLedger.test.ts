@@ -5,11 +5,11 @@ import {
   syndicateLedgerTimeSeries,
   SYNDICATE_SNAPSHOT_MAX,
   type SyndicateValueSnapshot,
-} from "@/core/breeding/syndicateLedger";
-import type { ShareActivityFeedItem, Syndicate } from "@/core/breeding/types";
-import { SyndicationHandler } from "@/core/resolver/handlers/SyndicationHandler";
-import type { SyndicateFeeDistributionImpact } from "@/core/resolver/impacts/breedingImpacts";
-import type { GameState } from "@/game/types";
+} from "@/domains/breeding/simulation/syndicateLedger";
+import type { ShareActivityFeedItem, Syndicate } from "@/domains/breeding/model/types";
+import { SyndicationHandler } from "@/platform/resolver/handlers/SyndicationHandler";
+import type { SyndicateFeeDistributionImpact } from "@/platform/resolver/impacts/breedingImpacts";
+import type { GameState } from "@/platform/game/types";
 
 const syndicate = (overrides: Partial<Syndicate> = {}): Syndicate =>
   ({

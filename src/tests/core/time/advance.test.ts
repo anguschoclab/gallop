@@ -3,10 +3,10 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { computePlayerRaceDays } from "@/core/time/advance";
-import { getCurrentYear } from "@/core/race/schedule";
-import type { Race } from "@/game/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { computePlayerRaceDays } from "@/platform/time/advance";
+import { getCurrentYear } from "@/domains/race/simulation/schedule";
+import type { Race } from "@/platform/game/types";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("computePlayerRaceDays", () => {
   it("should return empty set when no races have player entries", () => {

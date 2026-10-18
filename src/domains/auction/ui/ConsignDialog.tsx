@@ -1,0 +1,157 @@
+// Consign-horse dialog with reserve slider and live commission preview.
+//
+// UX goal: a player should *understand* what they're agreeing to before
+// they consign. This dialog surfaces the 6% sale-house commission, lets
+// them choose a reserve between 50% and 100% of estimated value, and
+// shows them what they'll net at reserve and at a "good outcome"
+// (reserve + 50%).
+
+import { useMemo, useState } from "react";
+import { useGame, useGameWithShallow } from "@/platform/game/store";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/shared/ui/dialog";
+import { Button } from "@/shared/ui/button";
+import { Slider } from "@/shared/ui/slider";
+import { Badge } from "@/shared/ui/badge";
+import { netProceeds } from "@/domains/auction/application/auctionFacade";
+import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/domains/auction/model/auctionConstants";
+import { CONSIGNMENT_COMMISSION } from "@/domains/market/model/economicConstants";;
+import { KIND_LABELS } from "@/domains/auction/application/auctionFacade";
+import { formatCurrency } from "@/shared/common/formatting";;
+import { horseMarketValue, horseCareerValuation } from "@/domains/horse/application/horseFacade";
+import { CareerValuationBreakdown } from "@/domains/horse/ui/CareerValuationBreakdown";
+import { resolveSaleHouse, houseCommissionRate } from "@/domains/prestige/application/prestigeFacade";
+import type { Horse, AuctionSale } from "@/platform/game/types";
+
+type Props = {
+  horse: Horse;
+  sale: AuctionSale;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+export function ConsignDialog({ horse, sale, open, onOpenChange }: Props) {
+  const horses = useGameWithShallow((s) => s.horses);
+  const consignHorse = useGame((s) => s.consignHorse);
+
+  const horseArr = useMemo(() => Object.values(horses), [horses]);
+  const baseValue = useMemo(() => horseMarketValue(horse, horseArr), [horse, horseArr]);
+  const careerValuation = useMemo(() => horseCareerValuation(horse, horseArr), [horse, horseArr]);
+  // Slider is a percentage of base value (50–100%), default 70%.
+  const [reservePct, setReservePct] = useState(Math.round(DEFAULT_PLAYER_RESERVE_RATIO * 100));
+  const reservePrice = Math.round(baseValue * (reservePct / 100));
+  const house = resolveSaleHouse(sale);
+  const effectiveCommissionRate = houseCommissionRate(CONSIGNMENT_COMMISSION, house);
+  const netAtReserve = netProceeds(reservePrice, house);
+  const netAtUpside = netProceeds(Math.round(reservePrice * 1.5), house);
+  const commissionAtReserve = reservePrice - netAtReserve;
+
+  const [error, setError] = useState<string | null>(null);
+
+  function submit() {
+    setError(null);
+    const result = consignHorse(horse.id, sale.id, reservePrice);
+    if (!result.ok) {
+      setError(result.reason);
+      return;
+    }
+    onOpenChange(false);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Consign {horse.name}</DialogTitle>
+          <DialogDescription>
+            {sale.name} · <Badge variant="outline">{KIND_LABELS[sale.kind] ?? sale.kind}</Badge>
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-5 py-2">
+          {/* Estimated value */}
+          <div className="rounded-lg border bg-muted/40 p-3 space-y-1">
+            <div className="flex items-center justify-between text-sm">
+              <span className="text-muted-foreground">Estimated value</span>
+              <span className="font-medium tabular-nums">{formatCurrency(baseValue)}</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Based on stats, age, and pedigree. The market may pay above or below.
+            </p>
+          </div>
+
+          {/* Career valuation breakdown */}
+          <div className="rounded-lg border bg-muted/20 p-3 space-y-2">
+            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+              Career Valuation
+            </div>
+            <CareerValuationBreakdown valuation={careerValuation} />
+            <p className="text-[10px] text-muted-foreground pt-1">
+              Pre-career = yearling projection from pedigree &amp; potential · Post-career =
+              breeding residual at prime reproductive age
+            </p>
+          </div>
+
+          {/* Reserve slider */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium">Reserve price</label>
+              <span className="text-sm tabular-nums font-semibold">
+                {formatCurrency(reservePrice)}{" "}
+                <span className="text-muted-foreground font-normal">({reservePct}%)</span>
+              </span>
+            </div>
+            <Slider
+              min={50}
+              max={100}
+              step={5}
+              value={[reservePct]}
+              onValueChange={(v) => setReservePct(v[0])}
+            />
+            <div className="flex justify-between text-xs text-muted-foreground">
+              <span>50% · easy sale</span>
+              <span>100% · holds out</span>
+            </div>
+          </div>
+
+          {/* Commission disclosure */}
+          <div className="rounded-lg border-l-4 border-l-warning bg-warning/5 p-3 space-y-1.5">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-medium">Sale-house commission</span>
+              <span className="tabular-nums">{Math.round(effectiveCommissionRate * 100)}%</span>
+            </div>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>Commission at reserve</span>
+              <span className="tabular-nums">{formatCurrency(commissionAtReserve)}</span>
+            </div>
+            <div className="border-t pt-1.5 mt-1.5 space-y-0.5">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-muted-foreground">Net if sold at reserve</span>
+                <span className="font-semibold tabular-nums">{formatCurrency(netAtReserve)}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Net at strong outcome (reserve × 1.5)</span>
+                <span className="tabular-nums">{formatCurrency(netAtUpside)}</span>
+              </div>
+            </div>
+          </div>
+
+          {error && <p className="text-sm text-destructive">{error}</p>}
+        </div>
+
+        <DialogFooter className="gap-2 sm:gap-2">
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancel
+          </Button>
+          <Button onClick={submit}>Consign to {sale.name.split(" ").slice(0, 2).join(" ")}</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}

@@ -1,19 +1,19 @@
 import { describe, it, expect } from "vitest";
-import { createInitialState } from "@/game/store/initialization";
-import { BACKSTORIES } from "@/core/common/backstories";
-import { UPKEEP_PER_HORSE } from "@/constants";
-import { isPlayerOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
-import { calculateTotalMaintenance } from "@/core/facilities/facilityDefaults";
+import { createInitialState } from "@/platform/game/store/initialization";
+import { BACKSTORIES } from "@/shared/common/backstories";
+import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";;
+import { isPlayerOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
+import { calculateTotalMaintenance } from "@/domains/facilities/simulation/facilityDefaults";
 import { runPipelineForDays } from "@/tests/helpers/runPipeline";
 import { createTestHorse } from "@/tests/helpers";
-import { buildAuctionImpacts } from "@/core/auction/auctionRunnerImpacts";
-import { netProceeds } from "@/core/auction/engine";
-import { resolveSaleHouse } from "@/core/prestige";
-import type { LotState } from "@/core/auction/auctionRunnerTypes";
-import type { AuctionSale, Horse } from "@/game/types";
-import type { NewGameOptions } from "@/game/store/state";
-import type { CashImpact } from "@/core/resolver/impacts/index";
-import type { InsurancePayoutImpact } from "@/core/resolver/impacts/raceImpacts";
+import { buildAuctionImpacts } from "@/domains/auction/simulation/auctionRunnerImpacts";
+import { netProceeds } from "@/domains/auction/simulation/engine";
+import { resolveSaleHouse } from "@/domains/prestige/simulation";
+import type { LotState } from "@/domains/auction/model/auctionRunnerTypes";
+import type { AuctionSale, Horse } from "@/platform/game/types";
+import type { NewGameOptions } from "@/platform/game/store/state";
+import type { CashImpact } from "@/platform/resolver/impacts";
+import type { InsurancePayoutImpact } from "@/platform/resolver/impacts/raceImpacts";
 
 const ALLOWED_POSITIVE_SOURCES = [
   "auction_proceeds_player",

@@ -4,9 +4,9 @@ import {
   mergeBiddingHistory,
   biddingHistorySummary,
   playerBidsForLot,
-} from "@/core/auction/biddingHistory";
-import type { AuctionLot, AuctionSale } from "@/core/market/types";
-import { asHorseId, asStableId, asPlayerOwnerId } from "@/core/types/branded";
+} from "@/domains/auction/simulation/biddingHistory";
+import type { AuctionLot, AuctionSale } from "@/domains/market/model/types";
+import { asHorseId, asStableId, asPlayerOwnerId } from "@/shared/types/branded";
 
 const sale = {
   id: "sale1",

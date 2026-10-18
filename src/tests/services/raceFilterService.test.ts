@@ -3,8 +3,8 @@ import {
   getFilteredRaces,
   getRacesByTrack,
   getRacesByMonth,
-} from "@/services/race/raceFilterService";
-import type { Race } from "@/game/types";
+} from "@/domains/race/application/raceFilterService";
+import type { Race } from "@/platform/game/types";
 
 function mkRace(overrides: Partial<Race> = {}): Race {
   return {

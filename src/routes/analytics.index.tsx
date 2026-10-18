@@ -1,15 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { AnalyticsOverviewTab } from "@/components/analytics/AnalyticsOverviewTab";
-import { AnalyticsStableTab } from "@/components/analytics/AnalyticsStableTab";
-import { AnalyticsRacingTab } from "@/components/analytics/AnalyticsRacingTab";
-import { AnalyticsFinanceTab } from "@/components/analytics/AnalyticsFinanceTab";
-import { AnalyticsBreedingTab } from "@/components/analytics/AnalyticsBreedingTab";
-import { RivalIntelTab } from "@/components/analytics/RivalIntelTab";
-import { EconomicIndicators } from "@/components/analytics/EconomicIndicators";
-import { NpcAIStatusPanel } from "@/components/analytics/NpcAIStatusPanel";
-import { useTabParam } from "@/hooks/ui/useTabParam";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { AnalyticsOverviewTab } from "@/domains/analytics/ui/AnalyticsOverviewTab";
+import { AnalyticsStableTab } from "@/domains/analytics/ui/AnalyticsStableTab";
+import { AnalyticsRacingTab } from "@/domains/analytics/ui/AnalyticsRacingTab";
+import { AnalyticsFinanceTab } from "@/domains/analytics/ui/AnalyticsFinanceTab";
+import { AnalyticsBreedingTab } from "@/domains/analytics/ui/AnalyticsBreedingTab";
+import { RivalIntelTab } from "@/domains/analytics/ui/RivalIntelTab";
+import { EconomicIndicators } from "@/domains/analytics/ui/EconomicIndicators";
+import { NpcAIStatusPanel } from "@/domains/analytics/ui/NpcAIStatusPanel";
+import { useTabParam } from "@/shared/hooks/ui/useTabParam";
 import { BarChart3, Zap, DollarSign, Sprout, PawPrint, Eye } from "lucide-react";
 
 const ANALYTICS_TABS = [

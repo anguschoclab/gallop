@@ -4,7 +4,7 @@ import {
   getRacecoursePrestigeByName,
   getHouseForSaleKind,
   racecoursePrestigeMultiplier,
-} from "@/core/prestige";
+} from "@/domains/prestige/simulation";
 
 describe("venue prestige", () => {
   it("ranks major courses above minor ones", () => {

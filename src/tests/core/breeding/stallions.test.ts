@@ -5,8 +5,8 @@ import {
   recalcStandingFee,
   isStallionAvailable,
   shouldRetireAtStartup,
-} from "@/core/breeding/stallions";
-import type { Horse, Stable } from "@/game/types";
+} from "@/domains/breeding/simulation/stallions";
+import type { Horse, Stable } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
 

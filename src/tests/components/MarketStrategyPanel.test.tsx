@@ -9,18 +9,18 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { createElement } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { useGame } from "@/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useGame } from "@/platform/game/store";
 import {
   createDefaultExchangeState,
   type ExchangeAsk,
   type ExchangeTrade,
-} from "@/core/market/exchange";
+} from "@/domains/market/simulation/exchange";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId } from "@/core/types/branded";
-import type { Syndicate } from "@/core/breeding/types";
-import { MarketStrategyPanel } from "@/components/market/MarketStrategyPanel";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asHorseId } from "@/shared/types/branded";
+import type { Syndicate } from "@/domains/breeding/model/types";
+import { MarketStrategyPanel } from "@/domains/market/ui/MarketStrategyPanel";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children }: { children?: React.ReactNode }) => createElement("a", {}, children),

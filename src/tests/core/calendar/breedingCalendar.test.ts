@@ -4,7 +4,7 @@ import {
   nextBreedingSeasonStart,
   isUniversalBirthday,
   isBreedingSeasonStart,
-} from "@/core/calendar/breedingCalendar";
+} from "@/domains/calendar/simulation/breedingCalendar";
 
 describe("breedingCalendar", () => {
   describe("inBreedingSeason", () => {

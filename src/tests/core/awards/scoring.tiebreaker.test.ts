@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { determineRegionalWinners } from "@/core/awards/scoring";
-import type { Horse, Race } from "@/game/types";
+import { determineRegionalWinners } from "@/domains/awards/simulation/scoring";
+import type { Horse, Race } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 
 function mkRace(

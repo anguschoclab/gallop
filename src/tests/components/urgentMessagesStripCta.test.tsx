@@ -35,13 +35,13 @@ vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
-import { UrgentMessagesStrip } from "@/components/dashboard/UrgentMessagesStrip";
+import { UrgentMessagesStrip } from "@/domains/dashboard/ui/UrgentMessagesStrip";
 import { Route as FoalDevelopmentRoute } from "@/routes/foal-development.$horseId";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestHorse } from "@/tests/helpers";
-import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
+import { createDefaultFoalDevelopmentArc } from "@/domains/horse/simulation/foalDevelopment";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("Foal development inbox CTA → route → back navigation", () => {
   afterEach(() => {

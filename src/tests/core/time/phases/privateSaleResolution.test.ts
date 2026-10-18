@@ -2,17 +2,17 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/game/types";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
+import type { GameState, PrivateSaleOffer, Horse, Stable } from "@/platform/game/types";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asHorseId, asStableId } from "@/shared/types/branded";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { PipelineContext } from "@/platform/time/pipeline";
 import {
   setCashPressureTuningOverrides,
   resetCashPressureTuningOverrides,
-} from "@/core/stable/cashPressureTuning";
-import { UPKEEP_PER_HORSE } from "@/constants/economicConstants";
-import { DECISION_TRACE_LOG_PREFIX } from "@/constants/privateSaleConstants";
+} from "@/domains/stable/simulation/cashPressureTuning";
+import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
+import { DECISION_TRACE_LOG_PREFIX } from "@/domains/market/model/privateSaleConstants";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
   id: "offer-1",
@@ -64,17 +64,17 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("should have correct name", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     expect(mod.privateSaleResolutionPhase.name).toBe("privateSaleResolution");
   });
 
   it("should have order 34", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     expect(mod.privateSaleResolutionPhase.order).toBe(34);
   });
 
   it("returns context unchanged when no pending offers", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const ctx = createContext({
       horses: h2r([mkHorse()]),
       npcStables: [mkStable()],
@@ -85,11 +85,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("aggressive: high offer (>=0.7x valuation) accepted", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "aggressive" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -115,11 +115,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("aggressive: medium offer (>=0.5x valuation) countered", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "aggressive" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -139,11 +139,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("aggressive: low offer (<0.5x valuation) declined", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "aggressive" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -163,11 +163,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("conservative: offer >= 1.0x valuation accepted", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "conservative" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -185,11 +185,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("conservative: offer >= 0.8x valuation countered", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "conservative" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -208,11 +208,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("conservative: low offer declined", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "conservative" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -230,11 +230,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("prestige: only accepts >= 1.3x valuation", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "prestige" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -261,11 +261,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("breeder: only accepts >= 1.1x valuation", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "breeder" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -283,11 +283,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("trader: accepts >= 0.8x valuation", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "trader" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -305,11 +305,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("developer: accepts >= 0.9x valuation", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "developer" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -327,11 +327,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("win-now: accepts >= 1.0x valuation", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "win-now" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -349,11 +349,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("specialist: accepts >= 1.0x valuation", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "specialist" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -371,7 +371,7 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("non-pending offers are not processed", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const ctx = createContext({
       horses: h2r([mkHorse()]),
       npcStables: [mkStable()],
@@ -391,11 +391,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("accepted offer generates correct impacts", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "aggressive" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -430,11 +430,11 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("countered offer sets counterAmount", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse();
     const stable = mkStable({ personality: "aggressive" });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse,
       stable,
@@ -452,15 +452,15 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("log entries generated for each decision", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse1 = mkHorse({ id: asHorseId("horse-1"), name: "Thunder" });
     const horse2 = mkHorse({ id: asHorseId("horse-2"), name: "Lightning" });
     const stable = mkStable({
       personality: "aggressive",
       horses: [asHorseId("horse-1"), asHorseId("horse-2")],
     });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse1,
       stable,
@@ -483,7 +483,7 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("horse not found — offer skipped, remains pending", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const ctx = createContext({
       horses: {},
       npcStables: [mkStable()],
@@ -494,7 +494,7 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("stable not found — offer skipped, remains pending", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const ctx = createContext({
       horses: h2r([mkHorse()]),
       npcStables: [],
@@ -505,7 +505,7 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("horse already transferred (stableId mismatch) — offer declined", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse = mkHorse({ ownership: makeNpcOwned(asNpcStableId("different-stable")) });
     const ctx = createContext({
       horses: h2r([horse]),
@@ -517,12 +517,12 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("multiple pending offers for different horses — all processed independently", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
     const horse1 = mkHorse({ id: asHorseId("horse-1"), name: "Thunder" });
     const horse2 = mkHorse({ id: asHorseId("horse-2"), name: "Lightning" });
     const stable = mkStable({ horses: [asHorseId("horse-1"), asHorseId("horse-2")] });
-    const { calculateLotValuation } = await import("@/core/auction/engine");
-    const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+    const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
     const valuation = attachmentAdjustedAsk(
       horse1,
       stable,
@@ -546,10 +546,10 @@ describe("privateSaleResolutionPhase", () => {
   // ── Known buyer premium integration tests ──────────────────────────────────
 
   it("regional reputation raises ask for protected horse — offer accepted at rep=0 is countered at rep=300", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
-    const { calculateLotValuation } = await import("@/core/auction/engine");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
     const { attachmentAdjustedAsk, evaluateHorseAttachment } =
-      await import("@/core/horse/attachment");
+      await import("@/domains/horse/simulation/attachment");
 
     // Horse with enough signals to reach "protected" tier (score >= 52)
     const horse = mkHorse({
@@ -594,10 +594,10 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("regional reputation does NOT affect valued horse — same outcome as rep=0", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
-    const { calculateLotValuation } = await import("@/core/auction/engine");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
     const { attachmentAdjustedAsk, evaluateHorseAttachment } =
-      await import("@/core/horse/attachment");
+      await import("@/domains/horse/simulation/attachment");
 
     // Default test horse is "valued" (fame=30, potential=75 → score ~28)
     const horse = mkHorse();
@@ -632,10 +632,10 @@ describe("privateSaleResolutionPhase", () => {
   });
 
   it("legendary reputation (score=900) raises ask even more for untouchable horse", async () => {
-    const mod = await import("@/core/time/phases/privateSaleResolution");
-    const { calculateLotValuation } = await import("@/core/auction/engine");
+    const mod = await import("@/platform/time/phases/privateSaleResolution");
+    const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
     const { attachmentAdjustedAsk, evaluateHorseAttachment } =
-      await import("@/core/horse/attachment");
+      await import("@/domains/horse/simulation/attachment");
 
     // Horse with enough signals to reach "untouchable" tier (score >= 78)
     const horse = mkHorse({
@@ -687,9 +687,9 @@ describe("privateSaleResolutionPhase", () => {
     afterEach(() => resetCashPressureTuningOverrides());
 
     it("same low offer declined when comfortable, accepted when desperate", async () => {
-      const mod = await import("@/core/time/phases/privateSaleResolution");
-      const { calculateLotValuation } = await import("@/core/auction/engine");
-      const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+      const mod = await import("@/platform/time/phases/privateSaleResolution");
+      const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+      const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
 
       const horse = mkHorse();
       const valuation = attachmentAdjustedAsk(
@@ -730,9 +730,9 @@ describe("privateSaleResolutionPhase", () => {
     });
 
     it("accept log mentions 'short of cash' when pressure >= 0.5", async () => {
-      const mod = await import("@/core/time/phases/privateSaleResolution");
-      const { calculateLotValuation } = await import("@/core/auction/engine");
-      const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+      const mod = await import("@/platform/time/phases/privateSaleResolution");
+      const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+      const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
 
       const horse = mkHorse();
       const stable = mkStable({ personality: "aggressive" });
@@ -767,9 +767,9 @@ describe("privateSaleResolutionPhase", () => {
     afterEach(() => resetCashPressureTuningOverrides());
 
     it("emits a [trace] log entry when enableDecisionTrace is true", async () => {
-      const mod = await import("@/core/time/phases/privateSaleResolution");
-      const { calculateLotValuation } = await import("@/core/auction/engine");
-      const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+      const mod = await import("@/platform/time/phases/privateSaleResolution");
+      const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+      const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
 
       const horse = mkHorse();
       const stable = mkStable({ personality: "aggressive" });
@@ -794,9 +794,9 @@ describe("privateSaleResolutionPhase", () => {
     });
 
     it("does not emit [trace] log when enableDecisionTrace is false (default)", async () => {
-      const mod = await import("@/core/time/phases/privateSaleResolution");
-      const { calculateLotValuation } = await import("@/core/auction/engine");
-      const { attachmentAdjustedAsk } = await import("@/core/horse/attachment");
+      const mod = await import("@/platform/time/phases/privateSaleResolution");
+      const { calculateLotValuation } = await import("@/domains/auction/simulation/engine");
+      const { attachmentAdjustedAsk } = await import("@/domains/horse/simulation/attachment");
 
       const horse = mkHorse();
       const stable = mkStable({ personality: "aggressive" });

@@ -2,12 +2,12 @@ import { describe, it, expect } from "vitest";
 import {
   getRacecoursePrestigeByName,
   racecoursePrestigeMultiplier,
-} from "@/core/prestige/racecoursePrestige";
+} from "@/domains/prestige/simulation/racecoursePrestige";
 import {
   calculateAverageCampaignPrestige,
   getPrestigeTier,
-} from "@/core/prestige/strategyPrestigeHelpers";
-import type { CampaignRaceSlot, Race } from "@/game/types";
+} from "@/domains/prestige/simulation/strategyPrestigeHelpers";
+import type { CampaignRaceSlot, Race } from "@/platform/game/types";
 
 describe("Track Prestige Calculations & Strategy Helpers", () => {
   it("correctly looks up track prestige score and multiplier for major venues", () => {

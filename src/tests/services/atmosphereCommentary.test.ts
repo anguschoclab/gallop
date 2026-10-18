@@ -1,17 +1,17 @@
 import { describe, it, expect } from "vitest";
-import { NarrativeGenerator } from "@/services/narrative/narrativeService";
-import type { Race, Horse, Stable } from "@/game/types";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { createRng, hashStr } from "@/core/common/rng";
+import { NarrativeGenerator } from "@/domains/narrative/application/narrativeService";
+import type { Race, Horse, Stable } from "@/platform/game/types";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { createRng, hashStr } from "@/shared/common/rng";
 import {
   ATMOSPHERE_LONG_STRAIGHT_TEMPLATES,
   ATMOSPHERE_TIGHT_TURN_TEMPLATES,
   ATMOSPHERE_GRADED_TEMPLATES,
   ATMOSPHERE_TRIPLE_CROWN_TEMPLATES,
   ATMOSPHERE_ELEVATION_TEMPLATES,
-} from "@/assets/narrative/atmosphereTemplates";
-import { TEMPLATES } from "@/assets/narrative/templates";
-import { makePlayerOwned } from "@/core/horse/ownership";
+} from "@/shared/assets/narrative/atmosphereTemplates";
+import { TEMPLATES } from "@/shared/assets/narrative/templates";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {

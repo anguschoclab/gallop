@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { runRaceToCompletion } from "@/core/race/engine/simulation";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { Horse, Jockey } from "@/game/types";
-import { createRng } from "@/core/common/rng";
+import { runRaceToCompletion } from "@/domains/race/simulation/engine/simulation";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import type { Horse, Jockey } from "@/platform/game/types";
+import { createRng } from "@/shared/common/rng";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
-import { makeUnowned } from "@/core/horse/ownership";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mockHorse(id: string, style: string): Horse {
   return {

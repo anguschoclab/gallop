@@ -12,7 +12,7 @@ import {
   getMarketTimingRecommendation,
   calculateNegotiatedPrice,
 } from "@/domains/agents/simulation/marketAIRecording";
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {

@@ -2,9 +2,9 @@ import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { createRouterMock } from "@/test-utils/routerMock";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { HorseConditionSection } from "@/components/horse/HorseConditionSection";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { HorseConditionSection } from "@/domains/horse/ui/HorseConditionSection";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => createRouterMock());
 

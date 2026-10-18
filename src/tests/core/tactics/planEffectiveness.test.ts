@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { planEffectiveness, type StrategyJournalEntry } from "@/core/tactics/strategyJournal";
+import { planEffectiveness, type StrategyJournalEntry } from "@/domains/tactics/simulation/strategyJournal";
 
 const e = (style: string | undefined, position: number): StrategyJournalEntry => ({
   id: Math.random().toString(),

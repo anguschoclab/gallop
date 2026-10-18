@@ -11,13 +11,13 @@ import {
   generateTrackSchedule,
   generateUpcomingRaces,
   generateAnnualCalendar,
-} from "@/core/race/schedule";
-import { dayOfYear } from "@/core/calendar/dateFormatting";
-import { createRng } from "@/core/common/rng";
-import type { Race } from "@/game/types";
-import type { Track, TrackSchedule } from "@/data/tracks";
-import { TRACK_SCHEDULES } from "@/data/tracks";
-import { GRADED_RACES_BY_DAY_OF_YEAR } from "@/data/gradedRaces";
+} from "@/domains/race/simulation/schedule";
+import { dayOfYear } from "@/domains/calendar/simulation/dateFormatting";
+import { createRng } from "@/shared/common/rng";
+import type { Race } from "@/platform/game/types";
+import type { Track, TrackSchedule } from "@/shared/data/tracks";
+import { TRACK_SCHEDULES } from "@/shared/data/tracks";
+import { GRADED_RACES_BY_DAY_OF_YEAR } from "@/shared/data/gradedRaces";
 
 describe("getCurrentYear", () => {
   it("should return year 1 for days 1-365", () => {

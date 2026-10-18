@@ -107,8 +107,8 @@ vi.mock("@/lib/cn", () => ({
 }));
 
 // ── Import after mocks ────────────────────────────────────────────────────────
-import { RaceBroadcast } from "@/components/race/RaceBroadcast";
-import { makeUnowned } from "@/core/horse/ownership";
+import { RaceBroadcast } from "@/domains/race/ui/RaceBroadcast";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 // ── Test fixtures ─────────────────────────────────────────────────────────────
 

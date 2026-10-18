@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { CashPressureHistory } from "@/core/stable/cashPressureHistory";
+import type { CashPressureHistory } from "@/domains/stable/simulation/cashPressureHistory";
 
 const mockHistory: CashPressureHistory = {
   s1: Array.from({ length: 10 }, (_, i) => ({
@@ -19,7 +19,7 @@ vi.mock("@/game/store", () => ({
 }));
 
 // Import after mock
-import { CashPressureTrend } from "@/components/stable/CashPressureTrend";
+import { CashPressureTrend } from "@/domains/stable/ui/CashPressureTrend";
 
 describe("CashPressureTrend", () => {
   it("renders detail variant with pressure and runway labels when >= 2 samples", () => {

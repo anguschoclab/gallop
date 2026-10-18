@@ -18,14 +18,14 @@
  *   pre-redesign worktree.
  */
 
-import { RaceSimulationSession } from "../src/core/race/engine/raceSession";
-import { createRng } from "../src/core/common/rng";
-import { SIMULATION_MAX_STEPS_PER_FRAME } from "../src/constants/raceSimulationConstants";
-import { DEFAULT_DT } from "../src/core/race/engine/constants";
+import { RaceSimulationSession } from "@/domains/race/simulation/engine/raceSession";
+import { createRng } from "@/shared/common/rng";
+import { SIMULATION_MAX_STEPS_PER_FRAME } from "@/domains/race/model/raceSimulationConstants";
+import { DEFAULT_DT } from "@/domains/race/model/engine/constants";
 import { mkdirSync, writeFileSync } from "node:fs";
-import type { Runner } from "../src/core/race/engine/runnerTypes";
+import type { Runner } from "@/domains/race/model/engine/runnerTypes";
 import { createTestJockey } from "../src/tests/helpers";
-import { asJockeyId } from "../src/core/types/branded";
+import { asJockeyId } from "@/shared/types/branded";
 
 const STYLES = ["E", "EP", "P", "S"] as const;
 const FIELD_SIZES = [6, 14, 40] as const;

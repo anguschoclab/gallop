@@ -9,16 +9,16 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { createInitialState } from "@/game/store/initialization";
+import { createInitialState } from "@/platform/game/store/initialization";
 import { getDisplayableStats, getVisibleStats } from "@/domains/agents/simulation/npc/scouting";
-import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { buildRunner } from "@/core/race/engine/runnerBuilder";
-import { runRaceToCompletion } from "@/core/race/engine/simulation";
-import { bestPerMileByHorse } from "@/core/race/bestPace";
-import { buildRaceTimeViews, pacePerKm, pacePerMile } from "@/core/common/formatting";
-import { createRng } from "@/core/common/rng";
-import { isNpcOwned } from "@/core/horse/ownership";
-import type { Horse } from "@/game/types";
+import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import { buildRunner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { runRaceToCompletion } from "@/domains/race/simulation/engine/simulation";
+import { bestPerMileByHorse } from "@/domains/race/simulation/bestPace";
+import { buildRaceTimeViews, pacePerKm, pacePerMile } from "@/shared/common/formatting";
+import { createRng } from "@/shared/common/rng";
+import { isNpcOwned } from "@/domains/horse/simulation/ownership";
+import type { Horse } from "@/platform/game/types";
 
 const STAT_KEYS = ["speed", "stamina", "acceleration", "consistency"] as const;
 

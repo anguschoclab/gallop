@@ -7,17 +7,17 @@ import {
   pregnancyPhase,
   buildNpcAIManagerUpdate,
   buildPregnancyImpacts,
-} from "@/core/time/phases/pregnancy";
+} from "@/platform/time/phases/pregnancy";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { createTestHorse, createTestMare, createTestStable } from "@/tests/helpers";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Pregnancy, Horse } from "@/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState, Pregnancy, Horse } from "@/platform/game/types";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
-import type { AnyImpact } from "@/core/resolver/impacts";
+import type { AnyImpact } from "@/platform/resolver/impacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function createLiveFoalScenario(
   overrides: {

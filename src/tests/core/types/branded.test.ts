@@ -14,8 +14,8 @@ import {
   type PlayerOwnerId,
   type NpcStableId,
   type OwnerKey,
-} from "@/core/types/branded";
-import { PLAYER_OWNER_ID } from "@/core/horse/ownership";
+} from "@/shared/types/branded";
+import { PLAYER_OWNER_ID } from "@/domains/horse/simulation/ownership";
 
 describe("branded types", () => {
   describe("casting helpers", () => {

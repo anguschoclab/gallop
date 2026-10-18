@@ -6,8 +6,8 @@
  * committed revision through the real engine/store pipeline.
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { PostCommitDispatcher, postCommitId } from "@/game/store/postCommit";
-import type { PostCommitEvent } from "@/game/store/postCommit";
+import { PostCommitDispatcher, postCommitId } from "@/platform/game/store/postCommit";
+import type { PostCommitEvent } from "@/platform/game/store/postCommit";
 
 function ev(kind: PostCommitEvent["kind"], revision: number, day = 10): PostCommitEvent {
   return { id: postCommitId(kind, revision), kind, revision, day };

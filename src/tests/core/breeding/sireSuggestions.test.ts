@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { suggestBestSires } from "@/core/breeding/sireSuggestions";
+import { suggestBestSires } from "@/domains/breeding/simulation/sireSuggestions";
 import { createTestMare, createTestStallion } from "@/tests/helpers";
-import { BREEDING_FEE } from "@/constants";
-import type { StudCareer } from "@/game/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { BREEDING_FEE } from "@/domains/breeding/model/breedingConstants";;
+import type { StudCareer } from "@/platform/game/types";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mkStud(overrides: Partial<StudCareer> = {}): StudCareer {
   return {

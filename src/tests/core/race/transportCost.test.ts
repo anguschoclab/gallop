@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { getTransportCostForRace } from "@/core/race/transportCost";
-import type { Race } from "@/game/types";
+import { getTransportCostForRace } from "@/domains/race/simulation/transportCost";
+import type { Race } from "@/platform/game/types";
 
 describe("getTransportCostForRace", () => {
   it("returns 150 for non-graded races", () => {

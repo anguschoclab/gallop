@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { useSeasonStandings } from "@/hooks/dashboard/useSeasonStandings";
-import { createDefaultGameState } from "@/game/store/state";
-import type { Horse } from "@/game/types";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { useSeasonStandings } from "@/domains/dashboard/application/hooks/useSeasonStandings";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { Horse } from "@/platform/game/types";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
-import { resolveAuctionSale } from "@/core/auction/auctionResolution";
+import { resolveAuctionSale } from "@/domains/auction/simulation/auctionResolution";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import * as engine from "@/core/auction/engine";
-import { AuctionSale } from "@/game/types";
+import * as engine from "@/domains/auction/simulation/engine";
+import { AuctionSale } from "@/platform/game/types";
 
 describe("resolveAuctionSale - Bidding Logic", () => {
   it("resolves a competitive bidding war between AI stables", () => {

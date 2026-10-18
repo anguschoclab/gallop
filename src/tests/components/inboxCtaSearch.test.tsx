@@ -9,8 +9,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import InboxPage from "@/components/routes/InboxPage";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import InboxPage from "@/domains/inbox/ui/pages/InboxPage";
 
 const navigateMock = vi.fn();
 

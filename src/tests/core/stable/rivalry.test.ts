@@ -4,7 +4,7 @@ import {
   isHatedRival,
   isFriendlyCompetitor,
   RIVALRY_CONSTANTS,
-} from "@/core/stable/rivalry";
+} from "@/domains/stable/simulation/rivalry";
 
 describe("calculateFrictionChange", () => {
   it("calculates positive and negative friction changes correctly", () => {

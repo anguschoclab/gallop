@@ -1,0 +1,201 @@
+/**
+ * impacts/miscImpacts.ts - Miscellaneous impact types
+ *
+ * This file provides miscellaneous impact types including news items, logs,
+ * reputation changes, staff actions, facility upgrades, scout reports,
+ * consignments, consignment withdrawals, and auction resolutions.
+ *
+ * Dependencies: ./base (Impact), @/game/types (ScoutReport), ../../narrative/newsTypes (NewsItem)
+ * Related files: ../handlers/MarketHandler.ts (handles impacts), ../handlers/SystemHandler.ts (handles impacts), ./index.ts (exports types)
+ */
+
+import type { Impact } from "@/platform/resolver/impacts/base";
+import type { ScoutReport } from "@/platform/game/types";
+import type { ReputationSource } from "@/domains/reputation/simulation";
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
+import type { FacilityLevel } from "@/domains/facilities/simulation";
+import type { TrackRecord } from "@/domains/history/model/historyTypes";
+import type { CareerArcState } from "@/domains/narrative/model/careerArcTypes";
+import type { HorseId, OwnerKey, StableId } from "@/shared/types/branded";
+
+// News impact
+export interface NewsImpact extends Impact {
+  type: "news_item";
+  newsItem: NewsItem;
+}
+
+// Track record impact
+export interface TrackRecordImpact extends Impact {
+  type: "track_record";
+  record: TrackRecord;
+  reason: string;
+}
+
+// Log impact
+export interface LogImpact extends Impact {
+  type: "log";
+  text: string;
+  reason: string;
+}
+
+// Reputation impact
+export interface ReputationImpact extends Impact {
+  type: "reputation_change";
+  delta: number;
+  reason: string;
+  source: ReputationSource;
+  metadata?: { horseId?: string; raceId?: string };
+}
+
+// Staff impact
+export interface StaffImpact extends Impact {
+  type: "staff";
+  action: "hire" | "fire";
+  stableId: StableId;
+  staffId: string;
+  role: import("@/domains/staff/model/staffTypes").StaffRole;
+  tier: import("@/domains/staff/model/staffTypes").StaffTier;
+  salary: number;
+  reason: string;
+}
+
+// Trainer stats impact - updates trainer race records and fame (Phase 4)
+export interface TrainerStatsImpact extends Impact {
+  type: "trainer_stats";
+  staffId: string;
+  raceRecord: {
+    wins: number;
+    places: number;
+    shows: number;
+    starts: number;
+  };
+  fameDelta: number;
+  specialty?: string; // e.g., "sprinter", "router", "turf", "dirt"
+  reason: string;
+}
+
+// Facility upgrade impact
+export interface FacilityUpgradeImpact extends Impact {
+  type: "facility_upgrade";
+  facilityId: string;
+  nextLevel: FacilityLevel;
+  cost?: number;
+  reason: string;
+}
+
+// Scout report impact
+export interface ScoutReportImpact extends Impact {
+  type: "scout_report";
+  report: ScoutReport;
+  reason: string;
+}
+
+// Consignment impact
+export interface ConsignmentImpact extends Impact {
+  type: "consignment";
+  horseId: HorseId;
+  saleId: string;
+  reservePrice: number;
+  consignorStableId?: StableId;
+  breezeSeconds?: number;
+  reason: string;
+}
+
+// Consignment withdrawal impact
+export interface ConsignmentWithdrawalImpact extends Impact {
+  type: "consignment_withdrawal";
+  horseId: HorseId;
+  saleId: string;
+  reason: string;
+}
+
+// Auction resolution impact
+export interface AuctionResolutionImpact extends Impact {
+  type: "auction_resolution";
+  saleId: string;
+  lotId: string;
+  hammerPrice?: number;
+  soldToStableId?: StableId;
+  passed: boolean;
+  bidHistory?: { stableId?: OwnerKey; amount: number; tick: number }[];
+  wasPlayerConsignment?: boolean;
+  reason: string;
+}
+
+// Transport impact - Imperial Expansion
+export interface TransportImpact extends Impact {
+  type: "transport_horse";
+  horseId: HorseId;
+  fromOutpostId: string;
+  toOutpostId: string;
+  fatigueSpike: number;
+  acclimatizationDays: number;
+  reason: string;
+}
+
+// Outpost impact - Imperial Expansion
+export interface OutpostImpact extends Impact {
+  type: "outpost_action";
+  stableId: StableId;
+  action: "create" | "upgrade_slot" | "assign_trainer";
+  outpostId: string;
+  metadata?: {
+    name?: string;
+    region?: import("@/domains/facilities/model/outpostTypes").OutpostRegion;
+    headTrainerId?: string;
+    trainerId?: string;
+  };
+  reason: string;
+}
+
+// Name reservation impact - reserves horse name for 25 years after death
+export interface NameReservationImpact extends Impact {
+  type: "name_reservation";
+  name: string;
+  deceasedOnDay: number;
+  reason: string;
+}
+
+// Narrative arc update impact
+export interface NarrativeArcUpdateImpact extends Impact {
+  type: "narrative_arc_update";
+  arcState: CareerArcState;
+}
+
+// Diplomatic action impact (NPC-to-NPC diplomacy)
+export interface DiplomaticImpact extends Impact {
+  type: "diplomatic";
+  sourceStableId: StableId;
+  targetStableId: StableId;
+  action: "alliance_formed" | "alliance_broken" | "betrayal" | "cooperation";
+  allianceType?: string;
+  trustChange: number;
+}
+
+// Cartel action impact (economic coordination)
+export interface CartelImpact extends Impact {
+  type: "cartel";
+  stableIds: StableId[];
+  action: "cartel_formed" | "cartel_dissolved" | "market_coordinated";
+  cartelType?: string;
+  marketAction?: string;
+}
+
+export type MiscImpact =
+  | NewsImpact
+  | TrackRecordImpact
+  | LogImpact
+  | ReputationImpact
+  | StaffImpact
+  | TrainerStatsImpact
+  | FacilityUpgradeImpact
+  | ScoutReportImpact
+  | ConsignmentImpact
+  | ConsignmentWithdrawalImpact
+  | AuctionResolutionImpact
+  | TransportImpact
+  | OutpostImpact
+  | NameReservationImpact
+  | NarrativeArcUpdateImpact
+  | DiplomaticImpact
+  | CartelImpact;

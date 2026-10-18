@@ -1,17 +1,17 @@
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import { describe, it, expect } from "vitest";
-import { NarrativeGenerator } from "@/services/narrative/narrativeService";
-import { CommentaryMemory } from "@/services/narrative/commentaryMemory";
-import type { Race, Horse, Stable } from "@/game/types";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { CommentaryLine } from "@/services/narrative/types";
-import { createRng, hashStr } from "@/core/common/rng";
+import { NarrativeGenerator } from "@/domains/narrative/application/narrativeService";
+import { CommentaryMemory } from "@/domains/narrative/application/commentaryMemory";
+import type { Race, Horse, Stable } from "@/platform/game/types";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import type { CommentaryLine } from "@/domains/narrative/model/types";
+import { createRng, hashStr } from "@/shared/common/rng";
 import {
   COMEBACK_NOTE_TEMPLATES,
   REDEMPTION_NOTE_TEMPLATES,
   CONFIRMATION_NOTE_TEMPLATES,
   CALLBACK_CLAUSES,
-} from "@/assets/narrative/chainingTemplates";
+} from "@/shared/assets/narrative/chainingTemplates";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {

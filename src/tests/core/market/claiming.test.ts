@@ -5,9 +5,9 @@ import {
   getSuggestedClaimingPriceRange,
   validateClaimingRace,
   type ClaimAttempt,
-} from "@/core/market/claiming";
+} from "@/domains/market/simulation/claiming";
 import { createTestHorse } from "@/tests/helpers";
-import type { Race } from "@/core/race/types";
+import type { Race } from "@/domains/race/simulation/types";
 
 function createTestRace(overrides?: Partial<Race>): Race {
   return {
@@ -25,7 +25,7 @@ function createTestRace(overrides?: Partial<Race>): Race {
   } as Race;
 }
 import { createTestRng } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("Claiming Mechanics", () => {
   describe("resolveClaims", () => {

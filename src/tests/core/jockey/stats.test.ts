@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateJockeyRating, getJockeyAbility } from "@/core/jockey/stats";
+import { calculateJockeyRating, getJockeyAbility } from "@/domains/jockey/simulation/stats";
 import { createTestJockey } from "@/tests/helpers";
 
 function mkJockey(

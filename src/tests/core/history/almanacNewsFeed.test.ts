@@ -3,11 +3,11 @@ import {
   buildAlmanacNewsFeed,
   filterAlmanacNewsFeed,
   type AlmanacFeedItem,
-} from "@/core/history/almanacNewsFeed";
-import type { NewsItem } from "@/services/narrative/newsTypes";
-import type { TrackRecord, SeasonRecord } from "@/core/history/historyTypes";
-import type { Transaction } from "@/core/transactions/transactionTypes";
-import type { Horse } from "@/core/horse/types";
+} from "@/domains/history/simulation/almanacNewsFeed";
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
+import type { TrackRecord, SeasonRecord } from "@/domains/history/model/historyTypes";
+import type { Transaction } from "@/domains/transactions/model/transactionTypes";
+import type { Horse } from "@/domains/horse/simulation/types";
 
 function mkNews(overrides: Partial<NewsItem> & { id: string; day: number }): NewsItem {
   return {

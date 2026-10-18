@@ -3,10 +3,10 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { racesPhase } from "@/core/time/phases/races";
+import { racesPhase } from "@/platform/time/phases/races";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
 
 describe("racesPhase", () => {
   it("should call generateUpcomingRaces and pruneOldRaces", () => {

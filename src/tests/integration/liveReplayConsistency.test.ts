@@ -1,15 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { runRaceToCompletion } from "@/core/race/engine/simulation";
+import { runRaceToCompletion } from "@/domains/race/simulation/engine/simulation";
 import {
   buildRaceField,
   rngForRace,
   type RaceSimulationDependencies,
-} from "@/core/race/raceSimulationService";
+} from "@/domains/race/simulation/raceSimulationService";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
-import { DEFAULT_DT, defaultMaxTime } from "@/constants/raceEngineConstants";
-import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
-import type { Race } from "@/core/race/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { DEFAULT_DT, defaultMaxTime } from "@/domains/race/model/engine/constants";;
+import { compareFinishOrder } from "@/domains/race/simulation/engine/compareFinishOrder";
+import type { Race } from "@/domains/race/simulation/types";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {

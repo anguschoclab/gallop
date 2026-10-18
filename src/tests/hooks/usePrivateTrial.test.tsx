@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 
 vi.mock("@/game/store", () => ({
   useGame: vi.fn(),
@@ -10,10 +10,10 @@ vi.mock("@/core/horse/trialFeedback", () => ({
   generateRiderFeedback: vi.fn(() => "mock feedback"),
 }));
 
-import { usePrivateTrial } from "@/hooks/race/usePrivateTrial";
-import { useGame } from "@/game/store";
-import { generateRiderFeedback } from "@/core/horse/trialFeedback";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { usePrivateTrial } from "@/domains/race/application/hooks/usePrivateTrial";
+import { useGame } from "@/platform/game/store";
+import { generateRiderFeedback } from "@/domains/horse/simulation/trialFeedback";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function makeHorse(overrides: any = {}): Horse {
   return {

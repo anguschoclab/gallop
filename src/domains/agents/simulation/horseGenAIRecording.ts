@@ -1,6 +1,6 @@
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
 import type { HorseGenAIState, HorseGeneration } from "./horseGenAI";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import { recordLearningOutcome, trimHistory } from "./learningModule";
 

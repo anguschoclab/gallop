@@ -24,8 +24,8 @@
  * Related files: npcActionRegistry.ts (consumes observations), npc/intentGenerators.ts (builds them)
  */
 
-import type { GameState, Horse, Stable } from "@/game/types";
-import { DEFAULT_MARKET_STRATEGY } from "@/core/market/strategy";
+import type { GameState, Horse, Stable } from "@/platform/game/types";
+import { DEFAULT_MARKET_STRATEGY } from "@/domains/market/simulation/strategy";
 
 const NPC_OBSERVATION_BRAND: unique symbol = Symbol.for("gallop.npcObservation");
 
@@ -334,10 +334,10 @@ export function buildNpcObservation(
     npcFacilities:
       actingStableId === PUBLIC_WORLD_OBSERVER
         ? {}
-        : state.npcFacilities?.[actingStableId as import("@/core/types/branded").StableId]
+        : state.npcFacilities?.[actingStableId as import("@/shared/types/branded").StableId]
           ? {
               [actingStableId]:
-                state.npcFacilities[actingStableId as import("@/core/types/branded").StableId]!,
+                state.npcFacilities[actingStableId as import("@/shared/types/branded").StableId]!,
             }
           : {},
     npcStables: state.npcStables.map((stable) =>

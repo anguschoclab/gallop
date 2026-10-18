@@ -5,9 +5,9 @@
  * avoiding the need for `as any` casts.
  */
 
-import type { Horse, Stable, GameState, Jockey, Race } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import { createRng } from "@/core/common/rng";
+import type { Horse, Stable, GameState, Jockey, Race } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import { createRng } from "@/shared/common/rng";
 
 // Partial types for test objects
 export type PartialHorse = Partial<Horse>;

@@ -1,17 +1,17 @@
 import { describe, it, expect } from "vitest";
-import { resolveCampaignIntent } from "@/core/time/phases/campaignManagementResolvers";
-import { SystemHandler } from "@/core/resolver/handlers/SystemHandler";
-import { createCampaignSlice } from "@/game/store/slices/campaignSlice";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { AutoManageToggleIntent } from "@/core/resolver/campaignIntents";
+import { resolveCampaignIntent } from "@/platform/time/phases/campaignManagementResolvers";
+import { SystemHandler } from "@/platform/resolver/handlers/SystemHandler";
+import { createCampaignSlice } from "@/platform/game/store/slices/campaignSlice";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { AutoManageToggleIntent } from "@/platform/resolver/campaignIntents";
 import type {
   AutoManageToggleImpact,
   CampaignCreationImpact,
-} from "@/core/resolver/impacts/campaignImpacts";
-import type { AnyImpact } from "@/core/resolver/impacts";
-import type { GameState, HorseCampaign } from "@/game/types";
-import { asHorseId } from "@/core/types/branded";
-import { createRng } from "@/core/common/rng";
+} from "@/platform/resolver/impacts/campaignImpacts";
+import type { AnyImpact } from "@/platform/resolver/impacts";
+import type { GameState, HorseCampaign } from "@/platform/game/types";
+import { asHorseId } from "@/shared/types/branded";
+import { createRng } from "@/shared/common/rng";
 
 describe("Campaign Management & Resolver Integration", () => {
   it("resolves auto_manage_toggle intent into AutoManageToggleImpact", () => {

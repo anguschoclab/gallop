@@ -1,0 +1,92 @@
+import { Button } from "@/shared/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/shared/ui/alert-dialog";
+import { Zap } from "lucide-react";
+import { formatCurrency } from "@/shared/common/formatting";;
+import { toast } from "sonner";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
+
+function showBuyNowResult(result: { ok: boolean; reason?: string }, horseName: string) {
+  if (result.ok) {
+    toast.success(`${horseName ?? "Horse"} joins your stable.`);
+  } else if (result.reason === "buy_now_unavailable") {
+    toast.info("Buy-now removed — bidding is active.");
+  } else {
+    toast.error(`Buy Now failed: ${result.reason}`);
+  }
+}
+
+interface BuyNowDialogProps {
+  horseName: string;
+  buyNowPrice: number;
+  cash: number;
+  onBuyNow: () => { ok: boolean; reason?: string };
+  disabled?: boolean;
+}
+
+export function BuyNowDialog({
+  horseName,
+  buyNowPrice,
+  cash,
+  onBuyNow,
+  disabled = false,
+}: BuyNowDialogProps) {
+  const formatted = formatCurrency(buyNowPrice);
+
+  if (disabled) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <span tabIndex={0} className="inline-block w-full cursor-not-allowed">
+              <Button variant="outline" className="w-full gap-2 pointer-events-none" disabled>
+                <Zap className="h-4 w-4" />
+                Buy Now {formatted}
+              </Button>
+            </span>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>Insufficient funds. You need {formatCurrency(buyNowPrice - cash)} more.</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="outline" className="w-full gap-2">
+          <Zap className="h-4 w-4" />
+          Buy Now {formatted}
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            Buy {horseName} now for {formatted}?
+          </AlertDialogTitle>
+          <AlertDialogDescription>
+            This immediately ends the lot. Your account will be debited {formatted} and {horseName}{" "}
+            will transfer to your stable.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={() => showBuyNowResult(onBuyNow(), horseName)}>
+            Buy Now
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}

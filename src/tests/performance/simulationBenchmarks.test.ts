@@ -8,12 +8,12 @@
  * script; this guards the harness itself.
  */
 import { describe, it, expect } from "vitest";
-import { SimulationExecutor } from "@/core/time/executor";
-import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
-import { buildAdvancePlan } from "@/core/time/advancePlan";
-import { checksumState } from "@/core/time/checksum";
+import { SimulationExecutor } from "@/platform/time/executor";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
+import { buildAdvancePlan } from "@/platform/time/advancePlan";
+import { checksumState } from "@/platform/time/checksum";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 
 function timedRange(state: GameState, days: number) {
   const input = structuredClone(state);

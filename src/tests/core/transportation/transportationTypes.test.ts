@@ -7,7 +7,7 @@ import {
   formatTransportMode,
   TRANSPORT_CONFIGS,
   type TransportMode,
-} from "@/core/transportation/transportationTypes";
+} from "@/domains/transportation/model/transportationTypes";
 
 vi.mock("@/core/uuid", () => ({
   generateUUID: () => "test-uuid-id",

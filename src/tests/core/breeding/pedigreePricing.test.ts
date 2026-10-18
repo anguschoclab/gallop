@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
-import type { Horse } from "@/game/types";
+import { pedigreeMultiplier } from "@/domains/breeding/simulation/pedigreePricing";
+import type { Horse } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
 

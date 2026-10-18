@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import { createDefaultTutorialState } from "@/core/tutorial/tutorialTypes";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { createDefaultTutorialState } from "@/domains/tutorial/model/tutorialTypes";
 
 describe("tutorialSlice", () => {
   beforeEach(() => {

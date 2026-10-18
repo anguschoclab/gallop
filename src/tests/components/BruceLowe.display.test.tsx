@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
 import { screen, render } from "@testing-library/react";
-import { HorseDetailHeader } from "@/components/horse/HorseDetailHeader";
-import { LotDetailPanel } from "@/components/auction/LotDetailPanel";
-import { ParentStatsPanel } from "@/components/breeding/ParentStatsPanel";
-import { SireSelector } from "@/components/breeding/SireSelector";
-import { DamSelector } from "@/components/breeding/DamSelector";
+import { HorseDetailHeader } from "@/domains/horse/ui/HorseDetailHeader";
+import { LotDetailPanel } from "@/domains/auction/ui/LotDetailPanel";
+import { ParentStatsPanel } from "@/domains/breeding/ui/ParentStatsPanel";
+import { SireSelector } from "@/domains/breeding/ui/SireSelector";
+import { DamSelector } from "@/domains/breeding/ui/DamSelector";
 import { createTestHorse } from "@/tests/helpers";
-import type { AuctionLot } from "@/game/types";
+import type { AuctionLot } from "@/platform/game/types";
 
 describe("Bruce Lowe family display — no raw codes", () => {
   describe("HorseDetailHeader", () => {

@@ -13,8 +13,8 @@ vi.mock("@/components/stable/StableCompareDrawer", () => ({
   ),
 }));
 
-import { StableCompareBar } from "@/components/stable/StableCompareBar";
-import { useCompareStables } from "@/hooks/stable/useCompareStables";
+import { StableCompareBar } from "@/domains/stable/ui/StableCompareBar";
+import { useCompareStables } from "@/domains/stable/application/hooks/useCompareStables";
 
 describe("StableCompareBar", () => {
   beforeEach(() => {

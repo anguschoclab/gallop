@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { AnyIntent, TransportIntent } from "@/core/resolver/intents";
+import type { AnyIntent, TransportIntent } from "@/platform/resolver/intents";
 
 describe("TransportIntent", () => {
   it("is a valid member of AnyIntent union", () => {

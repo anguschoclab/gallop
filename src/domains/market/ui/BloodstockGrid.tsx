@@ -1,0 +1,162 @@
+import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { Card, CardContent } from "@/shared/ui/card";
+import { Button } from "@/shared/ui/button";
+import { BookmarkButton } from "@/domains/bookmarks/ui/BookmarkButton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
+import { HorseStats, overall } from "@/domains/horse/ui/HorseBits";
+import { CareerValuationBreakdown } from "@/domains/horse/ui/CareerValuationBreakdown";
+import { formatCurrency } from "@/shared/common/formatting";;
+import { horseMarketValue, horseCareerValuation } from "@/domains/horse/application/horseFacade";
+import { useGameWithShallow } from "@/platform/game/store";
+import { SilkDot } from "@/domains/shell/ui/SilkDot";
+import { cn } from "@/shared/lib/cn";
+import type { Horse, GameState } from "@/platform/game/types";
+import { HardDrive, ChevronDown, ChevronUp } from "lucide-react";
+
+interface BloodstockGridProps {
+  market: Horse[];
+  cash: number;
+  buyHorse: (horseId: string) => void;
+}
+
+export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) {
+  const navigate = useNavigate();
+  const allHorses = useGameWithShallow((s: GameState) => s.horses);
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {market.map((h: Horse) => {
+        const price = horseMarketValue(h, Object.values(allHorses));
+        const ovr = overall(h);
+        const canAfford = cash >= price;
+
+        return (
+          <Card
+            key={h.id}
+            className="bg-slate-900/40 border-white/5 rounded-none relative overflow-hidden group hover:border-white/20 transition-all duration-300 shadow-xl cursor-pointer"
+            onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: h.id } })}
+          >
+            <div className="absolute top-0 left-0 w-full h-0.5 bg-white/5 group-hover:bg-success/40 transition-colors" />
+
+            <div className="absolute top-2 right-2 z-10">
+              <BookmarkButton
+                type="horse"
+                id={h.id}
+                label={h.name}
+                subtitle={`Age ${Math.floor(h.age)} · ${h.gender}`}
+              />
+            </div>
+
+            <CardContent className="p-6 space-y-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex items-start gap-3 flex-1">
+                  <SilkDot color={h.silk} size="md" />
+                  <div className="space-y-0.5 min-w-0">
+                    <h3 className="text-xl font-black text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-success transition-colors truncate">
+                      {h.name}
+                    </h3>
+                    <div className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-wide text-cream/30">
+                      <span>Age: {Math.floor(h.age)}</span>
+                      <span className="w-1 h-1 rounded-full bg-white/10" />
+                      <span>OVR: {ovr}</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <div className="text-[8px] font-black uppercase text-success/40 tracking-wide leading-none mb-1">
+                    Price
+                  </div>
+                  <div
+                    className={cn(
+                      "text-xl font-black font-mono tracking-tighter tabular-nums",
+                      canAfford ? "text-success" : "text-destructive/60",
+                    )}
+                  >
+                    {formatCurrency(price)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-black/40 p-3 rounded border border-white/5">
+                <HorseStats horse={h} />
+              </div>
+
+              {/* Expandable career valuation */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setExpandedId(expandedId === h.id ? null : h.id);
+                }}
+                className="flex items-center justify-between w-full text-[10px] font-black uppercase tracking-wide text-cream/40 hover:text-cream/70 transition-colors"
+              >
+                <span>Valuation</span>
+                {expandedId === h.id ? (
+                  <ChevronUp className="h-3 w-3" />
+                ) : (
+                  <ChevronDown className="h-3 w-3" />
+                )}
+              </button>
+              {expandedId === h.id && (
+                <div className="bg-black/40 p-3 rounded border border-white/5 space-y-2">
+                  <CareerValuationBreakdown
+                    valuation={horseCareerValuation(h, Object.values(allHorses))}
+                  />
+                  <p className="text-[10px] text-muted-foreground pt-1">
+                    Pre-career = yearling projection from pedigree &amp; potential · Post-career =
+                    breeding residual at prime reproductive age
+                  </p>
+                </div>
+              )}
+
+              {!canAfford ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span tabIndex={0} className="w-full block cursor-not-allowed">
+                      <Button
+                        disabled
+                        className={cn(
+                          "w-full h-10 uppercase text-[10px] font-black tracking-wide rounded-none transition-all pointer-events-none",
+                          "border-white/5 text-cream/20 bg-transparent",
+                        )}
+                      >
+                        Can't afford
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>Not enough cash</TooltipContent>
+                </Tooltip>
+              ) : (
+                <Button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    buyHorse(h.id);
+                  }}
+                  className={cn(
+                    "w-full h-10 uppercase text-[10px] font-black tracking-wide rounded-none transition-all",
+                    "bg-success hover:bg-success-dark text-slate-950 shadow-lg",
+                  )}
+                >
+                  Buy
+                </Button>
+              )}
+            </CardContent>
+          </Card>
+        );
+      })}
+
+      {market.length === 0 && (
+        <div className="col-span-full p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
+          <HardDrive className="h-16 w-16 mx-auto mb-6 text-cream/5" />
+          <p className="font-bold text-cream/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
+            Market Transmission Offline
+          </p>
+          <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">
+            Zero units detected in bloodstock exchange. Check next cycle.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}

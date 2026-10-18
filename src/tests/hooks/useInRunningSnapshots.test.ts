@@ -11,9 +11,9 @@
  */
 import { describe, it, expect } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useInRunningSnapshots } from "@/hooks/race/useInRunningSnapshots";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { useInRunningSnapshots } from "@/domains/race/application/hooks/useInRunningSnapshots";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function createMockRunner(overrides: Partial<Runner> = {}): Runner {
   return {

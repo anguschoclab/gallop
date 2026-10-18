@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { generateAllStables } from "@/domains/agents/simulation/npc/stables";
-import { createRng, hashStr } from "@/core/common/rng";
-import type { Stable } from "@/game/types";
+import { createRng, hashStr } from "@/shared/common/rng";
+import type { Stable } from "@/platform/game/types";
 
 describe("generateAllStables — elite pre-sort", () => {
   it("elite stables are sorted by reputation descending", () => {

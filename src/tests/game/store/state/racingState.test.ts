@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createDefaultRacingState } from "@/game/store/state/racingState";
+import { createDefaultRacingState } from "@/platform/game/store/state/racingState";
 
 describe("createDefaultRacingState", () => {
   it("returns object with trainingUsed as empty object", () => {

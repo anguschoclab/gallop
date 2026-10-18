@@ -20,7 +20,7 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { WeatherForecastStrip } from "@/components/race/WeatherForecastStrip";
+import { WeatherForecastStrip } from "@/domains/race/ui/WeatherForecastStrip";
 
 afterEach(() => cleanup());
 
@@ -36,7 +36,7 @@ describe("store subscription stability (smoke)", () => {
   it(
     "RacesTab feed mounts without a loop (empty weather/forecast)",
     async () => {
-      const { RacesTab } = await import("@/components/racing/RacesTab");
+      const { RacesTab } = await import("@/domains/racing/ui/RacesTab");
       expect(() => renderWithStore(createElement(RacesTab))).not.toThrow();
     },
     { timeout: 15000 },

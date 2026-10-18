@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { SyndicateStakesPage } from "@/components/syndicates/SyndicateStakesPage";
+import { SyndicateStakesPage } from "@/domains/syndicates/ui/SyndicateStakesPage";
 
 export const Route = createFileRoute("/syndicate-stakes")({
   head: () => ({

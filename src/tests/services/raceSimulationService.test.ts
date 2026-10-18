@@ -4,10 +4,10 @@ import {
   buildRaceField,
   simulateStep,
   getRaceClassBonus,
-} from "@/core/race/raceSimulationService";
-import type { Horse, Race } from "@/game/types";
+} from "@/domains/race/simulation/raceSimulationService";
+import type { Horse, Race } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse(overrides);

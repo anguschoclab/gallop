@@ -1,13 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { AIPersonalityCard } from "@/components/npc/AIPersonalityCard";
-import { StrategicDirectivesPanel } from "@/components/npc/StrategicDirectivesPanel";
-import { RelationshipGraph } from "@/components/npc/RelationshipGraph";
-import { AiActivityFeed } from "@/components/npc/AiActivityFeed";
-import { EconomicIndicators } from "@/components/analytics/EconomicIndicators";
-import { NarrativeArcCard } from "@/components/narrative/NarrativeArcCard";
-import { TacticalAnalysisPanel } from "@/components/race/TacticalAnalysisPanel";
+import { AIPersonalityCard } from "@/domains/agents/ui/AIPersonalityCard";
+import { StrategicDirectivesPanel } from "@/domains/agents/ui/StrategicDirectivesPanel";
+import { RelationshipGraph } from "@/domains/agents/ui/RelationshipGraph";
+import { AiActivityFeed } from "@/domains/agents/ui/AiActivityFeed";
+import { EconomicIndicators } from "@/domains/analytics/ui/EconomicIndicators";
+import { NarrativeArcCard } from "@/domains/narrative/ui/NarrativeArcCard";
+import { TacticalAnalysisPanel } from "@/domains/race/ui/TacticalAnalysisPanel";
 import type {
   StableAIState,
   NpcAIManager,
@@ -15,10 +15,10 @@ import type {
 } from "@/domains/agents/simulation/npcCycleAI";
 
 import type { PersonalityAIState } from "@/domains/agents/simulation/personalitySystem";
-import type { Stable } from "@/game/types";
-import type { RaceRunner } from "@/core/race/types";
-import type { NewsItem } from "@/services/narrative/newsTypes";
-import { makeUnowned } from "@/core/horse/ownership";
+import type { Stable } from "@/platform/game/types";
+import type { RaceRunner } from "@/domains/race/simulation/types";
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function createMockPersonalityState(
   overrides: Partial<PersonalityAIState> = {},

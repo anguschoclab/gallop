@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { stewardsPhase } from "@/core/time/phases/stewardsPhase";
+import { stewardsPhase } from "@/platform/time/phases/stewardsPhase";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { Race, Horse } from "@/game/types";
+import type { Race, Horse } from "@/platform/game/types";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function makeResolvedRace(overrides: Partial<Race> = {}): Race {
   return {

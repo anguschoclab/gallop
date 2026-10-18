@@ -21,19 +21,19 @@ import {
   createEconomicState,
   calculateStudFeeAdjustment,
 } from "@/domains/agents/simulation/economyAIState";
-import type { GameState, Stable, Horse } from "@/game/types";
+import type { GameState, Stable, Horse } from "@/platform/game/types";
 import {
   createStableAIState,
   type NpcAIManager,
   type StableAIState,
 } from "@/domains/agents/simulation/npcCycleAI";
-import { createInitialState } from "@/game/store/initialization";
-import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
+import { createInitialState } from "@/platform/game/store/initialization";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
 import { runPipelineForDay } from "@/tests/helpers/runPipeline";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asRaceId } from "@/core/types/branded";
-import type { Race } from "@/core/race/types";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asRaceId } from "@/shared/types/branded";
+import type { Race } from "@/domains/race/simulation/types";
 
 const BASE_STATE = createInitialState();
 

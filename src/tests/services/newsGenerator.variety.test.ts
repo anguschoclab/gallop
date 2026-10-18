@@ -8,9 +8,9 @@ import {
   generateRaceNews,
   generateMarketNews,
   generateFlavorNews,
-} from "@/services/narrative/newsGenerator";
+} from "@/domains/narrative/application/newsGenerator";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
-import type { Race } from "@/game/types";
+import type { Race } from "@/platform/game/types";
 
 function mkRace(overrides: Partial<Race> = {}): Race {
   return {

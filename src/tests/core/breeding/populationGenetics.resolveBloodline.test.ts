@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { resolveBloodline } from "@/core/breeding/populationGenetics";
+import { resolveBloodline } from "@/domains/breeding/simulation/populationGenetics";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Horse } from "@/game/types";
-import { clearAllCaches } from "@/core/genetics/genotypeCache";
+import type { Horse } from "@/platform/game/types";
+import { clearAllCaches } from "@/domains/genetics/simulation/genotypeCache";
 
 describe("populationGenetics - resolveBloodline", () => {
   let horseMap: Map<string, Horse>;

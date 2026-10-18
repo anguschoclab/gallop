@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { HorseIdentitySection } from "@/components/horse/HorseIdentitySection";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { HorseIdentitySection } from "@/domains/horse/ui/HorseIdentitySection";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function createHorse(overrides: Partial<Horse> = {}): Horse {
   return {

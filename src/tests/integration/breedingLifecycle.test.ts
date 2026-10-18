@@ -5,12 +5,12 @@
 
 import { describe, it, expect } from "vitest";
 import { runNpcBreeding } from "@/domains/agents/simulation/npc/breeding";
-import { createRng } from "@/core/common/rng";
-import { createDefaultGameState } from "@/game/store/state";
-import type { GameState, Horse, HorseGender } from "@/game/types";
+import { createRng } from "@/shared/common/rng";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { GameState, Horse, HorseGender } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 // Helper to create minimal valid Horse objects for testing

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
-import { HorseCardHeader } from "@/components/horse/HorseCardHeader";
-import { StallionCard } from "@/components/breeding/StallionCard";
-import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { HorseCardHeader } from "@/domains/horse/ui/HorseCardHeader";
+import { StallionCard } from "@/domains/breeding/ui/StallionCard";
+import { generateHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   useNavigate: () => () => {},

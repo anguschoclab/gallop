@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
+import { useGame } from "@/platform/game/store";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import type { AwardCeremonyInvitation } from "@/core/awards/invitations";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { AwardCeremonyInvitation } from "@/domains/awards/simulation/invitations";
 
 function mkInvitation(
   id: string,

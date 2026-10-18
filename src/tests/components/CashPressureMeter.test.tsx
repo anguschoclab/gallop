@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { CashPressureMeter } from "@/components/stable/CashPressureMeter";
+import { CashPressureMeter } from "@/domains/stable/ui/CashPressureMeter";
 
 describe("CashPressureMeter", () => {
   it("renders the meter bar with correct width based on meter value", () => {

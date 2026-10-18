@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { useGame } from "@/game/store";
-import type { GameState } from "@/game/types";
+import { useGame } from "@/platform/game/store";
+import type { GameState } from "@/platform/game/types";
 
 /**
  * Regression test: cashPressureHistory must be included in the persisted keys

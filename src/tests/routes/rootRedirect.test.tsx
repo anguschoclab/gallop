@@ -33,9 +33,9 @@ vi.mock("@/game/store/storage", () => ({
   hydrationComplete: { value: false },
 }));
 
-import { RootComponent } from "@/components/routes/RootComponent";
-import { rehydrateStore } from "@/game/store";
-import { saveExists, hydrationComplete } from "@/game/store/storage";
+import { RootComponent } from "@/domains/shell/ui/pages/RootComponent";
+import { rehydrateStore } from "@/platform/game/store";
+import { saveExists, hydrationComplete } from "@/platform/game/store/storage";
 
 describe("RootComponent redirect and error handling", () => {
   beforeEach(() => {

@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
-import { resetCache } from "@/hooks/shared/useBookmarks";
+import { BookmarkButton } from "@/domains/bookmarks/ui/BookmarkButton";
+import { resetCache } from "@/platform/game/hooks/useBookmarks";
 
 describe("BookmarkButton", () => {
   beforeEach(() => {

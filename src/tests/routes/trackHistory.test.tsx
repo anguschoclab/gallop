@@ -10,8 +10,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { createElement } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import type { TrackLedgerEntry } from "@/core/history/trackLedger";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { TrackLedgerEntry } from "@/domains/history/simulation/trackLedger";
 
 const useSearchMock = vi.fn((): { track?: string } => ({}));
 

@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from "vitest";
-import type { PipelineContext } from "@/core/time/pipeline";
-import { createPhase } from "@/core/time/pipeline";
-import { describePhase, type PhaseDescriptor } from "@/core/time/scheduler";
-import { SimulationExecutor } from "@/core/time/executor";
-import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import { createPhase } from "@/platform/time/pipeline";
+import { describePhase, type PhaseDescriptor } from "@/platform/time/scheduler";
+import { SimulationExecutor } from "@/platform/time/executor";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
+import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 
 describe("Executor exactly-once semantics", () => {
   it("each due phase executes exactly once per day", () => {

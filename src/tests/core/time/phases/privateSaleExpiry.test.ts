@@ -3,12 +3,12 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { privateSaleExpiryPhase } from "@/core/time/phases/privateSaleExpiry";
+import { privateSaleExpiryPhase } from "@/platform/time/phases/privateSaleExpiry";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
-import type { GameState, PrivateSaleOffer } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState, PrivateSaleOffer } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("privateSaleExpiryPhase", () => {

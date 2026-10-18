@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildAdvancePlan, interruptionForDay } from "@/core/time/advancePlan";
+import { buildAdvancePlan, interruptionForDay } from "@/platform/time/advancePlan";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
-import type { GameState, Race } from "@/game/types";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
+import type { GameState, Race } from "@/platform/game/types";
 
 function raceOnDay(day: number, player = true, resolved = false): Race {
   return {

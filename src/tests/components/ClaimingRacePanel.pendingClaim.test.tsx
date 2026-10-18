@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
-import { ClaimingRacePanel } from "@/components/race/ClaimingRacePanel";
-import type { Horse, Race } from "@/game/types";
-import type { ClaimingIntent } from "@/core/resolver/intents";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { ClaimingRacePanel } from "@/domains/race/ui/ClaimingRacePanel";
+import type { Horse, Race } from "@/platform/game/types";
+import type { ClaimingIntent } from "@/platform/resolver/intents";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

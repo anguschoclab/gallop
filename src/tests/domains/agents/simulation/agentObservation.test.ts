@@ -17,11 +17,11 @@ import {
   publicHorseView,
   PUBLIC_WORLD_OBSERVER,
 } from "@/domains/agents/simulation/agentObservation";
-import { createInitialState } from "@/game/store/initialization";
+import { createInitialState } from "@/platform/game/store/initialization";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { AnyIntent } from "@/core/resolver/intents";
-import type { GameState } from "@/game/types";
+import type { AnyIntent } from "@/platform/resolver/intents";
+import type { GameState } from "@/platform/game/types";
 
 function makeState(overrides: Partial<GameState> = {}): GameState {
   const base = createInitialState();

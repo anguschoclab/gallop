@@ -3,12 +3,12 @@ import {
   generateEnergyImpact,
   generateFormImpact,
   generateFameImpact,
-} from "@/core/race/impacts/energyFormFame";
+} from "@/domains/race/simulation/impacts/energyFormFame";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
-import { RACE_ENERGY_IMPACT } from "@/constants";
-import type { StaffMember } from "@/core/staff/staffTypes";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { RACE_ENERGY_IMPACT } from "@/domains/race/model/raceSimulationConstants";;
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("energyFormFame impacts", () => {
   const testHorse = createTestHorse({ id: "horse1" });

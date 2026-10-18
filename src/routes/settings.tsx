@@ -1,17 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/shared/ui/button";
 import { Settings, RotateCcw } from "lucide-react";
-import { useUserSettings, useSettingsActions } from "@/hooks/game/useSystemsState";
+import { useUserSettings, useSettingsActions } from "@/platform/game/hooks/useSystemsState";
 import { useState } from "react";
-import { SaveLoadDialog } from "@/components/settings/SaveLoadDialog";
-import { DisplaySettingsCard } from "@/components/settings/DisplaySettingsCard";
-import { GameplaySettingsCard } from "@/components/settings/GameplaySettingsCard";
-import { NotificationSettingsCard } from "@/components/settings/NotificationSettingsCard";
-import { AudioSettingsCard } from "@/components/settings/AudioSettingsCard";
-import { DataManagementCard } from "@/components/settings/DataManagementCard";
-import { RealWorldDataCard } from "@/components/settings/RealWorldDataCard";
-import { GlossaryPanel } from "@/components/settings/GlossaryPanel";
-import { TutorialSettingsCard } from "@/components/settings/TutorialSettingsCard";
+import { SaveLoadDialog } from "@/domains/settings/ui/SaveLoadDialog";
+import { DisplaySettingsCard } from "@/domains/settings/ui/DisplaySettingsCard";
+import { GameplaySettingsCard } from "@/domains/settings/ui/GameplaySettingsCard";
+import { NotificationSettingsCard } from "@/domains/settings/ui/NotificationSettingsCard";
+import { AudioSettingsCard } from "@/domains/settings/ui/AudioSettingsCard";
+import { DataManagementCard } from "@/domains/settings/ui/DataManagementCard";
+import { RealWorldDataCard } from "@/domains/settings/ui/RealWorldDataCard";
+import { GlossaryPanel } from "@/domains/settings/ui/GlossaryPanel";
+import { TutorialSettingsCard } from "@/domains/settings/ui/TutorialSettingsCard";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,

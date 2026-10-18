@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { calculateAssignedWeight } from "@/core/race/entryScoring";
-import { SCORING_CONSTANTS } from "@/core/race/entryScoringConstants";
-import { MIN_FORM_TO_ENTER, PREFERRED_DISTANCE_RANGE } from "@/constants";
+import { calculateAssignedWeight } from "@/domains/race/simulation/entryScoring";
+import { SCORING_CONSTANTS } from "@/domains/race/simulation/entryScoringConstants";
+import { MIN_FORM_TO_ENTER, PREFERRED_DISTANCE_RANGE } from "@/domains/race/model/raceEntryConstants";;
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Race } from "@/game/types";
+import type { Race } from "@/platform/game/types";
 
 describe("calculateAssignedWeight", () => {
   it("applies base weight to standard horses", () => {

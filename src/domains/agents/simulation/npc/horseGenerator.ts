@@ -8,16 +8,16 @@
  * Related files: npcStables.ts (uses horse generation), npcHorseGenHelpers.ts (helper functions)
  */
 
-import type { Horse, Stable } from "@/game/types";
-import type { Rng } from "@/core/common/rng";
-import { generateNpcHorse as _generateNpcHorse } from "@/core/horse/horseFactory";
-import { deriveFanCount } from "@/core/horse/fans";
-import { rand } from "@/core/common/random";
+import type { Horse, Stable } from "@/platform/game/types";
+import type { Rng } from "@/shared/common/rng";
+import { generateNpcHorse as _generateNpcHorse } from "@/domains/horse/simulation/horseFactory";
+import { deriveFanCount } from "@/domains/horse/simulation/fans";
+import { rand } from "@/shared/common/random";;
 import {
   shouldRetireAtStartup,
   calculateRecommendedStudFee,
   defaultStudParams,
-} from "@/core/breeding/stallions";
+} from "@/domains/breeding/simulation/stallions";
 import {
   shouldGenerateHorseOfAge,
   createHorseGenAIState,
@@ -26,9 +26,9 @@ import { recordHorseGeneration } from "@/domains/agents/simulation/horseGenAIRec
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { type AgeCategory, getAgeFromCategory, calculateStartingFame } from "./horseGenHelpers";
 
-import type { WorldSize } from "@/core/stable/worldSizeConfig";
-import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
-import { getStableId } from "@/core/horse/ownership";
+import type { WorldSize } from "@/domains/stable/simulation/worldSizeConfig";
+import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/domains/stable/simulation/worldSizeConfig";
+import { getStableId } from "@/domains/horse/simulation/ownership";
 
 // ─── Stable horse generation ──────────────────────────────────────────────────
 

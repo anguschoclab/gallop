@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { resolvePregnancies } from "@/core/breeding/pregnancy";
-import { generateHorse } from "@/core/horse/horseFactory";
-import { makeUnowned, makePlayerOwned } from "@/core/horse/ownership";
-import type { Horse, Pregnancy } from "@/game/types";
-import type { HorseId } from "@/core/types/branded";
+import { resolvePregnancies } from "@/domains/breeding/simulation/pregnancy";
+import { generateHorse } from "@/domains/horse/simulation/horseFactory";
+import { makeUnowned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import type { Horse, Pregnancy } from "@/platform/game/types";
+import type { HorseId } from "@/shared/types/branded";
 
 /**
  * Type-narrowing test for resolvePregnancies.

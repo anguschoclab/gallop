@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { generateRaceVerdict } from "@/core/race/raceVerdict";
-import type { RunnerFactorLedger, FactorKey } from "@/core/race/factorLedger";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { generateRaceVerdict } from "@/domains/race/simulation/raceVerdict";
+import type { RunnerFactorLedger, FactorKey } from "@/domains/race/simulation/factorLedger";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 
 function makeFactorEntry(
   raceAvg: number,

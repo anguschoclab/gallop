@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import { render } from "@testing-library/react";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { StepReview } from "@/components/NewGameWizard/steps/StepReview";
-import type { Backstory } from "@/core/common/backstories";
-import type { PlayerProfile, BackstoryId } from "@/game/types";
-import type { WorldSize } from "@/core/stable/worldSizeConfig";
+import { TooltipProvider } from "@/shared/ui/tooltip";
+import { StepReview } from "@/domains/onboarding/ui/steps/StepReview";
+import type { Backstory } from "@/shared/common/backstories";
+import type { PlayerProfile, BackstoryId } from "@/platform/game/types";
+import type { WorldSize } from "@/domains/stable/simulation/worldSizeConfig";
 
 const mockBackstory: Backstory = {
   id: "legacy" as BackstoryId,

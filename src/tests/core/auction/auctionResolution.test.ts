@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { resolveAuctionSale } from "@/core/auction/auctionResolution";
-import type { AuctionSale } from "@/game/types";
+import { resolveAuctionSale } from "@/domains/auction/simulation/auctionResolution";
+import type { AuctionSale } from "@/platform/game/types";
 
 describe("resolveAuctionSale", () => {
   it("marks a lot as passed if the horse does not exist", () => {

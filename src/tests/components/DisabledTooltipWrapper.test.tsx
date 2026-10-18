@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { DisabledTooltipWrapper } from "@/components/ui/DisabledTooltipWrapper";
+import { DisabledTooltipWrapper } from "@/shared/ui/DisabledTooltipWrapper";
 
 describe("DisabledTooltipWrapper", () => {
   it("renders children directly when no reason is given", () => {

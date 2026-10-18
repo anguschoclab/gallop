@@ -5,9 +5,9 @@ import {
 } from "@/domains/agents/simulation/raceEntryAIScoring";
 import { createRaceEntryAIState } from "@/domains/agents/simulation/raceEntryAITypes";
 import { createTestHorse } from "@/tests/helpers";
-import type { Horse, Race, Stable } from "@/game/types";
-import type { StaffRole } from "@/core/staff/staffTypes";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import type { Horse, Race, Stable } from "@/platform/game/types";
+import type { StaffRole } from "@/domains/staff/model/staffTypes";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 function mkStable(overrides: Partial<Stable> = {}): Stable {
   const staffRoles: StaffRole[] = ["veterinarian", "farrier", "nutritionist", "groom", "trainer"];

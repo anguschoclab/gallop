@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { Leaderboard } from "@/components/race/Leaderboard";
-import { TIE_BREAK_HINT_TEXT } from "@/constants/raceBroadcastConstants";
-import { makeUnowned } from "@/core/horse/ownership";
+import { Leaderboard } from "@/domains/race/ui/Leaderboard";
+import { TIE_BREAK_HINT_TEXT } from "@/domains/race/model/raceBroadcastConstants";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (

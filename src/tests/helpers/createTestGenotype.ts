@@ -8,7 +8,7 @@ import type {
   MarkerGenotype,
   HealthGenotype,
   MarkingsGenotype,
-} from "@/game/types";
+} from "@/platform/game/types";
 
 /**
  * Creates a valid test allele (1-10).

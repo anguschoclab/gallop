@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { GAME_PHASE_DESCRIPTORS, GAME_SCHEDULE } from "@/core/time/phases/descriptors";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
-import { compileSchedule } from "@/core/time/scheduler";
+import { GAME_PHASE_DESCRIPTORS, GAME_SCHEDULE } from "@/platform/time/phases/descriptors";
+import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
+import { compileSchedule } from "@/platform/time/scheduler";
 
 describe("Compiled schedule replaces numeric stages", () => {
   it("every registered phase appears exactly once in the compiled schedule", () => {

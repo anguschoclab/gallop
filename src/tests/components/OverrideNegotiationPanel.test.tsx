@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { OverrideNegotiationPanel } from "@/components/auction/OverrideNegotiationPanel";
-import type { HorseAttachment, AttachmentTier } from "@/core/horse/attachment";
-import type { Horse, Stable } from "@/game/types";
+import { OverrideNegotiationPanel } from "@/domains/auction/ui/OverrideNegotiationPanel";
+import type { HorseAttachment, AttachmentTier } from "@/domains/horse/simulation/attachment";
+import type { Horse, Stable } from "@/platform/game/types";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() },

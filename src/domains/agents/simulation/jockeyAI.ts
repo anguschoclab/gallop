@@ -13,11 +13,11 @@
  * Personality-driven jockey selection, retention, and contract negotiation
  */
 
-import type { Horse, Stable, Race } from "@/game/types";
-import type { Jockey } from "@/game/types";
+import type { Horse, Stable, Race } from "@/platform/game/types";
+import type { Jockey } from "@/platform/game/types";
 import { getPersonalityAIState, calculateUtilityAdjustment } from "./personalitySystem";
-import { calculateRaceRating } from "@/core/horse/stats";
-import { getCompatibility } from "@/core/jockey/compatibility";
+import { calculateRaceRating } from "@/domains/horse/simulation/stats";
+import { getCompatibility } from "@/domains/jockey/simulation/compatibility";
 import { createLearningState, getSuccessRate, type LearningState } from "./learningModule";
 
 export interface JockeyAIState {

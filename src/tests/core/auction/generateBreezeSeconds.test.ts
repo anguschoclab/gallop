@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { generateBreezeSeconds } from "@/core/auction/engine";
+import { generateBreezeSeconds } from "@/domains/auction/simulation/engine";
 import { createTestHorse } from "@/tests/helpers";
-import { createRng } from "@/core/common/rng";
+import { createRng } from "@/shared/common/rng";
 
 describe("Auction Engine - generateBreezeSeconds", () => {
   it("generates fast times for elite horses (100 stats)", () => {

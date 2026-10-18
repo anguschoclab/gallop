@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { TrophyFullView } from "@/components/awards/TrophyFullView";
-import type { RegionalAward } from "@/core/awards/types";
+import { TrophyFullView } from "@/domains/awards/ui/TrophyFullView";
+import type { RegionalAward } from "@/domains/awards/model/types";
 
 vi.mock("@/components/ui/card", () => ({
   Card: ({ children }: { children?: React.ReactNode }) => <div data-testid="card">{children}</div>,

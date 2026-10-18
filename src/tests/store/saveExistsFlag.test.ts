@@ -96,7 +96,7 @@ import {
   _resetSaveExists,
   createRehydrateStore,
   loadGameStateFromIDB,
-} from "@/game/store/storage";
+} from "@/platform/game/store/storage";
 
 describe("saveExists flag", () => {
   beforeEach(() => {

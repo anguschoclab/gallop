@@ -1,4 +1,4 @@
-import type { AppearanceDNA } from "@/core/genetics/types";
+import type { AppearanceDNA } from "@/domains/genetics/model/types";
 
 /**
  * Creates valid test appearance DNA.

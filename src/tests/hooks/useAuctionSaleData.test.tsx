@@ -14,10 +14,10 @@ vi.mock("@/services/auction/auctionLotFilter", () => ({
   filterAndSortLots: (lots: any[]) => lots,
 }));
 
-import { useAuctionSaleData } from "@/hooks/auction/useAuctionSaleData";
-import { createDefaultGameState } from "@/game/store/state";
+import { useAuctionSaleData } from "@/domains/auction/application/hooks/useAuctionSaleData";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 
 let mockState: any;
 

@@ -6,10 +6,10 @@ import {
   expectedBeyer,
   calculateBeyerForResult,
   detectPatternJump,
-} from "@/core/race/beyer";
-import type { Horse } from "@/game/types";
+} from "@/domains/race/simulation/beyer";
+import type { Horse } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
-import { makeUnowned } from "@/core/horse/ownership";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

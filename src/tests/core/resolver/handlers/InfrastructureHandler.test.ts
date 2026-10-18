@@ -1,14 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { InfrastructureHandler } from "@/core/resolver/handlers/InfrastructureHandler";
-import type { GameState } from "@/game/store/state";
+import { InfrastructureHandler } from "@/platform/resolver/handlers/InfrastructureHandler";
+import type { GameState } from "@/platform/game/store/state";
 import type {
   FacilityUpgradeImpact,
   StaffImpact,
   TransportImpact,
   OutpostImpact,
-} from "@/core/resolver/impacts/index";
+} from "@/platform/resolver/impacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createFacilityAIState } from "@/domains/agents/simulation/facilityAITypes";

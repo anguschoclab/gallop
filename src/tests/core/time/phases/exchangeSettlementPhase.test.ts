@@ -7,19 +7,19 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { exchangeSettlementPhase } from "@/core/time/phases/exchangeSettlementPhase";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
-import { PHASE_ORDER_EXCHANGE_SETTLEMENT } from "@/constants";
+import { exchangeSettlementPhase } from "@/platform/time/phases/exchangeSettlementPhase";
+import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
+import { PHASE_ORDER_EXCHANGE_SETTLEMENT } from "@/platform/time/pipelineConstants";;
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestStable, createTestNpcHorse } from "@/tests/helpers";
-import { createDefaultExchangeState } from "@/core/market/exchange";
-import { isPlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { createDefaultExchangeState } from "@/domains/market/simulation/exchange";
+import { isPlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 import { runPipelineForDays } from "@/tests/helpers/runPipeline";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 function mkContext(overrides: Partial<GameState> = {}, newDay = 10): PipelineContext {
   const state = makeGameState(overrides) as GameState;

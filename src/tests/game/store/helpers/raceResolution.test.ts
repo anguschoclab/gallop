@@ -4,7 +4,7 @@ import {
   sanitizeAndRankResults,
   detectPhotoFinish,
   type RankedResult,
-} from "@/core/race/resolution";
+} from "@/domains/race/simulation/resolution";
 
 // ---------------------------------------------------------------------------
 // computePayoutSplits

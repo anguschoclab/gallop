@@ -9,11 +9,11 @@ import {
   getSuggestedClaimingPriceRange,
   validateClaimingRace,
   type ClaimAttempt,
-} from "@/core/market/claiming";
-import { createRng } from "@/core/common/rng";
+} from "@/domains/market/simulation/claiming";
+import { createRng } from "@/shared/common/rng";
 import { createTestHorse } from "@/tests/helpers";
-import type { Horse, Race } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import type { Horse, Race } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("resolveClaims", () => {
   it("should return empty result when race is not a claiming race", () => {

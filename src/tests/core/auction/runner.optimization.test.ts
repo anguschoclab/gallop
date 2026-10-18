@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { createAuctionRunner } from "@/core/auction/runner";
-import { personalityConsignmentPolicy } from "@/core/auction/engine";
-import { createRng } from "@/core/common/rng";
-import type { AuctionSale, AuctionLot, Horse, Stable } from "@/game/types";
-import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type { StaffRole } from "@/core/staff/staffTypes";
+import { createAuctionRunner } from "@/domains/auction/simulation/runner";
+import { personalityConsignmentPolicy } from "@/domains/auction/simulation/engine";
+import { createRng } from "@/shared/common/rng";
+import type { AuctionSale, AuctionLot, Horse, Stable } from "@/platform/game/types";
+import type { AnyImpact } from "@/platform/resolver/impacts";
+import type { StaffRole } from "@/domains/staff/model/staffTypes";
 import { createTestHorse } from "@/tests/helpers";
-import { getStableId, makeNpcOwned } from "@/core/horse/ownership";
+import { getStableId, makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

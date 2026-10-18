@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import { useAutoResumeAdvance } from "@/hooks/game/useAutoResumeAdvance";
-import { asRaceId } from "@/core/types/branded";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useAutoResumeAdvance } from "@/platform/game/hooks/useAutoResumeAdvance";
+import { asRaceId } from "@/shared/types/branded";
 
 /**
  * Production-path tests: the real store and the real auto-resume hook.

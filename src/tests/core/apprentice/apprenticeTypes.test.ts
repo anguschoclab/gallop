@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getApprenticeStatus, getClaimAllowance } from "@/core/apprentice/apprenticeTypes";
+import { getApprenticeStatus, getClaimAllowance } from "@/domains/apprentice/model/apprenticeTypes";
 
 describe("getApprenticeStatus", () => {
   it('returns "apprentice" for less than 5 wins', () => {

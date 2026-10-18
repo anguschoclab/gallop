@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { narrativePhase } from "@/core/time/phases/narrativePhase";
+import { narrativePhase } from "@/platform/time/phases/narrativePhase";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import { createTestStable } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 describe("narrativePhase", () => {
   it("should return context unchanged when no NPC stables", () => {

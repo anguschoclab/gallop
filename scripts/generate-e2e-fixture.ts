@@ -9,11 +9,11 @@
  * Output: src/tests/e2e/fixtures/e2e-fixture.json
  */
 
-import { createInitialState } from "../src/game/store/initialization";
-import { STORE_STATE_VERSION } from "../src/game/store/stateVersion";
-import { splitHorsesForPersistence } from "../src/core/persistence/npcCompression";
-import { prunePedigree } from "../src/core/persistence/pedigreePrune";
-import type { GameState } from "../src/game/types";
+import { createInitialState } from "@/platform/game/store/initialization";
+import { STORE_STATE_VERSION } from "@/platform/game/store/stateVersion";
+import { splitHorsesForPersistence } from "@/platform/persistence/npcCompression";
+import { prunePedigree } from "@/platform/persistence/pedigreePrune";
+import type { GameState } from "@/platform/game/types";
 import { writeFileSync, mkdirSync } from "fs";
 import { dirname, join } from "path";
 import { fileURLToPath } from "url";

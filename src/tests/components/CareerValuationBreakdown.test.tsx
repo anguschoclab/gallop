@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { CareerValuationBreakdown } from "@/components/horse/CareerValuationBreakdown";
-import { formatCurrency } from "@/core/common/formatting";
-import type { HorseCareerValuation } from "@/core/horse/pricing";
+import { CareerValuationBreakdown } from "@/domains/horse/ui/CareerValuationBreakdown";
+import { formatCurrency } from "@/shared/common/formatting";
+import type { HorseCareerValuation } from "@/domains/horse/simulation/pricing";
 
 const sampleValuation: HorseCareerValuation = {
   racing: 50000,

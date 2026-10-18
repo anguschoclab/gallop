@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateUUID } from "@/core/uuid";
+import { generateUUID } from "@/shared/uuid/uuid";
 
 describe("UUID Collision Detection at Scale", () => {
   it("should generate 10,000 unique UUIDs without collisions", () => {

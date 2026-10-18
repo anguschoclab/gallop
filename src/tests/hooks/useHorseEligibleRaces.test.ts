@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { deriveEligibleRaces, findFirstEligibleRace } from "@/hooks/race/useHorseEligibleRaces";
-import type { Horse, Race, Jockey } from "@/game/types";
+import { deriveEligibleRaces, findFirstEligibleRace } from "@/domains/race/application/hooks/useHorseEligibleRaces";
+import type { Horse, Race, Jockey } from "@/platform/game/types";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

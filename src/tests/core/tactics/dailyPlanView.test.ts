@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { buildDailyPlanTimeline } from "@/core/tactics/dailyPlanView";
-import type { CampaignHistoryRow } from "@/core/stable/campaignHistory";
+import { buildDailyPlanTimeline } from "@/domains/tactics/simulation/dailyPlanView";
+import type { CampaignHistoryRow } from "@/domains/stable/simulation/campaignHistory";
 
 const row = (overrides: Partial<CampaignHistoryRow> = {}): CampaignHistoryRow => ({
   raceId: "r1",

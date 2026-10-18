@@ -3,12 +3,12 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { intentCollectionPhase } from "@/core/time/phases/intentCollection";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
-import type { TrainingIntent } from "@/core/resolver/intents";
+import { intentCollectionPhase } from "@/platform/time/phases/intentCollection";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { TrainingIntent } from "@/platform/resolver/intents";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { createRng } from "@/core/common/rng";
+import { createRng } from "@/shared/common/rng";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { h2r } from "@/tests/helpers/sampleGameState";
 

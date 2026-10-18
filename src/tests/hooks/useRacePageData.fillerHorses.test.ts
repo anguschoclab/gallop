@@ -7,8 +7,8 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
-import type { Horse, Race, Stable } from "@/game/types";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Horse, Race, Stable } from "@/platform/game/types";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
@@ -112,9 +112,9 @@ const RUNNERS: Runner[] = [
 
 // ─── Imports (after mocks) ───────────────────────────────────────────────────
 
-import { useRacePageData } from "@/hooks/race/useRacePageData";
-import { buildRaceField } from "@/core/race/raceSimulationService";
-import { NarrativeGenerator } from "@/services/narrative/narrativeService";
+import { useRacePageData } from "@/domains/race/application/hooks/useRacePageData";
+import { buildRaceField } from "@/domains/race/simulation/raceSimulationService";
+import { NarrativeGenerator } from "@/domains/narrative/application/narrativeService";
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 

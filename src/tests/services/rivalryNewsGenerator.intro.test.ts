@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { generateStableIntroNews } from "@/services/narrative/rivalryNewsGenerator";
+import { generateStableIntroNews } from "@/domains/narrative/application/rivalryNewsGenerator";
 import { createTestStable, createTestRng } from "@/tests/helpers";
-import { isValidUUID } from "@/core/uuid";
+import { isValidUUID } from "@/shared/uuid/uuid";
 
 describe("generateStableIntroNews", () => {
   it("13.1 — Headline contains stable name", () => {

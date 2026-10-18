@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { BOOKMARK_TYPE_ORDER } from "@/hooks/shared/useBookmarks";
-import type { Bookmark, BookmarkEntityType } from "@/hooks/shared/useBookmarks";
+import { BOOKMARK_TYPE_ORDER } from "@/platform/game/hooks/useBookmarks";
+import type { Bookmark, BookmarkEntityType } from "@/platform/game/hooks/useBookmarks";
 
 function makeBookmark(type: BookmarkEntityType, addedAt: number): Bookmark {
   return {

@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makePlayerOwned } from "@/core/horse/ownership";
-import { EngineClient } from "@/core/engine/client";
-import { LocalTransport } from "@/core/engine/transports";
-import { SimulationEngine } from "@/core/engine/engine";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import { EngineClient } from "@/platform/engine/client";
+import { LocalTransport } from "@/platform/engine/transports";
+import { SimulationEngine } from "@/platform/engine/engine";
 
 /**
  * Production-path tests: commands go through the real EngineClient →

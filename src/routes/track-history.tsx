@@ -1,21 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { FilterX, Landmark, MapPin } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/shared/ui/card";
+import { Badge } from "@/shared/ui/badge";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useGameWithShallow } from "@/game/store";
-import { TrackLedgerRaces } from "@/components/history/TrackLedgerRaces";
-import { TrackLedgerPrestigeTable } from "@/components/history/TrackLedgerPrestigeTable";
-import { formatCurrency } from "@/lib/formatting";
+} from "@/shared/ui/select";
+import { useGameWithShallow } from "@/platform/game/store";
+import { TrackLedgerRaces } from "@/domains/history/ui/TrackLedgerRaces";
+import { TrackLedgerPrestigeTable } from "@/domains/history/ui/TrackLedgerPrestigeTable";
+import { formatCurrency } from "@/shared/common/formatting";;
 import {
   filterTrackLedger,
   racesAtTrack,
@@ -23,7 +23,7 @@ import {
   summarizeTrackLedger,
   trackLedgerStableOptions,
   type TrackLedgerEntry,
-} from "@/services/history/historyFacade";
+} from "@/domains/history/application/historyFacade";
 
 const EMPTY_LEDGER: TrackLedgerEntry[] = [];
 

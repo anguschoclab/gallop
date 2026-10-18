@@ -12,12 +12,12 @@ import {
   portfolioTotals,
   sortPortfolios,
   type StablePortfolio,
-} from "@/core/stable/portfolio";
-import type { Syndicate } from "@/core/breeding/types";
+} from "@/domains/stable/simulation/portfolio";
+import type { Syndicate } from "@/domains/breeding/model/types";
 import { createTestHorse } from "@/tests/helpers";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
-import type { Horse, Stable } from "@/game/types";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import type { Horse, Stable } from "@/platform/game/types";
 
 function mkStable(overrides: Partial<Stable> & { id: string }): Stable {
   return {

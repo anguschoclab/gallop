@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { RelationshipGraph } from "@/components/npc/RelationshipGraph";
+import { RelationshipGraph } from "@/domains/agents/ui/RelationshipGraph";
 import type { NpcRelationship } from "@/domains/agents/simulation/npcCycleAI";
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 
 function createMockRelationship(overrides: Partial<NpcRelationship> = {}): NpcRelationship {
   return {

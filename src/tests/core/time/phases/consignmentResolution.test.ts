@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { consignmentResolutionPhase } from "@/core/time/phases/consignmentResolution";
+import { consignmentResolutionPhase } from "@/platform/time/phases/consignmentResolution";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("consignmentResolutionPhase", () => {
   it("should convert consignment intents to impacts", () => {

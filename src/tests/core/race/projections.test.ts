@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { calculateBeyerProjections, formatProjectionMessage } from "@/core/race/projections";
-import type { Horse, Race } from "@/game/types";
+import { calculateBeyerProjections, formatProjectionMessage } from "@/domains/race/simulation/projections";
+import type { Horse, Race } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
-import { makeUnowned } from "@/core/horse/ownership";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(id: string, speed = 70, stamina = 70, acceleration = 70, consistency = 70): Horse {
   return createTestHorse({

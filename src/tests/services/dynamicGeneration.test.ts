@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { composeSentence } from "@/services/narrative/sentenceComposer";
-import { generateProcedural } from "@/services/narrative/proceduralGenerator";
-import { DYNAMIC_OPENERS, DYNAMIC_TRAILERS } from "@/assets/narrative/dynamicClauses";
-import { createRng, hashStr } from "@/core/common/rng";
+import { composeSentence } from "@/domains/narrative/application/sentenceComposer";
+import { generateProcedural } from "@/domains/narrative/application/proceduralGenerator";
+import { DYNAMIC_OPENERS, DYNAMIC_TRAILERS } from "@/shared/assets/narrative/dynamicClauses";
+import { createRng, hashStr } from "@/shared/common/rng";
 
 describe("Dynamic Sentence Generation", () => {
   it("composeSentence() produces coherent sentences for SURGE", () => {

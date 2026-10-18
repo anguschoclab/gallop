@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { stepRunner, runRaceToCompletion } from "@/core/race/engine/simulation";
-import { createRng } from "@/core/common/rng";
-import { FactorLedgerCollector } from "@/core/race/factorLedger";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { stepRunner, runRaceToCompletion } from "@/domains/race/simulation/engine/simulation";
+import { createRng } from "@/shared/common/rng";
+import { FactorLedgerCollector } from "@/domains/race/simulation/factorLedger";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 import { createTestJockey } from "@/tests/helpers";
-import { asJockeyId } from "@/core/types/branded";
+import { asJockeyId } from "@/shared/types/branded";
 
 function makeJockey() {
   return createTestJockey({

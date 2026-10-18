@@ -15,9 +15,9 @@ import {
   shouldDefendFromClaim,
   detectClaimingArbitrage,
 } from "@/domains/agents/simulation/claimingAI";
-import type { Horse, Race, Stable } from "@/game/types";
+import type { Horse, Race, Stable } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

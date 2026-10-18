@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { prependLogEntry, prependLogEntries, DEFAULT_LOG_CAP } from "@/core/common/logHelpers";
+import { prependLogEntry, prependLogEntries, DEFAULT_LOG_CAP } from "@/shared/common/logHelpers";
 
 describe("prependLogEntry", () => {
   it("prepends a new entry to an empty log", () => {

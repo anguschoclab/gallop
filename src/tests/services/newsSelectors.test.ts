@@ -6,11 +6,11 @@ import {
   getG1RacesByDay,
   getGradedRacesByDay,
   getVeteransByFame,
-} from "@/services/narrative/newsSelectors";
+} from "@/domains/narrative/application/newsSelectors";
 import { createTestStable, createTestHorse, createTestNpcHorse } from "@/tests/helpers";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
-import type { Race, Stable, Horse } from "@/game/types";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import type { Race, Stable, Horse } from "@/platform/game/types";
 
 function buildStables(): Stable[] {
   return [

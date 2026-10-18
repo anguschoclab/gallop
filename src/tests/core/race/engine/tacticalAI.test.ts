@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { calculateTacticalAdjustment } from "@/core/race/engine/tacticalAI";
-import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
-import { makeUnowned } from "@/core/horse/ownership";
+import { calculateTacticalAdjustment } from "@/domains/race/simulation/engine/tacticalAI";
+import type { Runner, PaceContext } from "@/domains/race/simulation/engine/runnerBuilder";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("tacticalAI", () => {
   const createMockRunner = (

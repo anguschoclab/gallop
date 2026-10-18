@@ -4,10 +4,10 @@
  * Extracted from claimingAI.ts for modularity.
  */
 
-import type { Horse, Race, Stable } from "@/game/types";
+import type { Horse, Race, Stable } from "@/platform/game/types";
 import { calculateUtilityAdjustment } from "./personalitySystem";
 import { getSuccessRate } from "./learningModule";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import type { ClaimingAIState } from "./claimingAITypes";
 
 export function calculateClaimingValue(

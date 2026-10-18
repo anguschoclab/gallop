@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { computeRegionTrends, regionKeyForRace } from "@/core/analytics/regionalTrends";
-import { isInWindow, weekBucket } from "@/core/analytics/timeWindow";
-import type { Race } from "@/core/race/types";
-import type { Horse } from "@/core/horse/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { computeRegionTrends, regionKeyForRace } from "@/domains/analytics/simulation/regionalTrends";
+import { isInWindow, weekBucket } from "@/domains/analytics/simulation/timeWindow";
+import type { Race } from "@/domains/race/simulation/types";
+import type { Horse } from "@/domains/horse/simulation/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const race = (id: string, track?: string, grade?: "G1") =>
   ({

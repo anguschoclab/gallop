@@ -8,8 +8,8 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { createElement } from "react";
 import { render, screen, cleanup } from "@testing-library/react";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { ConditionSegment } from "@/hooks/race/useConditionTimeline";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import type { ConditionSegment } from "@/domains/race/application/hooks/useConditionTimeline";
 
 // ── Mock useConditionTimeline ────────────────────────────────────────────────
 
@@ -31,8 +31,8 @@ vi.mock("@/components/race/ConditionTimeline", () => ({
 
 // ── Import after mocks ────────────────────────────────────────────────────────
 
-import { ConditionTimelinePanel } from "@/components/race/ConditionTimelinePanel";
-import { makeUnowned } from "@/core/horse/ownership";
+import { ConditionTimelinePanel } from "@/domains/race/ui/ConditionTimelinePanel";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 

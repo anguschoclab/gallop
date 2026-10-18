@@ -6,8 +6,8 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { bestPerMileByHorse } from "@/core/race/bestPace";
-import type { Race } from "@/core/race/types";
+import { bestPerMileByHorse } from "@/domains/race/simulation/bestPace";
+import type { Race } from "@/domains/race/simulation/types";
 
 function mkRace(
   overrides: Omit<Partial<Race>, "result"> & {

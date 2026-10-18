@@ -38,8 +38,8 @@ import { createRouterMock, NotFoundError } from "@/test-utils/routerMock";
 vi.mock("@tanstack/react-router", () => createRouterMock());
 
 import { renderWithStore, midGameSeed } from "@/test-utils/renderWithStore";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import { componentRouteCases as cases } from "@/test-utils/routeDiscovery";
 
 beforeEach(() => {
@@ -134,7 +134,7 @@ describe("Phase 1.4 — Design bible: hardcoded hex colors in components", () =>
 
 describe("Phase 1.4 — Design bible: tabular-nums usage verification", () => {
   it("SidebarNav cash display uses tabular-nums", async () => {
-    const { SidebarNav } = await import("@/components/SidebarNav");
+    const { SidebarNav } = await import("@/domains/shell/ui/SidebarNav");
     const noop = vi.fn();
     const { container } = renderWithStore(
       createElement(SidebarNav, {
@@ -185,7 +185,7 @@ describe("Phase 1.4 — Wired features verification (previously TDD red)", () =>
 
 describe("Phase 1.4 — Verification: previously-unwired features now wired", () => {
   it("CareerArcPanel component exists and is importable", async () => {
-    const mod = await import("@/components/horse/CareerArcPanel");
+    const mod = await import("@/domains/horse/ui/CareerArcPanel");
     expect(mod.CareerArcPanel).toBeDefined();
     expect(typeof mod.CareerArcPanel).toBe("function");
   });
@@ -196,7 +196,7 @@ describe("Phase 1.4 — Verification: previously-unwired features now wired", ()
   });
 
   it("DiplomacyPanel component exists and is importable", async () => {
-    const mod = await import("@/components/npc/DiplomacyPanel");
+    const mod = await import("@/domains/agents/ui/DiplomacyPanel");
     expect(mod.DiplomacyPanel).toBeDefined();
     expect(typeof mod.DiplomacyPanel).toBe("function");
   });
@@ -207,7 +207,7 @@ describe("Phase 1.4 — Verification: previously-unwired features now wired", ()
   });
 
   it("StorylinesTab component exists and is importable", async () => {
-    const mod = await import("@/components/briefing/StorylinesTab");
+    const mod = await import("@/domains/briefing/ui/StorylinesTab");
     expect(mod.StorylinesTab).toBeDefined();
     expect(typeof mod.StorylinesTab).toBe("function");
   });
@@ -218,7 +218,7 @@ describe("Phase 1.4 — Verification: previously-unwired features now wired", ()
   });
 
   it("EconomicIndicators component exists and is importable", async () => {
-    const mod = await import("@/components/analytics/EconomicIndicators");
+    const mod = await import("@/domains/analytics/ui/EconomicIndicators");
     expect(mod.EconomicIndicators).toBeDefined();
     expect(typeof mod.EconomicIndicators).toBe("function");
   });
@@ -229,7 +229,7 @@ describe("Phase 1.4 — Verification: previously-unwired features now wired", ()
   });
 
   it("FoalDevelopmentPanel component exists and is importable", async () => {
-    const mod = await import("@/components/horse/FoalDevelopmentPanel");
+    const mod = await import("@/domains/horse/ui/FoalDevelopmentPanel");
     expect(mod.FoalDevelopmentPanel).toBeDefined();
     expect(typeof mod.FoalDevelopmentPanel).toBe("function");
   });

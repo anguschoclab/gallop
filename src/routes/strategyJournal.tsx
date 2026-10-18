@@ -1,20 +1,20 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Badge } from "@/shared/ui/badge";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useGame } from "@/game/store";
-import { PlanEffectivenessCard } from "@/components/journal/PlanEffectivenessCard";
-import { isPlayerOwned } from "@/core/horse/ownership";
+} from "@/shared/ui/select";
+import { useGame } from "@/platform/game/store";
+import { PlanEffectivenessCard } from "@/domains/journal/ui/PlanEffectivenessCard";
+import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import {
   addJournalEntry,
   journalOutcome,
@@ -22,7 +22,7 @@ import {
   updateJournalEntry,
   type JournalOutcome,
   type StrategyJournalEntry,
-} from "@/core/tactics/strategyJournal";
+} from "@/domains/tactics/simulation/strategyJournal";
 
 export const Route = createFileRoute("/strategyJournal")({
   validateSearch: (search: Record<string, unknown>): { horse?: string } => ({

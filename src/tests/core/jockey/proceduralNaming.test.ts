@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
-import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
-import { createRng } from "@/core/common/rng";
-import type { RegionalSystem } from "@/game/types";
+import { generateProceduralJockeyName } from "@/domains/jockey/simulation/proceduralNaming";
+import { createRng } from "@/shared/common/rng";
+import type { RegionalSystem } from "@/platform/game/types";
 
 describe("generateProceduralJockeyName", () => {
   it("generates a name from the specified regional pool", () => {

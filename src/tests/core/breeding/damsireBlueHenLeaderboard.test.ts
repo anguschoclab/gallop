@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import type { Horse } from "@/game/types";
-import { computeDamsireLeaderboard } from "@/core/breeding/damsireLeaderboard";
-import { computeBlueHenLeaderboard } from "@/core/breeding/blueHenLeaderboard";
+import type { Horse } from "@/platform/game/types";
+import { computeDamsireLeaderboard } from "@/domains/breeding/simulation/damsireLeaderboard";
+import { computeBlueHenLeaderboard } from "@/domains/breeding/simulation/blueHenLeaderboard";
 
 function makeHorse(overrides: Partial<Horse> & { id: string; name: string }): Horse {
   return {

@@ -53,8 +53,8 @@ vi.mock("@/components/NewGameWizard/steps/helpers", () => ({
   makeWizardRng: vi.fn(() => ({ next: () => 0.5 })),
 }));
 
-import { useNewGameWizard } from "@/hooks/shared/useNewGameWizard";
-import { useGame } from "@/game/store";
+import { useNewGameWizard } from "@/domains/onboarding/application/useNewGameWizard";
+import { useGame } from "@/platform/game/store";
 
 function setupStore(startNewGameImpl: any) {
   (useGame as any).mockImplementation((selector: any) =>

@@ -9,7 +9,7 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => searchState,
 }));
 
-import { useTabParam } from "@/hooks/ui/useTabParam";
+import { useTabParam } from "@/shared/hooks/ui/useTabParam";
 
 describe("useTabParam", () => {
   it("returns the fallback when no tab param is set", () => {

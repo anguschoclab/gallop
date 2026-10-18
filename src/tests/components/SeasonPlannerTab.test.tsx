@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { SeasonPlannerTab } from "@/components/breeding/SeasonPlannerTab";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { SeasonPlannerTab } from "@/domains/breeding/ui/SeasonPlannerTab";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (

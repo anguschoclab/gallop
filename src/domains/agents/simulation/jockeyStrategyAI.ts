@@ -9,8 +9,8 @@
  * Related files: jockeyStyleSelection.ts, jockeyTacticalMoves.ts, jockeyStrategyRecording.ts, jockeyStrategyAdjustments.ts
  */
 
-import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/game/types";
-import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/platform/game/types";
+import type { JockeyInstructions } from "@/domains/tactics/model/tacticsTypes";
 import { getPersonalityAIState } from "./personalitySystem";
 import { createLearningState, type LearningState } from "./learningModule";
 import { calculateOptimalRunningStyle } from "./jockeyStyleSelection";

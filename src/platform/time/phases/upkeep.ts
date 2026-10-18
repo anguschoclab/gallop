@@ -1,0 +1,271 @@
+/**
+ * phases/upkeep.ts - Upkeep phase
+ *
+ * This file provides the upkeep phase where player pays $50/horse/day and NPC stables
+ * pay the same on their own roster to close asymmetric drain.
+ *
+ * Dependencies: ../pipeline (PipelineContext), @/core/expenses (createExpense), @/core/transactions (createTransaction), @/core/facilities (calculateTotalMaintenance), @/core/narrative/newsGenerator (generateFlavorNews), @/core/uuid (generateUUID), @/core/resolver/impacts/index (AnyImpact), @/domains/agents/simulation/upkeepAI (calculateMonthlyExpenseBudget, shouldConserveCash, createUpkeepAIState, recordBudgetDecision, updateReserveState), @/domains/agents/simulation/npcCycleAI (getOrCreateStableAIState), @/constants (UPKEEP_PER_HORSE)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
+import type { PipelineContext } from "@/platform/time/pipeline";
+import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
+import { createExpense } from "@/domains/expenses/model/expenseTypes";;;
+import { calculateTotalMaintenance } from "@/domains/facilities/simulation";
+import { resolveNarrativePort } from "@/platform/time/pipelinePorts";
+import { generateUUID } from "@/shared/uuid/uuid";
+import type { AnyImpact } from "@/platform/resolver/impacts";
+import type { CashImpact, TransactionImpact, NewsImpact } from "@/platform/resolver/impacts";
+import { asNpcStableId } from "@/shared/types/branded";
+import { createUpkeepAIState } from "@/domains/agents/simulation/upkeepAI";
+import {
+  recordBudgetDecision,
+  updateReserveState,
+  shouldConserveCash,
+} from "@/domains/agents/simulation/upkeepAIInsights";
+import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
+import { UPKEEP_DISTRESS_MULTIPLIER } from "@/domains/financial/model/financialDistressConstants";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/domains/agents/model/aiConstants";
+import { DAYS_PER_WEEK } from "@/domains/calendar/model/calendarConstants";
+import { NEWS_FLAVOR_DAILY_PROBABILITY } from "@/domains/inbox/model/newsConstants";
+import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
+import { PHASE_ORDER_UPKEEP } from "@/platform/time/pipelineConstants";;
+
+/**
+ * Phase: Upkeep
+ * Player pays $50/horse/day. NPC stables pay the same on their own roster
+ * (closes the asymmetric drain that would have bankrupted them once foals,
+ * stud fees, and purses started circulating). Player horses are excluded
+ * from each NPC stable's count via stableId.
+ */
+export const upkeepPhase = {
+  name: "upkeep",
+  order: PHASE_ORDER_UPKEEP,
+  execute: (context: PipelineContext): PipelineContext => {
+    const { state, newDay, dailyRng } = context;
+    const impacts: AnyImpact[] = [];
+    // Resolve narrative ports — use injected implementations if available
+    const generateFlavor = resolveNarrativePort(context.ports, "generateFlavor");
+    const generateWeeklyFlavor = resolveNarrativePort(context.ports, "generateWeeklyFlavor");
+
+    const playerHorses = Object.values(state.horses).filter(
+      (h) => isPlayerOwned(h) && (!h.lifecycleStatus || h.lifecycleStatus === "active"),
+    );
+    const playerHorseCount = playerHorses.length;
+    const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
+
+    // Calculate staff salaries for player
+    const hiredStaff = state.hiredStaff ?? [];
+    const playerStaff = hiredStaff.filter((s) => s.stableId === "");
+    const playerStaffSalaries = playerStaff.reduce((sum, s) => sum + s.salary, 0);
+
+    const facilityMaintenance = state.facilities ? calculateTotalMaintenance(state.facilities) : 0;
+    const totalDailyCost = playerUpkeep + facilityMaintenance + playerStaffSalaries;
+
+    // Record expense entries for each horse
+    const newExpenses = playerHorses.map((horse) =>
+      createExpense("upkeep", UPKEEP_PER_HORSE, `Daily upkeep for ${horse.name}`, newDay, {
+        horseId: horse.id,
+        recurring: true,
+      }),
+    );
+
+    if (facilityMaintenance > 0) {
+      newExpenses.push(
+        createExpense(
+          "facility_maintenance",
+          facilityMaintenance,
+          `Daily facility maintenance`,
+          newDay,
+          { recurring: true },
+        ),
+      );
+    }
+
+    // Record staff salary expenses
+    playerStaff.forEach((staff) => {
+      newExpenses.push(
+        createExpense("upkeep", staff.salary, `${staff.role} salary for ${staff.name}`, newDay, {
+          recurring: true,
+        }),
+      );
+    });
+
+    // Emit impacts for player upkeep cash and transaction recording.
+    if (totalDailyCost > 0) {
+      impacts.push({
+        id: generateUUID(dailyRng),
+        intentId: "",
+        day: newDay,
+        phase: "upkeep",
+        logLevel: "conditional",
+        type: "cash_change",
+        entityId: "player",
+        amount: -totalDailyCost,
+        reason: `Daily upkeep: ${playerHorseCount} horses, facilities, and ${playerStaff.length} staff`,
+      } as CashImpact);
+      impacts.push({
+        id: generateUUID(dailyRng),
+        intentId: "",
+        day: newDay,
+        phase: "upkeep",
+        logLevel: "conditional",
+        type: "transaction",
+        amount: -totalDailyCost,
+        category: "upkeep",
+        description: `Daily upkeep: ${playerHorseCount} horses, facilities, and ${playerStaff.length} staff`,
+        recurring: true,
+      } as TransactionImpact);
+    }
+
+    // Pre-calculate counts and staff
+    const horseCountsByStable = new Map<string, number>();
+    for (const h of Object.values(state.horses)) {
+      const isActive = !h.lifecycleStatus || h.lifecycleStatus === "active";
+      if (h.ownership?.type === "npc" && isActive) {
+        const sid = h.ownership.stableId;
+        horseCountsByStable.set(sid, (horseCountsByStable.get(sid) ?? 0) + 1);
+      }
+    }
+
+    const staffByStable = new Map<string, StaffMember[]>();
+    if (state.hiredStaff) {
+      for (const staff of state.hiredStaff) {
+        const sid = staff.stableId ?? "";
+        if (!staffByStable.has(sid)) staffByStable.set(sid, []);
+        staffByStable.get(sid)!.push(staff);
+      }
+    }
+
+    // Clone AI manager so upkeep learning updates do not mutate the original state.
+    let npcAIManager = state.npcAIManager;
+    if (npcAIManager) {
+      npcAIManager = {
+        ...npcAIManager,
+        stableStates: Object.fromEntries(
+          Object.entries(npcAIManager.stableStates).map(([id, s]) => [id, { ...s }]),
+        ),
+      };
+    }
+
+    // Calculate NPC upkeep costs and emit cash_change impacts.
+    for (const stable of state.npcStables) {
+      const aiState = npcAIManager
+        ? getOrCreateStableAIState(npcAIManager, stable, newDay)
+        : undefined;
+      if (aiState && !aiState.upkeepAI) {
+        aiState.upkeepAI = createUpkeepAIState(stable);
+      }
+
+      const ownedCount = horseCountsByStable.get(stable.id) ?? 0;
+      const horseCost = ownedCount * UPKEEP_PER_HORSE;
+      const stableStaff = staffByStable.get(stable.id) ?? [];
+      const staffSalaries = stableStaff.reduce((sum, s) => sum + s.salary, 0);
+      let actualCost = horseCost + staffSalaries;
+
+      if (aiState) {
+        const monthlyExpenses = actualCost * 30; // Estimate monthly expenses
+
+        // Update reserve state based on current cash and expenses
+        const updatedAIState = updateReserveState(
+          aiState.upkeepAI!,
+          stable,
+          monthlyExpenses,
+          newDay,
+        );
+
+        // Check if stable should conserve cash
+        const upkeepWeight = aiState.subsystemWeights?.upkeep ?? DEFAULT_SUBSYSTEM_WEIGHT;
+        const shouldConserve = shouldConserveCash(
+          updatedAIState,
+          stable,
+          monthlyExpenses,
+          upkeepWeight,
+        );
+
+        // If conserving cash and running low, reduce spending by not charging full upkeep
+        if (shouldConserve && stable.cash < monthlyExpenses * 2) {
+          actualCost = Math.floor(actualCost * 0.5);
+        }
+
+        // Distress-aware additional cost cuts (on top of shouldConserveCash)
+        const distressLevel: DistressLevel = aiState.financialDistress?.level ?? "healthy";
+        if (distressLevel === "caution") {
+          actualCost = Math.floor(actualCost * UPKEEP_DISTRESS_MULTIPLIER.caution);
+        } else if (distressLevel === "emergency") {
+          actualCost = Math.floor(actualCost * UPKEEP_DISTRESS_MULTIPLIER.emergency);
+        } else if (distressLevel === "critical") {
+          actualCost = Math.floor(actualCost * UPKEEP_DISTRESS_MULTIPLIER.critical);
+        }
+
+        // Record budget decision for AI learning
+        aiState.upkeepAI = recordBudgetDecision(
+          updatedAIState,
+          monthlyExpenses,
+          actualCost,
+          { upkeep: actualCost },
+          stable,
+          newDay,
+        );
+
+        npcAIManager!.stableStates[stable.id] = aiState;
+      }
+
+      if (actualCost > 0) {
+        impacts.push({
+          id: generateUUID(dailyRng),
+          intentId: "",
+          day: newDay,
+          phase: "upkeep",
+          logLevel: "conditional",
+          type: "cash_change",
+          entityId: asNpcStableId(stable.id),
+          amount: -actualCost,
+          reason: "Daily NPC upkeep",
+        });
+      }
+    }
+
+    return {
+      ...context,
+      state: {
+        ...state,
+        npcAIManager,
+        expenses: [...(state.expenses ?? []), ...newExpenses].slice(-1000), // Cap at 1000 entries
+      },
+      impacts: [
+        ...context.impacts,
+        ...impacts,
+        ...(dailyRng.next() < NEWS_FLAVOR_DAILY_PROBABILITY
+          ? [
+              {
+                id: generateUUID(dailyRng),
+                intentId: "",
+                day: newDay,
+                phase: "upkeep",
+                logLevel: "always",
+                type: "news_item",
+                newsItem: generateFlavor(newDay, dailyRng),
+              } as NewsImpact,
+            ]
+          : []),
+        ...(newDay % DAYS_PER_WEEK === 0
+          ? [
+              {
+                id: generateUUID(dailyRng),
+                intentId: "",
+                day: newDay,
+                phase: "upkeep",
+                logLevel: "always",
+                type: "news_item",
+                newsItem: generateWeeklyFlavor(Object.values(state.horses), newDay, dailyRng),
+              } as NewsImpact,
+            ]
+          : []),
+      ],
+      logs: [...context.logs],
+    };
+  },
+};

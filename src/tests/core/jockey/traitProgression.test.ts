@@ -6,9 +6,9 @@ import {
   trainTrait,
   TRAIT_XP_UNLOCK_THRESHOLD,
   TRAIT_XP_MAINTENANCE_THRESHOLD,
-} from "@/core/jockey/traitProgression";
+} from "@/domains/jockey/simulation/traitProgression";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
-import type { JockeyTrait } from "@/core/jockey/types";
+import type { JockeyTrait } from "@/domains/jockey/model/types";
 
 describe("awardTraitXp", () => {
   it("adds XP to correct trait key", () => {

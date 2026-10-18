@@ -1,5 +1,5 @@
-import type { Horse, Race, Jockey, RunningStyle } from "@/game/types";
-import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import type { Horse, Race, Jockey, RunningStyle } from "@/platform/game/types";
+import type { JockeyInstructions } from "@/domains/tactics/model/tacticsTypes";
 
 export function adjustForTrackCondition(
   instructions: JockeyInstructions,

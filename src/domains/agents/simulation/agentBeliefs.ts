@@ -13,7 +13,7 @@
  * Related files: npc/intentGenerators.ts (refresh callsite), agentGoals.ts (goal derivation consumes beliefs)
  */
 
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 import type { NpcObservation } from "./agentObservation";
 import type { WorldAssessment } from "./strategicCoordinator";
 

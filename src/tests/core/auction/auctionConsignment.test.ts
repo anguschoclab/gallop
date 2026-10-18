@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { personalityConsignmentPolicy } from "@/core/auction/auctionConsignment";
+import { personalityConsignmentPolicy } from "@/domains/auction/simulation/auctionConsignment";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import { asNpcStableId, asHorseId } from "@/core/types/branded";
-import { createRng } from "@/core/common/rng";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId, asHorseId } from "@/shared/types/branded";
+import { createRng } from "@/shared/common/rng";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("personalityConsignmentPolicy", () => {
   const rng = createRng("test");

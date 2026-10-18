@@ -13,7 +13,7 @@ import {
   getSeasonalModifiers,
   getSeasonalModifiersForTrack,
   applyModifiers,
-} from "@/core/weather/seasonalModifiers";
+} from "@/domains/weather/simulation/seasonalModifiers";
 
 describe("Seasonal Patterns", () => {
   describe("Modifier Definitions", () => {

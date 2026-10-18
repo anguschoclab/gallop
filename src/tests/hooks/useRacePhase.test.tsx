@@ -9,7 +9,7 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => searchState,
 }));
 
-import { useRacePhase } from "@/hooks/race/useRacePhase";
+import { useRacePhase } from "@/domains/race/application/hooks/useRacePhase";
 
 describe("useRacePhase", () => {
   beforeEach(() => {

@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { checksumState, canonicalState } from "@/core/time/checksum";
-import { hashStr } from "@/core/common/rng";
+import { checksumState, canonicalState } from "@/platform/time/checksum";
+import { hashStr } from "@/shared/common/rng";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 
 describe("checksumState", () => {
   it("streaming hash matches hashStr over the canonical serialization", () => {

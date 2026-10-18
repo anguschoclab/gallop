@@ -9,9 +9,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { createElement } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { HorseOrderBook } from "@/components/market/HorseOrderBook";
-import type { HorseOrderBook as Book } from "@/core/market/exchange";
-import type { ExchangeAsk, ExchangeBid } from "@/core/market/exchange";
+import { HorseOrderBook } from "@/domains/market/ui/HorseOrderBook";
+import type { HorseOrderBook as Book } from "@/domains/market/simulation/exchange";
+import type { ExchangeAsk, ExchangeBid } from "@/domains/market/simulation/exchange";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children }: { children?: React.ReactNode }) => createElement("a", {}, children),

@@ -4,14 +4,10 @@
  * Extracted from withdrawalAI.ts for modularity.
  */
 
-import type { Horse, Race, Stable } from "@/game/types";
+import type { Horse, Race, Stable } from "@/platform/game/types";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import { getSuccessRate, recordLearningOutcome, trimHistory } from "./learningModule";
-import {
-  AI_RISK_TOLERANCE_CONSERVATIVE,
-  AI_RISK_TOLERANCE_AGGRESSIVE,
-  AI_RISK_TOLERANCE_WIN_NOW,
-} from "@/constants";
+import { AI_RISK_TOLERANCE_CONSERVATIVE, AI_RISK_TOLERANCE_AGGRESSIVE, AI_RISK_TOLERANCE_WIN_NOW } from "@/domains/agents/model/aiConstants";;
 import type { WithdrawalAIState, WithdrawalDecision } from "./withdrawalAITypes";
 import { calculateWithdrawalRisk, calculateWithdrawalOpportunityCost } from "./withdrawalAIValue";
 

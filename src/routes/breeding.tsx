@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/shared/ui/badge";
+import { Button } from "@/shared/ui/button";
 import {
   Heart,
   FileText,
@@ -14,23 +14,23 @@ import {
   GitBranch,
   Sparkles,
 } from "lucide-react";
-import { NumericValue } from "@/components/horse/HorseBits";
-import { cn } from "@/lib/cn";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BreedingProgramPanel } from "@/components/breeding/BreedingProgramPanel";
-import { useBreedingPage } from "@/hooks/breeding/useBreedingPage";
-import { BreedingShedTab } from "@/components/breeding/BreedingShedTab";
-import { BroodmaresTab } from "@/components/breeding/BroodmaresTab";
-import { BreedingHistoryTab } from "@/components/breeding/BreedingHistoryTab";
-import { BreedingPedigreeTab } from "@/components/breeding/BreedingPedigreeTab";
-import { BredHorsesTab } from "@/components/breeding/BredHorsesTab";
-import { StallionsTab } from "@/components/breeding/StallionsTab";
-import { SireWatchTab } from "@/components/breeding/SireWatchTab";
-import { SireLeaderboardsTab } from "@/components/breeding/SireLeaderboardsTab";
-import { DamsireLeaderboardTab } from "@/components/breeding/DamsireLeaderboardTab";
-import { BlueHenLeaderboardTab } from "@/components/breeding/BlueHenLeaderboardTab";
-import { SeasonPlannerTab } from "@/components/breeding/SeasonPlannerTab";
-import { useTabParam } from "@/hooks/ui/useTabParam";
+import { NumericValue } from "@/domains/horse/ui/HorseBits";
+import { cn } from "@/shared/lib/cn";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { BreedingProgramPanel } from "@/domains/breeding/ui/BreedingProgramPanel";
+import { useBreedingPage } from "@/domains/breeding/application/hooks/useBreedingPage";
+import { BreedingShedTab } from "@/domains/breeding/ui/BreedingShedTab";
+import { BroodmaresTab } from "@/domains/breeding/ui/BroodmaresTab";
+import { BreedingHistoryTab } from "@/domains/breeding/ui/BreedingHistoryTab";
+import { BreedingPedigreeTab } from "@/domains/breeding/ui/BreedingPedigreeTab";
+import { BredHorsesTab } from "@/domains/breeding/ui/BredHorsesTab";
+import { StallionsTab } from "@/domains/breeding/ui/StallionsTab";
+import { SireWatchTab } from "@/domains/breeding/ui/SireWatchTab";
+import { SireLeaderboardsTab } from "@/domains/breeding/ui/SireLeaderboardsTab";
+import { DamsireLeaderboardTab } from "@/domains/breeding/ui/DamsireLeaderboardTab";
+import { BlueHenLeaderboardTab } from "@/domains/breeding/ui/BlueHenLeaderboardTab";
+import { SeasonPlannerTab } from "@/domains/breeding/ui/SeasonPlannerTab";
+import { useTabParam } from "@/shared/hooks/ui/useTabParam";
 
 const BREEDING_TABS = [
   "planner",

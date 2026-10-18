@@ -7,8 +7,8 @@ import {
   getRegionAccent,
   REGION_COLORS,
   REGION_COLOR_CLASSES,
-} from "@/assets/awards";
-import type { AwardRegion, RegionalAwardCategory } from "@/core/awards/types";
+} from "@/domains/awards/ui/assets";
+import type { AwardRegion, RegionalAwardCategory } from "@/domains/awards/model/types";
 
 const ALL_REGIONS: AwardRegion[] = ["north_america", "europe", "asia_pacific", "south_america"];
 

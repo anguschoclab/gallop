@@ -4,12 +4,12 @@ import {
   calculateSyndicateReputationImpact,
   calculateSyndicateStakesSummary,
   type PlayerSyndicateStake,
-} from "@/core/breeding/syndicateStakes";
-import type { Syndicate } from "@/core/breeding/types";
-import type { Horse } from "@/game/types";
-import type { ManagerReputation } from "@/core/reputation";
-import type { InvestorRecord } from "@/core/breeding/investorTypes";
-import { asHorseId, asOwnerKey } from "@/core/types/branded";
+} from "@/domains/breeding/simulation/syndicateStakes";
+import type { Syndicate } from "@/domains/breeding/model/types";
+import type { Horse } from "@/platform/game/types";
+import type { ManagerReputation } from "@/domains/reputation/simulation";
+import type { InvestorRecord } from "@/domains/breeding/model/investorTypes";
+import { asHorseId, asOwnerKey } from "@/shared/types/branded";
 
 function createTestSyndicate(overrides: Partial<Syndicate> = {}): Syndicate {
   return {

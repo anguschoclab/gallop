@@ -3,8 +3,8 @@ import {
   playerPrestigeScore,
   playerPrestigeStanding,
   prestigeLadder,
-} from "@/core/prestige/playerPrestige";
-import { AUCTION_HOUSES } from "@/core/prestige/auctionHouses";
+} from "@/domains/prestige/simulation/playerPrestige";
+import { AUCTION_HOUSES } from "@/domains/prestige/simulation/auctionHouses";
 
 describe("playerPrestigeScore", () => {
   it("maps the 0-1000 reputation scale onto 0-100", () => {

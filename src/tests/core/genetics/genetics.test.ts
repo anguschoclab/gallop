@@ -1,17 +1,17 @@
 import { describe, it, expect } from "vitest";
-import { createRng } from "@/core/common/rng";
+import { createRng } from "@/shared/common/rng";
 import {
   generateGenotype,
   generateDeterministicGenotype,
   generateResearchBasedGenotype,
-} from "@/core/genetics/generation";
+} from "@/domains/genetics/simulation/generation";
 import {
   resolveCoatColor,
   resolveStats,
   resolveSize,
   resolveInjuryProneness,
-} from "@/core/genetics/phenotype";
-import { inheritDNA } from "@/core/genetics/inheritance";
+} from "@/domains/genetics/simulation/phenotype";
+import { inheritDNA } from "@/domains/genetics/simulation/inheritance";
 
 describe("Universal DNA System", () => {
   const rng = createRng(123);

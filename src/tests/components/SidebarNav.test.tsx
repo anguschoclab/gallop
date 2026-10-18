@@ -13,7 +13,7 @@ vi.mock("@tanstack/react-router", () => ({
     select ? select({ location: { pathname: "/" } }) : { location: { pathname: "/" } },
 }));
 
-import { SidebarNav } from "@/components/SidebarNav";
+import { SidebarNav } from "@/domains/shell/ui/SidebarNav";
 
 const defaultProps = {
   day: 1,

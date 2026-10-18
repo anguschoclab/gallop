@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { GRADED_RACES, getCountry } from "@/data/gradedRaces";
-import { TRACKS, TRACK_BY_ID, TRACK_BY_NAME } from "@/data/tracks";
-import { TRACK_SCHEDULES } from "@/data/trackSchedules";
-import { TRACK_KOPPEN_MAP } from "@/core/weather/trackKoppenMappings";
-import { getTrackHemisphere, getTrackClimate } from "@/core/weather/trackClimate";
-import { REGIONS } from "@/core/calendar/regions";
-import { COUNTRY_TO_REGION as AWARDS_COUNTRY_TO_REGION } from "@/core/awards/types";
-import { getCountryFlag } from "@/core/common/countryFlag";
+import { GRADED_RACES, getCountry } from "@/shared/data/gradedRaces";
+import { TRACKS, TRACK_BY_ID, TRACK_BY_NAME } from "@/shared/data/tracks";
+import { TRACK_SCHEDULES } from "@/shared/data/trackSchedules";
+import { TRACK_KOPPEN_MAP } from "@/domains/weather/simulation/trackKoppenMappings";
+import { getTrackHemisphere, getTrackClimate } from "@/domains/weather/simulation/trackClimate";
+import { REGIONS } from "@/domains/calendar/simulation/regions";
+import { COUNTRY_TO_REGION as AWARDS_COUNTRY_TO_REGION } from "@/domains/awards/model/types";
+import { getCountryFlag } from "@/shared/common/countryFlag";
 
 describe("Track data consistency — F1: graded race trackIds match track names", () => {
   it("every graded race trackId points to a track with the same name", () => {

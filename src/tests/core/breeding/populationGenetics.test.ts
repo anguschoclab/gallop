@@ -7,9 +7,9 @@ import {
   detectInbreedingPattern,
   computeAhc,
   computeCoiFromSnapshot,
-} from "@/core/breeding/populationGenetics";
+} from "@/domains/breeding/simulation/populationGenetics";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { clearAllCaches, getCacheStats } from "@/core/genetics/genotypeCache";
+import { clearAllCaches, getCacheStats } from "@/domains/genetics/simulation/genotypeCache";
 
 describe("populationGenetics", () => {
   beforeEach(() => {

@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { solvencyPhase } from "@/core/time/phases/solvency";
+import { solvencyPhase } from "@/platform/time/phases/solvency";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse, createUnownedHorse } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import { asHorseId } from "@/core/types/branded";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import { asHorseId } from "@/shared/types/branded";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("solvencyPhase", () => {
   it("should skip if runEnded is true", () => {

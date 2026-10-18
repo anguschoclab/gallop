@@ -5,7 +5,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases/index";
+import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
 
 describe("Pipeline Phase Order: AI phases in correct positions", () => {
   function getOrder(name: string): number {

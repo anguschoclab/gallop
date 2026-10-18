@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { generateCommentaryLine } from "@/services/narrative/commentaryGenerator";
-import type { Race } from "@/game/types";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { createRng, hashStr } from "@/core/common/rng";
-import { TEMPLATES } from "@/assets/narrative/templates";
+import { generateCommentaryLine } from "@/domains/narrative/application/commentaryGenerator";
+import type { Race } from "@/platform/game/types";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { createRng, hashStr } from "@/shared/common/rng";
+import { TEMPLATES } from "@/shared/assets/narrative/templates";
 
 function makeRace(): Race {
   return {

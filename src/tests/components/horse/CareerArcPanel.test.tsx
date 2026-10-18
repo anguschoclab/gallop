@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { CareerArcPanel } from "@/components/horse/CareerArcPanel";
-import type { CareerArcState } from "@/services/narrative/careerArcGenerator";
+import { CareerArcPanel } from "@/domains/horse/ui/CareerArcPanel";
+import type { CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";;
 
 vi.mock("@/game/store", () => ({
   useGameWithShallow: vi.fn(),
   useGame: vi.fn(),
 }));
 
-import { useGameWithShallow } from "@/game/store";
+import { useGameWithShallow } from "@/platform/game/store";
 
 describe("CareerArcPanel", () => {
   beforeEach(() => {

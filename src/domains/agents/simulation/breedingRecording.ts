@@ -1,8 +1,8 @@
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import type { BreedingAIState, BreedingDecision } from "./breedingAI";
 import { trimHistory } from "./learningModule";
-import { DEFAULT_SUCCESS_RATE, TOP_SIRES_COUNT } from "@/constants/aiConstants";
+import { DEFAULT_SUCCESS_RATE, TOP_SIRES_COUNT } from "@/domains/agents/model/aiConstants";
 
 export function recordBreedingDecision(
   aiState: BreedingAIState,

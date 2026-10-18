@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getJockeyTier, JOCKEY_TIER_ORDER, JOCKEY_TIER_LABELS } from "@/core/jockey/jockeyTier";
+import { getJockeyTier, JOCKEY_TIER_ORDER, JOCKEY_TIER_LABELS } from "@/domains/jockey/simulation/jockeyTier";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 
 describe("JOCKEY_TIER_ORDER", () => {

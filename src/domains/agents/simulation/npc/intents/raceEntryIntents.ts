@@ -1,6 +1,6 @@
-import type { RaceEntryIntent } from "@/core/resolver/intents";
-import type { GameState, Horse, Race, Stable } from "@/game/types";
-import { generateUUID } from "@/core/uuid";
+import type { RaceEntryIntent } from "@/platform/resolver/intents";
+import type { GameState, Horse, Race, Stable } from "@/platform/game/types";
+import { generateUUID } from "@/shared/uuid/uuid";
 import { createRaceEntryAIState } from "@/domains/agents/simulation/raceEntryAITypes";
 import {
   calculateStrategicEntryScore,
@@ -13,7 +13,7 @@ import {
 import { applyAffinityBoost } from "@/domains/agents/simulation/jockeyStrategyAdjustments";
 import type { StableAIState, DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
 import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
-import { MEDIUM_PURSE_THRESHOLD } from "@/constants";
+import { MEDIUM_PURSE_THRESHOLD } from "@/domains/prestige/model/fameConstants";;
 
 export function generateNpcRaceEntryIntents(
   state: GameState,

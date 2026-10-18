@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { NarrativeArcCard } from "@/components/narrative/NarrativeArcCard";
+import { NarrativeArcCard } from "@/domains/narrative/ui/NarrativeArcCard";
 import type { NarrativeArc, StoryBeat } from "@/domains/agents/simulation/npcCycleAI";
 
 function createMockArc(overrides: Partial<NarrativeArc> = {}): NarrativeArc {

@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { calculateTacticalAdjustment } from "@/core/race/engine/tacticalAI";
-import { applyBlockingEffect, detectBlocking } from "@/core/race/engine/jockeyEffects";
-import type { Horse, Jockey } from "@/game/types";
-import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
+import { calculateTacticalAdjustment } from "@/domains/race/simulation/engine/tacticalAI";
+import { applyBlockingEffect, detectBlocking } from "@/domains/race/simulation/engine/jockeyEffects";
+import type { Horse, Jockey } from "@/platform/game/types";
+import type { Runner, PaceContext } from "@/domains/race/simulation/engine/runnerBuilder";
 
 describe("Advanced AI Tactics", () => {
   const mockHorse = (id: string, style: any): Horse =>

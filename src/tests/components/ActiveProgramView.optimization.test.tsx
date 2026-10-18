@@ -1,4 +1,4 @@
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 /**
  * Tests for ActiveProgramView Set-based filtering optimization (Bolt-1 branch).
  *
@@ -10,16 +10,16 @@ import { describe, it, expect, vi } from "vitest";
 import { screen, fireEvent } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { ActiveProgramView } from "@/components/breeding/ActiveProgramView";
+import { ActiveProgramView } from "@/domains/breeding/ui/ActiveProgramView";
 import { createTestMare, createTestColt } from "@/tests/helpers";
-import type { BreedingProgram } from "@/core/breeding/programs";
+import type { BreedingProgram } from "@/domains/breeding/simulation/programs";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import {
   CANCEL_DIALOG_TITLE,
   CANCEL_DIALOG_KEEP,
   CANCEL_DIALOG_CONFIRM,
   CANCEL_BUTTON_ARIA_LABEL,
-} from "@/constants/breedingConstants";
+} from "@/domains/breeding/model/breedingConstants";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

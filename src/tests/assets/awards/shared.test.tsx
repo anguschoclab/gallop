@@ -7,8 +7,8 @@ import {
   AwardSvgShell,
   HotyBanner,
   type RegionAwardColorScheme,
-} from "@/assets/awards/shared";
-import type { AwardRegion } from "@/core/awards/types";
+} from "@/domains/awards/ui/assets/shared";
+import type { AwardRegion } from "@/domains/awards/model/types";
 
 const ALL_REGIONS: AwardRegion[] = ["north_america", "europe", "asia_pacific", "south_america"];
 

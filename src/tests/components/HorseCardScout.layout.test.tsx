@@ -1,14 +1,14 @@
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
-import type { Horse } from "@/game/types";
-import type { useHorseCard } from "@/hooks/horse/useHorseCard";
+import type { Horse } from "@/platform/game/types";
+import type { useHorseCard } from "@/domains/horse/application/hooks/useHorseCard";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
 }));
 
-import { HorseCardScout } from "@/components/horse/HorseCardScout";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { HorseCardScout } from "@/domains/horse/ui/HorseCardScout";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({

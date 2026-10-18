@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { generateJockeyAffinityImpact } from "@/core/race/impacts/jockeyAffinity";
-import { AFFINITY_CONSTANTS } from "@/core/jockey/affinity";
+import { generateJockeyAffinityImpact } from "@/domains/race/simulation/impacts/jockeyAffinity";
+import { AFFINITY_CONSTANTS } from "@/domains/jockey/simulation/affinity";
 import { createTestJockey, createTestHorse } from "@/tests/helpers";
-import type { Jockey, JockeyTrait } from "@/core/jockey/types";
-import type { Horse, Race } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import type { Jockey, JockeyTrait } from "@/domains/jockey/model/types";
+import type { Horse, Race } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function mkJockey(overrides: Partial<Jockey> = {}): Jockey {
   return createTestJockey({ id: "j1", affinityMap: {}, ...overrides });

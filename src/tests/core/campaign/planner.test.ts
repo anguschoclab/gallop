@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { updateCampaignAptitudes } from "@/core/campaign/planner";
-import type { ConfirmedAptitudes } from "@/core/calendar/campaignTypes";
+import { updateCampaignAptitudes } from "@/domains/campaign/simulation/planner";
+import type { ConfirmedAptitudes } from "@/domains/calendar/model/campaignTypes";
 
 describe("updateCampaignAptitudes", () => {
   it("should increment surface and distance starts", () => {

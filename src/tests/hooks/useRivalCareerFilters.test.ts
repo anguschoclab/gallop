@@ -5,7 +5,7 @@ import {
   DEFAULT_RIVAL_CAREER_FILTERS,
   type RivalCareerCandidate,
   type RivalCareerSortKey,
-} from "@/hooks/stable/useRivalCareerFilters";
+} from "@/domains/stable/application/hooks/useRivalCareerFilters";
 
 function candidate(overrides: Partial<RivalCareerCandidate>): RivalCareerCandidate {
   return {

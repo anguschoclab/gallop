@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { TrackRecordsTable } from "@/components/history/TrackRecordsTable";
+import { TrackRecordsTable } from "@/domains/history/ui/TrackRecordsTable";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (

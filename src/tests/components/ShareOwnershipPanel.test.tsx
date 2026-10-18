@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { ShareOwnershipPanel } from "@/components/market/ShareOwnershipPanel";
-import type { Syndicate } from "@/core/breeding/types";
-import type { Horse, Stable } from "@/game/types";
+import { ShareOwnershipPanel } from "@/domains/market/ui/ShareOwnershipPanel";
+import type { Syndicate } from "@/domains/breeding/model/types";
+import type { Horse, Stable } from "@/platform/game/types";
 
 vi.mock("@/core/breeding/devolutionUtils", () => ({
   simulateShareChange: (

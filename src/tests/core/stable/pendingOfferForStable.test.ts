@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { findPendingOfferForStable } from "@/core/stable/pendingOfferForStable";
-import type { PrivateSaleOffer } from "@/game/types";
+import { findPendingOfferForStable } from "@/domains/stable/simulation/pendingOfferForStable";
+import type { PrivateSaleOffer } from "@/platform/game/types";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
   id: "o1",

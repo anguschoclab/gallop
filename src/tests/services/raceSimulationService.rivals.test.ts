@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { buildRaceField, type RaceSimulationDependencies } from "@/core/race/raceSimulationService";
+import { buildRaceField, type RaceSimulationDependencies } from "@/domains/race/simulation/raceSimulationService";
 import { createTestHorse, createTestJockey, createTestStable } from "@/tests/helpers";
-import type { Race } from "@/core/race/types";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import type { Race } from "@/domains/race/simulation/types";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
 function makeRace(overrides: Partial<Race> = {}): Race {

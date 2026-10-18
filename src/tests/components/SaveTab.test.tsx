@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { SaveTab } from "@/components/settings/SaveTab";
-import type { SaveSlotMetadata } from "@/services/storage/saveManager";
+import { SaveTab } from "@/domains/settings/ui/SaveTab";
+import type { SaveSlotMetadata } from "@/platform/persistence/storage/saveManager";
 
 const mkSave = (overrides: Partial<SaveSlotMetadata> = {}): SaveSlotMetadata => ({
   id: "save1",
@@ -14,7 +14,7 @@ const mkSave = (overrides: Partial<SaveSlotMetadata> = {}): SaveSlotMetadata => 
   ...overrides,
 });
 
-import type { LedgerEntryProps } from "@/components/settings/LedgerEntry";
+import type { LedgerEntryProps } from "@/domains/settings/ui/LedgerEntry";
 
 const LedgerEntryMock = ({ save, actionLabel }: LedgerEntryProps) => (
   <div data-testid={`ledger-${save.id}`}>

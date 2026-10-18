@@ -89,16 +89,16 @@ vi.mock("comlink", () => ({
   removeEventListener() {}
 };
 
-import { useGame, STORE_STATE_VERSION } from "@/game/store";
+import { useGame, STORE_STATE_VERSION } from "@/platform/game/store";
 import {
   saveGameStateToIDB,
   saveExists,
   _resetSaveExists,
   saveCoordinator,
   _resetSaveCoordinator,
-} from "@/game/store/storage";
-import { clearDatabase } from "@/services/storage/indexedDbService";
-import type { NewGameOptions } from "@/game/store/state";
+} from "@/platform/game/store/storage";
+import { clearDatabase } from "@/platform/persistence/storage/indexedDbService";
+import type { NewGameOptions } from "@/platform/game/store/state";
 
 const mockProfile = {
   stableName: "Test Stable",

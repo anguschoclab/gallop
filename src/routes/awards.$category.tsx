@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
-import type { GameState } from "@/game/types";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useGame } from "@/platform/game/store";
+import type { GameState } from "@/platform/game/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Badge } from "@/shared/ui/badge";
 import { Trophy } from "lucide-react";
 import {
   CATEGORY_DISPLAY_NAMES,
@@ -10,8 +10,8 @@ import {
   REGION_AWARD_NAMES,
   type AwardRegion,
   type RegionalAwardCategory,
-} from "@/services/awards/awardsFacade";
-import { BackLink } from "@/components/charts/BackLink";
+} from "@/domains/awards/application/awardsFacade";
+import { BackLink } from "@/shared/ui/charts/BackLink";
 
 const ALL_CATEGORIES = new Set<string>(Object.keys(CATEGORY_DISPLAY_NAMES));
 

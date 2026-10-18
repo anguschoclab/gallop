@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useNextActionBanner } from "@/hooks/dashboard/useNextActionBanner";
-import { useGame, type StoreType } from "@/game/store";
+import { useNextActionBanner } from "@/domains/dashboard/application/hooks/useNextActionBanner";
+import { useGame, type StoreType } from "@/platform/game/store";
 
 vi.mock("@/game/store", () => ({
   useGame: vi.fn(),

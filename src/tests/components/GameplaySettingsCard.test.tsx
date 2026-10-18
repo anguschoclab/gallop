@@ -14,8 +14,8 @@ vi.mock("@/components/ui/slider", () => ({
     }),
 }));
 
-import { GameplaySettingsCard } from "@/components/settings/GameplaySettingsCard";
-import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
+import { GameplaySettingsCard } from "@/domains/settings/ui/GameplaySettingsCard";
+import { createDefaultUserSettings } from "@/domains/settings/model/settingsTypes";
 
 describe("GameplaySettingsCard", () => {
   beforeEach(() => {

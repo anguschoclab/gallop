@@ -9,7 +9,7 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => searchState,
 }));
 
-import { useAuctionSaleFilters } from "@/hooks/auction/useAuctionSaleFilters";
+import { useAuctionSaleFilters } from "@/domains/auction/application/hooks/useAuctionSaleFilters";
 
 describe("useAuctionSaleFilters", () => {
   beforeEach(() => {

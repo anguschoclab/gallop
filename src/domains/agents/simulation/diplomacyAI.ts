@@ -8,8 +8,8 @@
  * Related files: strategicCoordinator.ts (uses diplomacy state), npcCycle.ts (calls resolveDiplomaticInteractions)
  */
 
-import type { Stable } from "@/game/types";
-import { generateUUID } from "@/core/uuid";
+import type { Stable } from "@/platform/game/types";
+import { generateUUID } from "@/shared/uuid/uuid";
 import type {
   NpcAIManager,
   NpcRelationship,

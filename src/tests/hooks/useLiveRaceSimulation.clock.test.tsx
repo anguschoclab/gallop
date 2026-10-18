@@ -8,14 +8,14 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
-import { DEFAULT_DT } from "@/constants/raceEngineConstants";
-import { SIMULATION_MAX_STEPS_PER_FRAME } from "@/constants/raceSimulationConstants";
-import { createRng } from "@/core/common/rng";
-import type { Race } from "@/core/race/types";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { useLiveRaceSimulation } from "@/domains/race/application/hooks/useLiveRaceSimulation";
+import { DEFAULT_DT } from "@/domains/race/model/engine/constants";;
+import { SIMULATION_MAX_STEPS_PER_FRAME } from "@/domains/race/model/raceSimulationConstants";
+import { createRng } from "@/shared/common/rng";
+import type { Race } from "@/domains/race/simulation/types";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 import { createTestJockey } from "@/tests/helpers";
-import { asJockeyId } from "@/core/types/branded";
+import { asJockeyId } from "@/shared/types/branded";
 import { createRef } from "react";
 
 // ── Scripted RAF clock ──────────────────────────────────────────────────────

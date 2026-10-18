@@ -6,9 +6,9 @@ vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
 }));
 
-import { CampaignCard } from "@/components/scheduler/CampaignCard";
-import type { Horse } from "@/game/types";
-import type { HorseCampaign } from "@/core/calendar/campaignTypes";
+import { CampaignCard } from "@/domains/scheduler/ui/CampaignCard";
+import type { Horse } from "@/platform/game/types";
+import type { HorseCampaign } from "@/domains/calendar/model/campaignTypes";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({

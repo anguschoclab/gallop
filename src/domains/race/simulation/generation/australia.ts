@@ -1,0 +1,117 @@
+/**
+ * raceGeneration/australia.ts - Australian race generator
+ *
+ * Focus: Turf-centric, sprint-heavy, frequent handicaps.
+ */
+
+import type { Race, RaceClass } from "@/domains/race/simulation/types";
+import type { Track } from "@/shared/data/accessors/tracksAccessor";
+import type { Rng } from "@/shared/common/rng";
+import { generateUUID } from "@/shared/uuid/uuid";
+import { randomWeather } from "@/domains/race/simulation/environment";
+import { rand } from "@/shared/common/random";;
+import { randomTrackConditionWithClimateBias } from "@/domains/race/simulation/trackConditions";
+import { generateRaceName } from "@/domains/race/simulation/naming/raceNameGenerator";
+import { CLASS_CONFIG } from "@/domains/race/simulation/generation/raceGen";
+import { AUSTRALIA_PURSE_MULTIPLIER, AUSTRALIA_SPRINT_PROBABILITY, AUSTRALIA_SPRINT_DIST_MIN, AUSTRALIA_SPRINT_DIST_MAX, AUSTRALIA_FIELD_SIZE_MIN, AUSTRALIA_FIELD_SIZE_MAX } from "@/domains/race/model/raceClassificationConstants";;
+
+const AUSTRALIA_RACE_DISTRIBUTION: { class: RaceClass; probability: number }[] = [
+  { class: "Maiden", probability: 0.3 },
+  { class: "Handicap", probability: 0.5 },
+  { class: "Allowance", probability: 0.1 },
+  { class: "Stakes", probability: 0.1 },
+];
+
+/**
+ * Select a race class based on Australian race distribution
+ * @param rng - Random number generator
+ * @returns Selected race class
+ */
+function selectAustraliaRaceClass(rng: Rng): RaceClass {
+  const r = rng.next();
+  let cumulative = 0;
+  for (const distribution of AUSTRALIA_RACE_DISTRIBUTION) {
+    cumulative += distribution.probability;
+    if (r < cumulative) return distribution.class;
+  }
+  return "Handicap";
+}
+
+/**
+ * Generate a single Australian race
+ * @param track - Track to generate race for
+ * @param day - Current game day
+ * @param rng - Random number generator
+ * @param surface - Optional surface type (Turf, Dirt, or Synthetic)
+ * @param usedNames - Set of already used race names
+ * @returns Generated race object
+ */
+export function generateAustralianRace(
+  track: Track,
+  day: number,
+  rng: Rng,
+  surface?: "Turf" | "Dirt" | "Synthetic",
+  usedNames?: Set<string>,
+): Race {
+  const raceClass = selectAustraliaRaceClass(rng);
+  const cfg = CLASS_CONFIG[raceClass];
+
+  const trackSurfaces = track.courses.map((c) => c.surface) as ("Turf" | "Dirt" | "Synthetic")[];
+  const selectedSurface = surface || rng.pick(trackSurfaces.length > 0 ? trackSurfaces : ["Turf"]);
+
+  // Australia favors sprints (1000m-1400m)
+  const isSprint = rng.next() < AUSTRALIA_SPRINT_PROBABILITY;
+  const distance = isSprint
+    ? rand(AUSTRALIA_SPRINT_DIST_MIN / 100, AUSTRALIA_SPRINT_DIST_MAX / 100, rng) * 100
+    : rand(cfg.dist[0] / 100, cfg.dist[1] / 100, rng) * 100;
+
+  const name = generateRaceName({
+    track,
+    raceClass,
+    usedNames,
+    surface: selectedSurface,
+    distance,
+    rng,
+  });
+
+  return {
+    id: generateUUID(rng),
+    name,
+    day,
+    distance,
+    raceClass,
+    entryFee: cfg.entry,
+    purse: Math.round(cfg.purse * AUSTRALIA_PURSE_MULTIPLIER),
+    minStat: cfg.minStat,
+    fieldSize: rand(AUSTRALIA_FIELD_SIZE_MIN, AUSTRALIA_FIELD_SIZE_MAX, rng), // Large fields in Australia
+    entries: [],
+    resolved: false,
+    weather: randomWeather(rng),
+    trackCondition: randomTrackConditionWithClimateBias(rng, "temperate", "turf"),
+    trackId: track.id,
+    surface: selectedSurface,
+    isHandicap: raceClass === "Handicap",
+  };
+}
+
+/**
+ * Generate a full Australian race card (multiple races)
+ * @param track - Track to generate races for
+ * @param day - Current game day
+ * @param numRaces - Number of races to generate
+ * @param rng - Random number generator
+ * @returns Array of generated races
+ */
+export function generateAustralianRaceCard(
+  track: Track,
+  day: number,
+  numRaces: number,
+  rng: Rng,
+): Race[] {
+  const races: Race[] = [];
+  const usedNames = new Set<string>();
+  for (let i = 0; i < numRaces; i++) {
+    races.push(generateAustralianRace(track, day, rng, undefined, usedNames));
+  }
+  return races;
+}

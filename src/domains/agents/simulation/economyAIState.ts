@@ -4,7 +4,7 @@
  * Extracted from economyAI.ts for modularity.
  */
 
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 import type { EconomicTrend } from "./strategicCoordinator";
 
 const BASE_YEARLING_INDEX = 100;

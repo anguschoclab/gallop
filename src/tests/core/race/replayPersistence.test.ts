@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { createDefaultGameState } from "@/game/store/state";
-import type { Race } from "@/game/types";
-import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { Race } from "@/platform/game/types";
+import type { RaceSnapshot } from "@/domains/race/model/engine/raceSnapshotTypes";
 
 function makeRace(overrides: Partial<Race> & { id: string }): Race {
   return {

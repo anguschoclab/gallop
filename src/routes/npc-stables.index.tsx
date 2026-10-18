@@ -10,26 +10,26 @@ import {
   BarChart3,
   ClipboardList,
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/shared/ui/card";
+import { Input } from "@/shared/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScoutingInsightsPanel } from "@/components/insights/ScoutingInsightsPanel";
-import { ScoutingAssignmentsPanel } from "@/components/insights/ScoutingAssignmentsPanel";
-import { StableList } from "@/components/stable";
-import { StableCompareBar } from "@/components/stable/StableCompareBar";
+} from "@/shared/ui/select";
+import { Button } from "@/shared/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { ScoutingInsightsPanel } from "@/domains/insights/ui/ScoutingInsightsPanel";
+import { ScoutingAssignmentsPanel } from "@/domains/insights/ui/ScoutingAssignmentsPanel";
+import { StableList } from "@/domains/stable/ui";
+import { StableCompareBar } from "@/domains/stable/ui/StableCompareBar";
 import {
   useNpcStablesFilters,
   CASH_PRESSURE_FILTERS,
   NPC_STABLE_SORTS,
-} from "@/hooks/stable/useNpcStablesFilters";
+} from "@/domains/stable/application/hooks/useNpcStablesFilters";
 
 type NpcStablesSearch = {
   q: string;

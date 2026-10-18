@@ -15,9 +15,9 @@ vi.mock("@tanstack/react-router", () => ({
   ),
 }));
 
-import { InvitationHistoryPanel } from "@/components/awards/InvitationHistoryPanel";
-import type { AwardCeremonyInvitation } from "@/core/awards/invitations";
-import type { RegionalAward } from "@/core/awards/types";
+import { InvitationHistoryPanel } from "@/domains/awards/ui/InvitationHistoryPanel";
+import type { AwardCeremonyInvitation } from "@/domains/awards/simulation/invitations";
+import type { RegionalAward } from "@/domains/awards/model/types";
 
 const mkInvitation = (overrides: Partial<AwardCeremonyInvitation> = {}): AwardCeremonyInvitation =>
   ({

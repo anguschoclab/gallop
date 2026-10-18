@@ -7,9 +7,9 @@ import {
   getRandomEvent,
   getRandomAdjective,
   randomFromArray,
-} from "@/core/race/naming/namePools";
-import { createRng } from "@/core/common/rng";
-import type { RegionalSystem } from "@/game/types";
+} from "@/domains/race/simulation/naming/namePools";
+import { createRng } from "@/shared/common/rng";
+import type { RegionalSystem } from "@/platform/game/types";
 
 describe("randomFromArray", () => {
   it("returns a random element from array", () => {

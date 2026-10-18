@@ -7,7 +7,7 @@ import {
   getStrategicInsights,
   type NpcAIManager,
 } from "@/domains/agents/simulation/npcCycleAI";
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 import { createTestStable } from "@/tests/helpers";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {

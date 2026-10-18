@@ -12,10 +12,10 @@ import {
   type AgentBeliefs,
 } from "@/domains/agents/simulation/agentBeliefs";
 import { buildNpcObservation } from "@/domains/agents/simulation/agentObservation";
-import { createInitialState } from "@/game/store/initialization";
+import { createInitialState } from "@/platform/game/store/initialization";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 import type { WorldAssessment } from "@/domains/agents/simulation/strategicCoordinator";
 
 function makeState(overrides: Partial<GameState> = {}): GameState {

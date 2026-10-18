@@ -6,10 +6,10 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { calculateTacticalAdjustment } from "@/core/race/engine/tacticalAI";
-import { getDynamicProfile } from "@/core/race/engine/runningStyleProfiles";
-import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
-import { makeUnowned } from "@/core/horse/ownership";
+import { calculateTacticalAdjustment } from "@/domains/race/simulation/engine/tacticalAI";
+import { getDynamicProfile } from "@/domains/race/simulation/engine/runningStyleProfiles";
+import type { Runner, PaceContext } from "@/domains/race/simulation/engine/runnerBuilder";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function createMockRunner(overrides: Partial<Runner> = {}): Runner {
   return {

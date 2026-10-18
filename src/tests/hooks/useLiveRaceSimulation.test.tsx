@@ -9,7 +9,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useRef } from "react";
-import { useLiveRaceSimulation } from "@/hooks/race/useLiveRaceSimulation";
+import { useLiveRaceSimulation } from "@/domains/race/application/hooks/useLiveRaceSimulation";
 
 const baseRace = {
   id: "race-1",

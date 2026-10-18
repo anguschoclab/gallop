@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateConditionRecovery } from "@/core/race/trackConditions";
+import { calculateConditionRecovery } from "@/domains/race/simulation/trackConditions";
 
 describe("calculateConditionRecovery", () => {
   it("improves conditions based on days rested", () => {

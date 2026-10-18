@@ -4,9 +4,9 @@ import {
   horsePriceWithPedigree,
   estimateBreedingValue,
   horseMarketValue,
-} from "@/core/horse/pricing";
-import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
-import { calculateOverallRating } from "@/core/horse/stats";
+} from "@/domains/horse/simulation/pricing";
+import { pedigreeMultiplier } from "@/domains/breeding/simulation/pedigreePricing";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import {
   createTestColt,
   createTestStallion,

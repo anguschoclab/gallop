@@ -9,9 +9,9 @@ import {
   findBestResult,
 } from "@/domains/agents/simulation/npc/regionalDominanceHelpers";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
-import type { Race } from "@/game/types";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import type { Race } from "@/platform/game/types";
 
 describe("resolveWinningStableId", () => {
   it("returns 'player' for a player-owned horse", () => {

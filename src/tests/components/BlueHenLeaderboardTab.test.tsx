@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { BlueHenLeaderboardTab } from "@/components/breeding/BlueHenLeaderboardTab";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { BlueHenLeaderboardTab } from "@/domains/breeding/ui/BlueHenLeaderboardTab";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (

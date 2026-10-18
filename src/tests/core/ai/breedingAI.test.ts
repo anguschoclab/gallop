@@ -18,11 +18,11 @@ import {
   applySyndicatePreference,
   assessGeneticDiversity,
 } from "@/domains/agents/simulation/breedingSelection";
-import type { Horse, Stable, GameState } from "@/game/types";
+import type { Horse, Stable, GameState } from "@/platform/game/types";
 import type { EconomicTrend } from "@/domains/agents/simulation/strategicCoordinator";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import { createRng } from "@/core/common/rng";
+import { createRng } from "@/shared/common/rng";
 
 function createMockStallion(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

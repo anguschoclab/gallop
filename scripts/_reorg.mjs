@@ -143,6 +143,15 @@ const FILE_OVERRIDES = {
   "src/hooks/shared/useGameSelector.ts": "src/platform/game/hooks/useGameSelector.ts",
   "src/hooks/shared/useBookmarks.ts": "src/platform/game/hooks/useBookmarks.ts",
   "src/hooks/shared/useLiveFreshness.ts": "src/domains/race/application/hooks/useLiveFreshness.ts",
+  // pure types/thresholds shared by NPC sim and insights UI -> model
+  "src/domains/agents/simulation/npc/scoutingThresholds.ts":
+    "src/domains/agents/model/scoutingThresholds.ts",
+  // pure display/derivation helpers consumed by UI -> model
+  "src/core/tutorial/deriveTutorialStep.ts":
+    "src/domains/tutorial/model/deriveTutorialStep.ts",
+  "src/core/racing/nominationFees.ts": "src/domains/racing/model/nominationFees.ts",
+  "src/core/health/injuryDisplay.ts": "src/domains/health/model/injuryDisplay.ts",
+  "src/core/inbox/ctaRoute.ts": "src/domains/inbox/model/ctaRoute.ts",
   // mega-barrels: importers get symbol-split to true owners
   "src/services/common/commonFacade.ts": null,
 };
@@ -165,7 +174,9 @@ function walk(dir, out = []) {
   return out;
 }
 
-const allFiles = walk(SRC).filter((f) => !f.includes("routeTree.gen.ts"));
+const allFiles = walk(SRC).filter(
+  (f) => !f.includes("routeTree.gen.ts") && !f.endsWith(".DS_Store"),
+);
 
 // specifier sites: static imports/exports, side-effect imports, dynamic imports,
 // vi./jest.mock factories.
@@ -182,6 +193,7 @@ function specifiers(text) {
       index: m.index,
       typeOnly: /^(import|export)\s+type/.test(prefix.trim()),
       dynamic: /^import\s*\(/.test(prefix),
+      isExport: /^export/.test(prefix.trim()),
     });
   }
   return out;
@@ -192,6 +204,20 @@ function resolveSpec(spec, fromFile) {
   if (spec.startsWith("@/")) base = join(SRC, spec.slice(2));
   else if (spec.startsWith(".")) base = presolve(dirname(fromFile), spec);
   else return null;
+  const tried = tryResolve(base, fromFile);
+  if (tried) return tried;
+  // vitest mirrored-source redirect: src/tests/<sub>/ importing "./y" resolves
+  // against src/<sub>/ — replicate for test files
+  const testsRoot = join(SRC, "tests");
+  const importerDir = dirname(fromFile);
+  if (spec.startsWith(".") && importerDir.startsWith(testsRoot)) {
+    const sub = relative(testsRoot, importerDir);
+    return tryResolve(presolve(join(SRC, sub), spec), fromFile);
+  }
+  return null;
+}
+
+function tryResolve(base, fromFile) {
   for (const ext of ["", ".ts", ".tsx", ".json", ".d.ts", ".js", ".jsx", ".css"]) {
     if (existsSync(base + ext) && statSync(base + ext).isFile()) return base + ext;
   }
@@ -204,15 +230,29 @@ function resolveSpec(spec, fromFile) {
   return null;
 }
 
-const REEXPORT_STAR = /export\s+\*\s+from\s+["']([^"']+)["']/g;
-const REEXPORT_NAMED = /export\s*\{([^}]+)\}\s*from\s*["']([^"']+)["']/g;
-const EXPORT_NAME_RE =
-  /export\s+(?:const|let|var|function|class|enum|interface|type)\s+([A-Za-z_$][\w$]*)|export\s*\{([^}]+)\}(?!\s*from)/g;
+const REEXPORT_STAR = /export\s+(?:type\s+)?\*\s+from\s+["']([^"']+)["']/g;
 
-/** If file is only re-export statements, return {star: [...targets], named: Map(name->target)} */
+/** Single underlying module a pure barrel forwards to, or null. */
+function uniqueBarrelTarget(info) {
+  if (!info) return null;
+  if (info.star.length === 1 && info.named.size === 0) return info.star[0];
+  if (info.star.length === 0 && info.named.size > 0) {
+    const targets = new Set([...info.named.values()].map((v) => v.file));
+    if (targets.size === 1) return [...targets][0];
+  }
+  return null;
+}
+const REEXPORT_NAMED = /export\s+(?:type\s+)?\{([^}]+)\}\s*from\s*["']([^"']+)["']/g;
+const EXPORT_LOCAL_NAMED = /export\s+(?:type\s+)?\{([^}]+)\}(?!\s*from)/g;
+const EXPORT_DECL_RE =
+  /export\s+(?:declare\s+)?(?:const|let|var|function\*?|class|enum|interface|type|abstract\s+class)\s+([A-Za-z_$][\w$]*)/g;
+
+/** If file is only re-export statements, return {star: [...targets], named: Map(name->{file,localName})} */
+const COMMENTS_RE = /\/\*[\s\S]*?\*\/|\/\/[^\n]*/g;
+
 function barrelInfo(file) {
   const text = readFileSync(file, "utf8");
-  let rest = text;
+  let rest = text.replace(COMMENTS_RE, "");
   const star = [];
   let m;
   REEXPORT_STAR.lastIndex = 0;
@@ -228,9 +268,13 @@ function barrelInfo(file) {
     rest = rest.replace(m[0], "");
     if (t) {
       for (const part of m[1].split(",")) {
-        const segs = part.trim().split(/\s+as\s+/);
-        const exported = segs[segs.length - 1].replace(/^type\s+/, "").trim();
-        if (exported) named.set(exported, t);
+        const segs = part
+          .trim()
+          .replace(/^type\s+/, "")
+          .split(/\s+as\s+/);
+        const src = segs[0].trim();
+        const exported = (segs[1] ?? segs[0]).trim();
+        if (exported) named.set(exported, { file: t, localName: src });
       }
     }
   }
@@ -238,56 +282,64 @@ function barrelInfo(file) {
   return { star, named };
 }
 
-// ── constants symbol table: name -> declaring abs file ───────────────────────
-const symbolTable = new Map();
-{
-  const dir = join(SRC, "constants");
-  const files = existsSync(dir) ? walk(dir).filter((f) => /\.tsx?$/.test(f)) : [];
-  files.push(...SPLIT_FILES);
-  {
-    const queue = [...files];
-    const seen = new Set();
-    while (queue.length) {
-      const f = queue.shift();
-      if (seen.has(f)) continue;
-      seen.add(f);
-      const text = readFileSync(f, "utf8");
-      let m;
-      EXPORT_NAME_RE.lastIndex = 0;
-      while ((m = EXPORT_NAME_RE.exec(text))) {
-        if (m[1]) symbolTable.set(m[1], f);
-        if (m[2])
-          for (const part of m[2].split(",")) {
-            const nm = part
-              .trim()
-              .split(/\s+as\s+/)
-              .pop()
-              ?.replace(/^type\s+/, "")
-              .trim();
-            if (nm) symbolTable.set(nm, f);
-          }
-      }
-      REEXPORT_STAR.lastIndex = 0;
-      while ((m = REEXPORT_STAR.exec(text))) {
-        const t = resolveSpec(m[1], f);
-        if (t) queue.push(t);
-      }
-      REEXPORT_NAMED.lastIndex = 0;
-      while ((m = REEXPORT_NAMED.exec(text))) {
-        const t = resolveSpec(m[2], f);
-        if (!t) continue;
-        for (const part of m[1].split(",")) {
-          const nm = part
-            .trim()
-            .split(/\s+as\s+/)
-            .pop()
-            ?.replace(/^type\s+/, "")
-            .trim();
-          if (nm) symbolTable.set(nm, t);
-        }
-      }
+// ── recursive symbol resolution: (moduleFile, exportedName) -> {file, localName}
+const moduleInfoCache = new Map();
+function moduleInfo(file) {
+  if (moduleInfoCache.has(file)) return moduleInfoCache.get(file);
+  const text = readFileSync(file, "utf8");
+  const locals = new Set();
+  const named = new Map();
+  const stars = [];
+  let m;
+  EXPORT_DECL_RE.lastIndex = 0;
+  while ((m = EXPORT_DECL_RE.exec(text))) locals.add(m[1]);
+  EXPORT_LOCAL_NAMED.lastIndex = 0;
+  while ((m = EXPORT_LOCAL_NAMED.exec(text))) {
+    for (const part of m[1].split(",")) {
+      const segs = part
+        .trim()
+        .replace(/^type\s+/, "")
+        .split(/\s+as\s+/);
+      const nm = (segs[segs.length - 1] ?? "").trim();
+      if (nm) locals.add(nm);
     }
   }
+  REEXPORT_NAMED.lastIndex = 0;
+  while ((m = REEXPORT_NAMED.exec(text))) {
+    const t = resolveSpec(m[2], file);
+    if (!t) continue;
+    for (const part of m[1].split(",")) {
+      const segs = part
+        .trim()
+        .replace(/^type\s+/, "")
+        .split(/\s+as\s+/);
+      const src = segs[0].trim();
+      const exp = (segs[1] ?? segs[0]).trim();
+      if (exp) named.set(exp, { file: t, localName: src });
+    }
+  }
+  REEXPORT_STAR.lastIndex = 0;
+  while ((m = REEXPORT_STAR.exec(text))) {
+    const t = resolveSpec(m[1], file);
+    if (t) stars.push(t);
+  }
+  const info = { locals, named, stars };
+  moduleInfoCache.set(file, info);
+  return info;
+}
+
+function resolveSymbol(file, name, seen = new Set()) {
+  if (seen.has(file)) return null;
+  seen.add(file);
+  const info = moduleInfo(file);
+  if (info.locals.has(name)) return { file, localName: name };
+  const n = info.named.get(name);
+  if (n) return resolveSymbol(n.file, n.localName, seen) ?? n;
+  for (const s of info.stars) {
+    const r = resolveSymbol(s, name, seen);
+    if (r) return r;
+  }
+  return null;
 }
 
 // ── classification (core files only) ─────────────────────────────────────────
@@ -346,6 +398,13 @@ function plannedMove(absPath) {
     return `src/shared/constants/${basename(rel)}`;
   }
 
+  // transparent pointer barrels forwarding to a single module are deleted;
+  // importers chase through to the real declaration site.
+  if (/\.tsx?$/.test(rel)) {
+    const info = barrelInfo(absPath);
+    if (uniqueBarrelTarget(info)) return null;
+  }
+
   for (const [o, n] of PREFIX_RULES) {
     if (rel === o || rel.startsWith(o + "/")) return n + rel.slice(o.length);
   }
@@ -361,7 +420,7 @@ function plannedMove(absPath) {
     // pure barrels adopt the layer of their contents
     const info = barrelInfo(absPath);
     if (info) {
-      const targets = [...info.star, ...info.named.values()];
+      const targets = [...info.star, ...[...info.named.values()].map((v) => v.file)];
       const layers = new Set(targets.map((t) => plannedMove(t)?.includes("/model/") ?? false));
       if (layers.size === 1 && layers.has(true)) layer = "model";
     }
@@ -455,7 +514,7 @@ const ALLOWED = {
     "platform-game",
   ]),
   ui: new Set(["shared", "model", "platform", "platform-game", "application", "ui"]),
-  platform: new Set(["shared", "model", "simulation", "application", "platform"]),
+  platform: new Set(["shared", "model", "simulation", "application", "platform", "platform-game"]),
   "platform-game": new Set([
     "shared",
     "model",
@@ -485,17 +544,17 @@ function reportViolations() {
     const text = readFileSync(f, "utf8");
     for (const s of specifiers(text)) {
       if (s.typeOnly) continue;
+      if (SPLIT_FILES.has(f) && s.isExport) continue;
       if (s.dynamic && !isValueDynamic(text, s.index)) continue;
       const t = resolveSpec(s.spec, f);
       if (!t || !t.startsWith(SRC)) continue;
-      // chase transparent constants barrels to real target
+      // deleted/inlined modules get symbol-split or chased at rewrite time
       let target = t;
-      if (t.includes(`${sep}constants${sep}`)) {
-        const info = barrelInfo(t);
-        if (info && info.star.length === 1 && info.named.size === 0) target = info.star[0];
-        else continue; // multi-target barrels get symbol-split; skip
+      if (DELETED.has(t) || SPLIT_FILES.has(t)) {
+        const chased = uniqueBarrelTarget(barrelInfo(t));
+        if (chased) target = chased;
+        else continue;
       }
-      if (SPLIT_FILES.has(target)) continue; // symbol-split at rewrite time
       const tNew = moveMap.get(target) ?? target;
       const tRel = "src/" + relative(SRC, tNew).replaceAll(sep, "/");
       const tl = layerOf(tRel);
@@ -524,17 +583,6 @@ const IMPORT_STMT_RE =
 
 const unresolvedSymbols = [];
 
-function symbolTarget(name) {
-  const decl = symbolTable.get(name);
-  if (!decl) return null;
-  if (moveMap.has(decl)) return moveMap.get(decl);
-  if (barrelInfo(decl)) {
-    const chased = chaseSymbol(decl, name);
-    if (chased) return moveMap.get(chased) ?? chased;
-  }
-  return decl;
-}
-
 function rewriteFile(file, text) {
   let out = "";
   let last = 0;
@@ -556,24 +604,19 @@ function rewriteFile(file, text) {
       continue;
     }
 
-    const needsSplit =
-      isFromImport &&
-      (spec === "@/constants" || spec.startsWith("@/constants/") || (t && SPLIT_FILES.has(t)));
-
-    if (needsSplit) {
+    // named imports of a deleted/inlined module are re-pointed to each
+    // symbol's true declaring file
+    if (isFromImport && t && (DELETED.has(t) || SPLIT_FILES.has(t))) {
       const clause = m[3] ?? "";
       const namedMatch = /\{([^}]*)\}/.exec(clause);
-      // resolve the leaf for default/namespace/side-effect imports
       if (!namedMatch) {
-        let target = t;
-        if (t && t.includes(`${sep}constants${sep}`)) {
-          const info = barrelInfo(t);
-          if (info && info.star.length === 1) target = info.star[0];
-        }
-        const mapped = target && moveMap.get(target);
+        const chased = uniqueBarrelTarget(barrelInfo(t));
+        const mapped = chased && moveMap.get(chased);
         if (mapped) {
           out += text.slice(last, m.index) + m[0].replace(spec, toAbs(mapped));
           last = m.index + m[0].length;
+        } else {
+          unresolvedSymbols.push(`${relative(ROOT, file)}: <${clause.trim()}> (via ${spec})`);
         }
         continue;
       }
@@ -584,38 +627,46 @@ function rewriteFile(file, text) {
       const byMod = new Map();
       const leftover = [];
       for (const raw of names) {
-        const nm = raw
-          .replace(/^type\s+/, "")
-          .split(/\s+as\s+/)[0]
-          .trim();
-        const target = symbolTarget(nm);
-        if (!target) {
+        const isType = /^type\s+/.test(raw);
+        const segs = raw.replace(/^type\s+/, "").split(/\s+as\s+/);
+        const nm = segs[0].trim();
+        const binding = (segs[1] ?? segs[0]).trim();
+        const r = resolveSymbol(t, nm);
+        if (!r) {
           leftover.push(raw);
           unresolvedSymbols.push(`${relative(ROOT, file)}: ${nm} (via ${spec})`);
           continue;
         }
+        const target = moveMap.get(r.file) ?? r.file;
         const k = toAbs(target);
+        const emit =
+          r.localName === binding
+            ? `${isType ? "type " : ""}${r.localName}`
+            : `${isType ? "type " : ""}${r.localName} as ${binding}`;
         if (!byMod.has(k)) byMod.set(k, []);
-        byMod.get(k).push(raw);
+        byMod.get(k).push(emit);
       }
       const pieces = [];
       for (const [mod, list] of [...byMod.entries()].sort())
         pieces.push(`${m[1]}${m[2] ?? " "}{ ${list.join(", ")} } from "${mod}";`);
-      if (leftover.length && t)
-        pieces.push(
-          `${m[1]}${m[2] ?? " "}{ ${leftover.join(", ")} } from "${toAbs(moveMap.get(t) ?? t)}";`,
-        );
+      if (leftover.length)
+        pieces.push(`${m[1]}${m[2] ?? " "}{ ${leftover.join(", ")} } from "${spec}";`);
       out += text.slice(last, m.index) + pieces.join("\n");
       last = m.index + m[0].length;
       continue;
     }
 
     if (!t) continue;
-    // transparent constants leaf barrel -> chase single target
+    // deleted barrel -> chase single target, else warn (multi-target and
+    // this specifier has no named imports to split)
     let target = t;
-    if (t.includes(`${sep}constants${sep}`)) {
-      const info = barrelInfo(t);
-      if (info && info.star.length === 1) target = info.star[0];
+    if (DELETED.has(t)) {
+      const chased = uniqueBarrelTarget(barrelInfo(t));
+      if (chased) target = chased;
+      else {
+        unresolvedSymbols.push(`${relative(ROOT, file)}: <${spec}> (deleted barrel, unsplittable specifier)`);
+        continue;
+      }
     }
     const mapped = moveMap.get(target);
     if (mapped) {
@@ -636,23 +687,8 @@ function rewriteFile(file, text) {
   return out + text.slice(last);
 }
 
-function chaseSymbol(barrelFile, name) {
-  const info = barrelInfo(barrelFile);
-  if (!info) return null;
-  if (info.named.has(name)) return info.named.get(name);
-  for (const t of info.star) {
-    const text = readFileSync(t, "utf8");
-    if (
-      new RegExp(`export\\s+(?:const|function|class|enum|interface|type)\\s+${name}\\b`).test(text)
-    )
-      return t;
-    const deeper = chaseSymbol(t, name);
-    if (deeper) return deeper;
-  }
-  return null;
-}
-
 // ── main ──────────────────────────────────────────────────────────────────────
+const DELETED = new Set(allFiles.filter((f) => plannedMove(f) === null));
 const violations = reportViolations();
 console.log(`moves: ${moveMap.size}`);
 console.log(`layer violations (post-move model): ${violations.length}`);
@@ -702,12 +738,16 @@ if (APPLY) {
     console.log(`unresolved symbols: ${unresolvedSymbols.length}`);
     for (const u of unresolvedSymbols.slice(0, 80)) console.log("  " + u);
   }
-  // 2. delete inlined barrel files (plannedMove -> null)
-  for (const f of allFiles) {
-    if (plannedMove(f) === null && existsSync(f)) unlinkSync(f);
+  // 2. delete inlined barrel files (plannedMove -> null, computed pre-rewrite)
+  for (const f of DELETED) {
+    if (existsSync(f)) unlinkSync(f);
   }
-  // 3. rename files
+  // 3. rename files (skip sources that vanished or already landed)
   for (const [o, n] of moveMap) {
+    if (!existsSync(o)) {
+      if (!existsSync(n)) console.log(`!! MISSING SOURCE+TARGET: ${relative(ROOT, o)}`);
+      continue;
+    }
     mkdirSync(dirname(n), { recursive: true });
     renameSync(o, n);
   }

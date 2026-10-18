@@ -4,7 +4,7 @@
 
 import { describe, it, expect } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { useIsClient } from "@/hooks/shared/useIsClient";
+import { useIsClient } from "@/shared/hooks/useIsClient";
 
 describe("useIsClient", () => {
   it("returns true after mount (effects fire in jsdom)", () => {

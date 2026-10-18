@@ -26,8 +26,8 @@ vi.mock("@/lib/cn", () => ({
 
 // ── Import after mocks ────────────────────────────────────────────────────────
 
-import { ConditionTimeline } from "@/components/race/ConditionTimeline";
-import type { ConditionSegment } from "@/hooks/race/useConditionTimeline";
+import { ConditionTimeline } from "@/domains/race/ui/ConditionTimeline";
+import type { ConditionSegment } from "@/domains/race/application/hooks/useConditionTimeline";
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
 

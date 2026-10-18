@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { formatRecoveryDays } from "@/core/health/injuryDisplay";
-import type { InjurySeverity } from "@/core/health/healthSystem";
+import { formatRecoveryDays } from "@/domains/health/model/injuryDisplay";
+import type { InjurySeverity } from "@/domains/health/simulation/healthSystem";
 
 describe("formatRecoveryDays", () => {
   it("returns 'Career-ending' for severity 'career-ending'", () => {

@@ -1,0 +1,81 @@
+/**
+ * impacts/jockeyImpacts.ts - Jockey impact types
+ *
+ * This file provides jockey-related impact types including jockey contracts,
+ * jockey assignments, jockey silks, and jockey stats.
+ *
+ * Dependencies: ./base (Impact)
+ * Related files: ../handlers/RacingHandler.ts (handles impacts), ./index.ts (exports types)
+ */
+
+import type { Impact } from "@/platform/resolver/impacts/base";
+import type { ApprenticeProgression } from "@/domains/apprentice/model/apprenticeTypes";
+import type { JockeySilk } from "@/domains/jockey/model/types";
+import type { JockeyId, StableId } from "@/shared/types/branded";
+
+// Jockey contract impact
+export interface JockeyContractImpact extends Impact {
+  type: "jockey_contract";
+  jockeyId: JockeyId;
+  stableId?: StableId;
+  contractUntil?: number;
+  stableAffinity?: number;
+  isApprentice?: boolean;
+  loyalty?: number;
+  bonus?: number;
+  reason: string;
+}
+
+// Jockey release impact
+export interface JockeyReleaseImpact extends Impact {
+  type: "jockey_release";
+  jockeyId: JockeyId;
+  reason: string;
+}
+
+// Jockey assignment impact
+export interface JockeyAssignmentImpact extends Impact {
+  type: "jockey_assignment";
+  raceId: string;
+  horseId: string;
+  jockeyId: string;
+  reason: string;
+}
+
+// Jockey silk impact
+export interface JockeySilkImpact extends Impact {
+  type: "jockey_silk";
+  jockeyId: string;
+  silk: JockeySilk;
+  reason: string;
+}
+
+// Jockey stats impact
+export interface JockeyStatsImpact extends Impact {
+  type: "jockey_stats";
+  jockeyId: string;
+  careerStarts: number;
+  careerWins: number;
+  fame: number;
+  stableAffinityDelta?: number;
+  apprenticeProgression?: ApprenticeProgression;
+  traitXpAwards?: Record<string, number>;
+  reason: string;
+}
+
+// Jockey affinity impact
+export interface JockeyAffinityImpact extends Impact {
+  type: "jockey_affinity_gain";
+  jockeyId: string;
+  horseId: string;
+  xp: number;
+  reason: string;
+}
+
+export type JockeyImpact =
+  | JockeyContractImpact
+  | JockeyAssignmentImpact
+  | JockeySilkImpact
+  | JockeyStatsImpact
+  | JockeyAffinityImpact
+  | JockeyReleaseImpact;

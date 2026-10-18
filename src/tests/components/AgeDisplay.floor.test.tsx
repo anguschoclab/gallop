@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
-import { PlayerConsignmentsPanel } from "@/components/auction/PlayerConsignmentsPanel";
-import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import type { Horse, AuctionLot, Stable } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { PlayerConsignmentsPanel } from "@/domains/auction/ui/PlayerConsignmentsPanel";
+import { generateHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import type { Horse, AuctionLot, Stable } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children }: any) => children,

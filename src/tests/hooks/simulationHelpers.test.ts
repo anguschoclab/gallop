@@ -3,9 +3,9 @@ import {
   buildRankMap,
   updateSplitCrossings,
   recordFinish,
-} from "@/hooks/race/useLiveRaceSimulation";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { makeUnowned } from "@/core/horse/ownership";
+} from "@/domains/race/application/hooks/useLiveRaceSimulation";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {

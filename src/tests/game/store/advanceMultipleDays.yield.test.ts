@@ -144,8 +144,8 @@ vi.mock("@/game/store/storage", () => {
   };
 });
 
-import { saveCoordinator, _resetSaveCoordinator } from "@/game/store/storage";
-import { useGame } from "@/game/store";
+import { saveCoordinator, _resetSaveCoordinator } from "@/platform/game/store/storage";
+import { useGame } from "@/platform/game/store";
 import { seedStore } from "@/test-utils/renderWithStore";
 
 /**

@@ -4,13 +4,13 @@ import {
   periodStats,
   pctChange,
   filterPeriodCampaignRaces,
-} from "@/core/stable/periodComparison";
-import type { PlayerRaceWinRecord } from "@/core/stable/raceWins";
-import type { TrackLedgerEntry } from "@/core/history/trackLedger";
+} from "@/domains/stable/simulation/periodComparison";
+import type { PlayerRaceWinRecord } from "@/domains/stable/simulation/raceWins";
+import type { TrackLedgerEntry } from "@/domains/history/simulation/trackLedger";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
-import type { Transaction } from "@/game/types";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import type { Transaction } from "@/platform/game/types";
 
 const win = (day: number, payout: number, grade?: string) =>
   ({

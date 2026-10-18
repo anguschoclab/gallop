@@ -5,8 +5,8 @@ import {
   phaseIsDue,
   ScheduleError,
   type PhaseDescriptor,
-} from "@/core/time/scheduler";
-import { createPhase, type PipelineContext } from "@/core/time/pipeline";
+} from "@/platform/time/scheduler";
+import { createPhase, type PipelineContext } from "@/platform/time/pipeline";
 import { makePipelineContext } from "@/tests/helpers/sampleGameState";
 
 function fakePhase(name: string, order: number) {

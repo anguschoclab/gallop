@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { paceShapeMul, styleStaminaFactor } from "@/core/race/engine/runnerBuilder";
+import { paceShapeMul, styleStaminaFactor } from "@/domains/race/simulation/engine/runnerBuilder";
 
 describe("paceShapeMul", () => {
   it("should give E style a boost at start (progress < 0.1)", () => {

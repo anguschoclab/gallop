@@ -7,12 +7,12 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { rollForInjury } from "@/core/health/healthSystem";
-import { isValidUUID } from "@/core/uuid";
-import { createRng } from "@/core/common/rng";
+import { rollForInjury } from "@/domains/health/simulation/healthSystem";
+import { isValidUUID } from "@/shared/uuid/uuid";
+import { createRng } from "@/shared/common/rng";
 import { createTestColt } from "@/tests/helpers/createTestHorse";
-import type { Horse } from "@/game/types";
-import type { StaffMember } from "@/core/staff/staffTypes";
+import type { Horse } from "@/platform/game/types";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
 
 function makeInjuryProneHorse(): Horse {
   const horse = createTestColt({ id: "h1", energy: 10 });

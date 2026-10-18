@@ -18,23 +18,23 @@
  *   B.8 - generateUpcomingRaces (thin wrapper, not a duplicate)
  */
 import { describe, it, expect } from "vitest";
-import { formatCurrency as formatCurrencyFinancial } from "@/core/financial/financialTypes";
-import { formatCurrency as formatCurrencyCommon } from "@/core/common/formatting";
-import { defaultMaxTime as defaultMaxTimeEngine } from "@/core/race/engine/constants";
-import { defaultMaxTime as defaultMaxTimeConstants } from "@/constants/raceEngineConstants";
-import { distanceBucket as distanceBucketBeyer } from "@/core/race/beyer";
-import { classifyDistanceBucket as distanceBucketPace } from "@/core/horse/paceTendency";
-import { jockeyGradeColorClass as gradeColorJockey } from "@/core/race/jockeyReport";
-import { gradeColorClass as gradeColorHorse } from "@/core/horse/grading";
+import { formatCurrency as formatCurrencyFinancial } from "@/domains/financial/model/financialTypes";
+import { formatCurrency as formatCurrencyCommon } from "@/shared/common/formatting";
+import { defaultMaxTime as defaultMaxTimeEngine } from "@/domains/race/model/engine/constants";
+import { defaultMaxTime as defaultMaxTimeConstants } from "@/domains/race/model/engine/constants";;
+import { distanceBucket as distanceBucketBeyer } from "@/domains/race/simulation/beyer";
+import { classifyDistanceBucket as distanceBucketPace } from "@/domains/horse/simulation/paceTendency";
+import { jockeyGradeColorClass as gradeColorJockey } from "@/domains/race/simulation/jockeyReport";
+import { gradeColorClass as gradeColorHorse } from "@/domains/horse/simulation/grading";
 import { recordPersonalityOutcome } from "@/domains/agents/simulation/personalitySystem";
 import { recordLearningOutcome } from "@/domains/agents/simulation/learningModule";
-import { getTrackCountry as getTrackCountryByName } from "@/data/gradedRaces";
-import { getTrackCountryById as getTrackCountryByIdFn } from "@/core/weather/trackClimate";
-import { generateUpcomingRaces as generateUpcomingRacesSchedule } from "@/core/race/schedule";
-import { generateUpcomingScheduledRaces as generateUpcomingRacesMarket } from "@/core/market/marketRefresh";
+import { getTrackCountry as getTrackCountryByName } from "@/shared/data/gradedRaces";
+import { getTrackCountryById as getTrackCountryByIdFn } from "@/domains/weather/simulation/trackClimate";
+import { generateUpcomingRaces as generateUpcomingRacesSchedule } from "@/domains/race/simulation/schedule";
+import { generateUpcomingScheduledRaces as generateUpcomingRacesMarket } from "@/domains/market/simulation/marketRefresh";
 
 // B.2 — connectionTrophies: duplicate file deleted, canonical in @/core/awards
-import * as connectionTrophiesAwards from "@/core/awards/connectionTrophies";
+import * as connectionTrophiesAwards from "@/domains/awards/simulation/connectionTrophies";
 
 // ---------------------------------------------------------------------------
 // B.1 — formatCurrency: DIFFERENT implementations (must NOT merge)

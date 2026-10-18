@@ -1,5 +1,5 @@
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 /**
  * Integration tests for the award ceremony invitation phase.
  *
@@ -9,19 +9,19 @@ import { asNpcStableId } from "@/core/types/branded";
  */
 
 import { describe, it, expect } from "vitest";
-import { awardInvitationsPhase } from "@/core/time/phases/awardInvitations";
-import { createRng } from "@/core/common/rng";
+import { awardInvitationsPhase } from "@/platform/time/phases/awardInvitations";
+import { createRng } from "@/shared/common/rng";
 import { createTestHorse } from "@/tests/helpers";
-import { createDefaultGameState } from "@/game/store/state";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
-import type { Horse, Race } from "@/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { Horse, Race } from "@/platform/game/types";
 import {
   CEREMONY_INVITE_LEAD_DAYS,
   RSVP_DEADLINE_LEAD_DAYS,
   RSVP_REMINDER_MARKS,
   type AwardCeremonyInvitation,
-} from "@/core/awards/invitations";
+} from "@/domains/awards/simulation/invitations";
 
 const EUROPE_CEREMONY_DOY = 314; // Cartier Racing Awards
 const NA_CEREMONY_DOY = 365; // Eclipse Awards

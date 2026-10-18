@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { createAuctionRunner, nextBidAmount } from "@/core/auction/runner";
-import type { AuctionSale, AuctionLot, Horse, Stable } from "@/game/types";
+import { createAuctionRunner, nextBidAmount } from "@/domains/auction/simulation/runner";
+import type { AuctionSale, AuctionLot, Horse, Stable } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 
 describe("auctionTheater integration", () => {

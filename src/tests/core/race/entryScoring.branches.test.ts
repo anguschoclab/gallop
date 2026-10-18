@@ -6,9 +6,9 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { calculateRaceSuitability } from "@/core/race/entryScoring";
+import { calculateRaceSuitability } from "@/domains/race/simulation/entryScoring";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Race, Stable } from "@/game/types";
+import type { Race, Stable } from "@/platform/game/types";
 
 function makeStable(overrides: Partial<Stable> = {}): Stable {
   return {

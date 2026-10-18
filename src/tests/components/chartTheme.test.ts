@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import * as chartTheme from "@/components/charts/chartTheme";
+import * as chartTheme from "@/shared/ui/charts/chartTheme";
 
 describe("chartTheme live exports", () => {
   it("chartColors exports all expected keys", () => {

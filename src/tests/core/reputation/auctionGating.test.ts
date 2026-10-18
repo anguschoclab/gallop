@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { canAccessSale } from "@/core/reputation/reputationGating";
-import { getReputationTier } from "@/core/reputation/reputationTypes";
-import type { AuctionSaleKind } from "@/core/market/types";
+import { canAccessSale } from "@/domains/reputation/simulation/reputationGating";
+import { getReputationTier } from "@/domains/reputation/model/reputationTypes";
+import type { AuctionSaleKind } from "@/domains/market/model/types";
 
 describe("auction gating integration", () => {
   function checkSaleAccess(saleKind: AuctionSaleKind, reputationScore: number) {

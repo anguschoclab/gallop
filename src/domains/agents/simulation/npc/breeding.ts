@@ -10,34 +10,34 @@
  * Related files: npcStables.ts (uses breeding logic), breedingAI.ts (provides AI decisions)
  */
 
-import type { Horse, Pregnancy, Stable, GameState } from "@/game/types";
-import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { generateUUID } from "@/core/uuid";
-import { canBreed } from "@/core/breeding/eligibility";
-import { getAvailableStallions } from "@/core/breeding/stallions";
-import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
-import { computeProspectiveCoi } from "@/core/breeding/populationGenetics";
-import type { Rng } from "@/core/common/rng";
-import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
+import type { Horse, Pregnancy, Stable, GameState } from "@/platform/game/types";
+import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import { generateUUID } from "@/shared/uuid/uuid";
+import { canBreed } from "@/domains/breeding/simulation/eligibility";
+import { getAvailableStallions } from "@/domains/breeding/simulation/stallions";
+import { inBreedingSeason } from "@/domains/calendar/simulation/breedingCalendar";
+import { computeProspectiveCoi } from "@/domains/breeding/simulation/populationGenetics";
+import type { Rng } from "@/shared/common/rng";
+import type { Leaderboard } from "@/domains/breeding/model/leaderboardTypes";
 import {
   BREEDING_PERSONALITIES,
   SINGLE_FEE_CAP_FRACTION,
   MIN_MARE_OVERALL,
   MAX_COI,
   scoreStallion,
-} from "@/core/breeding/strategy";
-import { calculateOverallRating } from "@/core/horse/stats";
+} from "@/domains/breeding/simulation/strategy";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import {
   calculateAIStallionScore,
   createBreedingAIState,
 } from "@/domains/agents/simulation/breedingAI";
 import { recordBreedingDecision } from "@/domains/agents/simulation/breedingRecording";
-import { BREEDING_FEE, GESTATION_DAYS } from "@/constants";
+import { BREEDING_FEE, GESTATION_DAYS } from "@/domains/breeding/model/breedingConstants";;
 import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import {
   BREEDING_MARE_FRACTION,
   EMERGENCY_STUD_FEE_CAP_FRACTION,
-} from "@/constants/financialDistressConstants";
+} from "@/domains/financial/model/financialDistressConstants";
 
 /**
  * Run autonomous NPC breeding for the current day.

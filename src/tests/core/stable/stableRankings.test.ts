@@ -5,14 +5,14 @@ import {
   stableRankingsDays,
   STABLE_RANKINGS_MAX_ENTRIES,
   type StableRankingsInput,
-} from "@/core/stable/stableRankings";
-import { PLAYER_OWNER_ID } from "@/core/horse/ownership";
+} from "@/domains/stable/simulation/stableRankings";
+import { PLAYER_OWNER_ID } from "@/domains/horse/simulation/ownership";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import { asHorseId, asNpcStableId } from "@/core/types/branded";
-import { PRIZE_SPLIT } from "@/constants";
-import type { Horse, HorseRaceHistoryEntry } from "@/core/horse/types";
-import type { Stable, PlayerProfile } from "@/core/stable/types";
+import { asHorseId, asNpcStableId } from "@/shared/types/branded";
+import { PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import type { Horse, HorseRaceHistoryEntry } from "@/domains/horse/simulation/types";
+import type { Stable, PlayerProfile } from "@/domains/stable/simulation/types";
 
 const result = (
   day: number,

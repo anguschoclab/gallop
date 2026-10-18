@@ -6,9 +6,9 @@ import {
   makePlayerOwned,
   makeNpcOwned,
   makeUnowned,
-} from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
-import { generateHorse } from "@/core/horse/horseFactory";
+} from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { generateHorse } from "@/domains/horse/simulation/horseFactory";
 
 describe("ownership migration: generateHorse with ownership", () => {
   it("generateHorse with ownership: makePlayerOwned() creates a player-owned horse", () => {
@@ -41,4 +41,4 @@ describe("ownership migration: generateHorse with ownership", () => {
 });
 
 // Re-import for the unowned check
-import { isUnowned } from "@/core/horse/ownership";
+import { isUnowned } from "@/domains/horse/simulation/ownership";

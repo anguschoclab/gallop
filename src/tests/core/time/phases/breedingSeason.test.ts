@@ -3,11 +3,11 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { breedingSeasonPhase } from "@/core/time/phases/breedingSeason";
+import { breedingSeasonPhase } from "@/platform/time/phases/breedingSeason";
 import { createTestHorse } from "@/tests/helpers";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Horse } from "@/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState, Horse } from "@/platform/game/types";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("breedingSeasonPhase", () => {

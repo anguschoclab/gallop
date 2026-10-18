@@ -11,9 +11,9 @@
  * Related files: src/core/time/phases/npcMilestoneAlertsPhase.ts (drives this)
  */
 
-import type { Horse, NpcCareerStage } from "@/core/horse/types";
+import type { Horse, NpcCareerStage } from "@/domains/horse/simulation/types";
 import { careerStage } from "./careerTracker";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/shared/common/formatting";
 
 export type RivalMilestoneKind =
   "debut" | "breakthrough_win" | "earnings" | "peak_transition" | "retirement";

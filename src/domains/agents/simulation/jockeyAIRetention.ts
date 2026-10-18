@@ -1,5 +1,5 @@
-import type { Horse, Stable } from "@/game/types";
-import type { Jockey } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
+import type { Jockey } from "@/platform/game/types";
 import type { JockeyAIState, JockeyAssignment } from "./jockeyAI";
 import { getSuccessRate, recordLearningOutcome, trimHistory } from "./learningModule";
 

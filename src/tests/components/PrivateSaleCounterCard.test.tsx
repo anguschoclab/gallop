@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { PrivateSaleCounterCard } from "@/components/auction/PrivateSaleCounterCard";
-import type { Horse, Stable, PrivateSaleOffer } from "@/game/types";
+import { PrivateSaleCounterCard } from "@/domains/auction/ui/PrivateSaleCounterCard";
+import type { Horse, Stable, PrivateSaleOffer } from "@/platform/game/types";
 
 vi.mock("sonner", () => ({
   toast: {

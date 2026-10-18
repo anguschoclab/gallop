@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { npcClaimingPhase } from "@/core/time/phases/npcClaiming";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
+import { npcClaimingPhase } from "@/platform/time/phases/npcClaiming";
+import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("quarantined npcClaimingPhase", () => {
   it("is not registered in the authoritative pipeline", () => {

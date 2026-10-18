@@ -19,10 +19,10 @@ import {
   recordClaimingOutcome,
   shouldClaimHorse,
 } from "@/domains/agents/simulation/claimingAIRecording";
-import type { Stable, Horse } from "@/game/types";
-import type { Race } from "@/core/race/types";
+import type { Stable, Horse } from "@/platform/game/types";
+import type { Race } from "@/domains/race/simulation/types";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({

@@ -1,14 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { buildRunner } from "@/core/race/engine/runnerBuilder";
-import { generateBeyerAndRecoveryImpacts } from "@/core/race/impacts/beyerRecovery";
+import { buildRunner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { generateBeyerAndRecoveryImpacts } from "@/domains/race/simulation/impacts/beyerRecovery";
 import { createTestHorse } from "@/tests/helpers";
-import {
-  STAMINA_DRAIN_DISTANCE_DIVISOR,
-  STAMINA_DRAIN_BEYER_DIVISOR,
-  STAMINA_DRAIN_MAX,
-} from "@/constants";
-import type { Race, Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { STAMINA_DRAIN_DISTANCE_DIVISOR, STAMINA_DRAIN_BEYER_DIVISOR, STAMINA_DRAIN_MAX } from "@/domains/race/model/raceSimulationConstants";;
+import type { Race, Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const BASE_STATS = {
   speed: 80,

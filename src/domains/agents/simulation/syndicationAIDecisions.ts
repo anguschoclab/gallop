@@ -1,5 +1,5 @@
-import type { Horse, Stable } from "@/game/types";
-import type { Syndicate } from "@/core/breeding/types";
+import type { Horse, Stable } from "@/platform/game/types";
+import type { Syndicate } from "@/domains/breeding/model/types";
 import type { DistressLevel } from "./financialDistressAI";
 import type { SyndicationAIState } from "./syndicationAI";
 import {
@@ -8,7 +8,7 @@ import {
   getSyndicationSuccessRate,
   shouldCreateSyndicate,
 } from "./syndicationAI";
-import { getCareerStats } from "@/core/horse/stats";
+import { getCareerStats } from "@/domains/horse/simulation/stats";
 import { getSyndicationAppetite, computeQualityStakeScale } from "./syndicationAppetite";
 import { recordSyndicatePurchaseTrace, type SyndicatePurchaseTrace } from "./syndicationTrace";
 

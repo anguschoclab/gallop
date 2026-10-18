@@ -3,15 +3,15 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { breedingResolutionPhase } from "@/core/time/phases/breedingResolution";
+import { breedingResolutionPhase } from "@/platform/time/phases/breedingResolution";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
-import type { BreedingIntent } from "@/core/resolver/intents";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { BreedingIntent } from "@/platform/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("breedingResolutionPhase", () => {
   const createTestState = (): GameState =>

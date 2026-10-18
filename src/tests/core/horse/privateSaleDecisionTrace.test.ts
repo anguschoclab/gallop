@@ -1,28 +1,28 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId } from "@/core/types/branded";
-import { calculateLotValuation } from "@/core/auction/engine";
-import { evaluateHorseAttachment, attachmentAdjustedAsk } from "@/core/horse/attachment";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asHorseId } from "@/shared/types/branded";
+import { calculateLotValuation } from "@/domains/auction/simulation/engine";
+import { evaluateHorseAttachment, attachmentAdjustedAsk } from "@/domains/horse/simulation/attachment";
 import {
   computePrivateSaleDecision,
   buildPrivateSaleDecisionTrace,
   formatPrivateSaleDecisionTrace,
-} from "@/core/horse/privateSaleDecision";
+} from "@/domains/horse/simulation/privateSaleDecision";
 import {
   ACCEPT_THRESHOLDS,
   COUNTER_THRESHOLDS,
   COUNTER_MULTIPLIERS,
   DECISION_TRACE_LOG_PREFIX,
-} from "@/constants/privateSaleConstants";
-import { UPKEEP_PER_HORSE } from "@/constants/economicConstants";
+} from "@/domains/market/model/privateSaleConstants";
+import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
 import {
   getCashPressureTuning,
   setCashPressureTuningOverrides,
   resetCashPressureTuningOverrides,
-} from "@/core/stable/cashPressureTuning";
-import type { Horse, Stable } from "@/game/types";
+} from "@/domains/stable/simulation/cashPressureTuning";
+import type { Horse, Stable } from "@/platform/game/types";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   createTestNpcHorse({

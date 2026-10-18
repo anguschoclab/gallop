@@ -9,7 +9,7 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => searchState,
 }));
 
-import { useRegionalComparisonParams } from "@/hooks/analytics/useRegionalComparisonParams";
+import { useRegionalComparisonParams } from "@/domains/analytics/application/hooks/useRegionalComparisonParams";
 
 describe("useRegionalComparisonParams", () => {
   beforeEach(() => {

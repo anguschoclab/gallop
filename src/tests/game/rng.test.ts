@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createRng, hashStr, nondeterministicRng } from "@/core/common/rng";
+import { createRng, hashStr, nondeterministicRng } from "@/shared/common/rng";
 
 describe("rng", () => {
   it("same seed produces identical sequence", () => {

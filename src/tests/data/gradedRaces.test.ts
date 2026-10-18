@@ -11,8 +11,8 @@ import {
   validateNoDuplicateRaces,
   type GradedRace,
   type Continent,
-} from "@/data/gradedRaces";
-import { TRACK_BY_ID, TRACK_BY_NAME } from "@/data/tracks";
+} from "@/shared/data/gradedRaces";
+import { TRACK_BY_ID, TRACK_BY_NAME } from "@/shared/data/tracks";
 
 let originalSnapshot: GradedRace[] | undefined;
 

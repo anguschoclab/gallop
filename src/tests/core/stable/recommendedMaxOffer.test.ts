@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { recommendedMaxOffer } from "@/core/stable/recommendedMaxOffer";
+import { recommendedMaxOffer } from "@/domains/stable/simulation/recommendedMaxOffer";
 import { createTestStable } from "@/tests/helpers";
-import { ACCEPT_THRESHOLDS, COUNTER_MULTIPLIERS } from "@/constants/privateSaleConstants";
-import type { StablePersonality } from "@/game/types";
+import { ACCEPT_THRESHOLDS, COUNTER_MULTIPLIERS } from "@/domains/market/model/privateSaleConstants";
+import type { StablePersonality } from "@/platform/game/types";
 
 const horses = Array.from({ length: 10 }, (_, i) => `h${i}`) as unknown as never[];
 

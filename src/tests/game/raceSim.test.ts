@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { runRaceToCompletion, computePaceContext, stepRunner } from "@/core/race/engine/simulation";
-import { buildRunner, getConditionsModifier } from "@/core/race/engine/runnerBuilder";
-import { createRng } from "@/core/common/rng";
-import type { Horse } from "@/game/types";
+import { runRaceToCompletion, computePaceContext, stepRunner } from "@/domains/race/simulation/engine/simulation";
+import { buildRunner, getConditionsModifier } from "@/domains/race/simulation/engine/runnerBuilder";
+import { createRng } from "@/shared/common/rng";
+import type { Horse } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const mockRng = createRng(1);
 

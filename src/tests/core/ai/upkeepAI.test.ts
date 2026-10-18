@@ -10,10 +10,10 @@ import {
   getBudgetInsights,
   shouldConserveCash,
 } from "@/domains/agents/simulation/upkeepAIInsights";
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

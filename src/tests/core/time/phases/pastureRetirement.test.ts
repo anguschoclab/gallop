@@ -5,12 +5,12 @@
  * and horse deletion. Also covers edge cases and impact accumulation.
  */
 import { describe, it, expect } from "vitest";
-import { pastureRetirementPhase } from "@/core/time/phases/pastureRetirement";
+import { pastureRetirementPhase } from "@/platform/time/phases/pastureRetirement";
 import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { makePipelineContext } from "@/tests/helpers/sampleGameState";
-import { createRng } from "@/core/common/rng";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { AnyImpact } from "@/core/resolver/impacts/index";
+import { createRng } from "@/shared/common/rng";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { AnyImpact } from "@/platform/resolver/impacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 const G1_RACE = {

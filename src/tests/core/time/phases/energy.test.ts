@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { energyPhase } from "@/core/time/phases/energy";
+import { energyPhase } from "@/platform/time/phases/energy";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 describe("energyPhase", () => {
   it("should restore energy for horses", () => {

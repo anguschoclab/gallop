@@ -10,7 +10,7 @@
  * Related files: strategicCoordinator.ts (uses distress directive), intentGenerators.ts (uses distress state)
  */
 
-import type { Stable, StablePersonality } from "@/game/types";
+import type { Stable, StablePersonality } from "@/platform/game/types";
 import type { StrategicDirective } from "./strategicCoordinator";
 import {
   DISTRESS_CAUTION_THRESHOLD,
@@ -21,7 +21,7 @@ import {
   AGGRESSIVE_PERSONALITIES,
   DISTRESS_DIRECTIVE_WEIGHT,
   DISTRESS_DIRECTIVE_PRIORITY,
-} from "@/constants/financialDistressConstants";
+} from "@/domains/financial/model/financialDistressConstants";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 

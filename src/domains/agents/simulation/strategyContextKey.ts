@@ -1,4 +1,4 @@
-import type { Race, RunningStyle } from "@/game/types";
+import type { Race, RunningStyle } from "@/platform/game/types";
 
 export function getDistanceRange(distance: number): "short" | "mid" | "long" {
   if (distance < 1400) return "short";

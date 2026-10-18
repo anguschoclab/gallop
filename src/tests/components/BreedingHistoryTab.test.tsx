@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { BreedingHistoryTab } from "@/components/breeding/BreedingHistoryTab";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { BreedingHistoryTab } from "@/domains/breeding/ui/BreedingHistoryTab";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (

@@ -5,7 +5,7 @@
  * combine into the final stake, and logs it in dev/test builds only.
  */
 
-import type { StablePersonality } from "@/game/types";
+import type { StablePersonality } from "@/platform/game/types";
 import type { SyndicationAppetite } from "./syndicationAppetite";
 
 export type SyndicatePurchaseOutcome =

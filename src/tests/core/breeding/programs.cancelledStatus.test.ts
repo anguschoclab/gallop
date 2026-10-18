@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { createBreedingProgram, updateProgramProgress } from "@/core/breeding/programs";
-import { getArchetypeById } from "@/core/breeding/archetypes";
+import { createBreedingProgram, updateProgramProgress } from "@/domains/breeding/simulation/programs";
+import { getArchetypeById } from "@/domains/breeding/simulation/archetypes";
 import { createTestHorse } from "@/tests/helpers";
 import {
   PROGRAM_STATUS_ACTIVE,
   PROGRAM_STATUS_CANCELLED,
   CANCEL_REASON_USER,
-} from "@/constants/breedingConstants";
+} from "@/domains/breeding/model/breedingConstants";
 
 describe("BreedingProgram cancellation metadata", () => {
   it("createBreedingProgram defaults status to active", () => {

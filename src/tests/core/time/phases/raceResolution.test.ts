@@ -3,10 +3,10 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
+import { raceResolutionPhase } from "@/platform/time/phases/raceResolution";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Race } from "@/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState, Race } from "@/platform/game/types";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("raceResolutionPhase", () => {

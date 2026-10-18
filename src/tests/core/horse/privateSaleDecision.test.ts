@@ -2,11 +2,11 @@ import { describe, it, expect } from "vitest";
 import {
   computePrivateSaleDecision,
   buildPrivateSaleDecisionTrace,
-} from "@/core/horse/privateSaleDecision";
+} from "@/domains/horse/simulation/privateSaleDecision";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Stable, StablePersonality } from "@/game/types";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { ACCEPT_THRESHOLDS, COUNTER_THRESHOLDS } from "@/constants/privateSaleConstants";
+import type { Stable, StablePersonality } from "@/platform/game/types";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { ACCEPT_THRESHOLDS, COUNTER_THRESHOLDS } from "@/domains/market/model/privateSaleConstants";
 
 describe("privateSaleDecision", () => {
   const setup = (personality: StablePersonality, cash: number) => {

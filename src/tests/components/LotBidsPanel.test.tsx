@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { LotBidsPanel } from "@/components/auction/LotBidsPanel";
+import { LotBidsPanel } from "@/domains/auction/ui/LotBidsPanel";
 import { createTestStable } from "@/tests/helpers";
-import type { AuctionBidRecord, Stable } from "@/game/types";
+import type { AuctionBidRecord, Stable } from "@/platform/game/types";
 
 function mkBid(stableId: string | undefined, amount: number, tick: number): AuctionBidRecord {
   return { stableId, amount, tick };

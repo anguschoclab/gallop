@@ -7,7 +7,7 @@
  * on-track quality it demands before joining at all.
  */
 
-import type { StablePersonality } from "@/game/types";
+import type { StablePersonality } from "@/platform/game/types";
 import { getSyndicationTuning, getSyndicationQualityConfig } from "./syndicationTuning";
 
 export interface SyndicationAppetite {

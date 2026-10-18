@@ -7,8 +7,8 @@
 
 import { describe, it, expect, afterEach, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import type { Race } from "@/game/types";
-import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
+import type { Race } from "@/platform/game/types";
+import type { JockeyInstructions } from "@/domains/tactics/model/tacticsTypes";
 import { createTestHorse } from "@/tests/helpers";
 import { createTestJockey } from "@/tests/helpers";
 
@@ -43,7 +43,7 @@ vi.mock("@/core/race/transportCost", () => ({
   getTransportCostForRace: () => 200,
 }));
 
-import { ReviewStep } from "@/components/race/ReviewStep";
+import { ReviewStep } from "@/domains/race/ui/ReviewStep";
 
 const mockHorse = createTestHorse({ id: "horse-1", name: "Thunder Strike" });
 const mockJockey = createTestJockey({ id: "jockey-1", name: "Ruby Walsh" });

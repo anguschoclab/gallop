@@ -3,7 +3,7 @@ import {
   generateEnergyImpact,
   generateFormImpact,
   generateFameImpact,
-} from "@/core/race/impacts/energyFormFame";
+} from "@/domains/race/simulation/impacts/energyFormFame";
 import { createTestHorse } from "@/tests/helpers";
 
 describe("energyFormFame exports characterization", () => {
@@ -45,7 +45,7 @@ describe("energyFormFame exports characterization", () => {
   // The function was unused dead code. This test verifies it is no longer exported.
   it("generateFanCountImpact is no longer exported from the module", async () => {
     // Importing should not include generateFanCountImpact
-    const module = await import("@/core/race/impacts/energyFormFame");
+    const module = await import("@/domains/race/simulation/impacts/energyFormFame");
     expect((module as any).generateFanCountImpact).toBeUndefined();
   });
 });

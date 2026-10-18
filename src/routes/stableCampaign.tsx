@@ -1,23 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Progress } from "@/components/ui/progress";
-import { useGame, useGameWithShallow } from "@/game/store";
-import type { Horse } from "@/core/horse/types";
-import type { HorseDailyProgress } from "@/core/horse/dailyProgress";
-import type { RankingsHistory } from "@/core/market/rankingsHistory";
-import type { TrackLedgerEntry } from "@/core/history/trackLedger";
-import type { StrategyJournalEntry } from "@/core/tactics/strategyJournal";
-import { buildCampaignHistory } from "@/core/stable/campaignHistory";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { Progress } from "@/shared/ui/progress";
+import { useGame, useGameWithShallow } from "@/platform/game/store";
+import type { Horse } from "@/domains/horse/simulation/types";
+import type { HorseDailyProgress } from "@/domains/horse/simulation/dailyProgress";
+import type { RankingsHistory } from "@/domains/market/simulation/rankingsHistory";
+import type { TrackLedgerEntry } from "@/domains/history/simulation/trackLedger";
+import type { StrategyJournalEntry } from "@/domains/tactics/simulation/strategyJournal";
+import { buildCampaignHistory } from "@/domains/stable/simulation/campaignHistory";
 import {
   DEFAULT_STABLE_GOALS,
   GOAL_CLASSES,
   goalProgress,
   type StableGoals,
-} from "@/core/stable/stableGoals";
+} from "@/domains/stable/simulation/stableGoals";
 
 export const Route = createFileRoute("/stableCampaign")({
   head: () => ({

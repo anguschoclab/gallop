@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { registry, UUIDRegistry } from "@/core/uuidRegistry";
+import { registry, UUIDRegistry } from "@/shared/uuid/uuidRegistry";
 
 describe("UUIDRegistry", () => {
   beforeEach(() => {

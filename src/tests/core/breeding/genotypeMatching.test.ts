@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { calculateGeneticCompatibility } from "@/core/breeding/genotypeMatching";
+import { calculateGeneticCompatibility } from "@/domains/breeding/simulation/genotypeMatching";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 vi.mock("@/constants", async (importOriginal) => {

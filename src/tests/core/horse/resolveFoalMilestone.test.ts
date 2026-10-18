@@ -7,12 +7,12 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
+import { useGame } from "@/platform/game/store";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
-import type { Horse } from "@/core/horse/types";
+import { createDefaultFoalDevelopmentArc } from "@/domains/horse/simulation/foalDevelopment";
+import type { Horse } from "@/domains/horse/simulation/types";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function seedHorse(overrides: Partial<Horse> = {}) {
   const horse = createTestHorse({

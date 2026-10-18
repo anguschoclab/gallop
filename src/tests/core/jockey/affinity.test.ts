@@ -4,10 +4,10 @@ import {
   getAffinityLevel,
   calculateTraitAffinitySynergy,
   AFFINITY_CONSTANTS,
-} from "@/core/jockey/affinity";
+} from "@/domains/jockey/simulation/affinity";
 import { createTestJockey, createTestHorse } from "@/tests/helpers";
-import type { Jockey, JockeyTrait } from "@/core/jockey/types";
-import type { Horse } from "@/game/types";
+import type { Jockey, JockeyTrait } from "@/domains/jockey/model/types";
+import type { Horse } from "@/platform/game/types";
 
 function mkJockey(overrides: Partial<Jockey> = {}): Jockey {
   return createTestJockey({ id: "j1", affinityMap: {}, ...overrides });

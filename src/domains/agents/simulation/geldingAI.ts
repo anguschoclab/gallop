@@ -6,9 +6,9 @@
  * removes its breeding capability.
  */
 
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
 import { getPersonalityAIState } from "./personalitySystem";
-import { hashStr } from "@/core/common/rng";
+import { hashStr } from "@/shared/common/rng";
 
 export interface GeldingAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

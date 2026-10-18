@@ -3,20 +3,20 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { npcBankruptcyPhase } from "@/core/time/phases/npcBankruptcy";
+import { npcBankruptcyPhase } from "@/platform/time/phases/npcBankruptcy";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Syndicate } from "@/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState, Syndicate } from "@/platform/game/types";
 import type {
   CashImpact,
   ConsignmentImpact,
   NewsImpact,
   InboxImpact,
   HorseCreationImpact,
-} from "@/core/resolver/impacts/index";
-import { getStableId, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+} from "@/platform/resolver/impacts";
+import { getStableId, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 function makeSyndicate(overrides: Partial<Syndicate> = {}): Syndicate {
   return {

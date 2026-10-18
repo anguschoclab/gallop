@@ -6,7 +6,7 @@ import {
   raceGoalClass,
   type StableGoals,
   type GoalProgress,
-} from "@/core/stable/stableGoals";
+} from "@/domains/stable/simulation/stableGoals";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 const goals: StableGoals = {

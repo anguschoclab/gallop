@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
+import { compareFinishOrder } from "@/domains/race/simulation/engine/compareFinishOrder";
 
 describe("compareFinishOrder", () => {
   it("sorts by finishTime ascending when times differ", () => {

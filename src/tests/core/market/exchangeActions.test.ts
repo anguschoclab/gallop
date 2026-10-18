@@ -3,13 +3,13 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { applyTradeToExchange, buildSettleTradePatch } from "@/core/market/exchangeActions";
-import { createDefaultExchangeState, type ExchangeTrade } from "@/core/market/exchange";
+import { applyTradeToExchange, buildSettleTradePatch } from "@/domains/market/simulation/exchangeActions";
+import { createDefaultExchangeState, type ExchangeTrade } from "@/domains/market/simulation/exchange";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
-import { emptyReputation } from "@/core/reputation/reputationEvents";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { emptyReputation } from "@/domains/reputation/simulation/reputationEvents";
 
 describe("applyTradeToExchange", () => {
   it("removes matching asks and bids for the traded horse", () => {

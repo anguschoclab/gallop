@@ -1,4 +1,4 @@
-import { asNpcStableId } from "@/core/types/branded";
+import { asNpcStableId } from "@/shared/types/branded";
 /**
  * npcTrainingSelection.test.ts — Integration tests for NPC training selection.
  *
@@ -12,13 +12,13 @@ import { asNpcStableId } from "@/core/types/branded";
 
 import { describe, it, expect } from "vitest";
 import { generateNpcIntents } from "@/domains/agents/simulation/npc/intentGenerators";
-import { getAvailableTrainingTypes, createNPCFacilities } from "@/core/facilities";
+import { getAvailableTrainingTypes, createNPCFacilities } from "@/domains/facilities/simulation";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import type { GameState } from "@/game/types";
-import type { TrainingIntent } from "@/core/resolver/intents";
+import type { GameState } from "@/platform/game/types";
+import type { TrainingIntent } from "@/platform/resolver/intents";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 const ADVANCED_TYPES = ["gallop", "swimming", "breeze", "gate_work", "bullet", "treadmill"];
 const BASIC_TYPES = ["speed", "stamina", "acceleration", "rest"];

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { useGame } from "@/game/store";
+import { useGame } from "@/platform/game/store";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import type { PrivateSaleOffer, Horse, Stable } from "@/game/types";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import type { PrivateSaleOffer, Horse, Stable } from "@/platform/game/types";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>

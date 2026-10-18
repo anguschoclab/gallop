@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { HorseHandler } from "@/core/resolver/handlers/HorseHandler";
-import type { GameState } from "@/game/store/state";
-import type { InjuryImpact, HealthStatusImpact } from "@/core/resolver/impacts/index";
+import { HorseHandler } from "@/platform/resolver/handlers/HorseHandler";
+import type { GameState } from "@/platform/game/store/state";
+import type { InjuryImpact, HealthStatusImpact } from "@/platform/resolver/impacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("HorseHandler - Injury Handling", () => {
@@ -347,5 +347,5 @@ describe("HorseHandler - Injury Handling", () => {
     expect(draft.inbox[0].cta).toBeDefined();
   });
 });
-import type { Horse } from "@/game/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";

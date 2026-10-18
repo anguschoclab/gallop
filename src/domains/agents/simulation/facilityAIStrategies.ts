@@ -1,7 +1,7 @@
-import type { FacilityType, FacilityLevel } from "@/core/facilities/facilityTypes";
+import type { FacilityType, FacilityLevel } from "@/domains/facilities/model/facilityTypes";
 import type { FacilityROI } from "./facilityAITypes";
-import type { Stable } from "@/game/types";
-import { FACILITY_UPGRADE_COSTS } from "@/core/facilities/facilityTypes";
+import type { Stable } from "@/platform/game/types";
+import { FACILITY_UPGRADE_COSTS } from "@/domains/facilities/model/facilityTypes";
 
 const LEVEL_CAPACITY: Record<FacilityLevel, number> = {
   basic: 5,

@@ -8,9 +8,9 @@ import {
   isUnowned,
   ownerKey,
   PLAYER_OWNER_ID,
-} from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
-import type { Horse } from "@/core/horse/types";
+} from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import type { Horse } from "@/domains/horse/simulation/types";
 
 describe("ownership transitions", () => {
   // Helper to create a minimal horse-like object with ownership

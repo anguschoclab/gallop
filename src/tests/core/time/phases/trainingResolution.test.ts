@@ -1,15 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
-import { createRng } from "@/core/common/rng";
+import { trainingResolutionPhase } from "@/platform/time/phases/trainingResolution";
+import { createRng } from "@/shared/common/rng";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
-import type { TrainingIntent } from "@/core/resolver/intents";
-import type { EnergyImpact } from "@/core/resolver/impacts/horseImpacts";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { TrainingIntent } from "@/platform/resolver/intents";
+import type { EnergyImpact } from "@/platform/resolver/impacts/horseImpacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { AFFINITY_XP_PER_WORKOUT } from "@/constants";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { AFFINITY_XP_PER_WORKOUT } from "@/domains/jockey/model/jockeyConstants";;
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("trainingResolutionPhase", () => {
   const createTestState = (): GameState => ({

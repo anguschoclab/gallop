@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateDailyPremium, INSURANCE_CONFIG } from "@/core/insurance/insuranceTypes";
+import { calculateDailyPremium, INSURANCE_CONFIG } from "@/domains/insurance/model/insuranceTypes";
 
 describe("insuranceTypes", () => {
   describe("calculateDailyPremium", () => {

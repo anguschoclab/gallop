@@ -63,9 +63,9 @@ vi.mock("@/components/SidebarNav", () => ({
     ),
 }));
 
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import { AppShell } from "@/components/AppShell";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { AppShell } from "@/domains/shell/ui/AppShell";
 
 describe("AppShell navigation", () => {
   beforeEach(() => {

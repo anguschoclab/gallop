@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { marketPhase } from "@/core/time/phases/market";
+import { marketPhase } from "@/platform/time/phases/market";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 describe("marketPhase", () => {
   it("should refresh the market", () => {

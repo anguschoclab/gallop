@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { buildRunner } from "@/core/race/engine/runnerBuilder";
-import { AFFINITY_CONSTANTS } from "@/core/jockey/affinity";
+import { buildRunner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { AFFINITY_CONSTANTS } from "@/domains/jockey/simulation/affinity";
 import { createTestJockey, createTestHorse } from "@/tests/helpers";
-import type { Jockey, JockeyTrait } from "@/core/jockey/types";
-import type { Horse } from "@/game/types";
+import type { Jockey, JockeyTrait } from "@/domains/jockey/model/types";
+import type { Horse } from "@/platform/game/types";
 
 function mkJockey(overrides: Partial<Jockey> = {}): Jockey {
   return createTestJockey({ id: "j1", affinityMap: {}, stableAffinity: 0, ...overrides });

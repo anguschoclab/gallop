@@ -10,7 +10,7 @@ import {
   getPrestigeTier,
   formatPrestigeTier,
   PRESTIGE_TIER_LABELS,
-} from "@/core/prestige/prestigeTypes";
+} from "@/domains/prestige/model/prestigeTypes";
 
 describe("getPrestigeTier", () => {
   it("returns 'world' at exactly 90", () => {

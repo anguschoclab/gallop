@@ -5,7 +5,7 @@ import {
   calculateRaceLossReputation,
   calculateBreedingReputation,
   formatReputationTier,
-} from "@/core/reputation/reputationTypes";
+} from "@/domains/reputation/model/reputationTypes";
 
 describe("reputationTypes", () => {
   describe("getReputationTier", () => {

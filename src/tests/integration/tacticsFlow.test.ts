@@ -8,10 +8,10 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
-import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
-import { calculateTacticalAdjustment } from "@/core/race/engine/tacticalAI";
-import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
+import { useGame } from "@/platform/game/store";
+import type { JockeyInstructions } from "@/domains/tactics/model/tacticsTypes";
+import { calculateTacticalAdjustment } from "@/domains/race/simulation/engine/tacticalAI";
+import type { Runner, PaceContext } from "@/domains/race/simulation/engine/runnerBuilder";
 
 function makeInstructions(
   raceId: string,

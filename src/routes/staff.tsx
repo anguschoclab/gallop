@@ -1,24 +1,24 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useGame, useGameWithShallow } from "@/game/store";
-import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
+import { useGame, useGameWithShallow } from "@/platform/game/store";
+import { Badge } from "@/shared/ui/badge";
+import { Input } from "@/shared/ui/input";
 import { Users, Search, Filter } from "lucide-react";
-import { NumericValue } from "@/components/horse/HorseBits";
+import { NumericValue } from "@/domains/horse/ui/HorseBits";
 import { useMemo, useState } from "react";
-import { getG1WinsForStable, countByGrade } from "@/services/awards/awardsFacade";
-import { generateUUID } from "@/services/common/commonFacade";
-import type { StaffRole, StaffTier } from "@/services/staff/staffFacade";
-import { StaffNegotiationDialog } from "@/components/staff/StaffNegotiationDialog";
-import { StaffTeamList } from "@/components/staff/StaffTeamList";
-import { RecruitmentPool } from "@/components/staff/RecruitmentPool";
-import { STAFF_TRAIT_OPTIONS } from "@/services/common/commonFacade";
+import { getG1WinsForStable, countByGrade } from "@/domains/awards/application/awardsFacade";
+import { generateUUID } from "@/shared/uuid/uuid";;
+import type { StaffRole, StaffTier } from "@/domains/staff/application/staffFacade";
+import { StaffNegotiationDialog } from "@/domains/staff/ui/StaffNegotiationDialog";
+import { StaffTeamList } from "@/domains/staff/ui/StaffTeamList";
+import { RecruitmentPool } from "@/domains/staff/ui/RecruitmentPool";
+import { STAFF_TRAIT_OPTIONS } from "@/domains/genetics/application/traitLabels";;
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/shared/ui/select";
 
 export const Route = createFileRoute("/staff")({
   component: StaffManagement,

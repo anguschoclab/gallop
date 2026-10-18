@@ -4,8 +4,8 @@
  */
 
 import { describe, it, expect, vi } from "vitest";
-import { runAutoEntries, reconcileSlotStatuses } from "@/core/campaign/autoEntry";
-import type { Horse, Race, HorseCampaign } from "@/game/types";
+import { runAutoEntries, reconcileSlotStatuses } from "@/domains/campaign/simulation/autoEntry";
+import type { Horse, Race, HorseCampaign } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 
 // Mock data setup

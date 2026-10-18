@@ -5,7 +5,7 @@ import {
   GRADED_RACES_BY_KEY,
   GRADED_RACES_BY_TRIPLECROWN_KEY,
   GRADED_RACES_BY_BC_KEY,
-} from "@/data/gradedRaces";
+} from "@/shared/data/gradedRaces";
 
 describe("GRADED_RACES_BY_DAY_OF_YEAR", () => {
   it("is a Map<number, GradedRace[]>", () => {

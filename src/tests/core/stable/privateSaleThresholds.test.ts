@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { evaluatePrivateSaleThresholds } from "@/core/stable/privateSaleThresholds";
+import { evaluatePrivateSaleThresholds } from "@/domains/stable/simulation/privateSaleThresholds";
 import {
   recordCashPressureDecision,
   summarizeCashPressureTraces,
   clearCashPressureTraces,
   getCashPressureTraces,
-} from "@/core/stable/cashPressureLog";
+} from "@/domains/stable/simulation/cashPressureLog";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 
 const horses = Array.from({ length: 10 }, (_, i) => `h${i}`) as unknown as never[];

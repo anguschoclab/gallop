@@ -4,8 +4,8 @@
  * Extracted from raceEntryAI.ts for modularity.
  */
 
-import type { Horse, Race, Stable } from "@/game/types";
-import { RECENT_RACES_MAX_COUNT } from "@/constants";
+import type { Horse, Race, Stable } from "@/platform/game/types";
+import { RECENT_RACES_MAX_COUNT } from "@/shared/constants/storageLimitsConstants";;
 import { recordPersonalityOutcome } from "./personalitySystem";
 import { recordLearningOutcome } from "./learningModule";
 import type { RaceEntryAIState } from "./raceEntryAITypes";

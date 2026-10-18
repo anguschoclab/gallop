@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { getJockeyInsight } from "@/core/jockey/insights";
-import type { Jockey, Horse } from "@/game/types";
+import { getJockeyInsight } from "@/domains/jockey/simulation/insights";
+import type { Jockey, Horse } from "@/platform/game/types";
 
 describe("Tipster: Jockey Insights", () => {
   const createMockJockey = (id: string): Jockey => ({

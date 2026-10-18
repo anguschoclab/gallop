@@ -1,0 +1,110 @@
+import { useId } from "react";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
+import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";;
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
+import { Dice5 } from "lucide-react";
+import { randomStableName, randomOwnerName } from "@/domains/stable/application/stableFacade";
+import { makeWizardRng } from "@/domains/onboarding/application/steps/helpers";
+
+interface StepIdentityProps {
+  stableName: string;
+  setStableName: (v: string) => void;
+  ownerName: string;
+  setOwnerName: (v: string) => void;
+}
+
+export function StepIdentity({
+  stableName,
+  setStableName,
+  ownerName,
+  setOwnerName,
+}: StepIdentityProps) {
+  return (
+    <div className="space-y-6">
+      <FieldWithRandom
+        label="Stable name"
+        tooltip="Appears on race programs, headlines, and your owner's silks."
+        value={stableName}
+        onChange={setStableName}
+        onRandomize={() => setStableName(randomStableName(makeWizardRng("stable")))}
+        maxLength={40}
+        placeholder="Thunder Ridge Stables"
+      />
+      <FieldWithRandom
+        label="Owner name"
+        tooltip="The principal of record. Surfaces in the ledger and the press."
+        value={ownerName}
+        onChange={setOwnerName}
+        onRandomize={() => setOwnerName(randomOwnerName(makeWizardRng("owner")))}
+        maxLength={40}
+        placeholder="Alex Whitfield"
+      />
+    </div>
+  );
+}
+
+interface FieldWithRandomProps {
+  label: string;
+  tooltip: string;
+  value: string;
+  onChange: (v: string) => void;
+  onRandomize: () => void;
+  maxLength: number;
+  placeholder?: string;
+}
+
+function FieldWithRandom({
+  label,
+  tooltip,
+  value,
+  onChange,
+  onRandomize,
+  maxLength,
+  placeholder,
+}: FieldWithRandomProps) {
+  const inputId = useId();
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-baseline justify-between">
+        <label htmlFor={inputId} className="text-sm font-medium text-cream cursor-help">
+          {label}
+        </label>
+        <span className="text-xs text-cream-muted tabular-nums">
+          {value.length}/{maxLength}
+        </span>
+      </div>
+      <div className="flex gap-2">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Input
+              id={inputId}
+              value={value}
+              onChange={(e) => onChange(e.target.value.slice(0, maxLength))}
+              placeholder={placeholder}
+              maxLength={maxLength}
+            />
+          </TooltipTrigger>
+          <TooltipContent>{tooltip}</TooltipContent>
+        </Tooltip>
+        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={onRandomize}
+                aria-label={`Roll a random ${label.toLowerCase()}`}
+              >
+                <Dice5 className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Roll a random {label.toLowerCase()}</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+    </div>
+  );
+}

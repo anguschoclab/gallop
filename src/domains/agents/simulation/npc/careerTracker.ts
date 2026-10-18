@@ -15,10 +15,10 @@
  *   src/components/stable/NpcCareerTrackerPanel.tsx (surfaces it)
  */
 
-import type { Horse, HorseRaceHistoryEntry, NpcCareerStage } from "@/core/horse/types";
-import type { StableTier } from "@/core/stable/types";
-import type { Rng } from "@/core/common/rng";
-import { calculateRaceRating } from "@/core/horse/stats";
+import type { Horse, HorseRaceHistoryEntry, NpcCareerStage } from "@/domains/horse/simulation/types";
+import type { StableTier } from "@/domains/stable/simulation/types";
+import type { Rng } from "@/shared/common/rng";
+import { calculateRaceRating } from "@/domains/horse/simulation/stats";
 
 /** Minimum age at which a horse can take an off-screen start. */
 export const CAREER_DEBUT_AGE = 2;

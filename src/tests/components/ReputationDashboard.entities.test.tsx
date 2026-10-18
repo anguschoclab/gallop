@@ -2,11 +2,11 @@ import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { ReputationDashboard } from "@/components/reputation/ReputationDashboard";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { ReputationDashboard } from "@/domains/reputation/ui/ReputationDashboard";
 import { createTestHorse } from "@/tests/helpers";
-import type { ManagerReputation } from "@/core/reputation/reputationTypes";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import type { ManagerReputation } from "@/domains/reputation/model/reputationTypes";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

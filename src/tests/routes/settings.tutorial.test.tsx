@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { screen, fireEvent } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { TutorialSettingsCard } from "@/components/settings/TutorialSettingsCard";
-import { createDefaultTutorialState } from "@/core/tutorial/tutorialTypes";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
+import { TutorialSettingsCard } from "@/domains/settings/ui/TutorialSettingsCard";
+import { createDefaultTutorialState } from "@/domains/tutorial/model/tutorialTypes";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

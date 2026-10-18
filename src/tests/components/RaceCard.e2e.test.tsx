@@ -53,9 +53,9 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 // ── Import after mocks ─────────────────────────────────────────────────────────
-import { RaceCard } from "@/components/race/RaceCard";
-import type { Race } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { RaceCard } from "@/domains/race/ui/RaceCard";
+import type { Race } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 // ── helpers ────────────────────────────────────────────────────────────────────
 

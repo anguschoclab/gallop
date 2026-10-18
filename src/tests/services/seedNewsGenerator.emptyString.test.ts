@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
+import { seedGazetteNews } from "@/domains/narrative/application/seedNewsGenerator";
 import { createTestRng } from "@/tests/helpers";
-import type { PlayerProfile } from "@/core/stable/types";
+import type { PlayerProfile } from "@/domains/stable/simulation/types";
 
 function makeProfile(overrides: Partial<PlayerProfile> = {}): PlayerProfile {
   return {

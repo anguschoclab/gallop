@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { requireHorse, requireOwned } from "@/game/store/guards";
-import type { Horse } from "@/game/types";
+import { requireHorse, requireOwned } from "@/platform/game/store/guards";
+import type { Horse } from "@/platform/game/types";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 function makeHorse(id: string, owned: boolean): Horse {

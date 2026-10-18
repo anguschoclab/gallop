@@ -2,11 +2,11 @@ import { describe, it, expect, vi } from "vitest";
 import {
   applyAuctionImpacts,
   type AuctionImpactAccumulator,
-} from "@/core/auction/auctionImpactActions";
-import type { Stable, Horse } from "@/game/types";
-import type { InboxMessage } from "@/core/inbox/inboxTypes";
-import { asStableId, asHorseId, asNpcStableId, asOwnerKey } from "@/core/types/branded";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
+} from "@/domains/auction/simulation/auctionImpactActions";
+import type { Stable, Horse } from "@/platform/game/types";
+import type { InboxMessage } from "@/domains/inbox/model/inboxTypes";
+import { asStableId, asHorseId, asNpcStableId, asOwnerKey } from "@/shared/types/branded";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@/core/uuid", () => ({
   generateUUID: vi.fn(() => "mocked-uuid"),

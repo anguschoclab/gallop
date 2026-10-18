@@ -1,17 +1,17 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { useAnalyticsData } from "@/hooks/analytics/useAnalyticsData";
+import { useAnalyticsData } from "@/domains/analytics/application/hooks/useAnalyticsData";
 import { createTestHorse } from "@/tests/helpers";
 import type {
   Transaction,
   TransactionType,
   TransactionSubcategory,
-} from "@/core/transactions/transactionTypes";
-import type { SireRanking, Leaderboard, SireTrendData } from "@/core/breeding/leaderboardTypes";
-import type { SireAnalytics } from "@/core/breeding/sireAnalytics";
+} from "@/domains/transactions/model/transactionTypes";
+import type { SireRanking, Leaderboard, SireTrendData } from "@/domains/breeding/model/leaderboardTypes";
+import type { SireAnalytics } from "@/domains/breeding/simulation/sireAnalytics";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 function mkSireAnalytics(stallionId: string): SireAnalytics {
   return {
     stallionId,

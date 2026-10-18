@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { getOrdinalSuffix } from "@/core/common/ordinal";
+import { getOrdinalSuffix } from "@/shared/common/ordinal";
 
 describe("getOrdinalSuffix", () => {
   it("0 → th", () => expect(getOrdinalSuffix(0)).toBe("th"));

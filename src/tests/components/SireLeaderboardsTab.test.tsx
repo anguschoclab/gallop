@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { SireLeaderboardsTab } from "@/components/breeding/SireLeaderboardsTab";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { SireLeaderboardsTab } from "@/domains/breeding/ui/SireLeaderboardsTab";
 
 // Mock Select to avoid Radix portal complexity
 vi.mock("@/components/ui/select", () => ({

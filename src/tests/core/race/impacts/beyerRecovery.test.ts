@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { generateBeyerAndRecoveryImpacts } from "@/core/race/impacts/beyerRecovery";
+import { generateBeyerAndRecoveryImpacts } from "@/domains/race/simulation/impacts/beyerRecovery";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
-import type { Race } from "@/game/types";
+import type { Race } from "@/platform/game/types";
 
 describe("generateBeyerAndRecoveryImpacts", () => {
   const testHorse = createTestHorse({ id: "1" });

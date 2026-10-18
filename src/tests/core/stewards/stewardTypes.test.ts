@@ -5,8 +5,8 @@ import {
   resolveInquiry,
   formatInquiryType,
   formatInquiryOutcome,
-} from "@/core/stewards/stewardTypes";
-import type { Rng } from "@/core/common/rng";
+} from "@/domains/stewards/model/stewardTypes";
+import type { Rng } from "@/shared/common/rng";
 
 describe("stewardTypes", () => {
   describe("createStewardsInquiry", () => {

@@ -1,10 +1,10 @@
 import { createFileRoute, Link, useRouter, Navigate } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/shared/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { ArrowLeft, Sprout, CheckCircle2, Clock } from "lucide-react";
-import { useGame } from "@/game/store";
+import { useGame } from "@/platform/game/store";
 import { toast } from "sonner";
-import type { MilestoneChoice } from "@/services/horse/horseFacade";
+import type { MilestoneChoice } from "@/domains/horse/application/horseFacade";
 
 export const Route = createFileRoute("/foal-development/$horseId")({
   component: FoalDevelopmentPage,

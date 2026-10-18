@@ -8,17 +8,14 @@
  */
 
 import { describe, it, expect } from "vitest";
-import {
-  checkCareerArcTrigger,
-  type CareerArcState,
-} from "@/services/narrative/careerArcGenerator";
+import { checkCareerArcTrigger, type CareerArcState } from "@/domains/narrative/simulation/careerArcGenerator";;
 import { runNarrativeCycle } from "@/domains/agents/simulation/narrativeAI";
 import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
-import type { Stable, Horse, Race } from "@/game/types";
+import type { Stable, Horse, Race } from "@/platform/game/types";
 import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
-import { createRng } from "@/core/common/rng";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { createRng } from "@/shared/common/rng";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({

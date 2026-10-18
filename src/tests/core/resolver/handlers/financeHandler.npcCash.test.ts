@@ -3,9 +3,9 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { FinanceHandler } from "@/core/resolver/handlers/FinanceHandler";
-import type { GameState } from "@/game/types";
-import type { CashImpact } from "@/core/resolver/impacts/financialImpacts";
+import { FinanceHandler } from "@/platform/resolver/handlers/FinanceHandler";
+import type { GameState } from "@/platform/game/types";
+import type { CashImpact } from "@/platform/resolver/impacts/financialImpacts";
 import { createTestStable } from "@/tests/helpers";
 
 describe("FinanceHandler cash_change — NPC cash", () => {

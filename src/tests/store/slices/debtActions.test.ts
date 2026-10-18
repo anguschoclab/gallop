@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { useGame } from "@/game/store";
+import { useGame } from "@/platform/game/store";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { SOLVENCY_THRESHOLDS } from "@/core/financial/solvency";
-import { horsePrice } from "@/core/horse/pricing";
-import { asNpcStableId } from "@/core/types/branded";
-import { isPlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
+import { SOLVENCY_THRESHOLDS } from "@/domains/financial/simulation/solvency";
+import { horsePrice } from "@/domains/horse/simulation/pricing";
+import { asNpcStableId } from "@/shared/types/branded";
+import { isPlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("payDownDebt action", () => {
   beforeEach(() => {

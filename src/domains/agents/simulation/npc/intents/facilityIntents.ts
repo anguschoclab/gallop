@@ -3,29 +3,29 @@ import type {
   TransportIntent,
   FacilityUpgradeIntent,
   OutpostActionIntent,
-} from "@/core/resolver/intents";
-import type { GameState, Horse, Stable, AuctionSale } from "@/game/types";
-import { generateUUID } from "@/core/uuid";
-import { calculateOverallRating } from "@/core/horse/stats";
+} from "@/platform/resolver/intents";
+import type { GameState, Horse, Stable, AuctionSale } from "@/platform/game/types";
+import { generateUUID } from "@/shared/uuid/uuid";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import { createAuctionAIState, shouldConsignHorse } from "@/domains/agents/simulation/auctionAI";
 import {
   FACILITY_UPGRADE_COSTS,
   type FacilityLevel,
   type PlayerFacilities,
-} from "@/core/facilities";
+} from "@/domains/facilities/simulation";
 import {
   selectFacilityToUpgrade,
   shouldUpgradeFacility,
 } from "@/domains/agents/simulation/facilityAI";
 import { createFacilityAIState } from "@/domains/agents/simulation/facilityAITypes";
-import type { OutpostRegion } from "@/core/facilities/outpostTypes";
+import type { OutpostRegion } from "@/domains/facilities/model/outpostTypes";
 import type { StableAIState, DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
 import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import {
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   CONSIGNMENT_INTENT_PRIORITY,
   DEFAULT_SUBSYSTEM_WEIGHT,
-} from "@/constants/aiConstants";
+} from "@/domains/agents/model/aiConstants";
 
 export function generateNpcAuctionIntents(
   _state: GameState,

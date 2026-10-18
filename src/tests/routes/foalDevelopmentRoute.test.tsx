@@ -12,11 +12,11 @@
 
 import { describe, it, expect, afterEach, vi } from "vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import { createTestHorse } from "@/tests/helpers";
-import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
-import type { Horse } from "@/core/horse/types";
+import { createDefaultFoalDevelopmentArc } from "@/domains/horse/simulation/foalDevelopment";
+import type { Horse } from "@/domains/horse/simulation/types";
 
 const params: { horseId: string } = { horseId: "foal-1" };
 const navigateSpy = vi.fn();
@@ -50,7 +50,7 @@ vi.mock("@tanstack/react-router", () => ({
 
 // Import AFTER the mock so createFileRoute uses the mocked implementation.
 import { Route } from "@/routes/foal-development.$horseId";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const FoalDevelopmentPage = () => {
   const Component = Route.options.component!;

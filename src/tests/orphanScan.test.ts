@@ -27,8 +27,8 @@
 import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, extname, relative, sep } from "node:path";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases/index";
-import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
+import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
 import { runCapabilityAudit } from "../../scripts/orphan-audit";
 
 // ─── Helpers: scan source files via fs ───────────────────────────────────────

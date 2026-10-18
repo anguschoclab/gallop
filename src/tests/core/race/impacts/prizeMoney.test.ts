@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { generatePrizeMoneyImpacts } from "@/core/race/impacts/prizeMoney";
-import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants";
-import type { Race, Horse } from "@/game/types";
-import { asNpcStableId, asHorseId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { generatePrizeMoneyImpacts } from "@/domains/race/simulation/impacts/prizeMoney";
+import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import type { Race, Horse } from "@/platform/game/types";
+import { asNpcStableId, asHorseId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("prizeMoney", () => {
   const baseHorse: Horse = {

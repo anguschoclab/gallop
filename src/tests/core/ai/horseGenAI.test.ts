@@ -12,9 +12,9 @@ import {
   updateRosterComposition,
 } from "@/domains/agents/simulation/horseGenAIRecording";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import type { StablePersonality } from "@/core/stable/types";
-import type { Horse, Stable } from "@/game/types";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import type { StablePersonality } from "@/domains/stable/simulation/types";
+import type { Horse, Stable } from "@/platform/game/types";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 const ALL_PERSONALITIES: StablePersonality[] = [
   "prestige",

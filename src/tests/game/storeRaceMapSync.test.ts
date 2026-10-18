@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
-import { createDefaultCoreState } from "@/game/store/state/coreState";
-import type { Race } from "@/core/race/types";
+import { useGame } from "@/platform/game/store";
+import { createDefaultCoreState } from "@/platform/game/store/state/coreState";
+import type { Race } from "@/domains/race/simulation/types";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeRace(id: string, day: number = 1, overrides?: Partial<Race>): Race {
   return {

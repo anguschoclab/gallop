@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { runRaceToCompletion } from "@/core/race/engine/simulation";
-import { buildRunner } from "@/core/race/engine/runnerBuilder";
+import { runRaceToCompletion } from "@/domains/race/simulation/engine/simulation";
+import { buildRunner } from "@/domains/race/simulation/engine/runnerBuilder";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { asHorseId } from "@/core/types/branded";
-import type { CourseSpecification } from "@/data/tracks";
-import type { Horse, Rng, Genotype } from "@/game/types";
+import { asHorseId } from "@/shared/types/branded";
+import type { CourseSpecification } from "@/shared/data/tracks";
+import type { Horse, Rng, Genotype } from "@/platform/game/types";
 
 // Simple deterministic RNG for testing
 const mockRng: Rng = {

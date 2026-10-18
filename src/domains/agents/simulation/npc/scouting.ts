@@ -11,10 +11,10 @@
 // Scouting System - Fog of war for NPC horse stats
 // Famous horses are well-known; obscure horses require scouting
 
-import type { Horse, HorseStats, ScoutReport, Stable, Rng } from "@/game/types";
-import { calculateOverallRating } from "@/core/horse/stats";
-import { FAME_LOW_THRESHOLD } from "@/constants";
-import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import type { Horse, HorseStats, ScoutReport, Stable, Rng } from "@/platform/game/types";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
+import { FAME_LOW_THRESHOLD } from "@/domains/prestige/model/fameConstants";;
+import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
 
 // Scouting costs
 const SCOUT_COST_BASE = 500;

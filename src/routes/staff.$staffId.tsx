@@ -1,7 +1,7 @@
 import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/staff/$staffId")({
-  component: lazyRouteComponent(() => import("@/components/routes/StaffDetailPage")),
+  component: lazyRouteComponent(() => import("@/domains/staff/ui/pages/StaffDetailPage")),
   notFoundComponent: () => (
     <div className="p-6">
       <h1 className="text-2xl font-bold text-cream">Staff member not found</h1>

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { generatePerformanceCareerImpacts } from "@/core/race/impacts";
+import { generatePerformanceCareerImpacts } from "@/domains/race/simulation/impacts";
 import { createTestColt } from "@/tests/helpers/createTestHorse";
-import type { Race } from "@/game/types";
+import type { Race } from "@/platform/game/types";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {

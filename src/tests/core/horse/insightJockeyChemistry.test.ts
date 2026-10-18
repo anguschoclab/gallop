@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { detectJockeyChemistry } from "@/core/horse/insightDetectors";
-import type { Horse, HorseRaceHistoryEntry } from "@/core/horse/types";
+import { detectJockeyChemistry } from "@/domains/horse/simulation/insightDetectors";
+import type { Horse, HorseRaceHistoryEntry } from "@/domains/horse/simulation/types";
 
 describe("detectJockeyChemistry", () => {
   const createHorse = (history: Partial<HorseRaceHistoryEntry>[]): Horse => {

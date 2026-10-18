@@ -47,26 +47,26 @@ vi.mock("@tanstack/react-router", () => createRouterMock());
 import { renderWithStore, midGameSeed } from "@/test-utils/renderWithStore";
 import { componentRouteCases } from "@/test-utils/routeDiscovery";
 import { createTestHorse, createTestJockey, createTestStable } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
-import type { AdvanceExecution } from "@/game/store/state/systemsState";
-import type { Race } from "@/core/race/types";
-import type { AuctionSale } from "@/core/market/types";
-import type { Syndicate } from "@/core/breeding/types";
-import type { StaffMember } from "@/core/staff/staffTypes";
-import type { AwardCeremonyInvitation } from "@/core/awards/invitations";
+import type { GameState } from "@/platform/game/types";
+import type { AdvanceExecution } from "@/platform/game/store/state/systemsState";
+import type { Race } from "@/domains/race/simulation/types";
+import type { AuctionSale } from "@/domains/market/model/types";
+import type { Syndicate } from "@/domains/breeding/model/types";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import type { AwardCeremonyInvitation } from "@/domains/awards/simulation/invitations";
 
 // Lazy route targets: the router stub for lazyRouteComponent renders nothing,
 // so the real pages are exercised directly under the same state matrix.
-import AuctionSalePage from "@/components/routes/AuctionSalePage";
-import BookmarksPage from "@/components/routes/BookmarksPage";
-import HorseGalleryPage from "@/components/routes/HorseGalleryPage";
-import InboxPage from "@/components/routes/InboxPage";
-import LiveRace from "@/components/routes/LiveRace";
-import HorseDetail from "@/components/routes/HorseDetail";
-import StablePage from "@/components/routes/StablePage";
-import NpcStableDetailPage from "@/components/routes/NpcStableDetailPage";
-import StaffDetailPage from "@/components/routes/StaffDetailPage";
-import SyndicatePage from "@/components/routes/SyndicatePage";
+import AuctionSalePage from "@/domains/auction/ui/pages/AuctionSalePage";
+import BookmarksPage from "@/domains/bookmarks/ui/pages/BookmarksPage";
+import HorseGalleryPage from "@/domains/horse/ui/pages/HorseGalleryPage";
+import InboxPage from "@/domains/inbox/ui/pages/InboxPage";
+import LiveRace from "@/domains/race/ui/pages/LiveRace";
+import HorseDetail from "@/domains/horse/ui/pages/HorseDetail";
+import StablePage from "@/domains/stable/ui/pages/StablePage";
+import NpcStableDetailPage from "@/domains/agents/ui/pages/NpcStableDetailPage";
+import StaffDetailPage from "@/domains/staff/ui/pages/StaffDetailPage";
+import SyndicatePage from "@/domains/syndicates/ui/pages/SyndicatePage";
 
 const RUNNING_EXECUTION: AdvanceExecution = {
   status: "running",

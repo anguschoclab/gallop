@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { calculateOverallRating } from "@/core/horse/stats";
-import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import type { Horse } from "@/game/types";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
+import { generateHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import type { Horse } from "@/platform/game/types";
 
 describe("calculateOverallRating — phenotype interaction", () => {
   it("returns 0 for unresolved horse (all stats 0)", () => {

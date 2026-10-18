@@ -22,9 +22,9 @@ vi.mock("@/core/horse/paceTendency", () => ({
   TENDENCY_LABEL: { front: "Front", mid: "Mid", off: "Off" },
 }));
 
-import { RunningStyleBreakdown } from "@/components/horse/RunningStyleBreakdown";
+import { RunningStyleBreakdown } from "@/domains/horse/ui/RunningStyleBreakdown";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("RunningStyleBreakdown", () => {
   afterEach(() => {

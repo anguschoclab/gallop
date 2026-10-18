@@ -13,7 +13,7 @@
  * Tracks outcomes, patterns, and success rates for AI decision-making
  */
 
-import { DEFAULT_SUCCESS_RATE } from "@/constants/aiConstants";
+import { DEFAULT_SUCCESS_RATE } from "@/domains/agents/model/aiConstants";
 
 export interface LearningOutcome {
   decisionType: string;

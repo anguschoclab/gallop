@@ -3,7 +3,7 @@ import {
   canUpgradeFacility,
   canAccessSale,
   canReceiveAtLargeInvite,
-} from "@/core/reputation/reputationGating";
+} from "@/domains/reputation/simulation/reputationGating";
 
 describe("reputationGating", () => {
   describe("canUpgradeFacility", () => {

@@ -1,7 +1,7 @@
-import { SimulationExecutor } from "@/core/time/executor";
-import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
-import type { GameState } from "@/game/types";
-import type { AnyImpact } from "@/core/resolver/impacts/index";
+import { SimulationExecutor } from "@/platform/time/executor";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
+import type { GameState } from "@/platform/game/types";
+import type { AnyImpact } from "@/platform/resolver/impacts";
 
 const executor = new SimulationExecutor(GAME_PHASE_DESCRIPTORS);
 

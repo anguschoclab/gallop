@@ -5,19 +5,19 @@
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 import type {
   SyndicateCreationIntent,
   SharePurchaseIntent,
   ShareSaleIntent,
-} from "@/core/resolver/intents";
-import { SyndicationValidator } from "@/core/resolver/validators/SyndicationValidator";
-import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
-import { SyndicationHandler } from "@/core/resolver/handlers/SyndicationHandler";
-import { generateUUID } from "@/core/uuid";
+} from "@/platform/resolver/intents";
+import { SyndicationValidator } from "@/platform/resolver/validators/SyndicationValidator";
+import { resolveSyndicationIntent } from "@/platform/resolver/resolvers/syndicateResolver";
+import { SyndicationHandler } from "@/platform/resolver/handlers/SyndicationHandler";
+import { generateUUID } from "@/shared/uuid/uuid";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("SyndicationValidator", () => {
   let validator: SyndicationValidator;

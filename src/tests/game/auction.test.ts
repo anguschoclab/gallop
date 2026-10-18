@@ -4,10 +4,10 @@ import {
   calculateNpcBid,
   generateAuctionLots,
   resolveAuctionSale,
-} from "@/core/auction/engine";
-import { createRng } from "@/core/common/rng";
-import type { Horse, Stable, AuctionSale } from "@/game/types";
-import type { StaffRole } from "@/core/staff/staffTypes";
+} from "@/domains/auction/simulation/engine";
+import { createRng } from "@/shared/common/rng";
+import type { Horse, Stable, AuctionSale } from "@/platform/game/types";
+import type { StaffRole } from "@/domains/staff/model/staffTypes";
 import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {

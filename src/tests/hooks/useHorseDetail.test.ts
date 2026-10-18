@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import { useHorseDetail } from "@/hooks/horse/useHorseDetail";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useHorseDetail } from "@/domains/horse/application/hooks/useHorseDetail";
 import { renderHook } from "@testing-library/react";
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 // Mock IntersectionObserver (used by useHorseDetail's scroll section tracking)
 class MockIntersectionObserver {

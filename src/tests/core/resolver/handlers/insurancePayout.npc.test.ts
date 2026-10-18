@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { SystemHandler } from "@/core/resolver/handlers/SystemHandler";
-import type { InsurancePayoutImpact } from "@/core/resolver/impacts/raceImpacts";
-import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
+import { SystemHandler } from "@/platform/resolver/handlers/SystemHandler";
+import type { InsurancePayoutImpact } from "@/platform/resolver/impacts/raceImpacts";
+import type { GameState } from "@/platform/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
 
 describe("SystemHandler: insurance_payout entity attribution", () => {
   it("credits player cash when entityId is player", () => {

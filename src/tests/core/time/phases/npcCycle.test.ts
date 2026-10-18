@@ -3,12 +3,12 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { npcCyclePhase } from "@/core/time/phases/npcCycle";
+import { npcCyclePhase } from "@/platform/time/phases/npcCycle";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Race } from "@/game/types";
-import { makeUnowned } from "@/core/horse/ownership";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState, Race } from "@/platform/game/types";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("npcCyclePhase", () => {
   it("should skip when no NPC stables", () => {

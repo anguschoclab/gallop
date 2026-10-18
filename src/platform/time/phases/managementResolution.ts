@@ -1,0 +1,38 @@
+/**
+ * phases/managementResolution.ts - Management resolution phase
+ *
+ * This file provides the management resolution phase that processes player intents
+ * for infrastructure, jockeys, and horse management.
+ *
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), ./managementResolutionHelpers (resolveManagementIntent, applyInsurancePremiums)
+ * Related files: ../pipeline.ts (uses phase)
+ */
+
+import { PHASE_ORDER_MANAGEMENT_RESOLUTION } from "@/platform/time/pipelineConstants";;
+import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
+import type { AnyImpact } from "@/platform/resolver/impacts";
+import { resolveManagementIntent, applyInsurancePremiums } from "@/platform/time/phases/managementResolutionHelpers";
+
+/**
+ * Management Resolution Phase (Order 10)
+ * Resolves various management intents into impacts.
+ */
+export const managementResolutionPhase: PipelinePhase = {
+  name: "managementResolution",
+  order: PHASE_ORDER_MANAGEMENT_RESOLUTION,
+  execute: (context: PipelineContext): PipelineContext => {
+    const { intents } = context;
+    const impacts: AnyImpact[] = [];
+
+    applyInsurancePremiums(context, impacts);
+
+    for (const intent of intents) {
+      resolveManagementIntent(intent, context, impacts);
+    }
+
+    return {
+      ...context,
+      impacts: [...context.impacts, ...impacts],
+    };
+  },
+};

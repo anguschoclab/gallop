@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { CompareStatBars } from "@/components/horse/CompareStatBars";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { CompareStatBars } from "@/domains/horse/ui/CompareStatBars";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@/components/horse/HorseBits", () => ({
   HorseStats: ({ horse }: { horse: Horse }) => (

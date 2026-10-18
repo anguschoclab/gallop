@@ -5,11 +5,11 @@ import {
   generateNpcTransportIntents,
 } from "@/domains/agents/simulation/npc/intents/facilityIntents";
 import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
-import type { PlayerFacilities } from "@/game/types";
+import type { PlayerFacilities } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import { createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
-import { asOutpostId } from "@/core/types/branded";
+import { createDefaultPlayerFacilities } from "@/domains/facilities/simulation/facilityDefaults";
+import { asOutpostId } from "@/shared/types/branded";
 
 const budgetAllocation = (facilities: number) => ({
   total: facilities,

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { GradedHistoryPanel } from "@/components/horse/GradedHistoryPanel";
+import { GradedHistoryPanel } from "@/domains/horse/ui/GradedHistoryPanel";
 
 describe("GradedHistoryPanel", () => {
   it("renders graded entries with G1 grade", () => {

@@ -26,7 +26,7 @@ import {
   calculateStrategicClaimingPrice,
   calculateDynamicStudFee,
 } from "@/domains/agents/simulation/economyAICartel";
-import type { Stable, GameState } from "@/game/types";
+import type { Stable, GameState } from "@/platform/game/types";
 import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import type { EconomicTrend } from "@/domains/agents/simulation/strategicCoordinator";
 import { createTestStable } from "@/tests/helpers";

@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { findInvitationQualifiers } from "@/core/awards/invitations";
+import { findInvitationQualifiers } from "@/domains/awards/simulation/invitations";
 import { createTestHorse } from "@/tests/helpers";
-import type { Race } from "@/core/race/types";
-import type { RaceId } from "@/core/types/branded";
-import type { JockeyId } from "@/core/types/branded";
+import type { Race } from "@/domains/race/simulation/types";
+import type { RaceId } from "@/shared/types/branded";
+import type { JockeyId } from "@/shared/types/branded";
 
 describe("findInvitationQualifiers", () => {
   it("should return qualifiers for player horses with top-3 finishes in G1 races for the given region", () => {

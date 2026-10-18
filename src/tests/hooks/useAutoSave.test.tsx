@@ -9,9 +9,9 @@ vi.mock("@/services/storage/saveManager", () => ({
   saveToSlot: vi.fn(),
 }));
 
-import { useAutoSave } from "@/hooks/game/useAutoSave";
-import { useGame } from "@/game/store";
-import { saveToSlot } from "@/services/storage/saveManager";
+import { useAutoSave } from "@/platform/game/hooks/useAutoSave";
+import { useGame } from "@/platform/game/store";
+import { saveToSlot } from "@/platform/persistence/storage/saveManager";
 
 let mockState: any;
 

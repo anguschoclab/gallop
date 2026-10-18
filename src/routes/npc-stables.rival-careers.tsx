@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { NpcStablesRivalCareers } from "@/components/routes/NpcStablesRivalCareers";
+import { NpcStablesRivalCareers } from "@/domains/agents/ui/pages/NpcStablesRivalCareers";
 
 export const Route = createFileRoute("/npc-stables/rival-careers")({
   head: () => ({

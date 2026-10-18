@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { BuyNowDialog } from "@/components/auction/BuyNowDialog";
+import { BuyNowDialog } from "@/domains/auction/ui/BuyNowDialog";
 
 vi.mock("sonner", () => ({
   toast: {

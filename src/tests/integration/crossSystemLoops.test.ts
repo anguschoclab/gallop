@@ -29,19 +29,19 @@ import {
   createDefaultPlayerFacilities,
   createFacility,
   getAvailableTrainingTypes,
-} from "@/core/facilities/facilityDefaults";
-import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
-import { createRng } from "@/core/common/rng";
-import { createDefaultGameState } from "@/game/store/state";
+} from "@/domains/facilities/simulation/facilityDefaults";
+import { trainingResolutionPhase } from "@/platform/time/phases/trainingResolution";
+import { createRng } from "@/shared/common/rng";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { asRaceId, asStaffId } from "@/core/types/branded";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Race } from "@/game/types";
-import type { StaffMember } from "@/core/staff/staffTypes";
-import type { TrainingIntent } from "@/core/resolver/intents";
+import { asRaceId, asStaffId } from "@/shared/types/branded";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState, Race } from "@/platform/game/types";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import type { TrainingIntent } from "@/platform/resolver/intents";
 
 describe("Cross-System: Economy → Auction Pricing", () => {
   it("calculateAuctionReservePrice adjusts with yearlingPriceIndex", () => {

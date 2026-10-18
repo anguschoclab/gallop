@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { npcMilestoneAlertsPhase } from "@/core/time/phases/npcMilestoneAlertsPhase";
+import { npcMilestoneAlertsPhase } from "@/platform/time/phases/npcMilestoneAlertsPhase";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers";
-import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
-import type { GameState, Horse } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { RivalMilestoneAlertSettings } from "@/core/settings/settingsTypes";
+import { createDefaultUserSettings } from "@/domains/settings/model/settingsTypes";
+import type { GameState, Horse } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { RivalMilestoneAlertSettings } from "@/domains/settings/model/settingsTypes";
 
 function rival(): Horse {
   return {

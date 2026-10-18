@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { runNpcRaceEntry } from "@/domains/agents/simulation/npc/raceEntry";
 import { createTestHorse, createTestJockey, createTestStable } from "@/tests/helpers";
-import type { Horse, Jockey, Race, Stable } from "@/game/types";
+import type { Horse, Jockey, Race, Stable } from "@/platform/game/types";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { createJockeyStrategyAIState } from "@/domains/agents/simulation/jockeyStrategyAI";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

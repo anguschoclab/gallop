@@ -1,11 +1,11 @@
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
-import { StableRosterView } from "@/components/stable/StableRosterView";
-import { HorseCardCompact } from "@/components/horse/HorseCardCompact";
-import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { StableRosterView } from "@/domains/stable/ui/StableRosterView";
+import { HorseCardCompact } from "@/domains/horse/ui/HorseCardCompact";
+import { generateHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

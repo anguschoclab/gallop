@@ -6,7 +6,7 @@
 
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-import { UpcomingLedgerTable } from "@/components/auction/UpcomingLedgerTable";
+import { UpcomingLedgerTable } from "@/domains/auction/ui/UpcomingLedgerTable";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => {

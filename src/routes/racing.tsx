@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RaceCenterTab } from "@/components/racing/RaceCenterTab";
-import { RacesTab } from "@/components/racing/RacesTab";
-import { CalendarTab } from "@/components/racing/CalendarTab";
-import { BrowserTab } from "@/components/racing/BrowserTab";
-import { SchedulerTab } from "@/components/racing/SchedulerTab";
-import { NominationsTab } from "@/components/racing/NominationsTab";
-import { useTabParam } from "@/hooks/ui/useTabParam";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { RaceCenterTab } from "@/domains/racing/ui/RaceCenterTab";
+import { RacesTab } from "@/domains/racing/ui/RacesTab";
+import { CalendarTab } from "@/domains/racing/ui/CalendarTab";
+import { BrowserTab } from "@/domains/racing/ui/BrowserTab";
+import { SchedulerTab } from "@/domains/racing/ui/SchedulerTab";
+import { NominationsTab } from "@/domains/racing/ui/NominationsTab";
+import { useTabParam } from "@/shared/hooks/ui/useTabParam";
 import { Calendar, Flag, Search, CalendarClock, Award } from "lucide-react";
 
 const RACING_TABS = ["center", "races", "calendar", "browser", "scheduler", "nominations"] as const;

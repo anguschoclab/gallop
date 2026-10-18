@@ -1,15 +1,15 @@
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 /**
  * Tests for impact application (resolver core)
  */
 
 import { describe, it, expect } from "vitest";
-import { applyImpacts, type ResolverContext } from "@/core/resolver/resolver";
-import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
+import { applyImpacts, type ResolverContext } from "@/platform/resolver/resolver";
+import type { GameState } from "@/platform/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { asHorseId, asStableId, asPlayerOwnerId, asOwnerKey } from "@/core/types/branded";
+import { asHorseId, asStableId, asPlayerOwnerId, asOwnerKey } from "@/shared/types/branded";
 import type {
   AnyImpact,
   CashImpact,
@@ -17,7 +17,7 @@ import type {
   EnergyImpact,
   HorseCreationImpact,
   HorseTransferImpact,
-} from "@/core/resolver/impacts/index";
+} from "@/platform/resolver/impacts";
 
 describe("applyImpacts", () => {
   const createTestState = (): GameState => ({

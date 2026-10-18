@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { runRaceToCompletion } from "@/core/race/engine/simulation";
-import { createRng, type Rng } from "@/core/common/rng";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { makeUnowned } from "@/core/horse/ownership";
+import { runRaceToCompletion } from "@/domains/race/simulation/engine/simulation";
+import { createRng, type Rng } from "@/shared/common/rng";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {

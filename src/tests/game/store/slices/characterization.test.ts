@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { createJockeySlice } from "@/game/store/slices/jockeySlice";
-import { createCampaignSlice } from "@/game/store/slices/campaignSlice";
-import { createHorseAdminSlice } from "@/game/store/slices/horseAdminSlice";
-import { createAwardSlice } from "@/game/store/slices/awardSlice";
-import type { StoreType, StoreSet, StoreGet } from "@/game/store/types";
+import { createJockeySlice } from "@/platform/game/store/slices/jockeySlice";
+import { createCampaignSlice } from "@/platform/game/store/slices/campaignSlice";
+import { createHorseAdminSlice } from "@/platform/game/store/slices/horseAdminSlice";
+import { createAwardSlice } from "@/platform/game/store/slices/awardSlice";
+import type { StoreType, StoreSet, StoreGet } from "@/platform/game/store/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function createMockStore(partial: Partial<StoreType> = {}): {
   set: StoreSet;

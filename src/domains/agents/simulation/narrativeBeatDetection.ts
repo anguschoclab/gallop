@@ -1,5 +1,5 @@
-import type { Race } from "@/core/race/types";
-import type { Horse } from "@/core/horse/types";
+import type { Race } from "@/domains/race/simulation/types";
+import type { Horse } from "@/domains/horse/simulation/types";
 import type { NpcAIManager, StoryBeat } from "./npcCycleAI";
 import { generateStoryBeat } from "./narrativeAI";
 

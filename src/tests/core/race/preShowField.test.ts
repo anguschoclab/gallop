@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildPreShowField, type PreShowRunner } from "@/core/race/preShowField";
+import { buildPreShowField, type PreShowRunner } from "@/domains/race/simulation/preShowField";
 
 const runners: PreShowRunner[] = [
   { horseId: "a", name: "Long Shot", silk: "#111", owned: false },

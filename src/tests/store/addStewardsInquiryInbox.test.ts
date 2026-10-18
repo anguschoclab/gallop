@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
-import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
-import type { Race } from "@/game/types";
-import { asRaceId } from "@/core/types/branded";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { useGame } from "@/platform/game/store";
+import type { StewardsInquiry } from "@/domains/stewards/model/stewardTypes";
+import type { Race } from "@/platform/game/types";
+import { asRaceId } from "@/shared/types/branded";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function makeInquiry(overrides: Partial<StewardsInquiry> = {}): StewardsInquiry {
   return {

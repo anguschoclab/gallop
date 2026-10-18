@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { createTestStable } from "@/tests/helpers";
-import type { CashPressureHistory } from "@/core/stable/cashPressureHistory";
+import type { CashPressureHistory } from "@/domains/stable/simulation/cashPressureHistory";
 
 const mockHistory: CashPressureHistory = {
   s1: Array.from({ length: 10 }, (_, i) => ({
@@ -53,7 +53,7 @@ vi.mock("@/components/stable/CashPressureTrend", () => ({
   ),
 }));
 
-import { NpcStableOverviewTab } from "@/components/stable/NpcStableOverviewTab";
+import { NpcStableOverviewTab } from "@/domains/stable/ui/NpcStableOverviewTab";
 
 const horses = Array.from({ length: 10 }, (_, i) => `h${i}`) as unknown as never[];
 

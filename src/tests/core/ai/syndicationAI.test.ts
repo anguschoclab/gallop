@@ -7,10 +7,10 @@ import {
   shouldCreateSyndicateWithLearning,
   getSyndicationSuccessRate,
 } from "@/domains/agents/simulation/syndicationAI";
-import type { Horse, Stable } from "@/game/types";
-import type { Syndicate } from "@/core/breeding/types";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import type { Horse, Stable } from "@/platform/game/types";
+import type { Syndicate } from "@/domains/breeding/model/types";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 function makeStallion(overrides: Partial<Horse> = {}): Horse {
   return {

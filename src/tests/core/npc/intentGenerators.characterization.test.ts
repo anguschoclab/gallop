@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { generateNpcIntents } from "@/domains/agents/simulation/npc/intentGenerators";
-import type { GameState, Stable, Horse, Race } from "@/game/types";
+import type { GameState, Stable, Horse, Race } from "@/platform/game/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 let shouldThrowForStable1 = false;
 

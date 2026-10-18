@@ -5,9 +5,9 @@ import {
   calculateCenterOfDistribution,
   calculateDosageMetrics,
   interpretDosageIndex,
-} from "@/core/race/dosage";
-import type { DosageMetrics } from "@/core/breeding/types";
-import * as pedigreeData from "@/data/pedigreeData";
+} from "@/domains/race/simulation/dosage";
+import type { DosageMetrics } from "@/domains/breeding/model/types";
+import * as pedigreeData from "@/shared/data/pedigreeData";
 
 describe("Dosage Calculations", () => {
   beforeEach(() => {

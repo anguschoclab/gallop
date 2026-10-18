@@ -7,8 +7,8 @@
  */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
-import type { Horse, Race } from "@/game/types";
-import { asHorseId } from "@/core/types/branded";
+import type { Horse, Race } from "@/platform/game/types";
+import { asHorseId } from "@/shared/types/branded";
 
 // ─── Mocks ───────────────────────────────────────────────────────────────────
 
@@ -90,7 +90,7 @@ const mkRace = (overrides: Partial<Race> = {}): Race =>
 
 // ─── Imports (after mocks) ───────────────────────────────────────────────────
 
-import { useRaceCardOdds } from "@/hooks/race/useRaceCardOdds";
+import { useRaceCardOdds } from "@/domains/race/application/hooks/useRaceCardOdds";
 
 // ─── Tests ───────────────────────────────────────────────────────────────────
 

@@ -6,11 +6,11 @@ import {
   getStartingCashForTier,
   getTargetHorseCountForTier,
   mapStallionToStable,
-} from "@/core/stable/stableQueries";
+} from "@/domains/stable/simulation/stableQueries";
 import { createTestStable } from "@/tests/helpers";
-import { createRng } from "@/core/common/rng";
-import type { Stable } from "@/game/types";
-import type { PedigreeHorse } from "@/data/pedigreeData";
+import { createRng } from "@/shared/common/rng";
+import type { Stable } from "@/platform/game/types";
+import type { PedigreeHorse } from "@/shared/data/pedigreeData";
 
 function makeStables(): Stable[] {
   return [

@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { JockeyRoster } from "@/components/jockey/JockeyRoster";
-import { JockeyStandingsTable } from "@/components/jockey/JockeyStandingsTable";
-import { ApprenticeTracker } from "@/components/apprentice/ApprenticeTracker";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useGameWithShallow } from "@/game/store";
+import { JockeyRoster } from "@/domains/jockey/ui/JockeyRoster";
+import { JockeyStandingsTable } from "@/domains/jockey/ui/JockeyStandingsTable";
+import { ApprenticeTracker } from "@/domains/apprentice/ui/ApprenticeTracker";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { useGameWithShallow } from "@/platform/game/store";
 
 export const Route = createFileRoute("/jockeys")({
   component: JockeysPage,

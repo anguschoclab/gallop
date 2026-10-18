@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { DamsireLeaderboardTab } from "@/components/breeding/DamsireLeaderboardTab";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { DamsireLeaderboardTab } from "@/domains/breeding/ui/DamsireLeaderboardTab";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (

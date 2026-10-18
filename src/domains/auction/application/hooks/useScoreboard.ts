@@ -1,0 +1,48 @@
+import { useMemo } from "react";
+import { useGameWithShallow, type StoreType } from "@/platform/game/store";
+import { netProceeds } from "@/domains/auction/simulation/engine";
+import { resolveSaleHouse } from "@/domains/prestige/simulation";
+
+/**
+ * Pure-derived scoreboard — what the player has done so far in this sale.
+ *
+ * @param saleId - Unique ID of the auction sale
+ * @returns Object containing auction stats (won, sold, spent, netReceived)
+ */
+export function useScoreboard(saleId: string) {
+  const auctions = useGameWithShallow((s: StoreType) => s.auctions);
+  const horses = useGameWithShallow((s: StoreType) => s.horses);
+  return useMemo(() => {
+    const sale = auctions?.find((a) => a.id === saleId);
+    if (!sale) return null;
+    const house = resolveSaleHouse(sale);
+    let won = 0;
+    let sold = 0;
+    let spent = 0;
+    let netReceived = 0;
+    let topAcquisition: { name: string; price: number } | null = null;
+    let topSale: { name: string; price: number } | null = null;
+    for (const lot of sale.lots) {
+      if (lot.passed || lot.withdrawn) continue;
+      if (!lot.hammerPrice) continue;
+      const horse = horses[lot.horseId];
+      const isPlayerWin = lot.consignorStableId !== undefined && lot.soldToStableId === undefined;
+      const isPlayerSale = lot.consignorStableId === undefined;
+      if (isPlayerWin) {
+        won++;
+        spent += lot.hammerPrice;
+        if (!topAcquisition || lot.hammerPrice > topAcquisition.price) {
+          topAcquisition = { name: horse?.name ?? "Lot", price: lot.hammerPrice };
+        }
+      }
+      if (isPlayerSale) {
+        sold++;
+        netReceived += netProceeds(lot.hammerPrice, house);
+        if (!topSale || lot.hammerPrice > topSale.price) {
+          topSale = { name: horse?.name ?? "Lot", price: lot.hammerPrice };
+        }
+      }
+    }
+    return { won, sold, spent, netReceived, topAcquisition, topSale };
+  }, [auctions, saleId, horses]);
+}

@@ -29,9 +29,9 @@ vi.mock("@/components/race/raceVisualHelpers", async (importOriginal) => {
   };
 });
 
-import { HorseSprite } from "@/components/race/HorseSprite";
-import { getSpriteLoadStatus } from "@/components/race/raceVisualHelpers";
-import { getSpriteSheet, getAnimationDuration } from "@/components/race/raceVisualHelpers";
+import { HorseSprite } from "@/domains/race/ui/HorseSprite";
+import { getSpriteLoadStatus } from "@/domains/race/application/raceVisualHelpers";
+import { getSpriteSheet, getAnimationDuration } from "@/domains/race/application/raceVisualHelpers";
 
 const mockGetSpriteLoadStatus = getSpriteLoadStatus as unknown as ReturnType<
   typeof vi.fn<(url: string) => string | undefined>

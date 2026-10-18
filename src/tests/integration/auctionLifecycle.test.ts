@@ -9,11 +9,11 @@ import {
   resolveAuctionSale,
   netProceeds,
   personalityConsignmentPolicy,
-} from "@/core/auction/engine";
-import { CONSIGNMENT_COMMISSION } from "@/constants";
-import { createRng } from "@/core/common/rng";
-import { createAuctionRunner } from "@/core/auction/runner";
-import type { Horse, Stable } from "@/game/types";
+} from "@/domains/auction/simulation/engine";
+import { CONSIGNMENT_COMMISSION } from "@/domains/market/model/economicConstants";;
+import { createRng } from "@/shared/common/rng";
+import { createAuctionRunner } from "@/domains/auction/simulation/runner";
+import type { Horse, Stable } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 
 describe("Auction Lifecycle Integration", () => {

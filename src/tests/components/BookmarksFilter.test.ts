@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import type { Bookmark } from "@/hooks/shared/useBookmarks";
+import type { Bookmark } from "@/platform/game/hooks/useBookmarks";
 
 // Extract the filter logic to test it in isolation
 // This mirrors the logic in bookmarks.tsx useMemo

@@ -1,12 +1,12 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { screen, cleanup } from "@testing-library/react";
-import { StableRosterWidget } from "@/components/dashboard/StableRosterWidget";
+import { StableRosterWidget } from "@/domains/dashboard/ui/StableRosterWidget";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { useGame } from "@/game/store";
-import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useGame } from "@/platform/game/store";
+import { generateHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => children,

@@ -4,9 +4,9 @@ import {
   classifyDistanceBucket,
   getHorseTendencyStats,
   matchesTendency,
-} from "@/core/horse/paceTendency";
+} from "@/domains/horse/simulation/paceTendency";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 
 describe("paceTendency", () => {
   describe("classifyDistanceBucket", () => {

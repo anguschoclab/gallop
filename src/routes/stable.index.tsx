@@ -16,5 +16,5 @@ const stableSearchSchema = z.object({
 
 export const Route = createFileRoute("/stable/")({
   validateSearch: zodValidator(stableSearchSchema),
-  component: lazyRouteComponent(() => import("@/components/routes/StablePage")),
+  component: lazyRouteComponent(() => import("@/domains/stable/ui/pages/StablePage")),
 });

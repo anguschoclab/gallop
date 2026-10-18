@@ -1,4 +1,4 @@
-import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/game/types";
+import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/platform/game/types";
 import { calculateUtilityAdjustment } from "./personalitySystem";
 import { getSuccessRate } from "./learningModule";
 import { buildStrategyContextKey } from "./strategyContextKey";
@@ -8,7 +8,7 @@ import {
   JOCKEY_STYLE_LEARNING_RATE_THRESHOLD,
   DEFAULT_SUCCESS_RATE,
   JOCKEY_ADAPTIVE_BONUS_SCALE,
-} from "@/constants/aiConstants";
+} from "@/domains/agents/model/aiConstants";
 
 export function calculateOptimalRunningStyle(
   aiState: JockeyStrategyAIState,

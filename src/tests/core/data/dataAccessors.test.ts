@@ -6,29 +6,29 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { trackAccessors, TRACKS, TRACK_BY_NAME, TRACK_BY_ID } from "@/core/data/tracksAccessor";
+import { trackAccessors, TRACKS, TRACK_BY_NAME, TRACK_BY_ID } from "@/shared/data/accessors/tracksAccessor";
 import {
   gradedRaceAccessors,
   GRADED_RACES,
   GRADED_RACES_BY_KEY,
-} from "@/core/data/gradedRacesAccessor";
+} from "@/shared/data/accessors/gradedRacesAccessor";
 import {
   pedigreeAccessors,
   pedigreeMap as ACCESSOR_PEDIGREE_MAP,
   stallionResearchData,
-} from "@/core/data/pedigreeAccessor";
+} from "@/shared/data/accessors/pedigreeAccessor";
 import {
   TRACKS as DATA_TRACKS,
   TRACK_BY_NAME as DATA_TRACK_BY_NAME,
   TRACK_BY_ID as DATA_TRACK_BY_ID,
-} from "@/data/tracks";
+} from "@/shared/data/tracks";
 import {
   GRADED_RACES as DATA_GRADED_RACES,
   GRADED_RACES_BY_KEY as DATA_GRADED_RACES_BY_KEY,
-} from "@/data/gradedRaces";
-import { pedigreeMap as DATA_PEDIGREE_MAP } from "@/data/pedigreeData";
-import { stallionResearchData as DATA_STALLION_RESEARCH } from "@/data/stallionDNAData";
-import { DataPorts, EMPTY_DATA_PORTS } from "@/core/data/dataPorts";
+} from "@/shared/data/gradedRaces";
+import { pedigreeMap as DATA_PEDIGREE_MAP } from "@/shared/data/pedigreeData";
+import { stallionResearchData as DATA_STALLION_RESEARCH } from "@/shared/data/stallionDNAData";
+import { DataPorts, EMPTY_DATA_PORTS } from "@/shared/data/accessors/dataPorts";
 
 describe("trackAccessors", () => {
   it("returns the same track array as direct import", () => {

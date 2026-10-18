@@ -9,9 +9,9 @@
  * Related files: ../npc/intentGenerators.ts (uses this for syndication decisions)
  */
 
-import type { Horse, Stable } from "@/game/types";
-import type { Syndicate } from "@/core/breeding/types";
-import { getCareerStats } from "@/core/horse/stats";
+import type { Horse, Stable } from "@/platform/game/types";
+import type { Syndicate } from "@/domains/breeding/model/types";
+import { getCareerStats } from "@/domains/horse/simulation/stats";
 import { getPersonalityAIState, recordPersonalityOutcome } from "./personalitySystem";
 import {
   createLearningState,

@@ -8,7 +8,7 @@ import {
   LeaderboardSkeleton,
   LeaderboardError,
   LeaderboardControlsBar,
-} from "@/components/leaderboard/LeaderboardPrimitives";
+} from "@/domains/leaderboard/ui/LeaderboardPrimitives";
 
 // Mock Select to avoid Radix portal complexity in tests
 vi.mock("@/components/ui/select", () => {

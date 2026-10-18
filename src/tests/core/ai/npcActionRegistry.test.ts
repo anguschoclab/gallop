@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { createRng, hashStr } from "@/core/common/rng";
-import { withUuidStream } from "@/core/uuid";
+import { createRng, hashStr } from "@/shared/common/rng";
+import { withUuidStream } from "@/shared/uuid/uuid";
 import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import {
   generateNpcActions,
@@ -11,11 +11,11 @@ import {
   buildNpcObservation,
   ensureNpcObservation,
 } from "@/domains/agents/simulation/agentObservation";
-import type { AnyIntent } from "@/core/resolver/intents";
-import type { AuctionSale, GameState, Race } from "@/game/types";
-import { createInitialState } from "@/game/store/initialization";
-import { createDefaultPlayerFacilities } from "@/core/facilities";
-import { asJockeyId, asOutpostId, asRaceId } from "@/core/types/branded";
+import type { AnyIntent } from "@/platform/resolver/intents";
+import type { AuctionSale, GameState, Race } from "@/platform/game/types";
+import { createInitialState } from "@/platform/game/store/initialization";
+import { createDefaultPlayerFacilities } from "@/domains/facilities/simulation";
+import { asJockeyId, asOutpostId, asRaceId } from "@/shared/types/branded";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";

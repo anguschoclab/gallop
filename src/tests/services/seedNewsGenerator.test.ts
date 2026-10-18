@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
+import { seedGazetteNews } from "@/domains/narrative/application/seedNewsGenerator";
 import { createTestHorse, createTestStable, createTestRng } from "@/tests/helpers";
-import { isValidUUID } from "@/core/uuid";
-import type { NewsCategory, NewsImportance, EntityLink } from "@/services/narrative/newsTypes";
-import type { Race, Stable, Horse } from "@/game/types";
-import type { PlayerProfile } from "@/core/stable/types";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { isValidUUID } from "@/shared/uuid/uuid";
+import type { NewsCategory, NewsImportance, EntityLink } from "@/domains/narrative/model/newsTypes";;
+import type { Race, Stable, Horse } from "@/platform/game/types";
+import type { PlayerProfile } from "@/domains/stable/simulation/types";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 const VALID_CATEGORIES: NewsCategory[] = ["racing", "market", "stable", "flavor", "milestone"];
 const VALID_IMPORTANCE: NewsImportance[] = ["high", "medium", "low"];

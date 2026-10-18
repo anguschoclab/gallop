@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { seasonStandingsPhase } from "@/core/time/phases/seasonStandingsPhase";
+import { seasonStandingsPhase } from "@/platform/time/phases/seasonStandingsPhase";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 describe("seasonStandingsPhase", () => {
   it("should compute season standings and update lastTopTenRank", () => {

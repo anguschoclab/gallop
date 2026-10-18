@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { estimateBreedingValue } from "@/core/horse/pricing";
+import { estimateBreedingValue } from "@/domains/horse/simulation/pricing";
 import {
   createTestHorse,
   createTestColt,
@@ -7,7 +7,7 @@ import {
   createTestMare,
   createTestGelding,
 } from "@/tests/helpers/createTestHorse";
-import type { Horse, StudCareer } from "@/game/types";
+import type { Horse, StudCareer } from "@/platform/game/types";
 
 describe("estimateBreedingValue", () => {
   // ---------------------------------------------------------------------------

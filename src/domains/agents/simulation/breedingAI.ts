@@ -9,13 +9,13 @@
  * Related files: breedingRecording.ts, breedingSelection.ts
  */
 
-import type { Horse, Stable } from "@/game/types";
-import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
+import type { Horse, Stable } from "@/platform/game/types";
+import type { Leaderboard } from "@/domains/breeding/model/leaderboardTypes";
 import { getPersonalityAIState } from "./personalitySystem";
 import { getSuccessRate } from "./learningModule";
-import { scoreStallion } from "@/core/breeding/strategy";
-import { getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
-import type { BreedingProgram } from "@/core/breeding/programs";
+import { scoreStallion } from "@/domains/breeding/simulation/strategy";
+import { getTripleCrownKeysForArchetype } from "@/domains/breeding/simulation/archetypes";
+import type { BreedingProgram } from "@/domains/breeding/simulation/programs";
 
 export interface BreedingAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

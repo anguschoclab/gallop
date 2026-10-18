@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { render, fireEvent, waitFor, cleanup } from "@testing-library/react";
-import { RunnerMoodFace } from "@/components/race/RunnerMoodFace";
-import type { RunnerMood } from "@/core/race/runnerConditions";
+import { RunnerMoodFace } from "@/domains/race/ui/RunnerMoodFace";
+import type { RunnerMood } from "@/domains/race/simulation/runnerConditions";
 
 function mkMood(overrides: Partial<RunnerMood> = {}): RunnerMood {
   return {

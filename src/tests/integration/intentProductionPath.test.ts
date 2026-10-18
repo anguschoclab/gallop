@@ -3,11 +3,11 @@ import { runPipelineForDay } from "@/tests/helpers/runPipeline";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import { createInitialState } from "@/game/store/initialization";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import type { TrainingIntent } from "@/core/resolver/intents";
-import type { CashImpact } from "@/core/resolver/impacts/financialImpacts";
-import type { GameState } from "@/game/types";
+import { createInitialState } from "@/platform/game/store/initialization";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import type { TrainingIntent } from "@/platform/resolver/intents";
+import type { CashImpact } from "@/platform/resolver/impacts/financialImpacts";
+import type { GameState } from "@/platform/game/types";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
 function gameStateFor(overrides: Partial<GameState>): GameState {

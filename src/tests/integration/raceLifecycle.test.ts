@@ -4,11 +4,11 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateTrackSchedule } from "@/core/race/schedule";
-import { createRng } from "@/core/common/rng";
+import { generateTrackSchedule } from "@/domains/race/simulation/schedule";
+import { createRng } from "@/shared/common/rng";
 import { recordRaceStrategy } from "@/domains/agents/simulation/jockeyStrategyRecording";
-import { getDynamicProfile } from "@/core/race/engine/runningStyleProfiles";
-import type { GameState, Race, Horse } from "@/game/types";
+import { getDynamicProfile } from "@/domains/race/simulation/engine/runningStyleProfiles";
+import type { GameState, Race, Horse } from "@/platform/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { r2r } from "@/tests/helpers/sampleGameState";
 

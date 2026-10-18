@@ -12,14 +12,14 @@
  * - the store ends in a coherent execution state
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { useGame } from "@/game/store";
+import { useGame } from "@/platform/game/store";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import { EngineClient, type EngineTransport } from "@/core/engine/client";
-import type { AdvanceCommand, EngineEvent } from "@/core/engine/protocol";
-import { _setEngineClientForTests } from "@/game/store/engineClient";
-import type { GameState } from "@/game/types";
-import { createRng } from "@/core/common/rng";
+import { EngineClient, type EngineTransport } from "@/platform/engine/client";
+import type { AdvanceCommand, EngineEvent } from "@/platform/engine/protocol";
+import { _setEngineClientForTests } from "@/platform/game/store/engineClient";
+import type { GameState } from "@/platform/game/types";
+import { createRng } from "@/shared/common/rng";
 
 vi.mock("@/services/storage/storageAdapter", () => ({
   STORAGE_KEYS: {
@@ -40,7 +40,7 @@ vi.mock("@/services/storage/indexedDbService", () => ({
 }));
 
 vi.mock("@/game/store/storage", async (importActual) => {
-  const actual = await importActual<typeof import("@/game/store/storage")>();
+  const actual = await importActual<typeof import("@/platform/game/store/storage")>();
   return {
     ...actual,
     createIdbStorage: () => ({

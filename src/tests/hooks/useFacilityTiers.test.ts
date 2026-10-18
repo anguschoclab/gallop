@@ -4,9 +4,9 @@ import {
   useFacilityTiers,
   FACILITY_LEVELS,
   getRankValue,
-} from "@/hooks/facilities/useFacilityTiers";
-import type { FacilityLevel } from "@/core/facilities";
-import { FACILITY_ENABLED_WORKOUTS } from "@/core/facilities";
+} from "@/domains/facilities/application/hooks/useFacilityTiers";
+import type { FacilityLevel } from "@/domains/facilities/simulation";
+import { FACILITY_ENABLED_WORKOUTS } from "@/domains/facilities/simulation";
 
 function makeFacility(level: FacilityLevel, upgradeCost: number) {
   return { level, upgradeCost, maintenanceCost: 10 };

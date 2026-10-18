@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { StartScreen } from "@/components/routes/StartScreen";
+import { StartScreen } from "@/domains/shell/ui/pages/StartScreen";
 
 export const Route = createFileRoute("/start")({
   head: () => ({

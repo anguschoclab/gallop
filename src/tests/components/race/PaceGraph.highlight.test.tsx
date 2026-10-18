@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { PaceGraph } from "@/components/race/PaceGraph";
-import type { SectionalSplit } from "@/core/race/types";
+import { PaceGraph } from "@/domains/race/ui/PaceGraph";
+import type { SectionalSplit } from "@/domains/race/simulation/types";
 
 vi.mock("recharts", () => {
   const Line = (props: Record<string, unknown>) => (

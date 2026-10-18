@@ -3,22 +3,22 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { raceCancellationPhase } from "@/core/time/phases/raceCancellation";
+import { raceCancellationPhase } from "@/platform/time/phases/raceCancellation";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Race, HorseCampaign } from "@/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState, Race, HorseCampaign } from "@/platform/game/types";
 import { r2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
-import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
-import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
+import { raceResolutionPhase } from "@/platform/time/phases/raceResolution";
+import { raceEntryResolutionPhase } from "@/platform/time/phases/raceEntryResolution";
 import { runNpcRaceEntry } from "@/domains/agents/simulation/npc/raceEntry";
-import { runAutoEntries, reconcileSlotStatuses } from "@/core/campaign/autoEntry";
-import { pruneOldRaces } from "@/core/market/marketRefresh";
-import { archivingPhase } from "@/core/time/phases/archivingPhase";
-import type { RaceEntryIntent } from "@/core/resolver/intents";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { runAutoEntries, reconcileSlotStatuses } from "@/domains/campaign/simulation/autoEntry";
+import { pruneOldRaces } from "@/domains/market/simulation/marketRefresh";
+import { archivingPhase } from "@/platform/time/phases/archivingPhase";
+import type { RaceEntryIntent } from "@/platform/resolver/intents";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {

@@ -7,12 +7,12 @@
  * Related files: src/domains/agents/simulation/npc/regionalDominanceHelpers.ts (extracted helpers)
  */
 
-import type { Horse, Race, Stable } from "@/game/types";
-import type { ReputationEvent } from "@/core/reputation/reputationTypes";
-import type { Rng } from "@/core/common/rng";
+import type { Horse, Race, Stable } from "@/platform/game/types";
+import type { ReputationEvent } from "@/domains/reputation/model/reputationTypes";
+import type { Rng } from "@/shared/common/rng";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
-import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
-import type { NewsItem } from "@/core/narrative/newsTypes";
+import { RIVALRY_CONSTANTS } from "@/domains/stable/simulation/rivalry";
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 import {
   resolveWinningStableId,
   handlePlayerUnseatsNpcKing,

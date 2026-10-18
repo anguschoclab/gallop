@@ -5,8 +5,8 @@
  * Types, state creation, value/risk, and recording in dedicated child modules.
  */
 
-import type { Horse } from "@/game/types";
-import type { TrackCondition } from "@/core/race/types";
+import type { Horse } from "@/platform/game/types";
+import type { TrackCondition } from "@/domains/race/simulation/types";
 
 // ─── Track Condition Aware Withdrawal ────────────────────────────────────────
 

@@ -13,7 +13,7 @@
  * Strategic cost management, cash reserves, learning from budgeting decisions
  */
 
-import type { Stable, Horse } from "@/game/types";
+import type { Stable, Horse } from "@/platform/game/types";
 import { getPersonalityAIState } from "./personalitySystem";
 import { createLearningState, getSuccessRate, type LearningState } from "./learningModule";
 

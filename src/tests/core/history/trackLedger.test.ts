@@ -9,11 +9,11 @@ import {
   trackLedgerStableOptions,
   PLAYER_LEDGER_STABLE_ID,
   type TrackLedgerEntry,
-} from "@/core/history/trackLedger";
-import type { Horse, Race } from "@/game/types";
-import type { Stable } from "@/core/stable/types";
-import { TRACKS } from "@/core/data/tracksAccessor";
-import { asNpcStableId } from "@/core/types/branded";
+} from "@/domains/history/simulation/trackLedger";
+import type { Horse, Race } from "@/platform/game/types";
+import type { Stable } from "@/domains/stable/simulation/types";
+import { TRACKS } from "@/shared/data/accessors/tracksAccessor";
+import { asNpcStableId } from "@/shared/types/branded";
 
 const TRACK = TRACKS[0]!;
 

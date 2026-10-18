@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { resolveStableYard, formatYard } from "@/core/stable/stableYard";
-import { rosterSummary, type RosterEntry } from "@/core/stable/stableRoster";
-import type { Stable } from "@/core/stable/types";
-import { asStableId } from "@/core/types/branded";
+import { resolveStableYard, formatYard } from "@/domains/stable/simulation/stableYard";
+import { rosterSummary, type RosterEntry } from "@/domains/stable/simulation/stableRoster";
+import type { Stable } from "@/domains/stable/simulation/types";
+import { asStableId } from "@/shared/types/branded";
 
 function stable(overrides: Partial<Stable> = {}): Stable {
   return {

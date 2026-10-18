@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import type { Horse } from "@/core/horse/types";
-import type { Jockey } from "@/core/jockey/types";
-import type { Pedigree } from "@/game/types";
+import type { Horse } from "@/domains/horse/simulation/types";
+import type { Jockey } from "@/domains/jockey/model/types";
+import type { Pedigree } from "@/platform/game/types";
 
 describe("Type safety — no as any needed for existing fields", () => {
   it("horse.insurancePolicy can be set to undefined", () => {

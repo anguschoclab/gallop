@@ -9,8 +9,8 @@ import { describe, it, expect } from "vitest";
 import { runPipelineForDay } from "@/tests/helpers/runPipeline";
 import { createTestHorse } from "@/tests/helpers";
 import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
-import type { CashImpact } from "@/core/resolver/impacts/financialImpacts";
+import type { GameState } from "@/platform/game/types";
+import type { CashImpact } from "@/platform/resolver/impacts/financialImpacts";
 
 describe("day advancement production path", () => {
   it("runs the registered descriptor schedule and advances the day", () => {

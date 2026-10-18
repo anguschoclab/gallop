@@ -12,17 +12,17 @@
 
 import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import { STORE_STATE_VERSION } from "@/game/store/index";
-import type { GameState } from "@/game/types";
-import type { NominationRecord } from "@/core/racing/nominationFees";
-import type { InvestorRecord } from "@/core/breeding/investorTypes";
-import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
-import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { STORE_STATE_VERSION } from "@/platform/game/store";
+import type { GameState } from "@/platform/game/types";
+import type { NominationRecord } from "@/domains/racing/model/nominationFees";
+import type { InvestorRecord } from "@/domains/breeding/model/investorTypes";
+import type { StewardsInquiry } from "@/domains/stewards/model/stewardTypes";
+import { StewardsDigestToast } from "@/domains/stewards/ui/StewardsDigestToast";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 // ── Fixtures ─────────────────────────────────────────────────────────────────
 

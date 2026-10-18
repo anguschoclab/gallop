@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { useGameWithShallow } from "@/game/store";
+import { useGameWithShallow } from "@/platform/game/store";
 import { seedStore } from "@/test-utils/renderWithStore";
 
 function SelectorComponent({ selector, label }: { selector: (s: any) => any; label: string }) {

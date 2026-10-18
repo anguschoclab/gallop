@@ -3,14 +3,14 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { claimingWithdrawalPhase } from "@/core/time/phases/claimingWithdrawal";
+import { claimingWithdrawalPhase } from "@/platform/time/phases/claimingWithdrawal";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
-import type { GameState, Race } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { AnyIntent, WithdrawFromClaimingIntent } from "@/core/resolver/intents";
+import type { GameState, Race } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { AnyIntent, WithdrawFromClaimingIntent } from "@/platform/resolver/intents";
 import { r2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("claimingWithdrawalPhase", () => {
   const createTestState = (): GameState => makeGameState({ day: 10 }) as GameState;

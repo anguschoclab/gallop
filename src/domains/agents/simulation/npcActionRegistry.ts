@@ -1,10 +1,10 @@
-import type { GameState, Horse, Race, Stable } from "@/game/types";
-import type { AnyIntent } from "@/core/resolver/intents";
+import type { GameState, Horse, Race, Stable } from "@/platform/game/types";
+import type { AnyIntent } from "@/platform/resolver/intents";
 import type { NpcObservation } from "./agentObservation";
 import { beliefConfidence, beliefFreshnessDays } from "./agentBeliefs";
 import { ACTION_GOAL_MAP } from "./agentGoals";
-import type { PlayerFacilities } from "@/core/facilities";
-import type { StableId } from "@/core/types/branded";
+import type { PlayerFacilities } from "@/domains/facilities/simulation";
+import type { StableId } from "@/shared/types/branded";
 import type { RaceCompetitorIndex } from "./raceEntryAIScoring";
 import type { DifficultyState, NpcAIManager, StableAIState } from "./npcCycleAI";
 import type { DistressLevel } from "./financialDistressAI";
@@ -28,7 +28,7 @@ import { generateNpcDiplomaticIntents } from "@/domains/agents/simulation/npc/in
 import { generateNpcInsuranceIntents } from "@/domains/agents/simulation/npc/intents/insuranceIntents";
 import { generateNpcRaceEntryIntents } from "@/domains/agents/simulation/npc/intents/raceEntryIntents";
 import { generateNpcTrainingIntents } from "@/domains/agents/simulation/npc/intents/trainingIntents";
-import { TRAINING_COST, TRAINING_COST_MAP } from "@/constants";
+import { TRAINING_COST, TRAINING_COST_MAP } from "@/shared/constants/workoutConstants";;
 
 export type NpcActionId =
   | "training"

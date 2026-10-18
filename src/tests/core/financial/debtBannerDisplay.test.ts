@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeDebtBannerDisplay, computeDailyInterest } from "@/core/financial/solvency";
+import { computeDebtBannerDisplay, computeDailyInterest } from "@/domains/financial/simulation/solvency";
 
 describe("computeDebtBannerDisplay", () => {
   it("returns null when cash >= 0", () => {

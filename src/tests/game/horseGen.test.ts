@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { horsePrice } from "@/core/horse/pricing";
-import { makeGradedRace, generateRace } from "@/core/race/generation/raceGen";
-import type { GradedRace } from "@/data/gradedRaces";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { generateHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import { horsePrice } from "@/domains/horse/simulation/pricing";
+import { makeGradedRace, generateRace } from "@/domains/race/simulation/generation/raceGen";
+import type { GradedRace } from "@/shared/data/gradedRaces";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 const STAT_RANGES: Record<string, [number, number]> = {
   starter: [20, 60],

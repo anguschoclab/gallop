@@ -12,9 +12,9 @@ import {
   PRIVATE_TRIAL_COST,
   PRIVATE_TRIAL_HORSE_ENERGY_COST,
   PRIVATE_TRIAL_OPPONENT_ENERGY_COST,
-} from "@/core/race/privateTrialHelpers";
+} from "@/domains/race/simulation/privateTrialHelpers";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("validateTrialHorse", () => {
   it("returns null for a valid player-owned horse with sufficient cash and energy", () => {

@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
-import { AwardCeremony } from "@/components/awards/AwardCeremony";
-import type { RegionalAward } from "@/core/awards/types";
-import { CATEGORY_DESCRIPTIONS } from "@/core/awards/types";
+import { AwardCeremony } from "@/domains/awards/ui/AwardCeremony";
+import type { RegionalAward } from "@/domains/awards/model/types";
+import { CATEGORY_DESCRIPTIONS } from "@/domains/awards/model/types";
 
 vi.mock("@/components/ui/dialog", () => ({
   Dialog: ({ children, open }: { children: React.ReactNode; open: boolean }) =>

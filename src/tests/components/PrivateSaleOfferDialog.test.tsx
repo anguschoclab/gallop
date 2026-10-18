@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, fireEvent } from "@testing-library/react";
-import { PrivateSaleOfferDialog } from "@/components/auction/PrivateSaleOfferDialog";
+import { PrivateSaleOfferDialog } from "@/domains/auction/ui/PrivateSaleOfferDialog";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
 
 vi.mock("sonner", () => ({
   toast: {
@@ -15,7 +15,7 @@ vi.mock("sonner", () => ({
 
 import { toast } from "sonner";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   createTestNpcHorse({

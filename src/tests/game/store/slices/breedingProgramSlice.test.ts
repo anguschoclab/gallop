@@ -1,15 +1,15 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import { makeBreedingProgram } from "@/tests/helpers/sampleGameState";
-import type { BreedingProgram } from "@/core/breeding/programs";
+import type { BreedingProgram } from "@/domains/breeding/simulation/programs";
 import {
   PROGRAM_STATUS_ACTIVE,
   PROGRAM_STATUS_CANCELLED,
   CANCEL_REASON_USER,
   CANCEL_REASON_AUTO,
   ERR_NO_ACTIVE_PROGRAM,
-} from "@/constants/breedingConstants";
+} from "@/domains/breeding/model/breedingConstants";
 
 function seedStore(overrides: Record<string, unknown> = {}) {
   useGame.setState({ ...createDefaultGameState(), ...overrides } as any);

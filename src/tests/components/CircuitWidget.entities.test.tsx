@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { CircuitWidget } from "@/components/dashboard/CircuitWidget";
-import type { Race } from "@/core/race/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { CircuitWidget } from "@/domains/dashboard/ui/CircuitWidget";
+import type { Race } from "@/domains/race/simulation/types";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 
 // Mock the Drawer primitive to always render children (avoid vaul portal complexity)
 vi.mock("@/components/ui/drawer", () => ({
@@ -29,8 +29,8 @@ vi.mock("@/components/stable/StableCompareTable", () => ({
   ),
 }));
 
-import { StableCompareDrawer } from "@/components/stable/StableCompareDrawer";
-import { useCompareStables } from "@/hooks/stable/useCompareStables";
+import { StableCompareDrawer } from "@/domains/stable/ui/StableCompareDrawer";
+import { useCompareStables } from "@/domains/stable/application/hooks/useCompareStables";
 
 describe("StableCompareDrawer", () => {
   beforeEach(() => {

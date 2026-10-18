@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { industryMetricsPhase } from "@/core/time/phases/industryMetricsPhase";
+import { industryMetricsPhase } from "@/platform/time/phases/industryMetricsPhase";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 describe("industryMetricsPhase", () => {
   it("should skip when recently updated (< 30 days)", () => {

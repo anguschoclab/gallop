@@ -4,7 +4,7 @@ import {
   setCashPressureTuningOverrides,
   resetCashPressureTuningOverrides,
   getCashPressureTuningFileConfig,
-} from "@/core/stable/cashPressureTuning";
+} from "@/domains/stable/simulation/cashPressureTuning";
 
 describe("cashPressureTuning", () => {
   afterEach(() => resetCashPressureTuningOverrides());

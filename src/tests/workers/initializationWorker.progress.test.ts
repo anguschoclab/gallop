@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { createInitialState } from "@/game/store/initialization";
-import type { NewGameOptions } from "@/game/store/state";
+import { createInitialState } from "@/platform/game/store/initialization";
+import type { NewGameOptions } from "@/platform/game/store/state";
 
 describe("createInitialState progress callback", () => {
   it("invokes progressCallback with stage numbers 1..N", () => {

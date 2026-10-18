@@ -8,14 +8,14 @@
  * Run with: bun run scripts/runHeadlessTripleCrownSim.ts [maxYears] [worldSize]
  */
 
-import { createInitialState } from "../src/game/store/initialization";
-import { SimulationExecutor } from "../src/core/time/executor";
-import { GAME_PHASE_DESCRIPTORS } from "../src/core/time/phases/descriptors";
-import { withUuidStream } from "../src/core/uuid";
-import { createRng, hashStr } from "../src/core/common/rng";
-import { DAYS_PER_YEAR } from "../src/constants";
-import type { GameState, Horse } from "../src/game/types";
-import type { HorseId } from "../src/core/types/branded";
+import { createInitialState } from "@/platform/game/store/initialization";
+import { SimulationExecutor } from "@/platform/time/executor";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
+import { withUuidStream } from "@/shared/uuid/uuid";
+import { createRng, hashStr } from "@/shared/common/rng";
+import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";;
+import type { GameState, Horse } from "@/platform/game/types";
+import type { HorseId } from "@/shared/types/branded";
 
 const maxYears = Number(process.argv[2] ?? 100);
 const worldSize = (process.argv[3] ?? "medium") as "small" | "medium" | "large";

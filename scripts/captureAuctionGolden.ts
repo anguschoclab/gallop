@@ -1,11 +1,11 @@
-import { createInitialState } from "../src/game/store/initialization";
-import type { GameState } from "../src/game/types";
-import { createAuctionRunner } from "../src/core/auction/runner";
-import { SALE_TRIGGERS } from "../src/core/auction/data";
-import { generateAuctionLots } from "../src/core/auction/engine";
-import { createRng, hashStr } from "../src/core/common/rng";
-import { checksumState } from "../src/core/time/checksum";
-import { withUuidStream } from "../src/core/uuid";
+import { createInitialState } from "@/platform/game/store/initialization";
+import type { GameState } from "@/platform/game/types";
+import { createAuctionRunner } from "@/domains/auction/simulation/runner";
+import { SALE_TRIGGERS } from "@/domains/auction/simulation/data";
+import { generateAuctionLots } from "@/domains/auction/simulation/engine";
+import { createRng, hashStr } from "@/shared/common/rng";
+import { checksumState } from "@/platform/time/checksum";
+import { withUuidStream } from "@/shared/uuid/uuid";
 
 const state = withUuidStream(createRng(hashStr("fixture_medium")), () =>
   createInitialState({

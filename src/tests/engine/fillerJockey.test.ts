@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildRaceField } from "@/core/race/raceSimulationService";
+import { buildRaceField } from "@/domains/race/simulation/raceSimulationService";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Race } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import type { Race } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {

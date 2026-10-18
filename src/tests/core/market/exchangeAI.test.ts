@@ -4,11 +4,11 @@ import {
   npcBidQuote,
   npcAskPrice,
   resolveNpcExchangeTrades,
-} from "@/core/market/exchangeAI";
-import { createDefaultExchangeState, type ExchangeState } from "@/core/market/exchange";
+} from "@/domains/market/simulation/exchangeAI";
+import { createDefaultExchangeState, type ExchangeState } from "@/domains/market/simulation/exchange";
 import { createTestHorse } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import type { Stable, StablePersonality } from "@/core/stable/types";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import type { Stable, StablePersonality } from "@/domains/stable/simulation/types";
 
 function makeStable(overrides: Partial<Stable> & { id: string }): Stable {
   return {

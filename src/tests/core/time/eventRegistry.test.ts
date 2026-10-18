@@ -4,10 +4,10 @@ import {
   createDayOfYearTrigger,
   createIntervalTrigger,
   eventRegistry,
-} from "@/core/time/events";
+} from "@/platform/time/events";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 describe("quarantined EventRegistry", () => {
   it("executes registered triggers in descending priority and supports unregister", () => {

@@ -3,10 +3,10 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { weatherPhase } from "@/core/time/phases/weatherPhase";
-import { createRng } from "@/core/common/rng";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Race } from "@/game/types";
+import { weatherPhase } from "@/platform/time/phases/weatherPhase";
+import { createRng } from "@/shared/common/rng";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState, Race } from "@/platform/game/types";
 import { r2r } from "@/tests/helpers/sampleGameState";
 
 describe("weatherPhase", () => {

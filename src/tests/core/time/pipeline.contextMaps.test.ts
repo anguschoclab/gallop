@@ -8,13 +8,13 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { type PipelinePhase } from "@/core/time/pipeline";
-import { describePhase } from "@/core/time/scheduler";
-import { SimulationExecutor } from "@/core/time/executor";
+import { type PipelinePhase } from "@/platform/time/pipeline";
+import { describePhase } from "@/platform/time/scheduler";
+import { SimulationExecutor } from "@/platform/time/executor";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
 describe("PipelineContext shared maps", () => {

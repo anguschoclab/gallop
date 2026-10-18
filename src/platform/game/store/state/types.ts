@@ -1,0 +1,19 @@
+/**
+ * state/types.ts - Shared state types
+ *
+ * This file provides shared types for state initialization and management,
+ * helping to resolve circular dependencies between state modules.
+ */
+
+import type { PlayerProfile } from "@/domains/stable/simulation/types";
+import type { Backstory } from "@/shared/common/backstories";
+import type { WorldSize } from "@/domains/stable/simulation/worldSizeConfig";
+
+/**
+ * Options for initializing a new game, including player profile and chosen backstory.
+ */
+export interface NewGameOptions {
+  profile: PlayerProfile;
+  backstory: Backstory;
+  worldSize?: WorldSize;
+}

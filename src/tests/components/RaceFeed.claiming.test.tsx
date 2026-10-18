@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { RaceFeed } from "@/components/race/RaceFeed";
-import type { Horse, Race } from "@/game/types";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { RaceFeed } from "@/domains/race/ui/RaceFeed";
+import type { Horse, Race } from "@/platform/game/types";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 import { createElement, type ReactNode } from "react";
 
 vi.mock("@tanstack/react-router", () => ({

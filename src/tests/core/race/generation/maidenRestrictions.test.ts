@@ -1,13 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { generateRace } from "@/core/race/generation/raceGen";
-import { generateNorthAmericanRaceCard } from "@/core/race/generation/northAmerica";
-import { generateEuropeanRaceCard } from "@/core/race/generation/europe";
-import { generateAustralianRaceCard } from "@/core/race/generation/australia";
-import { generateAsianRaceCard } from "@/core/race/generation/asia";
-import { generateSouthAmericanRaceCard } from "@/core/race/generation/southAmerica";
-import { createRng } from "@/core/common/rng";
-import type { Track } from "@/data/tracks";
-import type { Race } from "@/game/types";
+import { generateRace } from "@/domains/race/simulation/generation/raceGen";
+import { generateNorthAmericanRaceCard } from "@/domains/race/simulation/generation/northAmerica";
+import { generateEuropeanRaceCard } from "@/domains/race/simulation/generation/europe";
+import { generateAustralianRaceCard } from "@/domains/race/simulation/generation/australia";
+import { generateAsianRaceCard } from "@/domains/race/simulation/generation/asia";
+import { generateSouthAmericanRaceCard } from "@/domains/race/simulation/generation/southAmerica";
+import { createRng } from "@/shared/common/rng";
+import type { Track } from "@/shared/data/tracks";
+import type { Race } from "@/platform/game/types";
 
 function mkTrack(overrides: Partial<Track> = {}): Track {
   return {

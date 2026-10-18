@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import { useCancelBreedingProgram } from "@/components/breeding/useCancelBreedingProgram";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useCancelBreedingProgram } from "@/domains/breeding/ui/useCancelBreedingProgram";
 import { makeBreedingProgram } from "@/tests/helpers/sampleGameState";
-import { TOAST_PROGRAM_CANCELLED, ERR_NO_ACTIVE_PROGRAM } from "@/constants/breedingConstants";
+import { TOAST_PROGRAM_CANCELLED, ERR_NO_ACTIVE_PROGRAM } from "@/domains/breeding/model/breedingConstants";
 
 vi.mock("sonner", () => ({
   toast: { info: vi.fn(), error: vi.fn() },

@@ -1,10 +1,10 @@
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { rollForInjury } from "@/core/health/healthSystem";
-import type { InjuryWeatherContext } from "@/core/health/healthSystem";
-import type { Rng } from "@/core/common/rng";
-import type { Horse } from "@/game/types";
-import type { StaffMember } from "@/core/staff/staffTypes";
+import { rollForInjury } from "@/domains/health/simulation/healthSystem";
+import type { InjuryWeatherContext } from "@/domains/health/simulation/healthSystem";
+import type { Rng } from "@/shared/common/rng";
+import type { Horse } from "@/platform/game/types";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
 
 vi.mock("@/core/uuid", () => ({
   generateUUID: () => "test-uuid",

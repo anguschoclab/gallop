@@ -5,8 +5,8 @@ import {
   MIN_MARE_OVERALL,
   MAX_COI,
   scoreStallion,
-} from "@/core/breeding/strategy";
-import type { Stable } from "@/game/types";
+} from "@/domains/breeding/simulation/strategy";
+import type { Stable } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 const ALL_PERSONALITIES: Stable["personality"][] = [

@@ -51,10 +51,10 @@ vi.mock("@/components/charts", () => ({
   formatCurrencyCompact: (n: number) => `$${n.toLocaleString()}`,
 }));
 
-import { RegionDrilldownDrawer } from "@/components/dashboard/RegionDrilldownDrawer";
-import type { Horse } from "@/core/horse/types";
-import type { Race } from "@/core/race/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { RegionDrilldownDrawer } from "@/domains/dashboard/ui/RegionDrilldownDrawer";
+import type { Horse } from "@/domains/horse/simulation/types";
+import type { Race } from "@/domains/race/simulation/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const makeRace = (id: string, track = "Belmont Park"): Race =>
   ({

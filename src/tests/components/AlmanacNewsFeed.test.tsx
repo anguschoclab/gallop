@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { AlmanacNewsFeed } from "@/components/history/AlmanacNewsFeed";
-import type { NewsItem } from "@/services/narrative/newsTypes";
-import type { TrackRecord, SeasonRecord } from "@/core/history/historyTypes";
-import type { Transaction } from "@/core/transactions/transactionTypes";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { AlmanacNewsFeed } from "@/domains/history/ui/AlmanacNewsFeed";
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
+import type { TrackRecord, SeasonRecord } from "@/domains/history/model/historyTypes";
+import type { Transaction } from "@/domains/transactions/model/transactionTypes";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

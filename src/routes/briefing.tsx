@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { Newspaper, Trophy, Rss, BookOpen } from "lucide-react";
-import { useTabParam } from "@/hooks/ui/useTabParam";
-import { GazetteTab } from "@/components/briefing/GazetteTab";
-import { RecapTab } from "@/components/briefing/RecapTab";
-import { NewsTab } from "@/components/briefing/NewsTab";
-import { StorylinesTab } from "@/components/briefing/StorylinesTab";
+import { useTabParam } from "@/shared/hooks/ui/useTabParam";
+import { GazetteTab } from "@/domains/briefing/ui/GazetteTab";
+import { RecapTab } from "@/domains/briefing/ui/RecapTab";
+import { NewsTab } from "@/domains/briefing/ui/NewsTab";
+import { StorylinesTab } from "@/domains/briefing/ui/StorylinesTab";
 
 const BRIEFING_TABS = ["gazette", "recap", "news", "storylines"] as const;
 

@@ -1,6 +1,6 @@
-import type { Horse, Race, Jockey, Stable } from "@/game/types";
+import type { Horse, Race, Jockey, Stable } from "@/platform/game/types";
 import { getSuccessRate } from "./learningModule";
-import { calculateRaceRating } from "@/core/horse/stats";
+import { calculateRaceRating } from "@/domains/horse/simulation/stats";
 import type { JockeyStrategyAIState } from "./jockeyStrategyAI";
 
 export function calculateJockeyAggressiveness(

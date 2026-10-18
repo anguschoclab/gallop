@@ -12,9 +12,9 @@ import {
   generateGrudgeMatchNews,
   generateRegionLostNews,
   generateRivalryEscalationNews,
-} from "@/services/narrative/rivalryNewsGenerator";
+} from "@/domains/narrative/application/rivalryNewsGenerator";
 import { createTestRng, createTestStable, createTestHorse } from "@/tests/helpers";
-import type { Race } from "@/game/types";
+import type { Race } from "@/platform/game/types";
 
 const DAY = 42;
 const stable = createTestStable({ id: "rival-1", name: "Bitter Creek Stables" });

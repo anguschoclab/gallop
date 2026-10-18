@@ -2,12 +2,12 @@ import { describe, it, expect } from "vitest";
 import {
   generateWeeklyFlavorNews,
   generateFollowUpRaceNews,
-} from "@/services/narrative/newsGenerator";
+} from "@/domains/narrative/application/newsGenerator";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
-import { isValidUUID } from "@/core/uuid";
-import type { Race, Horse } from "@/game/types";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { isValidUUID } from "@/shared/uuid/uuid";
+import type { Race, Horse } from "@/platform/game/types";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function createG1Race(overrides?: Partial<Race>): Race {
   return {

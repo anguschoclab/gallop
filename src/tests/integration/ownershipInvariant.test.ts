@@ -3,12 +3,12 @@ import fc from "fast-check";
 import { runPipelineForDay } from "@/tests/helpers/runPipeline";
 import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId } from "@/core/types/branded";
-import { UPKEEP_PER_HORSE } from "@/constants";
-import type { GameState, Horse, Stable } from "@/game/types";
-import type { CashImpact, TransactionImpact, AnyImpact } from "@/core/resolver/impacts/index";
-import { calculateTotalMaintenance } from "@/core/facilities/facilityDefaults";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asHorseId } from "@/shared/types/branded";
+import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";;
+import type { GameState, Horse, Stable } from "@/platform/game/types";
+import type { CashImpact, TransactionImpact, AnyImpact } from "@/platform/resolver/impacts";
+import { calculateTotalMaintenance } from "@/domains/facilities/simulation/facilityDefaults";
 
 const NUM_RUNS = 50;
 

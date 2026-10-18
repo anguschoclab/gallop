@@ -12,28 +12,28 @@
  */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Badge } from "@/shared/ui/badge";
+import { Button } from "@/shared/ui/button";
+import { Input } from "@/shared/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from "@/shared/ui/select";
 import { FilterX } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useGame, useGameWithShallow } from "@/game/store";
-import { buildCampaignHistory } from "@/core/stable/campaignHistory";
-import { DEFAULT_STABLE_GOALS } from "@/core/stable/stableGoals";
-import { buildDailyPlanTimeline } from "@/core/tactics/dailyPlanView";
-import { formatCurrency } from "@/lib/formatting";
-import type { Horse } from "@/core/horse/types";
-import type { HorseDailyProgress } from "@/core/horse/dailyProgress";
-import type { RankingsHistory } from "@/core/market/rankingsHistory";
-import type { StrategyJournalEntry } from "@/core/tactics/strategyJournal";
-import type { TrackLedgerEntry } from "@/core/history/trackLedger";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { useGame, useGameWithShallow } from "@/platform/game/store";
+import { buildCampaignHistory } from "@/domains/stable/simulation/campaignHistory";
+import { DEFAULT_STABLE_GOALS } from "@/domains/stable/simulation/stableGoals";
+import { buildDailyPlanTimeline } from "@/domains/tactics/simulation/dailyPlanView";
+import { formatCurrency } from "@/shared/common/formatting";;
+import type { Horse } from "@/domains/horse/simulation/types";
+import type { HorseDailyProgress } from "@/domains/horse/simulation/dailyProgress";
+import type { RankingsHistory } from "@/domains/market/simulation/rankingsHistory";
+import type { StrategyJournalEntry } from "@/domains/tactics/simulation/strategyJournal";
+import type { TrackLedgerEntry } from "@/domains/history/simulation/trackLedger";
 
 export const Route = createFileRoute("/dailyPlans")({
   head: () => ({

@@ -50,8 +50,8 @@ import {
   saveExists,
   _resetSaveExists,
   hydrationComplete,
-} from "@/game/store/storage";
-import { loadBuckets } from "@/services/storage/indexedDbService";
+} from "@/platform/game/store/storage";
+import { loadBuckets } from "@/platform/persistence/storage/indexedDbService";
 
 function savedPayloads(): any[] {
   const raw = localStorage.getItem(SAVED_KEY);

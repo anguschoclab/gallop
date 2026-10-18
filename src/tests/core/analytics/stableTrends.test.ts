@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { analyzeStableTrends } from "@/core/analytics/stableTrends";
-import type { Horse, HorseRaceHistoryEntry } from "@/core/horse/types";
+import { analyzeStableTrends } from "@/domains/analytics/simulation/stableTrends";
+import type { Horse, HorseRaceHistoryEntry } from "@/domains/horse/simulation/types";
 
 describe("analyzeStableTrends", () => {
   it("should return nulls when there is no race history", () => {

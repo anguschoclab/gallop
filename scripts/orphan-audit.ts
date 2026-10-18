@@ -10,11 +10,11 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { execSync } from "node:child_process";
 import { extname, join, relative } from "node:path";
 import * as ts from "typescript";
-import { GAME_PHASE_DESCRIPTORS } from "../src/core/time/phases/descriptors";
-import { GAME_PIPELINE_PHASES } from "../src/core/time/phases/index";
-import { ALL_VALIDATORS } from "../src/core/resolver/validators";
-import { INTENT_CAPABILITY_WAIVERS } from "../src/core/resolver/intentCapabilityWaivers";
-import type { AnyIntent } from "../src/core/resolver/intents";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
+import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
+import { ALL_VALIDATORS } from "@/platform/resolver/validators";
+import { INTENT_CAPABILITY_WAIVERS } from "@/platform/resolver/intentCapabilityWaivers";
+import type { AnyIntent } from "@/platform/resolver/intents";
 
 export interface SourceInput {
   path: string;

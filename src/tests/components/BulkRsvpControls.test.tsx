@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { useGame } from "@/game/store";
-import { BulkRsvpControls } from "@/components/awards/BulkRsvpControls";
-import type { AwardCeremonyInvitation } from "@/core/awards/invitations";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useGame } from "@/platform/game/store";
+import { BulkRsvpControls } from "@/domains/awards/ui/BulkRsvpControls";
+import type { AwardCeremonyInvitation } from "@/domains/awards/simulation/invitations";
 
 vi.mock("sonner", () => ({ toast: { success: vi.fn() } }));
 

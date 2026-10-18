@@ -7,13 +7,13 @@
  * path — not a reimplementation.
  */
 import { describe, it, expect } from "vitest";
-import { SimulationExecutor } from "@/core/time/executor";
-import type { PhaseDescriptor } from "@/core/time/scheduler";
-import type { PipelineContext, PipelinePhase } from "@/core/time/pipeline";
-import { buildAdvancePlan } from "@/core/time/advancePlan";
+import { SimulationExecutor } from "@/platform/time/executor";
+import type { PhaseDescriptor } from "@/platform/time/scheduler";
+import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
+import { buildAdvancePlan } from "@/platform/time/advancePlan";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned } from "@/core/horse/ownership";
-import type { GameState } from "@/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import type { GameState } from "@/platform/game/types";
 
 function phase(name: string, order: number, exec: (ctx: PipelineContext) => PipelineContext) {
   return { name, order, execute: exec } satisfies PipelinePhase;

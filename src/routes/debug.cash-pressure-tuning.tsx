@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
-import { CashPressureTuningEditor } from "@/components/debug/CashPressureTuningEditor";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CashPressureTuningEditor } from "@/domains/debug/ui/CashPressureTuningEditor";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Wallet } from "lucide-react";
 
 export const Route = createFileRoute("/debug/cash-pressure-tuning")({

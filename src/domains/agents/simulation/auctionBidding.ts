@@ -1,14 +1,14 @@
-import type { Horse, Stable, AuctionLot } from "@/game/types";
+import type { Horse, Stable, AuctionLot } from "@/platform/game/types";
 import { calculateUtilityAdjustment } from "./personalitySystem";
 import { getSuccessRate, getAdaptiveThreshold } from "./learningModule";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import type { NpcRelationship } from "./npcCycleAI";
 import type { AuctionAIState } from "./auctionAI";
 import {
   BID_BASE_THRESHOLD,
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   DEFAULT_SUBSYSTEM_WEIGHT,
-} from "@/constants/aiConstants";
+} from "@/domains/agents/model/aiConstants";
 
 export function calculateBiddingValue(
   aiState: AuctionAIState,

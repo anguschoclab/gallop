@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { jockeyPhase } from "@/core/time/phases/jockeyPhase";
+import { jockeyPhase } from "@/platform/time/phases/jockeyPhase";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 describe("jockeyPhase", () => {
   it("should expire player jockey contracts", () => {

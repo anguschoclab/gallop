@@ -1,13 +1,13 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
 }));
 
-import { RivalArchivesView } from "@/components/stable/RivalArchivesView";
+import { RivalArchivesView } from "@/domains/stable/ui/RivalArchivesView";
 
 const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({

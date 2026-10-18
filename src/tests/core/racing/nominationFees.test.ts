@@ -14,7 +14,7 @@ import {
   NOMINATION_FEE_G3_LATE,
   NOMINATION_TIER_EARLY_DAYS_THRESHOLD,
   NOMINATION_TIER_STANDARD_DAYS_THRESHOLD,
-} from "@/core/racing/nominationFees";
+} from "@/domains/racing/model/nominationFees";
 
 describe("nominationFees", () => {
   describe("getNominationTier", () => {

@@ -37,14 +37,14 @@ vi.mock("@/game/store/storage", () => ({
   createRehydrateStore: () => vi.fn().mockResolvedValue(undefined),
 }));
 
-import { useGame } from "@/game/store";
-import { _setEngineClientForTests } from "@/game/store/engineClient";
+import { useGame } from "@/platform/game/store";
+import { _setEngineClientForTests } from "@/platform/game/store/engineClient";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { runPipelineForDay } from "@/tests/helpers/runPipeline";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asHorseId, asNpcStableId } from "@/core/types/branded";
-import type { Race } from "@/game/types";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asHorseId, asNpcStableId } from "@/shared/types/branded";
+import type { Race } from "@/platform/game/types";
 
 function makeRace(id: string, day: number): Race {
   return {

@@ -1,12 +1,12 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { CashPressureTuningEditor } from "@/components/debug/CashPressureTuningEditor";
+import { CashPressureTuningEditor } from "@/domains/debug/ui/CashPressureTuningEditor";
 import {
   getCashPressureTuning,
   setCashPressureTuningOverrides,
   resetCashPressureTuningOverrides,
   getCashPressureTuningFileConfig,
-} from "@/core/stable/cashPressureTuning";
+} from "@/domains/stable/simulation/cashPressureTuning";
 
 describe("CashPressureTuningEditor", () => {
   afterEach(() => resetCashPressureTuningOverrides());

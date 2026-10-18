@@ -3,18 +3,18 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
+import { raceEntryResolutionPhase } from "@/platform/time/phases/raceEntryResolution";
 import { createTestHorse, createUnownedHorse } from "@/tests/helpers/createTestHorse";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
-import type { RaceEntryIntent, RaceWithdrawalIntent } from "@/core/resolver/intents";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { RaceEntryIntent, RaceWithdrawalIntent } from "@/platform/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { createJockeyAIState } from "@/domains/agents/simulation/jockeyAI";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("raceEntryResolutionPhase", () => {
   const createTestState = (): GameState =>

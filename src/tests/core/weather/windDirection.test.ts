@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { stepWeather, generateForecast } from "@/core/weather/weatherSim";
-import type { WeatherState } from "@/core/weather/weatherTypes";
+import { stepWeather, generateForecast } from "@/domains/weather/simulation/weatherSim";
+import type { WeatherState } from "@/domains/weather/model/weatherTypes";
 
 const TOKYO = "09aea125-88e4-4e51-b8d7-0475869c6269";
 

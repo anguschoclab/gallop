@@ -4,7 +4,7 @@
  * Extracted from claimingAI.ts for modularity.
  */
 
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 import { getPersonalityAIState } from "./personalitySystem";
 import { createLearningState, type LearningState } from "./learningModule";
 

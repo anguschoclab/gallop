@@ -1,0 +1,52 @@
+import type { Race } from "@/platform/game/types";
+import { NARRATIVE_THRESHOLDS } from "@/domains/narrative/model/narrativeThresholds";
+import type { NarrativeEvent } from "@/domains/narrative/model/types";
+
+export interface Milestone {
+  pos: number;
+  id: number;
+  eventType: NarrativeEvent;
+}
+
+/**
+ * Generate dynamic race milestones based on race distance.
+ *
+ * @param race - The race to generate milestones for.
+ * @returns Array of milestone positions and IDs.
+ */
+export function generateDynamicMilestones(race: Race): Milestone[] {
+  const distance = race.distance;
+  const milestones: Milestone[] = [];
+
+  milestones.push({
+    pos: distance * NARRATIVE_THRESHOLDS.HALFWAY_POSITION,
+    id: 50,
+    eventType: "MILESTONE_HALFWAY",
+  });
+
+  if (distance >= NARRATIVE_THRESHOLDS.MIN_DISTANCE_FOR_FINAL_400) {
+    milestones.push({
+      pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_400M,
+      id: 400,
+      eventType: "MILESTONE_FINAL_400",
+    });
+  }
+
+  if (distance >= NARRATIVE_THRESHOLDS.MIN_DISTANCE_FOR_FINAL_200) {
+    milestones.push({
+      pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_200M,
+      id: 200,
+      eventType: "MILESTONE_FINAL_200",
+    });
+  }
+
+  if (distance >= NARRATIVE_THRESHOLDS.MIN_DISTANCE_FOR_FINAL_100) {
+    milestones.push({
+      pos: distance - NARRATIVE_THRESHOLDS.MILESTONE_FINAL_100M,
+      id: 100,
+      eventType: "MILESTONE_FINAL_100",
+    });
+  }
+
+  return milestones.sort((a, b) => a.pos - b.pos);
+}

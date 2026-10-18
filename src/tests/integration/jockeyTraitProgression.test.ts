@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { generateJockeyStatsTrackingImpacts } from "@/core/race/impacts/jockeyStatsTracking";
+import { generateJockeyStatsTrackingImpacts } from "@/domains/race/simulation/impacts/jockeyStatsTracking";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import { createTestColt } from "@/tests/helpers/createTestHorse";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeOpenRace() {
   return {

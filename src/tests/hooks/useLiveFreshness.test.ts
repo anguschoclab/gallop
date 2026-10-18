@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useLiveFreshness } from "@/hooks/shared/useLiveFreshness";
-import { STALE_DATA_THRESHOLD_MS } from "@/constants/raceBroadcastConstants";
+import { useLiveFreshness } from "@/domains/race/application/hooks/useLiveFreshness";
+import { STALE_DATA_THRESHOLD_MS } from "@/domains/race/model/raceBroadcastConstants";
 
 describe("useLiveFreshness", () => {
   const BASE_TIME = 1_700_000_000_000;

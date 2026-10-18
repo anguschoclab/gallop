@@ -1,17 +1,11 @@
 import { describe, it, expect } from "vitest";
-import {
-  recordRaceHistory,
-  checkTrackRecord,
-  checkTrackRecords,
-  ageBucket,
-  genderBucket,
-} from "@/services/history/historyService";
+import { recordRaceHistory, checkTrackRecord, checkTrackRecords, ageBucket, genderBucket } from "@/domains/history/simulation/historyService";;
 import { createTestHorse, createTestRng } from "@/tests/helpers";
-import { DAYS_PER_YEAR } from "@/constants";
-import { isValidUUID } from "@/core/uuid";
-import type { Race, Horse, RaceRunner } from "@/game/types";
-import type { TrackRecord } from "@/core/history/historyTypes";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { DAYS_PER_YEAR } from "@/domains/calendar/model/calendarConstants";;
+import { isValidUUID } from "@/shared/uuid/uuid";
+import type { Race, Horse, RaceRunner } from "@/platform/game/types";
+import type { TrackRecord } from "@/domains/history/model/historyTypes";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 // ─── Shared fixtures ──────────────────────────────────────────────────────
 

@@ -1,15 +1,15 @@
 import { describe, it, expect, vi } from "vitest";
-import { createBreedingSlice } from "@/game/store/slices/breedingSlice";
-import { createDefaultGameState } from "@/game/store/state";
-import { suggestBestSires } from "@/core/breeding/sireSuggestions";
-import { canBreed } from "@/core/breeding/eligibility";
-import { inBreedingSeason } from "@/core/calendar/breedingCalendar";
+import { createBreedingSlice } from "@/platform/game/store/slices/breedingSlice";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { suggestBestSires } from "@/domains/breeding/simulation/sireSuggestions";
+import { canBreed } from "@/domains/breeding/simulation/eligibility";
+import { inBreedingSeason } from "@/domains/calendar/simulation/breedingCalendar";
 import { createTestMare, createTestStallion } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { StoreGet } from "@/game/store/types";
-import type { StudCareer, GameState } from "@/game/types";
-import type { MatingPlanEntry } from "@/game/store/state/breedingState";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import type { StoreGet } from "@/platform/game/store/types";
+import type { StudCareer, GameState } from "@/platform/game/types";
+import type { MatingPlanEntry } from "@/platform/game/store/state/breedingState";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mkStud(overrides: Partial<StudCareer> = {}): StudCareer {
   return {

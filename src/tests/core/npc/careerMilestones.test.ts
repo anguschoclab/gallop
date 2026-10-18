@@ -5,7 +5,7 @@ import {
   isNotableRival,
 } from "@/domains/agents/simulation/npc/careerMilestones";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 
 function horse(overrides: Partial<Horse> = {}): Horse {
   return { ...createTestHorse(), raceHistory: [], ...overrides } as Horse;

@@ -14,10 +14,10 @@
 
 import { describe, it, expect } from "vitest";
 import { runNpcBreeding } from "@/domains/agents/simulation/npc/breeding";
-import { createRng } from "@/core/common/rng";
-import type { GameState, Horse, HorseGender, Pregnancy } from "@/game/types";
-import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
-import { asHorseId, asNpcStableId } from "@/core/types/branded";
+import { createRng } from "@/shared/common/rng";
+import type { GameState, Horse, HorseGender, Pregnancy } from "@/platform/game/types";
+import { makeNpcOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
+import { asHorseId, asNpcStableId } from "@/shared/types/branded";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { h2r } from "@/tests/helpers/sampleGameState";
 

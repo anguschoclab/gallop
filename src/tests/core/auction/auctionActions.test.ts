@@ -6,9 +6,9 @@ import {
   validateBuyNow,
   buildBookBidLogText,
   buildAuctionResolutionLogText,
-} from "@/core/auction/auctionActions";
-import type { Horse, AuctionSale, AuctionLot } from "@/game/types";
-import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/constants";
+} from "@/domains/auction/simulation/auctionActions";
+import type { Horse, AuctionSale, AuctionLot } from "@/platform/game/types";
+import { DEFAULT_PLAYER_RESERVE_RATIO } from "@/domains/auction/model/auctionConstants";;
 
 // Mock the external pricing function so we don't have to construct full Horse objects
 vi.mock("@/core/horse/pricing", () => ({

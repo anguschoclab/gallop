@@ -8,10 +8,10 @@
 import { describe, it, expect, vi } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { CircuitWidget } from "@/components/dashboard/CircuitWidget";
-import { HQOpsWidget } from "@/components/dashboard/HQOpsWidget";
-import { StableRosterWidget } from "@/components/dashboard/StableRosterWidget";
-import { ImperialOutpostManager } from "@/components/facilities/ImperialOutpostManager";
+import { CircuitWidget } from "@/domains/dashboard/ui/CircuitWidget";
+import { HQOpsWidget } from "@/domains/dashboard/ui/HQOpsWidget";
+import { StableRosterWidget } from "@/domains/dashboard/ui/StableRosterWidget";
+import { ImperialOutpostManager } from "@/domains/facilities/ui/ImperialOutpostManager";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

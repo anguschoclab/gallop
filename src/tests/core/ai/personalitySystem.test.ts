@@ -11,8 +11,8 @@ import {
   calculateStrategicScore,
   getCompetitiveModifier,
 } from "@/domains/agents/simulation/personalitySystem";
-import type { StablePersonality } from "@/game/types";
-import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
+import type { StablePersonality } from "@/platform/game/types";
+import { PERSONALITY_CONFIG } from "@/domains/stable/simulation/stableConfig";
 
 describe("getPersonalityAIState", () => {
   it("should initialize AI state for each personality", () => {

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { Leaderboard } from "@/components/race/Leaderboard";
-import { makeUnowned } from "@/core/horse/ownership";
+import { Leaderboard } from "@/domains/race/ui/Leaderboard";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@/components/ui/select", () => ({
   Select: ({ value, onValueChange, children }: any) => (

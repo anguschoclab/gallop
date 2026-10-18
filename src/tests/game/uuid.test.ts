@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateUUID, generateShortId, isValidUUID } from "@/core/uuid";
+import { generateUUID, generateShortId, isValidUUID } from "@/shared/uuid/uuid";
 
 describe("generateUUID", () => {
   it("output passes isValidUUID", () => {

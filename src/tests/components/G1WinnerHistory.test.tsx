@@ -2,8 +2,8 @@ import { describe, it, expect, afterEach, vi } from "vitest";
 import { cleanup, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { G1WinnerHistory } from "@/components/awards/G1WinnerHistory";
-import type { SeasonRecord } from "@/core/history/historyTypes";
+import { G1WinnerHistory } from "@/domains/awards/ui/G1WinnerHistory";
+import type { SeasonRecord } from "@/domains/history/model/historyTypes";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, to, params, className }: any) => (

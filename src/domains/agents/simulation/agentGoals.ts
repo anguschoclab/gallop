@@ -23,7 +23,7 @@
  * Related files: npc/intentGenerators.ts (daily repair callsite), npcActionRegistry.ts (plan linkage)
  */
 
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 import type { NpcObservation } from "./agentObservation";
 import type { AgentBeliefs } from "./agentBeliefs";
 import type { NpcActionId } from "./npcActionRegistry";

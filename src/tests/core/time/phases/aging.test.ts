@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { agingPhase } from "@/core/time/phases/aging";
-import { createRng } from "@/core/common/rng";
+import { agingPhase } from "@/platform/time/phases/aging";
+import { createRng } from "@/shared/common/rng";
 import { createTestHorse } from "@/tests/helpers";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("agingPhase", () => {

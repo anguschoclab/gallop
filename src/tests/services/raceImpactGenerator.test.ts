@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateRaceImpacts } from "@/core/race/raceImpactGenerator";
+import { generateRaceImpacts } from "@/domains/race/simulation/raceImpactGenerator";
 import {
   createTestColt,
   createTestMare,
@@ -7,11 +7,11 @@ import {
   createTestNpcHorse,
 } from "@/tests/helpers/createTestHorse";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
-import type { Race } from "@/game/types";
-import { RACE_ENERGY_IMPACT, STAMINA_DRAIN_MAX } from "@/constants";
-import { AFFINITY_XP_PER_RACE, AFFINITY_XP_PER_WIN_BONUS } from "@/constants";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import type { Race } from "@/platform/game/types";
+import { RACE_ENERGY_IMPACT, STAMINA_DRAIN_MAX } from "@/domains/race/model/raceSimulationConstants";;
+import { AFFINITY_XP_PER_RACE, AFFINITY_XP_PER_WIN_BONUS } from "@/domains/jockey/model/jockeyConstants";;
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 // ---------------------------------------------------------------------------
 // Helpers

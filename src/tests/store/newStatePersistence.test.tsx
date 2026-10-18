@@ -6,15 +6,15 @@
  */
 import { describe, it, expect, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import type { GameState } from "@/game/types";
-import type { NominationRecord } from "@/core/racing/nominationFees";
-import type { InvestorRecord } from "@/core/breeding/investorTypes";
-import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
-import { StewardsDigestToast } from "@/components/stewards/StewardsDigestToast";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { GameState } from "@/platform/game/types";
+import type { NominationRecord } from "@/domains/racing/model/nominationFees";
+import type { InvestorRecord } from "@/domains/breeding/model/investorTypes";
+import type { StewardsInquiry } from "@/domains/stewards/model/stewardTypes";
+import { StewardsDigestToast } from "@/domains/stewards/ui/StewardsDigestToast";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 // Persisted keys must mirror src/game/store/index.ts PERSISTED_KEYS.
 const PERSISTED_KEYS = [
@@ -98,7 +98,7 @@ describe("Persistence of nominations / investors / stewards inquiries", () => {
     // The store module must load and PERSISTED_KEYS must include our fields.
     // We assert indirectly by importing the store and using the default state
     // as the baseline (empty), then confirming shape after round-trip.
-    const mod = await import("@/game/store/index");
+    const mod = await import("@/platform/game/store");
     expect(mod.useGame).toBeDefined();
 
     const baseline = createDefaultGameState();

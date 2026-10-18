@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { PlayerPrestigePanel } from "@/components/prestige/PlayerPrestigePanel";
+import { PlayerPrestigePanel } from "@/domains/prestige/ui/PlayerPrestigePanel";
 
 describe("PlayerPrestigePanel", () => {
   const errSpy = vi.spyOn(console, "error").mockImplementation(() => {});

@@ -24,9 +24,9 @@ vi.mock("@/assets/hero-racetrack-races.jpg", () => ({ default: "hero2" }));
 vi.mock("@/assets/hero-stable.jpg", () => ({ default: "hero3" }));
 vi.mock("@/assets/hero-grandstand.jpg", () => ({ default: "hero4" }));
 
-import { StartScreen } from "@/components/routes/StartScreen";
-import { useGame } from "@/game/store";
-import { saveExists } from "@/game/store/storage";
+import { StartScreen } from "@/domains/shell/ui/pages/StartScreen";
+import { useGame } from "@/platform/game/store";
+import { saveExists } from "@/platform/game/store/storage";
 
 function setupStore(overrides: Record<string, unknown> = {}) {
   (useGame as any).mockImplementation((selector: any) =>

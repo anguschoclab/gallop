@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
-import { generateHealthInjuryImpacts } from "@/core/race/impacts/healthInjury";
-import type { Horse } from "@/game/types";
-import type { StaffMember } from "@/core/staff/staffTypes";
-import type { InjuryWeatherContext } from "@/core/health/healthSystem";
+import { generateHealthInjuryImpacts } from "@/domains/race/simulation/impacts/healthInjury";
+import type { Horse } from "@/platform/game/types";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import type { InjuryWeatherContext } from "@/domains/health/simulation/healthSystem";
 
 // Mock dependencies to avoid complex logic during these isolated tests
 vi.mock("@/core/health/healthSystem", () => ({
@@ -18,8 +18,8 @@ vi.mock("@/core/race/impacts/energyFormFame", () => ({
 }));
 
 // We need to import the mocked functions to configure them in tests
-import { rollForInjury } from "@/core/health/healthSystem";
-import { generateEnergyImpact } from "@/core/race/impacts/energyFormFame";
+import { rollForInjury } from "@/domains/health/simulation/healthSystem";
+import { generateEnergyImpact } from "@/domains/race/simulation/impacts/energyFormFame";
 
 describe("healthInjury", () => {
   const baseHorse: Horse = {

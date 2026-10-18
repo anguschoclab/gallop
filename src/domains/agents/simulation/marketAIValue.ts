@@ -4,16 +4,16 @@
  * Extracted from marketAI.ts for modularity.
  */
 
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
 import { calculateUtilityAdjustment } from "./personalitySystem";
 import { getSuccessRate, getAdaptiveThreshold } from "./learningModule";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import {
   PURCHASE_BASE_THRESHOLD,
   PURCHASE_CASH_BUFFER_MULTIPLIER,
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   DEFAULT_SUBSYSTEM_WEIGHT,
-} from "@/constants/aiConstants";
+} from "@/domains/agents/model/aiConstants";
 import type { MarketAIState } from "./marketAITypes";
 
 /**

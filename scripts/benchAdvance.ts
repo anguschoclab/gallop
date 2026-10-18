@@ -12,17 +12,17 @@
  * - report median/p95 per range length and fixture size
  */
 
-import { SimulationExecutor } from "../src/core/time/executor";
-import { GAME_PHASE_DESCRIPTORS } from "../src/core/time/phases/descriptors";
-import { buildAdvancePlan } from "../src/core/time/advancePlan";
-import { checksumState } from "../src/core/time/checksum";
-import { createTelemetry } from "../src/core/time/telemetry";
-import { createInitialState } from "../src/game/store/initialization";
-import { SimulationEngine } from "../src/core/engine/engine";
-import { EngineClient } from "../src/core/engine/client";
-import { LocalTransport } from "../src/core/engine/transports";
+import { SimulationExecutor } from "@/platform/time/executor";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
+import { buildAdvancePlan } from "@/platform/time/advancePlan";
+import { checksumState } from "@/platform/time/checksum";
+import { createTelemetry } from "@/platform/time/telemetry";
+import { createInitialState } from "@/platform/game/store/initialization";
+import { SimulationEngine } from "@/platform/engine/engine";
+import { EngineClient } from "@/platform/engine/client";
+import { LocalTransport } from "@/platform/engine/transports";
 import { mkdirSync, writeFileSync } from "node:fs";
-import type { GameState } from "../src/game/types";
+import type { GameState } from "@/platform/game/types";
 
 const RANGES = [1, 7, 30, 365] as const;
 const REPS = 3;

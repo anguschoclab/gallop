@@ -3,13 +3,13 @@ import {
   selectHorsesForRaceEntry,
   runNpcRaceEntry,
 } from "@/domains/agents/simulation/npc/raceEntry";
-import { fillRaceWithFillerHorses } from "@/core/race/fieldManager";
-import { createRng } from "@/core/common/rng";
-import type { Horse, Race, Stable } from "@/game/types";
-import type { StaffRole } from "@/core/staff/staffTypes";
+import { fillRaceWithFillerHorses } from "@/domains/race/simulation/fieldManager";
+import { createRng } from "@/shared/common/rng";
+import type { Horse, Race, Stable } from "@/platform/game/types";
+import type { StaffRole } from "@/domains/staff/model/staffTypes";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

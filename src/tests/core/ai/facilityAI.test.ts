@@ -16,7 +16,7 @@ import {
   getSpecializationPriority,
   shouldDivestFacility,
 } from "@/domains/agents/simulation/facilityAIStrategies";
-import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
+import type { PlayerFacilities } from "@/domains/facilities/model/facilityTypes";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 
 function makeState(

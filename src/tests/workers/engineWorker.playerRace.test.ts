@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import type { Race } from "@/game/types";
-import type { RaceEntry } from "@/core/race/types";
-import { asHorseId, asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import type { Race } from "@/platform/game/types";
+import type { RaceEntry } from "@/domains/race/simulation/types";
+import { asHorseId, asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makePlayerEntry(horseId: string): RaceEntry {
   return { horseId: asHorseId(horseId), ownership: makePlayerOwned() };

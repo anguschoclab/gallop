@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import { RaceNominationRow } from "@/components/racing/NominationsTab";
-import type { NominationRecord } from "@/core/racing/nominationFees";
-import type { Race } from "@/core/race/types";
-import type { Horse } from "@/core/horse/types";
+import { RaceNominationRow } from "@/domains/racing/ui/NominationsTab";
+import type { NominationRecord } from "@/domains/racing/model/nominationFees";
+import type { Race } from "@/domains/race/simulation/types";
+import type { Horse } from "@/domains/horse/simulation/types";
 
 function buildHorseMap<T extends { id: string }>(horses: T[]): Map<string, T> {
   return new Map(horses.map((h) => [h.id, h]));

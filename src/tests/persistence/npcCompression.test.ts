@@ -8,13 +8,13 @@ import {
   regenerateNpcHorses,
   splitHorsesForPersistence,
   mergeHorses,
-} from "@/core/persistence/npcCompression";
-import type { Horse } from "@/core/horse/types";
-import type { Stable } from "@/core/stable/types";
-import { makeNpcOwned, makePlayerOwned, getStableId } from "@/core/horse/ownership";
-import { asNpcStableId, asStableId } from "@/core/types/branded";
-import { generateNpcHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { createRng, hashStr } from "@/core/common/rng";
+} from "@/platform/persistence/npcCompression";
+import type { Horse } from "@/domains/horse/simulation/types";
+import type { Stable } from "@/domains/stable/simulation/types";
+import { makeNpcOwned, makePlayerOwned, getStableId } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asStableId } from "@/shared/types/branded";
+import { generateNpcHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import { createRng, hashStr } from "@/shared/common/rng";
 import { detectRivalMilestones } from "@/domains/agents/simulation/npc/careerMilestones";
 import {
   isDueForOffscreenStart,

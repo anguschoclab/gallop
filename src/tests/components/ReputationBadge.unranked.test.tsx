@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { screen, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ReputationBadge } from "@/components/ReputationBadge";
+import { ReputationBadge } from "@/domains/shell/ui/ReputationBadge";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { useGame } from "@/game/store";
-import type { ManagerReputation } from "@/core/reputation";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useGame } from "@/platform/game/store";
+import type { ManagerReputation } from "@/domains/reputation/simulation";
 
 function mkReputation(overrides: Partial<ManagerReputation> = {}): ManagerReputation {
   return {

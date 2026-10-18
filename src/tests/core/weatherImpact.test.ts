@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { weatherPhase } from "@/core/time/phases/weatherPhase";
-import * as weatherSim from "@/core/weather";
-import type { PipelineContext } from "@/core/time/pipeline";
+import { weatherPhase } from "@/platform/time/phases/weatherPhase";
+import * as weatherSim from "@/domains/weather/simulation";
+import type { PipelineContext } from "@/platform/time/pipeline";
 import { r2r } from "@/tests/helpers/sampleGameState";
 
 describe("Weather Phase - Storm Jump Logic", () => {

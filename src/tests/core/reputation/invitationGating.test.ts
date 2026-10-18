@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { canReceiveAtLargeInvite } from "@/core/reputation/reputationGating";
-import { getReputationTier } from "@/core/reputation/reputationTypes";
+import { canReceiveAtLargeInvite } from "@/domains/reputation/simulation/reputationGating";
+import { getReputationTier } from "@/domains/reputation/model/reputationTypes";
 
 describe("race invitation gating integration", () => {
   function checkInvite(grade: string, reputationScore: number) {

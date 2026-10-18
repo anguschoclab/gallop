@@ -17,7 +17,7 @@ import {
   getSeasonalModifiers,
   applyModifiers,
   type SeasonalModifier,
-} from "@/core/weather/seasonalModifiers";
+} from "@/domains/weather/simulation/seasonalModifiers";
 
 describe("Seasonal Modifiers - Modifier Definitions", () => {
   it("should have valid month ranges (1-12) for all modifiers", () => {

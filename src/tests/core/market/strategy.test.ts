@@ -7,19 +7,19 @@
 
 import { describe, it, expect } from "vitest";
 import { createTestHorse } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId } from "@/core/types/branded";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asHorseId } from "@/shared/types/branded";
 import {
   scoreCandidate,
   runMarketStrategy,
   DEFAULT_MARKET_STRATEGY,
   type MarketStrategy,
   type StrategySource,
-} from "@/core/market/strategy";
-import { createDefaultExchangeState, type ExchangeAsk } from "@/core/market/exchange";
-import type { Horse } from "@/core/horse/types";
-import type { Syndicate } from "@/core/breeding/types";
-import { asOwnerKey } from "@/core/types/branded";
+} from "@/domains/market/simulation/strategy";
+import { createDefaultExchangeState, type ExchangeAsk } from "@/domains/market/simulation/exchange";
+import type { Horse } from "@/domains/horse/simulation/types";
+import type { Syndicate } from "@/domains/breeding/model/types";
+import { asOwnerKey } from "@/shared/types/branded";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

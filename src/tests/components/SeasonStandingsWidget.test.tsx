@@ -2,10 +2,10 @@ import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { SeasonStandingsWidget } from "@/components/dashboard/SeasonStandingsWidget";
-import { createDefaultGameState } from "@/game/store/state";
-import type { GameState, Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { SeasonStandingsWidget } from "@/domains/dashboard/ui/SeasonStandingsWidget";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { GameState, Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

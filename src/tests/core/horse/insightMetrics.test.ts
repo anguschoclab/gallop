@@ -1,5 +1,5 @@
 import { test, expect, describe } from "vitest";
-import { buildInsightRow, metricExtent } from "@/core/horse/insightMetrics";
+import { buildInsightRow, metricExtent } from "@/domains/horse/simulation/insightMetrics";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 describe("insightMetrics", () => {

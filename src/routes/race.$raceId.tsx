@@ -7,7 +7,7 @@ export const Route = createFileRoute("/race/$raceId")({
     const v = raw?.phase;
     return v === "preshow" || v === "live" || v === "review" ? { phase: v } : {};
   },
-  component: lazyRouteComponent(() => import("@/components/routes/LiveRace")),
+  component: lazyRouteComponent(() => import("@/domains/race/ui/pages/LiveRace")),
   notFoundComponent: () => (
     <div className="p-6">
       <h1 className="text-2xl font-bold text-cream">Race not found</h1>

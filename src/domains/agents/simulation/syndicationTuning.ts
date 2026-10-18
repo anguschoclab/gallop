@@ -7,8 +7,8 @@
  * (G1 wins) gate. Overrides can also be set at runtime (tests, debug tooling).
  */
 
-import type { StablePersonality } from "@/game/types";
-import tuningFile from "@/data/syndicationTuning.json";
+import type { StablePersonality } from "@/platform/game/types";
+import tuningFile from "@/shared/data/syndicationTuning";
 
 export interface SyndicationTuningEntry {
   stakeCapMultiplier?: number;

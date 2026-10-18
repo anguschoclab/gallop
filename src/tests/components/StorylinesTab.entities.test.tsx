@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { StorylinesTab } from "@/components/briefing/StorylinesTab";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { StorylinesTab } from "@/domains/briefing/ui/StorylinesTab";
 import { createTestStable } from "@/tests/helpers";
 import type {
   NpcAIManager,

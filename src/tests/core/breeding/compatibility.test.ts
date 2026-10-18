@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { calculateBreedingCompatibility } from "@/core/breeding/compatibility";
-import type { Horse } from "@/game/types";
+import { calculateBreedingCompatibility } from "@/domains/breeding/simulation/compatibility";
+import type { Horse } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {

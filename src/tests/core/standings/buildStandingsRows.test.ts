@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { buildStandingsRows } from "@/core/standings/buildStandingsRows";
-import type { StandingEntry } from "@/core/standings/computeStandings";
+import { buildStandingsRows } from "@/domains/standings/simulation/buildStandingsRows";
+import type { StandingEntry } from "@/domains/standings/simulation/computeStandings";
 
 function mkEntry(stableId: string, isPlayer = false, prizeMoney = 0): StandingEntry {
   return {

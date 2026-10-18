@@ -16,9 +16,9 @@ vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }));
 
-import { useSaveSlots } from "@/hooks/shared/useSaveSlots";
-import { useGame } from "@/game/store";
-import { getSaveSlots, deleteSaveSlot } from "@/services/storage/saveManager";
+import { useSaveSlots } from "@/platform/game/hooks/useSaveSlots";
+import { useGame } from "@/platform/game/store";
+import { getSaveSlots, deleteSaveSlot } from "@/platform/persistence/storage/saveManager";
 import { toast } from "sonner";
 
 let mockState: any;

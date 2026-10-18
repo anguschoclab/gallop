@@ -11,12 +11,12 @@ import {
   MAX_PRESTIGE_SCORE,
   MIN_FAME_GAIN,
   HOUSE_PRESTIGE_SPREAD,
-} from "@/core/prestige";
-import { netProceeds, commissionAmount } from "@/core/auction/engine";
-import { FAME_GAIN_G1_WIN } from "@/constants";
-import { buildAuctionImpacts } from "@/core/auction/auctionRunnerImpacts";
-import type { LotState } from "@/core/auction/auctionRunnerTypes";
-import type { AuctionSale, Horse } from "@/game/types";
+} from "@/domains/prestige/simulation";
+import { netProceeds, commissionAmount } from "@/domains/auction/simulation/engine";
+import { FAME_GAIN_G1_WIN } from "@/domains/prestige/model/fameConstants";;
+import { buildAuctionImpacts } from "@/domains/auction/simulation/auctionRunnerImpacts";
+import type { LotState } from "@/domains/auction/model/auctionRunnerTypes";
+import type { AuctionSale, Horse } from "@/platform/game/types";
 
 const FLOOR_MUL = prestigeMultiplier(RACECOURSE_FLOOR_PRESTIGE, RACECOURSE_PRESTIGE_SPREAD);
 

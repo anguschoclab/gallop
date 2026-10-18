@@ -1,13 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { runRaceToCompletion } from "@/core/race/engine/simulation";
-import { buildRunner } from "@/core/race/engine/runnerBuilder";
-import { createRng } from "@/core/common/rng";
+import { runRaceToCompletion } from "@/domains/race/simulation/engine/simulation";
+import { buildRunner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { createRng } from "@/shared/common/rng";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 import {
   RUNNING_STYLE_PROFILES,
   SPURT_BUILDUP_PEAK,
-} from "@/core/race/engine/runningStyleProfiles";
+} from "@/domains/race/simulation/engine/runningStyleProfiles";
 
 const SEEDS = [1, 7, 42, 99];
 

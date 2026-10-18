@@ -1,0 +1,50 @@
+import { safeParseJson, analyticsEventArraySchema } from "@/platform/persistence/storage/schemas";
+
+const ANALYTICS_KEY = "gallop_analytics_events";
+const MAX_EVENTS = 100;
+
+export interface AnalyticsEvent {
+  event: string;
+  properties?: Record<string, unknown>;
+  timestamp: number;
+}
+
+/**
+ * Track an analytics event by appending it to the persisted queue.
+ * @param event - Event name.
+ * @param properties - Optional event properties.
+ */
+export function trackEvent(event: string, properties?: Record<string, unknown>): void {
+  const entry: AnalyticsEvent = { event, properties, timestamp: Date.now() };
+  const queue = loadQueue();
+  queue.push(entry);
+  if (queue.length > MAX_EVENTS) queue.shift();
+  saveQueue(queue);
+}
+
+/**
+ * Flush all queued analytics events and return them.
+ * @returns All queued events (the queue is cleared after this call).
+ */
+export function flushEvents(): AnalyticsEvent[] {
+  const queue = loadQueue();
+  saveQueue([]);
+  return queue;
+}
+
+function loadQueue(): AnalyticsEvent[] {
+  try {
+    const raw = localStorage.getItem(ANALYTICS_KEY);
+    return raw ? (safeParseJson(raw, analyticsEventArraySchema) ?? []) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveQueue(queue: AnalyticsEvent[]): void {
+  try {
+    localStorage.setItem(ANALYTICS_KEY, JSON.stringify(queue));
+  } catch {
+    // Silently fail if localStorage is unavailable
+  }
+}

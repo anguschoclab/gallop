@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { formatCurrency } from "@/core/common/formatting";
+import { formatCurrency } from "@/shared/common/formatting";
 
 describe("formatCurrency", () => {
   it("formats zero as $0", () => {

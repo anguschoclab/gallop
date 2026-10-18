@@ -4,17 +4,17 @@
  * Covers: player pasture retirement, player stud retirement, and Hall of Fame induction.
  */
 import { describe, it, expect } from "vitest";
-import { pastureRetirementPhase } from "@/core/time/phases/pastureRetirement";
-import { managementResolutionPhase } from "@/core/time/phases/managementResolution";
-import { hallOfFamePhase } from "@/core/time/phases/hallOfFame";
+import { pastureRetirementPhase } from "@/platform/time/phases/pastureRetirement";
+import { managementResolutionPhase } from "@/platform/time/phases/managementResolution";
+import { hallOfFamePhase } from "@/platform/time/phases/hallOfFame";
 import {
   createTestHorse,
   createTestNpcHorse,
   createUnownedHorse,
 } from "@/tests/helpers/createTestHorse";
 import { makePipelineContext } from "@/tests/helpers/sampleGameState";
-import { createRng } from "@/core/common/rng";
-import type { PipelineContext } from "@/core/time/pipeline";
+import { createRng } from "@/shared/common/rng";
+import type { PipelineContext } from "@/platform/time/pipeline";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 const G1_RACE = {

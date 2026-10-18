@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { venuePayoutMultiplier, applyVenuePayout } from "@/core/race/venuePayout";
-import { computePayoutSplits } from "@/core/race/resolution";
-import { generatePrizeMoneyImpacts } from "@/core/race/impacts/prizeMoney";
-import { rankedRacecourses } from "@/core/prestige";
-import { PRIZE_SPLIT } from "@/constants";
-import { asHorseId, asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import type { Horse, Race } from "@/game/types";
+import { venuePayoutMultiplier, applyVenuePayout } from "@/domains/race/simulation/venuePayout";
+import { computePayoutSplits } from "@/domains/race/simulation/resolution";
+import { generatePrizeMoneyImpacts } from "@/domains/race/simulation/impacts/prizeMoney";
+import { rankedRacecourses } from "@/domains/prestige/simulation";
+import { PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
+import { asHorseId, asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import type { Horse, Race } from "@/platform/game/types";
 
 const ranked = rankedRacecourses();
 const best = ranked[0];

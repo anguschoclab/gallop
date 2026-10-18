@@ -1,16 +1,16 @@
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import { describe, it, expect } from "vitest";
-import { NarrativeGenerator } from "@/services/narrative/narrativeService";
-import type { Race, Horse, Stable, Jockey } from "@/game/types";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { createRng, hashStr } from "@/core/common/rng";
+import { NarrativeGenerator } from "@/domains/narrative/application/narrativeService";
+import type { Race, Horse, Stable, Jockey } from "@/platform/game/types";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { createRng, hashStr } from "@/shared/common/rng";
 import {
   JOCKEY_MOVE_TEMPLATES,
   JOCKEY_TACTIC_TEMPLATES,
   JOCKEY_MASTERY_TEMPLATES,
   JOCKEY_APPRENTICE_TEMPLATES,
   JOCKEY_TRAIT_TEMPLATES,
-} from "@/assets/narrative/jockeyTemplates";
+} from "@/shared/assets/narrative/jockeyTemplates";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {

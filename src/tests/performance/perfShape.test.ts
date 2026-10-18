@@ -1,13 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { calculateTacticalAdjustment } from "@/core/race/engine/tacticalAI";
-import { buildFieldContext } from "@/core/race/runnerConditionDerivation";
-import type { Runner, PaceContext } from "@/core/race/engine/runnerBuilder";
-import { makeUnowned } from "@/core/horse/ownership";
-import { calculateNpcBid } from "@/core/auction/engine";
-import { createRng } from "@/core/common/rng";
-import { AUCTION_HOUSES } from "@/core/prestige/auctionHouses";
-import type { Horse } from "@/core/horse/types";
-import type { Stable } from "@/core/stable/types";
+import { calculateTacticalAdjustment } from "@/domains/race/simulation/engine/tacticalAI";
+import { buildFieldContext } from "@/domains/race/simulation/runnerConditionDerivation";
+import type { Runner, PaceContext } from "@/domains/race/simulation/engine/runnerBuilder";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
+import { calculateNpcBid } from "@/domains/auction/simulation/engine";
+import { createRng } from "@/shared/common/rng";
+import { AUCTION_HOUSES } from "@/domains/prestige/simulation/auctionHouses";
+import type { Horse } from "@/domains/horse/simulation/types";
+import type { Stable } from "@/domains/stable/simulation/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 describe("perf-shape: tacticalAI uses Array.includes not Set allocation (#364)", () => {

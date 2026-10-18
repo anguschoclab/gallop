@@ -9,7 +9,7 @@
  * Related files: campaignTargeting.ts, campaignRecording.ts
  */
 
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
 import { getPersonalityAIState } from "./personalitySystem";
 import { createLearningState, type LearningState } from "./learningModule";
 import {
@@ -17,9 +17,9 @@ import {
   GRADED_RACES_BY_KEY,
   GRADED_RACES_BY_TRIPLECROWN_KEY,
   GRADED_RACES_BY_BC_KEY,
-} from "@/core/data/gradedRacesAccessor";
-import { calculateOverallRating, calculateRaceRating } from "@/core/horse/stats";
-import { getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
+} from "@/shared/data/accessors/gradedRacesAccessor";
+import { calculateOverallRating, calculateRaceRating } from "@/domains/horse/simulation/stats";
+import { getTripleCrownKeysForArchetype } from "@/domains/breeding/simulation/archetypes";
 
 export interface CampaignAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;

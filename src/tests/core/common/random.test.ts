@@ -1,10 +1,13 @@
 import { describe, it, expect } from "vitest";
-import { rand, rollRunningStyle, randomWeather, randomSilk } from "@/core/common/random";
-import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
-import { generateProceduralJockeyName } from "@/core/jockey/proceduralNaming";
-import { generateRaceName } from "@/core/race/naming/raceNameGenerator";
-import { createRng } from "@/core/common/rng";
-import type { Track } from "@/data/tracks";
+import { rollRunningStyle } from "@/domains/horse/simulation/stats";
+import { randomSilk } from "@/domains/horse/simulation/visuals";
+import { randomWeather } from "@/domains/race/simulation/environment";
+import { rand } from "@/shared/common/random";;
+import { generateProceduralHorseName } from "@/domains/horse/simulation/naming/nameGenerator";
+import { generateProceduralJockeyName } from "@/domains/jockey/simulation/proceduralNaming";
+import { generateRaceName } from "@/domains/race/simulation/naming/raceNameGenerator";
+import { createRng } from "@/shared/common/rng";
+import type { Track } from "@/shared/data/tracks";
 
 describe("rand", () => {
   it("returns integer within range", () => {

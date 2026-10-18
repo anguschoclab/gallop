@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useRaceProgress } from "@/hooks/race/useRaceProgress";
-import type { RacePhase } from "@/hooks/race/useRacePhase";
+import { useRaceProgress } from "@/domains/race/application/hooks/useRaceProgress";
+import type { RacePhase } from "@/domains/race/application/hooks/useRacePhase";
 
 // sessionStorage mock (localStorage is already mocked in setup.ts)
 const ssStore = new Map<string, string>();

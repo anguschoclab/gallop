@@ -1,6 +1,6 @@
-import type { Horse, Stable, AuctionLot } from "@/game/types";
+import type { Horse, Stable, AuctionLot } from "@/platform/game/types";
 import { recordLearningOutcome, trimHistory } from "./learningModule";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import type { EconomicTrend } from "./strategicCoordinator";
 import type { AuctionAIState, BiddingDecision, ConsignmentDecision } from "./auctionAI";
 

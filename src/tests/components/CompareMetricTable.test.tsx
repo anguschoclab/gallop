@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
-import { CompareMetricTable } from "@/components/horse/CompareMetricTable";
-import type { Horse } from "@/game/types";
-import type { RowData } from "@/hooks/horse/useHorseCompareRows";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { CompareMetricTable } from "@/domains/horse/ui/CompareMetricTable";
+import type { Horse } from "@/platform/game/types";
+import type { RowData } from "@/domains/horse/application/hooks/useHorseCompareRows";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@/components/SilkDot", () => ({
   SilkDot: ({ color }: { color: string }) => <span data-testid="silk-dot" data-color={color} />,

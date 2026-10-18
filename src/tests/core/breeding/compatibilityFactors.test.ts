@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { calculateCrossFamilyAffinity } from "@/core/breeding/compatibilityFactors";
-import type { Horse } from "@/core/horse/types";
+import { calculateCrossFamilyAffinity } from "@/domains/breeding/simulation/compatibilityFactors";
+import type { Horse } from "@/domains/horse/simulation/types";
 
 function makeHorse(overrides: Partial<Horse>): Horse {
   return {

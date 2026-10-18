@@ -8,14 +8,14 @@ import {
   refreshMarket,
   generateUpcomingScheduledRaces,
   pruneOldRaces,
-} from "@/core/market/marketRefresh";
-import { resolvePregnancies } from "@/core/breeding/pregnancy";
-import { maybeRecalibratePars } from "@/core/race/beyerPars";
-import type { Race, Pregnancy } from "@/game/types";
-import { generateHorse } from "@/core/horse/horseFactory";
-import { generateRace } from "@/core/race/generation/raceGen";
-import { createRng, hashStr } from "@/core/common/rng";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+} from "@/domains/market/simulation/marketRefresh";
+import { resolvePregnancies } from "@/domains/breeding/simulation/pregnancy";
+import { maybeRecalibratePars } from "@/domains/race/simulation/beyerPars";
+import type { Race, Pregnancy } from "@/platform/game/types";
+import { generateHorse } from "@/domains/horse/simulation/horseFactory";
+import { generateRace } from "@/domains/race/simulation/generation/raceGen";
+import { createRng, hashStr } from "@/shared/common/rng";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("refreshMarket", () => {
   it("should keep market at 5 horses", () => {

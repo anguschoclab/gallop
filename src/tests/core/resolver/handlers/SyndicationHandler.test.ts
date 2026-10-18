@@ -1,15 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { SyndicationHandler } from "@/core/resolver/handlers/SyndicationHandler";
-import type { GameState } from "@/game/store/state";
+import { SyndicationHandler } from "@/platform/resolver/handlers/SyndicationHandler";
+import type { GameState } from "@/platform/game/store/state";
 import type {
   SyndicateCreationImpact,
   ShareTransactionImpact,
   SyndicateFeeDistributionImpact,
   SyndicateSatisfactionImpact,
-} from "@/core/resolver/impacts/index";
+} from "@/platform/resolver/impacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { Horse } from "@/game/types";
-import { asPlayerOwnerId, asOwnerKey } from "@/core/types/branded";
+import type { Horse } from "@/platform/game/types";
+import { asPlayerOwnerId, asOwnerKey } from "@/shared/types/branded";
 
 describe("SyndicationHandler", () => {
   it("syndicate_creation creates syndicate for G1 winner", () => {

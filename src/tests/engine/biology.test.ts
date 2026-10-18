@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { createRng } from "@/core/common/rng";
-import { generateHorse } from "@/core/horse/horseFactory";
-import { buildRunner } from "@/core/race/engine/runnerBuilder";
+import { createRng } from "@/shared/common/rng";
+import { generateHorse } from "@/domains/horse/simulation/horseFactory";
+import { buildRunner } from "@/domains/race/simulation/engine/runnerBuilder";
 
 describe("Biological Simulation Bridge - Stress Test", () => {
   const rng = createRng(789);

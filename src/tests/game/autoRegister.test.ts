@@ -8,9 +8,9 @@ import { describe, it, expect } from "vitest";
 import {
   calculateAutoRegisterEntries,
   calculateTransportCostForRace,
-} from "@/core/campaign/autoRegister";
-import type { Horse, Race, Jockey } from "@/game/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+} from "@/domains/campaign/simulation/autoRegister";
+import type { Horse, Race, Jockey } from "@/platform/game/types";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 // Helper to create a minimal mock horse
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {

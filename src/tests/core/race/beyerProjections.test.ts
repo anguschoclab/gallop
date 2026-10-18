@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { calculateProjectedBeyer } from "@/core/race/beyerProjections";
+import { calculateProjectedBeyer } from "@/domains/race/simulation/beyerProjections";
 import { createTestHorse } from "@/tests/helpers";
-import type { Race } from "@/core/race/types";
-import { calculateClassBonus } from "@/core/common/classBonus";
-import { expectedBeyer } from "@/core/race/beyer";
-import { getCourseForRace } from "@/core/data/tracksAccessor";
+import type { Race } from "@/domains/race/simulation/types";
+import { calculateClassBonus } from "@/shared/common/classBonus";
+import { expectedBeyer } from "@/domains/race/simulation/beyer";
+import { getCourseForRace } from "@/shared/data/accessors/tracksAccessor";
 
 vi.mock("@/core/common/classBonus", () => ({
   calculateClassBonus: vi.fn(() => 5),

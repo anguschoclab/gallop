@@ -5,9 +5,9 @@ import type {
   SharePurchaseIntent,
   ShareSaleIntent,
   UpdateStudFeeIntent,
-} from "@/core/resolver/intents";
-import type { GameState, Horse, Stable } from "@/game/types";
-import { generateUUID } from "@/core/uuid";
+} from "@/platform/resolver/intents";
+import type { GameState, Horse, Stable } from "@/platform/game/types";
+import { generateUUID } from "@/shared/uuid/uuid";
 import { createGeldingAIState, shouldGeldHorse } from "@/domains/agents/simulation/geldingAI";
 import {
   shouldCreateSyndicate,
@@ -23,7 +23,7 @@ import {
   STUD_FEE_INTENT_PRIORITY,
   PRESTIGE_STUD_FEE_RESISTANCE,
   TRADER_STUD_FEE_AGGRESSION,
-} from "@/constants/financialDistressConstants";
+} from "@/domains/financial/model/financialDistressConstants";
 
 export function generateNpcGeldingIntents(
   _state: GameState,

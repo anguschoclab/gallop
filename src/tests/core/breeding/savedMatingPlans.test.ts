@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
-import { createBreedingSlice } from "@/game/store/slices/breedingSlice";
-import type { StoreGet } from "@/game/store/types";
-import type { MatingPlanEntry } from "@/game/store/state/breedingState";
+import { createBreedingSlice } from "@/platform/game/store/slices/breedingSlice";
+import type { StoreGet } from "@/platform/game/store/types";
+import type { MatingPlanEntry } from "@/platform/game/store/state/breedingState";
 
 function makeMockState(overrides: Record<string, any> = {}) {
   return {

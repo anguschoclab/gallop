@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { resolveFoaling } from "@/core/horse/horseFactory";
-import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
+import { resolveFoaling } from "@/domains/horse/simulation/horseFactory";
+import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
 import { createTestGenotype } from "@/tests/helpers/createTestGenotype";
-import { resolveGeneticMarkers } from "@/core/genetics/phenotype";
-import type { Horse, Pregnancy } from "@/game/types";
+import { resolveGeneticMarkers } from "@/domains/genetics/simulation/phenotype";
+import type { Horse, Pregnancy } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

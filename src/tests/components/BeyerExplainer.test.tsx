@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { screen, fireEvent } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { BeyerExplainer } from "@/components/tutorial/BeyerExplainer";
-import { createDefaultTutorialState } from "@/core/tutorial/tutorialTypes";
+import { BeyerExplainer } from "@/domains/tutorial/ui/BeyerExplainer";
+import { createDefaultTutorialState } from "@/domains/tutorial/model/tutorialTypes";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { TacticalAnalysisPanel } from "@/components/race/TacticalAnalysisPanel";
-import type { RaceRunner } from "@/core/race/types";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { TacticalAnalysisPanel } from "@/domains/race/ui/TacticalAnalysisPanel";
+import type { RaceRunner } from "@/domains/race/simulation/types";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function createMockRunner(overrides: Partial<RaceRunner> = {}): RaceRunner {
   return {

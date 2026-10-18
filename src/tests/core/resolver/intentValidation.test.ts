@@ -3,8 +3,8 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { validateIntent } from "@/core/resolver/resolver";
-import type { GameState } from "@/game/types";
+import { validateIntent } from "@/platform/resolver/resolver";
+import type { GameState } from "@/platform/game/types";
 import type {
   AnyIntent,
   TrainingIntent,
@@ -12,7 +12,7 @@ import type {
   WithdrawFromClaimingIntent,
   BreedingIntent,
   PurchaseIntent,
-} from "@/core/resolver/intents";
+} from "@/platform/resolver/intents";
 import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";

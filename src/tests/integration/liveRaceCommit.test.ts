@@ -45,19 +45,19 @@ vi.mock("@/game/store/storage", () => ({
 }));
 
 vi.mock("@/core/race/raceSimulationExecutor", async (importActual) => {
-  const actual = await importActual<typeof import("@/core/race/raceSimulationExecutor")>();
+  const actual = await importActual<typeof import("@/domains/race/simulation/raceSimulationExecutor")>();
   return { ...actual, simulateRace: vi.fn(actual.simulateRace) };
 });
 
-import { useGame } from "@/game/store";
-import { simulateRace } from "@/core/race/raceSimulationExecutor";
-import { _setEngineClientForTests } from "@/game/store/engineClient";
-import type { RaceRunner } from "@/core/race/types";
+import { useGame } from "@/platform/game/store";
+import { simulateRace } from "@/domains/race/simulation/raceSimulationExecutor";
+import { _setEngineClientForTests } from "@/platform/game/store/engineClient";
+import type { RaceRunner } from "@/domains/race/simulation/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asHorseId, asJockeyId, asNpcStableId } from "@/core/types/branded";
-import type { Race } from "@/game/types";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asHorseId, asJockeyId, asNpcStableId } from "@/shared/types/branded";
+import type { Race } from "@/platform/game/types";
 
 const RESULT = [
   { horseId: "h1", position: 1, time: 96 },

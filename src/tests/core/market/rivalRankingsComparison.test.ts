@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { rivalRankingsForDay } from "@/core/market/rivalRankingsComparison";
-import { PLAYER_OWNER_ID } from "@/core/horse/ownership";
+import { rivalRankingsForDay } from "@/domains/market/simulation/rivalRankingsComparison";
+import { PLAYER_OWNER_ID } from "@/domains/horse/simulation/ownership";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { asHorseId, asNpcStableId } from "@/core/types/branded";
-import type { RankingsHistory } from "@/core/market/rankingsHistory";
-import type { StableRankingsHistory } from "@/core/stable/stableRankings";
+import { asHorseId, asNpcStableId } from "@/shared/types/branded";
+import type { RankingsHistory } from "@/domains/market/simulation/rankingsHistory";
+import type { StableRankingsHistory } from "@/domains/stable/simulation/stableRankings";
 
 const rival = createTestHorse({
   id: asHorseId("rival-1"),

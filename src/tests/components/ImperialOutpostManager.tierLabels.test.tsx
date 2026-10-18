@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { ImperialOutpostManager } from "@/components/facilities/ImperialOutpostManager";
+import { ImperialOutpostManager } from "@/domains/facilities/ui/ImperialOutpostManager";
 
 describe("ImperialOutpostManager — tier label display", () => {
   it("does NOT render raw 'basic', 'standard', 'premium', or 'elite' in badge text", () => {

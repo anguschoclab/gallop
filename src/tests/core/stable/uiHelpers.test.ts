@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { getTierColor, getReputationStars } from "@/core/stable/uiHelpers";
-import type { StableTier } from "@/game/types";
+import { getTierColor, getReputationStars } from "@/domains/stable/simulation/uiHelpers";
+import type { StableTier } from "@/platform/game/types";
 
 describe("getTierColor", () => {
   it("returns correct color for elite tier", () => {

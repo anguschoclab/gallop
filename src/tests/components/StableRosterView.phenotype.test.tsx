@@ -6,10 +6,10 @@
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
-import { StableRosterView } from "@/components/stable/StableRosterView";
-import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { calculateOverallRating } from "@/core/horse/stats";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { StableRosterView } from "@/domains/stable/ui/StableRosterView";
+import { generateHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

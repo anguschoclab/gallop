@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 
 // These functions are currently private in simulation.ts.
 // We test the enhanced logic via a new exported function:
@@ -11,8 +11,8 @@ import {
   getEnhancedDraftingHorseId,
   calculateRailSavingLane,
   calculateCoverModifier,
-} from "@/core/race/engine/draftingAI";
-import { calculateTargetLane } from "@/core/race/engine/lateralMovement";
+} from "@/domains/race/simulation/engine/draftingAI";
+import { calculateTargetLane } from "@/domains/race/simulation/engine/lateralMovement";
 
 function createMockRunner(overrides: Partial<Runner> = {}): Runner {
   return {

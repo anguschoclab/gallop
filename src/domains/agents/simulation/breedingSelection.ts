@@ -1,13 +1,13 @@
-import type { Horse, Stable, GameState } from "@/game/types";
-import { isFemaleHorse } from "@/core/horse/gender";
-import { calculateOverallRating } from "@/core/horse/stats";
-import { runBreedingSimulation } from "@/core/genetics/breedingSimulator";
-import { cachedSimulation } from "@/core/genetics/genotypeCache";
-import { getArchetypeById } from "@/core/breeding/archetypes";
-import { calculateGeneticDistance } from "@/core/breeding/programs";
-import { createRng, hashStr, type Rng } from "@/core/common/rng";
-import { computeProspectiveCoi } from "@/core/breeding/populationGenetics";
-import { canBreed } from "@/core/breeding/eligibility";
+import type { Horse, Stable, GameState } from "@/platform/game/types";
+import { isFemaleHorse } from "@/domains/horse/simulation/gender";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
+import { runBreedingSimulation } from "@/domains/genetics/simulation/breedingSimulator";
+import { cachedSimulation } from "@/domains/genetics/simulation/genotypeCache";
+import { getArchetypeById } from "@/domains/breeding/simulation/archetypes";
+import { calculateGeneticDistance } from "@/domains/breeding/simulation/programs";
+import { createRng, hashStr, type Rng } from "@/shared/common/rng";
+import { computeProspectiveCoi } from "@/domains/breeding/simulation/populationGenetics";
+import { canBreed } from "@/domains/breeding/simulation/eligibility";
 import type { EconomicTrend } from "./strategicCoordinator";
 import type { BreedingDecision } from "./breedingAI";
 

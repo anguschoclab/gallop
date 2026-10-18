@@ -9,9 +9,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { createElement } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { useGame } from "@/game/store";
-import { PriceAlertsPanel } from "@/components/market/PriceAlertsPanel";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useGame } from "@/platform/game/store";
+import { PriceAlertsPanel } from "@/domains/market/ui/PriceAlertsPanel";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children }: { children?: React.ReactNode }) => createElement("a", {}, children),

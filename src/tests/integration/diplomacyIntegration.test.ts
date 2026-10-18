@@ -13,7 +13,7 @@ import {
   resolveDiplomaticInteractions,
   applyClaimingFriction,
 } from "@/domains/agents/simulation/diplomacyAI";
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable } from "@/tests/helpers";
 

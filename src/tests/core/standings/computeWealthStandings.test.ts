@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { computeWealthStandings } from "@/core/standings/computeWealthStandings";
-import { createDefaultGameState } from "@/game/store/state";
-import type { GameState } from "@/game/types";
+import { computeWealthStandings } from "@/domains/standings/simulation/computeWealthStandings";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { GameState } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function mkState(overrides: Partial<GameState> = {}): GameState {
   return { ...createDefaultGameState(), ...overrides };

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { generateNpcWithdrawalIntents } from "@/domains/agents/simulation/npc/intents/claimingIntents";
-import type { GameState, Horse, Race, Stable } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
+import type { GameState, Horse, Race, Stable } from "@/platform/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
 
 describe("NPC Weather & Track Condition Scratching", () => {
   const stable: Stable = {

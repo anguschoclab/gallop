@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { useGame } from "@/game/store";
-import { TacticsAnalyzer } from "@/components/tactics/TacticsAnalyzer";
-import type { Horse, Race } from "@/game/types";
-import { AGGRESSIVENESS_DEFAULT, TACTICS_SAVED_FEEDBACK_MS } from "@/constants";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useGame } from "@/platform/game/store";
+import { TacticsAnalyzer } from "@/domains/tactics/ui/TacticsAnalyzer";
+import type { Horse, Race } from "@/platform/game/types";
+import { AGGRESSIVENESS_DEFAULT, TACTICS_SAVED_FEEDBACK_MS } from "@/shared/constants/tacticsConstants";;
 
 vi.mock("sonner", () => ({
   toast: { success: vi.fn() },

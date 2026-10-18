@@ -2,9 +2,9 @@ import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { HorseAnalyticsSection } from "@/components/horse/HorseAnalyticsSection";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { HorseAnalyticsSection } from "@/domains/horse/ui/HorseAnalyticsSection";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

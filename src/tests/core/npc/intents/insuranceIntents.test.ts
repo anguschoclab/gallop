@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { generateNpcInsuranceIntents } from "@/domains/agents/simulation/npc/intents/insuranceIntents";
-import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
+import type { GameState } from "@/platform/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 

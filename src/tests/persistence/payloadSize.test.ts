@@ -6,14 +6,14 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateNpcHorse } from "@/core/horse/horseFactory";
-import { createRng, hashStr } from "@/core/common/rng";
-import { prunePedigree, MAX_PERSISTED_PEDIGREE_DEPTH } from "@/core/persistence/pedigreePrune";
-import { compressNpcHorses, splitHorsesForPersistence } from "@/core/persistence/npcCompression";
-import type { Horse } from "@/core/horse/types";
-import type { Stable } from "@/core/stable/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
-import { asStableId } from "@/core/types/branded";
+import { generateNpcHorse } from "@/domains/horse/simulation/horseFactory";
+import { createRng, hashStr } from "@/shared/common/rng";
+import { prunePedigree, MAX_PERSISTED_PEDIGREE_DEPTH } from "@/platform/persistence/pedigreePrune";
+import { compressNpcHorses, splitHorsesForPersistence } from "@/platform/persistence/npcCompression";
+import type { Horse } from "@/domains/horse/simulation/types";
+import type { Stable } from "@/domains/stable/simulation/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import { asStableId } from "@/shared/types/branded";
 
 function makeTestStable(id: string, tier: "elite" | "mid" | "budget" = "mid"): Stable {
   return {

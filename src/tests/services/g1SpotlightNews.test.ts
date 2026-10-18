@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { generateG1SpotlightNews } from "@/services/narrative/newsGenerator";
+import { generateG1SpotlightNews } from "@/domains/narrative/application/newsGenerator";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
-import { isValidUUID } from "@/core/uuid";
-import type { Race } from "@/game/types";
+import { isValidUUID } from "@/shared/uuid/uuid";
+import type { Race } from "@/platform/game/types";
 
 function createG1Race(overrides?: Partial<Race>): Race {
   return {

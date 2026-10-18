@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { calculateInquiryProbability } from "@/core/racing/inquiryProbability";
+import { calculateInquiryProbability } from "@/domains/racing/simulation/inquiryProbability";
 
 describe("calculateInquiryProbability", () => {
   it("returns base 5% with no modifiers", () => {

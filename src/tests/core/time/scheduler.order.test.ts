@@ -9,12 +9,12 @@
  *   order, honoring cadence gates and skipIf.
  */
 import { describe, it, expect } from "vitest";
-import type { GameState } from "@/game/types";
-import { createPhase, type PipelinePhase } from "@/core/time/pipeline";
-import { compileSchedule, describePhase, type PhaseDescriptor } from "@/core/time/scheduler";
-import { SimulationExecutor } from "@/core/time/executor";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
-import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
+import type { GameState } from "@/platform/game/types";
+import { createPhase, type PipelinePhase } from "@/platform/time/pipeline";
+import { compileSchedule, describePhase, type PhaseDescriptor } from "@/platform/time/scheduler";
+import { SimulationExecutor } from "@/platform/time/executor";
+import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
+import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 
 function spyDescriptor(

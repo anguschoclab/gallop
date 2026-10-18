@@ -13,9 +13,9 @@ import {
   type AlertHorse,
   type PriceAlertDirection,
   type PriceAlertScope,
-} from "@/core/market/priceAlerts";
-import { priceAlertMessage, tradeNotificationMessage } from "@/core/market/priceAlertMessages";
-import type { ExchangeAsk, ExchangeBid, ExchangeTrade } from "@/core/market/exchange";
+} from "@/domains/market/simulation/priceAlerts";
+import { priceAlertMessage, tradeNotificationMessage } from "@/domains/market/simulation/priceAlertMessages";
+import type { ExchangeAsk, ExchangeBid, ExchangeTrade } from "@/domains/market/simulation/exchange";
 
 function mkHorse(id: string, overrides: Partial<AlertHorse> = {}): AlertHorse {
   return { id, name: `Horse ${id}`, raceHistory: [], courseVisits: {}, ...overrides };

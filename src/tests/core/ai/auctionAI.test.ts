@@ -17,7 +17,7 @@ import {
   evaluateConsignmentTiming,
   generatePostPurchasePlan,
 } from "@/domains/agents/simulation/auctionRecording";
-import type { Horse, Stable, AuctionLot } from "@/game/types";
+import type { Horse, Stable, AuctionLot } from "@/platform/game/types";
 import type { NpcRelationship } from "@/domains/agents/simulation/npcCycleAI";
 import type { EconomicTrend } from "@/domains/agents/simulation/strategicCoordinator";
 import { createTestHorse, createTestStable } from "@/tests/helpers";

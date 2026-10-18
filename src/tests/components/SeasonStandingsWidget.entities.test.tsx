@@ -2,11 +2,11 @@ import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { SeasonStandingsWidget } from "@/components/dashboard/SeasonStandingsWidget";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { SeasonStandingsWidget } from "@/domains/dashboard/ui/SeasonStandingsWidget";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

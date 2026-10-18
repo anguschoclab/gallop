@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { deriveTutorialStep } from "@/core/tutorial/deriveTutorialStep";
-import type { TutorialState } from "@/core/tutorial/tutorialTypes";
-import type { GameState } from "@/game/types";
+import { deriveTutorialStep } from "@/domains/tutorial/model/deriveTutorialStep";
+import type { TutorialState } from "@/domains/tutorial/model/tutorialTypes";
+import type { GameState } from "@/platform/game/types";
 
 function makeTutorialState(overrides: Partial<TutorialState> = {}): TutorialState {
   return {

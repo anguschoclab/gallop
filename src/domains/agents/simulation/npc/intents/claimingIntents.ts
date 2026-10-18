@@ -2,10 +2,10 @@ import type {
   ClaimingIntent,
   WithdrawFromClaimingIntent,
   RaceWithdrawalIntent,
-} from "@/core/resolver/intents";
-import type { GameState, Horse, Race, Stable } from "@/game/types";
-import { generateUUID } from "@/core/uuid";
-import { isHorseEligibleForClaimingPrice } from "@/core/market/claiming";
+} from "@/platform/resolver/intents";
+import type { GameState, Horse, Race, Stable } from "@/platform/game/types";
+import { generateUUID } from "@/shared/uuid/uuid";
+import { isHorseEligibleForClaimingPrice } from "@/domains/market/simulation/claiming";
 import { createClaimingAIState } from "@/domains/agents/simulation/claimingAITypes";
 import {
   shouldClaimHorse,

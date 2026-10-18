@@ -1,11 +1,11 @@
 import { describe, it, expect } from "vitest";
-import { SystemHandler } from "@/core/resolver/handlers/SystemHandler";
-import type { GameState } from "@/game/store/state";
+import { SystemHandler } from "@/platform/resolver/handlers/SystemHandler";
+import type { GameState } from "@/platform/game/store/state";
 import type {
   LogImpact,
   CampaignCreationImpact,
   CampaignFlagDismissalImpact,
-} from "@/core/resolver/impacts/index";
+} from "@/platform/resolver/impacts";
 
 describe("SystemHandler", () => {
   it("log pushes entry to draft.log", () => {

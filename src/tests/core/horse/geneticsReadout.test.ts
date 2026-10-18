@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { deriveHorseGenetics } from "@/core/horse/genetics-readout";
-import type { Horse } from "@/core/horse/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { deriveHorseGenetics } from "@/domains/horse/simulation/genetics-readout";
+import type { Horse } from "@/domains/horse/simulation/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeLocus(a: number, b: number): [number, number] {
   return [a, b];

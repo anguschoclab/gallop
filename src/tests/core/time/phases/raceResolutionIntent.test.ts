@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState } from "@/game/types";
-import type { AnyIntent } from "@/core/resolver/intents";
-import { createRng } from "@/core/common/rng";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { raceResolutionPhase } from "@/platform/time/phases/raceResolution";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { AnyIntent } from "@/platform/resolver/intents";
+import { createRng } from "@/shared/common/rng";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeMinimalState(races: Record<string, any> = {}): GameState {
   return {

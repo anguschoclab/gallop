@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { claimResolutionPhase } from "@/core/time/phases/claimResolution";
+import { claimResolutionPhase } from "@/platform/time/phases/claimResolution";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
 
 describe("claimResolutionPhase", () => {
   it("should return context unchanged when no claims today", () => {

@@ -9,8 +9,8 @@ import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { StaffNegotiationDialog } from "@/components/staff/StaffNegotiationDialog";
-import type { StaffMember } from "@/core/staff/staffTypes";
+import { StaffNegotiationDialog } from "@/domains/staff/ui/StaffNegotiationDialog";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { createAuctionRunner } from "@/core/auction/runner";
-import type { AuctionSale, AuctionLot, Horse, Stable } from "@/game/types";
-import type { StaffRole } from "@/core/staff/staffTypes";
+import { createAuctionRunner } from "@/domains/auction/simulation/runner";
+import type { AuctionSale, AuctionLot, Horse, Stable } from "@/platform/game/types";
+import type { StaffRole } from "@/domains/staff/model/staffTypes";
 import { createTestHorse } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 const PERSONALITIES: Stable["personality"][] = [
   "aggressive",

@@ -8,23 +8,23 @@
  * Related files: src/domains/agents/simulation/npc/npcRegionalDominance.ts (coordinator)
  */
 
-import type { Horse, Race, Stable } from "@/game/types";
-import type { ReputationEvent } from "@/core/reputation/reputationTypes";
-import type { Rng } from "@/core/common/rng";
+import type { Horse, Race, Stable } from "@/platform/game/types";
+import type { ReputationEvent } from "@/domains/reputation/model/reputationTypes";
+import type { Rng } from "@/shared/common/rng";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
-import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
-import { generateUUID } from "@/core/uuid";
-import type { NewsItem } from "@/core/narrative/newsTypes";
-import { isPlayerOwned } from "@/core/horse/ownership";
-import { asStableId } from "@/core/types/branded";
+import { RIVALRY_CONSTANTS } from "@/domains/stable/simulation/rivalry";
+import { generateUUID } from "@/shared/uuid/uuid";
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
+import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
+import { asStableId } from "@/shared/types/branded";
 import {
   generateRivalryEmergenceNews,
   generateGrudgeMatchNews,
   generateRegionLostNews,
   generateRivalryEscalationNews,
   generateStableIntroNews,
-} from "@/core/narrative/rivalryNewsGenerator";
+} from "@/domains/narrative/simulation/rivalryNewsGenerator";
 
 /** Result of processing a single race's regional dominance. */
 export interface RaceDominanceResult {

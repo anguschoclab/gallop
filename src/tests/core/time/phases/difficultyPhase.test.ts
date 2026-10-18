@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { difficultyPhase } from "@/core/time/phases/difficultyPhase";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { GameState, Horse, Race } from "@/game/types";
+import { difficultyPhase } from "@/platform/time/phases/difficultyPhase";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { GameState, Horse, Race } from "@/platform/game/types";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { asHorseId, asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { asHorseId, asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import type { DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
 
 function makeHorse(overrides: Omit<Partial<Horse>, "id"> & { id?: string } = {}): Horse {

@@ -16,7 +16,7 @@ import {
   recordJockeyOutcome,
   getJockeyInsights,
 } from "@/domains/agents/simulation/jockeyAIRetention";
-import type { Jockey, Horse, Stable, Race } from "@/game/types";
+import type { Jockey, Horse, Stable, Race } from "@/platform/game/types";
 import { createTestHorse, createTestStable, createTestJockey } from "@/tests/helpers";
 
 function createMockRace(overrides: Partial<Race> = {}): Race {

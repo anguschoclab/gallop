@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { raceFormPremium, worldRankings, RACE_FORM_PREMIUM_CAP } from "@/core/market/raceForm";
+import { raceFormPremium, worldRankings, RACE_FORM_PREMIUM_CAP } from "@/domains/market/simulation/raceForm";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { asHorseId } from "@/core/types/branded";
+import { asHorseId } from "@/shared/types/branded";
 
 const win = (day: number, grade?: string) => ({
   raceId: `r${day}`,

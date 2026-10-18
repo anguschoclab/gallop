@@ -2,13 +2,13 @@ import { describe, it, expect } from "vitest";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import type { GameState, PrivateSaleOffer, Horse, Stable, StablePersonality } from "@/game/types";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId, asStableId } from "@/core/types/branded";
-import { calculateLotValuation } from "@/core/auction/engine";
-import { attachmentAdjustedAsk, suggestedOfferTiers } from "@/core/horse/attachment";
-import { privateSaleResolutionPhase } from "@/core/time/phases/privateSaleResolution";
-import { ACCEPT_THRESHOLDS } from "@/constants/privateSaleConstants";
+import type { GameState, PrivateSaleOffer, Horse, Stable, StablePersonality } from "@/platform/game/types";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asHorseId, asStableId } from "@/shared/types/branded";
+import { calculateLotValuation } from "@/domains/auction/simulation/engine";
+import { attachmentAdjustedAsk, suggestedOfferTiers } from "@/domains/horse/simulation/attachment";
+import { privateSaleResolutionPhase } from "@/platform/time/phases/privateSaleResolution";
+import { ACCEPT_THRESHOLDS } from "@/domains/market/model/privateSaleConstants";
 
 const ALL_PERSONALITIES: StablePersonality[] = [
   "aggressive",

@@ -3,8 +3,8 @@ import {
   computePayoutSplits,
   sanitizeAndRankResults,
   detectPhotoFinish,
-} from "@/core/race/resolution";
-import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/constants";
+} from "@/domains/race/simulation/resolution";
+import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/domains/market/model/economicConstants";;
 
 describe("resolution", () => {
   describe("computePayoutSplits", () => {

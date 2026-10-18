@@ -10,9 +10,9 @@
  *   src/routes/npc-stables.rival-careers.tsx
  */
 
-import type { Horse, HorseRaceHistoryEntry, NpcCareerStage } from "@/core/horse/types";
+import type { Horse, HorseRaceHistoryEntry, NpcCareerStage } from "@/domains/horse/simulation/types";
 import { careerStage, careerStageLabel, summarizeNpcCareer } from "./careerTracker";
-import { getStableId } from "@/core/horse/ownership";
+import { getStableId } from "@/domains/horse/simulation/ownership";
 import { detectRivalMilestones, type RivalMilestoneKind } from "./careerMilestones";
 
 export interface RivalMilestoneRecord {

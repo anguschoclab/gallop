@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
-import { ALL_HANDLERS } from "@/core/resolver/handlers";
-import { INTENT_CAPABILITY_WAIVERS } from "@/core/resolver/intentCapabilityWaivers";
+import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
+import { ALL_HANDLERS } from "@/platform/resolver/handlers";
+import { INTENT_CAPABILITY_WAIVERS } from "@/platform/resolver/intentCapabilityWaivers";
 import {
   containsRuntimeContractLiteral,
   extractDiscriminatedContracts,

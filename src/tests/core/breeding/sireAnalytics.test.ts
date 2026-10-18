@@ -3,10 +3,10 @@ import {
   calculateAei,
   calculateProgenyWinPercentage,
   classifyStallion,
-} from "@/core/breeding/sireAnalytics";
-import { clearLineageCache } from "@/core/breeding/lineage";
+} from "@/domains/breeding/simulation/sireAnalytics";
+import { clearLineageCache } from "@/domains/breeding/simulation/lineage";
 import { createTestHorse } from "@/tests/helpers";
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 
 describe("sireAnalytics", () => {
   beforeEach(() => {

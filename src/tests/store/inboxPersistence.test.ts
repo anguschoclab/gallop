@@ -12,10 +12,10 @@
  */
 import { describe, it, expect } from "vitest";
 import { produce } from "immer";
-import { weatherPhase } from "@/core/time/phases/weatherPhase";
-import { InboxHandler } from "@/core/resolver/handlers/InboxHandler";
-import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/core/weather";
-import { createRng } from "@/core/common/rng";
+import { weatherPhase } from "@/platform/time/phases/weatherPhase";
+import { InboxHandler } from "@/platform/resolver/handlers/InboxHandler";
+import { stepWeather, PATTERN_SEVERITY, type WeatherState } from "@/domains/weather/simulation";
+import { createRng } from "@/shared/common/rng";
 import { r2r } from "@/tests/helpers/sampleGameState";
 
 // ─── helpers ────────────────────────────────────────────────────────────────
@@ -125,7 +125,7 @@ describe("Inbox persistence across reload — weather drama alerts", () => {
   it("'inbox' is present in PERSISTED_KEYS so messages survive page reloads", async () => {
     // We import the store index dynamically to read the runtime module-level constant.
     // The store itself is not instantiated; we just check the keys list.
-    const storeModule = await import("@/game/store/index");
+    const storeModule = await import("@/platform/game/store");
 
     // PERSISTED_KEYS is not exported directly, but its effect is captured in the
     // persist partialize function.  We verify by inspecting a real state round-trip

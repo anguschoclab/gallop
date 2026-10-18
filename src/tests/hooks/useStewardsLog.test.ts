@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import { useStewardsLog } from "@/hooks/stewards/useStewardsLog";
-import type { StewardsInquiry } from "@/core/stewards/stewardTypes";
-import { createStewardsInquiry, resolveInquiry } from "@/core/stewards/stewardTypes";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useStewardsLog } from "@/domains/stewards/application/hooks/useStewardsLog";
+import type { StewardsInquiry } from "@/domains/stewards/model/stewardTypes";
+import { createStewardsInquiry, resolveInquiry } from "@/domains/stewards/model/stewardTypes";
 
 function seedInquiries(inquiries: StewardsInquiry[]) {
   useGame.setState({ ...createDefaultGameState(), stewardsInquiries: inquiries });

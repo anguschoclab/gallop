@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { ReplayPlayer } from "@/components/race/ReplayPlayer";
-import type { Race } from "@/game/types";
+import { ReplayPlayer } from "@/domains/race/ui/ReplayPlayer";
+import type { Race } from "@/platform/game/types";
 
 vi.mock("@/game/store", () => ({
   useGameWithShallow: vi.fn(),
   useGame: vi.fn(),
 }));
 
-import { useGame } from "@/game/store";
+import { useGame } from "@/platform/game/store";
 
 function makeRace(overrides: Partial<Race> & { id: string }): Race {
   return {

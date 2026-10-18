@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useBookmarks, resetCache, type Bookmark } from "@/hooks/shared/useBookmarks";
+import { useBookmarks, resetCache, type Bookmark } from "@/platform/game/hooks/useBookmarks";
 
 const STORAGE_KEY = "gallop.bookmarks.v1";
 

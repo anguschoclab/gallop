@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { z } from "zod";
-import { RegionalTrendsWidget } from "@/components/dashboard/RegionalTrendsWidget";
-import { METRIC_MODES, DIST_PRESET_VALUES } from "@/constants/regionalConstants";
+import { RegionalTrendsWidget } from "@/domains/dashboard/ui/RegionalTrendsWidget";
+import { METRIC_MODES, DIST_PRESET_VALUES } from "@/shared/constants/regionalConstants";
 
 export const Route = createFileRoute("/regional-comparison")({
   validateSearch: z.object({

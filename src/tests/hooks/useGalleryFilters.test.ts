@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import type { Horse } from "@/core/horse/types";
+import type { Horse } from "@/domains/horse/simulation/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestGenotype } from "@/tests/helpers/createTestGenotype";
 
@@ -17,8 +17,8 @@ vi.mock("@/core/horse/stats", () => ({
   calculateOverallRating: (h: Horse) => h.potential ?? 50,
 }));
 
-import { useGalleryFilters } from "@/hooks/horse/useGalleryFilters";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { useGalleryFilters } from "@/domains/horse/application/hooks/useGalleryFilters";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 let mockState: any;
 

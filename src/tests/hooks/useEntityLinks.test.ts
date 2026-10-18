@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { useEntityLinks } from "@/hooks/shared/useEntityLinks";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useEntityLinks } from "@/platform/game/hooks/useEntityLinks";
 import { createTestHorse, createTestJockey, createTestStable } from "@/tests/helpers";
-import type { Race } from "@/core/race/types";
+import type { Race } from "@/domains/race/simulation/types";
 
 function mkRace(id: string, name: string): Race {
   return {

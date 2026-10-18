@@ -9,10 +9,10 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { TRACK_KOPPEN_MAP, getTrackKoppen } from "@/core/weather/trackKoppenMappings";
-import { KOPPEN_PROFILES } from "@/core/weather/koppenProfiles";
-import { ALL_KOPPEN_CODES, KOPPEN_DESCRIPTIONS } from "@/core/weather/koppenTypes";
-import TRACK_DATA from "@/data/tracks.json";
+import { TRACK_KOPPEN_MAP, getTrackKoppen } from "@/domains/weather/simulation/trackKoppenMappings";
+import { KOPPEN_PROFILES } from "@/domains/weather/simulation/koppenProfiles";
+import { ALL_KOPPEN_CODES, KOPPEN_DESCRIPTIONS } from "@/domains/weather/model/koppenTypes";
+import TRACK_DATA from "@/shared/data/tracks";
 
 describe("Koppen Climate System", () => {
   describe("Track Mappings", () => {

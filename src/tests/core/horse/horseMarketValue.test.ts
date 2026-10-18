@@ -3,7 +3,7 @@ import {
   horseMarketValue,
   horsePriceWithPedigree,
   estimateBreedingValue,
-} from "@/core/horse/pricing";
+} from "@/domains/horse/simulation/pricing";
 import {
   createTestColt,
   createTestStallion,

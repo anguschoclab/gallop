@@ -2,11 +2,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { screen, fireEvent } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { DebtBanner } from "@/components/dashboard/DebtBanner";
+import { DebtBanner } from "@/domains/dashboard/ui/DebtBanner";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { SOLVENCY_THRESHOLDS } from "@/core/financial/solvency";
-import { createDefaultUserSettings } from "@/core/settings/settingsTypes";
+import { SOLVENCY_THRESHOLDS } from "@/domains/financial/simulation/solvency";
+import { createDefaultUserSettings } from "@/domains/settings/model/settingsTypes";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

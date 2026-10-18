@@ -6,10 +6,10 @@ import {
   expectedBeyer,
   detectPatternJump,
   calculateBeyerForResult,
-} from "@/core/race/beyer";
+} from "@/domains/race/simulation/beyer";
 import { createTestHorse } from "@/tests/helpers";
-import type { CourseSpecification } from "@/data/tracks";
-import { BEYER_MIN, BEYER_MAX, BEYER_BASE } from "@/constants";
+import type { CourseSpecification } from "@/shared/data/tracks";
+import { BEYER_MIN, BEYER_MAX, BEYER_BASE } from "@/domains/race/model/raceSimulationConstants";;
 
 describe("beyer.ts", () => {
   describe("distanceBucket", () => {

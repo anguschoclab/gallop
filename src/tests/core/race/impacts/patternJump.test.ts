@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
-import { generatePatternJumpImpact } from "@/core/race/impacts/patternJump";
+import { generatePatternJumpImpact } from "@/domains/race/simulation/impacts/patternJump";
 import { createTestHorse, createTestRng } from "@/tests/helpers";
-import type { Race } from "@/game/types";
+import type { Race } from "@/platform/game/types";
 
 describe("generatePatternJumpImpact", () => {
   const testHorse = createTestHorse({ id: "horse1" });

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { SyndicateMarket } from "@/components/market/SyndicateMarket";
+import { SyndicateMarket } from "@/domains/market/ui/SyndicateMarket";
 
 vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn() },

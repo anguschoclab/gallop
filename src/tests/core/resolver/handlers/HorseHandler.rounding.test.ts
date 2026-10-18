@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { HorseHandler } from "@/core/resolver/handlers/HorseHandler";
-import type { GameState } from "@/game/store/state";
+import { HorseHandler } from "@/platform/resolver/handlers/HorseHandler";
+import type { GameState } from "@/platform/game/store/state";
 import type {
   HorseStatImpact,
   EnergyImpact,
@@ -9,9 +9,9 @@ import type {
   RecoveryImpact,
   FitnessImpact,
   FatigueImpact,
-} from "@/core/resolver/impacts/index";
+} from "@/platform/resolver/impacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 
 function mkState(horse: Partial<Horse>): GameState {
   return {

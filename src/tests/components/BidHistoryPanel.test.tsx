@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup } from "@testing-library/react";
-import { BidHistoryPanel } from "@/components/auction/BidHistoryPanel";
+import { BidHistoryPanel } from "@/domains/auction/ui/BidHistoryPanel";
 import { createTestStable } from "@/tests/helpers";
-import type { AuctionBidRecord, Stable } from "@/game/types";
+import type { AuctionBidRecord, Stable } from "@/platform/game/types";
 
 function mkBid(stableId: string | undefined, amount: number, tick: number): AuctionBidRecord {
   return { stableId, amount, tick };

@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { createInitialState } from "@/game/store/initialization";
-import type { NewGameOptions } from "@/game/store/state";
-import { isPlayerOwned } from "@/core/horse/ownership";
+import { createInitialState } from "@/platform/game/store/initialization";
+import type { NewGameOptions } from "@/platform/game/store/state";
+import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const mockProfile = {
   stableName: "Alignment Test Stable",

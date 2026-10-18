@@ -2,33 +2,33 @@ import { useMemo } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { Briefcase, Search, Sparkles } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
-import { useGame, useGameWithShallow } from "@/game/store";
-import type { GameState } from "@/game/types";
-import { formatCurrency } from "@/lib/formatting";
+import { Input } from "@/shared/ui/input";
+import { Card, CardContent } from "@/shared/ui/card";
+import { useGame, useGameWithShallow } from "@/platform/game/store";
+import type { GameState } from "@/platform/game/types";
+import { formatCurrency } from "@/shared/common/formatting";;
 import {
   buildStablePortfolios,
   portfolioTotals,
   sortPortfolios,
   derivePlayerRaceWins,
   type PortfolioSortKey,
-} from "@/services/stable/stableFacade";
-import { getPrestigeTier } from "@/services/prestige/prestigeFacade";
-import { StatCard } from "@/components/common/StatCard";
-import { PillToggleGroup } from "@/components/common/PillToggleGroup";
-import { PortfolioTable } from "@/components/portfolio/PortfolioTable";
-import { BiddingHistoryTable } from "@/components/portfolio/BiddingHistoryTable";
-import { RaceWinsTable } from "@/components/portfolio/RaceWinsTable";
-import { RaceWinsDashboard } from "@/components/portfolio/RaceWinsDashboard";
-import { PeriodComparison } from "@/components/portfolio/PeriodComparison";
-import { SyndicateStakesPage } from "@/components/syndicates/SyndicateStakesPage";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
+} from "@/domains/stable/application/stableFacade";
+import { getPrestigeTier } from "@/domains/prestige/application/prestigeFacade";
+import { StatCard } from "@/shared/ui/common/StatCard";
+import { PillToggleGroup } from "@/shared/ui/common/PillToggleGroup";
+import { PortfolioTable } from "@/domains/portfolio/ui/PortfolioTable";
+import { BiddingHistoryTable } from "@/domains/portfolio/ui/BiddingHistoryTable";
+import { RaceWinsTable } from "@/domains/portfolio/ui/RaceWinsTable";
+import { RaceWinsDashboard } from "@/domains/portfolio/ui/RaceWinsDashboard";
+import { PeriodComparison } from "@/domains/portfolio/ui/PeriodComparison";
+import { SyndicateStakesPage } from "@/domains/syndicates/ui/SyndicateStakesPage";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { Switch } from "@/shared/ui/switch";
+import { Label } from "@/shared/ui/label";
+import { Button } from "@/shared/ui/button";
 import { toast } from "sonner";
-import { useCompareStables, MAX_COMPARE } from "@/hooks/stable/useCompareStables";
+import { useCompareStables, MAX_COMPARE } from "@/domains/stable/application/hooks/useCompareStables";
 
 const PAGE_SIZE = 10;
 

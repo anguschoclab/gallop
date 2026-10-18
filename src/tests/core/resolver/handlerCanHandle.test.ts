@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ALL_HANDLERS } from "@/core/resolver/handlers";
+import { ALL_HANDLERS } from "@/platform/resolver/handlers";
 
 const KNOWN_TYPES: Record<string, string[]> = {
   HorseHandler: ["horse_stat_change", "injury", "energy_change"],

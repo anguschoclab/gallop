@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { computeDistanceScaling } from "@/core/race/engine/runnerBuilder";
+import { computeDistanceScaling } from "@/domains/race/simulation/engine/runnerBuilder";
 
 describe("computeDistanceScaling", () => {
   it("returns neutral values when race distance equals preferred distance", () => {

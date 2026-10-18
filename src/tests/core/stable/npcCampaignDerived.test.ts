@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { compareWithPlayer, deriveNpcCampaignProgress } from "@/core/stable/npcCampaignDerived";
-import type { GoalProgress } from "@/core/stable/stableGoals";
+import { compareWithPlayer, deriveNpcCampaignProgress } from "@/domains/stable/simulation/npcCampaignDerived";
+import type { GoalProgress } from "@/domains/stable/simulation/stableGoals";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers";
-import { horseMarketValue } from "@/core/horse/pricing";
+import { horseMarketValue } from "@/domains/horse/simulation/pricing";
 
 const run = (
   day: number,

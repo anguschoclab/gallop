@@ -3,15 +3,15 @@ import {
   calculateAwardPoints,
   determineRegionalWinners,
   determineAllRegionalWinners,
-} from "@/core/awards/scoring";
-import type { Horse, HorseRaceHistoryEntry } from "@/core/horse/types";
-import type { Race } from "@/core/race/types";
+} from "@/domains/awards/simulation/scoring";
+import type { Horse, HorseRaceHistoryEntry } from "@/domains/horse/simulation/types";
+import type { Race } from "@/domains/race/simulation/types";
 import {
   NorthAmericanCategory,
   AsiaPacificCategory,
   RegionalAwardCategory,
-} from "@/core/awards/types";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
+} from "@/domains/awards/model/types";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("awards/scoring (PR #490)", () => {
   const createMockHorse = (

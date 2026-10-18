@@ -9,9 +9,9 @@ import {
   pedigreeDepth,
   countStubs,
   MAX_PERSISTED_PEDIGREE_DEPTH,
-} from "@/core/persistence/pedigreePrune";
-import type { PedigreeNode } from "@/core/breeding/types";
-import type { Horse } from "@/core/horse/types";
+} from "@/platform/persistence/pedigreePrune";
+import type { PedigreeNode } from "@/domains/breeding/model/types";
+import type { Horse } from "@/domains/horse/simulation/types";
 
 function makeDeepPedigree(depth: number, generation: number = 0): PedigreeNode {
   if (depth <= 0) {

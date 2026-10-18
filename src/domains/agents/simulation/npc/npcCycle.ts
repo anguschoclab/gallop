@@ -8,18 +8,18 @@
  * Related files: intentGenerators.ts (provides intent generation)
  */
 
-import type { Horse, Race, Stable, Jockey } from "@/game/types";
-import type { ReputationEvent } from "@/core/reputation/reputationTypes";
-import type { Rng } from "@/core/common/rng";
+import type { Horse, Race, Stable, Jockey } from "@/platform/game/types";
+import type { ReputationEvent } from "@/domains/reputation/model/reputationTypes";
+import type { Rng } from "@/shared/common/rng";
 import {
   NpcAIManager,
   getOrCreateStableAIState,
   updateStableAIState,
   pruneAllLearningData,
 } from "@/domains/agents/simulation/npcCycleAI";
-import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
-import type { NewsItem } from "@/core/narrative/newsTypes";
-import { calculateFanGainsForRaces } from "@/core/horse/fans";
+import type { PlayerFacilities } from "@/domains/facilities/model/facilityTypes";
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";
+import { calculateFanGainsForRaces } from "@/domains/horse/simulation/fans";
 import { calculateFameGainsForRaces } from "./npcFame";
 import { resolveRegionalDominance, applyFrictionDecay } from "./npcRegionalDominance";
 

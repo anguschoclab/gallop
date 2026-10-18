@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { validateHorseName } from "@/core/horse/naming/jockeyClubRules";
-import { generateProceduralHorseName } from "@/core/horse/naming/nameGenerator";
-import { createRng } from "@/core/common/rng";
-import type { ReservedNameEntry } from "@/core/horse/naming/reservedNames";
+import { validateHorseName } from "@/domains/horse/simulation/naming/jockeyClubRules";
+import { generateProceduralHorseName } from "@/domains/horse/simulation/naming/nameGenerator";
+import { createRng } from "@/shared/common/rng";
+import type { ReservedNameEntry } from "@/domains/horse/simulation/naming/reservedNames";
 
 describe("Horse Naming System", () => {
   describe("Jockey Club Rules", () => {

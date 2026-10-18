@@ -1,11 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import { EngineClient } from "@/core/engine/client";
-import { LocalTransport } from "@/core/engine/transports";
-import { SimulationEngine } from "@/core/engine/engine";
-import { parseCommand, parseCancel } from "@/core/engine/protocol";
-import type { EngineEvent, AdvanceCommand } from "@/core/engine/protocol";
+import { EngineClient } from "@/platform/engine/client";
+import { LocalTransport } from "@/platform/engine/transports";
+import { SimulationEngine } from "@/platform/engine/engine";
+import { parseCommand, parseCancel } from "@/platform/engine/protocol";
+import type { EngineEvent, AdvanceCommand } from "@/platform/engine/protocol";
 
 function makeClient(engine = new SimulationEngine()) {
   const transport = new LocalTransport(engine);

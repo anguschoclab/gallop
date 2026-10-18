@@ -6,8 +6,8 @@ import {
   makePlayerOwned,
   makeNpcOwned,
   makeUnowned,
-} from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+} from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 describe("Store ownership transitions use ownership field", () => {
   it("quickSellHorse should set ownership to unowned (not owned: false)", () => {

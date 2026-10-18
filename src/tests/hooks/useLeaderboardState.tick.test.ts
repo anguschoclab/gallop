@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useLeaderboardState } from "@/hooks/race/useLeaderboardState";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { Race } from "@/core/race/types";
-import { DEFAULT_GATE } from "@/constants/gateConstants";
-import { makeUnowned } from "@/core/horse/ownership";
+import { useLeaderboardState } from "@/domains/race/application/hooks/useLeaderboardState";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import type { Race } from "@/domains/race/simulation/types";
+import { DEFAULT_GATE } from "@/domains/race/model/gateConstants";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 

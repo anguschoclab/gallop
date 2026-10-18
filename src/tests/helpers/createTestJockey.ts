@@ -5,8 +5,8 @@ import type {
   JockeyTrait,
   JockeySilk,
   JockeySilkPattern,
-} from "@/game/types";
-import { asJockeyId } from "@/core/types/branded";
+} from "@/platform/game/types";
+import { asJockeyId } from "@/shared/types/branded";
 
 /**
  * Creates a valid test jockey stats object.

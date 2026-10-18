@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { runNpcCycle } from "@/domains/agents/simulation/npc/npcCycle";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import { createRng } from "@/core/common/rng";
-import type { PlayerFacilities } from "@/core/facilities";
-import { createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
+import { createRng } from "@/shared/common/rng";
+import type { PlayerFacilities } from "@/domains/facilities/simulation";
+import { createDefaultPlayerFacilities } from "@/domains/facilities/simulation/facilityDefaults";
 
 describe("npcCycle facility ownership", () => {
   it("does not mutate NPC facilities outside the intent/impact contract", () => {

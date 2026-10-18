@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { isLotEligible } from "@/core/auction/engine";
+import { isLotEligible } from "@/domains/auction/simulation/engine";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 
 describe("isLotEligible", () => {

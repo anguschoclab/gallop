@@ -1,14 +1,14 @@
 import { describe, it, expect } from "vitest";
-import { MarketHandler } from "@/core/resolver/handlers/MarketHandler";
-import type { GameState } from "@/game/store/state";
+import { MarketHandler } from "@/platform/resolver/handlers/MarketHandler";
+import type { GameState } from "@/platform/game/store/state";
 import type {
   ScoutReportImpact,
   ConsignmentImpact,
   ConsignmentWithdrawalImpact,
   AuctionResolutionImpact,
-} from "@/core/resolver/impacts/index";
+} from "@/platform/resolver/impacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 
 describe("MarketHandler", () => {
   it("scout_report pushes report to draft.scoutReports", () => {

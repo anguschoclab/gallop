@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateDirectiveChangeNews } from "@/services/narrative/directiveNewsGenerator";
+import { generateDirectiveChangeNews } from "@/domains/narrative/simulation/directiveNewsGenerator";;
 import type { StrategicDirective } from "@/domains/agents/simulation/strategicCoordinator";
 
 describe("generateDirectiveChangeNews", () => {

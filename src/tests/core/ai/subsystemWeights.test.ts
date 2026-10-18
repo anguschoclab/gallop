@@ -16,9 +16,9 @@ import { shouldTrainToday, createTrainingAIState } from "@/domains/agents/simula
 import { shouldClaimHorse } from "@/domains/agents/simulation/claimingAIRecording";
 import { createClaimingAIState } from "@/domains/agents/simulation/claimingAITypes";
 import { shouldGeldHorse, createGeldingAIState } from "@/domains/agents/simulation/geldingAI";
-import type { Stable, Horse } from "@/game/types";
+import type { Stable, Horse } from "@/platform/game/types";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({
@@ -134,7 +134,7 @@ describe("Subsystem Weight Application", () => {
         entries: [],
         resolved: false,
         claimingPrice: 25000,
-      } as unknown as import("@/core/race/types").Race;
+      } as unknown as import("@/domains/race/simulation/types").Race;
 
       const claimingAI = createClaimingAIState(stable);
 

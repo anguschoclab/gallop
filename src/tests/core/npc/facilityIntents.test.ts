@@ -3,8 +3,8 @@ import { generateNpcFacilityUpgradeIntents } from "@/domains/agents/simulation/n
 import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createFacilityAIState } from "@/domains/agents/simulation/facilityAITypes";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import type { PlayerFacilities } from "@/core/facilities";
-import { createDefaultPlayerFacilities } from "@/core/facilities/facilityDefaults";
+import type { PlayerFacilities } from "@/domains/facilities/simulation";
+import { createDefaultPlayerFacilities } from "@/domains/facilities/simulation/facilityDefaults";
 
 describe("generateNpcFacilityUpgradeIntents", () => {
   it("does not commit an upgrade that exceeds both stable cash and the facilities reservation", () => {

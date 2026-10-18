@@ -3,11 +3,11 @@ import {
   generateJockeyReport,
   jockeyGradeColorClass,
   type JockeyReportGrade,
-} from "@/core/race/jockeyReport";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { SectionalSplit, SectionalEntry } from "@/core/race/types";
-import type { Jockey, JockeyStats } from "@/core/jockey/types";
-import type { Horse } from "@/game/types";
+} from "@/domains/race/simulation/jockeyReport";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import type { SectionalSplit, SectionalEntry } from "@/domains/race/simulation/types";
+import type { Jockey, JockeyStats } from "@/domains/jockey/model/types";
+import type { Horse } from "@/platform/game/types";
 
 function makeEntry(horseId: string, rank: number): SectionalEntry {
   return {

@@ -10,6 +10,6 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/npc-stables/$stableId")({
-  component: lazyRouteComponent(() => import("@/components/routes/NpcStableDetailPage")),
+  component: lazyRouteComponent(() => import("@/domains/agents/ui/pages/NpcStableDetailPage")),
   validateSearch: zodValidator(searchSchema),
 });

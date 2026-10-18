@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { SpeedBreakdownChart } from "@/components/race/SpeedBreakdownChart";
-import type { RaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
+import { SpeedBreakdownChart } from "@/domains/race/ui/SpeedBreakdownChart";
+import type { RaceSnapshot } from "@/domains/race/model/engine/raceSnapshotTypes";
 
 vi.mock("recharts", () => {
   const Line = (props: Record<string, unknown>) => (

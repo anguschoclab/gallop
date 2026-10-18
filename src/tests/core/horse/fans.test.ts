@@ -4,27 +4,10 @@ import {
   calculateFanGainsForRaces,
   applyFanGainsToHorses,
   applyFanDecay,
-} from "@/core/horse/fans";
+} from "@/domains/horse/simulation/fans";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Race } from "@/game/types";
-import {
-  FANS_PER_FAME_POINT,
-  FAN_GAIN_G1_WIN,
-  FAN_GAIN_G2_WIN,
-  FAN_GAIN_G3_WIN,
-  FAN_GAIN_OTHER_WIN,
-  FAN_GAIN_TOP3_G1,
-  FAN_GAIN_TOP3_G2,
-  FAN_GAIN_TOP3_G3,
-  FAN_GAIN_TOP3_OTHER,
-  FAN_GAIN_TOP5,
-  FAN_BONUS_LARGE_PURSE,
-  FAN_BONUS_MEDIUM_PURSE,
-  FAN_DAILY_DECAY_RATE,
-  FAN_DECAY_GRACE_DAYS,
-  LARGE_PURSE_THRESHOLD,
-  MEDIUM_PURSE_THRESHOLD,
-} from "@/constants";
+import type { Race } from "@/platform/game/types";
+import { FANS_PER_FAME_POINT, FAN_GAIN_G1_WIN, FAN_GAIN_G2_WIN, FAN_GAIN_G3_WIN, FAN_GAIN_OTHER_WIN, FAN_GAIN_TOP3_G1, FAN_GAIN_TOP3_G2, FAN_GAIN_TOP3_G3, FAN_GAIN_TOP3_OTHER, FAN_GAIN_TOP5, FAN_BONUS_LARGE_PURSE, FAN_BONUS_MEDIUM_PURSE, FAN_DAILY_DECAY_RATE, FAN_DECAY_GRACE_DAYS, LARGE_PURSE_THRESHOLD, MEDIUM_PURSE_THRESHOLD } from "@/domains/prestige/model/fameConstants";;
 
 function createRaceWithResult(
   overrides: Partial<Race> & {

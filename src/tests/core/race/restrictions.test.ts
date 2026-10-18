@@ -3,7 +3,7 @@ import {
   formatAgeRestrictions,
   formatGenderRestriction,
   formatAllRestrictions,
-} from "@/core/race/restrictions";
+} from "@/domains/race/simulation/restrictions";
 
 describe("formatAgeRestrictions", () => {
   it("undefined → empty string", () => expect(formatAgeRestrictions(undefined)).toBe(""));

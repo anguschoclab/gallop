@@ -1,13 +1,13 @@
 import { describe, it, expect, afterEach } from "vitest";
-import { evaluateCashPressure, applyCashPressureToThreshold } from "@/core/stable/cashPressure";
+import { evaluateCashPressure, applyCashPressureToThreshold } from "@/domains/stable/simulation/cashPressure";
 import {
   setCashPressureTuningOverrides,
   resetCashPressureTuningOverrides,
   getCashPressureTuning,
-} from "@/core/stable/cashPressureTuning";
-import { UPKEEP_PER_HORSE } from "@/constants/economicConstants";
+} from "@/domains/stable/simulation/cashPressureTuning";
+import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import { asHorseId } from "@/core/types/branded";
+import { asHorseId } from "@/shared/types/branded";
 
 const roster = (n: number) => Array.from({ length: n }, (_, i) => asHorseId(`h${i}`));
 

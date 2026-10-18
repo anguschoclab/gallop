@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { stewardsPhase } from "@/core/time/phases/stewardsPhase";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { StewardsInquiryIntent } from "@/core/resolver/systemIntents";
-import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
-import { createRng } from "@/core/common/rng";
+import { stewardsPhase } from "@/platform/time/phases/stewardsPhase";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { StewardsInquiryIntent } from "@/platform/resolver/systemIntents";
+import type { GameState } from "@/platform/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { createRng } from "@/shared/common/rng";
 
 describe("stewardsPhase: StewardsInquiryIntent processing", () => {
   it("processes StewardsInquiryIntent into an inquiry impact", () => {

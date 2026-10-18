@@ -5,7 +5,7 @@ import {
   formatOdds,
   createBettingPool,
   updateOdds,
-} from "@/core/odds/oddsTypes";
+} from "@/domains/odds/model/oddsTypes";
 
 describe("oddsTypes", () => {
   describe("calculateWinProbability", () => {

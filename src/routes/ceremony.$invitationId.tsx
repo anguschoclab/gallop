@@ -1,23 +1,23 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
-import type { GameState } from "@/game/types";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useGame } from "@/platform/game/store";
+import type { GameState } from "@/platform/game/types";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Badge } from "@/shared/ui/badge";
 import { Award, CalendarClock, MapPin, Trophy } from "lucide-react";
 import {
   REGION_AWARD_NAMES,
   CATEGORY_DISPLAY_NAMES,
   CATEGORY_DESCRIPTIONS,
-} from "@/services/awards/awardsFacade";
-import { formatDate, dayOfYear } from "@/services/calendar/calendarFacade";
+} from "@/domains/awards/application/awardsFacade";
+import { formatDate, dayOfYear } from "@/domains/calendar/application/calendarFacade";
 import {
   getInvitationOutcome,
   isCeremonyHeld,
   type AwardCeremonyInvitation,
-} from "@/services/awards/awardsFacade";
-import { CeremonyRsvpControls } from "@/components/awards/CeremonyRsvpControls";
-import { BackLink } from "@/components/charts/BackLink";
-import { InvitationAuditLog } from "@/components/awards/InvitationAuditLog";
+} from "@/domains/awards/application/awardsFacade";
+import { CeremonyRsvpControls } from "@/domains/awards/ui/CeremonyRsvpControls";
+import { BackLink } from "@/shared/ui/charts/BackLink";
+import { InvitationAuditLog } from "@/domains/awards/ui/InvitationAuditLog";
 
 export const Route = createFileRoute("/ceremony/$invitationId")({
   head: () => ({

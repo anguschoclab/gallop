@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
-import { createRacingSlice } from "@/game/store/slices/racingSlice";
-import type { StoreGet } from "@/game/store/types";
-import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { createRacingSlice } from "@/platform/game/store/slices/racingSlice";
+import type { StoreGet } from "@/platform/game/store/types";
+import { createDefaultFoalDevelopmentArc } from "@/domains/horse/simulation/foalDevelopment";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeMockState(horseOverrides: Partial<Horse> = {}) {
   const arc = createDefaultFoalDevelopmentArc(0);

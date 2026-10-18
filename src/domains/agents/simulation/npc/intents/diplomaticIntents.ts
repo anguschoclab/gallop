@@ -2,9 +2,9 @@ import type {
   AnyIntent,
   DiplomaticActionIntent,
   CartelActionIntent,
-} from "@/core/resolver/intents";
-import type { GameState, Stable } from "@/game/types";
-import { generateUUID } from "@/core/uuid";
+} from "@/platform/resolver/intents";
+import type { GameState, Stable } from "@/platform/game/types";
+import { generateUUID } from "@/shared/uuid/uuid";
 import type { StableAIState, NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
 export function generateNpcDiplomaticIntents(

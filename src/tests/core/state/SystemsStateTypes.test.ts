@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createDefaultSystemsState } from "@/game/store/state/systemsState";
+import { createDefaultSystemsState } from "@/platform/game/store/state/systemsState";
 
 describe("SystemsState types", () => {
   it("createDefaultSystemsState includes outposts: []", () => {

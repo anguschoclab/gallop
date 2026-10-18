@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { NarrativeState } from "@/services/narrative/narrativeState";
-import type { CommentaryLine } from "@/services/narrative/types";
+import { NarrativeState } from "@/domains/narrative/application/narrativeState";
+import type { CommentaryLine } from "@/domains/narrative/model/types";
 
 function makeLine(overrides: Partial<CommentaryLine> = {}): CommentaryLine {
   return {

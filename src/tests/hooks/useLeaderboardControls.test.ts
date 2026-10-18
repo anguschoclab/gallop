@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useLeaderboardControls } from "@/hooks/leaderboard/useLeaderboardControls";
+import { useLeaderboardControls } from "@/domains/leaderboard/application/hooks/useLeaderboardControls";
 
 interface TestItem {
   v: number;

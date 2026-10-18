@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { JockeyLearningInsights } from "@/components/race/JockeyLearningInsights";
+import { JockeyLearningInsights } from "@/domains/race/ui/JockeyLearningInsights";
 
 vi.mock("@/lib/cn", () => ({
   cn: (...args: any[]) => args.filter(Boolean).join(" "),

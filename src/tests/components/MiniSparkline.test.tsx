@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
-import { MiniSparkline } from "@/components/stable/MiniSparkline";
+import { MiniSparkline } from "@/domains/stable/ui/MiniSparkline";
 
 describe("MiniSparkline", () => {
   it("renders an svg with a polyline when data has >= 2 points", () => {

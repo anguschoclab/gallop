@@ -1,17 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { resolveFoaling } from "@/core/horse/foaling";
+import { resolveFoaling } from "@/domains/horse/simulation/foaling";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Pregnancy } from "@/game/types";
-import {
-  FOALING_AGE_RISK_THRESHOLD,
-  FOALING_AGE_RISK_MULTIPLIER,
-  FOALING_BASE_COMPLICATION_RATE,
-} from "@/constants";
+import type { Pregnancy } from "@/platform/game/types";
+import { FOALING_AGE_RISK_THRESHOLD, FOALING_AGE_RISK_MULTIPLIER, FOALING_BASE_COMPLICATION_RATE } from "@/domains/breeding/model/breedingConstants";;
 
 let mockSequence: number[] = [];
 
 vi.mock("@/core/common/rng", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/core/common/rng")>();
+  const actual = await importOriginal<typeof import("@/shared/common/rng")>();
   return {
     ...actual,
     createRng: () => {

@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { recordFinish } from "@/hooks/race/useLiveRaceSimulation";
-import { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { makeUnowned } from "@/core/horse/ownership";
+import { recordFinish } from "@/domains/race/application/hooks/useLiveRaceSimulation";
+import { compareFinishOrder } from "@/domains/race/simulation/engine/compareFinishOrder";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {

@@ -1,9 +1,9 @@
 // src/test-utils/renderWithStore.tsx
 import { render, type RenderResult } from "@testing-library/react";
 import type { ReactElement } from "react";
-import { useGame } from "@/game/store";
-import { createDefaultGameState } from "@/game/store/state";
-import type { GameState } from "@/game/types";
+import { useGame } from "@/platform/game/store";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import type { GameState } from "@/platform/game/types";
 
 /**
  * Reset the real store to default data (preserving action methods) with optional

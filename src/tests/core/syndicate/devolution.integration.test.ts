@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { SyndicationHandler } from "@/core/resolver/handlers/SyndicationHandler";
-import type { GameState } from "@/game/types";
-import type { Horse } from "@/game/types";
-import type { ShareTransactionImpact } from "@/core/resolver/impacts/breedingImpacts";
+import { SyndicationHandler } from "@/platform/resolver/handlers/SyndicationHandler";
+import type { GameState } from "@/platform/game/types";
+import type { Horse } from "@/platform/game/types";
+import type { ShareTransactionImpact } from "@/platform/resolver/impacts/breedingImpacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { asOwnerKey, asHorseId } from "@/core/types/branded";
+import { asOwnerKey, asHorseId } from "@/shared/types/branded";
 
 function makeStallion(id: string, name: string, stableId?: string): Horse {
   return {

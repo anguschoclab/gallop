@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { deriveFoalInheritance } from "@/core/horse/foal-inheritance";
-import type { Horse } from "@/core/horse/types";
+import { deriveFoalInheritance } from "@/domains/horse/simulation/foal-inheritance";
+import type { Horse } from "@/domains/horse/simulation/types";
 
 function horseWith(
   stats: Partial<Record<"speed" | "stamina" | "acceleration" | "consistency", number>>,

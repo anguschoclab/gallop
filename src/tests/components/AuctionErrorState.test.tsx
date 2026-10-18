@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { AuctionErrorState } from "@/components/auction/AuctionStates";
+import { AuctionErrorState } from "@/domains/auction/ui/AuctionStates";
 
 describe("AuctionErrorState", () => {
   it("renders message text correctly", () => {

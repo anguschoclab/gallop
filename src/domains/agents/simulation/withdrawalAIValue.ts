@@ -4,8 +4,8 @@
  * Extracted from withdrawalAI.ts for modularity.
  */
 
-import type { Horse, Race, Stable } from "@/game/types";
-import { calculateOverallRating } from "@/core/horse/stats";
+import type { Horse, Race, Stable } from "@/platform/game/types";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import type { WithdrawalAIState } from "./withdrawalAITypes";
 
 export function calculateWithdrawalRisk(

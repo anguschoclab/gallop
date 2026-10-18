@@ -3,8 +3,8 @@ import {
   filterRacesByCriteria,
   separateUpcomingAndPast,
   sortRacesByDay,
-} from "@/core/race/filtering";
-import type { Race } from "@/game/types";
+} from "@/domains/race/simulation/filtering";
+import type { Race } from "@/platform/game/types";
 
 function mkRace(overrides: Partial<Race> = {}): Race {
   return {

@@ -1,10 +1,10 @@
 import { describe, it, expect, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
-import { NpcSyndicateIntentPanel } from "@/components/market/NpcSyndicateIntentPanel";
-import type { Horse, Stable } from "@/game/types";
-import type { Syndicate } from "@/core/breeding/types";
+import { NpcSyndicateIntentPanel } from "@/domains/market/ui/NpcSyndicateIntentPanel";
+import type { Horse, Stable } from "@/platform/game/types";
+import type { Syndicate } from "@/domains/breeding/model/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeStallion(g1Wins: number): Horse {
   return {

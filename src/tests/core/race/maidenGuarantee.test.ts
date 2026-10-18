@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { ensureMaidenRaces, ensureMaidenInCard, ensure2yoRaces } from "@/core/race/maidenGuarantee";
-import { createRng } from "@/core/common/rng";
-import type { Race } from "@/game/types";
-import type { Track } from "@/data/tracks";
-import { TWOYO_DISTANCE_BANDS, TWOYO_AGE } from "@/constants";
+import { ensureMaidenRaces, ensureMaidenInCard, ensure2yoRaces } from "@/domains/race/simulation/maidenGuarantee";
+import { createRng } from "@/shared/common/rng";
+import type { Race } from "@/platform/game/types";
+import type { Track } from "@/shared/data/tracks";
+import { TWOYO_DISTANCE_BANDS, TWOYO_AGE } from "@/domains/race/model/raceClassificationConstants";;
 
 function mkRace(overrides: Partial<Race> = {}): Race {
   const base: Race = {

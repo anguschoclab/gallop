@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
-import { RecapTab } from "@/components/briefing/RecapTab";
+import { RecapTab } from "@/domains/briefing/ui/RecapTab";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => children,

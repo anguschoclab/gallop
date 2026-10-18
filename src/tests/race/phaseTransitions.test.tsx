@@ -166,8 +166,8 @@ vi.mock("@/components/race/raceVisualHelpers", async (importOriginal) => {
 });
 
 // ── Import after mocks ───────────────────────────────────────────────────────
-import LiveRace from "@/components/routes/LiveRace";
-import { makeUnowned } from "@/core/horse/ownership";
+import LiveRace from "@/domains/race/ui/pages/LiveRace";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 // jsdom doesn't implement ResizeObserver.
 class ResizeObserverMock {

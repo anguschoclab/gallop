@@ -16,7 +16,7 @@ import {
   getImportedDataset,
   clearImportedDataset,
   IMPORT_TEMPLATE_CSV,
-} from "@/services/storage/importedRealWorldService";
+} from "@/platform/persistence/storage/importedRealWorldService";
 
 beforeEach(() => {
   clearImportedDataset();

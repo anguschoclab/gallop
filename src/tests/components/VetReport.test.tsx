@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { screen, fireEvent } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { VetReport } from "@/components/health/VetReport";
+import { VetReport } from "@/domains/health/ui/VetReport";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { ActiveInjury } from "@/game/types";
+import type { ActiveInjury } from "@/platform/game/types";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { useRaceEntry } from "@/hooks/race/useRaceEntry";
+import { useRaceEntry } from "@/domains/race/application/hooks/useRaceEntry";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { Race } from "@/game/types";
-import { asJockeyId } from "@/core/types/branded";
+import type { Race } from "@/platform/game/types";
+import { asJockeyId } from "@/shared/types/branded";
 
 function claimingRace(): Race {
   return {

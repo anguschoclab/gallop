@@ -1,4 +1,4 @@
-import { asNpcStableId } from "@/core/types/branded";
+import { asNpcStableId } from "@/shared/types/branded";
 /**
  * Integration tests for rivalry escalation news generation in npcCycle.
  *
@@ -8,11 +8,11 @@ import { asNpcStableId } from "@/core/types/branded";
 
 import { describe, it, expect, beforeEach } from "vitest";
 import { runNpcCycle } from "@/domains/agents/simulation/npc/npcCycle";
-import { createRng } from "@/core/common/rng";
-import type { Horse, Race, Stable, Jockey } from "@/game/types";
+import { createRng } from "@/shared/common/rng";
+import type { Horse, Race, Stable, Jockey } from "@/platform/game/types";
 import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const DAY = 100;
 const REGION = "North America (East)";

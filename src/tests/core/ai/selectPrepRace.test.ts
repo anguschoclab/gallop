@@ -8,8 +8,8 @@
 
 import { describe, it, expect } from "vitest";
 import { selectPrepRace } from "@/domains/agents/simulation/campaignTargeting";
-import { GRADED_RACES_BY_KEY } from "@/data/gradedRaces";
-import type { GradedRace } from "@/data/gradedRaces";
+import { GRADED_RACES_BY_KEY } from "@/shared/data/gradedRaces";
+import type { GradedRace } from "@/shared/data/gradedRaces";
 
 const targetKey = "woodbine-mile";
 const targetRace = GRADED_RACES_BY_KEY.get(targetKey)!;

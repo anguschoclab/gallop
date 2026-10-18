@@ -1,12 +1,12 @@
 import { describe, it, expect, vi } from "vitest";
-import { createBreedingSlice } from "@/game/store/slices/breedingSlice";
-import type { StoreGet } from "@/game/store/types";
+import { createBreedingSlice } from "@/platform/game/store/slices/breedingSlice";
+import type { StoreGet } from "@/platform/game/store/types";
 import { createTestMare, createTestStallion } from "@/tests/helpers";
-import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE, MAX_BATCH_BREEDING } from "@/constants";
-import type { Horse, StudCareer, Pregnancy } from "@/game/types";
-import type { MatingPlanEntry } from "@/game/store/state/breedingState";
-import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE, MAX_BATCH_BREEDING } from "@/domains/breeding/model/breedingConstants";;
+import type { Horse, StudCareer, Pregnancy } from "@/platform/game/types";
+import type { MatingPlanEntry } from "@/platform/game/store/state/breedingState";
+import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 function mkStud(overrides: Partial<StudCareer> = {}): StudCareer {
   return {

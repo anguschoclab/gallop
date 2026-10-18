@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { InboxHandler } from "@/core/resolver/handlers/InboxHandler";
-import type { GameState } from "@/game/store/state";
-import type { InboxImpact } from "@/core/resolver/impacts/index";
+import { InboxHandler } from "@/platform/resolver/handlers/InboxHandler";
+import type { GameState } from "@/platform/game/store/state";
+import type { InboxImpact } from "@/platform/resolver/impacts";
 
 describe("InboxHandler", () => {
   it("inbox_message pushes message with generated ID and day", () => {

@@ -14,18 +14,18 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Building2 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Sparkline } from "@/components/charts/Sparkline";
-import { SilkDot } from "@/components/SilkDot";
-import { PillToggleGroup } from "@/components/common/PillToggleGroup";
-import { useGameWithShallow } from "@/game/store";
-import { formatCurrency } from "@/lib/formatting";
-import type { StableRankingsHistory, StableRankingsSnapshot } from "@/core/stable/stableRankings";
-import { getStableReputationTierMeta } from "@/core/stable/stableReputationTier";
-import { formatReputationTier } from "@/core/reputation";
-import { PLAYER_OWNER_ID } from "@/core/horse/ownership";
+import { Card, CardContent } from "@/shared/ui/card";
+import { Input } from "@/shared/ui/input";
+import { Badge } from "@/shared/ui/badge";
+import { Sparkline } from "@/shared/ui/charts/Sparkline";
+import { SilkDot } from "@/domains/shell/ui/SilkDot";
+import { PillToggleGroup } from "@/shared/ui/common/PillToggleGroup";
+import { useGameWithShallow } from "@/platform/game/store";
+import { formatCurrency } from "@/shared/common/formatting";;
+import type { StableRankingsHistory, StableRankingsSnapshot } from "@/domains/stable/simulation/stableRankings";
+import { getStableReputationTierMeta } from "@/domains/stable/simulation/stableReputationTier";
+import { formatReputationTier } from "@/domains/reputation/simulation";
+import { PLAYER_OWNER_ID } from "@/domains/horse/simulation/ownership";
 
 const EMPTY_HISTORY: StableRankingsHistory = {};
 

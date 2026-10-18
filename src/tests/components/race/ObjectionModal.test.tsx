@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { ObjectionModal } from "@/components/race/ObjectionModal";
-import type { Race } from "@/game/types";
+import { ObjectionModal } from "@/domains/race/ui/ObjectionModal";
+import type { Race } from "@/platform/game/types";
 
 describe("ObjectionModal component", () => {
   const mockRace: Race = {

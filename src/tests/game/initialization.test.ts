@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { createInitialState } from "@/game/store/initialization";
-import { calculateOverallRating } from "@/core/horse/stats";
-import type { NewGameOptions } from "@/game/store/state";
+import { createInitialState } from "@/platform/game/store/initialization";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
+import type { NewGameOptions } from "@/platform/game/store/state";
 
 const mockProfile = {
   stableName: "Test Stable",

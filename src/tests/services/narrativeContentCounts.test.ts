@@ -1,17 +1,17 @@
 import { describe, it, expect } from "vitest";
-import { FLAVOR_STORIES, ALL_FLAVOR_STORIES } from "@/services/narrative/flavorStories";
+import { FLAVOR_STORIES, ALL_FLAVOR_STORIES } from "@/domains/narrative/simulation/flavorStories";;
 import {
   ATMOSPHERE_LONG_STRAIGHT_TEMPLATES,
   ATMOSPHERE_TIGHT_TURN_TEMPLATES,
   ATMOSPHERE_GRADED_TEMPLATES,
   ATMOSPHERE_TRIPLE_CROWN_TEMPLATES,
   ATMOSPHERE_ELEVATION_TEMPLATES,
-} from "@/assets/narrative/atmosphereTemplates";
+} from "@/shared/assets/narrative/atmosphereTemplates";
 import {
   JOCKEY_TRAIT_TEMPLATES,
   JOCKEY_MOVE_TEMPLATES,
   JOCKEY_TACTIC_TEMPLATES,
-} from "@/assets/narrative/jockeyTemplates";
+} from "@/shared/assets/narrative/jockeyTemplates";
 
 describe("content counts: flavor stories (#379)", () => {
   it("has at least 180 flavor stories total", () => {

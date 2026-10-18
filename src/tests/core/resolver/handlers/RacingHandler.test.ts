@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { RacingHandler } from "@/core/resolver/handlers/RacingHandler";
-import type { GameState } from "@/game/store/state";
-import type { Horse } from "@/game/types";
+import { RacingHandler } from "@/platform/resolver/handlers/RacingHandler";
+import type { GameState } from "@/platform/game/store/state";
+import type { Horse } from "@/platform/game/types";
 import type {
   RaceEntryImpact,
   RaceWithdrawalImpact,
@@ -9,18 +9,18 @@ import type {
   ClaimingImpact,
   TacticsImpact,
   RaceResultAdjustmentImpact,
-} from "@/core/resolver/impacts/index";
+} from "@/platform/resolver/impacts";
 import type {
   JockeyContractImpact,
   JockeyAssignmentImpact,
   JockeySilkImpact,
   JockeyStatsImpact,
   JockeyAffinityImpact,
-} from "@/core/resolver/impacts/index";
-import type { TripleCrownProgressImpact } from "@/core/resolver/impacts/index";
+} from "@/platform/resolver/impacts";
+import type { TripleCrownProgressImpact } from "@/platform/resolver/impacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import type { Race } from "@/game/types";
-import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import type { Race } from "@/platform/game/types";
+import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("RacingHandler", () => {
   it("race_entry adds entry to race", () => {

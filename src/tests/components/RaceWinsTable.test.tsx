@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { RaceWinsTable } from "@/components/portfolio/RaceWinsTable";
-import type { PlayerRaceWinRecord } from "@/core/stable/raceWins";
+import { RaceWinsTable } from "@/domains/portfolio/ui/RaceWinsTable";
+import type { PlayerRaceWinRecord } from "@/domains/stable/simulation/raceWins";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

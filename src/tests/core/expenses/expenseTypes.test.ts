@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
-import {
-  createExpense,
-  groupExpensesByCategory,
-  filterExpensesByDayRange,
-  calculateCategoryTotal,
-} from "@/core/expenses";
-import type { Expense } from "@/core/expenses";
+import { createExpense, groupExpensesByCategory, filterExpensesByDayRange, calculateCategoryTotal } from "@/domains/expenses/model/expenseTypes";;;
+import type { Expense } from "@/domains/expenses/model/expenseTypes";;;
 
 describe("Expense Types & Utility Functions", () => {
   describe("createExpense", () => {

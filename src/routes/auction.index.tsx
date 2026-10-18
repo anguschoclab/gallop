@@ -1,28 +1,28 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useGame, useGameWithShallow } from "@/game/store";
-import { useAuctions } from "@/hooks/game/useMarketState";
-import type { GameState } from "@/game/types";
+import { useGame, useGameWithShallow } from "@/platform/game/store";
+import { useAuctions } from "@/platform/game/hooks/useMarketState";
+import type { GameState } from "@/platform/game/types";
 import { useState, useMemo } from "react";
-import { Badge } from "@/components/ui/badge";
-import { dayOfYear } from "@/services/calendar/calendarFacade";
-import { SALE_TRIGGERS } from "@/services/auction/auctionFacade";
-import { isLotEligible } from "@/services/auction/auctionFacade";
-import { CONSIGNMENT_COMMISSION } from "@/constants";
+import { Badge } from "@/shared/ui/badge";
+import { dayOfYear } from "@/domains/calendar/application/calendarFacade";
+import { SALE_TRIGGERS } from "@/domains/auction/application/auctionFacade";
+import { isLotEligible } from "@/domains/auction/application/auctionFacade";
+import { CONSIGNMENT_COMMISSION } from "@/domains/market/model/economicConstants";;
 import { Gavel } from "lucide-react";
-import { NumericValue } from "@/components/horse/HorseBits";
-import { ConsignDialog } from "@/components/auction/ConsignDialog";
-import { ConsignmentSidebar } from "@/components/auction/ConsignmentSidebar";
-import { TransactionArchive } from "@/components/auction/TransactionArchive";
-import { LiveExchangeFloor } from "@/components/auction/LiveExchangeFloor";
-import { UpcomingLedgerTable } from "@/components/auction/UpcomingLedgerTable";
-import type { AuctionSale, Horse } from "@/game/types";
+import { NumericValue } from "@/domains/horse/ui/HorseBits";
+import { ConsignDialog } from "@/domains/auction/ui/ConsignDialog";
+import { ConsignmentSidebar } from "@/domains/auction/ui/ConsignmentSidebar";
+import { TransactionArchive } from "@/domains/auction/ui/TransactionArchive";
+import { LiveExchangeFloor } from "@/domains/auction/ui/LiveExchangeFloor";
+import { UpcomingLedgerTable } from "@/domains/auction/ui/UpcomingLedgerTable";
+import type { AuctionSale, Horse } from "@/platform/game/types";
 import {
   canAccessSale,
   getReputationTier,
   formatReputationTier,
-} from "@/services/reputation/reputationFacade";
-import type { AuctionSaleKind } from "@/services/market/marketFacade";
-import { isPlayerOwned } from "@/services/horse/horseFacade";
+} from "@/domains/reputation/application/reputationFacade";
+import type { AuctionSaleKind } from "@/domains/market/application/marketFacade";
+import { isPlayerOwned } from "@/domains/horse/application/horseFacade";
 
 type SaleDisplay =
   | AuctionSale

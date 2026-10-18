@@ -1,7 +1,7 @@
-import type { Pregnancy } from "@/core/breeding/types";
+import type { Pregnancy } from "@/domains/breeding/model/types";
 import { describe, it, expect } from "vitest";
-import { BreedingHandler } from "@/core/resolver/handlers/BreedingHandler";
-import type { GameState } from "@/game/store/state";
+import { BreedingHandler } from "@/platform/resolver/handlers/BreedingHandler";
+import type { GameState } from "@/platform/game/store/state";
 import type {
   UpdateStudFeeImpact,
   StudCareerImpact,
@@ -9,8 +9,8 @@ import type {
   PregnancyUpdateImpact,
   PregnancyDeletionImpact,
   MareFoalingUpdateImpact,
-} from "@/core/resolver/impacts/index";
-import type { BlueHenImpact } from "@/core/resolver/impacts/index";
+} from "@/platform/resolver/impacts";
+import type { BlueHenImpact } from "@/platform/resolver/impacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("BreedingHandler", () => {
@@ -316,5 +316,5 @@ describe("BreedingHandler", () => {
     expect(handler.canHandle("cash_change")).toBe(false);
   });
 });
-import type { Horse } from "@/game/types";
-import { asHorseId } from "@/core/types/branded";
+import type { Horse } from "@/platform/game/types";
+import { asHorseId } from "@/shared/types/branded";

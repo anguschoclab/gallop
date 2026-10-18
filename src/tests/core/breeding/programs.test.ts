@@ -3,10 +3,10 @@ import {
   calculateGeneticDistance,
   updateProgramProgress,
   createBreedingProgram,
-} from "@/core/breeding/programs";
-import { ORIGINAL_ARCHETYPES } from "@/core/breeding/archetypes";
+} from "@/domains/breeding/simulation/programs";
+import { ORIGINAL_ARCHETYPES } from "@/domains/breeding/simulation/archetypes";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Archetype } from "@/core/breeding/archetypes";
+import type { Archetype } from "@/domains/breeding/simulation/archetypes";
 
 describe("programs", () => {
   describe("calculateGeneticDistance", () => {

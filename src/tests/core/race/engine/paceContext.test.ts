@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { computePaceContext } from "@/core/race/engine/paceContext";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
+import { computePaceContext } from "@/domains/race/simulation/engine/paceContext";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {

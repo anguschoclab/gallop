@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { runRaceToCompletion } from "@/core/race/engine/simulation";
-import { buildRunner } from "@/core/race/engine/runnerBuilder";
-import { createRng, hashStr } from "@/core/common/rng";
-import type { Horse, HorseGender } from "@/game/types";
-import type { Genotype } from "@/core/genetics/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { runRaceToCompletion } from "@/domains/race/simulation/engine/simulation";
+import { buildRunner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { createRng, hashStr } from "@/shared/common/rng";
+import type { Horse, HorseGender } from "@/platform/game/types";
+import type { Genotype } from "@/domains/genetics/model/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 // Mock Horse generator
 function mockHorse(

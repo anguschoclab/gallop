@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { stallionRetirementPhase } from "@/core/time/phases/stallionRetirement";
+import { stallionRetirementPhase } from "@/platform/time/phases/stallionRetirement";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 describe("stallionRetirementPhase", () => {
   it("should skip non-NPC horses", () => {

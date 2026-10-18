@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { StableCompareTable } from "@/components/stable/StableCompareTable";
+import { StableCompareTable } from "@/domains/stable/ui/StableCompareTable";
 import { createTestStable } from "@/tests/helpers";
-import type { StablePersonality } from "@/game/types";
+import type { StablePersonality } from "@/platform/game/types";
 
 const horses = Array.from({ length: 10 }, (_, i) => `h${i}`) as unknown as never[];
 

@@ -7,7 +7,7 @@ vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
 }));
 
-import { StaffTeamList } from "@/components/staff/StaffTeamList";
+import { StaffTeamList } from "@/domains/staff/ui/StaffTeamList";
 
 interface TestStaff {
   id: string;

@@ -26,9 +26,9 @@ vi.mock("@/core/race/headToHead", () => ({
   ]),
 }));
 
-import { HorseCompare } from "@/components/horse/HorseCompare";
-import type { Horse } from "@/game/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { HorseCompare } from "@/domains/horse/ui/HorseCompare";
+import type { Horse } from "@/platform/game/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({

@@ -9,14 +9,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import type { MutableRefObject } from "react";
-import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
+import type { CommentaryLine } from "@/domains/narrative/application/commentaryGenerator";
 
 function makeQueue(lines: CommentaryLine[] = []): MutableRefObject<CommentaryLine[]> {
   return { current: lines } as MutableRefObject<CommentaryLine[]>;
 }
 
 // Import after mocks — the module doesn't exist yet, so this will fail (RED).
-import { useCommentaryFeed } from "@/hooks/race/useCommentaryFeed";
+import { useCommentaryFeed } from "@/domains/race/application/hooks/useCommentaryFeed";
 
 function makeLine(id: string, text: string, horseId?: string): CommentaryLine {
   return {

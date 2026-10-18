@@ -10,8 +10,8 @@ import { describe, it, expect, afterEach, vi } from "vitest";
 import { cleanup, screen, within } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestHorse } from "@/tests/helpers";
-import { createDefaultFoalDevelopmentArc } from "@/core/horse/foalDevelopment";
-import type { Horse } from "@/core/horse/types";
+import { createDefaultFoalDevelopmentArc } from "@/domains/horse/simulation/foalDevelopment";
+import type { Horse } from "@/domains/horse/simulation/types";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, to, params }: any) => (
@@ -25,9 +25,9 @@ vi.mock("@tanstack/react-router", () => ({
   ),
 }));
 
-import { FoalDevelopmentPanel } from "@/components/horse/FoalDevelopmentPanel";
+import { FoalDevelopmentPanel } from "@/domains/horse/ui/FoalDevelopmentPanel";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeHorse(overrides: Partial<Horse> = {}) {
   return createTestHorse({

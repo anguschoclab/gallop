@@ -6,11 +6,11 @@ import {
   previewSeizure,
   SOLVENCY_THRESHOLDS,
   type SellableHorse,
-} from "@/core/financial/solvency";
+} from "@/domains/financial/simulation/solvency";
 import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import { horsePrice } from "@/core/horse/pricing";
-import { asHorseId } from "@/core/types/branded";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { horsePrice } from "@/domains/horse/simulation/pricing";
+import { asHorseId } from "@/shared/types/branded";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("deriveSolvencyState", () => {
   it("returns healthy for non-negative cash", () => {

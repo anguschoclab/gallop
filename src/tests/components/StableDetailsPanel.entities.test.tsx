@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
-import { StableDetailsPanel } from "@/components/dashboard/StableDetailsPanel";
-import type { StandingEntry } from "@/core/standings/computeStandings";
+import { StableDetailsPanel } from "@/domains/dashboard/ui/StableDetailsPanel";
+import type { StandingEntry } from "@/domains/standings/simulation/computeStandings";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

@@ -7,13 +7,13 @@
  * interruption/resume revision chaining.
  */
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
-import { useGame } from "@/game/store";
+import { useGame } from "@/platform/game/store";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
-import { EngineClient, type EngineTransport } from "@/core/engine/client";
-import type { EngineCommand, EngineEvent } from "@/core/engine/protocol";
-import { _setEngineClientForTests } from "@/game/store/engineClient";
-import type { GameState } from "@/game/types";
+import { EngineClient, type EngineTransport } from "@/platform/engine/client";
+import type { EngineCommand, EngineEvent } from "@/platform/engine/protocol";
+import { _setEngineClientForTests } from "@/platform/game/store/engineClient";
+import type { GameState } from "@/platform/game/types";
 
 /** Scriptable transport: captures commands, emits events on demand. */
 class FakeTransport implements EngineTransport {

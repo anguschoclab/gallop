@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { asNpcStableId } from "@/core/types/branded";
-import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 /**
  * Regression tests for files using `: any` type annotations.
@@ -29,7 +29,7 @@ import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
 describe("`any` type regression: storage.ts", () => {
   it("createRehydrateStore returns a function", async () => {
-    const { createRehydrateStore } = await import("@/game/store/storage");
+    const { createRehydrateStore } = await import("@/platform/game/store/storage");
     const rehydrate = createRehydrateStore({} as any);
     expect(typeof rehydrate).toBe("function");
   });

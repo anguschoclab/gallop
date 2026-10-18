@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { rollForInjury } from "@/core/health/healthSystem";
-import { createRng } from "@/core/common/rng";
-import type { Horse } from "@/game/types";
-import type { StaffMember } from "@/core/staff/staffTypes";
+import { rollForInjury } from "@/domains/health/simulation/healthSystem";
+import { createRng } from "@/shared/common/rng";
+import type { Horse } from "@/platform/game/types";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makeNpcOwned } from "@/core/horse/ownership";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("Health System - Injury Rolls", () => {
   const mockHorse = createTestHorse({

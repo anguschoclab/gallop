@@ -14,11 +14,11 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { exportHorsePortraitPng } from "@/core/horse/exportPortrait";
-import type { Horse } from "@/game/types";
+import { exportHorsePortraitPng } from "@/domains/horse/ui/exportPortrait";
+import type { Horse } from "@/platform/game/types";
 import { makeAppearanceDNA } from "@/tests/helpers/sampleGameState";
 import { renderToStaticMarkup } from "react-dom/server";
-import { getOrDeriveAppearance } from "@/core/horse/proceduralPortrait";
+import { getOrDeriveAppearance } from "@/domains/horse/simulation/proceduralPortrait";
 import { createElement } from "react";
 
 // Mock React server-side rendering

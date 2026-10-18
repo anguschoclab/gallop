@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { canUpgradeFacility } from "@/core/reputation/reputationGating";
-import { getReputationTier } from "@/core/reputation/reputationTypes";
-import type { FacilityLevel } from "@/core/facilities";
+import { canUpgradeFacility } from "@/domains/reputation/simulation/reputationGating";
+import { getReputationTier } from "@/domains/reputation/model/reputationTypes";
+import type { FacilityLevel } from "@/domains/facilities/simulation";
 
 describe("facility gating integration", () => {
   // Simulates the check that facilitySlice will perform

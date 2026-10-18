@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { JockeySelectionStep } from "@/components/race/JockeySelectionStep";
-import type { Horse, Jockey } from "@/game/types";
-import type { JockeyStats } from "@/core/jockey/types";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { JockeySelectionStep } from "@/domains/race/ui/JockeySelectionStep";
+import type { Horse, Jockey } from "@/platform/game/types";
+import type { JockeyStats } from "@/domains/jockey/model/types";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@/components/jockey/JockeyCard", () => ({
   JockeyCard: () => <div data-testid="jockey-card" />,

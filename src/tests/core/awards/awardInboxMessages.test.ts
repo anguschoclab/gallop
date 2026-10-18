@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { generateAwardInboxMessage } from "@/core/awards/awardInboxMessages";
-import type { RegionalAward } from "@/core/awards/types";
+import { generateAwardInboxMessage } from "@/domains/awards/simulation/awardInboxMessages";
+import type { RegionalAward } from "@/domains/awards/model/types";
 
 function createMockAward(overrides: Partial<RegionalAward> = {}): RegionalAward {
   return {

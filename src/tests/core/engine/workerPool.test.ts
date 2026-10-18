@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { BoundedPool, runSerial } from "@/core/engine/workerPool";
-import type { PartitionedJob } from "@/core/engine/workerPool";
+import { BoundedPool, runSerial } from "@/platform/engine/workerPool";
+import type { PartitionedJob } from "@/platform/engine/workerPool";
 
 function sumJob(id: string, input: number[]): PartitionedJob<number[], number> {
   return { id, input, run: (nums) => nums.reduce((a, b) => a + b, 0) };

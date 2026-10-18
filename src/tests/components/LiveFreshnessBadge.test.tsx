@@ -9,7 +9,7 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, act } from "@testing-library/react";
-import { LiveFreshnessBadge } from "@/components/race/LiveFreshnessBadge";
+import { LiveFreshnessBadge } from "@/domains/race/ui/LiveFreshnessBadge";
 
 describe("LiveFreshnessBadge — Level transitions at 3s and 5s boundaries", () => {
   const BASE_TIME = 1_700_000_000_000;

@@ -6,10 +6,10 @@ import {
   calculateNpcBid,
   generateAuctionLots,
   resolveAuctionSale,
-} from "@/core/auction/engine";
+} from "@/domains/auction/simulation/engine";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { createRng } from "@/core/common/rng";
-import { CONSIGNMENT_COMMISSION } from "@/constants";
+import { createRng } from "@/shared/common/rng";
+import { CONSIGNMENT_COMMISSION } from "@/domains/market/model/economicConstants";;
 
 describe("netProceeds", () => {
   it("should return hammer price minus commission", () => {

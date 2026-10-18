@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { resolveFoaling } from "@/core/horse/horseFactory";
-import type { Horse, Pregnancy, GameState } from "@/game/types";
+import { resolveFoaling } from "@/domains/horse/simulation/horseFactory";
+import type { Horse, Pregnancy, GameState } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({

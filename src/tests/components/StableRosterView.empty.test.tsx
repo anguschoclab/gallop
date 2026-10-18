@@ -13,8 +13,8 @@ vi.mock("@tanstack/react-router", () => ({
   useSearch: () => ({}),
 }));
 
-import { StableRosterView } from "@/components/stable/StableRosterView";
-import type { Horse } from "@/game/types";
+import { StableRosterView } from "@/domains/stable/ui/StableRosterView";
+import type { Horse } from "@/platform/game/types";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({

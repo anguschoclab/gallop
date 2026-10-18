@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { calculateWindEffect } from "@/core/race/engine/windEffects";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import type { CourseSpecification, TrackSection } from "@/core/data/tracksAccessor";
+import { calculateWindEffect } from "@/domains/race/simulation/engine/windEffects";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import type { CourseSpecification, TrackSection } from "@/shared/data/accessors/tracksAccessor";
 import {
   WIND_EFFECT_SCALE,
   SPRINTER_WIND_MULTIPLIER,
@@ -10,8 +10,8 @@ import {
   HEADWIND_STAMINA_PENALTY,
   TAILWIND_STAMINA_RELIEF,
   LONG_STRAIGHT_THRESHOLD,
-} from "@/core/race/engine/constants";
-import * as trackGeometry from "@/core/race/engine/trackGeometry";
+} from "@/domains/race/model/engine/constants";
+import * as trackGeometry from "@/domains/race/simulation/engine/trackGeometry";
 
 describe("calculateWindEffect", () => {
   const mockRunner: Runner = {

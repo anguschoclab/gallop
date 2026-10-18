@@ -10,8 +10,8 @@
  */
 import { describe, it, expect, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { InRunningSnapshotDialog } from "@/components/race/InRunningSnapshotDialog";
-import type { InRunningSnapshot } from "@/hooks/race/useInRunningSnapshots";
+import { InRunningSnapshotDialog } from "@/domains/race/ui/InRunningSnapshotDialog";
+import type { InRunningSnapshot } from "@/domains/race/application/hooks/useInRunningSnapshots";
 
 function createMockSnapshot(overrides: Partial<InRunningSnapshot> = {}): InRunningSnapshot {
   return {

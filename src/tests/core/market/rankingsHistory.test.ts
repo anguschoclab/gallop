@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { RANKINGS_HISTORY_MAX_ENTRIES, recordRankingsHistory } from "@/core/market/rankingsHistory";
-import { compareRankingsForDay } from "@/core/market/rankingsComparison";
+import { RANKINGS_HISTORY_MAX_ENTRIES, recordRankingsHistory } from "@/domains/market/simulation/rankingsHistory";
+import { compareRankingsForDay } from "@/domains/market/simulation/rankingsComparison";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { asHorseId } from "@/core/types/branded";
-import type { Horse } from "@/core/horse/types";
+import { asHorseId } from "@/shared/types/branded";
+import type { Horse } from "@/domains/horse/simulation/types";
 
 const win = (day: number, grade?: string) => ({
   raceId: `r${day}`,

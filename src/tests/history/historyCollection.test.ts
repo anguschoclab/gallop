@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
-import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
-import { PipelineContext } from "@/core/time/pipeline";
-import { Race, Horse } from "@/game/types";
+import { raceResolutionPhase } from "@/platform/time/phases/raceResolution";
+import { PipelineContext } from "@/platform/time/pipeline";
+import { Race, Horse } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 // Mock simulateRace to return a G1 win
 vi.mock("@/core/race/raceSimulationExecutor", () => ({

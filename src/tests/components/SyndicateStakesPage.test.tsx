@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { SyndicateStakesPage } from "@/components/syndicates/SyndicateStakesPage";
-import type { PlayerSyndicateStake } from "@/core/breeding/syndicateStakes";
+import { SyndicateStakesPage } from "@/domains/syndicates/ui/SyndicateStakesPage";
+import type { PlayerSyndicateStake } from "@/domains/breeding/simulation/syndicateStakes";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

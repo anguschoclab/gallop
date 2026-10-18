@@ -3,8 +3,8 @@ import "@/tests/setup";
 import { describe, it, expect, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { HorseBenchmarkDialog } from "@/components/history/HorseBenchmarkDialog";
-import type { Race } from "@/core/race/types";
+import { HorseBenchmarkDialog } from "@/domains/history/ui/HorseBenchmarkDialog";
+import type { Race } from "@/domains/race/simulation/types";
 
 describe("HorseBenchmarkDialog", () => {
   beforeEach(() => {

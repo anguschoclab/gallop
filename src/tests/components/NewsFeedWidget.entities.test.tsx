@@ -2,10 +2,10 @@ import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { NewsFeedWidget } from "@/components/dashboard/NewsFeedWidget";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { NewsFeedWidget } from "@/domains/dashboard/ui/NewsFeedWidget";
 import { createTestHorse } from "@/tests/helpers";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

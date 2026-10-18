@@ -1,22 +1,22 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Badge } from "@/shared/ui/badge";
+import { Button } from "@/shared/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { useGame } from "@/game/store";
-import { isPlayerOwned } from "@/core/horse/ownership";
-import { adviseRace, adviceToInstructions } from "@/core/tactics/raceAdvisor";
-import type { Horse } from "@/game/types";
-import { addJournalEntry } from "@/core/tactics/strategyJournal";
-import { goalProgress, goalRaceBonus } from "@/core/stable/stableGoals";
+} from "@/shared/ui/select";
+import { useGame } from "@/platform/game/store";
+import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
+import { adviseRace, adviceToInstructions } from "@/domains/tactics/simulation/raceAdvisor";
+import type { Horse } from "@/platform/game/types";
+import { addJournalEntry } from "@/domains/tactics/simulation/strategyJournal";
+import { goalProgress, goalRaceBonus } from "@/domains/stable/simulation/stableGoals";
 import { Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/race-advisor")({

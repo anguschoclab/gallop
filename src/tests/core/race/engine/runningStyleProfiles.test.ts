@@ -3,8 +3,8 @@ import {
   getDynamicProfile,
   RUNNING_STYLE_PROFILES,
   getRunningStyleProfile,
-} from "@/core/race/engine/runningStyleProfiles";
-import type { RunningStyle } from "@/core/horse/types";
+} from "@/domains/race/simulation/engine/runningStyleProfiles";
+import type { RunningStyle } from "@/domains/horse/simulation/types";
 
 describe("runningStyleProfiles", () => {
   describe("getRunningStyleProfile (static)", () => {

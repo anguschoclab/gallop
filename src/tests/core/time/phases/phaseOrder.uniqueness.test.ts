@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
+import { GAME_PIPELINE_PHASES } from "@/platform/time/phases";
 
 describe("Phase order uniqueness", () => {
   it("T44: no two phases share the same order value", () => {

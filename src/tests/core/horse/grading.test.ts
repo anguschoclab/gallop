@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { scoutGrade, gradeColorClass } from "@/core/horse/grading";
+import { scoutGrade, gradeColorClass } from "@/domains/horse/simulation/grading";
 
 describe("grading", () => {
   describe("scoutGrade", () => {

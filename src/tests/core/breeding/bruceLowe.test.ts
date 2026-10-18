@@ -5,8 +5,8 @@ import {
   RUNNING_FAMILIES,
   SIRE_FAMILIES,
   rollProceduralFamily,
-} from "@/core/breeding/bruceLowe";
-import type { Horse } from "@/game/types";
+} from "@/domains/breeding/simulation/bruceLowe";
+import type { Horse } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
 

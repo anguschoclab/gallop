@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { generateNpcTrainingIntents } from "@/domains/agents/simulation/npc/intents/trainingIntents";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { GameState } from "@/game/types";
-import { TRAINING_CAUTION_MIN_ENERGY } from "@/constants/financialDistressConstants";
+import type { GameState } from "@/platform/game/types";
+import { TRAINING_CAUTION_MIN_ENERGY } from "@/domains/financial/model/financialDistressConstants";
 
 // Mock the AI functions to ensure deterministic behavior
 vi.mock("@/domains/agents/simulation/trainingAI", () => ({

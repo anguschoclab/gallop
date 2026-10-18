@@ -10,8 +10,8 @@ import {
   calculateAwardPoints,
   determineRegionalWinners,
   determineAllRegionalWinners,
-} from "@/core/awards/scoring";
-import type { Horse, Race } from "@/game/types";
+} from "@/domains/awards/simulation/scoring";
+import type { Horse, Race } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
 
 function mkRace(

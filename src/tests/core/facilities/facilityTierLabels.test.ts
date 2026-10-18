@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { FACILITY_TIER_LABELS, facilityLevelToTierLabel } from "@/core/facilities/facilityTypes";
-import type { FacilityLevel } from "@/core/facilities";
+import { FACILITY_TIER_LABELS, facilityLevelToTierLabel } from "@/domains/facilities/model/facilityTypes";
+import type { FacilityLevel } from "@/domains/facilities/simulation";
 
 describe("FACILITY_TIER_LABELS", () => {
   it("maps basic to Tier 01", () => {

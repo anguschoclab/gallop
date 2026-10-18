@@ -7,14 +7,14 @@
  * separate RNG stream and cannot perturb race outcomes.
  */
 import { describe, it, expect } from "vitest";
-import { RaceSimulationSession } from "@/core/race/engine/raceSession";
-import { NarrativeGenerator } from "@/services/narrative/narrativeService";
-import { createRng } from "@/core/common/rng";
-import type { Race, Horse, Stable } from "@/game/types";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { RaceSimulationSession } from "@/domains/race/simulation/engine/raceSession";
+import { NarrativeGenerator } from "@/domains/narrative/application/narrativeService";
+import { createRng } from "@/shared/common/rng";
+import type { Race, Horse, Stable } from "@/platform/game/types";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import { createTestJockey } from "@/tests/helpers";
-import { asJockeyId } from "@/core/types/branded";
+import { asJockeyId } from "@/shared/types/branded";
 
 function makeJockey() {
   return createTestJockey({

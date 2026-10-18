@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { AiActivityFeed } from "@/components/npc/AiActivityFeed";
-import type { NewsItem } from "@/services/narrative/newsTypes";
+import { AiActivityFeed } from "@/domains/agents/ui/AiActivityFeed";
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
 
 function createMockNews(overrides: Partial<NewsItem> = {}): NewsItem {
   return {

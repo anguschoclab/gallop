@@ -25,9 +25,9 @@ vi.mock("@/game/store/storage", () => ({
   saveGameStateToIDB: mockSaveGameStateToIDB,
 }));
 
-import * as saveManager from "@/services/storage/saveManager";
-import type { GameState } from "@/game/types";
-import { createDefaultGameState } from "@/game/store/state";
+import * as saveManager from "@/platform/persistence/storage/saveManager";
+import type { GameState } from "@/platform/game/types";
+import { createDefaultGameState } from "@/platform/game/store/state";
 
 describe("saveManager", () => {
   const mockGameState: GameState = {

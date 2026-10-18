@@ -19,10 +19,10 @@ if (!globalThis.IntersectionObserver) {
   } as unknown as typeof IntersectionObserver;
 }
 
-import { HorseDetail } from "@/components/routes/HorseDetail";
+import { HorseDetail } from "@/domains/horse/ui/pages/HorseDetail";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 
 describe("HorseDetail surfacing", () => {
   const testHorse: Horse = createTestHorse({

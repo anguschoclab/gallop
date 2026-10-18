@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateRiderFeedback } from "@/core/horse/trialFeedback";
+import { generateRiderFeedback } from "@/domains/horse/simulation/trialFeedback";
 
 function makeHorse(overrides: any = {}) {
   return {

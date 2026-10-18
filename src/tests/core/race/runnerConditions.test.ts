@@ -1,17 +1,13 @@
-import { makeUnowned } from "@/core/horse/ownership";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 import { describe, it, expect } from "vitest";
 import {
   buildFieldContext,
   deriveRunnerConditions,
   deriveRunnerMood,
-} from "@/core/race/runnerConditions";
-import type { MoodSignal } from "@/core/race/runnerConditions";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import {
-  MOOD_BASE_SCORE,
-  MOOD_DEFAULT_SIGNAL_LABEL,
-  MOOD_DEFAULT_SIGNAL_CONTRIBUTION,
-} from "@/constants";
+} from "@/domains/race/simulation/runnerConditions";
+import type { MoodSignal } from "@/domains/race/simulation/runnerConditions";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { MOOD_BASE_SCORE, MOOD_DEFAULT_SIGNAL_LABEL, MOOD_DEFAULT_SIGNAL_CONTRIBUTION } from "@/shared/constants/runnerConditionThresholds";;
 
 function horse(temperament = 50, injured = false) {
   return {

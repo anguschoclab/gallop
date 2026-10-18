@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { AttachmentBreakdown } from "@/components/auction/AttachmentBreakdown";
-import type { HorseAttachment } from "@/core/horse/attachment";
+import { AttachmentBreakdown } from "@/domains/auction/ui/AttachmentBreakdown";
+import type { HorseAttachment } from "@/domains/horse/simulation/attachment";
 
 function mkAttachment(overrides: Partial<HorseAttachment> = {}): HorseAttachment {
   return {

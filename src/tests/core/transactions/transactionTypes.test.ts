@@ -10,7 +10,7 @@ import {
   groupTransactionsBySubcategory,
   formatTransactionType,
   formatTransactionSubcategory,
-} from "@/core/transactions/transactionTypes";
+} from "@/domains/transactions/model/transactionTypes";
 
 describe("transactionTypes", () => {
   const transactions = [

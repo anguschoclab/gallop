@@ -14,7 +14,7 @@
  * Manages AI state persistence and strategic coordination across all NPC subsystems
  */
 
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 import { getPersonalityAIState } from "./personalitySystem";
 import { createLearningState, pruneOldOutcomes } from "./learningModule";
 import type { CampaignAIState } from "./campaignAI";
@@ -175,7 +175,7 @@ export interface NpcAIManager {
   previousDifficultyMultiplier?: number;
 
   // Smart notifications collected during intent generation
-  pendingNewsItems?: import("@/services/narrative/newsTypes").NewsItem[];
+  pendingNewsItems?: import("@/domains/narrative/model/newsTypes").NewsItem[];
 }
 
 /**

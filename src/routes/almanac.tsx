@@ -11,18 +11,18 @@ import {
   ScrollText,
   Timer,
 } from "lucide-react";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { useGameWithShallow } from "@/game/store";
-import { AlmanacNewsFeed } from "@/components/history/AlmanacNewsFeed";
-import { RecordAlmanac } from "@/components/history/RecordAlmanac";
-import { AlmanacMilestones } from "@/components/history/AlmanacMilestones";
-import { DecadeLeaders } from "@/components/history/DecadeLeaders";
-import { TrackHistoryTimeline } from "@/components/history/TrackHistoryTimeline";
-import { RealWorldBenchmarks } from "@/components/history/RealWorldBenchmarks";
-import { RaceTimeDisplay } from "@/components/race/RaceTimeDisplay";
-import type { SeasonRecord, TrackRecord } from "@/services/history/historyFacade";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { Card, CardContent } from "@/shared/ui/card";
+import { Badge } from "@/shared/ui/badge";
+import { useGameWithShallow } from "@/platform/game/store";
+import { AlmanacNewsFeed } from "@/domains/history/ui/AlmanacNewsFeed";
+import { RecordAlmanac } from "@/domains/history/ui/RecordAlmanac";
+import { AlmanacMilestones } from "@/domains/history/ui/AlmanacMilestones";
+import { DecadeLeaders } from "@/domains/history/ui/DecadeLeaders";
+import { TrackHistoryTimeline } from "@/domains/history/ui/TrackHistoryTimeline";
+import { RealWorldBenchmarks } from "@/domains/history/ui/RealWorldBenchmarks";
+import { RaceTimeDisplay } from "@/domains/race/ui/RaceTimeDisplay";
+import type { SeasonRecord, TrackRecord } from "@/domains/history/application/historyFacade";
 
 const ALMANAC_TABS = [
   "news",

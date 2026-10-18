@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { INSIGHT_DETECTORS } from "@/core/horse/insightDetectors";
+import { INSIGHT_DETECTORS } from "@/domains/horse/simulation/insightDetectors";
 
 describe("INSIGHT_DETECTORS registry order", () => {
   it("has exactly 21 detectors", () => {

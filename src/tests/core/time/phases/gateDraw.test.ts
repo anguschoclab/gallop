@@ -1,16 +1,16 @@
-import type { RaceEntry } from "@/core/race/types";
+import type { RaceEntry } from "@/domains/race/simulation/types";
 /**
  * gateDraw.test.ts - Tests for the gate draw phase
  */
 
 import { describe, it, expect } from "vitest";
-import { gateDrawPhase } from "@/core/time/phases/gateDraw";
-import type { Horse, Race, GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { InboxImpact } from "@/core/resolver/impacts/inboxImpacts";
+import { gateDrawPhase } from "@/platform/time/phases/gateDraw";
+import type { Horse, Race, GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { InboxImpact } from "@/platform/resolver/impacts/inboxImpacts";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 function makeHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse(overrides);

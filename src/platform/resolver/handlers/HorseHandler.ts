@@ -1,0 +1,286 @@
+/**
+ * handlers/HorseHandler.ts - Horse impact handler
+ *
+ * This file handles horse-related impacts including stat changes, energy changes,
+ * form changes, fame changes, gelding, renaming, aging, health status changes,
+ * pasture retirement, horse death, injury, and horse creation.
+ *
+ * Dependencies: immer (WritableDraft), @/game/types (GameState), ../impacts (AnyImpact), @/core/horse/gender (isMaleHorse), ./types (ImpactHandler)
+ * Related files: ../resolver.ts (uses handler), ../impacts/horseImpacts.ts (provides impact types)
+ */
+
+import type { WritableDraft } from "immer";
+import type { GameState, Horse } from "@/platform/game/types";
+import type { AnyImpact } from "@/platform/resolver/impacts";
+import { isMaleHorse, geldHorse } from "@/domains/horse/simulation/gender";
+import type { ImpactHandler, LookupMaps } from "@/platform/resolver/handlers/types";
+import { generateUUID } from "@/shared/uuid/uuid";
+import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
+import { formatRecoveryDays } from "@/domains/health/model/injuryDisplay";
+import type {
+  HorseCreationImpact,
+  HorseDeletionImpact,
+  HorseStatImpact,
+  EnergyImpact,
+  FormImpact,
+  FameImpact,
+  FanCountImpact,
+  RenameImpact,
+  AgingImpact,
+  HealthStatusImpact,
+  PastureRetirementImpact,
+  HorseDeathImpact,
+  InjuryImpact,
+  RecoveryImpact,
+  FitnessImpact,
+  FatigueImpact,
+  PeakingIndexImpact,
+  BeyerImpact,
+  DistanceAptitudeImpact,
+} from "@/platform/resolver/impacts/horseImpacts";
+
+type HorseImpactHandlerFunction = (
+  draft: WritableDraft<GameState>,
+  impact: AnyImpact,
+  horse: WritableDraft<Horse> | undefined,
+  lookupMaps?: LookupMaps,
+) => void;
+
+const IMPACT_HANDLERS: Record<string, HorseImpactHandlerFunction> = {
+  horse_creation: (draft, impact, horse, lookupMaps) => {
+    const { horse: horseData } = impact as HorseCreationImpact;
+    if (horseData) {
+      draft.horses[horseData.id] = horseData;
+      if (lookupMaps) lookupMaps.horseMap.set(horseData.id, horseData);
+    }
+  },
+  horse_deletion: (draft, impact, horse, lookupMaps) => {
+    const { horseId } = impact as HorseDeletionImpact;
+    delete draft.horses[horseId];
+    if (lookupMaps) {
+      lookupMaps.horseMap.delete(horseId);
+    }
+  },
+  horse_stat_change: (draft, impact, horse) => {
+    const { stat, delta } = impact as HorseStatImpact;
+    if (horse) {
+      horse.stats[stat] = Math.round(
+        Math.min(horse.potential, Math.max(0, horse.stats[stat] + delta)),
+      );
+    }
+  },
+  energy_change: (draft, impact, horse) => {
+    const { delta } = impact as EnergyImpact;
+    if (horse) {
+      horse.energy = Math.round(Math.min(100, Math.max(0, horse.energy + delta)));
+    }
+  },
+  form_change: (draft, impact, horse) => {
+    const { delta } = impact as FormImpact;
+    if (horse) {
+      horse.form = Math.round(Math.min(10, Math.max(-10, horse.form + delta)));
+    }
+  },
+  fame_change: (draft, impact, horse) => {
+    const { delta } = impact as FameImpact;
+    if (horse) {
+      horse.fame = Math.round(Math.min(100, Math.max(0, horse.fame + delta)));
+    }
+  },
+  fan_count_change: (draft, impact, horse) => {
+    const { delta } = impact as FanCountImpact;
+    if (horse) {
+      horse.fanCount = Math.max(0, Math.round((horse.fanCount ?? 0) + delta));
+    }
+  },
+  gelding: (draft, impact, horse) => {
+    if (horse && isMaleHorse(horse.gender)) {
+      Object.assign(horse, geldHorse(horse));
+    }
+  },
+  rename: (draft, impact, horse) => {
+    const { newName } = impact as RenameImpact;
+    if (horse) {
+      horse.name = newName;
+    }
+  },
+  aging: (draft, impact, horse) => {
+    const { newAge } = impact as AgingImpact;
+    if (horse) {
+      horse.age = newAge;
+    }
+  },
+  health_status_change: (draft, impact, horse) => {
+    const { status } = impact as HealthStatusImpact;
+    // Defense-in-depth: only apply health status change if horse is currently healthy
+    // Upstream guards (energy phase, training resolution) should prevent this,
+    // but this ensures we never overwrite an existing sickness
+    if (horse && horse.healthStatus === "healthy") {
+      horse.healthStatus = status;
+      horse.healthStatusDay = impact.day;
+
+      if (status === "recovering") {
+        const campaign = draft.campaigns?.find((c) => c.horseId === horse.id);
+        if (campaign) {
+          campaign.flags.push({
+            day: impact.day,
+            type: "health_issue",
+            message: `${horse.name} is recovering from a health issue (${impact.reason || "training injury"}). Review upcoming entries.`,
+            dismissed: false,
+          });
+        }
+        if (isPlayerOwned(horse)) {
+          if (!draft.inbox) draft.inbox = [];
+          draft.inbox.push({
+            id: generateUUID(),
+            day: impact.day,
+            category: "injury",
+            priority: "urgent",
+            title: `Health Alert: ${horse.name}`,
+            body: `${horse.name} condition changed to recovering: ${impact.reason || "Health issue detected"}.`,
+            cta: {
+              label: "Review Strategy",
+              route: "strategy.$horseId",
+              params: { horseId: horse.id },
+            },
+          });
+        }
+      }
+    }
+  },
+  pasture_retirement: (draft, impact, horse) => {
+    const { retiredOnDay } = impact as PastureRetirementImpact;
+    if (horse) {
+      horse.lifecycleStatus = "retired";
+      horse.retiredOnDay = retiredOnDay;
+    }
+  },
+  horse_death: (draft, impact, horse) => {
+    const { cause, deceasedOnDay } = impact as HorseDeathImpact;
+    if (horse) {
+      horse.lifecycleStatus = "deceased";
+      horse.deceasedOnDay = deceasedOnDay;
+      horse.causeOfDeath = cause;
+    }
+  },
+  injury: (draft, impact, horse) => {
+    const { severity, injuryType, recoveryDays } = impact as InjuryImpact;
+    // Defense-in-depth: only apply injury if horse is currently healthy
+    // Upstream guards (race entry checks, training phase) should prevent injuries to sick horses,
+    // but this ensures we never overwrite an existing sickness
+    if (horse && horse.healthStatus === "healthy") {
+      horse.healthStatus = severity === "career-ending" ? "other_illness" : "recovering";
+      horse.healthStatusDay = impact.day;
+      horse.activeInjury = {
+        type: injuryType,
+        severity,
+        recoveryDays,
+        onsetDay: impact.day,
+      };
+
+      // Flag campaign if horse has an active campaign
+      const campaign = draft.campaigns?.find((c) => c.horseId === horse.id);
+      if (campaign) {
+        campaign.flags.push({
+          day: impact.day,
+          type: "health_issue",
+          message: `${horse.name} sustained a ${severity} ${injuryType} injury. Estimated recovery: ${formatRecoveryDays(recoveryDays, severity)}. Planned races may need rescheduling.`,
+          dismissed: false,
+        });
+      }
+
+      // Push to Inbox if player-owned
+      if (isPlayerOwned(horse)) {
+        if (!draft.inbox) draft.inbox = [];
+        const priority =
+          severity === "career-ending"
+            ? "critical"
+            : severity === "major"
+              ? "urgent"
+              : severity === "moderate"
+                ? "low"
+                : "info";
+        draft.inbox.push({
+          id: generateUUID(),
+          day: impact.day,
+          category: "injury",
+          priority,
+          title: `Injury: ${horse.name}`,
+          body: `${horse.name} sustained a ${severity} ${injuryType} injury. Estimated recovery: ${formatRecoveryDays(recoveryDays, severity)}.`,
+          ...(severity === "major" || severity === "career-ending"
+            ? {
+                cta: {
+                  label: "Review Strategy",
+                  route: "strategy.$horseId",
+                  params: { horseId: horse.id },
+                },
+                secondaryCta: {
+                  label: "View Horse",
+                  route: "stable.$horseId",
+                  params: { horseId: horse.id },
+                },
+              }
+            : {}),
+        });
+      }
+    }
+  },
+  recovery_change: (draft, impact, horse) => {
+    const { delta } = impact as RecoveryImpact;
+    if (horse) {
+      horse.recoveryPoints = Math.round(
+        Math.min(100, Math.max(0, (horse.recoveryPoints ?? 100) + delta)),
+      );
+    }
+  },
+  fitness_change: (draft, impact, horse) => {
+    const { delta } = impact as FitnessImpact;
+    if (horse) {
+      horse.fitness = Math.round(Math.max(0, (horse.fitness ?? 0) + delta));
+    }
+  },
+  fatigue_change: (draft, impact, horse) => {
+    const { delta } = impact as FatigueImpact;
+    if (horse) {
+      horse.fatigue = Math.round(Math.max(0, (horse.fatigue ?? 0) + delta));
+    }
+  },
+  peaking_index_update: (draft, impact, horse) => {
+    const { value } = impact as PeakingIndexImpact;
+    if (horse) {
+      horse.peakingIndex = value;
+    }
+  },
+  beyer_update: (draft, impact, horse) => {
+    const { beyer, raceDay } = impact as BeyerImpact;
+    if (horse) {
+      horse.lastBeyer = beyer;
+      horse.lastRaceDay = raceDay;
+    }
+  },
+  distance_aptitude_shift: (_draft, impact, horse) => {
+    const { newValue } = impact as DistanceAptitudeImpact;
+    if (horse) {
+      horse.distanceAptitude = Math.max(800, Math.min(3200, newValue));
+    }
+  },
+};
+
+export class HorseHandler implements ImpactHandler {
+  canHandle(type: string): boolean {
+    return Object.hasOwn(IMPACT_HANDLERS, type);
+  }
+
+  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
+    const horseId =
+      (impact as { horseId?: string; entityId?: string }).horseId ||
+      (impact as { entityId?: string }).entityId ||
+      "";
+    const horse = horseId ? lookupMaps?.horseMap.get(horseId) || draft.horses[horseId] : undefined;
+
+    const handler = IMPACT_HANDLERS[impact.type];
+    if (handler) {
+      handler(draft, impact, horse, lookupMaps);
+    }
+  }
+}

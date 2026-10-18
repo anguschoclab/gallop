@@ -1,15 +1,15 @@
 import { describe, it, expect } from "vitest";
-import { dailySnapshotPhase } from "@/core/time/phases/dailySnapshotPhase";
-import { cashPressureHistoryPhase } from "@/core/time/phases/cashPressureHistoryPhase";
+import { dailySnapshotPhase } from "@/platform/time/phases/dailySnapshotPhase";
+import { cashPressureHistoryPhase } from "@/platform/time/phases/cashPressureHistoryPhase";
 import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameState";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
-import { PHASE_ORDER_DAILY_SNAPSHOT } from "@/constants";
-import type { GameState } from "@/game/types";
-import type { PipelineContext } from "@/core/time/pipeline";
-import type { HorseDailyProgress } from "@/core/horse/dailyProgress";
-import type { StrategyJournalEntry } from "@/core/tactics/strategyJournal";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
+import { PHASE_ORDER_DAILY_SNAPSHOT } from "@/platform/time/pipelineConstants";;
+import type { GameState } from "@/platform/game/types";
+import type { PipelineContext } from "@/platform/time/pipeline";
+import type { HorseDailyProgress } from "@/domains/horse/simulation/dailyProgress";
+import type { StrategyJournalEntry } from "@/domains/tactics/simulation/strategyJournal";
 
 const horses = Array.from({ length: 10 }, (_, i) => `h${i}`) as unknown as never[];
 

@@ -3,9 +3,9 @@ import {
   generateStaffMember,
   generateStaffPool,
   SPECIALIZED_TRAITS,
-} from "@/core/staff/staffGenerator";
-import { STAFF_CONFIG } from "@/core/staff/staffConfig";
-import type { Rng } from "@/core/common/rng";
+} from "@/domains/staff/simulation/staffGenerator";
+import { STAFF_CONFIG } from "@/domains/staff/simulation/staffConfig";
+import type { Rng } from "@/shared/common/rng";
 
 vi.mock("@/core/uuid", () => ({
   generateUUID: vi.fn(() => "mocked-uuid"),

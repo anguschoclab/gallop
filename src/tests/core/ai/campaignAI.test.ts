@@ -19,9 +19,9 @@ import {
   decayContenderConfidence,
   coordinateMultiHorsePrep,
 } from "@/domains/agents/simulation/campaignRecording";
-import type { Horse, Race, Stable } from "@/game/types";
-import type { GradedRace } from "@/data/gradedRaces";
-import { asRaceId } from "@/core/types/branded";
+import type { Horse, Race, Stable } from "@/platform/game/types";
+import type { GradedRace } from "@/shared/data/gradedRaces";
+import { asRaceId } from "@/shared/types/branded";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 // Mock data setup

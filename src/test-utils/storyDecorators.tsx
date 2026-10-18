@@ -2,7 +2,7 @@
 // so store-coupled components render real state in stories.
 import type { Decorator } from "@storybook/react";
 import { useState } from "react";
-import type { GameState } from "@/game/types";
+import type { GameState } from "@/platform/game/types";
 import { seedStore } from "./renderWithStore";
 
 /**

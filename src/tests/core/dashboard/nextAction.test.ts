@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { deriveNextAction, type NextActionInput } from "@/core/dashboard/nextAction";
+import { deriveNextAction, type NextActionInput } from "@/domains/dashboard/simulation/nextAction";
 
 const base: NextActionInput = {
   urgentMessageCount: 0,

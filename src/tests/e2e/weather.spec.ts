@@ -1,5 +1,5 @@
 import { test, expect, type Page } from "@playwright/test";
-import { STORE_STATE_VERSION } from "../../game/store/stateVersion";
+import { STORE_STATE_VERSION } from "@/platform/game/store/stateVersion";
 
 const FORECAST_PATTERNS = [
   "clear",

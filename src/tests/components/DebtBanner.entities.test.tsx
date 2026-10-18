@@ -1,10 +1,10 @@
 import { describe, it, vi } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
-import { DebtBanner } from "@/components/dashboard/DebtBanner";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { DebtBanner } from "@/domains/dashboard/ui/DebtBanner";
 import { createTestHorse } from "@/tests/helpers";
-import { makePlayerOwned } from "@/core/horse/ownership";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

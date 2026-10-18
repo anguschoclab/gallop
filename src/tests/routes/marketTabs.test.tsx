@@ -10,7 +10,7 @@ import userEvent from "@testing-library/user-event";
 import { render, screen } from "@testing-library/react";
 import { createElement } from "react";
 import { seedStore } from "@/test-utils/renderWithStore";
-import { createDefaultGameState } from "@/game/store/state";
+import { createDefaultGameState } from "@/platform/game/store/state";
 
 const useSearchMock = vi.fn((): Record<string, unknown> => ({}));
 // Tab changes route through navigate({ search }); simulate the URL updating

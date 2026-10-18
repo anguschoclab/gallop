@@ -9,8 +9,8 @@
  * Related files: npcCycle.ts (uses intents), intents/*.ts (extracted generators)
  */
 
-import type { AnyIntent } from "@/core/resolver/intents";
-import type { GameState, Horse, Race } from "@/game/types";
+import type { AnyIntent } from "@/platform/resolver/intents";
+import type { GameState, Horse, Race } from "@/platform/game/types";
 import {
   getOrCreateStableAIState,
   updateStableAIState,
@@ -22,7 +22,7 @@ import {
   coordinateSubsystems,
   type WorldAssessment,
 } from "@/domains/agents/simulation/strategicCoordinator";
-import { generateDirectiveChangeNews } from "@/core/narrative/directiveNewsGenerator";
+import { generateDirectiveChangeNews } from "@/domains/narrative/simulation/directiveNewsGenerator";
 import { generateNpcActions } from "@/domains/agents/simulation/npcActionRegistry";
 import {
   buildNpcObservation,

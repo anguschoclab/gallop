@@ -6,8 +6,8 @@ import {
   matchesScoutingThresholds,
   planScoutingRun,
   type ScoutingCandidate,
-} from "@/domains/agents/simulation/npc/scoutingThresholds";
-import type { InsightRow, InsightMetricKey } from "@/core/horse/insightMetrics";
+} from "@/domains/agents/model/scoutingThresholds";
+import type { InsightRow, InsightMetricKey } from "@/domains/horse/simulation/insightMetrics";
 
 function row(
   id: string,
@@ -149,13 +149,13 @@ describe("planScoutingRun", () => {
 describe("lastScoutDayByHorse", () => {
   it("returns an empty map for no reports", async () => {
     const { lastScoutDayByHorse } =
-      await import("@/domains/agents/simulation/npc/scoutingThresholds");
+      await import("@/domains/agents/model/scoutingThresholds");
     expect(lastScoutDayByHorse([]).size).toBe(0);
   });
 
   it("keeps the latest report day per horse", async () => {
     const { lastScoutDayByHorse } =
-      await import("@/domains/agents/simulation/npc/scoutingThresholds");
+      await import("@/domains/agents/model/scoutingThresholds");
     const reports = [
       { horseId: "h1", day: 5 } as any,
       { horseId: "h1", day: 20 } as any,

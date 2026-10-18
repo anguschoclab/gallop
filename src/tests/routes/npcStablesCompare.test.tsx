@@ -9,7 +9,7 @@
 
 import { describe, it, expect, afterEach, vi, beforeEach } from "vitest";
 import { cleanup, render, screen, fireEvent } from "@testing-library/react";
-import type { Stable } from "@/game/types";
+import type { Stable } from "@/platform/game/types";
 
 vi.mock("@tanstack/react-router", () => ({
   createFileRoute: () => (config: any) => ({ options: config }),
@@ -68,7 +68,7 @@ vi.mock("@/components/stable/StableCompareBar", () => ({
 }));
 
 import { Route } from "@/routes/npc-stables.compare";
-import { useCompareStables } from "@/hooks/stable/useCompareStables";
+import { useCompareStables } from "@/domains/stable/application/hooks/useCompareStables";
 
 const NpcStablesCompare = Route.options.component!;
 

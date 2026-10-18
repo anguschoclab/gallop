@@ -5,7 +5,7 @@ import {
   CASH_PRESSURE_HISTORY_MAX,
   type CashPressureSnapshot,
   type CashPressureHistory,
-} from "@/core/stable/cashPressureHistory";
+} from "@/domains/stable/simulation/cashPressureHistory";
 
 const mkSnapshot = (day: number, meter = 50): CashPressureSnapshot => ({
   day,

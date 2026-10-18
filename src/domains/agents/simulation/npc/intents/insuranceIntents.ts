@@ -6,13 +6,13 @@
  * when an insured horse suffers injuries.
  */
 
-import type { InsurancePurchaseIntent, InsuranceClaimIntent } from "@/core/resolver/intents";
-import type { GameState, Horse, Stable } from "@/game/types";
-import { generateUUID } from "@/core/uuid";
+import type { InsurancePurchaseIntent, InsuranceClaimIntent } from "@/platform/resolver/intents";
+import type { GameState, Horse, Stable } from "@/platform/game/types";
+import { generateUUID } from "@/shared/uuid/uuid";
 import type { StableAIState } from "@/domains/agents/simulation/npcCycleAI";
-import { calculateBaseHorseValue } from "@/core/horse/pricing";
-import { calculateDailyPremium, type InsurancePolicyType } from "@/core/insurance/insuranceTypes";
-import { getCareerStats } from "@/core/horse/stats";
+import { calculateBaseHorseValue } from "@/domains/horse/simulation/pricing";
+import { calculateDailyPremium, type InsurancePolicyType } from "@/domains/insurance/model/insuranceTypes";
+import { getCareerStats } from "@/domains/horse/simulation/stats";
 
 function safeHorseValue(horse: Horse): number {
   if (horse.stats) {

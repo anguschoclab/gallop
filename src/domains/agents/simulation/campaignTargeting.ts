@@ -1,14 +1,14 @@
-import type { Horse, Stable } from "@/game/types";
-import type { GradedRace } from "@/core/data/gradedRacesAccessor";
-import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
+import type { Horse, Stable } from "@/platform/game/types";
+import type { GradedRace } from "@/shared/data/accessors/gradedRacesAccessor";
+import type { TripleCrownProgress } from "@/domains/calendar/model/campaignTypes";
 import { calculateUtilityAdjustment } from "./personalitySystem";
 import { getSuccessRate, getAdaptiveThreshold } from "./learningModule";
-import { calculateOverallRating } from "@/core/horse/stats";
-import { getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
+import { getTripleCrownKeysForArchetype } from "@/domains/breeding/simulation/archetypes";
 import {
   GRADED_RACES_BY_KEY,
   GRADED_RACES_BY_TRIPLECROWN_KEY,
-} from "@/core/data/gradedRacesAccessor";
+} from "@/shared/data/accessors/gradedRacesAccessor";
 import type { CampaignAIState, ContenderStatus } from "./campaignAI";
 
 export function getOptimalMajorRaceTarget(

@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render } from "@testing-library/react";
-import { NpcStableRosterTab } from "@/components/stable/NpcStableRosterTab";
-import type { Horse, Stable, PrivateSaleOffer } from "@/game/types";
+import { NpcStableRosterTab } from "@/domains/stable/ui/NpcStableRosterTab";
+import type { Horse, Stable, PrivateSaleOffer } from "@/platform/game/types";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId } from "@/core/types/branded";
+import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asHorseId } from "@/shared/types/branded";
 
 vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() },

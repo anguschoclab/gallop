@@ -23,9 +23,9 @@ import {
   recordRaceStrategy,
   getStrategyInsights,
 } from "@/domains/agents/simulation/jockeyStrategyRecording";
-import type { Jockey, Horse, Race, Stable } from "@/game/types";
-import type { JockeyInstructions } from "@/core/tactics/tacticsTypes";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import type { Jockey, Horse, Race, Stable } from "@/platform/game/types";
+import type { JockeyInstructions } from "@/domains/tactics/model/tacticsTypes";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 // Mock data setup
 function createMockJockey(overrides: Partial<Jockey> = {}): Jockey {

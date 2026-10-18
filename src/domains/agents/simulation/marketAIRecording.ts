@@ -4,9 +4,9 @@
  * Extracted from marketAI.ts for modularity.
  */
 
-import type { Horse, Stable } from "@/game/types";
+import type { Horse, Stable } from "@/platform/game/types";
 import { recordLearningOutcome, trimHistory } from "./learningModule";
-import { calculateOverallRating } from "@/core/horse/stats";
+import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import type { MarketAIState, MarketPurchase } from "./marketAITypes";
 
 /**

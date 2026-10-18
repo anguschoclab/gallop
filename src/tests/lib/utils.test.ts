@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { cn } from "@/lib/cn";
-import { groupRacesByDate } from "@/core/race/groupRacesByDate";
+import { cn } from "@/shared/lib/cn";
+import { groupRacesByDate } from "@/domains/race/simulation/groupRacesByDate";
 
 describe("utils", () => {
   describe("cn", () => {

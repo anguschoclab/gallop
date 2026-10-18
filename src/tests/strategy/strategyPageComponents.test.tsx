@@ -6,13 +6,13 @@ vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
 }));
 
-import { StrategyHeader } from "@/components/strategy/StrategyHeader";
-import { TargetGradesSection } from "@/components/strategy/TargetGradesSection";
-import { TrackPrestigeSection } from "@/components/strategy/TrackPrestigeSection";
-import { SyndicationStakesSection } from "@/components/strategy/SyndicationStakesSection";
-import { LiveAnnualTimeline } from "@/components/strategy/LiveAnnualTimeline";
-import { CampaignAlertsFeed } from "@/components/strategy/CampaignAlertsFeed";
-import type { Horse, HorseCampaign, Race } from "@/game/types";
+import { StrategyHeader } from "@/domains/strategy/ui/StrategyHeader";
+import { TargetGradesSection } from "@/domains/strategy/ui/TargetGradesSection";
+import { TrackPrestigeSection } from "@/domains/strategy/ui/TrackPrestigeSection";
+import { SyndicationStakesSection } from "@/domains/strategy/ui/SyndicationStakesSection";
+import { LiveAnnualTimeline } from "@/domains/strategy/ui/LiveAnnualTimeline";
+import { CampaignAlertsFeed } from "@/domains/strategy/ui/CampaignAlertsFeed";
+import type { Horse, HorseCampaign, Race } from "@/platform/game/types";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   ({

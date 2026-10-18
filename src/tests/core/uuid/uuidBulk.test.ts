@@ -7,8 +7,8 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateUUID, generateUUIDBulk, isValidUUID } from "@/core/uuid";
-import { createRng } from "@/core/common/rng";
+import { generateUUID, generateUUIDBulk, isValidUUID } from "@/shared/uuid/uuid";
+import { createRng } from "@/shared/common/rng";
 
 const UUID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 

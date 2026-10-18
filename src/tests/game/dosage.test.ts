@@ -6,8 +6,8 @@ import {
   generatePedigree,
   calculateDosageMetrics,
   interpretDosageIndex,
-} from "@/core/race/dosage";
-import type { DosageProfile } from "@/game/types";
+} from "@/domains/race/simulation/dosage";
+import type { DosageProfile } from "@/platform/game/types";
 
 function emptyProfile(): DosageProfile {
   return { brilliant: 0, intermediate: 0, classic: 0, solid: 0, professional: 0 };

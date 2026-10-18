@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { AIActivityStrip } from "@/components/dashboard/AIActivityStrip";
-import type { NewsItem } from "@/services/narrative/newsTypes";
+import { AIActivityStrip } from "@/domains/dashboard/ui/AIActivityStrip";
+import type { NewsItem } from "@/domains/narrative/model/newsTypes";;
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

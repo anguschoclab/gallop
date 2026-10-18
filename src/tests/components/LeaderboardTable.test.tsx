@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { LeaderboardTable } from "@/components/history/LeaderboardTable";
+import { LeaderboardTable } from "@/domains/history/ui/LeaderboardTable";
 import { createProgenyLeaderboard, createProgenyRanking } from "@/tests/helpers";
 
 vi.mock("@/components/ui/select", () => ({

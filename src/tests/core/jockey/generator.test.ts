@@ -1,15 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { generateJockey, generateApprentice } from "@/core/jockey/generator";
-import { createRng } from "@/core/common/rng";
-import {
-  JOCKEY_SALARY_ELITE_MIN,
-  JOCKEY_SALARY_ELITE_MAX,
-  JOCKEY_SALARY_MID_MIN,
-  JOCKEY_SALARY_MID_MAX,
-  JOCKEY_SALARY_BUDGET_MIN,
-  JOCKEY_SALARY_BUDGET_MAX,
-} from "@/constants";
-import type { JockeyTrait } from "@/core/jockey/types";
+import { generateJockey, generateApprentice } from "@/domains/jockey/simulation/generator";
+import { createRng } from "@/shared/common/rng";
+import { JOCKEY_SALARY_ELITE_MIN, JOCKEY_SALARY_ELITE_MAX, JOCKEY_SALARY_MID_MIN, JOCKEY_SALARY_MID_MAX, JOCKEY_SALARY_BUDGET_MIN, JOCKEY_SALARY_BUDGET_MAX } from "@/domains/jockey/model/jockeyConstants";;
+import type { JockeyTrait } from "@/domains/jockey/model/types";
 
 const VALID_TRAITS: JockeyTrait[] = [
   "bullring_expert",

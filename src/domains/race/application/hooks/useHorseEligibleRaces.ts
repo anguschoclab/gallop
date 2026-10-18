@@ -1,0 +1,123 @@
+import { useMemo } from "react";
+import type { Horse, Race, Jockey, Stable } from "@/platform/game/types";
+import { isHorseEligibleForRace } from "@/domains/race/simulation/eligibility";
+import { calculateRaceSuitability } from "@/domains/race/simulation/entryScoring";
+import { getTransportCostForRace } from "@/domains/race/simulation/transportCost";
+import { selectBestFreeAgentJockey } from "@/domains/jockey/simulation/selectFreeAgent";
+
+const PLAYER_STABLE_CONFIG: Stable = {
+  id: "player",
+  name: "Player Stable",
+  owner: "Player",
+  personality: "win-now",
+  tier: "elite",
+  cash: 0,
+  horses: [],
+  reputation: 50,
+  founded: 1,
+  isMajor: true,
+  colors: { primary: "#D4AF37", secondary: "#C0C0C0" },
+  staff: { trainer: null, veterinarian: null, farrier: null, nutritionist: null, groom: null },
+  outposts: [],
+};
+
+export type EligibleRaceRow = {
+  race: Race;
+  suitabilityScore: number;
+  entryFee: number;
+  transportCost: number;
+  estimatedJockeyFee: number;
+  totalCost: number;
+  isEntered: boolean;
+  requiresDialog: boolean;
+};
+
+function estimateJockeyFee(horse: Horse, jockeys: Jockey[]): number {
+  const retained = jockeys.find((j) => j.stableId === "player");
+  if (retained) return retained.ridingFee;
+
+  const freeAgents = jockeys.filter((j) => !j.stableId);
+  if (freeAgents.length === 0) return 0;
+
+  const selected = selectBestFreeAgentJockey(horse, freeAgents);
+  return selected?.ridingFee ?? 0;
+}
+
+export function deriveEligibleRaces(
+  horse: Horse | undefined,
+  races: Race[],
+  jockeys: Jockey[],
+  cash: number,
+  day: number,
+  daysAhead: number = 30,
+): EligibleRaceRow[] {
+  if (!horse) return [];
+
+  if (horse.energy < 50) return [];
+
+  const upcoming = races.filter((r) => !r.resolved && r.day > day && r.day <= day + daysAhead);
+
+  const rows: EligibleRaceRow[] = [];
+
+  // ⚡ Bolt Optimization:
+  // Lifted invariant jockey fee calculation outside the loop.
+  // Impact: Prevents redundant calculation (including filtering and sorting jockeys) per upcoming race.
+  const jockeyFee = estimateJockeyFee(horse, jockeys);
+
+  for (const race of upcoming) {
+    if (!isHorseEligibleForRace(horse, race, new Set(), day)) continue;
+
+    const score = calculateRaceSuitability(horse, race, PLAYER_STABLE_CONFIG);
+    const transportCost = getTransportCostForRace(race);
+    const totalCost = race.entryFee + jockeyFee + transportCost;
+    const isEntered = race.entries.some((e) => e.horseId === horse.id);
+    const requiresDialog = !!race.graded;
+
+    rows.push({
+      race,
+      suitabilityScore: score,
+      entryFee: race.entryFee,
+      transportCost,
+      estimatedJockeyFee: jockeyFee,
+      totalCost,
+      isEntered,
+      requiresDialog,
+    });
+  }
+
+  rows.sort((a, b) => b.suitabilityScore - a.suitabilityScore);
+  return rows;
+}
+
+export function useHorseEligibleRaces(
+  horse: Horse | undefined,
+  races: Record<string, Race>,
+  jockeys: Jockey[],
+  cash: number,
+  day: number,
+  daysAhead: number = 30,
+): EligibleRaceRow[] {
+  const racesArray = useMemo(() => Object.values(races), [races]);
+  return useMemo(
+    () => deriveEligibleRaces(horse, racesArray, jockeys, cash, day, daysAhead),
+    [horse, racesArray, jockeys, cash, day, daysAhead],
+  );
+}
+
+export function findFirstEligibleRace(
+  horse: Horse | undefined,
+  races: Race[],
+  day: number,
+): Race | undefined {
+  if (!horse) return undefined;
+  if (horse.energy < 50) return undefined;
+
+  const upcoming = races.filter((r) => !r.resolved && r.day > day).sort((a, b) => a.day - b.day);
+
+  for (const race of upcoming) {
+    if (isHorseEligibleForRace(horse, race, new Set(), day)) {
+      return race;
+    }
+  }
+  return undefined;
+}

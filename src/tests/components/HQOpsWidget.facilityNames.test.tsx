@@ -2,9 +2,9 @@ import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import { HQOpsWidget } from "@/components/dashboard/HQOpsWidget";
-import type { PlayerFacilities, FacilityType } from "@/core/facilities";
-import { createFacility } from "@/core/facilities";
+import { HQOpsWidget } from "@/domains/dashboard/ui/HQOpsWidget";
+import type { PlayerFacilities, FacilityType } from "@/domains/facilities/simulation";
+import { createFacility } from "@/domains/facilities/simulation";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),

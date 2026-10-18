@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
-import { useDismissedAuctionErrors } from "@/hooks/auction/useDismissedAuctionErrors";
+import { useDismissedAuctionErrors } from "@/domains/auction/application/hooks/useDismissedAuctionErrors";
 
 beforeEach(() => {
   sessionStorage.clear();

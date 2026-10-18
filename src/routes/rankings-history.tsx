@@ -1,26 +1,26 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { TrendingUp } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Sparkline } from "@/components/charts/Sparkline";
-import { useGameWithShallow } from "@/game/store";
-import { formatCurrency } from "@/lib/formatting";
-import type { RankingsHistory, RankingsSnapshot } from "@/core/market/rankingsHistory";
-import type { Horse } from "@/game/types";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/shared/ui/card";
+import { Input } from "@/shared/ui/input";
+import { Sparkline } from "@/shared/ui/charts/Sparkline";
+import { useGameWithShallow } from "@/platform/game/store";
+import { formatCurrency } from "@/shared/common/formatting";;
+import type { RankingsHistory, RankingsSnapshot } from "@/domains/market/simulation/rankingsHistory";
+import type { Horse } from "@/platform/game/types";
+import { Button } from "@/shared/ui/button";
 import {
   Select,
   SelectTrigger,
   SelectValue,
   SelectContent,
   SelectItem,
-} from "@/components/ui/select";
+} from "@/shared/ui/select";
 import {
   compareRankingsForDay,
   rankingsComparisonDays,
   type RankingsComparisonRow,
-} from "@/core/market/rankingsComparison";
+} from "@/domains/market/simulation/rankingsComparison";
 
 const EMPTY_HISTORY: RankingsHistory = {};
 

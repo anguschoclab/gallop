@@ -4,8 +4,8 @@
  * Extracted from facilityAI.ts for modularity.
  */
 
-import type { FacilityType, FacilityLevel } from "@/core/facilities/facilityTypes";
-import type { Stable } from "@/game/types";
+import type { FacilityType, FacilityLevel } from "@/domains/facilities/model/facilityTypes";
+import type { Stable } from "@/platform/game/types";
 import { recordPersonalityOutcome } from "./personalitySystem";
 import type { FacilityAIState, FacilityInvestment } from "./facilityAITypes";
 import { trimHistory } from "./learningModule";

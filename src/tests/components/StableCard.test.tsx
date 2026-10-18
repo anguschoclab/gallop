@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
-import type { Stable, PrivateSaleOffer } from "@/game/types";
+import type { Stable, PrivateSaleOffer } from "@/platform/game/types";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: any) => <a {...props}>{children}</a>,
@@ -37,7 +37,7 @@ vi.mock("@/core/horse/attachment", () => ({
   attachmentAdjustedAsk: () => 120_000,
 }));
 
-import { StableCard } from "@/components/stable/StableCard";
+import { StableCard } from "@/domains/stable/ui/StableCard";
 
 const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({

@@ -1,9 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { applyBlockingEffect, detectBlocking } from "@/core/race/engine/jockeyEffects";
-import { calculateTargetLane } from "@/core/race/engine/lateralMovement";
-import { computePaceContext } from "@/core/race/engine/paceContext";
-import type { Runner } from "@/core/race/engine/runnerBuilder";
-import { MIN_BLOCK_GAP, LANE_WIDTH } from "@/constants/raceEngineConstants";
+import { applyBlockingEffect, detectBlocking } from "@/domains/race/simulation/engine/jockeyEffects";
+import { calculateTargetLane } from "@/domains/race/simulation/engine/lateralMovement";
+import { computePaceContext } from "@/domains/race/simulation/engine/paceContext";
+import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
+import { MIN_BLOCK_GAP, LANE_WIDTH } from "@/domains/race/model/engine/constants";;
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
   return {

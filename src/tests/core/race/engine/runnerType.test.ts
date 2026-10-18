@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildRunner } from "@/core/race/engine/runnerBuilder";
-import type { Runner } from "@/core/race/engine/runnerTypes";
-import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
-import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
+import { buildRunner } from "@/domains/race/simulation/engine/runnerBuilder";
+import type { Runner } from "@/domains/race/model/engine/runnerTypes";
+import { generateHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 describe("Runner type: isPlayer property", () => {
   it("buildRunner returns Runner with isPlayer=true when owned=true", () => {

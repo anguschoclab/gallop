@@ -1,12 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useGame } from "@/game/store";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useGame } from "@/platform/game/store";
+import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { Button } from "@/shared/ui/button";
+import { Badge } from "@/shared/ui/badge";
 import { ArrowLeft, TrendingUp, Zap } from "lucide-react";
-import { getSireAnalytics, type SireClassification } from "@/services/breeding/breedingFacade";
-import { JargonTooltip } from "@/components/ui/JargonTooltip";
-import { BookmarkButton } from "@/components/bookmarks/BookmarkButton";
+import { getSireAnalytics, type SireClassification } from "@/domains/breeding/application/breedingFacade";
+import { JargonTooltip } from "@/domains/horse/ui/JargonTooltip";
+import { BookmarkButton } from "@/domains/bookmarks/ui/BookmarkButton";
 
 export const Route = createFileRoute("/sire-watch/$stallionId")({
   component: SireProfilePage,

@@ -11,9 +11,9 @@
  */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, act } from "@testing-library/react";
-import { BroadcastCommentary } from "@/components/race/BroadcastCommentary";
-import { STALE_DATA_THRESHOLD_MS } from "@/constants/raceBroadcastConstants";
-import type { CommentaryLine } from "@/services/narrative/commentaryGenerator";
+import { BroadcastCommentary } from "@/domains/race/ui/BroadcastCommentary";
+import { STALE_DATA_THRESHOLD_MS } from "@/domains/race/model/raceBroadcastConstants";
+import type { CommentaryLine } from "@/domains/narrative/application/commentaryGenerator";
 
 function makeCommentaryLine(
   id: string,

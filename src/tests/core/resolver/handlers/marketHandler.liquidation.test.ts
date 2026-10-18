@@ -3,12 +3,12 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { MarketHandler } from "@/core/resolver/handlers/MarketHandler";
-import type { GameState, AuctionSale } from "@/game/types";
-import type { AuctionResolutionImpact } from "@/core/resolver/impacts/miscImpacts";
+import { MarketHandler } from "@/platform/resolver/handlers/MarketHandler";
+import type { GameState, AuctionSale } from "@/platform/game/types";
+import type { AuctionResolutionImpact } from "@/platform/resolver/impacts/miscImpacts";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
-import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 function makeSale(overrides: Partial<AuctionSale> = {}): AuctionSale {
   return {

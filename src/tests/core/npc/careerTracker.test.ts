@@ -9,9 +9,9 @@ import {
   summarizeNpcCareer,
   REAL_START_COOLDOWN_DAYS,
 } from "@/domains/agents/simulation/npc/careerTracker";
-import { createRng } from "@/core/common/rng";
+import { createRng } from "@/shared/common/rng";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
-import type { Horse } from "@/game/types";
+import type { Horse } from "@/platform/game/types";
 
 function horse(overrides: Partial<Horse> = {}): Horse {
   return { ...createTestHorse(), raceHistory: [], ...overrides } as Horse;

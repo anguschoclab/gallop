@@ -45,10 +45,10 @@ vi.mock("comlink", () => ({
   expose: vi.fn(),
 }));
 
-import { createDefaultGameState } from "@/game/store/state";
-import { useGame } from "@/game/store";
-import type { Horse } from "@/game/types";
-import { DAYS_PER_MONTH } from "@/constants";
+import { createDefaultGameState } from "@/platform/game/store/state";
+import { useGame } from "@/platform/game/store";
+import type { Horse } from "@/platform/game/types";
+import { DAYS_PER_MONTH } from "@/domains/calendar/model/calendarConstants";;
 
 describe("Headless Triple Crown Simulation", () => {
   beforeEach(() => {

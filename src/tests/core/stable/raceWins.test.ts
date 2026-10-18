@@ -3,11 +3,11 @@ import {
   derivePlayerRaceWins,
   playerRaceWinsSummary,
   type PlayerRaceWinRecord,
-} from "@/core/stable/raceWins";
+} from "@/domains/stable/simulation/raceWins";
 import { createTestHorse } from "@/tests/helpers";
-import { makePlayerOwned } from "@/core/horse/ownership";
-import { asNpcStableId, asHorseId } from "@/core/types/branded";
-import { createTransaction } from "@/core/transactions";
+import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId, asHorseId } from "@/shared/types/branded";
+import { createTransaction } from "@/domains/transactions/model/transactionTypes";;
 
 describe("derivePlayerRaceWins", () => {
   it("returns an empty array when no horses have race history", () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createDefaultBreedingState } from "@/game/store/state/breedingState";
+import { createDefaultBreedingState } from "@/platform/game/store/state/breedingState";
 
 describe("createDefaultBreedingState", () => {
   it("pregnancies is empty array", () => {
