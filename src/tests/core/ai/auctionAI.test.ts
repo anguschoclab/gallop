@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { createAuctionAIState, shouldConsignHorse } from "@/core/ai/auctionAI";
+import { createAuctionAIState, shouldConsignHorse } from "@/domains/agents/simulation/auctionAI";
 import {
   calculateBiddingValue,
   calculateMaxBid,
   shouldBidOnHorse,
   calculateBidIncrement,
   shouldYieldToAlly,
-} from "@/core/ai/auctionBidding";
+} from "@/domains/agents/simulation/auctionBidding";
 import {
   recordBiddingDecision,
   recordConsignmentDecision,
@@ -16,10 +16,10 @@ import {
   recordHammerPrice,
   evaluateConsignmentTiming,
   generatePostPurchasePlan,
-} from "@/core/ai/auctionRecording";
+} from "@/domains/agents/simulation/auctionRecording";
 import type { Horse, Stable, AuctionLot } from "@/game/types";
-import type { NpcRelationship } from "@/core/ai/npcCycleAI";
-import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
+import type { NpcRelationship } from "@/domains/agents/simulation/npcCycleAI";
+import type { EconomicTrend } from "@/domains/agents/simulation/strategicCoordinator";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {

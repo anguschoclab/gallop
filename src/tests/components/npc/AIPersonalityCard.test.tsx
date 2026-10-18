@@ -2,8 +2,11 @@ import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { AIPersonalityCard } from "@/components/npc/AIPersonalityCard";
 import { StrategicDirectivesPanel } from "@/components/npc/StrategicDirectivesPanel";
-import type { StableAIState } from "@/core/ai/npcCycleAI";
-import type { StrategicDirective, BudgetAllocation } from "@/core/ai/strategicCoordinator";
+import type { StableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import type {
+  StrategicDirective,
+  BudgetAllocation,
+} from "@/domains/agents/simulation/strategicCoordinator";
 
 function createMockStableAI(overrides: Partial<StableAIState> = {}): StableAIState {
   return {

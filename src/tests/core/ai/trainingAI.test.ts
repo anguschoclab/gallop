@@ -8,7 +8,7 @@ import {
   getFacilityTrainingMultiplier,
   updateHorseTraining,
   type HorseTrainingTrack,
-} from "@/core/ai/trainingAI";
+} from "@/domains/agents/simulation/trainingAI";
 import { TRAINING_HISTORY_MAX_SIZE } from "@/constants";
 import type { Horse, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";

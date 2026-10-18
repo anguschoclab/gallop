@@ -1,0 +1,286 @@
+{
+  "schemaVersion": 1,
+  "branch": "campaign/megaplan-atomic",
+  "capabilityGraph": {
+    "source": "scripts/orphan-audit.ts",
+    "status": "clean",
+    "intents": 45,
+    "impacts": 80,
+    "phases": 58,
+    "routes": 75,
+    "components": 462,
+    "unhandledIntents": 0,
+    "unproducedIntents": 0,
+    "unhandledImpacts": 0,
+    "undescribedPhases": 0
+  },
+  "findings": [
+    {
+      "id": "engine-executor-path",
+      "status": "APPROVED",
+      "evidence": "UI/store commands flow through EngineClient, transports, SimulationEngine, SimulationExecutor, and the descriptor-derived phase schedule."
+    },
+    {
+      "id": "phase-registry-declarative",
+      "status": "APPROVED",
+      "evidence": "GAME_PIPELINE_PHASES and GAME_PHASE_DESCRIPTORS both report 58 registered phases through scripts/orphan-audit.ts."
+    },
+    {
+      "id": "existing-agent-intelligence",
+      "status": "APPROVED",
+      "evidence": "StableAIState, learning, strategic coordination, relationships, distress, personality, and subsystem policies were preserved under src/domains/agents/simulation."
+    },
+    {
+      "id": "hard-save-reset-policy",
+      "status": "APPROVED",
+      "evidence": "STORE_STATE_VERSION is the existing compatibility boundary; the campaign advances it to 10 and persistenceContract.test.ts guards transient engine fields."
+    },
+    {
+      "id": "legacy-orphan-scanner",
+      "status": "DISPROVED",
+      "evidence": "The old scanner hardcoded contract lists and sampled only selected functions; capabilityGraph.test.ts now derives intents, impacts, and phases from source declarations and registries."
+    },
+    {
+      "id": "direct-pipeline-test-path",
+      "status": "CORRECTED",
+      "evidence": "Integration coverage now includes intentProductionPath.test.ts through the authoritative collection/resolution path rather than relying only on direct executePipeline calls."
+    },
+    {
+      "id": "npc-facility-ownership",
+      "status": "CORRECTED",
+      "evidence": "InfrastructureHandler resolves facility upgrades against entityId-owned player or NPC facility maps and records NPC facility investment on the owning StableAIState."
+    },
+    {
+      "id": "npc-facility-direct-path",
+      "status": "CORRECTED",
+      "evidence": "The dormant applyNpcFacilityUpgrade branch was removed; facility behavior now flows through registered NPC intents and InfrastructureHandler."
+    },
+    {
+      "id": "literal-player-npc-parity",
+      "status": "CORRECTED",
+      "evidence": "intentCapabilityWaivers.ts explicitly classifies lifecycle, player-expression, system-mediated, and NPC-world intents instead of forcing impossible symmetry."
+    },
+    {
+      "id": "hybrid-test-placement",
+      "status": "CORRECTED",
+      "evidence": "Vitest discovers src/**/*.test.ts(x), excludes Playwright specs, and only redirects mirrored test imports when the source file exists."
+    },
+    {
+      "id": "route-page-boundary",
+      "status": "CORRECTED",
+      "evidence": "Root, start, compare, and rival-career route pages moved to src/components/routes while route files remain adapters."
+    },
+    {
+      "id": "protected-agent-artifacts",
+      "status": "APPROVED",
+      "evidence": "protectedArtifacts.test.ts verifies ignored .jules artifacts, tracked tool directories, and exclusion of generated routeTree.gen.ts."
+    }
+  ],
+  "testFirstLedger": [
+    {
+      "workstream": "test-harness-and-ci",
+      "redGate": "testHarnessPlacement failed before hybrid discovery, redirect, Bun pin, and E2E CI changes",
+      "greenGate": "bunx vitest run src/tests/architecture/testHarnessPlacement.test.ts",
+      "testFiles": ["src/tests/architecture/testHarnessPlacement.test.ts"],
+      "productionScopes": [
+        "vitest.config.ts",
+        "tsconfig.json",
+        ".github/workflows/ci.yml",
+        "package.json"
+      ]
+    },
+    {
+      "workstream": "capability-contract-graph",
+      "redGate": "capabilityGraph failed before contract derivation and typed waivers",
+      "greenGate": "bunx vitest run src/tests/architecture/capabilityGraph.test.ts src/tests/orphanScan.test.ts && bun run scripts/orphan-audit.ts",
+      "testFiles": [
+        "src/tests/architecture/capabilityGraph.test.ts",
+        "src/tests/orphanScan.test.ts"
+      ],
+      "productionScopes": [
+        "scripts/orphan-audit.ts",
+        "src/core/resolver/intentCapabilityWaivers.ts"
+      ]
+    },
+    {
+      "workstream": "production-executor-path",
+      "redGate": "intentProductionPath established executor-path expectations before resolver wiring",
+      "greenGate": "bunx vitest run src/tests/integration/intentProductionPath.test.ts src/tests/integration/systemIntegration.test.ts",
+      "testFiles": [
+        "src/tests/integration/intentProductionPath.test.ts",
+        "src/tests/integration/systemIntegration.test.ts"
+      ],
+      "productionScopes": [
+        "src/core/time/phases/**",
+        "src/core/resolver/**"
+      ]
+    },
+    {
+      "workstream": "npc-action-registry",
+      "redGate": "npcActionRegistry and facility intent tests failed before bounded plans, traces, and ownership propagation",
+      "greenGate": "bunx vitest run src/tests/core/ai/npcActionRegistry.test.ts src/tests/core/npc/facilityIntents.test.ts src/tests/core/npc/npcCycleFacilityPath.test.ts",
+      "testFiles": [
+        "src/tests/core/ai/npcActionRegistry.test.ts",
+        "src/tests/core/npc/facilityIntents.test.ts",
+        "src/tests/core/npc/npcCycleFacilityPath.test.ts"
+      ],
+      "productionScopes": ["src/domains/agents/simulation/**"]
+    },
+    {
+      "workstream": "resolver-ownership",
+      "redGate": "InfrastructureHandler and management-resolution tests failed before entity-owned impact resolution",
+      "greenGate": "bunx vitest run src/tests/core/resolver/handlers/InfrastructureHandler.test.ts src/tests/core/time/phases/managementResolution.test.ts",
+      "testFiles": [
+        "src/tests/core/resolver/handlers/InfrastructureHandler.test.ts",
+        "src/tests/core/time/phases/managementResolution.test.ts"
+      ],
+      "productionScopes": [
+        "src/core/resolver/handlers/**",
+        "src/core/time/phases/*ManagementResolvers.ts",
+        "src/core/time/phases/trainingResolution.ts"
+      ]
+    },
+    {
+      "workstream": "persistence-schema-contract",
+      "redGate": "persistenceContract and rehydration coverage established persisted/transient boundaries before version reset",
+      "greenGate": "bunx vitest run src/tests/architecture/persistenceContract.test.ts src/tests/persistence/npcCompression.test.ts src/tests/store/storeRehydration.test.tsx",
+      "testFiles": [
+        "src/tests/architecture/persistenceContract.test.ts",
+        "src/tests/persistence/npcCompression.test.ts",
+        "src/tests/store/storeRehydration.test.tsx"
+      ],
+      "productionScopes": [
+        "src/game/store/**",
+        "src/core/resolver/impacts/**"
+      ]
+    },
+    {
+      "workstream": "domain-boundaries-and-moves",
+      "redGate": "domain boundary and move-manifest tests failed before agent simulation moved out of legacy core paths",
+      "greenGate": "bunx vitest run src/tests/architecture/domainBoundaries.test.ts src/tests/architecture/agentDomainMoves.test.ts src/tests/architecture/layeringRules.test.ts",
+      "testFiles": [
+        "src/tests/architecture/domainBoundaries.test.ts",
+        "src/tests/architecture/agentDomainMoves.test.ts",
+        "src/tests/architecture/layeringRules.test.ts"
+      ],
+      "productionScopes": [
+        "src/domains/**",
+        "src/services/**",
+        "eslint.config.js",
+        "ARCHITECTURE.md",
+        "AGENTS.md",
+        "layering-violations.baseline.json"
+      ]
+    },
+    {
+      "workstream": "route-thinness",
+      "redGate": "routeThinness failed while route files exported page components",
+      "greenGate": "bunx vitest run src/tests/architecture/routeThinness.test.ts src/tests/routes/rootRedirect.test.tsx src/tests/routes/startScreenSaveDetection.test.tsx",
+      "testFiles": [
+        "src/tests/architecture/routeThinness.test.ts",
+        "src/tests/routes/rootRedirect.test.tsx",
+        "src/tests/routes/startScreenSaveDetection.test.tsx"
+      ],
+      "productionScopes": ["src/routes/**", "src/components/routes/**"]
+    },
+    {
+      "workstream": "ui-honesty-and-agent-surfacing",
+      "redGate": "uiHonesty reported legibility and fabricated-chrome violations before the scoped UI transform",
+      "greenGate": "bunx vitest run src/tests/architecture/uiHonesty.test.ts src/tests/components/analytics/RivalIntelTab.test.tsx",
+      "testFiles": [
+        "src/tests/architecture/uiHonesty.test.ts",
+        "src/tests/components/analytics/RivalIntelTab.test.tsx"
+      ],
+      "productionScopes": ["src/components/**", "src/routes/**"]
+    },
+    {
+      "workstream": "protected-artifacts-and-cleanup",
+      "redGate": "protectedArtifacts and data-immutability gates guarded protected paths before cleanup",
+      "greenGate": "bunx vitest run src/tests/architecture/protectedArtifacts.test.ts src/tests/architecture/dataImmutability.test.ts",
+      "testFiles": [
+        "src/tests/architecture/protectedArtifacts.test.ts",
+        "src/tests/architecture/dataImmutability.test.ts"
+      ],
+      "productionScopes": [
+        "src/data/**",
+        "layering-violations.baseline.json",
+        ".github/workflows/ci.yml"
+      ]
+    },
+    {
+      "workstream": "determinism-and-performance",
+      "redGate": "checksum and benchmark coverage guarded seeded simulation before path consolidation",
+      "greenGate": "bunx vitest run src/tests/core/time/checksum.test.ts src/tests/performance/simulationBenchmarks.test.ts && bun run bench:advance && bun run bench:race",
+      "testFiles": [
+        "src/tests/core/time/checksum.test.ts",
+        "src/tests/performance/simulationBenchmarks.test.ts"
+      ],
+      "productionScopes": ["src/core/time/**", "src/core/race/**", "src/domains/agents/simulation/**"]
+    }
+  ],
+  "moveManifests": ["src/tests/fixtures/agentDomainMoveManifest.json"],
+  "deletionManifest": [
+    {
+      "path": "src/core/ai/**",
+      "disposition": "moved_preserved",
+      "evidence": "Every retained module moved to src/domains/agents/simulation; only path references and domain-boundary imports changed."
+    },
+    {
+      "path": "src/core/npc/**",
+      "disposition": "moved_preserved",
+      "evidence": "NPC generation and support modules moved to src/domains/agents/simulation/npc."
+    },
+    {
+      "path": "src/core/npc/npcFacilityUpgrades.ts",
+      "disposition": "consolidated_dormant_path",
+      "evidence": "Direct facility mutation was unreachable from npcCyclePhase; facility upgrades now execute through NPC intents and InfrastructureHandler."
+    },
+    {
+      "path": "src/core/resolver/impacts/raceImpacts.ts::ClaimResolutionImpact",
+      "disposition": "removed_dead_contract",
+      "evidence": "No producer or registered handler referenced the contract; claim settlement emits horse_transfer and cash_change impacts."
+    },
+    {
+      "path": "src/hooks/shared/use-mobile.tsx",
+      "disposition": "quarantined_unique",
+      "evidence": "Responsive-layout primitive has no current production consumer; retained as an approved shared utility pending an adaptive-UI requirement."
+    },
+    {
+      "path": "src/hooks/shared/useIsClient.ts",
+      "disposition": "quarantined_unique",
+      "evidence": "Client-hydration guard has dedicated test coverage but no current production consumer; retained as approved internal infrastructure rather than deleted."
+    }
+  ],
+  "persistence": {
+    "storeVersion": 10,
+    "policy": "hard_reset_incompatible_saves",
+    "transientFields": ["engineRevision"],
+    "dedicatedBucketsGuard": "persistenceContract.test.ts"
+  },
+  "performance": {
+    "deterministicFingerprints": {
+      "small_30d": "c247e45d",
+      "medium_30d": "f5da45c6",
+      "small_seeded_repeat": "7470229B",
+      "medium_seeded_repeat": "12937976B",
+      "large_seeded_repeat": "18650219B"
+    },
+    "benchmarks": [
+      {
+        "name": "advance",
+        "command": "bun run bench:advance",
+        "result": "PASS; same-seed checksum repeatability; small 365d 1.9d/s, medium 365d 1.1d/s, large 365d 0.9d/s; retained-world steady-state command payload 82B"
+      },
+      {
+        "name": "race",
+        "command": "bun run bench:race",
+        "result": "PASS; 14-runner step p95 0.027ms under 4ms physics and 16.7ms RAF-equivalent gates"
+      },
+      {
+        "name": "phase-profile",
+        "command": "bun run scripts/profilePhases.ts 30 small",
+        "result": "small/30d total 42371ms; raceResolution 69.6%, impactApplication 13.9%, dailySnapshot 3.5%, intentCollection 2.9%"
+      }
+    ]
+  }
+}

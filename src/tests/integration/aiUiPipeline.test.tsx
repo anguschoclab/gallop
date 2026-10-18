@@ -8,9 +8,13 @@ import { AiActivityFeed } from "@/components/npc/AiActivityFeed";
 import { EconomicIndicators } from "@/components/analytics/EconomicIndicators";
 import { NarrativeArcCard } from "@/components/narrative/NarrativeArcCard";
 import { TacticalAnalysisPanel } from "@/components/race/TacticalAnalysisPanel";
-import type { StableAIState, NpcAIManager, NarrativeArc } from "@/core/ai/npcCycleAI";
+import type {
+  StableAIState,
+  NpcAIManager,
+  NarrativeArc,
+} from "@/domains/agents/simulation/npcCycleAI";
 
-import type { PersonalityAIState } from "@/core/ai/personalitySystem";
+import type { PersonalityAIState } from "@/domains/agents/simulation/personalitySystem";
 import type { Stable } from "@/game/types";
 import type { RaceRunner } from "@/core/race/types";
 import type { NewsItem } from "@/services/narrative/newsTypes";

@@ -12,7 +12,7 @@ import {
   getAdaptiveThreshold,
   pruneOldOutcomes,
   getLearningInsights,
-} from "@/core/ai/learningModule";
+} from "@/domains/agents/simulation/learningModule";
 
 describe("createLearningState", () => {
   it("should initialize empty learning state", () => {

@@ -29,10 +29,13 @@ import {
   selectBestJockey,
   createJockeyAIState,
   calculateJockeySuitability,
-} from "@/core/ai/jockeyAI";
-import { recordJockeyAssignment } from "@/core/ai/jockeyAIRetention";
+} from "@/domains/agents/simulation/jockeyAI";
+import { recordJockeyAssignment } from "@/domains/agents/simulation/jockeyAIRetention";
 import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
-import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
+import {
+  getOrCreateStableAIState,
+  type NpcAIManager,
+} from "@/domains/agents/simulation/npcCycleAI";
 import { isPlayerOwned } from "@/core/horse/ownership";
 
 /**

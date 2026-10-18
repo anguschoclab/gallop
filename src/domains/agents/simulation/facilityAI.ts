@@ -4,7 +4,7 @@
  * This file provides strategic investment decisions, budget management,
  * and upgrade priority scoring for NPC stables.
  *
- * Dependencies: @/game/types (Stable), @/core/facilities/facilityTypes (FacilityType, FacilityLevel, PlayerFacilities, FACILITY_UPGRADE_COSTS), ./personalitySystem (calculateUtilityScore), ./learningModule (getSuccessRate, getAdaptiveThreshold), ./facilityAITypes (types, createFacilityAIState), ./facilityAIRoi (recordFacilityInvestment, updateFacilityROI, getFacilityInsights), ./facilityAIStrategies (shouldUpgradeForCapacity, getSpecializationPriority, shouldDivestFacility)
+ * Dependencies: @/game/types (Stable), @/core/facilities/facilityTypes (FacilityType, FacilityLevel, PlayerFacilities, FACILITY_UPGRADE_COSTS), ./learningModule (getSuccessRate, getAdaptiveThreshold), ./facilityAITypes (types, createFacilityAIState), ./facilityAIRoi (recordFacilityInvestment, updateFacilityROI, getFacilityInsights), ./facilityAIStrategies (shouldUpgradeForCapacity, getSpecializationPriority, shouldDivestFacility)
  * Related files: npcCycleAI.ts (uses facility AI), personalitySystem.ts (provides personality state)
  */
 
@@ -14,7 +14,6 @@ import type {
   PlayerFacilities,
 } from "@/core/facilities/facilityTypes";
 import type { Stable } from "@/game/types";
-import { calculateUtilityScore } from "./personalitySystem";
 import { getSuccessRate, getAdaptiveThreshold } from "./learningModule";
 import { FACILITY_UPGRADE_COSTS } from "@/core/facilities/facilityTypes";
 import { FACILITY_UPGRADE_BASE_THRESHOLD, DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
@@ -69,16 +68,6 @@ function calculateFacilityUpgradePriority(
     if (dailyROI > 50) score += 20; // Good ROI
     if (dailyROI < 10) score -= 15; // Poor ROI
   }
-
-  // Personality modifiers
-  const factors: Record<string, number> = {
-    facility_priority: facilityPriority,
-    current_level_bonus: levelBonus,
-    budget_ratio: budgetRatio,
-    upgrade_cost: upgradeCost,
-  };
-
-  score = calculateUtilityScore(aiState.personalityState, "facility_upgrade", factors);
 
   // Learning-based adjustment
   const contextKey = `${stable.personality}:${facilityType}`;

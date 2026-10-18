@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
-import { resolveRegionalDominance } from "@/core/npc/npcRegionalDominance";
+import { resolveRegionalDominance } from "@/domains/agents/simulation/npc/npcRegionalDominance";
 import { createRng } from "@/core/common/rng";
 import type { Horse, Race, Stable } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";

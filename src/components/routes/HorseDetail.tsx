@@ -201,7 +201,7 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
             <section id="training" className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <Zap className="h-4 w-4 text-gold" />
-                <h2 className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+                <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
                   Training
                 </h2>
               </div>

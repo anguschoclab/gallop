@@ -19,10 +19,10 @@ import { generateHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactor
 import { makePlayerOwned } from "@/core/horse/ownership";
 import { generateRace, makeGradedRace } from "@/core/race/generation/raceGen";
 import { generateInitialJockeys } from "@/core/jockey/generator";
-import { generateAllStables } from "@/core/npc/stables";
-import { generateAllNpcHorses } from "@/core/npc/horseGenerator";
+import { generateAllStables } from "@/domains/agents/simulation/npc/stables";
+import { generateAllNpcHorses } from "@/domains/agents/simulation/npc/horseGenerator";
 import { generateFamousStallions } from "@/data/famousStallions";
-import { runNpcRaceEntry } from "@/core/npc/raceEntry";
+import { runNpcRaceEntry } from "@/domains/agents/simulation/npc/raceEntry";
 import { createRng, hashStr } from "@/core/common/rng";
 import { GRADED_RACES } from "@/data/gradedRaces";
 import { createDefaultPlayerFacilities, createFacility } from "@/core/facilities";
@@ -31,7 +31,7 @@ import { STARTING_CASH, MAIDEN_GUARANTEE_START_DAY, MAIDEN_GUARANTEE_END_DAY } f
 import { createDefaultExchangeState } from "@/core/market/exchange";
 import { DEFAULT_MARKET_STRATEGY } from "@/core/market/strategy";
 import { seedGazetteNews } from "@/services/narrative/seedNewsGenerator";
-import { createStableAIState } from "@/core/ai/npcCycleAI";
+import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { generateUpcomingScheduledRaces } from "@/core/market/marketRefresh";
 import { ensureMaidenRaces } from "@/core/race/maidenGuarantee";
 import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";

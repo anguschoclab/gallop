@@ -18,7 +18,7 @@ export function TimeWindowSelect({ className, compact }: TimeWindowSelectProps) 
   return (
     <div className={cn("flex items-center gap-2", className)}>
       {!compact ? (
-        <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-cream/40">
+        <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-cream/40">
           Window
         </span>
       ) : null}

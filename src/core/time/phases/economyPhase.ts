@@ -5,13 +5,13 @@
  * market signals. Runs before marketPhase (order 50) so market decisions
  * can use fresh economic data.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/ai/economyAI (runEconomicCycle), @/core/ai/npcCycleAI (NpcAIManager)
+ * Dependencies: ../pipeline (PipelineContext), @/domains/agents/simulation/economyAI (runEconomicCycle), @/domains/agents/simulation/npcCycleAI (NpcAIManager)
  * Related files: ../pipeline.ts (uses phase), index.ts (aggregates phase)
  */
 
 import type { PipelineContext } from "../pipeline";
-import { runEconomicCycle } from "@/core/ai/economyAITracking";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { runEconomicCycle } from "@/domains/agents/simulation/economyAITracking";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { PHASE_ORDER_ECONOMY } from "@/constants";
 
 export const economyPhase = {

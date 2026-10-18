@@ -24,7 +24,7 @@ export function AIActivityStrip({ news }: AIActivityStripProps) {
       </CardHeader>
       <CardContent className="p-3">
         {display.length === 0 ? (
-          <div className="py-6 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+          <div className="py-6 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
             No recent AI activity to report.
           </div>
         ) : (

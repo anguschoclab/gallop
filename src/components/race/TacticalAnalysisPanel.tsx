@@ -37,7 +37,7 @@ export function TacticalAnalysisPanel({ runners, insights }: TacticalAnalysisPan
       </CardHeader>
       <CardContent className="p-0">
         {runners.length === 0 ? (
-          <div className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+          <div className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
             No tactical data available for this race.
           </div>
         ) : (

@@ -10,7 +10,7 @@
 
 import { describe, it, expect } from "vitest";
 import { createInitialState } from "@/game/store/initialization";
-import { getDisplayableStats, getVisibleStats } from "@/core/npc/scouting";
+import { getDisplayableStats, getVisibleStats } from "@/domains/agents/simulation/npc/scouting";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { buildRunner } from "@/core/race/engine/runnerBuilder";
 import { runRaceToCompletion } from "@/core/race/engine/simulation";

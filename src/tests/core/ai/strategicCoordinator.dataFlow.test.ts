@@ -7,10 +7,16 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { assessWorldState, type WorldAssessment } from "@/core/ai/strategicCoordinator";
-import { generateNpcIntents } from "@/core/npc/intentGenerators";
+import {
+  assessWorldState,
+  type WorldAssessment,
+} from "@/domains/agents/simulation/strategicCoordinator";
+import {
+  generateNpcIntents,
+  generateNpcIntentsDetailed,
+} from "@/domains/agents/simulation/npc/intentGenerators";
 import type { GameState, Stable, Horse } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
 
@@ -130,9 +136,9 @@ describe("coordinateSubsystems: weights are consumed by intent generators", () =
     const manager = createMockManager();
     const state = createMockGameState({ npcAIManager: manager });
 
-    generateNpcIntents(state, 100);
+    const generated = generateNpcIntentsDetailed(state, 100);
 
-    const updatedStableAI = manager.stableStates["npc-1"];
+    const updatedStableAI = generated.npcAIManager?.stableStates["npc-1"];
     expect(updatedStableAI).toBeDefined();
     expect(updatedStableAI?.subsystemWeights).toBeDefined();
   });
@@ -141,9 +147,9 @@ describe("coordinateSubsystems: weights are consumed by intent generators", () =
     const manager = createMockManager();
     const state = createMockGameState({ npcAIManager: manager });
 
-    generateNpcIntents(state, 100);
+    const generated = generateNpcIntentsDetailed(state, 100);
 
-    const updatedStableAI = manager.stableStates["npc-1"];
+    const updatedStableAI = generated.npcAIManager?.stableStates["npc-1"];
     expect(updatedStableAI).toBeDefined();
     const weights = updatedStableAI?.subsystemWeights;
     expect(weights).toBeDefined();
@@ -163,9 +169,9 @@ describe("budgetAllocation: checked before generating spending intents", () => {
     const manager = createMockManager();
     const state = createMockGameState({ npcAIManager: manager });
 
-    generateNpcIntents(state, 100);
+    const generated = generateNpcIntentsDetailed(state, 100);
 
-    const updatedStableAI = manager.stableStates["npc-1"];
+    const updatedStableAI = generated.npcAIManager?.stableStates["npc-1"];
     expect(updatedStableAI).toBeDefined();
     expect(updatedStableAI?.budgetAllocation).toBeDefined();
     expect(updatedStableAI?.budgetAllocation?.total).toBeGreaterThan(0);

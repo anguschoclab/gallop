@@ -35,7 +35,7 @@ export function RaceFeed({
     return (
       <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
         <Globe className="h-16 w-16 mx-auto mb-6 text-cream/5" />
-        <p className="font-bold text-cream/40 uppercase tracking-[0.3em] font-[family-name:var(--font-display)]">
+        <p className="font-bold text-cream/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
           No Races Found
         </p>
         <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">

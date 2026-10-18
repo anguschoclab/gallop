@@ -13,7 +13,7 @@ import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { createTestHorse, createTestMare, createTestStable } from "@/tests/helpers";
 import type { PipelineContext } from "@/core/time/pipeline";
 import type { GameState, Pregnancy, Horse } from "@/game/types";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import type { AnyImpact } from "@/core/resolver/impacts";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { asNpcStableId } from "@/core/types/branded";

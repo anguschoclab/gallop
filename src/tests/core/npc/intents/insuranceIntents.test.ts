@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateNpcInsuranceIntents } from "@/core/npc/intents/insuranceIntents";
+import { generateNpcInsuranceIntents } from "@/domains/agents/simulation/npc/intents/insuranceIntents";
 import type { GameState, Horse, Stable } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 

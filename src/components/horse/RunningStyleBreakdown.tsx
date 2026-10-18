@@ -86,7 +86,7 @@ export function RunningStyleBreakdown({ horse }: RunningStyleBreakdownProps) {
       <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
         <div className="flex items-center gap-2">
           <Gauge className="h-4 w-4 text-gold" />
-          <h2 className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+          <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
             Running Style Breakdown
           </h2>
         </div>
@@ -223,9 +223,7 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
                 {observed}
               </div>
             ) : (
-              <div className="text-[10px] font-mono text-cream/30 italic uppercase">
-                No pace data
-              </div>
+              <div className="text-[10px] font-mono text-cream/30 uppercase">No pace data</div>
             )}
             {overall.dominant && (
               <p className="text-[10px] text-cream/40 mt-1 leading-snug">

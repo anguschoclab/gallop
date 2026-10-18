@@ -99,10 +99,10 @@ export function RaceVerdictBar({ verdict }: RaceVerdictBarProps) {
       )}
 
       {verdict.conditionsNote && (
-        <div className="text-[9px] font-mono text-cream/30 italic">{verdict.conditionsNote}</div>
+        <div className="text-[9px] font-mono text-cream/30">{verdict.conditionsNote}</div>
       )}
       {verdict.fieldComparison && (
-        <div className="text-[9px] font-mono text-cream/30 italic">{verdict.fieldComparison}</div>
+        <div className="text-[9px] font-mono text-cream/30">{verdict.fieldComparison}</div>
       )}
     </div>
   );

@@ -74,7 +74,7 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-orange-400">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.3em] text-cream flex items-center gap-2">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-orange-400" /> Stewards Inquiries
           </CardTitle>
           <Badge className="bg-orange-400/10 text-orange-400 border-orange-400/30">

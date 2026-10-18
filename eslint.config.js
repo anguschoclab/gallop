@@ -128,7 +128,7 @@ export default tseslint.config(
   },
   // Exclude core (core often uses any for type assertions)
   {
-    files: ["src/core/**/*.ts"],
+    files: ["src/core/**/*.ts", "src/domains/**/*.ts"],
     rules: {
       "@typescript-eslint/no-explicit-any": "off",
       "jsdoc/require-returns": "off",
@@ -252,7 +252,7 @@ export default tseslint.config(
   //    layering-violations.baseline.json — count can only go down) ──────
   // core may NOT import from game/store, services, components, hooks
   {
-    files: ["src/core/**/*.ts"],
+    files: ["src/core/**/*.ts", "src/domains/**/*.ts"],
     ignores: ["src/core/**/*.test.ts"],
     rules: {
       "no-restricted-syntax": [

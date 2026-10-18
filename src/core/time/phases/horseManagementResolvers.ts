@@ -27,7 +27,7 @@ import type {
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import { createRng, hashStr } from "@/core/common/rng";
-import { scoutHorse } from "@/core/npc/scouting";
+import { scoutHorse } from "@/domains/agents/simulation/npc/scouting";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { isPlayerOwned } from "@/core/horse/ownership";
 import {

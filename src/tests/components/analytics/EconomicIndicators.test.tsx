@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import { EconomicIndicators } from "@/components/analytics/EconomicIndicators";
 import { renderWithStore } from "@/test-utils/renderWithStore";
-import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
+import type { EconomicTrend } from "@/domains/agents/simulation/strategicCoordinator";
 
 function createMockEconomicTrend(overrides: Partial<EconomicTrend> = {}): EconomicTrend {
   return {

@@ -8,7 +8,7 @@
 import { useCallback, useMemo, useReducer, useRef } from "react";
 import { createRng, hashStr } from "@/core/common/rng";
 import { generateAuctioneerLine, type AuctioneerLine } from "@/services/auction/auctioneerService";
-import { getDisplayableStats } from "@/core/npc/scouting";
+import { getDisplayableStats } from "@/domains/agents/simulation/npc/scouting";
 import type { AuctionRunner } from "@/core/auction/runner";
 import type { Horse, Stable, AuctionLot } from "@/game/types";
 import type { ScoutReport } from "@/core/market/types";

@@ -7,9 +7,9 @@ import {
   getEarlyTriggerDays,
   type FinancialDistressState,
   type SpendingCategory,
-} from "@/core/ai/financialDistressAI";
-import { calculateShareSale } from "@/core/ai/syndicationAI";
-import { shouldConsignHorse, createAuctionAIState } from "@/core/ai/auctionAI";
+} from "@/domains/agents/simulation/financialDistressAI";
+import { calculateShareSale } from "@/domains/agents/simulation/syndicationAI";
+import { shouldConsignHorse, createAuctionAIState } from "@/domains/agents/simulation/auctionAI";
 import {
   STUD_FEE_REDUCTION_MULTIPLIER,
   STUD_FEE_MINIMUM,

@@ -6,7 +6,7 @@ vi.mock("@/game/store", () => ({
   useGameWithShallow: (selector: (s: any) => any) => selector(mockState),
 }));
 
-vi.mock("@/core/npc/scouting", () => ({
+vi.mock("@/domains/agents/simulation/npc/scouting", () => ({
   getDisplayableStats: () => ({ stats: null, overallEstimate: null }),
 }));
 

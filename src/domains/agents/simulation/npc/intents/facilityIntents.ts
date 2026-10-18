@@ -7,16 +7,20 @@ import type {
 import type { GameState, Horse, Stable, AuctionSale } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { createAuctionAIState, shouldConsignHorse } from "@/core/ai/auctionAI";
+import { createAuctionAIState, shouldConsignHorse } from "@/domains/agents/simulation/auctionAI";
 import {
   FACILITY_UPGRADE_COSTS,
-  type FacilityType,
   type FacilityLevel,
   type PlayerFacilities,
 } from "@/core/facilities";
+import {
+  selectFacilityToUpgrade,
+  shouldUpgradeFacility,
+} from "@/domains/agents/simulation/facilityAI";
+import { createFacilityAIState } from "@/domains/agents/simulation/facilityAITypes";
 import type { OutpostRegion } from "@/core/facilities/outpostTypes";
-import type { StableAIState, DifficultyState } from "@/core/ai/npcCycleAI";
-import type { DistressLevel } from "@/core/ai/financialDistressAI";
+import type { StableAIState, DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
+import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import {
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   CONSIGNMENT_INTENT_PRIORITY,
@@ -104,10 +108,13 @@ export function generateNpcTransportIntents(
 
   const TRANSPORT_COST = 5000;
   const MAX_TRANSPORTS_PER_DAY = 2;
-  let transportCount = 0;
+  if (stable.cash < TRANSPORT_COST) return intents;
+  let transportSpend = 0;
 
   for (const horse of ownedHorses) {
-    if (transportCount >= MAX_TRANSPORTS_PER_DAY) break;
+    if (intents.length >= MAX_TRANSPORTS_PER_DAY || transportSpend + TRANSPORT_COST > stable.cash) {
+      break;
+    }
     if (horse.ownership?.type !== "npc" || horse.ownership.stableId !== stable.id) continue;
     if (horse.age < 2) continue;
 
@@ -141,7 +148,7 @@ export function generateNpcTransportIntents(
         transportId: `${currentOutpost.id}->${bestOutpost.id}`,
         cost: TRANSPORT_COST,
       });
-      transportCount++;
+      transportSpend += TRANSPORT_COST;
     }
   }
 
@@ -165,41 +172,37 @@ export function generateNpcFacilityUpgradeIntents(
   const stableFacilities = npcFacilities?.[stable.id];
   if (!stableFacilities) return intents;
 
+  const facilityAI = stableAI?.facilityAI ?? createFacilityAIState(stable);
+  const facilityType = selectFacilityToUpgrade(facilityAI, stableFacilities, stable, day);
+  if (!facilityType) return intents;
+
+  const facility = stableFacilities[facilityType];
+  if (!facility) return intents;
+
+  const upgradeCost = FACILITY_UPGRADE_COSTS[facility.level];
+  if (upgradeCost === null || upgradeCost > facilitiesBudget) return intents;
+  if (
+    !shouldUpgradeFacility(facilityAI, facilityType, facility.level, stable, day, facilityWeight)
+  ) {
+    return intents;
+  }
+
   const LEVEL_ORDER: FacilityLevel[] = ["basic", "standard", "premium", "elite"];
-  const PRIORITY_FACILITIES: FacilityType[] = ["main_track", "barn", "veterinary_clinic"];
+  const nextLevel = LEVEL_ORDER[LEVEL_ORDER.indexOf(facility.level) + 1];
+  if (!nextLevel) return intents;
 
-  let bestCandidate: { type: FacilityType; level: FacilityLevel; cost: number } | null = null;
-
-  for (const facilityType of PRIORITY_FACILITIES) {
-    const facility = stableFacilities[facilityType];
-    if (!facility) continue;
-    const upgradeCost = FACILITY_UPGRADE_COSTS[facility.level];
-    if (upgradeCost === null) continue;
-    if (upgradeCost > facilitiesBudget) continue;
-
-    if (
-      !bestCandidate ||
-      LEVEL_ORDER.indexOf(facility.level) < LEVEL_ORDER.indexOf(bestCandidate.level)
-    ) {
-      bestCandidate = { type: facilityType, level: facility.level, cost: upgradeCost };
-    }
-  }
-
-  if (bestCandidate) {
-    const nextLevel = LEVEL_ORDER[LEVEL_ORDER.indexOf(bestCandidate.level) + 1];
-    intents.push({
-      id: generateUUID(),
-      entityId: stable.id,
-      source: "npc",
-      sourceId: stable.id,
-      day,
-      priority: 15,
-      type: "facility_upgrade",
-      facilityId: bestCandidate.type,
-      nextLevel,
-      cost: bestCandidate.cost,
-    });
-  }
+  intents.push({
+    id: generateUUID(),
+    entityId: stable.id,
+    source: "npc",
+    sourceId: stable.id,
+    day,
+    priority: 15,
+    type: "facility_upgrade",
+    facilityId: facilityType,
+    nextLevel,
+    cost: upgradeCost,
+  });
 
   return intents;
 }
@@ -219,8 +222,8 @@ export function generateNpcOutpostIntents(
   if (currentOutposts.length >= MAX_OUTPOSTS) return intents;
 
   if (
-    stable.cash < OUTPOST_COST &&
-    (facilitiesBudget === undefined || facilitiesBudget < OUTPOST_COST)
+    stable.cash < OUTPOST_COST ||
+    (facilitiesBudget !== undefined && facilitiesBudget < OUTPOST_COST)
   ) {
     return intents;
   }

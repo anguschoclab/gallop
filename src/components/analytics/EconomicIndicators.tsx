@@ -35,7 +35,7 @@ export function EconomicIndicators() {
     return (
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
         <CardHeader>
-          <CardTitle className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream">
             Industry Metrics
           </CardTitle>
         </CardHeader>
@@ -58,7 +58,7 @@ export function EconomicIndicators() {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream">
             Economic Indicators
           </CardTitle>
           <Badge

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { runNpcCycle } from "@/core/npc/npcCycle";
+import { runNpcCycle } from "@/domains/agents/simulation/npc/npcCycle";
 import type { Race, Stable } from "@/game/types";
 
 describe("npcCycle error handling", () => {

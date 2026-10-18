@@ -4,7 +4,7 @@
  * One column per rival horse with rows for age, starts, wins, win rate,
  * earnings, fame, career stage, days since last run and milestone history.
  *
- * Dependencies: @/core/npc/rivalCareerCompare (RivalCareerProfile)
+ * Dependencies: @/domains/agents/simulation/npc/rivalCareerCompare (RivalCareerProfile)
  * Related files: src/routes/npc-stables.rival-careers.tsx (consumer)
  */
 

@@ -17,8 +17,8 @@ import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/constants";
 import { formatCurrency } from "@/core/common/formatting";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts/index";
-import { applyClaimingFriction } from "@/core/ai/diplomacyAI";
-import { trackClaimingActivity } from "@/core/ai/economyAITracking";
+import { applyClaimingFriction } from "@/domains/agents/simulation/diplomacyAI";
+import { trackClaimingActivity } from "@/domains/agents/simulation/economyAITracking";
 
 /**
  * Phase: Claim Resolution
@@ -29,7 +29,7 @@ import { trackClaimingActivity } from "@/core/ai/economyAITracking";
  *   - Randomly select a winner per horse (seeded by raceId + horseId)
  *   - Debit claimant's cash, credit original owner's net proceeds
  *   - Transfer horse ownership
- *   - Emit ClaimResolutionImpact via logs
+ *   - Emit horse-transfer and cash impacts for authoritative application
  *
  * Prize money is credited to the original owner by the race resolution phase,
  * so no adjustment is needed here.

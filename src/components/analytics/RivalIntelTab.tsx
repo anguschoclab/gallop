@@ -59,12 +59,13 @@ export function RivalIntelTab() {
         <NpcDistressMonitorPanel stableStates={stableStates} stableMap={stableMap} />
         <WorldAssessmentPanel stableStates={stableStates} />
         <StrategicDirectivesPanel stableStates={stableStates} />
+        <NpcActionDecisionsPanel stableStates={stableStates} stableMap={stableMap} />
         <NpcRelationshipsPanel stableStates={stableStates} stableMap={stableMap} />
         <NpcStableIntelPanel stableStates={stableStates} stableMap={stableMap} />
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-sm font-black uppercase tracking-[0.2em] text-gold/60">
+        <h3 className="text-sm font-black uppercase tracking-[0.15em] text-gold/60">
           Active Storylines
         </h3>
         <StorylinesTab />
@@ -96,7 +97,7 @@ function DifficultyPanel({
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
           <TrendingUp size={14} />
           Difficulty Modulator
         </CardTitle>
@@ -148,7 +149,7 @@ function CartelsPanel({
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
           <Swords size={14} />
           Active Cartels
         </CardTitle>
@@ -208,7 +209,7 @@ function NpcDistressMonitorPanel({
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
           <AlertTriangle size={14} />
           NPC Distress Monitor
         </CardTitle>
@@ -260,7 +261,7 @@ function WorldAssessmentPanel({ stableStates }: { stableStates: Record<string, S
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
           <Globe size={14} />
           World Assessment
         </CardTitle>
@@ -299,7 +300,7 @@ function StrategicDirectivesPanel({
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
           <Target size={14} />
           Strategic Directives
         </CardTitle>
@@ -317,6 +318,63 @@ function StrategicDirectivesPanel({
                   {d.priority}
                 </Badge>
               </div>
+            </div>
+          ))
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
+function NpcActionDecisionsPanel({
+  stableStates,
+  stableMap,
+}: {
+  stableStates: Record<string, StableAIState>;
+  stableMap: Map<string, Stable>;
+}) {
+  const decisions = Object.values(stableStates).flatMap((state) => state.decisionTraces ?? []);
+  const actionLabel = (actionId: string) => actionId.replace(/_/g, " ");
+
+  return (
+    <Card className="border-gold/20 bg-slate-900/40">
+      <CardHeader className="border-b border-gold/10 pb-3">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
+          <Activity size={14} />
+          NPC Action Decisions
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-4 space-y-2">
+        {decisions.length === 0 ? (
+          <p className="text-[11px] text-cream/40 font-mono">No action decisions recorded</p>
+        ) : (
+          decisions.map((decision) => (
+            <div
+              key={`${decision.stableId}:${decision.actionId}:${decision.day}`}
+              className="space-y-1 text-xs"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <Link
+                  to="/npc-stables/$stableId"
+                  params={{ stableId: decision.stableId }}
+                  className="text-cream font-bold hover:text-gold"
+                >
+                  {stableMap.get(decision.stableId)?.name ?? decision.stableId}
+                </Link>
+                <Badge variant="outline" className="text-[9px] border-white/10 text-cream/40">
+                  {decision.status}
+                </Badge>
+              </div>
+              <div className="flex items-center justify-between text-[10px] font-mono text-cream/40">
+                <span>{actionLabel(decision.actionId)}</span>
+                <span>
+                  Day {decision.day} · {decision.intentCount} intent
+                  {decision.intentCount === 1 ? "" : "s"}
+                </span>
+              </div>
+              {decision.rejectionReason && (
+                <p className="text-[10px] font-mono text-red-300/70">{decision.rejectionReason}</p>
+              )}
             </div>
           ))
         )}
@@ -358,7 +416,7 @@ function NpcRelationshipsPanel({
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
           <Users size={14} />
           NPC Relationships
         </CardTitle>
@@ -448,7 +506,7 @@ function NpcStableIntelPanel({
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
           <Activity size={14} />
           NPC Stable Intelligence
         </CardTitle>

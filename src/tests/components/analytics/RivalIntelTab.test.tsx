@@ -34,6 +34,18 @@ vi.mock("@/game/store", () => ({
             strategicDirectives: [
               { id: "d1", priority: "high" as const, type: "acquire_stallion" },
             ],
+            decisionTraces: [
+              {
+                stableId: "s1",
+                day: 99,
+                actionId: "facility_upgrade",
+                capability: "npc.facility_upgrade",
+                intentTypes: ["facility_upgrade"],
+                intentIds: ["intent-1"],
+                intentCount: 1,
+                status: "executed",
+              },
+            ],
             npcRelationships: {
               s2: {
                 trust: 30,
@@ -132,6 +144,15 @@ describe("RivalIntelTab", () => {
     render(<RivalIntelTab />);
     expect(screen.getAllByText(/Strategic Directives/i).length).toBeGreaterThan(0);
     expect(screen.getByText(/acquire_stallion/i)).toBeDefined();
+  });
+
+  it("surfaces bounded NPC action decisions with real intent outcomes", () => {
+    render(<RivalIntelTab />);
+    expect(screen.getByText(/NPC Action Decisions/i)).toBeDefined();
+    expect(screen.getByText(/facility upgrade/i)).toBeDefined();
+    expect(screen.getByText(/1 intent/i)).toBeDefined();
+    expect(screen.getByText(/executed/i)).toBeDefined();
+    expect(screen.queryByText(/intent-1/i)).toBeNull();
   });
 
   it("displays NPC relationships section with trust heatmap", () => {

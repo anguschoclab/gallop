@@ -13,7 +13,7 @@ export function NpcAIStatusPanel() {
   return (
     <Card className="border-gold/20 bg-slate-900/40">
       <CardHeader className="border-b border-gold/10">
-        <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
+        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
           <Activity size={16} />
           NPC Status
         </CardTitle>

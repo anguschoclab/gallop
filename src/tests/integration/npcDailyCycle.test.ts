@@ -4,7 +4,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { runNpcCycle } from "@/core/npc/npcCycle";
+import { runNpcCycle } from "@/domains/agents/simulation/npc/npcCycle";
 import { createRng } from "@/core/common/rng";
 import type { Horse, Stable, Race, Jockey } from "@/game/types";
 

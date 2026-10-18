@@ -4,7 +4,11 @@ import { renderWithStore } from "@/test-utils/renderWithStore";
 import { createDefaultGameState } from "@/game/store/state";
 import { StorylinesTab } from "@/components/briefing/StorylinesTab";
 import { createTestStable } from "@/tests/helpers";
-import type { NpcAIManager, StableAIState, NarrativeState } from "@/core/ai/npcCycleAI";
+import type {
+  NpcAIManager,
+  StableAIState,
+  NarrativeState,
+} from "@/domains/agents/simulation/npcCycleAI";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({

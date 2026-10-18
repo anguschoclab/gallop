@@ -4,12 +4,15 @@ import {
   getSyndicationAppetite,
   getSyndicateIntent,
   SYNDICATE_INTENT_META,
-} from "@/core/ai/syndicationAppetite";
+} from "@/domains/agents/simulation/syndicationAppetite";
 import {
   setSyndicationTuningOverrides,
   resetSyndicationTuningOverrides,
-} from "@/core/ai/syndicationTuning";
-import { evaluateSharePurchase, calculateSharePurchase } from "@/core/ai/syndicationAIDecisions";
+} from "@/domains/agents/simulation/syndicationTuning";
+import {
+  evaluateSharePurchase,
+  calculateSharePurchase,
+} from "@/domains/agents/simulation/syndicationAIDecisions";
 import type { Horse, Stable, StablePersonality } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";

@@ -81,7 +81,7 @@ export function HorseManagementSection({
     <section id="management" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
         <Tag className="h-4 w-4 text-purple-400" />
-        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
           Racing &amp; Status
         </h2>
       </div>
@@ -137,7 +137,7 @@ export function HorseManagementSection({
               </div>
             </div>
           ) : (
-            <div className="text-xs text-cream/30 font-mono italic">No auction activity.</div>
+            <div className="text-xs text-cream/30 font-mono">No auction activity.</div>
           )}
 
           <div className="pt-4 border-t border-white/5 space-y-1">

@@ -129,7 +129,7 @@ export function PrivateTrialResults({
         <div className="text-[10px] font-black uppercase tracking-wide text-gold mb-2">
           Rider Feedback
         </div>
-        <p className="text-xs font-mono italic text-cream/90">{feedback}</p>
+        <p className="text-xs font-mono text-cream/90">{feedback}</p>
       </div>
 
       <Button

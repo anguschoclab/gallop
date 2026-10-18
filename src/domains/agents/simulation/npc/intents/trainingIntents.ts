@@ -2,10 +2,15 @@ import type { TrainingIntent } from "@/core/resolver/intents";
 import type { GameState, Horse, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import { getAvailableTrainingTypes } from "@/core/facilities";
-import { createTrainingAIState, selectTrainingType, shouldTrainToday } from "@/core/ai/trainingAI";
-import type { StableAIState, DifficultyState } from "@/core/ai/npcCycleAI";
-import type { DistressLevel } from "@/core/ai/financialDistressAI";
+import {
+  createTrainingAIState,
+  selectTrainingType,
+  shouldTrainToday,
+} from "@/domains/agents/simulation/trainingAI";
+import type { StableAIState, DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
+import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import { TRAINING_CAUTION_MIN_ENERGY } from "@/constants/financialDistressConstants";
+import { TRAINING_COST, TRAINING_COST_MAP } from "@/constants";
 
 export function generateNpcTrainingIntents(
   state: GameState,
@@ -25,7 +30,6 @@ export function generateNpcTrainingIntents(
   const trainingAI = stableAI?.trainingAI ?? createTrainingAIState(stable);
 
   const trainingBudget = stableAI?.budgetAllocation?.training;
-  const trainingCostPerSession = 500;
   let cumulativeTrainingSpend = 0;
 
   const stableFacilities = state.npcFacilities?.[stable.id];
@@ -57,11 +61,15 @@ export function generateNpcTrainingIntents(
         : trainingWeight;
       if (shouldTrainToday(trainingAI, horse, day, effectiveTrainingWeight)) {
         const trainingType = selectTrainingType(trainingAI, horse, day, availableTypes);
+        const trainingCost = TRAINING_COST_MAP[trainingType] ?? TRAINING_COST;
 
-        if (trainingBudget !== undefined && trainingBudget <= 0 && cumulativeTrainingSpend > 0) {
+        if (
+          trainingBudget !== undefined &&
+          cumulativeTrainingSpend + trainingCost > trainingBudget
+        ) {
           continue;
         }
-        cumulativeTrainingSpend += trainingCostPerSession;
+        cumulativeTrainingSpend += trainingCost;
 
         intents.push({
           id: generateUUID(),

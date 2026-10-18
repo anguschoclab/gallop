@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import type { Horse, Stable, GameState } from "@/game/types";
-import { runNpcBreeding } from "@/core/npc/breeding";
+import { runNpcBreeding } from "@/domains/agents/simulation/npc/breeding";
 import { createRng } from "@/core/common/rng";
 import type { Leaderboard } from "@/core/breeding/leaderboardTypes";
 import { h2r } from "@/tests/helpers/sampleGameState";

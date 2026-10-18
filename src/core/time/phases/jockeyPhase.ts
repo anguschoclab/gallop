@@ -4,16 +4,16 @@
  * This file provides the jockey management phase that handles contract expirations,
  * NPC hiring, pool refreshment, and Imperial Expansion relationship mechanics (Poaching).
  *
- * Dependencies: ../pipeline (PipelineContext), @/game/rng (createRng, hashStr), @/game/jockeyGen (generateJockey), @/core/ai/jockeyAI (selectBestJockey, shouldRetainJockey, createJockeyAIState, recordJockeyAssignment), @/core/ai/npcCycleAI (getOrCreateStableAIState)
+ * Dependencies: ../pipeline (PipelineContext), @/game/rng (createRng, hashStr), @/game/jockeyGen (generateJockey), @/domains/agents/simulation/jockeyAI (selectBestJockey, shouldRetainJockey, createJockeyAIState, recordJockeyAssignment), @/domains/agents/simulation/npcCycleAI (getOrCreateStableAIState)
  * Related files: ../pipeline.ts (uses phase)
  */
 
 import type { PipelineContext } from "../pipeline";
 import { createRng, hashStr } from "@/core/common/rng";
 import { generateJockey } from "@/core/jockey/generator";
-import { selectBestJockey, createJockeyAIState } from "@/core/ai/jockeyAI";
-import { shouldRetainJockey } from "@/core/ai/jockeyAIRetention";
-import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { selectBestJockey, createJockeyAIState } from "@/domains/agents/simulation/jockeyAI";
+import { shouldRetainJockey } from "@/domains/agents/simulation/jockeyAIRetention";
+import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { getWorldSizeConfig, DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
 import { JOCKEY_CONTRACT_DAYS, JOCKEY_RETAINER_DAYS, PHASE_ORDER_JOCKEY_PHASE } from "@/constants";
 import { generateUUID } from "@/core/uuid";

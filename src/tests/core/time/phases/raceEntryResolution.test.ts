@@ -12,7 +12,7 @@ import type { GameState } from "@/game/types";
 import type { RaceEntryIntent, RaceWithdrawalIntent } from "@/core/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { createJockeyAIState } from "@/core/ai/jockeyAI";
+import { createJockeyAIState } from "@/domains/agents/simulation/jockeyAI";
 import { asNpcStableId } from "@/core/types/branded";
 import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 

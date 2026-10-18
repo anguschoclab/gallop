@@ -3,6 +3,8 @@ import { useGame } from "@/game/store";
 import { createDefaultCoreState } from "@/game/store/state/coreState";
 import type { Race } from "@/core/race/types";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
+import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { makePlayerOwned } from "@/core/horse/ownership";
 
 function makeRace(id: string, day: number = 1, overrides?: Partial<Race>): Race {
   return {
@@ -116,11 +118,15 @@ describe("races Record sync through store actions", () => {
   });
 
   it("races Record entries reflect resolved status after race resolution", async () => {
-    const dueRace = makeRace("r-due", 1, { resolved: false });
+    const horse = createTestHorse({ id: "h1", ownership: makePlayerOwned() });
+    const dueRace = makeRace("r-due", 1, {
+      resolved: false,
+      entries: [{ horseId: horse.id, ownership: makePlayerOwned() }],
+    });
     useGame.setState({
       day: 1,
       races: r2r([dueRace]),
-      horses: h2r([{ id: "h1", ownership: { type: "player" } } as any]),
+      horses: h2r([horse]),
     });
 
     await useGame.getState().advanceDay();

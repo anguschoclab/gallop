@@ -6,7 +6,7 @@ import {
   pruneAllLearningData,
   getStrategicInsights,
   type NpcAIManager,
-} from "@/core/ai/npcCycleAI";
+} from "@/domains/agents/simulation/npcCycleAI";
 import type { Stable } from "@/game/types";
 import { createTestStable } from "@/tests/helpers";
 

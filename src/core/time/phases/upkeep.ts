@@ -4,7 +4,7 @@
  * This file provides the upkeep phase where player pays $50/horse/day and NPC stables
  * pay the same on their own roster to close asymmetric drain.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/expenses (createExpense), @/core/transactions (createTransaction), @/core/facilities (calculateTotalMaintenance), @/core/narrative/newsGenerator (generateFlavorNews), @/core/uuid (generateUUID), @/core/resolver/impacts/index (AnyImpact), @/core/ai/upkeepAI (calculateMonthlyExpenseBudget, shouldConserveCash, createUpkeepAIState, recordBudgetDecision, updateReserveState), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/constants (UPKEEP_PER_HORSE)
+ * Dependencies: ../pipeline (PipelineContext), @/core/expenses (createExpense), @/core/transactions (createTransaction), @/core/facilities (calculateTotalMaintenance), @/core/narrative/newsGenerator (generateFlavorNews), @/core/uuid (generateUUID), @/core/resolver/impacts/index (AnyImpact), @/domains/agents/simulation/upkeepAI (calculateMonthlyExpenseBudget, shouldConserveCash, createUpkeepAIState, recordBudgetDecision, updateReserveState), @/domains/agents/simulation/npcCycleAI (getOrCreateStableAIState), @/constants (UPKEEP_PER_HORSE)
  * Related files: ../pipeline.ts (uses phase)
  */
 
@@ -17,14 +17,14 @@ import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { CashImpact, TransactionImpact, NewsImpact } from "@/core/resolver/impacts/index";
 import { asNpcStableId } from "@/core/types/branded";
-import { createUpkeepAIState } from "@/core/ai/upkeepAI";
+import { createUpkeepAIState } from "@/domains/agents/simulation/upkeepAI";
 import {
   recordBudgetDecision,
   updateReserveState,
   shouldConserveCash,
-} from "@/core/ai/upkeepAIInsights";
-import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import type { DistressLevel } from "@/core/ai/financialDistressAI";
+} from "@/domains/agents/simulation/upkeepAIInsights";
+import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import { UPKEEP_DISTRESS_MULTIPLIER } from "@/constants/financialDistressConstants";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";

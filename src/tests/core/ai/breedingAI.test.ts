@@ -3,13 +3,13 @@ import {
   createBreedingAIState,
   calculateAIStallionScore,
   getProgenyTripleCrownSuccess,
-} from "@/core/ai/breedingAI";
+} from "@/domains/agents/simulation/breedingAI";
 import {
   recordBreedingDecision,
   recordBreedingOutcome,
   getBreedingInsights,
   adaptBreedingStrategy,
-} from "@/core/ai/breedingRecording";
+} from "@/domains/agents/simulation/breedingRecording";
 import {
   selectSireForDam,
   evaluateMareRetirement,
@@ -17,9 +17,9 @@ import {
   hasSyndicateShare,
   applySyndicatePreference,
   assessGeneticDiversity,
-} from "@/core/ai/breedingSelection";
+} from "@/domains/agents/simulation/breedingSelection";
 import type { Horse, Stable, GameState } from "@/game/types";
-import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
+import type { EconomicTrend } from "@/domains/agents/simulation/strategicCoordinator";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { createRng } from "@/core/common/rng";

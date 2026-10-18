@@ -2,13 +2,16 @@ import { describe, it, expect } from "vitest";
 import {
   identifyCostOptimizationOpportunities,
   assessEmergencyBudget,
-} from "@/core/ai/upkeepAIInsights";
-import { analyzeRosterGaps } from "@/core/ai/horseGenAIRecording";
+} from "@/domains/agents/simulation/upkeepAIInsights";
+import { analyzeRosterGaps } from "@/domains/agents/simulation/horseGenAIRecording";
 import {
   shouldWithdrawForTrackCondition,
   detectConsecutiveWithdrawalPattern,
-} from "@/core/ai/withdrawalAI";
-import { shouldConsiderGeldingForPerformance, generatePostGeldingPlan } from "@/core/ai/geldingAI";
+} from "@/domains/agents/simulation/withdrawalAI";
+import {
+  shouldConsiderGeldingForPerformance,
+  generatePostGeldingPlan,
+} from "@/domains/agents/simulation/geldingAI";
 import {
   calculateShareValue,
   shouldDissolveSyndicate,
@@ -16,7 +19,7 @@ import {
   recordSyndicationOutcome,
   getSyndicationSuccessRate,
   shouldCreateSyndicateWithLearning,
-} from "@/core/ai/syndicationAI";
+} from "@/domains/agents/simulation/syndicationAI";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
 

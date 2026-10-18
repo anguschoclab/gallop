@@ -10,6 +10,7 @@ export interface PerDayResult {
   cashBefore: number;
   cashAfter: number;
   impacts: AnyImpact[];
+  logs: { day: number; text: string }[];
   state: GameState;
 }
 
@@ -47,6 +48,7 @@ export function runPipelineForDays(
       cashBefore,
       cashAfter: currentState.cash,
       impacts: result.impacts,
+      logs: result.logs,
       state: currentState,
     });
   }

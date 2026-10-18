@@ -7,7 +7,7 @@
  * - Cross-System Budgeting: unified budget allocation across all subsystems
  * - Subsystem Coordination: weights that adjust subsystem decision thresholds
  *
- * Dependencies: @/game/types (GameState, Stable, StablePersonality, Race), @/core/ai/npcCycleAI (NpcAIManager), @/core/stable/stableConfig (PERSONALITY_CONFIG)
+ * Dependencies: @/game/types (GameState, Stable, StablePersonality, Race), @/domains/agents/simulation/npcCycleAI (NpcAIManager), @/core/stable/stableConfig (PERSONALITY_CONFIG)
  * Related files: npc/intentGenerators.ts (calls coordinator before generating intents)
  */
 

@@ -7,11 +7,14 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { initializeRelationships, resolveDiplomaticInteractions } from "@/core/ai/diplomacyAI";
-import { generateNpcIntents } from "@/core/npc/intentGenerators";
-import { createStableAIState } from "@/core/ai/npcCycleAI";
+import {
+  initializeRelationships,
+  resolveDiplomaticInteractions,
+} from "@/domains/agents/simulation/diplomacyAI";
+import { generateNpcIntents } from "@/domains/agents/simulation/npc/intentGenerators";
+import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import type { GameState, Stable, Horse } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
 

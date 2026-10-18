@@ -3,14 +3,14 @@
  *
  * Extracted from npcCycle.ts for modularity.
  *
- * Dependencies: @/game/types (Horse, Race, Stable), @/core/ai/npcCycleAI (NpcAIManager, getOrCreateStableAIState), @/core/stable/rivalry (RIVALRY_CONSTANTS), @/core/narrative/rivalryNewsGenerator, @/core/uuid, @/core/common/rng
- * Related files: src/core/npc/regionalDominanceHelpers.ts (extracted helpers)
+ * Dependencies: @/game/types (Horse, Race, Stable), @/domains/agents/simulation/npcCycleAI (NpcAIManager, getOrCreateStableAIState), @/core/stable/rivalry (RIVALRY_CONSTANTS), @/core/narrative/rivalryNewsGenerator, @/core/uuid, @/core/common/rng
+ * Related files: src/domains/agents/simulation/npc/regionalDominanceHelpers.ts (extracted helpers)
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
 import type { ReputationEvent } from "@/core/reputation/reputationTypes";
 import type { Rng } from "@/core/common/rng";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
 import type { NewsItem } from "@/core/narrative/newsTypes";
 import {
@@ -20,7 +20,7 @@ import {
   buildRaceEntryMaps,
   findBestResult,
   resolveGrudgeMatch,
-} from "@/core/npc/regionalDominanceHelpers";
+} from "@/domains/agents/simulation/npc/regionalDominanceHelpers";
 
 /**
  * Apply ally friction cascades — when an NPC gains friction against the player,

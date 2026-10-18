@@ -7,7 +7,7 @@
  * cached.
  *
  * Dependencies: @/data/gradedRaces (GRADED_RACES), @/data/tracks (TRACKS), ./prestigeTypes
- * Related files: src/core/npc/npcFame.ts (fame scaling by venue prestige)
+ * Related files: src/domains/agents/simulation/npc/npcFame.ts (fame scaling by venue prestige)
  */
 
 import { GRADED_RACES } from "@/core/data/gradedRacesAccessor";

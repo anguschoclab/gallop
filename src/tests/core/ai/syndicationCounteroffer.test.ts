@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { evaluateCounteroffer } from "@/core/ai/syndicationAIDecisions";
+import { evaluateCounteroffer } from "@/domains/agents/simulation/syndicationAIDecisions";
 import type { Horse, Stable, StablePersonality } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";

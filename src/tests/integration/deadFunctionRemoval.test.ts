@@ -6,9 +6,9 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateNpcIntents } from "@/core/npc/intentGenerators";
+import { generateNpcIntents } from "@/domains/agents/simulation/npc/intentGenerators";
 import type { GameState, Stable, Horse } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
 
@@ -88,7 +88,7 @@ describe("Dead Function Removal: generateNpcBreedingIntents", () => {
 
   it("generateNpcBreedingIntents is not exported from intentGenerators", async () => {
     // The function should not be exported or present in the module
-    const module = await import("@/core/npc/intentGenerators");
+    const module = await import("@/domains/agents/simulation/npc/intentGenerators");
     expect((module as Record<string, unknown>).generateNpcBreedingIntents).toBeUndefined();
   });
 });

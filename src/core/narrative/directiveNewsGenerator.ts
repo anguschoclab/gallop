@@ -5,7 +5,10 @@
  * to financial_distress), this generates a news item to surface the change to the player.
  */
 
-import type { StrategicDirective, DirectiveType } from "@/core/ai/strategicCoordinator";
+import type {
+  StrategicDirective,
+  DirectiveType,
+} from "@/domains/agents/simulation/strategicCoordinator";
 import type { NewsItem, NewsImportance, EntityLink } from "@/core/narrative/newsTypes";
 import { createRng, hashStr } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";

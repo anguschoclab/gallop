@@ -11,24 +11,24 @@ import {
   calculateStudFeeAdjustment,
   calculateYearlingPriceAdjustment,
   getEconomicSignal,
-} from "@/core/ai/economyAIState";
+} from "@/domains/agents/simulation/economyAIState";
 import {
   runEconomicCycle,
   trackClaimingActivity,
   trackAuctionPrices,
   trackBreedingVolume,
   trackMarketPrices,
-} from "@/core/ai/economyAITracking";
+} from "@/domains/agents/simulation/economyAITracking";
 import {
   evaluateCartelOpportunity,
   coordinateCartelAction,
   calculateAuctionReservePrice,
   calculateStrategicClaimingPrice,
   calculateDynamicStudFee,
-} from "@/core/ai/economyAICartel";
+} from "@/domains/agents/simulation/economyAICartel";
 import type { Stable, GameState } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
-import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import type { EconomicTrend } from "@/domains/agents/simulation/strategicCoordinator";
 import { createTestStable } from "@/tests/helpers";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {

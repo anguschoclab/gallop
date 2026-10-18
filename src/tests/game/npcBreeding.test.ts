@@ -13,7 +13,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { runNpcBreeding } from "@/core/npc/breeding";
+import { runNpcBreeding } from "@/domains/agents/simulation/npc/breeding";
 import { createRng } from "@/core/common/rng";
 import type { GameState, Horse, HorseGender, Pregnancy } from "@/game/types";
 import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";

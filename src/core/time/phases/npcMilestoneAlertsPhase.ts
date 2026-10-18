@@ -6,15 +6,15 @@
  * inbox messages so the player hears about rivals worth tracking. Records the
  * announced milestone keys on the horse so each one fires only once.
  *
- * Dependencies: ../pipeline, @/core/npc/careerMilestones, @/core/horse/ownership
- * Related files: src/core/npc/careerMilestones.ts, phases/index.ts (registers phase)
+ * Dependencies: ../pipeline, @/domains/agents/simulation/npc/careerMilestones, @/core/horse/ownership
+ * Related files: src/domains/agents/simulation/npc/careerMilestones.ts, phases/index.ts (registers phase)
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { Horse } from "@/game/types";
 import type { AnyImpact, InboxImpact } from "@/core/resolver/impacts/index";
 import type { InboxCategory, InboxPriority } from "@/core/inbox/inboxTypes";
-import type { RivalMilestoneKind } from "@/core/npc/careerMilestones";
+import type { RivalMilestoneKind } from "@/domains/agents/simulation/npc/careerMilestones";
 import { isNpcOwned, isPlayerOwned, getStableId } from "@/core/horse/ownership";
 import { PHASE_ORDER_NPC_MILESTONE_ALERTS } from "@/constants";
 import { generateUUID } from "@/core/uuid";
@@ -22,7 +22,7 @@ import {
   detectPlayerMilestones,
   detectRivalMilestones,
   isNotableRival,
-} from "@/core/npc/careerMilestones";
+} from "@/domains/agents/simulation/npc/careerMilestones";
 
 /** Maximum rival milestone alerts emitted on a single day, to avoid inbox spam. */
 export const MAX_RIVAL_ALERTS_PER_DAY = 6;

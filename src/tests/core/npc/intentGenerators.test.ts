@@ -1,12 +1,16 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { generateNpcIntents } from "@/core/npc/intentGenerators";
+import {
+  generateNpcIntents,
+  generateNpcIntentsDetailed,
+} from "@/domains/agents/simulation/npc/intentGenerators";
 import {
   assessWorldState,
   generateStrategicDirectives,
   allocateBudget,
   coordinateSubsystems,
-} from "@/core/ai/strategicCoordinator";
-import { updateStableAIState } from "@/core/ai/npcCycleAI";
+} from "@/domains/agents/simulation/strategicCoordinator";
+import { updateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import { NPC_ACTION_REGISTRY } from "@/domains/agents/simulation/npcActionRegistry";
 import type { GameState, Stable } from "@/game/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
@@ -16,7 +20,7 @@ import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 let shouldThrowForStable1 = false;
 
 // Mock the AI module so we can control when it throws
-vi.mock("@/core/ai/npcCycleAI", () => ({
+vi.mock("@/domains/agents/simulation/npcCycleAI", () => ({
   getOrCreateStableAIState: vi.fn((manager: any, stable: Stable, _day: number) => {
     if (stable.id === "stable1" && shouldThrowForStable1) {
       throw new Error("Simulated AI error for stable 1");
@@ -32,7 +36,7 @@ vi.mock("@/core/ai/npcCycleAI", () => ({
 }));
 
 // Mock the strategic coordinator
-vi.mock("@/core/ai/strategicCoordinator", () => ({
+vi.mock("@/domains/agents/simulation/strategicCoordinator", () => ({
   assessWorldState: vi.fn(() => ({
     playerDominance: 0.5,
     regionalPowerBalance: {},
@@ -88,20 +92,18 @@ describe("generateNpcIntents error handling", () => {
       },
     } as unknown as GameState;
 
-    const intents = generateNpcIntents(mockState, 1);
+    const result = generateNpcIntentsDetailed(mockState, 1);
 
-    expect(Array.isArray(intents)).toBe(true);
-    expect(console.warn).toHaveBeenCalledWith(
-      "Failed to generate intents for NPC",
-      "stable1",
-      expect.any(Error),
-    );
-
-    const warnCallArgs = (console.warn as any).mock.calls.find(
-      (call: any) => call[1] === "stable1",
-    );
-    expect(warnCallArgs).toBeDefined();
-    expect(warnCallArgs[2].message).toBe("Simulated AI error for stable 1");
+    expect(Array.isArray(result.intents)).toBe(true);
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({
+        stableId: "stable1",
+        day: 1,
+        phase: "intent_collection",
+        message: "Simulated AI error for stable 1",
+      }),
+    ]);
+    expect(console.warn).not.toHaveBeenCalled();
   });
 });
 
@@ -192,6 +194,54 @@ describe("generateNpcIntents coordination integration", () => {
     const passedState = lastCall[0];
     expect(passedState.strategicDirectives).toBeDefined();
     expect(passedState.budgetAllocation).toBeDefined();
+  });
+
+  it("stores one bounded action trace per registered NPC action", () => {
+    const mockState = {
+      horses: {},
+      pregnancies: [],
+      races: {},
+      npcStables: [createTestStable({ id: "stable1", country: "USA", personality: "aggressive" })],
+      npcAIManager: { stableStates: {}, globalDay: 1, regionalKings: {} },
+    } as unknown as GameState;
+
+    generateNpcIntents(mockState, 1);
+    const passedState = vi.mocked(updateStableAIState).mock.calls[0][0];
+    const traces = passedState.decisionTraces ?? [];
+    expect(traces).toHaveLength(NPC_ACTION_REGISTRY.length);
+    expect(traces.map((trace: any) => trace.actionId)).toEqual(
+      NPC_ACTION_REGISTRY.map((action) => action.id),
+    );
+    expect(
+      traces.every((trace: any) => trace.status === "executed" || trace.status === "no_candidates"),
+    ).toBe(true);
+
+    const plans = passedState.actionPlans ?? [];
+    expect(plans).toHaveLength(NPC_ACTION_REGISTRY.length);
+    expect(() => JSON.stringify(plans)).not.toThrow();
+    expect(
+      plans.every(
+        (plan) =>
+          plan.beliefs.stableId === "stable1" &&
+          plan.outcome.intentCount === plan.commitments.length,
+      ),
+    ).toBe(true);
+  });
+
+  it("does not mutate the input npcAIManager while collecting intents", () => {
+    const aiManager = { stableStates: {}, globalDay: 1, regionalKings: {} };
+    const mockState = {
+      horses: {},
+      pregnancies: [],
+      races: {},
+      npcStables: [createTestStable({ id: "stable1", country: "USA", personality: "aggressive" })],
+      npcAIManager: aiManager,
+    } as unknown as GameState;
+
+    generateNpcIntents(mockState, 1);
+
+    expect(mockState.npcAIManager).toBe(aiManager);
+    expect(aiManager.stableStates).toEqual({});
   });
 
   it("does not call coordination functions when npcAIManager is missing", () => {

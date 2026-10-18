@@ -89,15 +89,6 @@ export interface ClaimingImpact extends Impact {
   reason: string;
 }
 
-// Claim resolution impact
-export interface ClaimResolutionImpact extends Impact {
-  type: "claimResolution";
-  raceId: RaceId;
-  horseId: HorseId;
-  winningClaimId: string;
-  losingClaimIds: string[];
-}
-
 // Tactics impact
 export interface TacticsImpact extends Impact {
   type: "tactics";
@@ -171,7 +162,6 @@ export type RaceImpact =
   | RaceResultImpact
   | RaceHistoryImpact
   | ClaimingImpact
-  | ClaimResolutionImpact
   | TacticsImpact
   | PaceSampleImpact
   | InsurancePurchaseImpact

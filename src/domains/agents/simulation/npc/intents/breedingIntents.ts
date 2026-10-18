@@ -8,15 +8,15 @@ import type {
 } from "@/core/resolver/intents";
 import type { GameState, Horse, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
-import { createGeldingAIState, shouldGeldHorse } from "@/core/ai/geldingAI";
+import { createGeldingAIState, shouldGeldHorse } from "@/domains/agents/simulation/geldingAI";
 import {
   shouldCreateSyndicate,
   calculateSharePurchase,
   calculateShareSale,
   calculateSharePrice,
-} from "@/core/ai/syndicationAI";
-import type { StableAIState } from "@/core/ai/npcCycleAI";
-import type { DistressLevel } from "@/core/ai/financialDistressAI";
+} from "@/domains/agents/simulation/syndicationAI";
+import type { StableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import {
   STUD_FEE_REDUCTION_MULTIPLIER,
   STUD_FEE_MINIMUM,

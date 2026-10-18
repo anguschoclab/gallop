@@ -95,7 +95,7 @@ export const GAME_PHASE_DESCRIPTORS: PhaseDescriptor[] = [
     label: "Collect intents",
     cadence: "daily",
     provides: ["intents"],
-    writes: ["pendingIntents", "intents"],
+    writes: ["pendingIntents", "intents", "npcAIManager"],
   }),
   describePhase(intentValidationPhase, {
     label: "Validate intents",

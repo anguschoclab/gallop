@@ -4,7 +4,7 @@
  * This file generates and updates campaign race slots by scanning upcoming races
  * and matching them to the horse's goal and aptitudes.
  *
- * Dependencies: ./types (Horse, Race, HorseCampaign, CampaignRaceSlot, CampaignFlag, ConfirmedAptitudes, Stable), ./gradedRaces (GRADED_RACES, GradedRace), ./raceSchedule (getCurrentYear), @/core/ai/campaignAI (detectContender, getOptimalMajorRaceTarget, getPrepRaceStrategy, createCampaignAIState), @/core/ai/npcCycleAI (getOrCreateStableAIState, NpcAIManager)
+ * Dependencies: ./types (Horse, Race, HorseCampaign, CampaignRaceSlot, CampaignFlag, ConfirmedAptitudes, Stable), ./gradedRaces (GRADED_RACES, GradedRace), ./raceSchedule (getCurrentYear), @/domains/agents/simulation/campaignAI (detectContender, getOptimalMajorRaceTarget, getPrepRaceStrategy, createCampaignAIState), @/domains/agents/simulation/npcCycleAI (getOrCreateStableAIState, NpcAIManager)
  * Related files: autoEntryRunner.ts (uses campaign slots for auto-entry), scheduler.ts (uses for campaign management)
  */
 
@@ -23,10 +23,13 @@ import type {
 } from "@/game/types";
 import { GRADED_RACES_BY_KEY } from "@/core/data/gradedRacesAccessor";
 import { getCurrentYear } from "@/core/race/schedule";
-import { detectContender, createCampaignAIState } from "@/core/ai/campaignAI";
-import { getOptimalMajorRaceTarget } from "@/core/ai/campaignTargeting";
+import { detectContender, createCampaignAIState } from "@/domains/agents/simulation/campaignAI";
+import { getOptimalMajorRaceTarget } from "@/domains/agents/simulation/campaignTargeting";
 import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
-import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
+import {
+  getOrCreateStableAIState,
+  type NpcAIManager,
+} from "@/domains/agents/simulation/npcCycleAI";
 import {
   getDistanceBand,
   buildPrepChain,

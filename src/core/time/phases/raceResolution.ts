@@ -4,7 +4,7 @@
  * This file provides the race resolution phase that simulates unresolved races
  * and generates all race resolution impacts.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/race/raceResolution (resolveRaces), @/constants (PHASE_ORDER_RACE_RESOLUTION), @/core/resolver/impacts/index (AnyImpact), @/core/race/rngForRace (rngForRace), @/game/types (Race), @/core/resolver/intents (ClaimingIntent), @/core/race/raceSimulationExecutor (simulateRace), @/core/race/raceImpactGenerator (generateRaceImpacts), @/core/auction/claimingResolutionService (resolveClaimingResolution), @/core/history/historyService (recordRaceHistory, checkHallOfFameInduction), @/core/uuid (generateUUID), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/raceEntryAI (recordRaceEntryOutcome), @/core/ai/jockeyAI (recordJockeyOutcome), @/core/ai/campaignAI (recordCampaignOutcome)
+ * Dependencies: ../pipeline (PipelineContext), @/core/race/raceResolution (resolveRaces), @/constants (PHASE_ORDER_RACE_RESOLUTION), @/core/resolver/impacts/index (AnyImpact), @/core/race/rngForRace (rngForRace), @/game/types (Race), @/core/resolver/intents (ClaimingIntent), @/core/race/raceSimulationExecutor (simulateRace), @/core/race/raceImpactGenerator (generateRaceImpacts), @/core/auction/claimingResolutionService (resolveClaimingResolution), @/core/history/historyService (recordRaceHistory, checkHallOfFameInduction), @/core/uuid (generateUUID), @/domains/agents/simulation/npcCycleAI (getOrCreateStableAIState), @/domains/agents/simulation/raceEntryAI (recordRaceEntryOutcome), @/domains/agents/simulation/jockeyAI (recordJockeyOutcome), @/domains/agents/simulation/campaignAI (recordCampaignOutcome)
  * Related files: ../pipeline.ts (uses phase)
  */
 

@@ -15,7 +15,7 @@ export function FounderLegacy({ horseId }: FounderLegacyProps) {
   return (
     <Card className="border-gold bg-gold/5 overflow-hidden">
       <CardHeader className="bg-gold/10 border-b border-gold/20">
-        <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
+        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
           <Trophy size={16} />
           Founder Legacy: {founder.name}
         </CardTitle>

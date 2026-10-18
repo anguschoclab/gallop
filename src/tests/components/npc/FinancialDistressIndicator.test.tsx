@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { FinancialDistressIndicator } from "@/components/npc/FinancialDistressIndicator";
-import type { FinancialDistressState } from "@/core/ai/financialDistressAI";
+import type { FinancialDistressState } from "@/domains/agents/simulation/financialDistressAI";
 
 function createMockDistress(
   overrides: Partial<FinancialDistressState> = {},

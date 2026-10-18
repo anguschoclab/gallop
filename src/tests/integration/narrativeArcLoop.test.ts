@@ -12,10 +12,10 @@ import {
   checkCareerArcTrigger,
   type CareerArcState,
 } from "@/services/narrative/careerArcGenerator";
-import { runNarrativeCycle } from "@/core/ai/narrativeAI";
-import { createStableAIState } from "@/core/ai/npcCycleAI";
+import { runNarrativeCycle } from "@/domains/agents/simulation/narrativeAI";
+import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import type { Stable, Horse, Race } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { createRng } from "@/core/common/rng";
 import { makeNpcOwned } from "@/core/horse/ownership";

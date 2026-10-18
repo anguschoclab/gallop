@@ -9,7 +9,7 @@
 import type { InsurancePurchaseIntent, InsuranceClaimIntent } from "@/core/resolver/intents";
 import type { GameState, Horse, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
-import type { StableAIState } from "@/core/ai/npcCycleAI";
+import type { StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { calculateBaseHorseValue } from "@/core/horse/pricing";
 import { calculateDailyPremium, type InsurancePolicyType } from "@/core/insurance/insuranceTypes";
 import { getCareerStats } from "@/core/horse/stats";

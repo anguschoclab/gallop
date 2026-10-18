@@ -5,41 +5,29 @@
  * intent modules: trainingIntents, raceEntryIntents, claimingIntents,
  * breedingIntents, diplomaticIntents, facilityIntents.
  *
- * Dependencies: @/core/resolver/intents, @/game/types, @/core/ai/npcCycleAI, @/core/ai/strategicCoordinator, @/core/narrative/directiveNewsGenerator
+ * Dependencies: @/core/resolver/intents, @/game/types, @/domains/agents/simulation/npcCycleAI, @/domains/agents/simulation/strategicCoordinator, @/core/narrative/directiveNewsGenerator
  * Related files: npcCycle.ts (uses intents), intents/*.ts (extracted generators)
  */
 
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { GameState, Horse, Race } from "@/game/types";
-import { getOrCreateStableAIState, updateStableAIState } from "@/core/ai/npcCycleAI";
+import {
+  getOrCreateStableAIState,
+  updateStableAIState,
+} from "@/domains/agents/simulation/npcCycleAI";
 import {
   assessWorldState,
   generateStrategicDirectives,
   allocateBudget,
   coordinateSubsystems,
   type WorldAssessment,
-} from "@/core/ai/strategicCoordinator";
+} from "@/domains/agents/simulation/strategicCoordinator";
 import { generateDirectiveChangeNews } from "@/core/narrative/directiveNewsGenerator";
-import { generateNpcTrainingIntents } from "./intents/trainingIntents";
-import { generateNpcRaceEntryIntents } from "./intents/raceEntryIntents";
-import { buildRaceCompetitorIndex, type RaceCompetitorIndex } from "@/core/ai/raceEntryAIScoring";
+import { generateNpcActions } from "@/domains/agents/simulation/npcActionRegistry";
 import {
-  generateNpcClaimingIntents,
-  generateNpcWithdrawalIntents,
-} from "./intents/claimingIntents";
-import {
-  generateNpcGeldingIntents,
-  generateNpcSyndicateIntents,
-  generateNpcStudFeeIntents,
-} from "./intents/breedingIntents";
-import { generateNpcDiplomaticIntents } from "./intents/diplomaticIntents";
-import {
-  generateNpcAuctionIntents,
-  generateNpcTransportIntents,
-  generateNpcFacilityUpgradeIntents,
-  generateNpcOutpostIntents,
-} from "./intents/facilityIntents";
-import { generateNpcInsuranceIntents } from "./intents/insuranceIntents";
+  buildRaceCompetitorIndex,
+  type RaceCompetitorIndex,
+} from "@/domains/agents/simulation/raceEntryAIScoring";
 
 /**
  * Generate all NPC intents for the day.
@@ -55,15 +43,38 @@ import { generateNpcInsuranceIntents } from "./intents/insuranceIntents";
  * @param prebuiltRaceMap - Optional pre-built race map to avoid rebuilding
  * @returns Array of intent objects for all NPC actions
  */
-export function generateNpcIntents(
+export interface NpcGenerationDiagnostic {
+  stableId: string;
+  day: number;
+  phase: "intent_collection";
+  message: string;
+}
+
+export interface NpcIntentGenerationResult {
+  intents: AnyIntent[];
+  diagnostics: NpcGenerationDiagnostic[];
+  npcAIManager?: GameState["npcAIManager"];
+}
+
+export function generateNpcIntentsDetailed(
   state: GameState,
   day: number,
   cachedWorldAssessment?: WorldAssessment,
   prebuiltHorseMap?: Map<string, Horse>,
   prebuiltRaceMap?: Map<string, Race>,
-): AnyIntent[] {
+): NpcIntentGenerationResult {
   const intents: AnyIntent[] = [];
-  const aiManager = state.npcAIManager;
+  const diagnostics: NpcGenerationDiagnostic[] = [];
+  const aiManager = state.npcAIManager
+    ? {
+        ...state.npcAIManager,
+        stableStates: { ...state.npcAIManager.stableStates },
+        regionalKings: { ...state.npcAIManager.regionalKings },
+        pendingNewsItems: state.npcAIManager.pendingNewsItems
+          ? [...state.npcAIManager.pendingNewsItems]
+          : undefined,
+      }
+    : undefined;
 
   // Cross-System Coordination: use cached world assessment if available, otherwise compute
   const worldAssessment: WorldAssessment | undefined =
@@ -175,117 +186,31 @@ export function generateNpcIntents(
       const weights = stableAI?.subsystemWeights;
       const distressLevel = stableAI?.financialDistress?.level ?? "healthy";
 
-      // Training intents (distress reduces training for low-energy horses)
-      intents.push(
-        ...generateNpcTrainingIntents(
-          state,
-          stable,
-          stableAI,
-          day,
-          ownedHorses,
-          activePregnanciesByDam,
-          weights?.training,
-          distressLevel,
-          aiManager?.difficultyModulator,
-        ),
-      );
-      intents.push(
-        ...generateNpcRaceEntryIntents(
-          state,
-          stable,
-          stableAI,
-          day,
-          ownedHorses,
-          relevantRaces,
-          raceEntrySets,
-          horseMap,
-          weights?.raceEntry,
-          distressLevel,
-          aiManager?.difficultyModulator,
-          raceCompetitorIndex,
-        ),
-      );
-
-      // Block claiming when in financial distress
-      if (distressLevel === "healthy") {
-        intents.push(
-          ...generateNpcClaimingIntents(
-            state,
-            stable,
-            stableAI,
-            day,
-            relevantRaces,
-            horseMap,
-            weights?.claiming,
-          ),
-        );
+      const actionResult = generateNpcActions({
+        state,
+        stable,
+        stableAI,
+        day,
+        ownedHorses,
+        relevantRaces,
+        activePregnanciesByDam,
+        raceEntrySets,
+        raceCompetitorIndex,
+        horseMap,
+        weights,
+        distressLevel,
+        difficultyModulator: aiManager?.difficultyModulator,
+        aiManager,
+        npcFacilities: state.npcFacilities,
+      });
+      intents.push(...actionResult.intents);
+      if (stableAI) {
+        stableAI = {
+          ...stableAI,
+          decisionTraces: actionResult.traces,
+          actionPlans: actionResult.plans,
+        };
       }
-      intents.push(
-        ...generateNpcWithdrawalIntents(
-          state,
-          stable,
-          stableAI,
-          day,
-          ownedHorses,
-          relevantRaces,
-          horseMap,
-        ),
-      );
-      intents.push(
-        ...generateNpcGeldingIntents(state, stable, stableAI, day, ownedHorses, weights?.breeding),
-      );
-
-      // Syndicate intents: bypass weekly cadence when in distress
-      intents.push(...generateNpcSyndicateIntents(state, stable, day, ownedHorses, distressLevel));
-
-      // Diplomatic intents: skip entirely when in distress
-      if (distressLevel === "healthy") {
-        intents.push(...generateNpcDiplomaticIntents(state, stable, stableAI, day, aiManager));
-      }
-
-      // Auction consignment intents: bypass weekly cadence when in distress
-      intents.push(
-        ...generateNpcAuctionIntents(
-          state,
-          stable,
-          stableAI,
-          day,
-          ownedHorses,
-          state.auctions ?? [],
-          weights?.auction,
-          distressLevel,
-          aiManager?.difficultyModulator,
-        ),
-      );
-
-      // Stud fee intents: generate when in distress to reduce fees
-      if (distressLevel !== "healthy") {
-        intents.push(...generateNpcStudFeeIntents(stable, day, ownedHorses, distressLevel));
-      }
-
-      // Transport intents: move horses between outposts for regional racing advantage
-      if (stable.outposts && stable.outposts.length > 1) {
-        intents.push(...generateNpcTransportIntents(stable, day, ownedHorses));
-      }
-
-      // Facility upgrade intents: upgrade facilities when budget allows
-      intents.push(
-        ...generateNpcFacilityUpgradeIntents(
-          stable,
-          stableAI,
-          day,
-          state.npcFacilities,
-          weights?.facility,
-        ),
-      );
-
-      // Insurance intents: conservative and wealthy stables insure star horses
-      if (distressLevel === "healthy") {
-        intents.push(...generateNpcInsuranceIntents(state, stable, stableAI, day, ownedHorses));
-      }
-
-      // Outpost creation intents: NPCs with sufficient cash build outposts for regional expansion
-      intents.push(...generateNpcOutpostIntents(stable, stableAI, day));
 
       // Update stable AI state in the manager (immutable update)
       if (aiManager && stableAI) {
@@ -296,10 +221,30 @@ export function generateNpcIntents(
         };
       }
     } catch (err) {
-      console.warn("Failed to generate intents for NPC", stable.id, err);
-      continue;
+      diagnostics.push({
+        stableId: stable.id,
+        day,
+        phase: "intent_collection",
+        message: err instanceof Error ? err.message : String(err),
+      });
     }
   }
 
-  return intents;
+  return { intents, diagnostics, npcAIManager: aiManager };
+}
+
+export function generateNpcIntents(
+  state: GameState,
+  day: number,
+  cachedWorldAssessment?: WorldAssessment,
+  prebuiltHorseMap?: Map<string, Horse>,
+  prebuiltRaceMap?: Map<string, Race>,
+): AnyIntent[] {
+  return generateNpcIntentsDetailed(
+    state,
+    day,
+    cachedWorldAssessment,
+    prebuiltHorseMap,
+    prebuiltRaceMap,
+  ).intents;
 }

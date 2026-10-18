@@ -6,12 +6,18 @@ import type {
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
 import { isHorseEligibleForClaimingPrice } from "@/core/market/claiming";
-import { createClaimingAIState } from "@/core/ai/claimingAITypes";
-import { shouldClaimHorse, recordClaimingDecision } from "@/core/ai/claimingAIRecording";
-import { createWithdrawalAIState } from "@/core/ai/withdrawalAITypes";
-import { shouldWithdrawHorse, recordWithdrawalDecision } from "@/core/ai/withdrawalAIRecording";
-import { shouldWithdrawForTrackCondition } from "@/core/ai/withdrawalAI";
-import type { StableAIState } from "@/core/ai/npcCycleAI";
+import { createClaimingAIState } from "@/domains/agents/simulation/claimingAITypes";
+import {
+  shouldClaimHorse,
+  recordClaimingDecision,
+} from "@/domains/agents/simulation/claimingAIRecording";
+import { createWithdrawalAIState } from "@/domains/agents/simulation/withdrawalAITypes";
+import {
+  shouldWithdrawHorse,
+  recordWithdrawalDecision,
+} from "@/domains/agents/simulation/withdrawalAIRecording";
+import { shouldWithdrawForTrackCondition } from "@/domains/agents/simulation/withdrawalAI";
+import type { StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 
 export function generateNpcClaimingIntents(
   state: GameState,

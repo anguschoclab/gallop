@@ -20,15 +20,39 @@ import type {
   TransportImpact,
   OutpostImpact,
 } from "../impacts/miscImpacts";
+import { createFacilityAIState } from "@/domains/agents/simulation/facilityAITypes";
+import { recordFacilityInvestment } from "@/domains/agents/simulation/facilityAIRoi";
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   facility_upgrade: (draft, impact, lookupMaps) => {
-    const { facilityId, nextLevel } = impact as FacilityUpgradeImpact;
+    const { entityId, facilityId, nextLevel, cost } = impact as FacilityUpgradeImpact;
+    const ownerId = entityId ?? "player";
     const facility =
-      lookupMaps?.facilityMap.get(facilityId) ||
-      (draft.facilities ? draft.facilities[facilityId as FacilityType] : undefined);
+      ownerId === "player"
+        ? lookupMaps?.facilityMap.get(facilityId) ||
+          (draft.facilities ? draft.facilities[facilityId as FacilityType] : undefined)
+        : draft.npcFacilities?.[ownerId]?.[facilityId as FacilityType];
     if (facility) {
+      const previousLevel = facility.level;
       facility.level = nextLevel;
+
+      if (ownerId !== "player") {
+        const stable =
+          lookupMaps?.stableMap.get(ownerId) ||
+          draft.npcStables?.find((candidate) => candidate.id === ownerId);
+        const stableAI = draft.npcAIManager?.stableStates?.[ownerId];
+        if (stable && stableAI) {
+          stableAI.facilityAI = recordFacilityInvestment(
+            stableAI.facilityAI ?? createFacilityAIState(stable),
+            facilityId as FacilityType,
+            previousLevel,
+            nextLevel,
+            cost ?? 0,
+            stable,
+            impact.day,
+          );
+        }
+      }
     }
   },
 

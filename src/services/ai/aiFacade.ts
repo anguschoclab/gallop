@@ -3,12 +3,12 @@
  * Per PR 9 of the megaplan.
  */
 
-export * from "@/core/ai/npcCycleAI";
-export * from "@/core/ai/syndicationAIDecisions";
-export * from "@/core/ai/strategicCoordinator";
-export * from "@/core/ai/financialDistressAI";
-export * from "@/core/ai/syndicationTrace";
-export * from "@/core/ai/economyAIState";
-export * from "@/core/ai/syndicationAppetite";
-export * from "@/core/ai/jockeyStrategyRecording";
-export * from "@/core/ai/learningModule";
+export * from "@/domains/agents/simulation/npcCycleAI";
+export * from "@/domains/agents/simulation/syndicationAIDecisions";
+export * from "@/domains/agents/simulation/strategicCoordinator";
+export * from "@/domains/agents/simulation/financialDistressAI";
+export * from "@/domains/agents/simulation/syndicationTrace";
+export * from "@/domains/agents/simulation/economyAIState";
+export * from "@/domains/agents/simulation/syndicationAppetite";
+export * from "@/domains/agents/simulation/jockeyStrategyRecording";
+export * from "@/domains/agents/simulation/learningModule";

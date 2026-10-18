@@ -30,7 +30,7 @@ export const RelationshipGraph = memo(function RelationshipGraph({
             <Network className="h-3 w-3 text-blue-400" /> Relationship Graph
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+        <CardContent className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
           No diplomatic relationships established yet.
         </CardContent>
       </Card>

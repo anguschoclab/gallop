@@ -4,7 +4,7 @@
  * This file provides the pregnancy resolution phase that resolves pregnancies
  * and produces impacts for foaling events, NPC AI learning, and player reputation.
  *
- * Dependencies: ../pipeline (PipelineContext), @/game/types (Horse, Pregnancy), @/core/breeding/pregnancy (PregnancyResult, resolvePregnancies), @/core/resolver/impacts (AnyImpact, CashImpact, HorseCreationImpact, InboxImpact, ReputationImpact, MareFoalingUpdateImpact, StudCareerImpact), @/core/reputation (createReputationEvent, calculateBreedingReputation), @/core/ai/npcCycleAI (NpcAIManager, getOrCreateStableAIState), @/core/ai/breedingAI (recordBreedingOutcome), @/core/horse/stats (calculateOverallRating), @/core/uuid (generateUUID)
+ * Dependencies: ../pipeline (PipelineContext), @/game/types (Horse, Pregnancy), @/core/breeding/pregnancy (PregnancyResult, resolvePregnancies), @/core/resolver/impacts (AnyImpact, CashImpact, HorseCreationImpact, InboxImpact, ReputationImpact, MareFoalingUpdateImpact, StudCareerImpact), @/core/reputation (createReputationEvent, calculateBreedingReputation), @/domains/agents/simulation/npcCycleAI (NpcAIManager, getOrCreateStableAIState), @/domains/agents/simulation/breedingAI (recordBreedingOutcome), @/core/horse/stats (calculateOverallRating), @/core/uuid (generateUUID)
  * Related files: ../pipeline.ts (uses phase), @/core/resolver/handlers/* (applies impacts)
  */
 
@@ -23,9 +23,9 @@ import type {
 } from "@/core/resolver/impacts";
 import { generateUUID } from "@/core/uuid";
 import { calculateBreedingReputation } from "@/core/reputation";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { recordBreedingOutcome } from "@/core/ai/breedingRecording";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
+import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import { recordBreedingOutcome } from "@/domains/agents/simulation/breedingRecording";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { asPlayerOwnerId, asHorseId } from "@/core/types/branded";
 

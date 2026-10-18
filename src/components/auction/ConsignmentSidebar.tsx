@@ -94,7 +94,7 @@ export function ConsignmentSidebar({
                 );
               })}
               {consignablePairs.length === 0 && (
-                <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+                <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
                   No assets ready for deployment
                 </div>
               )}

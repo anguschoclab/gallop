@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { trimHistory } from "@/core/ai/learningModule";
+import { trimHistory } from "@/domains/agents/simulation/learningModule";
 
 describe("trimHistory", () => {
   it("should return empty array for empty input", () => {

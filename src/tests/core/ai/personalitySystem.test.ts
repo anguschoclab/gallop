@@ -10,7 +10,7 @@ import {
   recordPersonalityOutcome,
   calculateStrategicScore,
   getCompetitiveModifier,
-} from "@/core/ai/personalitySystem";
+} from "@/domains/agents/simulation/personalitySystem";
 import type { StablePersonality } from "@/game/types";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 

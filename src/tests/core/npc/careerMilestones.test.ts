@@ -3,7 +3,7 @@ import {
   detectPlayerMilestones,
   detectRivalMilestones,
   isNotableRival,
-} from "@/core/npc/careerMilestones";
+} from "@/domains/agents/simulation/npc/careerMilestones";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Horse } from "@/game/types";
 

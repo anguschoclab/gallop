@@ -3,16 +3,16 @@
  *
  * Each helper handles one responsibility, keeping the coordinator thin.
  *
- * Dependencies: @/game/types, @/core/ai/npcCycleAI, @/core/stable/rivalry,
+ * Dependencies: @/game/types, @/domains/agents/simulation/npcCycleAI, @/core/stable/rivalry,
  *              @/core/narrative/rivalryNewsGenerator, @/core/uuid, @/core/common/rng
- * Related files: src/core/npc/npcRegionalDominance.ts (coordinator)
+ * Related files: src/domains/agents/simulation/npc/npcRegionalDominance.ts (coordinator)
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
 import type { ReputationEvent } from "@/core/reputation/reputationTypes";
 import type { Rng } from "@/core/common/rng";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
-import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
+import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { RIVALRY_CONSTANTS } from "@/core/stable/rivalry";
 import { generateUUID } from "@/core/uuid";
 import type { NewsItem } from "@/core/narrative/newsTypes";

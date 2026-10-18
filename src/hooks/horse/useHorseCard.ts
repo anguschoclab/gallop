@@ -2,7 +2,7 @@ import { useGameSelector } from "@/hooks/shared/useGameSelector";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { scoutGrade } from "@/core/horse/grading";
 import { statGradeColor } from "@/core/common/uiTokens";
-import { getDisplayableStats, getScoutStatus } from "@/core/npc/scouting";
+import { getDisplayableStats, getScoutStatus } from "@/domains/agents/simulation/npc/scouting";
 import { isMaleHorse } from "@/core/horse/gender";
 import type { Horse } from "@/game/types";
 import { getStableId } from "@/core/horse/ownership";

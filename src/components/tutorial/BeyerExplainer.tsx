@@ -23,7 +23,7 @@ export function BeyerExplainer({ beyerScore }: BeyerExplainerProps) {
   return (
     <Card className="border-blue-400/30 bg-slate-900/40">
       <CardHeader className="bg-blue-400/5 border-b border-blue-400/10">
-        <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2 text-blue-400">
+        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-2 text-blue-400">
           <GraduationCap size={16} />
           What is a Beyer Speed Figure?
         </CardTitle>

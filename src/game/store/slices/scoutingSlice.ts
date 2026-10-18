@@ -8,7 +8,7 @@
  */
 
 import type { Horse, ScoutReport, Stable } from "@/game/types";
-import { calculateScoutCost } from "@/core/npc/scouting";
+import { calculateScoutCost } from "@/domains/agents/simulation/npc/scouting";
 import {
   createScoutingAssignment,
   createDefaultScoutingThresholds,
@@ -17,7 +17,7 @@ import {
   type ScoutingAssignment,
   type ScoutingCandidate,
   type ScoutingThresholds,
-} from "@/core/npc/scoutingThresholds";
+} from "@/domains/agents/simulation/npc/scoutingThresholds";
 import { buildInsightRow } from "@/core/horse/insightMetrics";
 import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { generateUUID } from "@/core/uuid";

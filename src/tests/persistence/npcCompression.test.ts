@@ -15,8 +15,12 @@ import { makeNpcOwned, makePlayerOwned, getStableId } from "@/core/horse/ownersh
 import { asNpcStableId, asStableId } from "@/core/types/branded";
 import { generateNpcHorse, ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { createRng, hashStr } from "@/core/common/rng";
-import { detectRivalMilestones } from "@/core/npc/careerMilestones";
-import { isDueForOffscreenStart, lastStartDay, summarizeNpcCareer } from "@/core/npc/careerTracker";
+import { detectRivalMilestones } from "@/domains/agents/simulation/npc/careerMilestones";
+import {
+  isDueForOffscreenStart,
+  lastStartDay,
+  summarizeNpcCareer,
+} from "@/domains/agents/simulation/npc/careerTracker";
 
 function makeTestStable(): Stable {
   return {

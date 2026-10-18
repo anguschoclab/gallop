@@ -39,6 +39,7 @@ import type {
 } from "./strategicCoordinator";
 import type { EconomicTrend } from "./strategicCoordinator";
 import type { FinancialDistressState } from "./financialDistressAI";
+import type { NpcActionPlan, NpcActionTrace } from "./npcActionRegistry";
 
 /**
  * Per-stable AI state that persists across all NPC decision-making
@@ -80,6 +81,10 @@ export interface StableAIState {
   npcRelationships?: Record<string, NpcRelationship>;
   narrativeState?: NarrativeState;
   financialDistress?: FinancialDistressState;
+  /** Latest bounded explainability trace for each registered action. */
+  decisionTraces?: NpcActionTrace[];
+  /** Latest bounded action plan snapshot for each registered action. */
+  actionPlans?: NpcActionPlan[];
 }
 
 /**

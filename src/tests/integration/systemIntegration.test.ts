@@ -10,9 +10,8 @@
  * 7. Storage/persistence test
  */
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
-import { executePipeline, type PipelineContext } from "@/core/time/pipeline";
-import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
-import { createRng } from "@/core/common/rng";
+import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
+import { runPipelineForDay, runPipelineForDays } from "@/tests/helpers/runPipeline";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
 import { createDefaultGameState } from "@/game/store/state";
@@ -21,71 +20,23 @@ import type { GameState, Horse } from "@/game/types";
 import type { AnyIntent } from "@/core/resolver/intents";
 import { makeUnowned } from "@/core/horse/ownership";
 
-function buildContext(state: GameState, newDay: number = 1): PipelineContext {
-  return {
-    previousDay: newDay - 1,
-    newDay,
-    state,
-    logs: [],
-    dailyRng: createRng(42),
-    intents: [],
-    impacts: [],
-    impactLog: [],
-    horseMap: new Map(Object.values(state.horses ?? {}).map((h) => [h.id, h])),
-    raceMap: new Map(Object.values(state.races ?? {}).map((r) => [r.id, r])),
-    stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
-    jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
-  };
-}
-
 // ---------------------------------------------------------------------------
 // 1. Full Pipeline Test — All 50+ Phases Execute in Order
 // ---------------------------------------------------------------------------
 
-describe("Phase 1.5 — Full pipeline: all phases execute in order", () => {
-  it("GAME_PIPELINE_PHASES contains 50+ phases", () => {
-    expect(GAME_PIPELINE_PHASES.length).toBeGreaterThanOrEqual(50);
-  });
-
-  it("all phases have unique order values", () => {
-    const orders = GAME_PIPELINE_PHASES.map((p) => p.order);
-    const uniqueOrders = new Set(orders);
-    expect(uniqueOrders.size).toBe(orders.length);
-  });
-
-  it("all phases are sorted by order", () => {
-    for (let i = 1; i < GAME_PIPELINE_PHASES.length; i++) {
-      expect(GAME_PIPELINE_PHASES[i - 1].order).toBeLessThan(GAME_PIPELINE_PHASES[i].order);
-    }
-  });
-
-  it("all phases have required properties", () => {
-    for (const phase of GAME_PIPELINE_PHASES) {
-      expect(phase).toBeDefined();
-      expect(typeof phase.order).toBe("number");
-      expect(typeof phase.execute).toBe("function");
-      expect(typeof phase.name).toBe("string");
-    }
-  });
-
-  it("full pipeline executes without crashing on empty state", () => {
+describe("Phase 1.5 — production executor schedule", () => {
+  it("runs the compiled descriptor schedule on a representative state", () => {
     const state = makeGameState({ day: 1, cash: 100000 }) as GameState;
-    const context = buildContext(state, 1);
-    const result = executePipeline(GAME_PIPELINE_PHASES, context);
-    expect(result).toBeDefined();
-    expect(result.state).toBeDefined();
-    expect(result.logs).toBeDefined();
+    const result = runPipelineForDay(state, 2);
+
+    expect(result.state.day).toBe(2);
+    expect(result.state.pendingIntents).toEqual([]);
     expect(Array.isArray(result.logs)).toBe(true);
   });
 
-  it("full pipeline preserves state through execution", () => {
-    const state = makeGameState({ day: 2, cash: 100000 }) as GameState;
-    const context = buildContext(state, 2);
-    const result = executePipeline(GAME_PIPELINE_PHASES, context);
-    expect(result.state).toBeDefined();
-    // Pipeline processes state but doesn't advance day itself —
-    // the caller (advanceDay) sets newDay before calling executePipeline
-    expect(result.state.day).toBeDefined();
+  it("contains the award and solvency phases used by the scenarios below", () => {
+    const ids = new Set(GAME_PHASE_DESCRIPTORS.map((descriptor) => descriptor.id));
+    expect([...ids]).toEqual(expect.arrayContaining(["awardInvitations", "awards", "solvency"]));
   });
 });
 
@@ -111,8 +62,7 @@ describe("Phase 1.5 — Intent → Impact → State flow", () => {
       } as AnyIntent,
     ];
 
-    const context = buildContext(state, 1);
-    const result = executePipeline(GAME_PIPELINE_PHASES, context);
+    const result = runPipelineForDay(state, 2);
     const updatedHorse = Object.values(result.state.horses)[0] as Horse;
     expect(updatedHorse.energy).toBeLessThan(100);
   });
@@ -142,8 +92,7 @@ describe("Phase 1.5 — Intent → Impact → State flow", () => {
       } as AnyIntent,
     ];
 
-    const context = buildContext(state, 1);
-    const result = executePipeline(GAME_PIPELINE_PHASES, context);
+    const result = runPipelineForDay(state, 2);
     // The jockey should have been contracted
     const updatedJockey = result.state.jockeys?.find((j: any) => j.id === "j1");
     expect(updatedJockey).toBeDefined();
@@ -167,8 +116,7 @@ describe("Phase 1.5 — Intent → Impact → State flow", () => {
       } as AnyIntent,
     ];
 
-    const context = buildContext(state, 1);
-    const result = executePipeline(GAME_PIPELINE_PHASES, context);
+    const result = runPipelineForDay(state, 2);
     const updatedHorse = Object.values(result.state.horses)[0] as Horse;
     expect(updatedHorse.name).toBe("NewName");
   });
@@ -189,8 +137,7 @@ describe("Phase 1.5 — Intent → Impact → State flow", () => {
       } as AnyIntent,
     ];
 
-    const context = buildContext(state, 1);
-    const result = executePipeline(GAME_PIPELINE_PHASES, context);
+    const result = runPipelineForDay(state, 2);
     const updatedHorse = Object.values(result.state.horses)[0] as Horse;
     expect(updatedHorse.gender).toBe("gelding");
   });
@@ -198,8 +145,7 @@ describe("Phase 1.5 — Intent → Impact → State flow", () => {
   it("empty pendingIntents produces no errors", () => {
     const state = makeGameState({ day: 1, cash: 100000 }) as GameState;
     state.pendingIntents = [];
-    const context = buildContext(state, 1);
-    const result = executePipeline(GAME_PIPELINE_PHASES, context);
+    const result = runPipelineForDay(state, 2);
     expect(result.state).toBeDefined();
   });
 });
@@ -221,16 +167,10 @@ describe("Phase 1.5 — NPC AI 7-day cycle", () => {
     state.horses = h2r([horse]);
     state.npcStables = [stable];
 
-    let currentState = state;
-    for (let day = 1; day <= 7; day++) {
-      const context = buildContext(currentState, day);
-      const result = executePipeline(GAME_PIPELINE_PHASES, context);
-      currentState = result.state;
-    }
+    const result = runPipelineForDays(state, 7);
+    const currentState = result.state;
 
-    // After 7 days of pipeline execution, state should be consistent
-    // (pipeline itself doesn't advance day — caller does)
-    expect(currentState).toBeDefined();
+    expect(currentState.day).toBe(8);
     expect(currentState.horses).toBeDefined();
     expect(Object.keys(currentState.horses).length).toBeGreaterThan(0);
   });
@@ -239,14 +179,9 @@ describe("Phase 1.5 — NPC AI 7-day cycle", () => {
     const state = makeGameState({ day: 1, cash: 100000 }) as GameState;
     state.npcStables = [];
 
-    let currentState = state;
-    for (let day = 1; day <= 3; day++) {
-      const context = buildContext(currentState, day);
-      const result = executePipeline(GAME_PIPELINE_PHASES, context);
-      currentState = result.state;
-    }
+    const result = runPipelineForDays(state, 3);
 
-    expect(currentState).toBeDefined();
+    expect(result.state.day).toBe(4);
   });
 });
 
@@ -255,22 +190,6 @@ describe("Phase 1.5 — NPC AI 7-day cycle", () => {
 // ---------------------------------------------------------------------------
 
 describe("Phase 1.5 — Awards ceremony flow", () => {
-  it("awardInvitationsPhase is registered in pipeline", () => {
-    const phase = GAME_PIPELINE_PHASES.find((p) => p.name === "awardInvitations");
-    expect(phase).toBeDefined();
-  });
-
-  it("awardsPhase is registered in pipeline", () => {
-    const phase = GAME_PIPELINE_PHASES.find((p) => p.name === "awards");
-    expect(phase).toBeDefined();
-  });
-
-  it("pipeline processes awards phases in correct order", () => {
-    const invitationsPhase = GAME_PIPELINE_PHASES.find((p) => p.name === "awardInvitations");
-    const awardsPhase = GAME_PIPELINE_PHASES.find((p) => p.name === "awards");
-    expect(invitationsPhase!.order).toBeLessThan(awardsPhase!.order);
-  });
-
   it("pipeline with award ceremony invitations does not crash", () => {
     const state = makeGameState({ day: 365, cash: 100000 }) as GameState;
     state.awardCeremonyInvitations = [
@@ -285,8 +204,7 @@ describe("Phase 1.5 — Awards ceremony flow", () => {
       } as any,
     ];
 
-    const context = buildContext(state, 365);
-    const result = executePipeline(GAME_PIPELINE_PHASES, context);
+    const result = runPipelineForDay(state, 366);
     expect(result.state).toBeDefined();
   });
 });
@@ -296,18 +214,12 @@ describe("Phase 1.5 — Awards ceremony flow", () => {
 // ---------------------------------------------------------------------------
 
 describe("Phase 1.5 — Solvency escalation in full pipeline", () => {
-  it("solvencyPhase is registered in pipeline", () => {
-    const phase = GAME_PIPELINE_PHASES.find((p) => p.name === "solvency");
-    expect(phase).toBeDefined();
-  });
-
   it("pipeline with negative cash escalates solvency tier", () => {
     const state = makeGameState({ day: 1, cash: -50000 }) as GameState;
     state.solvencyTier = "healthy";
     state.solvencyAuditLog = [];
 
-    const context = buildContext(state, 1);
-    const result = executePipeline(GAME_PIPELINE_PHASES, context);
+    const result = runPipelineForDay(state, 2);
     expect(result.state).toBeDefined();
     // Solvency should have escalated from healthy
     if (result.state.solvencyTier) {
@@ -320,8 +232,7 @@ describe("Phase 1.5 — Solvency escalation in full pipeline", () => {
     state.solvencyTier = "healthy";
     state.solvencyAuditLog = [];
 
-    const context = buildContext(state, 1);
-    const result = executePipeline(GAME_PIPELINE_PHASES, context);
+    const result = runPipelineForDay(state, 2);
     expect(result.state).toBeDefined();
   });
 });
@@ -336,16 +247,10 @@ describe("Phase 1.5 — Multi-day advance (30 days)", () => {
     const state = makeGameState({ day: 1, cash: 500000 }) as GameState;
     state.horses = h2r([horse]);
 
-    let currentState = state;
-    for (let day = 1; day <= 30; day++) {
-      const context = buildContext(currentState, day);
-      const result = executePipeline(GAME_PIPELINE_PHASES, context);
-      currentState = result.state;
-    }
+    const result = runPipelineForDays(state, 30);
+    const currentState = result.state;
 
-    // Pipeline processes state but doesn't advance day itself
-    expect(currentState).toBeDefined();
-    // Horse should still exist
+    expect(currentState.day).toBe(31);
     const h = Object.values(currentState.horses)[0] as Horse;
     expect(h).toBeDefined();
     expect(h.id).toBe("h1");
@@ -363,27 +268,16 @@ describe("Phase 1.5 — Multi-day advance (30 days)", () => {
     state.horses = h2r([horse]);
     state.npcStables = [stable];
 
-    let currentState = state;
-    for (let day = 1; day <= 30; day++) {
-      const context = buildContext(currentState, day);
-      const result = executePipeline(GAME_PIPELINE_PHASES, context);
-      currentState = result.state;
-    }
+    const result = runPipelineForDays(state, 30);
 
-    expect(currentState).toBeDefined();
+    expect(result.state.day).toBe(31);
   });
 
   it("30-day advance produces logs", () => {
     const state = makeGameState({ day: 1, cash: 500000 }) as GameState;
 
-    let currentState = state;
-    let totalLogs = 0;
-    for (let day = 1; day <= 30; day++) {
-      const context = buildContext(currentState, day);
-      const result = executePipeline(GAME_PIPELINE_PHASES, context);
-      currentState = result.state;
-      totalLogs += result.logs.length;
-    }
+    const result = runPipelineForDays(state, 30);
+    const totalLogs = result.perDay.reduce((sum, day) => sum + day.logs.length, 0);
 
     expect(totalLogs).toBeGreaterThan(0);
   });

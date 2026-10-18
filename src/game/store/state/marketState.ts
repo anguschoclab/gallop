@@ -16,7 +16,7 @@ import type { Horse } from "@/core/horse/types";
 import type { AuctionSale, ScoutReport, PrivateSaleOffer, Claim } from "@/core/market/types";
 import type { ExchangeState } from "@/core/market/exchange";
 import { createDefaultExchangeState } from "@/core/market/exchange";
-import type { ScoutingAssignment } from "@/core/npc/scoutingThresholds";
+import type { ScoutingAssignment } from "@/domains/agents/simulation/npc/scoutingThresholds";
 import type { PlayerBiddingRecord } from "@/core/auction/biddingHistory";
 import type { PriceAlert } from "@/core/market/priceAlerts";
 import type { MarketStrategy } from "@/core/market/strategy";

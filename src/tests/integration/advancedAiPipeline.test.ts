@@ -5,18 +5,24 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateNpcIntents } from "@/core/npc/intentGenerators";
+import { generateNpcIntents } from "@/domains/agents/simulation/npc/intentGenerators";
 import {
   assessWorldState,
   generateStrategicDirectives,
   allocateBudget,
-} from "@/core/ai/strategicCoordinator";
-import { resolveDiplomaticInteractions, initializeRelationships } from "@/core/ai/diplomacyAI";
-import { runNarrativeCycle, createNarrativeState } from "@/core/ai/narrativeAI";
-import { runEconomicCycle } from "@/core/ai/economyAITracking";
-import { createEconomicState, calculateStudFeeAdjustment } from "@/core/ai/economyAIState";
+} from "@/domains/agents/simulation/strategicCoordinator";
+import {
+  resolveDiplomaticInteractions,
+  initializeRelationships,
+} from "@/domains/agents/simulation/diplomacyAI";
+import { runNarrativeCycle, createNarrativeState } from "@/domains/agents/simulation/narrativeAI";
+import { runEconomicCycle } from "@/domains/agents/simulation/economyAITracking";
+import {
+  createEconomicState,
+  calculateStudFeeAdjustment,
+} from "@/domains/agents/simulation/economyAIState";
 import type { GameState, Stable, Horse } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";

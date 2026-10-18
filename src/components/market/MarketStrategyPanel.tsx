@@ -92,7 +92,7 @@ export function MarketStrategyPanel() {
                 );
               })}
               {strategy.targetGrades.length === 0 && (
-                <span className="text-[10px] font-mono text-cream/40 italic">any grade</span>
+                <span className="text-[10px] font-mono text-cream/40">any grade</span>
               )}
             </div>
           </div>

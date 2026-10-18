@@ -4,7 +4,7 @@
  * This file generates horses for NPC stables based on tier, age categories, and
  * AI state, including initial fame calculation and stud fee determination.
  *
- * Dependencies: ./types (Horse, Stable, StableTier), ./rng (Rng), @/core/horse/horseFactory (generateNpcHorse), @/core/common/random (rand), @/core/breeding/stallions (shouldRetireAtStartup, calculateRecommendedStudFee, defaultStudParams), @/core/ai/horseGenAI (shouldGenerateHorseOfAge, createHorseGenAIState, recordHorseGeneration), @/core/ai/npcCycleAI (NpcAIManager), ./npcHorseGenHelpers (AgeCategory, getAgeFromCategory, calculateStartingFame)
+ * Dependencies: ./types (Horse, Stable, StableTier), ./rng (Rng), @/core/horse/horseFactory (generateNpcHorse), @/core/common/random (rand), @/core/breeding/stallions (shouldRetireAtStartup, calculateRecommendedStudFee, defaultStudParams), @/domains/agents/simulation/horseGenAI (shouldGenerateHorseOfAge, createHorseGenAIState, recordHorseGeneration), @/domains/agents/simulation/npcCycleAI (NpcAIManager), ./npcHorseGenHelpers (AgeCategory, getAgeFromCategory, calculateStartingFame)
  * Related files: npcStables.ts (uses horse generation), npcHorseGenHelpers.ts (helper functions)
  */
 
@@ -18,9 +18,12 @@ import {
   calculateRecommendedStudFee,
   defaultStudParams,
 } from "@/core/breeding/stallions";
-import { shouldGenerateHorseOfAge, createHorseGenAIState } from "@/core/ai/horseGenAI";
-import { recordHorseGeneration } from "@/core/ai/horseGenAIRecording";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import {
+  shouldGenerateHorseOfAge,
+  createHorseGenAIState,
+} from "@/domains/agents/simulation/horseGenAI";
+import { recordHorseGeneration } from "@/domains/agents/simulation/horseGenAIRecording";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { type AgeCategory, getAgeFromCategory, calculateStartingFame } from "./horseGenHelpers";
 
 import type { WorldSize } from "@/core/stable/worldSizeConfig";

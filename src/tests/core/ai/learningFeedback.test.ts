@@ -12,13 +12,13 @@ import {
   recordLearningOutcome,
   getSuccessRate,
   getAdaptiveThreshold,
-} from "@/core/ai/learningModule";
-import { createClaimingAIState } from "@/core/ai/claimingAITypes";
+} from "@/domains/agents/simulation/learningModule";
+import { createClaimingAIState } from "@/domains/agents/simulation/claimingAITypes";
 import {
   recordClaimingDecision,
   recordClaimingOutcome,
   shouldClaimHorse,
-} from "@/core/ai/claimingAIRecording";
+} from "@/domains/agents/simulation/claimingAIRecording";
 import type { Stable, Horse } from "@/game/types";
 import type { Race } from "@/core/race/types";
 import { createTestStable, createTestHorse } from "@/tests/helpers";

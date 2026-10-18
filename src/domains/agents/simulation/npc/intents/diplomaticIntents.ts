@@ -5,7 +5,7 @@ import type {
 } from "@/core/resolver/intents";
 import type { GameState, Stable } from "@/game/types";
 import { generateUUID } from "@/core/uuid";
-import type { StableAIState, NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { StableAIState, NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
 export function generateNpcDiplomaticIntents(
   _state: GameState,

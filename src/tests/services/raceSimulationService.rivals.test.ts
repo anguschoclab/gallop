@@ -4,7 +4,7 @@ import { createTestHorse, createTestJockey, createTestStable } from "@/tests/hel
 import type { Race } from "@/core/race/types";
 import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
 function makeRace(overrides: Partial<Race> = {}): Race {
   return {

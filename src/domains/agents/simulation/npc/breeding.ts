@@ -6,7 +6,7 @@
  * higher-quality pairings, budget stables look for value sires, and trader stables
  * breed for marketability.
  *
- * Dependencies: ./types (Horse, Pregnancy, Stable, GameState), ./uuid (generateUUID), @/core/breeding/eligibility (canBreed), @/core/breeding/stallions (getAvailableStallions), @/core/calendar/breedingCalendar (inBreedingSeason), @/core/breeding/populationGenetics (computeProspectiveCoi), ./rng (Rng), @/core/breeding/leaderboardTypes (Leaderboard), @/core/breeding/strategy (BREEDING_PERSONALITIES, SINGLE_FEE_CAP_FRACTION, MIN_MARE_OVERALL, MAX_COI, scoreStallion), @/core/horse/stats (calculateOverallRating), @/core/ai/breedingAI (calculateAIStallionScore, createBreedingAIState, recordBreedingDecision), ./constants/gameConstants (BREEDING_FEE, GESTATION_DAYS)
+ * Dependencies: ./types (Horse, Pregnancy, Stable, GameState), ./uuid (generateUUID), @/core/breeding/eligibility (canBreed), @/core/breeding/stallions (getAvailableStallions), @/core/calendar/breedingCalendar (inBreedingSeason), @/core/breeding/populationGenetics (computeProspectiveCoi), ./rng (Rng), @/core/breeding/leaderboardTypes (Leaderboard), @/core/breeding/strategy (BREEDING_PERSONALITIES, SINGLE_FEE_CAP_FRACTION, MIN_MARE_OVERALL, MAX_COI, scoreStallion), @/core/horse/stats (calculateOverallRating), @/domains/agents/simulation/breedingAI (calculateAIStallionScore, createBreedingAIState, recordBreedingDecision), ./constants/gameConstants (BREEDING_FEE, GESTATION_DAYS)
  * Related files: npcStables.ts (uses breeding logic), breedingAI.ts (provides AI decisions)
  */
 
@@ -27,10 +27,13 @@ import {
   scoreStallion,
 } from "@/core/breeding/strategy";
 import { calculateOverallRating } from "@/core/horse/stats";
-import { calculateAIStallionScore, createBreedingAIState } from "@/core/ai/breedingAI";
-import { recordBreedingDecision } from "@/core/ai/breedingRecording";
+import {
+  calculateAIStallionScore,
+  createBreedingAIState,
+} from "@/domains/agents/simulation/breedingAI";
+import { recordBreedingDecision } from "@/domains/agents/simulation/breedingRecording";
 import { BREEDING_FEE, GESTATION_DAYS } from "@/constants";
-import type { DistressLevel } from "@/core/ai/financialDistressAI";
+import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import {
   BREEDING_MARE_FRACTION,
   EMERGENCY_STUD_FEE_CAP_FRACTION,

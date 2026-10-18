@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateAllStables } from "@/core/npc/stables";
+import { generateAllStables } from "@/domains/agents/simulation/npc/stables";
 import { createRng, hashStr } from "@/core/common/rng";
 import type { Stable } from "@/game/types";
 

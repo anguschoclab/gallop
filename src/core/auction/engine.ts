@@ -4,7 +4,7 @@
  * This file provides functions for calculating lot valuations, bidding values,
  * commission amounts, and net proceeds for auction sales.
  *
- * Dependencies: @/core/horse/gender (isMaleHorse, isFemaleHorse), ./types (Horse, Pregnancy, Stable, AuctionLot, AuctionSale, AuctionSaleKind), @/core/horse/horseFactory (generateNpcHorse), @/core/horse/pricing (calculateNpcHorseValue), @/core/stable/stableConfig (PERSONALITY_CONFIG), ./rng (createRng, hashStr, Rng), ./uuid (generateUUID), @/core/breeding/pedigreePricing (pedigreeMultiplier), @/core/ai/auctionAI (calculateBiddingValue, calculateMaxBid, shouldBidOnHorse, createAuctionAIState, recordBiddingDecision), @/core/ai/npcCycleAI (NpcAIManager), ./auctionData (SALE_TRIGGERS, KIND_LABELS)
+ * Dependencies: @/core/horse/gender (isMaleHorse, isFemaleHorse), ./types (Horse, Pregnancy, Stable, AuctionLot, AuctionSale, AuctionSaleKind), @/core/horse/horseFactory (generateNpcHorse), @/core/horse/pricing (calculateNpcHorseValue), @/core/stable/stableConfig (PERSONALITY_CONFIG), ./rng (createRng, hashStr, Rng), ./uuid (generateUUID), @/core/breeding/pedigreePricing (pedigreeMultiplier), @/domains/agents/simulation/auctionAI (calculateBiddingValue, calculateMaxBid, shouldBidOnHorse, createAuctionAIState, recordBiddingDecision), @/domains/agents/simulation/npcCycleAI (NpcAIManager), ./auctionData (SALE_TRIGGERS, KIND_LABELS)
  * Related files: auctionRunner.ts (uses valuation logic), auctionData.ts (sale triggers and labels)
  */
 
@@ -22,8 +22,8 @@ import { calculateNpcHorseValue } from "@/core/horse/pricing";
 import { createRng, type Rng } from "@/core/common/rng";
 import { generateUUID } from "@/core/uuid";
 import { pedigreeMultiplier } from "@/core/breeding/pedigreePricing";
-import { calculateMaxBid, shouldBidOnHorse } from "@/core/ai/auctionBidding";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { calculateMaxBid, shouldBidOnHorse } from "@/domains/agents/simulation/auctionBidding";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/constants/aiConstants";
 import {
   CONSIGNMENT_COMMISSION,

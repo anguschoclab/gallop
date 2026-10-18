@@ -59,8 +59,8 @@ describe("Phase 14: Architecture validation", () => {
   });
 
   it("economyAI child modules exist with pruning logic", () => {
-    expectComponentFile("core/ai/economyAIState.ts");
-    expectComponentFile("core/ai/economyAITracking.ts");
-    expectComponentFile("core/ai/economyAICartel.ts");
+    expectComponentFile("domains/agents/simulation/economyAIState.ts");
+    expectComponentFile("domains/agents/simulation/economyAITracking.ts");
+    expectComponentFile("domains/agents/simulation/economyAICartel.ts");
   });
 });

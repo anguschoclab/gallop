@@ -154,7 +154,7 @@ export function RecruitmentPool({
 
         {filtered.length === 0 && (
           <div className="p-12 text-center border border-dashed border-white/10 bg-black/10">
-            <p className="text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+            <p className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
               Recruitment cycle currently saturated. Check next frequency.
             </p>
           </div>
@@ -168,7 +168,7 @@ export function RecruitmentPool({
             Recruitment
           </span>
         </div>
-        <p className="text-[9px] font-mono text-cream/40 uppercase leading-relaxed italic">
+        <p className="text-[9px] font-mono text-cream/40 uppercase leading-relaxed">
           Staff salary is deducted daily from liquid assets. Ensure stable revenue before fire
           lower-tier staff before hiring elite personnel.
         </p>

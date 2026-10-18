@@ -1,99 +1,74 @@
 /**
- * scripts/orphan-audit.ts - Automated repository-wide orphan and wiring scanner
+ * scripts/orphan-audit.ts — capability and wiring audit
  *
- * Scans the codebase for:
- * 1. Intent coverage: player-generated, NPC-generated, and resolver-handled status across all 45 intents.
- * 2. Dormant AI functions: functions implemented/tested but not invoked in intent generation or execution loops.
- * 3. Facility type parity: compares FacilityType against Outpost SLOT_FOOTPRINTS.
- * 4. Summary metrics and actionable wiring items.
+ * Builds the capability contract graph from authoritative TypeScript unions and
+ * registered runtime registries. It intentionally avoids a hardcoded intent or
+ * impact list so new gameplay contracts are audited as soon as they are typed.
  */
 
-import { readFileSync, readdirSync, statSync } from "node:fs";
-import { join, extname, sep } from "node:path";
+import { readdirSync, readFileSync, statSync } from "node:fs";
+import { extname, join, relative } from "node:path";
+import * as ts from "typescript";
+import { GAME_PHASE_DESCRIPTORS } from "../src/core/time/phases/descriptors";
+import { GAME_PIPELINE_PHASES } from "../src/core/time/phases/index";
 
-export interface IntentCoverageReport {
-  allIntents: string[];
-  playerGenerated: string[];
-  npcGenerated: string[];
-  handled: string[];
-  orphanedFromNpc: string[];
-  orphanedFromPlayer: string[];
+export interface SourceInput {
+  path: string;
+  text: string;
+  family: "intent" | "impact";
 }
 
-export interface DormantAiReport {
-  checkedFunctions: string[];
-  dormantFunctions: string[];
-  activeFunctions: string[];
+export interface IntentCoverage {
+  type: string;
+  playerProduced: boolean;
+  npcProduced: boolean;
+  systemProduced: boolean;
+  validated: boolean;
+  resolved: boolean;
 }
 
-export interface FacilityParityReport {
-  facilityTypes: string[];
-  outpostFootprints: string[];
-  missingFromFacilityTypes: string[];
+export interface CapabilityAuditResult {
+  intents: {
+    all: string[];
+    byType: Record<string, IntentCoverage>;
+    unproduced: string[];
+    unhandled: string[];
+    unvalidated: string[];
+    playerOnly: string[];
+    npcOnly: string[];
+    systemOnly: string[];
+  };
+  impacts: {
+    all: string[];
+    handled: string[];
+    unhandled: string[];
+  };
+  phases: {
+    registered: string[];
+    described: string[];
+    undescribed: string[];
+    unregisteredDescriptors: string[];
+  };
+  files: {
+    sourceFileCount: number;
+    routeCount: number;
+    componentCount: number;
+  };
+  summary: {
+    totalIntents: number;
+    unhandledIntents: number;
+    totalImpacts: number;
+    unhandledImpacts: number;
+    phasesRegistered: number;
+  };
 }
 
-export interface OrphanAuditSummary {
-  totalIntents: number;
-  npcCoveragePercent: number;
-  handledPercent: number;
-  dormantAiCount: number;
-  missingFacilityCount: number;
+interface ContractDeclaration {
+  name: string;
+  kind: "interface" | "type";
+  node: ts.InterfaceDeclaration | ts.TypeAliasDeclaration;
+  file: SourceInput;
 }
-
-export interface OrphanAuditResult {
-  intents: IntentCoverageReport;
-  dormantAi: DormantAiReport;
-  facilityParity: FacilityParityReport;
-  summary: OrphanAuditSummary;
-}
-
-export const ALL_INTENT_TYPES = [
-  "training",
-  "race_entry",
-  "race_withdrawal",
-  "breeding",
-  "stud_retirement",
-  "purchase",
-  "jockey_contract",
-  "jockey_release",
-  "jockey_assignment",
-  "scout",
-  "consignment",
-  "consignment_withdrawal",
-  "gelding",
-  "reroll_silk",
-  "rename",
-  "campaign_slot",
-  "campaign_flag_dismissal",
-  "campaign_creation",
-  "campaign_deletion",
-  "auto_manage_toggle",
-  "upkeep",
-  "aging",
-  "energy",
-  "pregnancy_check",
-  "pregnancy_resolution",
-  "race_resolution",
-  "claiming",
-  "withdraw_from_claiming",
-  "tactics",
-  "transport",
-  "staff",
-  "facility_upgrade",
-  "pasture_retirement",
-  "update_stud_fee",
-  "syndicate_creation",
-  "share_purchase",
-  "share_sale",
-  "syndicate_fee_distribution",
-  "insurance_purchase",
-  "insurance_cancel",
-  "insurance_claim",
-  "stewards_inquiry",
-  "diplomatic_action",
-  "cartel_action",
-  "outpost_action",
-];
 
 function collectFiles(dir: string, extensions: string[], results: string[] = []): string[] {
   let entries: string[];
@@ -115,7 +90,8 @@ function collectFiles(dir: string, extensions: string[], results: string[] = [])
         entry === "node_modules" ||
         entry === ".git" ||
         entry === "dist" ||
-        entry === "test-results"
+        entry === "test-results" ||
+        entry === ".output"
       ) {
         continue;
       }
@@ -127,268 +103,323 @@ function collectFiles(dir: string, extensions: string[], results: string[] = [])
   return results;
 }
 
-function readFileSafe(filePath: string): string {
+function readFileSafe(path: string): string {
   try {
-    return readFileSync(filePath, "utf-8");
+    return readFileSync(path, "utf8");
   } catch {
     return "";
   }
 }
 
-export function scanIntentCoverage(srcRoot: string): IntentCoverageReport {
-  const npcDir = join(srcRoot, "core", "npc");
-  const npcFiles = collectFiles(npcDir, [".ts"]);
-  const npcContent = npcFiles.map((f) => readFileSafe(f)).join("\n");
-
-  const uiDir = join(srcRoot, "components");
-  const routesDir = join(srcRoot, "routes");
-  const storeDir = join(srcRoot, "game", "store");
-  const playerFiles = [
-    ...collectFiles(uiDir, [".tsx", ".ts"]),
-    ...collectFiles(routesDir, [".tsx", ".ts"]),
-    ...collectFiles(storeDir, [".ts"]),
-  ].filter((f) => !f.includes(".test."));
-  const playerContent = playerFiles.map((f) => readFileSafe(f)).join("\n");
-
-  const handlersDir = join(srcRoot, "core", "resolver", "handlers");
-  const phasesDir = join(srcRoot, "core", "time", "phases");
-  const handlerFiles = [
-    ...collectFiles(handlersDir, [".ts"]),
-    ...collectFiles(phasesDir, [".ts"]),
-  ].filter((f) => !f.includes(".test."));
-  const handlerContent = handlerFiles.map((f) => readFileSafe(f)).join("\n");
-
-  const playerGenerated: string[] = [];
-  const npcGenerated: string[] = [];
-  const handled: string[] = [];
-  const orphanedFromNpc: string[] = [];
-  const orphanedFromPlayer: string[] = [];
-
-  for (const type of ALL_INTENT_TYPES) {
-    const pattern = `type: "${type}"`;
-    const isPlayer = playerContent.includes(pattern) || playerContent.includes(`type: '${type}'`);
-    const isNpc = npcContent.includes(pattern) || npcContent.includes(`type: '${type}'`);
-    const isHandled = handlerContent.includes(`"${type}"`) || handlerContent.includes(`'${type}'`);
-
-    if (isPlayer) playerGenerated.push(type);
-    else orphanedFromPlayer.push(type);
-
-    if (isNpc) npcGenerated.push(type);
-    else orphanedFromNpc.push(type);
-
-    if (isHandled) handled.push(type);
-  }
-
-  return {
-    allIntents: ALL_INTENT_TYPES,
-    playerGenerated,
-    npcGenerated,
-    handled,
-    orphanedFromNpc,
-    orphanedFromPlayer,
-  };
+function sourceInputs(projectRoot: string, directory: string, family: SourceInput["family"]) {
+  return collectFiles(join(projectRoot, directory), [".ts"], [])
+    .filter((path) => !path.includes(".test."))
+    .map((path) => ({ path: relative(projectRoot, path), text: readFileSafe(path), family }));
 }
 
-export function scanDormantAiFunctions(srcRoot: string): DormantAiReport {
-  const candidateFunctions = [
-    { name: "shouldWithdrawForTrackCondition", file: "src/core/ai/withdrawalAI.ts" },
-    { name: "detectConsecutiveWithdrawalPattern", file: "src/core/ai/withdrawalAI.ts" },
-  ];
+function sourceFile(input: SourceInput): ts.SourceFile {
+  return ts.createSourceFile(input.path, input.text, ts.ScriptTarget.ES2022, true);
+}
 
-  const nonTestFiles = collectFiles(srcRoot, [".ts", ".tsx"]).filter(
-    (f) => !f.includes(".test.") && !f.includes(sep + "test-utils" + sep),
-  );
+function literalValues(node: ts.TypeNode | undefined): string[] {
+  if (!node) return [];
+  if (ts.isLiteralTypeNode(node) && ts.isStringLiteral(node.literal)) {
+    return [node.literal.text];
+  }
+  if (ts.isUnionTypeNode(node)) {
+    return node.types.flatMap((part) => literalValues(part));
+  }
+  return [];
+}
 
-  const checkedFunctions: string[] = [];
-  const dormantFunctions: string[] = [];
-  const activeFunctions: string[] = [];
+function declarationName(node: ts.Node): string | undefined {
+  return (ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node)) && node.name
+    ? node.name.text
+    : undefined;
+}
 
-  for (const fn of candidateFunctions) {
-    checkedFunctions.push(fn.name);
-    let callerCount = 0;
+function collectDeclarations(inputs: SourceInput[]): Map<string, ContractDeclaration[]> {
+  const declarations = new Map<string, ContractDeclaration[]>();
+  for (const input of inputs) {
+    const parsed = sourceFile(input);
+    const visit = (node: ts.Node) => {
+      if (ts.isInterfaceDeclaration(node) || ts.isTypeAliasDeclaration(node)) {
+        const name = declarationName(node);
+        if (name) {
+          const declaration: ContractDeclaration = {
+            name,
+            kind: ts.isInterfaceDeclaration(node) ? "interface" : "type",
+            node,
+            file: input,
+          };
+          declarations.set(name, [...(declarations.get(name) ?? []), declaration]);
+        }
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(parsed);
+  }
+  return declarations;
+}
 
-    for (const file of nonTestFiles) {
-      if (file.endsWith(fn.file.replace(/\//g, sep))) continue;
-      const content = readFileSafe(file);
-      if (content.includes(fn.name)) {
-        callerCount++;
+function unionMemberNames(alias: ts.TypeAliasDeclaration): string[] {
+  if (!ts.isUnionTypeNode(alias.type)) return [];
+  return alias.type.types
+    .filter(ts.isTypeReferenceNode)
+    .map((member) => member.typeName.getText(alias.getSourceFile()));
+}
+
+function typeLiteralValues(declaration: ContractDeclaration): string[] {
+  if (ts.isInterfaceDeclaration(declaration.node)) {
+    const discriminator = declaration.node.members.find(
+      (member): member is ts.PropertySignature =>
+        ts.isPropertySignature(member) && member.name.getText() === "type",
+    );
+    return literalValues(discriminator?.type);
+  }
+  return literalValues(declaration.node.type);
+}
+
+function resolveContractLiterals(
+  rootName: string,
+  declarations: Map<string, ContractDeclaration[]>,
+  seen = new Set<string>(),
+): string[] {
+  if (seen.has(rootName)) return [];
+  seen.add(rootName);
+
+  const matches = declarations.get(rootName) ?? [];
+  const literals: string[] = [];
+  for (const declaration of matches) {
+    literals.push(...typeLiteralValues(declaration));
+    if (ts.isTypeAliasDeclaration(declaration.node)) {
+      for (const memberName of unionMemberNames(declaration.node)) {
+        literals.push(...resolveContractLiterals(memberName, declarations, seen));
       }
     }
+  }
+  return literals;
+}
 
-    if (callerCount === 0) {
-      dormantFunctions.push(fn.name);
-    } else {
-      activeFunctions.push(fn.name);
-    }
+/**
+ * Extract the literal values used as `type` discriminators by declarations in
+ * the supplied family. For interfaces, the name or heritage clause must match
+ * the family suffix so unrelated type-bearing contracts are excluded.
+ */
+export function extractDiscriminatedContracts(inputs: SourceInput[]): string[] {
+  const family = inputs[0]?.family;
+  const suffix = family === "intent" ? "Intent" : "Impact";
+  const declarations = collectDeclarations(inputs);
+  const rootName = `Any${suffix}`;
+  const unionLiterals = resolveContractLiterals(rootName, declarations);
+  if (unionLiterals.length > 0) return [...new Set(unionLiterals)].sort();
+
+  const literals = new Set<string>();
+  for (const input of inputs) {
+    const parsed = sourceFile(input);
+    const visit = (node: ts.Node) => {
+      if (ts.isInterfaceDeclaration(node)) {
+        const familyMatch = (node.heritageClauses ?? []).some((clause) =>
+          clause.types.some((heritage) => heritage.expression.getText(parsed).endsWith(suffix)),
+        );
+        if (familyMatch) {
+          for (const value of typeLiteralValues({
+            name: node.name.text,
+            kind: "interface",
+            node,
+            file: input,
+          })) {
+            literals.add(value);
+          }
+        }
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(parsed);
   }
 
+  return [...literals].sort();
+}
+
+function collectSourceText(projectRoot: string, directories: string[]): string {
+  return directories
+    .flatMap((directory) => collectFiles(join(projectRoot, "src", directory), [".ts", ".tsx"]))
+    .filter((path) => !path.includes(".test."))
+    .map(readFileSafe)
+    .join("\n");
+}
+
+function hasLiteral(text: string, value: string): boolean {
+  if (text.includes(`"${value}"`) || text.includes(`'${value}'`)) return true;
+  return new RegExp(`\\b${value}\\s*:`).test(text);
+}
+
+/** Compatibility view for callers that only need intent producer/resolver sets. */
+export function scanIntentCoverage(srcRoot: string) {
+  const audit = runCapabilityAudit(join(srcRoot, ".."));
   return {
-    checkedFunctions,
-    dormantFunctions,
-    activeFunctions,
+    allIntents: audit.intents.all,
+    playerGenerated: audit.intents.all.filter((type) => audit.intents.byType[type].playerProduced),
+    npcGenerated: audit.intents.all.filter((type) => audit.intents.byType[type].npcProduced),
+    handled: audit.intents.all.filter((type) => audit.intents.byType[type].resolved),
   };
 }
 
-/**
- * Returns the substring enclosed by the balanced `open`/`close` pair that
- * starts at `startIdx` (which must point at `open`). Quote- and
- * line-comment-aware so `}`/`;` inside strings or comments don't truncate.
- */
-function extractBalanced(
-  text: string,
-  startIdx: number,
-  open: string,
-  close: string,
-): string | null {
-  if (text[startIdx] !== open) return null;
-  let depth = 0;
-  let i = startIdx;
-  while (i < text.length) {
-    const c = text[i];
-    if (c === '"' || c === "'" || c === "`") {
-      const end = text.indexOf(c, i + 1);
-      if (end === -1) return null;
-      i = end + 1;
-      continue;
-    }
-    if (c === "/" && text[i + 1] === "/") {
-      const eol = text.indexOf("\n", i);
-      i = eol === -1 ? text.length : eol + 1;
-      continue;
-    }
-    if (c === open) depth++;
-    else if (c === close) {
-      depth--;
-      if (depth === 0) return text.slice(startIdx + 1, i);
-    }
-    i++;
-  }
-  return null;
-}
-
-/**
- * Returns the text between `=` and the statement-terminating `;` for
- * `export type X = ...;`. Quote/comment-aware so `;` inside literals or
- * comments doesn't truncate the capture.
- */
-function extractTypeUnionBody(text: string, exportName: string): string {
-  const declIdx = text.indexOf(`export type ${exportName}`);
-  if (declIdx === -1) return "";
-  const eqIdx = text.indexOf("=", declIdx);
-  if (eqIdx === -1) return "";
-  let i = eqIdx + 1;
-  while (i < text.length) {
-    const c = text[i];
-    if (c === '"' || c === "'" || c === "`") {
-      const end = text.indexOf(c, i + 1);
-      if (end === -1) break;
-      i = end + 1;
-      continue;
-    }
-    if (c === "/" && text[i + 1] === "/") {
-      const eol = text.indexOf("\n", i);
-      i = eol === -1 ? text.length : eol + 1;
-      continue;
-    }
-    if (c === ";") return text.slice(eqIdx + 1, i);
-    i++;
-  }
-  return text.slice(eqIdx + 1);
-}
-
-export function scanFacilityTypeParity(srcRoot: string): FacilityParityReport {
-  const facilityTypesPath = join(srcRoot, "core", "facilities", "facilityTypes.ts");
-  const outpostTypesPath = join(srcRoot, "core", "facilities", "outpostTypes.ts");
-
-  const facilityTypesContent = readFileSafe(facilityTypesPath);
-  const outpostTypesContent = readFileSafe(outpostTypesPath);
-
-  // Extract facility types from `FacilityType` union (quote/comment-aware)
-  const facilityTypeMatches = extractTypeUnionBody(facilityTypesContent, "FacilityType");
-  const facilityTypes = Array.from(facilityTypeMatches.matchAll(/"([^"]+)"/g)).map((m) => m[1]);
-
-  // Extract keys from SLOT_FOOTPRINTS (brace-balanced, tolerates nested objects)
-  const footprintsKeyIdx = outpostTypesContent.indexOf("SLOT_FOOTPRINTS");
-  let slotFootprintsMatch = "";
-  if (footprintsKeyIdx !== -1) {
-    const braceIdx = outpostTypesContent.indexOf("{", footprintsKeyIdx);
-    slotFootprintsMatch =
-      (braceIdx !== -1 && extractBalanced(outpostTypesContent, braceIdx, "{", "}")) || "";
-  }
-  const outpostFootprints = Array.from(slotFootprintsMatch.matchAll(/([a-z_]+)\s*:/g)).map(
-    (m) => m[1],
+/** Check selected AI functions for production callers outside their declaration. */
+export function scanDormantAiFunctions(srcRoot: string) {
+  const checkedFunctions = ["shouldWithdrawForTrackCondition"];
+  const productionFiles = collectFiles(srcRoot, [".ts", ".tsx"]).filter(
+    (path) => !path.includes(".test."),
   );
+  const callers = Object.fromEntries(
+    checkedFunctions.map((name) => [
+      name,
+      productionFiles.filter(
+        (path) => !path.endsWith("withdrawalAI.ts") && readFileSafe(path).includes(name),
+      ),
+    ]),
+  );
+  return { checkedFunctions, callers };
+}
 
-  const missingFromFacilityTypes = outpostFootprints.filter((fp) => !facilityTypes.includes(fp));
-
+/** Check every FacilityType has an outpost slot footprint. */
+export function scanFacilityTypeParity(srcRoot: string) {
+  const facilityPath = join(srcRoot, "core", "facilities", "facilityTypes.ts");
+  const outpostPath = join(srcRoot, "core", "facilities", "outpostTypes.ts");
+  const facilityText = readFileSafe(facilityPath);
+  const outpostText = readFileSafe(outpostPath);
+  const inputs: SourceInput[] = [{ path: facilityPath, text: facilityText, family: "impact" }];
+  const declarations = collectDeclarations(inputs);
+  const facilityTypes = [...new Set(resolveContractLiterals("FacilityType", declarations))].sort();
+  const footprintSection = outpostText.split("SLOT_FOOTPRINTS:")[1]?.split("} as")[0] ?? "";
+  const outpostFootprints = [...footprintSection.matchAll(/\b([a-z_]+)\s*:\s*\d+/g)].map(
+    (match) => match[1],
+  );
+  const footprintSet = new Set(outpostFootprints);
   return {
     facilityTypes,
     outpostFootprints,
-    missingFromFacilityTypes,
+    missingFootprints: facilityTypes.filter((type) => !footprintSet.has(type)),
   };
 }
 
-export function runOrphanAudit(projectRoot: string): OrphanAuditResult {
-  const srcRoot = join(projectRoot, "src");
-  const intents = scanIntentCoverage(srcRoot);
-  const dormantAi = scanDormantAiFunctions(srcRoot);
-  const facilityParity = scanFacilityTypeParity(srcRoot);
+/**
+ * Build the repository capability audit from authoritative contracts and
+ * production source coverage buckets.
+ */
+export function runCapabilityAudit(projectRoot = process.cwd()): CapabilityAuditResult {
+  const resolverInputs = sourceInputs(projectRoot, join("src", "core", "resolver"), "intent");
+  const declarations = collectDeclarations(resolverInputs);
+  const intents = [...new Set(resolveContractLiterals("AnyIntent", declarations))].sort();
 
-  const summary: OrphanAuditSummary = {
-    totalIntents: intents.allIntents.length,
-    npcCoveragePercent: Math.round((intents.npcGenerated.length / intents.allIntents.length) * 100),
-    handledPercent: Math.round((intents.handled.length / intents.allIntents.length) * 100),
-    dormantAiCount: dormantAi.dormantFunctions.length,
-    missingFacilityCount: facilityParity.missingFromFacilityTypes.length,
-  };
+  const impactInputs = sourceInputs(
+    projectRoot,
+    join("src", "core", "resolver", "impacts"),
+    "impact",
+  );
+  const impactDeclarations = collectDeclarations(impactInputs);
+  const impacts = [...new Set(resolveContractLiterals("AnyImpact", impactDeclarations))].sort();
+
+  const playerText = collectSourceText(projectRoot, [
+    "components",
+    "routes",
+    join("game", "store"),
+    "hooks",
+  ]);
+  const npcText = collectSourceText(projectRoot, [join("domains", "agents", "simulation")]);
+  const systemText = collectSourceText(projectRoot, ["core/time/phases"]);
+  const validatorText = collectSourceText(projectRoot, ["core/resolver/validators"]);
+  const resolverText = collectSourceText(projectRoot, [
+    "core/resolver/handlers",
+    "core/time/phases",
+  ]);
+
+  const byType: Record<string, IntentCoverage> = {};
+  for (const type of intents) {
+    byType[type] = {
+      type,
+      playerProduced: hasLiteral(playerText, type),
+      npcProduced: hasLiteral(npcText, type),
+      systemProduced: hasLiteral(systemText, type),
+      validated: hasLiteral(validatorText, type),
+      resolved: hasLiteral(resolverText, type),
+    };
+  }
+
+  const registered = GAME_PIPELINE_PHASES.map((phase) => phase.name);
+  const described = GAME_PHASE_DESCRIPTORS.map((descriptor) => descriptor.id);
+  const registeredSet = new Set(registered);
+  const describedSet = new Set(described);
+
+  const srcFiles = collectFiles(join(projectRoot, "src"), [".ts", ".tsx"]).filter(
+    (path) => !path.includes(".test.") && !path.includes(join("tests", "e2e")),
+  );
 
   return {
-    intents,
-    dormantAi,
-    facilityParity,
-    summary,
+    intents: {
+      all: intents,
+      byType,
+      unproduced: intents.filter(
+        (type) =>
+          !byType[type].playerProduced && !byType[type].npcProduced && !byType[type].systemProduced,
+      ),
+      unhandled: intents.filter((type) => !byType[type].resolved),
+      unvalidated: intents.filter((type) => !byType[type].validated),
+      playerOnly: intents.filter(
+        (type) => byType[type].playerProduced && !byType[type].npcProduced,
+      ),
+      npcOnly: intents.filter((type) => byType[type].npcProduced && !byType[type].playerProduced),
+      systemOnly: intents.filter(
+        (type) =>
+          byType[type].systemProduced && !byType[type].playerProduced && !byType[type].npcProduced,
+      ),
+    },
+    impacts: {
+      all: impacts,
+      handled: impacts.filter((type) => hasLiteral(resolverText, type)),
+      unhandled: impacts.filter((type) => !hasLiteral(resolverText, type)),
+    },
+    phases: {
+      registered,
+      described,
+      undescribed: registered.filter((name) => !describedSet.has(name)),
+      unregisteredDescriptors: described.filter((name) => !registeredSet.has(name)),
+    },
+    files: {
+      sourceFileCount: srcFiles.length,
+      routeCount: collectFiles(join(projectRoot, "src", "routes"), [".tsx"]).filter(
+        (path) => !path.endsWith("__root.tsx"),
+      ).length,
+      componentCount: collectFiles(join(projectRoot, "src", "components"), [".ts", ".tsx"]).length,
+    },
+    summary: {
+      totalIntents: intents.length,
+      unhandledIntents: intents.filter((type) => !byType[type].resolved).length,
+      totalImpacts: impacts.length,
+      unhandledImpacts: impacts.filter((type) => !hasLiteral(resolverText, type)).length,
+      phasesRegistered: registered.length,
+    },
   };
 }
 
-// CLI entry point
+/** Backwards-compatible alias for the older scanner name. */
+export const runOrphanAudit = runCapabilityAudit;
+
 if (import.meta.main) {
-  const projectRoot = process.cwd();
-  const result = runOrphanAudit(projectRoot);
-
+  const result = runCapabilityAudit(process.cwd());
   console.log("\n=======================================================");
-  console.log("             GALLOP ORPHAN & WIRING AUDIT               ");
+  console.log("             GALLOP CAPABILITY AUDIT                    ");
   console.log("=======================================================\n");
-
-  console.log(`[1] INTENT MATRIX COVERAGE (${result.summary.totalIntents} intent types)`);
+  console.log(`Source files: ${result.files.sourceFileCount}`);
+  console.log(`Routes: ${result.files.routeCount}`);
+  console.log(`Components: ${result.files.componentCount}`);
+  console.log(`Intent contracts: ${result.intents.all.length}`);
+  console.log(`Unhandled intents: ${result.intents.unhandled.join(", ") || "none"}`);
+  console.log(`Unproduced intents: ${result.intents.unproduced.join(", ") || "none"}`);
+  console.log(`Impact contracts: ${result.impacts.all.length}`);
+  console.log(`Unhandled impacts: ${result.impacts.unhandled.join(", ") || "none"}`);
   console.log(
-    `    - Handled by Resolvers: ${result.intents.handled.length}/${result.summary.totalIntents} (${result.summary.handledPercent}%)`,
+    `Phases registered/described: ${result.phases.registered.length}/${result.phases.described.length}`,
   );
-  console.log(
-    `    - NPC AI Emitted:      ${result.intents.npcGenerated.length}/${result.summary.totalIntents} (${result.summary.npcCoveragePercent}%)`,
-  );
-  console.log(
-    `    - Player UI Emitted:   ${result.intents.playerGenerated.length}/${result.summary.totalIntents}`,
-  );
-  if (result.intents.orphanedFromNpc.length > 0) {
-    console.log(`    ⚠️  Missing from NPC AI:`, result.intents.orphanedFromNpc);
-  }
-
-  console.log(`\n[2] DORMANT AI LOGIC`);
-  console.log(
-    `    - Dormant functions (tested only, 0 production callers):`,
-    result.dormantAi.dormantFunctions,
-  );
-  console.log(`    - Active functions:`, result.dormantAi.activeFunctions);
-
-  console.log(`\n[3] FACILITY TYPE PARITY`);
-  console.log(`    - Defined FacilityTypes:`, result.facilityParity.facilityTypes);
-  console.log(`    - Outpost Footprints:    `, result.facilityParity.outpostFootprints);
-  if (result.facilityParity.missingFromFacilityTypes.length > 0) {
-    console.log(
-      `    ⚠️  In footprints but missing from FacilityType:`,
-      result.facilityParity.missingFromFacilityTypes,
-    );
-  }
-
-  console.log("\n=======================================================\n");
+  console.log("=======================================================\n");
 }

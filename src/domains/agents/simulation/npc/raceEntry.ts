@@ -4,7 +4,7 @@
  * This file provides AI race entry for NPC stables, evaluating races 1-3 days ahead
  * and entering eligible, competitive horses using modular scoring, geometry, and AI systems.
  *
- * Dependencies: ./types (Horse, Race, Stable, Jockey), ./rng (Rng), @/core/race/entryScoring (calculateAssignedWeight, MAX_HORSES_PER_STABLE_PER_RACE), @/core/ai/jockeyStrategyAI (calculateOptimalTactics), @/core/ai/npcCycleAI (NpcAIManager), ./npcRaceEntryHelpers (shouldEnterHorse)
+ * Dependencies: ./types (Horse, Race, Stable, Jockey), ./rng (Rng), @/core/race/entryScoring (calculateAssignedWeight, MAX_HORSES_PER_STABLE_PER_RACE), @/domains/agents/simulation/jockeyStrategyAI (calculateOptimalTactics), @/domains/agents/simulation/npcCycleAI (NpcAIManager), ./npcRaceEntryHelpers (shouldEnterHorse)
  * Related files: npcRaceEntryHelpers.ts (provides entry logic), npcStables.ts (uses race entry)
  */
 
@@ -18,9 +18,9 @@ import { ensurePhenotypeResolved } from "@/core/horse/horseFactory";
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
 import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/constants";
 import { findBumpableEntryIndex } from "@/core/race/entry/bumpResolver";
-import { calculateOptimalTactics } from "@/core/ai/jockeyStrategyAI";
-import { applyAffinityBoost } from "@/core/ai/jockeyStrategyAdjustments";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { calculateOptimalTactics } from "@/domains/agents/simulation/jockeyStrategyAI";
+import { applyAffinityBoost } from "@/domains/agents/simulation/jockeyStrategyAdjustments";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { shouldEnterHorse } from "./raceEntryHelpers";
 import { isHatedRival } from "@/core/stable/rivalry";
 import { makeNpcOwned } from "@/core/horse/ownership";

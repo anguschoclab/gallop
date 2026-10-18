@@ -29,7 +29,7 @@ export function ReplaysLibrary() {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Trophy className="h-4 w-4 text-gold" />
-            <h2 className="text-sm font-black uppercase tracking-[0.2em] text-gold">
+            <h2 className="text-sm font-black uppercase tracking-[0.15em] text-gold">
               Highlight Reel
             </h2>
           </div>

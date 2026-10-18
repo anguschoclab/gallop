@@ -1,16 +1,16 @@
 import { describe, it, expect } from "vitest";
-import { createWithdrawalAIState } from "@/core/ai/withdrawalAITypes";
+import { createWithdrawalAIState } from "@/domains/agents/simulation/withdrawalAITypes";
 import {
   calculateWithdrawalRisk,
   calculateWithdrawalOpportunityCost,
-} from "@/core/ai/withdrawalAIValue";
+} from "@/domains/agents/simulation/withdrawalAIValue";
 import {
   shouldWithdrawHorse,
   isWithdrawalStrategic,
   recordWithdrawalDecision,
   recordWithdrawalOutcome,
   getWithdrawalInsights,
-} from "@/core/ai/withdrawalAIRecording";
+} from "@/domains/agents/simulation/withdrawalAIRecording";
 import type { Horse, Race, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import {

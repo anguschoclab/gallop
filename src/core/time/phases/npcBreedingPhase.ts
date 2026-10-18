@@ -9,10 +9,10 @@
  */
 
 import type { PipelineContext } from "../pipeline";
-import { runAutonomousBreeding } from "@/core/npc/breeding";
+import { runAutonomousBreeding } from "@/domains/agents/simulation/npc/breeding";
 import { PHASE_ORDER_NPC_BREEDING } from "@/constants";
-import { trackBreedingVolume } from "@/core/ai/economyAITracking";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { trackBreedingVolume } from "@/domains/agents/simulation/economyAITracking";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
 /**
  * Phase: NPC Autonomous Breeding

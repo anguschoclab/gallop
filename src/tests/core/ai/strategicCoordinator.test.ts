@@ -7,9 +7,9 @@ import {
   type WorldAssessment,
   type StrategicDirective,
   type BudgetAllocation,
-} from "@/core/ai/strategicCoordinator";
+} from "@/domains/agents/simulation/strategicCoordinator";
 import type { GameState, Stable, Horse, Race } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 

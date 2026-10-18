@@ -23,7 +23,7 @@ export function AiActivityFeed({ news, filterActive }: AiActivityFeedProps) {
       </CardHeader>
       <CardContent className="p-0">
         {filtered.length === 0 ? (
-          <div className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+          <div className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
             No recent AI activity to report.
           </div>
         ) : (

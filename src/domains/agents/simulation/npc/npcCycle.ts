@@ -4,7 +4,7 @@
  * This file provides the main NPC cycle orchestration that coordinates
  * NPC training, race entry, horse fame updates, and AI state management.
  *
- * Dependencies: @/game/types (Horse, Race, Stable, Jockey), @/core/common/rng (Rng), @/core/ai/npcCycleAI (NpcAIManager, getOrCreateStableAIState, updateStableAIState, pruneAllLearningData), ./npcFame (calculateFameGainsForRaces), ./npcRegionalDominance (resolveRegionalDominance, applyFrictionDecay), ./npcFacilityUpgrades (applyNpcFacilityUpgrade), @/core/horse/fans (calculateFanGainsForRaces)
+ * Dependencies: @/game/types (Horse, Race, Stable, Jockey), @/core/common/rng (Rng), @/domains/agents/simulation/npcCycleAI (NpcAIManager, getOrCreateStableAIState, updateStableAIState, pruneAllLearningData), ./npcFame (calculateFameGainsForRaces), ./npcRegionalDominance (resolveRegionalDominance, applyFrictionDecay), @/core/horse/fans (calculateFanGainsForRaces)
  * Related files: intentGenerators.ts (provides intent generation)
  */
 
@@ -16,13 +16,12 @@ import {
   getOrCreateStableAIState,
   updateStableAIState,
   pruneAllLearningData,
-} from "@/core/ai/npcCycleAI";
+} from "@/domains/agents/simulation/npcCycleAI";
 import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
 import type { NewsItem } from "@/core/narrative/newsTypes";
 import { calculateFanGainsForRaces } from "@/core/horse/fans";
 import { calculateFameGainsForRaces } from "./npcFame";
 import { resolveRegionalDominance, applyFrictionDecay } from "./npcRegionalDominance";
-import { applyNpcFacilityUpgrade } from "./npcFacilityUpgrades";
 
 // Re-export fame functions for backward compatibility
 export { calculateFameGainsForRaces, applyFameGainsToHorses } from "./npcFame";
@@ -96,15 +95,6 @@ export function runNpcCycle(
     let fameChanges: Array<{ horseId: string; delta: number }> = [];
     let fanChanges: Array<{ horseId: string; delta: number }> = [];
 
-    // Clone facilities to avoid mutating the input state.
-    let updatedNpcFacilities = npcFacilities;
-    if (npcFacilities) {
-      updatedNpcFacilities = {};
-      for (const stableId in npcFacilities) {
-        updatedNpcFacilities[stableId] = { ...npcFacilities[stableId] };
-      }
-    }
-
     // 3. Calculate fame gains for horses in today's resolved races (do not mutate horses here).
     const todaysResolvedRaces = races.filter((r) => r.day === currentDay && r.resolved && r.result);
 
@@ -161,19 +151,6 @@ export function runNpcCycle(
       try {
         const stableAIState = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
 
-        // AI-driven facility upgrades
-        if (updatedNpcFacilities && updatedNpcFacilities[stable.id]) {
-          const cashChange = applyNpcFacilityUpgrade(
-            stable,
-            stableAIState,
-            updatedNpcFacilities[stable.id],
-            currentDay,
-          );
-          if (cashChange) {
-            cashChanges.push(cashChange);
-          }
-        }
-
         // Update stable state in manager
         updatedAiManager.stableStates[stable.id] = updateStableAIState(stableAIState, currentDay);
       } catch (error) {
@@ -190,7 +167,7 @@ export function runNpcCycle(
       races: racesAfterEntry,
       jockeys,
       aiManager: updatedAiManager,
-      npcFacilities: updatedNpcFacilities,
+      npcFacilities,
       newsItems,
       reputationEvents: dominanceResult.reputationEvents,
       cashChanges,

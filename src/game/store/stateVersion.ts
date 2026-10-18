@@ -6,4 +6,4 @@
  * Kept in a leaf module (no store/side-effect imports) so e2e specs can read
  * the authoritative value when seeding saves without booting the store.
  */
-export const STORE_STATE_VERSION = 9;
+export const STORE_STATE_VERSION = 10;

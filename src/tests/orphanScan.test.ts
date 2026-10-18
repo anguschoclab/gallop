@@ -28,10 +28,22 @@ import { describe, it, expect } from "vitest";
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join, extname, relative, sep } from "node:path";
 import { GAME_PIPELINE_PHASES } from "@/core/time/phases/index";
+import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
+import { runCapabilityAudit } from "../../scripts/orphan-audit";
 
 // ─── Helpers: scan source files via fs ───────────────────────────────────────
 
 const PROJECT_ROOT = join(__dirname, "..", "..");
+const quarantineManifest = JSON.parse(
+  readFileSync(join(PROJECT_ROOT, "src/tests/fixtures/campaignManifest.json"), "utf8"),
+) as {
+  deletionManifest: { path: string; disposition: string }[];
+};
+const quarantinedProductionPaths = new Set(
+  quarantineManifest.deletionManifest
+    .filter((entry) => entry.disposition === "quarantined_unique")
+    .map((entry) => entry.path.replace(/^src\//, "")),
+);
 
 /** Recursively collect all files with given extensions under a directory */
 function collectFiles(dir: string, extensions: string[], results: string[] = []): string[] {
@@ -81,6 +93,9 @@ const allTsxFiles = collectFiles(join(srcRoot, "components"), [".tsx"], [])
   .concat(collectFiles(join(srcRoot, "components"), [".ts"], []));
 
 const allCoreTsFiles = collectFiles(join(srcRoot, "core"), [".ts"], []);
+const agentsSimulationRoot = join(srcRoot, "domains", "agents", "simulation");
+const allAgentTsFiles = collectFiles(agentsSimulationRoot, [".ts"], []);
+const agentIntentGeneratorsPath = join(agentsSimulationRoot, "npc", "intentGenerators.ts");
 const allGameTsFiles = collectFiles(join(srcRoot, "game"), [".ts"], []);
 const allHooksTsFiles = collectFiles(join(srcRoot, "hooks"), [".ts", ".tsx"], []);
 const allServicesTsFiles = collectFiles(join(srcRoot, "services"), [".ts"], []);
@@ -97,6 +112,7 @@ const allTsxText = tsxFileContents.map((f) => f.text).join("\n");
 const allSourceContents = [
   ...allTsxFiles,
   ...allCoreTsFiles,
+  ...allAgentTsFiles,
   ...allGameTsFiles,
   ...allHooksTsFiles,
   ...allServicesTsFiles,
@@ -109,7 +125,7 @@ function isInTsx(field: string): boolean {
   return allTsxText.includes(field);
 }
 
-/** Check if an import path (e.g., "@/core/ai/campaignAI") appears in non-test source */
+/** Check if an import path (e.g., "@/domains/agents/simulation/campaignAI") appears in non-test source */
 function isImportedByNonTest(importPath: string): boolean {
   const basename = importPath.split("/").pop() + ".ts";
   return allSourceContents.some((f) => !f.path.endsWith(basename) && f.text.includes(importPath));
@@ -200,9 +216,8 @@ describe("Orphan Scan: State Fields", () => {
     });
   }
 
-  it("records orphaned state fields for Phase 5 comparison", () => {
-    console.log("ORPHANED state fields (no UI consumer):", orphanedFields);
-    console.log("WIRED state fields:", wiredFields);
+  it("has no unclassified state-field orphans", () => {
+    expect(orphanedFields).toEqual([]);
   });
 });
 
@@ -223,20 +238,20 @@ describe("Orphan Scan: AI Subsystem Imports", () => {
   const wiredAI: string[] = [];
 
   for (const aiFile of aiFiles) {
-    const importPath = `@/core/ai/${aiFile}`;
+    const importPath = `@/domains/agents/simulation/${aiFile}`;
     it(`${aiFile} is ${isImportedByNonTest(importPath) ? "imported" : "ORPHANED"} by non-test source`, () => {
-      if (isImportedByNonTest(importPath)) {
+      const imported = isImportedByNonTest(importPath);
+      if (imported) {
         wiredAI.push(aiFile);
       } else {
         orphanedAI.push(aiFile);
       }
-      expect(typeof aiFile).toBe("string");
+      expect(imported).toBe(true);
     });
   }
 
-  it("records orphaned AI files for Phase 5 comparison", () => {
-    console.log("ORPHANED AI files:", orphanedAI);
-    console.log("WIRED AI files:", wiredAI);
+  it("has no unclassified AI module orphans", () => {
+    expect(orphanedAI).toEqual([]);
   });
 });
 
@@ -249,8 +264,7 @@ describe("Orphan Scan: Pipeline Phase Outputs", () => {
     const consumed = phaseFiles.some(
       (text) => text.includes("context.worldAssessment") || text.includes("ctx.worldAssessment"),
     );
-    console.log("context.worldAssessment:", consumed ? "CONSUMED" : "ORPHANED");
-    expect(typeof consumed).toBe("boolean");
+    expect(consumed).toBe(true);
   });
 
   it("context.economicTrend is consumed by downstream phases", () => {
@@ -261,25 +275,23 @@ describe("Orphan Scan: Pipeline Phase Outputs", () => {
     const consumed = phaseFiles.some(
       (text) => text.includes("context.economicTrend") || text.includes("ctx.economicTrend"),
     );
-    console.log("context.economicTrend:", consumed ? "CONSUMED" : "ORPHANED");
-    expect(typeof consumed).toBe("boolean");
+    expect(consumed).toBe(true);
   });
 
-  it("all 58 pipeline phases are registered", () => {
-    expect(GAME_PIPELINE_PHASES.length).toBe(58);
+  it("all registered pipeline phases have descriptors", () => {
+    expect(GAME_PIPELINE_PHASES.length).toBe(GAME_PHASE_DESCRIPTORS.length);
   });
 });
 
 describe("Orphan Scan: Strategic Coordinator Outputs", () => {
   it("coordinateSubsystems return value is used (not _weights)", () => {
-    const intentText = readFileSafe(join(srcRoot, "core", "npc", "intentGenerators.ts"));
+    const intentText = readFileSafe(agentIntentGeneratorsPath);
     const usesWeights = intentText.includes("_weights = coordinateSubsystems");
-    console.log("coordinateSubsystems assigned to _weights (unused):", usesWeights);
-    expect(typeof usesWeights).toBe("boolean");
+    expect(usesWeights).toBe(false);
   });
 
   it("assessWorldState reads globalEconomicState (not hardcoded)", () => {
-    const coordText = readFileSafe(join(srcRoot, "core", "ai", "strategicCoordinator.ts"));
+    const coordText = readFileSafe(join(agentsSimulationRoot, "strategicCoordinator.ts"));
     const readsGlobalState = coordText.includes("manager.globalEconomicState");
     const hasFallback = coordText.includes("studFeeTrend: 0");
     console.log(
@@ -289,7 +301,7 @@ describe("Orphan Scan: Strategic Coordinator Outputs", () => {
   });
 
   it("budgetAllocation is read by any AI subsystem", () => {
-    const intentText = readFileSafe(join(srcRoot, "core", "npc", "intentGenerators.ts"));
+    const intentText = readFileSafe(agentIntentGeneratorsPath);
     const readsBudget =
       intentText.includes("budgetAllocation?.claiming") ||
       intentText.includes("budgetAllocation?.auctions") ||
@@ -302,67 +314,21 @@ describe("Orphan Scan: Strategic Coordinator Outputs", () => {
       intentText.includes("budgetAllocation.training") ||
       intentText.includes("budgetAllocation.facilities");
 
-    console.log("budgetAllocation read by subsystems:", readsBudget);
-    expect(typeof readsBudget).toBe("boolean");
+    expect(readsBudget).toBe(true);
   });
 });
 
-// ─── Intent type coverage audit (44 types) ───────────────────────────────────
+// ─── Intent type coverage audit ───────────────────────────────────────────────
 
-const allIntentTypes = [
-  "training",
-  "race_entry",
-  "race_withdrawal",
-  "breeding",
-  "stud_retirement",
-  "purchase",
-  "jockey_contract",
-  "jockey_release",
-  "jockey_assignment",
-  "scout",
-  "consignment",
-  "consignment_withdrawal",
-  "gelding",
-  "reroll_silk",
-  "rename",
-  "campaign_slot",
-  "campaign_flag_dismissal",
-  "campaign_creation",
-  "campaign_deletion",
-  "auto_manage_toggle",
-  "upkeep",
-  "aging",
-  "energy",
-  "pregnancy_check",
-  "pregnancy_resolution",
-  "race_resolution",
-  "claiming",
-  "withdraw_from_claiming",
-  "tactics",
-  "transport",
-  "staff",
-  "facility_upgrade",
-  "pasture_retirement",
-  "update_stud_fee",
-  "syndicate_creation",
-  "share_purchase",
-  "share_sale",
-  "syndicate_fee_distribution",
-  "insurance_purchase",
-  "insurance_cancel",
-  "insurance_claim",
-  "stewards_inquiry",
-  "diplomatic_action",
-  "cartel_action",
-  "outpost_action",
-];
+const capabilityAudit = runCapabilityAudit(PROJECT_ROOT);
+const allIntentTypes = capabilityAudit.intents.all;
 
-describe("Orphan Scan: Intent Type Coverage (45 types)", () => {
+describe("Orphan Scan: Intent Type Coverage", () => {
   const orphanedIntents: string[] = [];
   const wiredIntents: string[] = [];
 
   // Collect all non-test source text for intent generation check
-  const intentGenText = readFileSafe(join(srcRoot, "core", "npc", "intentGenerators.ts"));
+  const intentGenText = readFileSafe(agentIntentGeneratorsPath);
   const allPhaseTexts = allCoreTsFiles
     .filter((f) => f.includes(sep + "time" + sep + "phases" + sep) && !f.includes(".test."))
     .map((f) => readFileSafe(f))
@@ -390,43 +356,25 @@ describe("Orphan Scan: Intent Type Coverage (45 types)", () => {
           `${intentType} (generated: ${isGenerated}, handled: ${isHandled}, referenced: ${isReferenced})`,
         );
       }
-      expect(typeof intentType).toBe("string");
+      expect(isGenerated && isHandled).toBe(true);
     });
   }
 
-  it("records orphaned intent types for Phase 5 comparison", () => {
-    console.log("ORPHANED intent types:", orphanedIntents);
-    console.log("WIRED intent types:", wiredIntents);
-    expect(allIntentTypes.length).toBe(45);
+  it("has no unhandled or unproduced intent contracts", () => {
+    expect(orphanedIntents).toEqual([]);
+    expect(capabilityAudit.intents.unhandled).toEqual([]);
+    expect(capabilityAudit.intents.unproduced).toEqual([]);
   });
 });
 
-// ─── Store slice action audit (20 slices) ────────────────────────────────────
+// ─── Store slice action audit ────────────────────────────────────────────────
 
-const storeSlices = [
-  "auctionSlice",
-  "awardSlice",
-  "breedingProgramSlice",
-  "breedingSlice",
-  "campaignSlice",
-  "coreSlice",
-  "facilitySlice",
-  "horseAdminSlice",
-  "inboxSlice",
-  "insuranceSlice",
-  "jockeySlice",
-  "marketSlice",
-  "privateSaleSlice",
-  "racingSlice",
-  "scoutingSlice",
-  "settingsSlice",
-  "staffSlice",
-  "transportSlice",
-  "utilitySlice",
-  "weatherSlice",
-];
+const storeSlices = readdirSync(join(srcRoot, "game", "store", "slices"))
+  .filter((file) => file.endsWith("Slice.ts"))
+  .map((file) => file.replace(/\.ts$/, ""))
+  .sort();
 
-describe("Orphan Scan: Store Slice Imports (20 slices)", () => {
+describe("Orphan Scan: Store Slice Imports", () => {
   const orphanedSlices: string[] = [];
   const wiredSlices: string[] = [];
 
@@ -441,15 +389,13 @@ describe("Orphan Scan: Store Slice Imports (20 slices)", () => {
       } else {
         orphanedSlices.push(slice);
       }
-      console.log(`${slice}: ${imported ? "WIRED" : "ORPHANED"}`);
-      expect(typeof slice).toBe("string");
+      expect(imported).toBe(true);
     });
   }
 
-  it("records orphaned store slices", () => {
-    console.log("ORPHANED store slices:", orphanedSlices);
-    console.log("WIRED store slices:", wiredSlices);
-    expect(storeSlices.length).toBe(20);
+  it("has no orphaned store slices", () => {
+    expect(storeSlices.length).toBeGreaterThan(0);
+    expect(orphanedSlices).toEqual([]);
   });
 });
 
@@ -483,18 +429,18 @@ describe("Orphan Scan: Hook Selectors", () => {
           (f.text.includes(importPathWithDir) || f.text.includes(relativeImport)),
       );
 
+      const classified = consumed || quarantinedProductionPaths.has(hookFile);
       if (consumed) {
         wiredHooks.push(hookFile);
-      } else {
+      } else if (!classified) {
         orphanedHooks.push(hookFile);
       }
-      expect(typeof hookFile).toBe("string");
+      expect(classified).toBe(true);
     });
   }
 
-  it("records orphaned hooks", () => {
-    console.log("ORPHANED hooks:", orphanedHooks);
-    console.log("WIRED hooks:", wiredHooks);
+  it("has no unclassified hook orphans", () => {
+    expect(orphanedHooks).toEqual([]);
   });
 });
 
@@ -509,12 +455,12 @@ describe("Orphan Scan: NpcAIManager Fields", () => {
   for (const field of npcAIManagerFields) {
     it(`NpcAIManager.${field} is surfaced in UI (.tsx) or AI subsystem`, () => {
       const inTsx = isInTsx(field);
-      const inAi = allCoreTsFiles
-        .filter((f) => f.includes(sep + "ai" + sep) && !f.includes(".test."))
+      const inAi = allAgentTsFiles
+        .filter((f) => !f.includes(".test."))
         .map((f) => readFileSafe(f))
         .join("\n")
         .includes(field);
-      const intentText = readFileSafe(join(srcRoot, "core", "npc", "intentGenerators.ts"));
+      const intentText = readFileSafe(agentIntentGeneratorsPath);
       const inIntentGen = intentText.includes(field);
       const isWired = inTsx || inAi || inIntentGen;
       if (isWired) {
@@ -522,16 +468,12 @@ describe("Orphan Scan: NpcAIManager Fields", () => {
       } else {
         orphanedManagerFields.push(field);
       }
-      console.log(
-        `NpcAIManager.${field}: ${isWired ? "WIRED" : "ORPHANED"} (UI: ${inTsx}, AI: ${inAi}, intentGen: ${inIntentGen})`,
-      );
-      expect(typeof field).toBe("string");
+      expect(isWired).toBe(true);
     });
   }
 
-  it("records orphaned NpcAIManager fields", () => {
-    console.log("ORPHANED NpcAIManager fields (no UI/AI consumer):", orphanedManagerFields);
-    console.log("WIRED NpcAIManager fields:", wiredManagerFields);
+  it("has no unclassified NpcAIManager field orphans", () => {
+    expect(orphanedManagerFields).toEqual([]);
   });
 });
 
@@ -544,9 +486,9 @@ describe("Orphan Scan: Budget Allocation Per-Field", () => {
 
   for (const budget of budgetFields) {
     it(`budgetAllocation.${budget} is read by AI subsystem`, () => {
-      const intentText = readFileSafe(join(srcRoot, "core", "npc", "intentGenerators.ts"));
-      const allAiText = allCoreTsFiles
-        .filter((f) => f.includes(sep + "ai" + sep) && !f.includes(".test."))
+      const intentText = readFileSafe(agentIntentGeneratorsPath);
+      const allAiText = allAgentTsFiles
+        .filter((f) => !f.includes(".test."))
         .map((f) => readFileSafe(f))
         .join("\n");
       const isRead =
@@ -561,14 +503,12 @@ describe("Orphan Scan: Budget Allocation Per-Field", () => {
       } else {
         orphanedBudgets.push(budget);
       }
-      console.log(`budgetAllocation.${budget}: ${isRead ? "READ" : "NOT READ"}`);
-      expect(typeof budget).toBe("string");
+      expect(isRead).toBe(true);
     });
   }
 
-  it("records orphaned budget fields", () => {
-    console.log("ORPHANED budget fields (not read by AI):", orphanedBudgets);
-    console.log("WIRED budget fields:", wiredBudgets);
+  it("has no unread budget allocation fields", () => {
+    expect(orphanedBudgets).toEqual([]);
   });
 });
 
@@ -586,7 +526,7 @@ describe("Orphan Scan: Confirmed Wired Fields (Validation Baseline)", () => {
 
 describe("Orphan Scan: Dormant AI Functions", () => {
   it("shouldWithdrawForTrackCondition has callers in production code", () => {
-    const callerFiles = allCoreTsFiles
+    const callerFiles = allAgentTsFiles
       .filter((f) => !f.includes("withdrawalAI.ts") && !f.includes(".test."))
       .filter((f) => readFileSafe(f).includes("shouldWithdrawForTrackCondition"));
     expect(callerFiles.length).toBeGreaterThan(0);
@@ -603,7 +543,7 @@ describe("Orphan Scan: Facility Type Parity", () => {
 
 describe("Orphan Scan: NPC Insurance Intents", () => {
   it("NPC AI generates insurance_purchase intents", () => {
-    const intentGenFiles = allCoreTsFiles.filter(
+    const intentGenFiles = allAgentTsFiles.filter(
       (f) => f.includes(sep + "npc" + sep) && !f.includes(".test."),
     );
     const hasInsurance = intentGenFiles.some((f) =>

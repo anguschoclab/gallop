@@ -24,7 +24,7 @@ export function RevenueAnalysisPanel({ items, total }: RevenueAnalysisPanelProps
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
         <CardContent className="p-6">
           {items.length === 0 ? (
-            <div className="py-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+            <div className="py-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
               Zero income data in current window
             </div>
           ) : (

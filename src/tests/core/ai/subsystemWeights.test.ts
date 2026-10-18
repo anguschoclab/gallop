@@ -8,11 +8,14 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { coordinateSubsystems, type BudgetAllocation } from "@/core/ai/strategicCoordinator";
-import { shouldTrainToday, createTrainingAIState } from "@/core/ai/trainingAI";
-import { shouldClaimHorse } from "@/core/ai/claimingAIRecording";
-import { createClaimingAIState } from "@/core/ai/claimingAITypes";
-import { shouldGeldHorse, createGeldingAIState } from "@/core/ai/geldingAI";
+import {
+  coordinateSubsystems,
+  type BudgetAllocation,
+} from "@/domains/agents/simulation/strategicCoordinator";
+import { shouldTrainToday, createTrainingAIState } from "@/domains/agents/simulation/trainingAI";
+import { shouldClaimHorse } from "@/domains/agents/simulation/claimingAIRecording";
+import { createClaimingAIState } from "@/domains/agents/simulation/claimingAITypes";
+import { shouldGeldHorse, createGeldingAIState } from "@/domains/agents/simulation/geldingAI";
 import type { Stable, Horse } from "@/game/types";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";

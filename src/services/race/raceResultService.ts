@@ -6,14 +6,14 @@
  *   components → services → core
  *
  * Dependencies: @/core/race/raceVerdict, @/core/race/engine/compareFinishOrder,
- *              @/core/ai/jockeyStrategyRecording, @/core/horse/ownership,
+ *              @/domains/agents/simulation/jockeyStrategyRecording, @/core/horse/ownership,
  *              @/core/race/venuePayout, @/core/common/formatting
  * Related files: src/components/race/ResultOverlay.tsx (consumer)
  */
 
 export { generateRaceVerdict } from "@/core/race/raceVerdict";
 export { compareFinishOrder } from "@/core/race/engine/compareFinishOrder";
-export { getStrategyInsights } from "@/core/ai/jockeyStrategyRecording";
+export { getStrategyInsights } from "@/domains/agents/simulation/jockeyStrategyRecording";
 export { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 export { venuePayoutMultiplier } from "@/core/race/venuePayout";
 export { formatCurrency } from "@/core/common/formatting";

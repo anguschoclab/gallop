@@ -1,5 +1,5 @@
 {
-  "$comment": "Balancing knobs for NPC syndicate share appetite. Edit values here to rebalance without touching code. Multipliers scale the base appetite from src/core/ai/syndicationAppetite.ts; g1WinsOffset/g2WinsOffset/g3WinsOffset shift the graded proven-quality gates (the gate is an OR: a personality is blocked only when it misses ALL THREE minimums, so raising g2/g3 offsets is how you force a G1-only gate). qualityTiers and qualityWeights control tier-based stake scaling from graded wins.",
+  "$comment": "Balancing knobs for NPC syndicate share appetite. Edit values here to rebalance without touching code. Multipliers scale the base appetite from src/domains/agents/simulation/syndicationAppetite.ts; g1WinsOffset/g2WinsOffset/g3WinsOffset shift the graded proven-quality gates (the gate is an OR: a personality is blocked only when it misses ALL THREE minimums, so raising g2/g3 offsets is how you force a G1-only gate). qualityTiers and qualityWeights control tier-based stake scaling from graded wins.",
   "global": {
     "stakeCapMultiplier": 1,
     "buyFractionMultiplier": 1,

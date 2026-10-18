@@ -1,21 +1,21 @@
 import { describe, it, expect } from "vitest";
-import { createFacilityAIState } from "@/core/ai/facilityAITypes";
-import type { FacilityROI } from "@/core/ai/facilityAITypes";
+import { createFacilityAIState } from "@/domains/agents/simulation/facilityAITypes";
+import type { FacilityROI } from "@/domains/agents/simulation/facilityAITypes";
 import {
   calculateFacilityBudget,
   shouldUpgradeFacility,
   selectFacilityToUpgrade,
-} from "@/core/ai/facilityAI";
+} from "@/domains/agents/simulation/facilityAI";
 import {
   recordFacilityInvestment,
   updateFacilityROI,
   getFacilityInsights,
-} from "@/core/ai/facilityAIRoi";
+} from "@/domains/agents/simulation/facilityAIRoi";
 import {
   shouldUpgradeForCapacity,
   getSpecializationPriority,
   shouldDivestFacility,
-} from "@/core/ai/facilityAIStrategies";
+} from "@/domains/agents/simulation/facilityAIStrategies";
 import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 
@@ -108,6 +108,12 @@ describe("shouldUpgradeFacility", () => {
     const state = makeState();
     const result = shouldUpgradeFacility(state, "main_track", "basic", stable, 1);
     expect(typeof result).toBe("boolean");
+  });
+
+  it("approves a clearly affordable high-priority facility upgrade", () => {
+    const stable = createTestStable({ cash: 500_000, personality: "aggressive" });
+    const state = makeState();
+    expect(shouldUpgradeFacility(state, "main_track", "basic", stable, 1)).toBe(true);
   });
 
   it("stable with very low cash is less likely to upgrade", () => {

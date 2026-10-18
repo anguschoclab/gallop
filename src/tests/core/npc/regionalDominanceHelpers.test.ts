@@ -7,7 +7,7 @@ import {
   resolveWinningStableId,
   buildRaceEntryMaps,
   findBestResult,
-} from "@/core/npc/regionalDominanceHelpers";
+} from "@/domains/agents/simulation/npc/regionalDominanceHelpers";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
