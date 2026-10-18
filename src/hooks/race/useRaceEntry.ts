@@ -14,7 +14,6 @@ export function useRaceEntry(race: Race) {
   const [selectedHorseId, setSelectedHorseId] = useState<string | null>(null);
   const [selectedJockeyId, setSelectedJockeyId] = useState<string | null>(null);
   const [selectedPreset, setSelectedPreset] = useState<PresetId>("default");
-  const [wantToClaim, setWantToClaim] = useState(false);
 
   const allHorses = useGameWithShallow((s) => s.horses);
   const horses = useMemo(() => Object.values(allHorses) as Horse[], [allHorses]);
@@ -24,7 +23,6 @@ export function useRaceEntry(race: Race) {
   const withdrawFromClaimingRace = useGame((s) => s.withdrawFromClaimingRace);
   const assignJockey = useGame((s) => s.assignJockey);
   const setRaceTactics = useGame((s) => s.setRaceTactics);
-  const submitClaim = useGame((s) => s.submitClaim);
   const withdrawRace = useGame((s) => s.withdrawRace);
   const withdrawClaim = useGame((s) => s.withdrawClaim);
   const completeTutorialBeat = useGame((s) => s.completeTutorialBeat);
@@ -38,8 +36,8 @@ export function useRaceEntry(race: Race) {
     return buf.find((w: WeatherState) => w.day === race.day) ?? buf[buf.length - 1];
   });
 
-  const isNewClaimingRace = !!race.claiming;
-  const claimingPrice = race.claiming?.price ?? race.claimingPrice;
+  const claimingPrice = race.claimingPrice;
+  const isNewClaimingRace = claimingPrice !== undefined;
 
   const selectedHorse = useMemo(
     () => (selectedHorseId ? allHorses[selectedHorseId] : undefined),
@@ -100,14 +98,6 @@ export function useRaceEntry(race: Race) {
         );
         setRaceTactics(race.id, selectedHorseId, instructions);
 
-        if (wantToClaim && race.claimingPrice && !isNewClaimingRace) {
-          const claimRes = submitClaim(race.id, selectedHorseId);
-          if (!claimRes.ok) {
-            toast.error(`Claim failed: ${claimRes.reason}`);
-            return;
-          }
-        }
-
         if (isNewClaimingRace) {
           const horse = horses.find((h: Horse) => h.id === selectedHorseId);
           toast.info(
@@ -134,8 +124,6 @@ export function useRaceEntry(race: Race) {
     setSelectedJockeyId,
     selectedPreset,
     setSelectedPreset,
-    wantToClaim,
-    setWantToClaim,
     horses,
     jockeys,
     cash,

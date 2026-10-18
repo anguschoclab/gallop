@@ -68,6 +68,46 @@ describe("raceEntryResolutionPhase", () => {
     expect(result.impacts[1].type).toBe("cash_change");
   });
 
+  it("does not mutate the input transports array while enqueueing transport", () => {
+    const horse = createTestHorse({ id: "horse-1" });
+    const transports: GameState["transports"] = [];
+    const state: GameState = {
+      ...createTestState(),
+      horses: h2r([horse]),
+      transports,
+      races: r2r([
+        {
+          id: "race-1",
+          name: "Test Race",
+          day: 5,
+          distance: 2000,
+          raceClass: "Maiden",
+          entryFee: 500,
+          purse: 10000,
+          minStat: 70,
+          fieldSize: 8,
+          entries: [],
+          resolved: false,
+        },
+      ]),
+    };
+    const intent: RaceEntryIntent = {
+      id: "intent-1",
+      day: 1,
+      type: "race_entry",
+      entityId: "horse-1",
+      priority: 100,
+      source: "player",
+      horseId: "horse-1",
+      raceId: "race-1",
+    };
+
+    const result = raceEntryResolutionPhase.execute(createTestContext(state, [intent]));
+
+    expect(transports).toHaveLength(0);
+    expect(result.state.transports).toHaveLength(1);
+  });
+
   it("should skip non-race entry intents", () => {
     const horse = createTestHorse({ id: "horse-1" });
     const state: GameState = {

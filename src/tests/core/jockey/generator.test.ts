@@ -121,8 +121,7 @@ describe("generateJockey — trait assignment", () => {
         return;
       }
     }
-    // If no versatile generated, that's fine — the test passes
-    expect(true).toBe(true);
+    expect.fail("generateJockey did not produce a versatile archetype in 200 seeds");
   });
 });
 

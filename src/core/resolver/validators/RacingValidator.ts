@@ -8,9 +8,21 @@
  * Related files: ../resolver.ts (uses validator), ./index.ts (exports validators)
  */
 
-import type { GameState } from "@/game/types";
-import type { AnyIntent, RaceEntryIntent, WithdrawFromClaimingIntent } from "../intents";
+import type { GameState, Horse } from "@/game/types";
+import type {
+  AnyIntent,
+  RaceEntryIntent,
+  RaceWithdrawalIntent,
+  WithdrawFromClaimingIntent,
+} from "../intents";
 import type { IntentValidator, ValidationCache } from "./types";
+
+function sourceOwnsHorse(intent: AnyIntent, horse: Horse): boolean {
+  if (intent.source === "player" || intent.source === "system") {
+    return horse.ownership?.type === "player";
+  }
+  return horse.ownership?.type === "npc" && horse.ownership.stableId === intent.sourceId;
+}
 
 export class RacingValidator implements IntentValidator {
   canValidate(type: AnyIntent["type"]): boolean {
@@ -29,6 +41,9 @@ export class RacingValidator implements IntentValidator {
         const race = cache?.raceMap?.get(raceIntent.raceId) || state.races[raceIntent.raceId];
 
         if (!horse) return { valid: false, reason: "Horse not found" };
+        if (!sourceOwnsHorse(intent, horse)) {
+          return { valid: false, reason: "Intent source does not own horse" };
+        }
         if (horse.consignedSaleId)
           return { valid: false, reason: "Horse is consigned to an auction" };
         if (!race) return { valid: false, reason: "Race not found" };
@@ -52,6 +67,25 @@ export class RacingValidator implements IntentValidator {
         break;
       }
 
+      case "race_withdrawal": {
+        const withdrawalIntent = intent as RaceWithdrawalIntent;
+        const race =
+          cache?.raceMap?.get(withdrawalIntent.raceId) || state.races[withdrawalIntent.raceId];
+        const horse =
+          cache?.horseMap?.get(withdrawalIntent.horseId) || state.horses[withdrawalIntent.horseId];
+
+        if (!horse) return { valid: false, reason: "Horse not found" };
+        if (!sourceOwnsHorse(intent, horse)) {
+          return { valid: false, reason: "Intent source does not own horse" };
+        }
+        if (!race) return { valid: false, reason: "Race not found" };
+        if (race.resolved) return { valid: false, reason: "Race already resolved" };
+        if (!race.entries.some((entry) => entry.horseId === withdrawalIntent.horseId)) {
+          return { valid: false, reason: "Horse not entered in this race" };
+        }
+        break;
+      }
+
       case "withdraw_from_claiming": {
         const withdrawIntent = intent as WithdrawFromClaimingIntent;
         const race =
@@ -61,6 +95,9 @@ export class RacingValidator implements IntentValidator {
 
         if (!race) return { valid: false, reason: "Race not found" };
         if (!horse) return { valid: false, reason: "Horse not found" };
+        if (!sourceOwnsHorse(intent, horse)) {
+          return { valid: false, reason: "Intent source does not own horse" };
+        }
         if (race.resolved) return { valid: false, reason: "Race already resolved" };
         if (!race.claimingPrice) return { valid: false, reason: "Race is not a claiming race" };
         if (race.raceClass !== "OptionalClaiming" && race.raceClass !== "MaidenOptionalClaiming") {

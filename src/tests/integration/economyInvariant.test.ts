@@ -13,12 +13,14 @@ import type { LotState } from "@/core/auction/auctionRunnerTypes";
 import type { AuctionSale, Horse } from "@/game/types";
 import type { NewGameOptions } from "@/game/store/state";
 import type { CashImpact } from "@/core/resolver/impacts/index";
+import type { InsurancePayoutImpact } from "@/core/resolver/impacts/raceImpacts";
 
 const ALLOWED_POSITIVE_SOURCES = [
   "auction_proceeds_player",
   "Distressed sale of",
   "NPC bankruptcy",
   "LFG refund",
+  "Insurance payout",
 ] as const;
 
 const mockProfile = {
@@ -130,13 +132,25 @@ describe("Economy Invariant Tests", () => {
         const delta = dayResult.cashAfter - dayResult.cashBefore;
         expect(Math.abs(delta)).toBeLessThanOrEqual(MAX_DAILY_DELTA);
 
+        const playerCashImpacts = dayResult.impacts.filter(
+          (i): i is CashImpact =>
+            i.type === "cash_change" && (i.entityId === "player" || i.entityId === undefined),
+        );
+        const playerInsurancePayouts = dayResult.impacts.filter(
+          (i): i is InsurancePayoutImpact =>
+            i.type === "insurance_payout" && (i.entityId === "player" || i.entityId === undefined),
+        );
+        const accountedDelta =
+          playerCashImpacts.reduce((sum, impact) => sum + impact.amount, 0) +
+          playerInsurancePayouts.reduce((sum, impact) => sum + impact.amount, 0);
+
+        expect(accountedDelta).toBe(delta);
+
         if (delta > 0) {
-          const positivePlayerImpacts = dayResult.impacts.filter(
-            (i): i is CashImpact =>
-              i.type === "cash_change" &&
-              (i.entityId === "player" || i.entityId === undefined) &&
-              (i as CashImpact).amount > 0,
-          );
+          const positivePlayerImpacts = [
+            ...playerCashImpacts.filter((impact) => impact.amount > 0),
+            ...playerInsurancePayouts.filter((impact) => impact.amount > 0),
+          ];
 
           expect(positivePlayerImpacts.length).toBeGreaterThan(0);
 

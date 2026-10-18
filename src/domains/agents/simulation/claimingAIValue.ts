@@ -5,7 +5,7 @@
  */
 
 import type { Horse, Race, Stable } from "@/game/types";
-import { calculateUtilityScore } from "./personalitySystem";
+import { calculateUtilityAdjustment } from "./personalitySystem";
 import { getSuccessRate } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 import type { ClaimingAIState } from "./claimingAITypes";
@@ -22,16 +22,16 @@ export function calculateClaimingValue(
   const estimatedValue = horseRating * 1000;
   const valueRatio = estimatedValue / (race.claimingPrice || 1);
 
-  score += Math.max(0, (valueRatio - 1) * 50);
+  score += Math.max(0, (valueRatio - 1) * 100);
 
   const factors: Record<string, number> = {
-    value_ratio: valueRatio,
-    horse_age: horse.age,
-    horse_energy: horse.energy,
-    claiming_price: race.claimingPrice || 0,
+    value_ratio: Math.max(0, Math.min(1, valueRatio / 2)),
+    horse_age: Math.max(0, 1 - horse.age / 10),
+    horse_energy: Math.max(0, Math.min(1, horse.energy / 100)),
+    claiming_price: Math.max(0, Math.min(1, (race.claimingPrice || 0) / 100000)),
   };
 
-  score = calculateUtilityScore(aiState.personalityState, "claiming", factors);
+  score += calculateUtilityAdjustment(aiState.personalityState, "claiming", factors);
 
   const contextKey = `${horse.age}:${race.claimingPrice}`;
   const successRate = getSuccessRate(aiState.learningState, "claiming", contextKey);

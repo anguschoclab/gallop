@@ -12,6 +12,7 @@ import type { GameState } from "@/game/types";
 import type { AnyIntent, PurchaseIntent, ClaimingIntent } from "../intents";
 import type { IntentValidator, ValidationCache } from "./types";
 import { isHorseEligibleForClaimingPrice } from "@/core/market/claiming";
+import type { ClaimingPrice } from "@/core/race/types";
 
 export class MarketValidator implements IntentValidator {
   canValidate(type: AnyIntent["type"]): boolean {
@@ -42,36 +43,60 @@ export class MarketValidator implements IntentValidator {
 
         if (!race) return { valid: false, reason: "Race not found" };
         if (!horse) return { valid: false, reason: "Horse not found" };
+        if (race.resolved) return { valid: false, reason: "Race already resolved" };
         if (horse.consignedSaleId)
           return { valid: false, reason: "Horse is consigned to an auction" };
-        if (!race.claimingPrice) return { valid: false, reason: "Race is not a claiming race" };
-        if (!race.entries.some((e) => e.horseId === claimingIntent.horseId)) {
+        const claimingPrice = race.claimingPrice;
+        if (!claimingPrice) return { valid: false, reason: "Race is not a claiming race" };
+        if (claimingIntent.claimingPrice !== claimingPrice) {
+          return { valid: false, reason: "Claiming price mismatch" };
+        }
+        const entry = race.entries.find((e) => e.horseId === claimingIntent.horseId);
+        if (!entry) {
           return { valid: false, reason: "Horse is not entered in this race" };
         }
-        if (
-          horse.ownership?.type === "npc" &&
-          horse.ownership.stableId === claimingIntent.claimantStableId
-        ) {
+        const claimantStableId =
+          claimingIntent.source === "player" ? undefined : claimingIntent.claimantStableId;
+        if (claimingIntent.source === "npc" && !claimantStableId) {
+          return { valid: false, reason: "Claiming stable not found" };
+        }
+        if (entry.ownership.type === "player" && claimantStableId === undefined) {
           return { valid: false, reason: "Cannot claim own horse" };
+        }
+        if (entry.ownership.type === "npc" && entry.ownership.stableId === claimantStableId) {
+          return { valid: false, reason: "Cannot claim own horse" };
+        }
+        if (
+          state.claims?.some(
+            (claim) =>
+              claim.raceId === claimingIntent.raceId &&
+              claim.horseId === claimingIntent.horseId &&
+              claim.claimantStableId === claimantStableId,
+          )
+        ) {
+          return { valid: false, reason: "Claim already filed" };
         }
 
         // Check claimant has sufficient funds
-        if (claimingIntent.claimantStableId) {
+        if (claimantStableId) {
           const stable =
-            cache?.stableMap?.get(claimingIntent.claimantStableId) ||
-            state.npcStables.find((s) => s.id === claimingIntent.claimantStableId);
-          if (!stable || stable.cash < race.claimingPrice) {
+            cache?.stableMap?.get(claimantStableId) ||
+            state.npcStables.find((s) => s.id === claimantStableId);
+          if (!stable) return { valid: false, reason: "Claiming stable not found" };
+          if (stable.cash < claimingPrice) {
             return { valid: false, reason: "Insufficient funds" };
           }
-        } else {
-          if (state.cash < race.claimingPrice) {
-            return { valid: false, reason: "Insufficient funds" };
-          }
+        } else if (state.cash < claimingPrice) {
+          return { valid: false, reason: "Insufficient funds" };
         }
 
         // Check horse eligibility for claiming price
         if (
-          !isHorseEligibleForClaimingPrice(horse, race.claimingPrice, Object.values(state.horses))
+          !isHorseEligibleForClaimingPrice(
+            horse,
+            claimingPrice as ClaimingPrice,
+            Object.values(state.horses),
+          )
         ) {
           return { valid: false, reason: "Horse is not eligible for this claiming price" };
         }

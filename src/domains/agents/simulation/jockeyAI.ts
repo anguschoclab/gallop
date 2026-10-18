@@ -15,7 +15,7 @@
 
 import type { Horse, Stable, Race } from "@/game/types";
 import type { Jockey } from "@/game/types";
-import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
+import { getPersonalityAIState, calculateUtilityAdjustment } from "./personalitySystem";
 import { calculateRaceRating } from "@/core/horse/stats";
 import { getCompatibility } from "@/core/jockey/compatibility";
 import { createLearningState, getSuccessRate, type LearningState } from "./learningModule";
@@ -105,13 +105,13 @@ export function calculateJockeySuitability(
 
   // Personality modifiers
   const factors: Record<string, number> = {
-    jockey_skill: avgStat,
-    jockey_aggressiveness: jockey.stats.vigor,
-    horse_age: horse?.age ?? 4,
-    horse_energy: horse?.energy ?? 100,
+    jockey_skill: Math.max(0, Math.min(1, avgStat / 100)),
+    jockey_aggressiveness: Math.max(0, Math.min(1, jockey.stats.vigor / 100)),
+    horse_age: Math.max(0, 1 - (horse?.age ?? 4) / 10),
+    horse_energy: Math.max(0, Math.min(1, (horse?.energy ?? 100) / 100)),
   };
 
-  score = calculateUtilityScore(aiState.personalityState, "jockey_selection", factors);
+  score += calculateUtilityAdjustment(aiState.personalityState, "jockey_selection", factors);
 
   // Learning-based adjustment
   const contextKey = `${jockey.id}:${horse?.age ?? 4}`;

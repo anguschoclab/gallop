@@ -1,13 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { runPipelineForDay } from "@/tests/helpers/runPipeline";
-import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
+import { h2r } from "@/tests/helpers/sampleGameState";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
+import { createInitialState } from "@/game/store/initialization";
 import { makeNpcOwned } from "@/core/horse/ownership";
 import type { TrainingIntent } from "@/core/resolver/intents";
 import type { CashImpact } from "@/core/resolver/impacts/financialImpacts";
 import type { GameState } from "@/game/types";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
+
+function gameStateFor(overrides: Partial<GameState>): GameState {
+  return { ...createInitialState(), ...overrides };
+}
 
 describe("authoritative intent production path", () => {
   it("charges a queued NPC training intent to the owning stable, not the player", () => {
@@ -28,13 +33,13 @@ describe("authoritative intent production path", () => {
       horseId: horse.id,
       trainingType: "speed",
     };
-    const state = makeGameState({
+    const state = gameStateFor({
       day: 1,
       cash: 500000,
       horses: h2r([horse]),
       npcStables: [stable],
       pendingIntents: [intent],
-    }) as GameState;
+    });
 
     const result = runPipelineForDay(state, 2);
     const trainingCashImpacts = result.impacts.filter(
@@ -57,12 +62,12 @@ describe("authoritative intent production path", () => {
       globalDay: 1,
       regionalKings: {},
     };
-    const state = makeGameState({
+    const state = gameStateFor({
       day: 1,
       cash: 500000,
       npcStables: [stable],
       npcAIManager: aiManager,
-    }) as GameState;
+    });
 
     const result = runPipelineForDay(state, 2);
 

@@ -1,45 +1,69 @@
 import { describe, it, expect } from "vitest";
 import { generateNpcInsuranceIntents } from "@/domains/agents/simulation/npc/intents/insuranceIntents";
-import type { GameState, Horse, Stable } from "@/game/types";
+import type { GameState } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
+import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { createTestStable } from "@/tests/helpers/createTestStable";
 
 describe("generateNpcInsuranceIntents", () => {
-  const stable: Stable = {
+  const stable = createTestStable({
     id: "stable-rich",
     name: "Rich Stable",
     cash: 250000,
     personality: "conservative",
-  } as any;
+  });
 
-  const starHorse: Horse = {
+  const starHorse = createTestHorse({
     id: "horse-star",
     name: "Golden Hope",
-    ownership: { type: "npc", stableId: "stable-rich" },
-    raceHistory: [{ position: 1, grade: "G1", distance: 1600, surface: "Dirt" }],
+    ownership: { type: "npc", stableId: stable.id },
+    raceHistory: [
+      {
+        raceId: "graded-win",
+        raceName: "Test G1",
+        position: 1,
+        day: 8,
+        grade: "G1",
+        distance: 1600,
+        surface: "Dirt",
+      },
+    ],
     healthStatus: "healthy",
-    conformation: "excellent",
+    conformation: 90,
     stats: {
       speed: 95,
       stamina: 90,
       acceleration: 92,
       consistency: 88,
+      temperament: 70,
+      conformation: 90,
     },
     insurancePolicy: undefined,
-  } as any;
+  });
 
-  const injuredHorse: Horse = {
+  const injuredHorse = createTestHorse({
     id: "horse-injured",
     name: "Hurting Hero",
-    ownership: { type: "npc", stableId: "stable-rich" },
-    raceHistory: [{ position: 1, grade: "G2", distance: 1600, surface: "Dirt" }],
-    healthStatus: "injured",
+    ownership: { type: "npc", stableId: stable.id },
+    raceHistory: [
+      {
+        raceId: "graded-placing",
+        raceName: "Test G2",
+        position: 1,
+        day: 8,
+        grade: "G2",
+        distance: 1600,
+        surface: "Dirt",
+      },
+    ],
+    healthStatus: "other_illness",
     insurancePolicy: {
       type: "injury_only",
       premiumPerDay: 25,
       coveragePercent: 0.5,
       activeSinceDay: 1,
     },
-  } as any;
+  });
 
   it("generates insurance_purchase intent for high-value uninsured horses", () => {
     const state: GameState = {

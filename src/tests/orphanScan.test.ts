@@ -360,10 +360,11 @@ describe("Orphan Scan: Intent Type Coverage", () => {
     });
   }
 
-  it("has no unhandled or unproduced intent contracts", () => {
+  it("has no unhandled, unproduced, or unvalidated intent contracts", () => {
     expect(orphanedIntents).toEqual([]);
     expect(capabilityAudit.intents.unhandled).toEqual([]);
     expect(capabilityAudit.intents.unproduced).toEqual([]);
+    expect(capabilityAudit.intents.unvalidated).toEqual([]);
   });
 });
 

@@ -78,7 +78,6 @@ const defaultProps = {
   isHorseQualifiedForRace: () => true,
   isNewClaimingRace: false,
   claimingPrice: undefined,
-  wantToClaim: false,
   cash: 100000,
 };
 

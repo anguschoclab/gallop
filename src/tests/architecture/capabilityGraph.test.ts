@@ -2,9 +2,14 @@ import { describe, expect, it } from "vitest";
 import { GAME_PIPELINE_PHASES } from "@/core/time/phases";
 import { ALL_HANDLERS } from "@/core/resolver/handlers";
 import { INTENT_CAPABILITY_WAIVERS } from "@/core/resolver/intentCapabilityWaivers";
-import { extractDiscriminatedContracts, runCapabilityAudit } from "../../../scripts/orphan-audit";
+import {
+  containsRuntimeContractLiteral,
+  extractDiscriminatedContracts,
+  runCapabilityAudit,
+} from "../../../scripts/orphan-audit";
 
 const ROOT = process.cwd();
+const AUDIT = runCapabilityAudit(ROOT);
 
 describe("capability graph", () => {
   it("derives contracts from discriminated declarations instead of a hardcoded list", () => {
@@ -26,22 +31,48 @@ describe("capability graph", () => {
     expect(contracts).not.toContain("noise");
   });
 
+  it("detects runtime contract edges without counting declarations or comments", () => {
+    const source = {
+      path: "runtimeFixture.ts",
+      family: "intent" as const,
+      text: `
+        // "comment_only"
+        interface ContractFixture { type: "declaration_only" }
+        const emitted = { type: "produced_contract" };
+        const handlers = { handler_map_contract: () => true };
+        function resolve(intent: { type: string }) {
+          switch (intent.type) {
+            case "resolved_contract": return true;
+            default: return intent.type === "consumed_contract";
+          }
+        }
+      `,
+    };
+
+    expect(containsRuntimeContractLiteral([source], "produced_contract")).toBe(true);
+    expect(containsRuntimeContractLiteral([source], "handler_map_contract")).toBe(true);
+    expect(containsRuntimeContractLiteral([source], "resolved_contract")).toBe(true);
+    expect(containsRuntimeContractLiteral([source], "consumed_contract")).toBe(true);
+    expect(containsRuntimeContractLiteral([source], "declaration_only")).toBe(false);
+    expect(containsRuntimeContractLiteral([source], "comment_only")).toBe(false);
+  });
+
   it("covers the complete production intent union without a stale count", () => {
-    const audit = runCapabilityAudit(ROOT);
+    const audit = AUDIT;
     expect(audit.intents.all.length).toBeGreaterThan(0);
     expect(new Set(audit.intents.all).size).toBe(audit.intents.all.length);
     expect(audit.intents.unhandled).toEqual([]);
   });
 
   it("covers every registered phase through the authoritative registry", () => {
-    const audit = runCapabilityAudit(ROOT);
+    const audit = AUDIT;
     expect(audit.phases.registered).toEqual(GAME_PIPELINE_PHASES.map((phase) => phase.name));
     expect(audit.phases.undescribed).toEqual([]);
     expect(audit.phases.unregisteredDescriptors).toEqual([]);
   });
 
   it("reports player, NPC, validation, and resolution coverage separately", () => {
-    const audit = runCapabilityAudit(ROOT);
+    const audit = AUDIT;
     const raceEntry = audit.intents.byType.race_entry;
     expect(raceEntry.playerProduced).toBe(true);
     expect(raceEntry.npcProduced).toBe(true);
@@ -50,7 +81,7 @@ describe("capability graph", () => {
   });
 
   it("assigns every impact contract to exactly one registered handler", () => {
-    const audit = runCapabilityAudit(ROOT);
+    const audit = AUDIT;
     const duplicates: string[] = [];
     const missing: string[] = [];
     for (const impactType of audit.impacts.all) {
@@ -62,7 +93,7 @@ describe("capability graph", () => {
   });
 
   it("requires an explicit typed waiver for every asymmetric or system-only intent", () => {
-    const audit = runCapabilityAudit(ROOT);
+    const audit = AUDIT;
     const asymmetric = new Set([
       ...audit.intents.playerOnly,
       ...audit.intents.npcOnly,
@@ -75,5 +106,23 @@ describe("capability graph", () => {
       (type) => !audit.intents.all.includes(type as never),
     );
     expect({ missing, invalid }).toEqual({ missing: [], invalid: [] });
+  });
+
+  it("maps system-lifecycle intent contracts to their owning registered phases", () => {
+    const registered = new Set(GAME_PIPELINE_PHASES.map((phase) => phase.name));
+    const expected = {
+      upkeep: "upkeep",
+      aging: "aging",
+      energy: "energy",
+      pregnancy_check: "pregnancy",
+      pregnancy_resolution: "pregnancy",
+    } as const;
+
+    for (const [type, phase] of Object.entries(expected)) {
+      const waiver = INTENT_CAPABILITY_WAIVERS[type as keyof typeof INTENT_CAPABILITY_WAIVERS];
+      expect(waiver?.classification).toBe("system_lifecycle");
+      expect(waiver?.systemPhase).toBe(phase);
+      expect(registered.has(phase), `${type} phase registration`).toBe(true);
+    }
   });
 });

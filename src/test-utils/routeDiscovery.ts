@@ -23,6 +23,12 @@ const allEntries = Object.entries(routeModules).filter(
   ([path]) => !SKIP.some((re) => re.test(path)),
 );
 
+export const discoveredRouteNames = allEntries
+  .map(([path]) => path.replace("../routes/", ""))
+  .sort();
+
+export const discoveredRouteModules = routeModules;
+
 export const componentRouteCases: ComponentRouteCase[] = allEntries
   .map(([path, mod]) => ({
     name: path.replace("../routes/", ""),

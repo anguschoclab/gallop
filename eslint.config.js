@@ -8,7 +8,17 @@ import unusedImports from "eslint-plugin-unused-imports";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist", ".output", ".vinxi", "*.gen.ts", "src/routeTree.gen.ts", "tsconfig.json"] },
+  {
+    ignores: [
+      "dist",
+      ".output",
+      ".vinxi",
+      "storybook-static",
+      "*.gen.ts",
+      "src/routeTree.gen.ts",
+      "tsconfig.json",
+    ],
+  },
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ["**/*.{ts,tsx}"],

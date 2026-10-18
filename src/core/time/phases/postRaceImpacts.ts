@@ -10,10 +10,9 @@
 
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { Race, Horse, RaceRunner } from "@/game/types";
-import type { ClaimingIntent } from "@/core/resolver/intents";
-import type { Rng } from "@/core/common/rng";
+
 import type { TrackRecord } from "@/core/history/historyTypes";
-import { checkTrackRecordAndHof, resolveClaimingForRace } from "./raceResolutionHelpers";
+import { checkTrackRecordAndHof } from "./raceResolutionHelpers";
 import type { PipelinePorts } from "@/core/time/pipelinePorts";
 
 /**
@@ -25,9 +24,6 @@ import type { PipelinePorts } from "@/core/time/pipelinePorts";
  * @param newDay - The new game day.
  * @param trackRecords - Existing track records.
  * @param hallOfFameIds - Set of Hall of Fame horse IDs.
- * @param contextIntents - Claiming intents for this race.
- * @param allHorses - All horses in the game.
- * @param rng - Random number generator.
  * @param ports - Injected pipeline ports.
  * @param result - Race result array.
  */
@@ -38,9 +34,6 @@ export function generatePostRaceImpacts(
   newDay: number,
   trackRecords: Record<string, TrackRecord>,
   hallOfFameIds: Set<string>,
-  contextIntents: ClaimingIntent[],
-  allHorses: Horse[],
-  rng: Rng,
   ports: PipelinePorts | undefined,
   result: { horseId: string; position: number; time: number }[],
 ): AnyImpact[] {
@@ -57,18 +50,6 @@ export function generatePostRaceImpacts(
     ports,
   );
   impacts.push(...trackRecordAndHofImpacts);
-
-  if (race.claimingPrice) {
-    const claimingImpacts = resolveClaimingForRace(
-      race,
-      contextIntents,
-      allHorses,
-      newDay,
-      rng,
-      ports,
-    );
-    impacts.push(...claimingImpacts);
-  }
 
   return impacts;
 }

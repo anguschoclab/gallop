@@ -1,5 +1,5 @@
 import type { Horse, Race, Jockey, Stable, RunningStyle } from "@/game/types";
-import { calculateUtilityScore } from "./personalitySystem";
+import { calculateUtilityAdjustment } from "./personalitySystem";
 import { getSuccessRate } from "./learningModule";
 import { buildStrategyContextKey } from "./strategyContextKey";
 import type { JockeyStrategyAIState } from "./jockeyStrategyAI";
@@ -117,19 +117,24 @@ function calculateStyleScore(
   if (jockey.stats.positioning > 80 && style === "P") score += 10;
 
   const factors: Record<string, number> = {
-    style_score: score,
-    horse_energy: horse.energy,
-    horse_form: horse.form,
-    jockey_skill:
-      (jockey.stats.pacing +
-        jockey.stats.vigor +
-        jockey.stats.positioning +
-        jockey.stats.gateSkill +
-        jockey.stats.temperament) /
-      5,
+    style_score: Math.max(0, Math.min(1, score / 100)),
+    horse_energy: Math.max(0, Math.min(1, horse.energy / 100)),
+    horse_form: Math.max(0, Math.min(1, horse.form / 100)),
+    jockey_skill: Math.max(
+      0,
+      Math.min(
+        1,
+        (jockey.stats.pacing +
+          jockey.stats.vigor +
+          jockey.stats.positioning +
+          jockey.stats.gateSkill +
+          jockey.stats.temperament) /
+          500,
+      ),
+    ),
   };
 
-  score = calculateUtilityScore(aiState.personalityState, "jockey_strategy", factors);
+  score += calculateUtilityAdjustment(aiState.personalityState, "jockey_strategy", factors);
 
   const contextKey = buildStrategyContextKey(race, style);
   const successRate = getSuccessRate(aiState.learningState, "jockey_strategy", contextKey);

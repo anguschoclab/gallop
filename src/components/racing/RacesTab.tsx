@@ -52,9 +52,10 @@ export function RacesTab() {
   const races = useRaces();
   const horses = useHorses();
   const claims = useGameWithShallow((s: GameState) => s.claims ?? []);
+  const pendingIntents = useGameWithShallow((s: GameState) => s.pendingIntents ?? []);
   const day = useGame((s: GameState) => s.day);
   const cash = useGame((s) => s.cash);
-  const fileClaim = useGame((s) => s.fileClaim);
+  const fileClaim = useGame((s) => s.fileRaceClaim);
   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
   const [enteringRace, setEnteringRace] = useState<Race | null>(null);
 
@@ -148,6 +149,7 @@ export function RacesTab() {
           onEnterRace={setEnteringRace}
           horses={Object.values(horses)}
           claims={claims}
+          pendingIntents={pendingIntents}
           cash={cash}
           fileClaim={fileClaim}
         />

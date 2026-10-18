@@ -94,8 +94,7 @@ describe("resolveFoaling — COI, AHC, and genome modifiers", () => {
         return;
       }
     }
-    // If no live birth in 50 tries, test may need adjustment
-    expect(true).toBe(true);
+    expect.fail("resolveFoaling did not produce a live birth in 50 deterministic attempts");
   });
 
   it("computes ancestralHistoryCoefficient on the foal", () => {
@@ -129,7 +128,7 @@ describe("resolveFoaling — COI, AHC, and genome modifiers", () => {
         return;
       }
     }
-    expect(true).toBe(true);
+    expect.fail("resolveFoaling did not produce a live birth in 50 deterministic attempts");
   });
 
   it("applies genome modifiers to foal stats (outcross produces vigor bonus)", () => {
@@ -178,6 +177,6 @@ describe("resolveFoaling — COI, AHC, and genome modifiers", () => {
         return;
       }
     }
-    expect(true).toBe(true);
+    expect.fail("resolveFoaling did not produce a live birth in 50 deterministic attempts");
   });
 });

@@ -145,6 +145,25 @@ export function calculateUtilityScore(
 }
 
 /**
+ * Convert a normalized personality utility into a bounded adjustment for a
+ * domain score. Callers must normalize factor values to the 0-1 range.
+ *
+ * @param aiState - Personality state used to weight the utility factors
+ * @param decisionType - Decision category whose learned weights apply
+ * @param factors - Normalized decision factors in the 0-1 range
+ * @param scale - Maximum positive or negative adjustment applied to the domain score
+ * @returns Bounded signed adjustment for the caller's domain score
+ */
+export function calculateUtilityAdjustment(
+  aiState: PersonalityAIState,
+  decisionType: string,
+  factors: Record<string, number>,
+  scale = 20,
+): number {
+  return (calculateUtilityScore(aiState, decisionType, factors) - 0.5) * scale;
+}
+
+/**
  * Record a decision outcome for learning.
  *
  * Records the outcome and adapts strategy if needed based on success rate.

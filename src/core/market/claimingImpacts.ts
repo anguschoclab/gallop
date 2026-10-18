@@ -12,51 +12,42 @@ import type {
 } from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import { formatCurrency } from "@/core/common/formatting";
-import type { ClaimingIntent } from "@/core/resolver/intents";
 import type { Rng } from "@/core/common/rng";
 import type { Race } from "@/game/types";
 import type { HorseTransfer } from "@/core/market/claiming";
 
-export function generateWithdrawnClaimRefunds(
-  withdrawnClaims: ClaimingIntent[],
+export interface ClaimResolutionInput {
+  id: string;
+  horseId: string;
+  claimantStableId?: string;
+  price: number;
+}
+
+export function generateWithdrawnClaimLogs(
+  withdrawnClaims: ClaimResolutionInput[],
   race: Race,
   newDay: number,
   rng?: Rng,
 ): AnyImpact[] {
-  const impacts: AnyImpact[] = [];
-
-  for (const withdrawnClaim of withdrawnClaims) {
-    impacts.push({
-      id: generateUUID(rng),
-      intentId: withdrawnClaim.id,
-      day: newDay,
-      phase: "raceResolution",
-      logLevel: "conditional",
-      type: "cash_change",
-      entityId: withdrawnClaim.claimantStableId || "",
-      amount: withdrawnClaim.claimingPrice,
-      reason: `Refund for withdrawn horse ${withdrawnClaim.horseId} in ${race.name}`,
-    } as CashImpact);
-
-    impacts.push({
-      id: generateUUID(rng),
-      intentId: withdrawnClaim.id,
-      day: newDay,
-      phase: "raceResolution",
-      logLevel: "always",
-      type: "log",
-      text: `Claim on ${withdrawnClaim.horseId} in ${race.name} refunded (horse withdrawn from claiming)`,
-      reason: "Claiming refund",
-    } as LogImpact);
-  }
-
-  return impacts;
+  return withdrawnClaims.map(
+    (claim) =>
+      ({
+        id: generateUUID(rng),
+        intentId: claim.id,
+        day: newDay,
+        phase: "claimResolution",
+        logLevel: "always",
+        type: "log",
+        text: `Claim on ${claim.horseId} in ${race.name} voided (horse withdrawn from claiming)`,
+        reason: "Claiming withdrawal",
+      }) as LogImpact,
+  );
 }
 
 export function generateClaimTransferImpacts(
   transfers: HorseTransfer[],
   race: Race,
-  intentMap: Map<string, ClaimingIntent>,
+  claimMap: Map<string, ClaimResolutionInput>,
   newDay: number,
   rng?: Rng,
 ): AnyImpact[] {
@@ -65,9 +56,9 @@ export function generateClaimTransferImpacts(
   for (const transfer of transfers) {
     impacts.push({
       id: generateUUID(rng),
-      intentId: intentMap.get(`${transfer.horseId}:${transfer.toStableId}`)?.id || "",
+      intentId: claimMap.get(`${transfer.horseId}:${transfer.toStableId}`)?.id || "",
       day: newDay,
-      phase: "raceResolution",
+      phase: "claimResolution",
       logLevel: "always",
       type: "claiming",
       raceId: race.id,
@@ -82,10 +73,10 @@ export function generateClaimTransferImpacts(
       id: generateUUID(rng),
       intentId: "",
       day: newDay,
-      phase: "raceResolution",
+      phase: "claimResolution",
       logLevel: "conditional",
       type: "cash_change",
-      entityId: transfer.toStableId || "",
+      entityId: transfer.toStableId || "player",
       amount: -transfer.price,
       reason: `Claiming payment for ${transfer.horseId} in ${race.name}`,
     } as CashImpact);
@@ -94,37 +85,12 @@ export function generateClaimTransferImpacts(
       id: generateUUID(rng),
       intentId: "",
       day: newDay,
-      phase: "raceResolution",
+      phase: "claimResolution",
       logLevel: "conditional",
       type: "cash_change",
-      entityId: transfer.fromStableId || "",
+      entityId: transfer.fromStableId || "player",
       amount: transfer.price,
       reason: `Claiming proceeds for ${transfer.horseId} in ${race.name}`,
-    } as CashImpact);
-  }
-
-  return impacts;
-}
-
-export function generateLosingClaimantRefunds(
-  losingClaims: ClaimingIntent[],
-  race: Race,
-  newDay: number,
-  rng?: Rng,
-): AnyImpact[] {
-  const impacts: AnyImpact[] = [];
-
-  for (const losingClaim of losingClaims) {
-    impacts.push({
-      id: generateUUID(rng),
-      intentId: losingClaim.id,
-      day: newDay,
-      phase: "raceResolution",
-      logLevel: "conditional",
-      type: "cash_change",
-      entityId: losingClaim.claimantStableId || "",
-      amount: losingClaim.claimingPrice,
-      reason: `Refund for failed claim on ${losingClaim.horseId} in ${race.name}`,
     } as CashImpact);
   }
 

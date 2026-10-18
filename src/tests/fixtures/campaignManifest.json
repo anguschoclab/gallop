@@ -6,13 +6,23 @@
     "status": "clean",
     "intents": 45,
     "impacts": 80,
-    "phases": 58,
+    "phases": 57,
     "routes": 75,
     "components": 462,
     "unhandledIntents": 0,
     "unproducedIntents": 0,
     "unhandledImpacts": 0,
     "undescribedPhases": 0
+  },
+  "capabilityDispositions": {
+    "core/time/eventRegistry": {
+      "disposition": "quarantined_unique",
+      "reason": "Event registry infrastructure is retained, but there are no registered triggers to execute; the phase is intentionally absent from GAME_PIPELINE_PHASES and GAME_PHASE_DESCRIPTORS."
+    },
+    "core/time/npcClaiming": {
+      "disposition": "quarantined_duplicate",
+      "reason": "NPC claiming decisions are generated as typed claiming intents during intent collection; the legacy direct-claim writer is inert and unregistered."
+    }
   },
   "findings": [
     {
@@ -23,7 +33,7 @@
     {
       "id": "phase-registry-declarative",
       "status": "APPROVED",
-      "evidence": "GAME_PIPELINE_PHASES and GAME_PHASE_DESCRIPTORS both report 58 registered phases through scripts/orphan-audit.ts."
+      "evidence": "GAME_PIPELINE_PHASES and GAME_PHASE_DESCRIPTORS both report 57 registered phases through scripts/orphan-audit.ts."
     },
     {
       "id": "existing-agent-intelligence",
@@ -74,6 +84,61 @@
       "id": "protected-agent-artifacts",
       "status": "APPROVED",
       "evidence": "protectedArtifacts.test.ts verifies ignored .jules artifacts, tracked tool directories, and exclusion of generated routeTree.gen.ts."
+    },
+    {
+      "id": "canonical-claiming-lifecycle",
+      "status": "CORRECTED",
+      "evidence": "Validated claiming intents are persisted by claimRegistrationPhase, consumed once, and resolved only by claimResolutionPhase; winner-only payment, no refunds, shared same-day cash budgets, canonical player attribution, and NPC outcome learning are covered by claimingLifecycle.test.ts."
+    },
+    {
+      "id": "generated-claiming-race-ui",
+      "status": "CORRECTED",
+      "evidence": "Race.claimingPrice is the sole canonical contract; fileRaceClaim, race-entry steps, badges, and ClaimingRacePanel use it. RaceFeed.claiming.test.ts proves claim filing is reachable without a player entry and pending claims render before registration."
+    },
+    {
+      "id": "structural-intent-validation",
+      "status": "CORRECTED",
+      "evidence": "INTENT_TYPE_CONTRACTS is compile-checked against AnyIntent, ALL_VALIDATORS includes StructuralIntentValidator, and composed validation rejects malformed recognized and unknown intents."
+    },
+    {
+      "id": "descriptor-runtime-contract",
+      "status": "CORRECTED",
+      "evidence": "descriptorRuntimeContract.test.ts instruments a representative executor day and fails on any undeclared top-level GameState read or write; descriptors were reconciled to observed behavior."
+    },
+    {
+      "id": "npc-cycle-diagnostics",
+      "status": "CORRECTED",
+      "evidence": "runNpcCycle returns structured NpcCycleDiagnostic records and npcCyclePhase appends them to day logs without console.error or one-stable failure aborting the cycle."
+    },
+    {
+      "id": "vacuous-generator-assertions",
+      "status": "CORRECTED",
+      "evidence": "Weather, foaling, and jockey generator tests now assert real seasonal modifiers and deterministic production instead of unconditional success."
+    },
+    {
+      "id": "advanced-ai-fixture-quality",
+      "status": "CORRECTED",
+      "evidence": "advancedAiPipeline.test.ts now uses typed full GameState/StableAIState fixtures and a production SimulationExecutor assertion for action plans/traces; fixtureQuality.test.ts rejects partial state and any casts in designated campaign suites."
+    },
+    {
+      "id": "intent-collection-dependency",
+      "status": "CORRECTED",
+      "evidence": "intentCollection now explicitly depends on and requires worldAssessment in the compiled descriptor schedule; the full-state runtime contract confirms no undeclared reads or writes."
+    },
+    {
+      "id": "ai-utility-score-composition",
+      "status": "CORRECTED",
+      "evidence": "calculateUtilityAdjustment preserves each domain score's 0-100 scale and applies a bounded signed personality adjustment; claiming, auction, training, market, campaign, and jockey decisions no longer discard semantic base values for a 0-1 utility fraction."
+    },
+    {
+      "id": "player-cash-impact-accounting",
+      "status": "CORRECTED",
+      "evidence": "economyInvariant.test.ts reconciles the complete player cash delta from cash_change and player insurance_payout impacts, exposing the previously unclassified positive payout source."
+    },
+    {
+      "id": "typed-npc-fixture-coverage",
+      "status": "CORRECTED",
+      "evidence": "facilityWeights, insuranceIntents, crossSystemLoops, and designated campaign suites use complete typed Stable/GameState fixtures; fixtureQuality.test.ts rejects partial casts in those files."
     }
   ],
   "testFirstLedger": [
@@ -216,6 +281,119 @@
         "src/tests/performance/simulationBenchmarks.test.ts"
       ],
       "productionScopes": ["src/core/time/**", "src/core/race/**", "src/domains/agents/simulation/**"]
+    },
+    {
+      "workstream": "canonical-claiming-lifecycle",
+      "redGate": "claimingLifecycle, claimResolution, RaceFeed.claiming, pending-claim, and privateSaleSlice tests failed before persisted claims, winner-only settlement, shared budgets, and canonical UI/action wiring",
+      "greenGate": "bunx vitest run src/tests/core/time/phases/claimingLifecycle.test.ts src/tests/core/time/phases/claimResolution.test.ts src/tests/core/auction/claimingResolutionService.test.ts src/tests/services/claimingResolutionService.test.ts src/tests/store/slices/privateSaleSlice.test.ts src/tests/components/ClaimingRacePanel.pendingClaim.test.tsx src/tests/components/ClaimingRacePanel.tooltip.test.tsx src/tests/components/RaceFeed.claiming.test.tsx",
+      "testFiles": [
+        "src/tests/core/time/phases/claimingLifecycle.test.ts",
+        "src/tests/core/time/phases/claimResolution.test.ts",
+        "src/tests/core/auction/claimingResolutionService.test.ts",
+        "src/tests/services/claimingResolutionService.test.ts",
+        "src/tests/store/slices/privateSaleSlice.test.ts",
+        "src/tests/components/ClaimingRacePanel.pendingClaim.test.tsx",
+        "src/tests/components/ClaimingRacePanel.tooltip.test.tsx",
+        "src/tests/components/RaceFeed.claiming.test.tsx"
+      ],
+      "productionScopes": [
+        "src/core/time/phases/claimRegistration.ts",
+        "src/core/time/phases/claimResolution.ts",
+        "src/core/time/phases/raceResolution.ts",
+        "src/core/time/phases/raceResolutionHelpers.ts",
+        "src/core/time/phases/postRaceImpacts.ts",
+        "src/core/auction/claimingResolutionService.ts",
+        "src/core/market/claimingImpacts.ts",
+        "src/game/store/slices/privateSaleSlice.ts",
+        "src/game/store/slices/raceEntryActions.ts",
+        "src/hooks/race/useRaceEntry.ts",
+        "src/components/race/**",
+        "src/components/racing/RacesTab.tsx"
+      ]
+    },
+    {
+      "workstream": "intent-structure-and-diagnostics",
+      "redGate": "intentValidation, npcCycleDiagnostics, and eventTriggerDisposition tests failed before registry-derived structural validation, typed diagnostics, and explicit quarantine evidence",
+      "greenGate": "bunx vitest run src/tests/core/resolver/intentValidation.test.ts src/tests/domains/agents/simulation/npcCycleDiagnostics.test.ts src/tests/architecture/eventTriggerDisposition.test.ts src/tests/core/time/eventRegistry.test.ts",
+      "testFiles": [
+        "src/tests/core/resolver/intentValidation.test.ts",
+        "src/tests/domains/agents/simulation/npcCycleDiagnostics.test.ts",
+        "src/tests/architecture/eventTriggerDisposition.test.ts",
+        "src/tests/core/time/eventRegistry.test.ts"
+      ],
+      "productionScopes": [
+        "src/core/resolver/intentTypeRegistry.ts",
+        "src/core/resolver/resolver.ts",
+        "src/core/resolver/validators/**",
+        "src/core/time/phases/intentValidation.ts",
+        "src/core/time/phases/npcCycle.ts",
+        "src/domains/agents/simulation/npc/npcCycle.ts"
+      ]
+    },
+    {
+      "workstream": "weather-regional-fidelity",
+      "redGate": "seasonalPatterns failed to find Gulfstream hurricane/rain modifiers before track-level regional lookup existed",
+      "greenGate": "bunx vitest run src/tests/core/weather/seasonalPatterns.test.ts",
+      "testFiles": ["src/tests/core/weather/seasonalPatterns.test.ts"],
+      "productionScopes": ["src/core/weather/**", "src/core/data/tracksAccessor.ts"]
+    },
+    {
+      "workstream": "phase-descriptor-runtime-contract",
+      "redGate": "descriptorRuntimeContract reported undeclared reads/writes before descriptor reconciliation and race-entry transport immutability",
+      "greenGate": "bunx vitest run src/tests/core/time/descriptorRuntimeContract.test.ts src/tests/core/time/phases/raceEntryResolution.test.ts src/tests/core/time/descriptors.coverage.test.ts",
+      "testFiles": [
+        "src/tests/core/time/descriptorRuntimeContract.test.ts",
+        "src/tests/core/time/phases/raceEntryResolution.test.ts",
+        "src/tests/core/time/descriptors.coverage.test.ts",
+        "src/tests/architecture/fixtureQuality.test.ts",
+        "src/tests/integration/advancedAiPipeline.test.ts"
+      ],
+      "productionScopes": [
+        "src/core/time/phases/descriptors.ts",
+        "src/core/time/phases/index.ts",
+        "src/core/time/phases/raceEntryResolution.ts",
+        "src/constants/pipelineConstants.ts"
+      ]
+    },
+    {
+      "workstream": "npc-decision-utility-scale",
+      "redGate": "claiming, bidding, and training priority tests failed because 0-100 domain scores were replaced by 0-1 personality utilities",
+      "greenGate": "bunx vitest run src/tests/core/ai/npcActionRegistry.test.ts src/tests/core/ai/auctionAI.test.ts src/tests/core/ai/marketAI.test.ts src/tests/core/ai/trainingAI.test.ts src/tests/core/ai/personalitySystem.test.ts",
+      "testFiles": [
+        "src/tests/core/ai/npcActionRegistry.test.ts",
+        "src/tests/core/ai/auctionAI.test.ts",
+        "src/tests/core/ai/marketAI.test.ts",
+        "src/tests/core/ai/trainingAI.test.ts",
+        "src/tests/core/ai/personalitySystem.test.ts"
+      ],
+      "productionScopes": [
+        "src/domains/agents/simulation/personalitySystem.ts",
+        "src/domains/agents/simulation/claimingAIValue.ts",
+        "src/domains/agents/simulation/auctionBidding.ts",
+        "src/domains/agents/simulation/trainingAI.ts",
+        "src/domains/agents/simulation/marketAIValue.ts",
+        "src/domains/agents/simulation/campaignTargeting.ts",
+        "src/domains/agents/simulation/jockeyStyleSelection.ts",
+        "src/domains/agents/simulation/jockeyAI.ts"
+      ]
+    },
+    {
+      "workstream": "fixture-quality-and-cash-accounting",
+      "redGate": "unsafe NPC fixture casts remained and the economy invariant failed to account for the player insurance_payout impact",
+      "greenGate": "bunx vitest run src/tests/architecture/fixtureQuality.test.ts src/tests/core/npc/intents/facilityWeights.test.ts src/tests/core/npc/intents/insuranceIntents.test.ts src/tests/integration/economyInvariant.test.ts",
+      "testFiles": [
+        "src/tests/architecture/fixtureQuality.test.ts",
+        "src/tests/core/npc/intents/facilityWeights.test.ts",
+        "src/tests/core/npc/intents/insuranceIntents.test.ts",
+        "src/tests/integration/crossSystemLoops.test.ts",
+        "src/tests/integration/intentProductionPath.test.ts",
+        "src/tests/integration/economyInvariant.test.ts"
+      ],
+      "productionScopes": [
+        "eslint.config.js",
+        "src/domains/agents/simulation/npc/intents/**",
+        "src/core/resolver/handlers/SystemHandler.ts"
+      ]
     }
   ],
   "moveManifests": ["src/tests/fixtures/agentDomainMoveManifest.json"],
@@ -254,13 +432,18 @@
   "persistence": {
     "storeVersion": 10,
     "policy": "hard_reset_incompatible_saves",
-    "transientFields": ["engineRevision"],
+    "transientFields": [
+      "engineGeneration",
+      "engineRevision",
+      "execution",
+      "pendingIntents"
+    ],
     "dedicatedBucketsGuard": "persistenceContract.test.ts"
   },
   "performance": {
     "deterministicFingerprints": {
-      "small_30d": "c247e45d",
-      "medium_30d": "f5da45c6",
+      "small_30d": "c27694e3",
+      "medium_30d": "642b44b6",
       "small_seeded_repeat": "7470229B",
       "medium_seeded_repeat": "12937976B",
       "large_seeded_repeat": "18650219B"
@@ -269,17 +452,22 @@
       {
         "name": "advance",
         "command": "bun run bench:advance",
-        "result": "PASS; same-seed checksum repeatability; small 365d 1.9d/s, medium 365d 1.1d/s, large 365d 0.9d/s; retained-world steady-state command payload 82B"
+        "result": "PASS; same-seed checksum repeatability; small 365d 1.8d/s, medium 365d 0.8d/s, large 365d 0.9d/s; retained-world steady-state command payload 82B"
       },
       {
         "name": "race",
         "command": "bun run bench:race",
-        "result": "PASS; 14-runner step p95 0.027ms under 4ms physics and 16.7ms RAF-equivalent gates"
+        "result": "PASS; 14-runner step p95 0.018ms under 4ms physics and 16.7ms RAF-equivalent gates"
       },
       {
         "name": "phase-profile",
         "command": "bun run scripts/profilePhases.ts 30 small",
-        "result": "small/30d total 42371ms; raceResolution 69.6%, impactApplication 13.9%, dailySnapshot 3.5%, intentCollection 2.9%"
+        "result": "small/30d total 9397ms (3.2 days/s); raceResolution 68.4%, impactApplication 13.5%, dailySnapshot 3.9%, intentCollection 3.0%"
+      },
+      {
+        "name": "multi-year-soak",
+        "command": "bun run scripts/runLongTermAnalysis.ts 3 small",
+        "result": "PASS; 3-year executor soak bounded population (731 horses stable across years), 0/35 bankrupt NPCs, bounded transaction/expense stores"
       }
     ]
   }

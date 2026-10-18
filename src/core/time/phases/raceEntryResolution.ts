@@ -52,7 +52,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];
     const newTransactions: typeof state.transactions = [];
-    const newTransports = state.transports ?? [];
+    const newTransports = [...(state.transports ?? [])];
 
     // Filter for race entry and withdrawal intents
     const raceEntryIntents = intents.filter((i): i is RaceEntryIntent => i.type === "race_entry");

@@ -29,6 +29,13 @@ export { calculateFameGainsForRaces, applyFameGainsToHorses } from "./npcFame";
 /**
  * NPC Cycle Result
  */
+export interface NpcCycleDiagnostic {
+  stableId?: string;
+  day: number;
+  phase: "npc_cycle";
+  message: string;
+}
+
 export interface NpcCycleResult {
   horses: Horse[];
   races: Race[];
@@ -40,6 +47,7 @@ export interface NpcCycleResult {
   cashChanges?: Array<{ stableId: string; amount: number; reason: string }>;
   fameChanges?: Array<{ horseId: string; delta: number }>;
   fanChanges?: Array<{ horseId: string; delta: number }>;
+  diagnostics: NpcCycleDiagnostic[];
 }
 
 /**
@@ -74,6 +82,7 @@ export function runNpcCycle(
   aiManager: NpcAIManager = { stableStates: {}, globalDay: currentDay, regionalKings: {} },
   npcFacilities?: Record<string, PlayerFacilities>,
 ): NpcCycleResult {
+  const diagnostics: NpcCycleDiagnostic[] = [];
   try {
     // Skip if no NPC stables
     if (npcStables.length === 0) {
@@ -85,6 +94,7 @@ export function runNpcCycle(
         cashChanges: [],
         fameChanges: [],
         fanChanges: [],
+        diagnostics,
       };
     }
 
@@ -154,7 +164,12 @@ export function runNpcCycle(
         // Update stable state in manager
         updatedAiManager.stableStates[stable.id] = updateStableAIState(stableAIState, currentDay);
       } catch (error) {
-        console.error(`Error processing stable ${stable.id} in NPC cycle:`, error);
+        diagnostics.push({
+          stableId: stable.id,
+          day: currentDay,
+          phase: "npc_cycle",
+          message: error instanceof Error ? error.message : String(error),
+        });
       }
     }
 
@@ -173,9 +188,14 @@ export function runNpcCycle(
       cashChanges,
       fameChanges,
       fanChanges,
+      diagnostics,
     };
   } catch (error) {
-    console.error("Error in runNpcCycle:", error);
+    diagnostics.push({
+      day: currentDay,
+      phase: "npc_cycle",
+      message: error instanceof Error ? error.message : String(error),
+    });
     // Return original state on error to prevent corruption
     return {
       horses,
@@ -187,6 +207,7 @@ export function runNpcCycle(
       cashChanges: [],
       fameChanges: [],
       fanChanges: [],
+      diagnostics,
     };
   }
 }

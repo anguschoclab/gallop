@@ -64,6 +64,7 @@ export const npcCyclePhase = {
       cashChanges,
       fameChanges,
       fanChanges,
+      diagnostics,
     } = runNpcCycle(
       state.npcStables,
       Object.values(state.horses),
@@ -170,6 +171,13 @@ export const npcCyclePhase = {
         npcAIManager: updatedAiManager,
       },
       impacts: [...context.impacts, ...impacts],
+      logs: [
+        ...context.logs,
+        ...diagnostics.map((diagnostic) => ({
+          day: newDay,
+          text: `NPC cycle diagnostic${diagnostic.stableId ? ` (${diagnostic.stableId})` : ""}: ${diagnostic.message}`,
+        })),
+      ],
     };
   },
 };

@@ -34,6 +34,19 @@ export const DEDICATED_BUCKET_KEYS: ReadonlySet<PropertyKey> = new Set([
  */
 export type PersistedStateKey = keyof GameState | "storeVersion";
 
+/**
+ * GameState fields that must remain session-local. They are engine-command,
+ * pending-work, or in-flight execution records and must never enter either
+ * persisted bucket. Adding a GameState field now requires an explicit choice:
+ * PERSISTED_KEYS or this list.
+ */
+export const TRANSIENT_STATE_KEYS: (keyof GameState)[] = [
+  "engineGeneration",
+  "engineRevision",
+  "execution",
+  "pendingIntents",
+];
+
 export const PERSISTED_KEYS: PersistedStateKey[] = [
   "day",
   "cash",

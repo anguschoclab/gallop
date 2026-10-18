@@ -30,17 +30,24 @@ export const intentValidationPhase: PipelinePhase = {
     const { horseMap, raceMap, stableMap } = context;
 
     const validIntents: typeof intents = [];
+    const rejectionLogs: PipelineContext["logs"] = [];
 
     for (const intent of intents) {
       const validation = validateIntent(intent, state, { horseMap, raceMap, stableMap });
       if (validation.valid) {
         validIntents.push(intent);
+      } else {
+        rejectionLogs.push({
+          day: context.newDay,
+          text: `Intent rejected (${intent.type}): ${validation.reason ?? "Invalid intent"}`,
+        });
       }
     }
 
     return {
       ...context,
       intents: validIntents,
+      logs: [...context.logs, ...rejectionLogs],
     };
   },
 };

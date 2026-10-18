@@ -141,6 +141,24 @@ describe("calculateBiddingValue", () => {
     expect(goodScore).toBeGreaterThan(poorScore);
   });
 
+  it("keeps a clearly underpriced lot above the bidding decision threshold", () => {
+    const stable = createMockStable();
+    const state = createAuctionAIState(stable);
+    const horse = createMockHorse({
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const lot = createMockAuctionLot({ reservePrice: 10000, hammerPrice: 10000 });
+
+    expect(calculateBiddingValue(state, horse, lot, stable, 1)).toBeGreaterThan(50);
+  });
+
   it("strategic bonus: +10 if portfolio needs horses", () => {
     const stable = createMockStable();
     const state = createAuctionAIState(stable);

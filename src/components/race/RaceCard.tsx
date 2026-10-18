@@ -21,8 +21,8 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
   const ownedCount = race.entries.filter((e) => e.ownership?.type === "player").length;
   const gradeLabel = race.graded?.grade;
   const gradeColorClass = gradeLabel ? gradeColor(gradeLabel) : "bg-muted text-muted-foreground";
-  const isClaiming = !!race.claiming;
-  const claimingPrice: number | undefined = race.claiming?.price;
+  const claimingPrice: number | undefined = race.claimingPrice;
+  const isClaiming = claimingPrice !== undefined;
 
   const favoriteOdds = useRaceCardOdds(race);
 

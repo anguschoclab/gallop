@@ -36,7 +36,7 @@ export type PrivateSaleSlice = {
   /** Withdraws a horse from a claiming race before the entry cutoff */
   withdrawFromClaimingRace: (raceId: string, horseId: string) => void;
   /** Files a claim on a horse running in a claiming race */
-  fileClaim: (raceId: string, horseId: string) => { ok: boolean; reason?: string };
+  fileRaceClaim: (raceId: string, horseId: string) => { ok: boolean; reason?: string };
   /** Sets the collection of active private sale offers */
   setPrivateSaleOffers: (offers: PrivateSaleOffer[]) => void;
   /** Sets the collection of active claims */
@@ -201,7 +201,7 @@ export function createPrivateSaleSlice(
       const s = get();
       const race: Race | undefined = s.races[raceId];
       if (!race) return { ok: false, reason: "race_not_found" };
-      if (!race.claiming) return { ok: false, reason: "not_claiming_race" };
+      if (race.claimingPrice === undefined) return { ok: false, reason: "not_claiming_race" };
       const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "horse_not_found" };
       if (!isPlayerOwned(horse)) return { ok: false, reason: "not_owned" };
@@ -224,7 +224,9 @@ export function createPrivateSaleSlice(
     withdrawFromClaimingRace: (raceId, horseId) => {
       const s = get();
       const race: Race | undefined = s.races[raceId];
-      if (!race) return;
+      if (!race || race.claimingPrice === undefined) return;
+      const horse = s.horses[horseId];
+      if (!horse || !isPlayerOwned(horse)) return;
       if (s.day >= race.day - 1) return;
 
       enqueueIntent({
@@ -239,17 +241,36 @@ export function createPrivateSaleSlice(
       });
     },
 
-    fileClaim: (raceId, horseId) => {
+    fileRaceClaim: (raceId, horseId) => {
       const s = get();
       const race: Race | undefined = s.races[raceId];
       if (!race) return { ok: false, reason: "race_not_found" };
-      if (!race.claiming) return { ok: false, reason: "not_claiming_race" };
+      const claimingPrice = race.claimingPrice;
+      if (claimingPrice === undefined) return { ok: false, reason: "not_claiming_race" };
+      if (race.resolved) return { ok: false, reason: "race_resolved" };
       const horse = s.horses[horseId];
       if (!horse) return { ok: false, reason: "horse_not_found" };
-      // Self-claim prohibited
+      if (!race.entries.some((entry) => entry.horseId === horseId)) {
+        return { ok: false, reason: "horse_not_entered" };
+      }
       if (isPlayerOwned(horse)) return { ok: false, reason: "self_claim_prohibited" };
-      if (s.cash < race.claiming.price) return { ok: false, reason: "insufficient_funds" };
+      if (s.cash < claimingPrice) return { ok: false, reason: "insufficient_funds" };
       if (s.day >= race.day) return { ok: false, reason: "post_time_passed" };
+      const alreadyFiled =
+        (s.claims ?? []).some(
+          (claim) =>
+            claim.raceId === raceId &&
+            claim.horseId === horseId &&
+            claim.claimantStableId === undefined,
+        ) ||
+        (s.pendingIntents ?? []).some(
+          (intent) =>
+            intent.type === "claiming" &&
+            intent.source === "player" &&
+            intent.raceId === raceId &&
+            intent.horseId === horseId,
+        );
+      if (alreadyFiled) return { ok: false, reason: "duplicate_claim" };
 
       enqueueIntent({
         id: generateUUID(),
@@ -260,7 +281,7 @@ export function createPrivateSaleSlice(
         type: "claiming",
         raceId,
         horseId,
-        claimingPrice: race.claiming.price,
+        claimingPrice,
       });
 
       return { ok: true };

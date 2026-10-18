@@ -13,6 +13,7 @@ import { RacingValidator } from "./RacingValidator";
 import { BreedingValidator } from "./BreedingValidator";
 import { MarketValidator } from "./MarketValidator";
 import { SyndicationValidator } from "./SyndicationValidator";
+import { StructuralIntentValidator } from "./structuralIntentValidator";
 import type { IntentValidator } from "./types";
 
 /**
@@ -24,6 +25,7 @@ export const ALL_VALIDATORS: IntentValidator[] = [
   new BreedingValidator(),
   new MarketValidator(),
   new SyndicationValidator(),
+  new StructuralIntentValidator(),
 ];
 
 export * from "./types";

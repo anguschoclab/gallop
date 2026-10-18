@@ -1,9 +1,9 @@
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { resolveClaimingResolution } from "@/services/auction/claimingResolutionService";
-import { createTestRng, createTestHorse } from "@/tests/helpers";
+import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/core/uuid";
-import type { Race, Horse } from "@/game/types";
-import type { ClaimingIntent } from "@/core/resolver/intents";
+import type { Horse, Race } from "@/game/types";
+import type { ClaimResolutionInput } from "@/core/market/claimingImpacts";
 import { asNpcStableId } from "@/core/types/branded";
 import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 
@@ -26,20 +26,14 @@ function mkRace(overrides?: Partial<Race>): Race {
   } as Race;
 }
 
-function mkClaimingIntent(overrides?: Partial<ClaimingIntent>): ClaimingIntent {
+function mkClaim(overrides?: Partial<ClaimResolutionInput>): ClaimResolutionInput {
   return {
-    id: "intent-1",
-    entityId: "stable-1",
-    source: "npc",
-    day: DAY,
-    priority: 5,
-    type: "claiming",
-    raceId: "race-1",
+    id: "claim-1",
     horseId: "horse-1",
-    claimantStableId: "stable-1",
-    claimingPrice: 25000,
+    claimantStableId: "stable-1" as any,
+    price: 25000,
     ...overrides,
-  } as ClaimingIntent;
+  };
 }
 
 function mkClaimedHorse(id: string, stableId?: string): Horse {
@@ -50,35 +44,53 @@ function mkClaimedHorse(id: string, stableId?: string): Horse {
   });
 }
 
-describe("resolveClaimingResolution — empty / early return", () => {
-  it("empty claimIntents returns empty impacts", () => {
-    const race = mkRace();
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: [],
-      horses: [],
-      newDay: DAY,
-      rng: createTestRng("empty"),
-    });
+function resolve(race: Race, claims: ClaimResolutionInput[], horses: Horse[]) {
+  return resolveClaimingResolution({
+    race,
+    claims,
+    horses,
+    newDay: DAY,
+    rng: createTestRng("claim-resolution"),
+    playerCash: 1_000_000,
+    stableCash: new Map([
+      ["stable-1", 1_000_000],
+      ["stable-buyer", 1_000_000],
+      ["stable-a", 1_000_000],
+      ["stable-b", 1_000_000],
+      ["stable-c", 1_000_000],
+      ["s-a", 1_000_000],
+      ["s-b", 1_000_000],
+      ["s-buyer", 1_000_000],
+      ["s-buyer-w", 1_000_000],
+      ["s-buyer-e", 1_000_000],
+      ["s-buyer-1", 1_000_000],
+      ["s-buyer-2", 1_000_000],
+      ["s-a1", 1_000_000],
+      ["s-b1", 1_000_000],
+      ["s-a2", 1_000_000],
+      ["s-b2", 1_000_000],
+    ]),
+  });
+}
+
+describe("resolveClaimingResolution", () => {
+  it("returns empty output when no claims are persisted", () => {
+    const result = resolve(mkRace(), [], []);
     expect(result.impacts).toEqual([]);
+    expect(result.transfers).toEqual([]);
   });
 
-  it("claims for horses not in race.entries are silently dropped", () => {
-    const race = mkRace({ entries: [] });
-    const intent = mkClaimingIntent({ horseId: "h-orphan" });
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: [intent],
-      horses: [mkClaimedHorse("h-orphan", "stable-old")],
-      newDay: DAY,
-      rng: createTestRng("orphan"),
-    });
+  it("voids claims for horses that are not entered", () => {
+    const result = resolve(
+      mkRace({ entries: [] }),
+      [mkClaim({ horseId: "h-orphan" })],
+      [mkClaimedHorse("h-orphan", "stable-old")],
+    );
     expect(result.impacts).toEqual([]);
+    expect(result.voidedClaims).toHaveLength(1);
   });
-});
 
-describe("resolveClaimingResolution — withdrawn claims", () => {
-  it("single withdrawn claim produces cash_change refund + log impact", () => {
+  it("voids a withdrawn claim without a cash refund", () => {
     const race = mkRace({
       entries: [
         {
@@ -88,612 +100,144 @@ describe("resolveClaimingResolution — withdrawn claims", () => {
         },
       ],
     });
-    const intent = mkClaimingIntent({
-      id: "w-1",
-      horseId: "h1",
-      claimantStableId: "stable-buyer",
-      claimingPrice: 25000,
-    });
-    const result = resolveClaimingResolution({
+    const result = resolve(
       race,
-      claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "stable-old")],
-      newDay: DAY,
-      rng: createTestRng("withdrawn-single"),
+      [mkClaim({ id: "w-1", horseId: "h1", claimantStableId: "stable-buyer" as any })],
+      [mkClaimedHorse("h1", "stable-old")],
+    );
+
+    expect(result.impacts).toHaveLength(1);
+    expect(result.impacts[0]).toMatchObject({
+      type: "log",
+      phase: "claimResolution",
+      intentId: "w-1",
     });
-    expect(result.impacts).toHaveLength(2);
-    expect(result.impacts[0].type).toBe("cash_change");
-    expect((result.impacts[0] as any).amount).toBe(25000);
-    expect((result.impacts[0] as any).entityId).toBe("stable-buyer");
-    expect(result.impacts[1].type).toBe("log");
+    expect(result.impacts.some((impact) => impact.type === "cash_change")).toBe(false);
+    expect(result.withdrawnClaims).toHaveLength(1);
   });
 
-  it("multiple withdrawn claims produce 2 impacts per claim", () => {
+  it("settles an eligible claim with one transfer, one payment, and one proceeds impact", () => {
     const race = mkRace({
-      entries: [
-        {
-          horseId: "h1",
-          ownership: makeNpcOwned(asNpcStableId("s-old")),
-          withdrawnFromClaiming: true,
-        },
-        {
-          horseId: "h2",
-          ownership: makeNpcOwned(asNpcStableId("s-old")),
-          withdrawnFromClaiming: true,
-        },
-      ],
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
-    const intents = [
-      mkClaimingIntent({ id: "w-1", horseId: "h1", claimantStableId: "s-a", claimingPrice: 25000 }),
-      mkClaimingIntent({ id: "w-2", horseId: "h2", claimantStableId: "s-b", claimingPrice: 25000 }),
-    ];
-    const result = resolveClaimingResolution({
+    const result = resolve(
       race,
-      claimIntents: intents,
-      horses: [mkClaimedHorse("h1", "s-old"), mkClaimedHorse("h2", "s-old")],
-      newDay: DAY,
-      rng: createTestRng("withdrawn-multi"),
-    });
+      [mkClaim({ id: "c-1", horseId: "h1", claimantStableId: "stable-buyer" as any })],
+      [mkClaimedHorse("h1", "stable-old")],
+    );
+
+    expect(result.transfers).toHaveLength(1);
     expect(result.impacts).toHaveLength(4);
-  });
-
-  it("withdrawn claim with undefined claimantStableId defaults entityId to empty string", () => {
-    const race = mkRace({
-      entries: [
-        {
-          horseId: "h1",
-          ownership: makeNpcOwned(asNpcStableId("s-old")),
-          withdrawnFromClaiming: true,
-        },
-      ],
-    });
-    const intent = mkClaimingIntent({
-      id: "w-1",
+    expect(result.impacts.map((impact) => impact.type)).toEqual([
+      "claiming",
+      "cash_change",
+      "cash_change",
+      "log",
+    ]);
+    expect(result.impacts[0]).toMatchObject({
+      type: "claiming",
+      intentId: "c-1",
+      raceId: "race-1",
       horseId: "h1",
-      claimantStableId: undefined,
+      fromStableId: "stable-old",
+      toStableId: "stable-buyer",
       claimingPrice: 25000,
     });
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "s-old")],
-      newDay: DAY,
-      rng: createTestRng("withdrawn-no-stable"),
-    });
-    expect((result.impacts[0] as any).entityId).toBe("");
-  });
-});
-
-describe("resolveClaimingResolution — eligible claims (single claimant)", () => {
-  const eligibleRace = mkRace({
-    entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
-  });
-  const eligibleIntent = mkClaimingIntent({
-    id: "c-1",
-    horseId: "h1",
-    claimantStableId: "stable-buyer",
-    claimingPrice: 25000,
-  });
-  const eligibleHorses = [mkClaimedHorse("h1", "stable-old")];
-
-  it("single eligible claim produces 4 impacts: claiming + payment + proceeds + log", () => {
-    const result = resolveClaimingResolution({
-      race: eligibleRace,
-      claimIntents: [eligibleIntent],
-      horses: eligibleHorses,
-      newDay: DAY,
-      rng: createTestRng("eligible-single"),
-    });
-    expect(result.impacts).toHaveLength(4);
-    const types = result.impacts.map((i) => i.type);
-    expect(types).toContain("claiming");
-    expect(types).toContain("cash_change");
-    expect(types).toContain("log");
-  });
-
-  it("claiming impact has correct fields", () => {
-    const result = resolveClaimingResolution({
-      race: eligibleRace,
-      claimIntents: [eligibleIntent],
-      horses: eligibleHorses,
-      newDay: DAY,
-      rng: createTestRng("eligible-fields"),
-    });
-    const claimingImpact = result.impacts.find((i) => i.type === "claiming") as any;
-    expect(claimingImpact).toBeDefined();
-    expect(claimingImpact.raceId).toBe("race-1");
-    expect(claimingImpact.horseId).toBe("h1");
-    expect(claimingImpact.fromStableId).toBe("stable-old");
-    expect(claimingImpact.toStableId).toBe("stable-buyer");
-    expect(claimingImpact.claimingPrice).toBe(25000);
-  });
-
-  it("cash_change payment is negative claimingPrice from buyer stable", () => {
-    const result = resolveClaimingResolution({
-      race: eligibleRace,
-      claimIntents: [eligibleIntent],
-      horses: eligibleHorses,
-      newDay: DAY,
-      rng: createTestRng("eligible-payment"),
-    });
-    const cashImpacts = result.impacts.filter((i) => i.type === "cash_change") as any[];
-    const payment = cashImpacts.find((c) => c.amount < 0);
-    expect(payment).toBeDefined();
-    expect(payment.amount).toBe(-25000);
-    expect(payment.entityId).toBe("stable-buyer");
-  });
-
-  it("cash_change proceeds is positive claimingPrice to old stable", () => {
-    const result = resolveClaimingResolution({
-      race: eligibleRace,
-      claimIntents: [eligibleIntent],
-      horses: eligibleHorses,
-      newDay: DAY,
-      rng: createTestRng("eligible-proceeds"),
-    });
-    const cashImpacts = result.impacts.filter((i) => i.type === "cash_change") as any[];
-    const proceeds = cashImpacts.find((c) => c.amount > 0);
-    expect(proceeds).toBeDefined();
-    expect(proceeds.amount).toBe(25000);
-    expect(proceeds.entityId).toBe("stable-old");
-  });
-});
-
-describe("resolveClaimingResolution — multiple claimants same horse", () => {
-  const multiRace = mkRace({
-    entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
-  });
-  const multiHorses = [mkClaimedHorse("h1", "stable-old")];
-
-  it("two claimants for same horse: exactly one claiming transfer impact", () => {
-    const intents = [
-      mkClaimingIntent({
-        id: "c-a",
-        horseId: "h1",
-        claimantStableId: "stable-a",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-b",
-        horseId: "h1",
-        claimantStableId: "stable-b",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race: multiRace,
-      claimIntents: intents,
-      horses: multiHorses,
-      newDay: DAY,
-      rng: createTestRng("multi-claim"),
-    });
-    const claimingImpacts = result.impacts.filter((i) => i.type === "claiming");
-    expect(claimingImpacts).toHaveLength(1);
-  });
-
-  it("two claimants same horse: log impacts include outdrawn message for loser", () => {
-    const intents = [
-      mkClaimingIntent({
-        id: "c-a",
-        horseId: "h1",
-        claimantStableId: "stable-a",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-b",
-        horseId: "h1",
-        claimantStableId: "stable-b",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race: multiRace,
-      claimIntents: intents,
-      horses: multiHorses,
-      newDay: DAY,
-      rng: createTestRng("multi-log"),
-    });
-    const logImpacts = result.impacts.filter((i) => i.type === "log") as any[];
-    const outdrawnLogs = logImpacts.filter(
-      (l) => l.text.includes("outdrawn") || l.text.includes("failed"),
+    expect(result.impacts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "cash_change",
+          entityId: "stable-buyer",
+          amount: -25000,
+        }),
+        expect.objectContaining({
+          type: "cash_change",
+          entityId: "stable-old",
+          amount: 25000,
+        }),
+      ]),
     );
-    expect(outdrawnLogs.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("determinism: same RNG seed selects same winner", () => {
-    const intents = [
-      mkClaimingIntent({
-        id: "c-a",
-        horseId: "h1",
-        claimantStableId: "stable-a",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-b",
-        horseId: "h1",
-        claimantStableId: "stable-b",
-        claimingPrice: 25000,
-      }),
-    ];
-    const r1 = resolveClaimingResolution({
-      race: multiRace,
-      claimIntents: intents,
-      horses: multiHorses,
-      newDay: DAY,
-      rng: createTestRng("det-1"),
-    });
-    const r2 = resolveClaimingResolution({
-      race: multiRace,
-      claimIntents: intents,
-      horses: multiHorses,
-      newDay: DAY,
-      rng: createTestRng("det-1"),
-    });
-    expect(r1.impacts.map((i) => i.id)).toEqual(r2.impacts.map((i) => i.id));
-  });
-
-  it("two claimants same horse: losing claimant gets refund cash_change", () => {
-    const intents = [
-      mkClaimingIntent({
-        id: "c-a",
-        horseId: "h1",
-        claimantStableId: "stable-a",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-b",
-        horseId: "h1",
-        claimantStableId: "stable-b",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race: multiRace,
-      claimIntents: intents,
-      horses: multiHorses,
-      newDay: DAY,
-      rng: createTestRng("refund-test"),
-    });
-    const claimingImpact = result.impacts.find((i) => i.type === "claiming") as any;
-    const winningStableId = claimingImpact.toStableId;
-    const losingIntentId = winningStableId === "stable-a" ? "c-b" : "c-a";
-
-    const refundImpacts = result.impacts.filter(
-      (i) =>
-        i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId === losingIntentId,
-    ) as any[];
-    expect(refundImpacts).toHaveLength(1);
-  });
-
-  it("two claimants same horse: refund amount equals claimingPrice", () => {
-    const intents = [
-      mkClaimingIntent({
-        id: "c-a",
-        horseId: "h1",
-        claimantStableId: "stable-a",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-b",
-        horseId: "h1",
-        claimantStableId: "stable-b",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race: multiRace,
-      claimIntents: intents,
-      horses: multiHorses,
-      newDay: DAY,
-      rng: createTestRng("refund-amount"),
-    });
-    const refundImpacts = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId !== "",
-    ) as any[];
-    expect(refundImpacts).toHaveLength(1);
-    expect(refundImpacts[0].amount).toBe(25000);
-  });
-
-  it("two claimants same horse: refund entityId matches losing claimant's stableId", () => {
-    const intents = [
-      mkClaimingIntent({
-        id: "c-a",
-        horseId: "h1",
-        claimantStableId: "stable-a",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-b",
-        horseId: "h1",
-        claimantStableId: "stable-b",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race: multiRace,
-      claimIntents: intents,
-      horses: multiHorses,
-      newDay: DAY,
-      rng: createTestRng("refund-entity"),
-    });
-    const claimingImpact = result.impacts.find((i) => i.type === "claiming") as any;
-    const winningStableId = claimingImpact.toStableId;
-    const losingStableId = winningStableId === "stable-a" ? "stable-b" : "stable-a";
-
-    const refundImpacts = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId !== "",
-    ) as any[];
-    expect(refundImpacts).toHaveLength(1);
-    expect(refundImpacts[0].entityId).toBe(losingStableId);
-  });
-
-  it("three claimants same horse: two losers get refunds", () => {
-    const intents = [
-      mkClaimingIntent({
-        id: "c-a",
-        horseId: "h1",
-        claimantStableId: "stable-a",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-b",
-        horseId: "h1",
-        claimantStableId: "stable-b",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-c",
-        horseId: "h1",
-        claimantStableId: "stable-c",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race: multiRace,
-      claimIntents: intents,
-      horses: multiHorses,
-      newDay: DAY,
-      rng: createTestRng("three-claims"),
-    });
-    const refundImpacts = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId !== "",
-    ) as any[];
-    expect(refundImpacts).toHaveLength(2);
-  });
-
-  it("player + NPC claim same horse: loser gets refund", () => {
-    const intents = [
-      mkClaimingIntent({
-        id: "c-player",
-        horseId: "h1",
-        claimantStableId: undefined,
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-npc",
-        horseId: "h1",
-        claimantStableId: "stable-a",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race: multiRace,
-      claimIntents: intents,
-      horses: multiHorses,
-      newDay: DAY,
-      rng: createTestRng("player-npc"),
-    });
-    const refundImpacts = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId !== "",
-    ) as any[];
-    expect(refundImpacts).toHaveLength(1);
-    const claimingImpact = result.impacts.find((i) => i.type === "claiming") as any;
-    const winningStableId = claimingImpact.toStableId;
-    const losingIntentId = winningStableId === "stable-a" ? "c-player" : "c-npc";
-    expect(refundImpacts[0].intentId).toBe(losingIntentId);
-  });
-
-  it("two claimants same horse: claiming impact intentId matches winning claim", () => {
-    const intents = [
-      mkClaimingIntent({
-        id: "c-a",
-        horseId: "h1",
-        claimantStableId: "stable-a",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-b",
-        horseId: "h1",
-        claimantStableId: "stable-b",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race: multiRace,
-      claimIntents: intents,
-      horses: multiHorses,
-      newDay: DAY,
-      rng: createTestRng("intent-match"),
-    });
-    const claimingImpact = result.impacts.find((i) => i.type === "claiming") as any;
-    const winningStableId = claimingImpact.toStableId;
-    const winningIntentId = winningStableId === "stable-a" ? "c-a" : "c-b";
-    expect(claimingImpact.intentId).toBe(winningIntentId);
-  });
-
-  it("two claimants same horse: winning intentId is not the losing claim's id", () => {
-    const intents = [
-      mkClaimingIntent({
-        id: "c-a",
-        horseId: "h1",
-        claimantStableId: "stable-a",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-b",
-        horseId: "h1",
-        claimantStableId: "stable-b",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race: multiRace,
-      claimIntents: intents,
-      horses: multiHorses,
-      newDay: DAY,
-      rng: createTestRng("intent-negative"),
-    });
-    const claimingImpact = result.impacts.find((i) => i.type === "claiming") as any;
-    const winningStableId = claimingImpact.toStableId;
-    const losingIntentId = winningStableId === "stable-a" ? "c-b" : "c-a";
-    expect(claimingImpact.intentId).not.toBe(losingIntentId);
-  });
-});
-
-describe("resolveClaimingResolution — race not resolved / no claimingPrice", () => {
-  it("resolved: false → resolveClaims returns empty, all eligible claims become losing refunds", () => {
+  it("selects exactly one winner for multiple claims and emits no loser refunds", () => {
     const race = mkRace({
-      resolved: false,
       entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
-    const intent = mkClaimingIntent({
-      id: "c-1",
-      horseId: "h1",
-      claimantStableId: "stable-buyer",
-      claimingPrice: 25000,
+    const claims = [
+      mkClaim({ id: "c-a", horseId: "h1", claimantStableId: "stable-a" as any }),
+      mkClaim({ id: "c-b", horseId: "h1", claimantStableId: "stable-b" as any }),
+    ];
+    const first = resolve(race, claims, [mkClaimedHorse("h1", "stable-old")]);
+    const second = resolve(race, claims, [mkClaimedHorse("h1", "stable-old")]);
+
+    expect(first.transfers).toHaveLength(1);
+    expect(first.losingClaims).toHaveLength(1);
+    expect(first.impacts.filter((impact) => impact.type === "claiming")).toHaveLength(1);
+    const loser = first.losingClaims[0].claimantStableId;
+    expect(
+      first.impacts.some(
+        (impact) =>
+          impact.type === "cash_change" &&
+          (impact as any).entityId === loser &&
+          (impact as any).amount > 0,
+      ),
+    ).toBe(false);
+    expect(first.impacts.map((impact) => impact.id)).toEqual(
+      second.impacts.map((impact) => impact.id),
+    );
+  });
+
+  it("marks unaffordable claims as failures without transfer or cash impacts", () => {
+    const race = mkRace({
+      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
     const result = resolveClaimingResolution({
       race,
-      claimIntents: [intent],
+      claims: [mkClaim({ id: "poor", horseId: "h1", claimantStableId: "stable-a" as any })],
       horses: [mkClaimedHorse("h1", "stable-old")],
       newDay: DAY,
-      rng: createTestRng("not-resolved"),
+      rng: createTestRng("poor"),
+      playerCash: 1_000_000,
+      stableCash: new Map([["stable-a", 100]]),
     });
-    const claimingImpacts = result.impacts.filter((i) => i.type === "claiming");
-    expect(claimingImpacts).toHaveLength(0);
-    const refundImpacts = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount > 0,
-    );
-    expect(refundImpacts.length).toBeGreaterThanOrEqual(1);
+
+    expect(result.transfers).toEqual([]);
+    expect(result.unaffordableClaims).toHaveLength(1);
+    expect(result.impacts).toHaveLength(1);
+    expect(result.impacts[0].type).toBe("log");
   });
 
-  it("claimingPrice: undefined → same behavior as not resolved", () => {
-    const race = mkRace({
-      claimingPrice: undefined,
-      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
-    });
-    const intent = mkClaimingIntent({
-      id: "c-1",
-      horseId: "h1",
-      claimantStableId: "stable-buyer",
-      claimingPrice: 25000,
-    });
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "stable-old")],
-      newDay: DAY,
-      rng: createTestRng("no-price"),
-    });
-    const claimingImpacts = result.impacts.filter((i) => i.type === "claiming");
-    expect(claimingImpacts).toHaveLength(0);
-  });
-});
-
-describe("resolveClaimingResolution — horse edge cases", () => {
-  it("horse not in horses array → claim becomes losing refund", () => {
-    const race = mkRace({
-      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
-    });
-    const intent = mkClaimingIntent({
-      id: "c-1",
-      horseId: "h1",
-      claimantStableId: "stable-buyer",
-      claimingPrice: 25000,
-    });
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: [intent],
-      horses: [],
-      newDay: DAY,
-      rng: createTestRng("horse-missing"),
-    });
-    const claimingImpacts = result.impacts.filter((i) => i.type === "claiming");
-    expect(claimingImpacts).toHaveLength(0);
-    const refundImpacts = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount > 0,
-    );
-    expect(refundImpacts.length).toBeGreaterThanOrEqual(1);
+  it("does not transfer when the race is unresolved or has no claiming price", () => {
+    const claim = mkClaim({ horseId: "h1", claimantStableId: "stable-buyer" as any });
+    const entry = { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) };
+    for (const race of [
+      mkRace({ resolved: false, entries: [entry] }),
+      mkRace({ claimingPrice: undefined, entries: [entry] }),
+    ]) {
+      const result = resolve(race, [claim], [mkClaimedHorse("h1", "stable-old")]);
+      expect(result.transfers).toEqual([]);
+      expect(result.impacts.filter((impact) => impact.type === "claiming")).toEqual([]);
+    }
   });
 
-  it("horse with stableId: undefined → claim processed with empty fromStableId", () => {
+  it("handles an unowned source horse without inventing a seller", () => {
     const race = mkRace({
       entries: [{ horseId: "h1", ownership: makeUnowned() }],
     });
-    const intent = mkClaimingIntent({
-      id: "c-1",
-      horseId: "h1",
-      claimantStableId: "stable-buyer",
-      claimingPrice: 25000,
-    });
-    const result = resolveClaimingResolution({
+    const result = resolve(
       race,
-      claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", undefined)],
-      newDay: DAY,
-      rng: createTestRng("no-stable"),
-    });
-    // After #361 behavioral change, unowned horses are still processed
-    // (the old guard that skipped non-NPC horses was removed)
-    const claimingImpacts = result.impacts.filter((i) => i.type === "claiming");
-    expect(claimingImpacts).toHaveLength(1);
-    // fromStableId should be empty string for unowned horses
-    expect((claimingImpacts[0] as any).fromStableId).toBe("");
-  });
-});
-
-describe("resolveClaimingResolution — mixed scenarios", () => {
-  it("1 withdrawn + 1 eligible (different horses) produces both refund and transfer impacts", () => {
-    const race = mkRace({
-      entries: [
-        {
-          horseId: "h-w",
-          ownership: makeNpcOwned(asNpcStableId("s-old-w")),
-          withdrawnFromClaiming: true,
-        },
-        { horseId: "h-e", ownership: makeNpcOwned(asNpcStableId("s-old-e")) },
-      ],
-    });
-    const intents = [
-      mkClaimingIntent({
-        id: "w-1",
-        horseId: "h-w",
-        claimantStableId: "s-buyer-w",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-1",
-        horseId: "h-e",
-        claimantStableId: "s-buyer-e",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: intents,
-      horses: [mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")],
-      newDay: DAY,
-      rng: createTestRng("mixed"),
-    });
-    const hasRefund = result.impacts.some(
-      (i) => i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId === "w-1",
+      [mkClaim({ id: "c-1", horseId: "h1", claimantStableId: "stable-buyer" as any })],
+      [mkClaimedHorse("h1")],
     );
-    const hasClaiming = result.impacts.some((i) => i.type === "claiming");
-    expect(hasRefund).toBe(true);
-    expect(hasClaiming).toBe(true);
+    expect(result.transfers).toHaveLength(1);
+    expect(result.impacts[0]).toMatchObject({
+      type: "claiming",
+      fromStableId: "",
+      toStableId: "stable-buyer",
+    });
   });
 
-  it("impact ordering: withdrawn refunds come before transfer impacts", () => {
+  it("separates withdrawn and eligible claims across different horses", () => {
     const race = mkRace({
       entries: [
         {
@@ -704,344 +248,43 @@ describe("resolveClaimingResolution — mixed scenarios", () => {
         { horseId: "h-e", ownership: makeNpcOwned(asNpcStableId("s-old-e")) },
       ],
     });
-    const intents = [
-      mkClaimingIntent({
-        id: "w-1",
-        horseId: "h-w",
-        claimantStableId: "s-buyer-w",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-1",
-        horseId: "h-e",
-        claimantStableId: "s-buyer-e",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
+    const result = resolve(
       race,
-      claimIntents: intents,
-      horses: [mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")],
-      newDay: DAY,
-      rng: createTestRng("mixed-order"),
-    });
-    const firstClaimingIndex = result.impacts.findIndex((i) => i.type === "claiming");
-    const lastWithdrawnRefundIndex =
-      result.impacts
-        .map((i, idx) => ({ i, idx }))
-        .filter(({ i }) => i.type === "cash_change" && (i as any).intentId === "w-1")
-        .pop()?.idx ?? -1;
-    expect(lastWithdrawnRefundIndex).toBeLessThan(firstClaimingIndex);
-  });
-});
+      [
+        mkClaim({ id: "w-1", horseId: "h-w", claimantStableId: "s-buyer-w" as any }),
+        mkClaim({ id: "c-1", horseId: "h-e", claimantStableId: "s-buyer-e" as any }),
+      ],
+      [mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")],
+    );
 
-describe("resolveClaimingResolution — impact structure validation", () => {
-  it("all impacts have correct day, phase, and valid UUID id", () => {
+    expect(result.withdrawnClaims).toHaveLength(1);
+    expect(result.transfers).toHaveLength(1);
+    expect(
+      result.impacts.some(
+        (impact) =>
+          impact.type === "cash_change" &&
+          (impact as any).entityId === "s-buyer-w" &&
+          (impact as any).amount > 0,
+      ),
+    ).toBe(false);
+  });
+
+  it("emits deterministic, uniquely identified impacts in the claim-resolution phase", () => {
     const race = mkRace({
       entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
     });
-    const intent = mkClaimingIntent({
-      id: "c-1",
-      horseId: "h1",
-      claimantStableId: "stable-buyer",
-      claimingPrice: 25000,
-    });
-    const result = resolveClaimingResolution({
+    const result = resolve(
       race,
-      claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "stable-old")],
-      newDay: DAY,
-      rng: createTestRng("structure"),
-    });
+      [mkClaim({ id: "c-1", horseId: "h1", claimantStableId: "stable-buyer" as any })],
+      [mkClaimedHorse("h1", "stable-old")],
+    );
+
+    const ids = result.impacts.map((impact) => impact.id);
+    expect(new Set(ids).size).toBe(ids.length);
     for (const impact of result.impacts) {
       expect(impact.day).toBe(DAY);
-      expect(impact.phase).toBe("raceResolution");
+      expect(impact.phase).toBe("claimResolution");
       expect(isValidUUID(impact.id)).toBe(true);
     }
-  });
-
-  it("all impact IDs are unique within a single call", () => {
-    const race = mkRace({
-      entries: [
-        {
-          horseId: "h-w",
-          ownership: makeNpcOwned(asNpcStableId("s-old-w")),
-          withdrawnFromClaiming: true,
-        },
-        { horseId: "h-e", ownership: makeNpcOwned(asNpcStableId("s-old-e")) },
-      ],
-    });
-    const intents = [
-      mkClaimingIntent({
-        id: "w-1",
-        horseId: "h-w",
-        claimantStableId: "s-buyer-w",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-1",
-        horseId: "h-e",
-        claimantStableId: "s-buyer-e",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: intents,
-      horses: [mkClaimedHorse("h-w", "s-old-w"), mkClaimedHorse("h-e", "s-old-e")],
-      newDay: DAY,
-      rng: createTestRng("unique-ids"),
-    });
-    const ids = result.impacts.map((i) => i.id);
-    expect(new Set(ids).size).toBe(ids.length);
-  });
-});
-
-describe("resolveClaimingResolution — multiple eligible claims for different horses", () => {
-  it("2 horses × 1 claimant each: 2 claiming transfers, 2 payments, 2 proceeds, logs", () => {
-    const race = mkRace({
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("s-old-1")) },
-        { horseId: "h2", ownership: makeNpcOwned(asNpcStableId("s-old-2")) },
-      ],
-    });
-    const intents = [
-      mkClaimingIntent({
-        id: "c-1",
-        horseId: "h1",
-        claimantStableId: "s-buyer-1",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-2",
-        horseId: "h2",
-        claimantStableId: "s-buyer-2",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: intents,
-      horses: [mkClaimedHorse("h1", "s-old-1"), mkClaimedHorse("h2", "s-old-2")],
-      newDay: DAY,
-      rng: createTestRng("multi-horse"),
-    });
-    const claimingImpacts = result.impacts.filter((i) => i.type === "claiming") as any[];
-    expect(claimingImpacts).toHaveLength(2);
-    expect(claimingImpacts.map((c) => c.horseId).sort()).toEqual(["h1", "h2"]);
-
-    const negativeCash = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount < 0,
-    ) as any[];
-    expect(negativeCash).toHaveLength(2);
-
-    const positiveProceeds = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId === "",
-    ) as any[];
-    expect(positiveProceeds).toHaveLength(2);
-
-    const logImpacts = result.impacts.filter((i) => i.type === "log") as any[];
-    expect(logImpacts.length).toBeGreaterThanOrEqual(2);
-  });
-});
-
-describe("resolveClaimingResolution — claimingPrice: 0 edge case", () => {
-  it("claimingPrice: 0 behaves like undefined (falsy) — no transfers, eligible becomes losing refund", () => {
-    const race = mkRace({
-      claimingPrice: 0 as any,
-      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
-    });
-    const intent = mkClaimingIntent({
-      id: "c-1",
-      horseId: "h1",
-      claimantStableId: "stable-buyer",
-      claimingPrice: 25000,
-    });
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "stable-old")],
-      newDay: DAY,
-      rng: createTestRng("zero-price"),
-    });
-    const claimingImpacts = result.impacts.filter((i) => i.type === "claiming");
-    expect(claimingImpacts).toHaveLength(0);
-    const refundImpacts = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount > 0,
-    );
-    expect(refundImpacts.length).toBeGreaterThanOrEqual(1);
-  });
-});
-
-describe("resolveClaimingResolution — log impact content", () => {
-  it("eligible claim log impacts have correct fields", () => {
-    const race = mkRace({
-      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
-    });
-    const intent = mkClaimingIntent({
-      id: "c-1",
-      horseId: "h1",
-      claimantStableId: "stable-buyer",
-      claimingPrice: 25000,
-    });
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "stable-old")],
-      newDay: DAY,
-      rng: createTestRng("log-content"),
-    });
-    const logImpacts = result.impacts.filter(
-      (i) => i.type === "log" && (i as any).reason === "Claiming result",
-    ) as any[];
-    expect(logImpacts.length).toBeGreaterThanOrEqual(1);
-    for (const log of logImpacts) {
-      expect(log.logLevel).toBe("always");
-      expect(log.reason).toBe("Claiming result");
-      expect(log.text).toContain("claimed for");
-    }
-  });
-
-  it("withdrawn claim log text matches expected format", () => {
-    const race = mkRace({
-      name: "Test Claiming Race",
-      entries: [
-        {
-          horseId: "h1",
-          ownership: makeNpcOwned(asNpcStableId("s-old")),
-          withdrawnFromClaiming: true,
-        },
-      ],
-    });
-    const intent = mkClaimingIntent({
-      id: "w-1",
-      horseId: "h1",
-      claimantStableId: "s-buyer",
-      claimingPrice: 25000,
-    });
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "s-old")],
-      newDay: DAY,
-      rng: createTestRng("withdrawn-log"),
-    });
-    const logImpacts = result.impacts.filter((i) => i.type === "log") as any[];
-    expect(logImpacts).toHaveLength(1);
-    expect(logImpacts[0].text).toBe(
-      "Claim on h1 in Test Claiming Race refunded (horse withdrawn from claiming)",
-    );
-  });
-});
-
-describe("resolveClaimingResolution — impact reason fields", () => {
-  it("claiming impact reason contains 'Claimed for' and formatted currency", () => {
-    const race = mkRace({
-      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
-    });
-    const intent = mkClaimingIntent({
-      id: "c-1",
-      horseId: "h1",
-      claimantStableId: "stable-buyer",
-      claimingPrice: 25000,
-    });
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "stable-old")],
-      newDay: DAY,
-      rng: createTestRng("reason-test"),
-    });
-    const claimingImpact = result.impacts.find((i) => i.type === "claiming") as any;
-    expect(claimingImpact.reason).toContain("Claimed for");
-    expect(claimingImpact.reason).toContain("$25,000");
-  });
-});
-
-describe("resolveClaimingResolution — newDay vs race.day", () => {
-  it("impacts use newDay parameter, not race.day", () => {
-    const race = mkRace({
-      day: 10,
-      entries: [{ horseId: "h1", ownership: makeNpcOwned(asNpcStableId("stable-old")) }],
-    });
-    const intent = mkClaimingIntent({
-      id: "c-1",
-      horseId: "h1",
-      claimantStableId: "stable-buyer",
-      claimingPrice: 25000,
-    });
-    const NEW_DAY = 999;
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: [intent],
-      horses: [mkClaimedHorse("h1", "stable-old")],
-      newDay: NEW_DAY,
-      rng: createTestRng("newday-test"),
-    });
-    for (const impact of result.impacts) {
-      expect(impact.day).toBe(NEW_DAY);
-    }
-  });
-});
-
-describe("resolveClaimingResolution — 2 horses × 2 claimants each", () => {
-  it("4 intents across 2 horses: 2 transfers, 2 loser refunds, 2 payments, 2 proceeds", () => {
-    const race = mkRace({
-      entries: [
-        { horseId: "h1", ownership: makeNpcOwned(asNpcStableId("s-old-1")) },
-        { horseId: "h2", ownership: makeNpcOwned(asNpcStableId("s-old-2")) },
-      ],
-    });
-    const intents = [
-      mkClaimingIntent({
-        id: "c-1a",
-        horseId: "h1",
-        claimantStableId: "s-a1",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-1b",
-        horseId: "h1",
-        claimantStableId: "s-b1",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-2a",
-        horseId: "h2",
-        claimantStableId: "s-a2",
-        claimingPrice: 25000,
-      }),
-      mkClaimingIntent({
-        id: "c-2b",
-        horseId: "h2",
-        claimantStableId: "s-b2",
-        claimingPrice: 25000,
-      }),
-    ];
-    const result = resolveClaimingResolution({
-      race,
-      claimIntents: intents,
-      horses: [mkClaimedHorse("h1", "s-old-1"), mkClaimedHorse("h2", "s-old-2")],
-      newDay: DAY,
-      rng: createTestRng("2x2"),
-    });
-    const claimingImpacts = result.impacts.filter((i) => i.type === "claiming") as any[];
-    expect(claimingImpacts).toHaveLength(2);
-    expect(claimingImpacts.map((c) => c.horseId).sort()).toEqual(["h1", "h2"]);
-
-    const refundImpacts = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId !== "",
-    ) as any[];
-    expect(refundImpacts).toHaveLength(2);
-
-    const negativeCash = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount < 0,
-    ) as any[];
-    expect(negativeCash).toHaveLength(2);
-
-    const positiveProceeds = result.impacts.filter(
-      (i) => i.type === "cash_change" && (i as any).amount > 0 && (i as any).intentId === "",
-    ) as any[];
-    expect(positiveProceeds).toHaveLength(2);
   });
 });

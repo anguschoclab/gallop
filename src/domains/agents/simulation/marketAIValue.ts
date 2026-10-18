@@ -5,7 +5,7 @@
  */
 
 import type { Horse, Stable } from "@/game/types";
-import { calculateUtilityScore } from "./personalitySystem";
+import { calculateUtilityAdjustment } from "./personalitySystem";
 import { getSuccessRate, getAdaptiveThreshold } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 import {
@@ -40,13 +40,13 @@ export function calculatePurchaseValue(
   score += Math.max(0, (valueRatio - 1) * 40);
 
   const factors: Record<string, number> = {
-    value_ratio: valueRatio,
-    horse_age: horse.age,
-    horse_rating: horseRating,
-    purchase_price: price,
+    value_ratio: Math.max(0, Math.min(1, valueRatio / 2)),
+    horse_age: Math.max(0, 1 - horse.age / 10),
+    horse_rating: Math.max(0, Math.min(1, horseRating / 100)),
+    purchase_price: Math.max(0, Math.min(1, price / 100000)),
   };
 
-  score = calculateUtilityScore(aiState.personalityState, "market_purchase", factors);
+  score += calculateUtilityAdjustment(aiState.personalityState, "market_purchase", factors);
 
   const contextKey = `${horse.age}`;
   const successRate = getSuccessRate(aiState.learningState, "market_purchase", contextKey);

@@ -34,8 +34,6 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
     setSelectedJockeyId,
     selectedPreset,
     setSelectedPreset,
-    wantToClaim,
-    setWantToClaim,
     horses,
     cash,
     day,
@@ -89,6 +87,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               isNewClaimingRace={isNewClaimingRace}
               day={day}
               onWithdrawFromClaimingRace={withdrawFromClaimingRace}
+              onWithdrawClaim={withdrawClaim}
               onWithdrawRace={withdrawRace}
               onClose={onClose}
             />
@@ -132,19 +131,12 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               isHorseQualifiedForRace={isHorseQualifiedForRace}
               isNewClaimingRace={isNewClaimingRace}
               claimingPrice={claimingPrice}
-              wantToClaim={wantToClaim}
               cash={cash}
             />
           )}
 
           {step === 5 && selectedHorse && (
-            <ClaimingStep
-              race={race}
-              selectedHorse={selectedHorse}
-              wantToClaim={wantToClaim}
-              onToggleClaim={setWantToClaim}
-              onWithdrawClaim={withdrawClaim}
-            />
+            <ClaimingStep race={race} selectedHorse={selectedHorse} />
           )}
         </div>
 
@@ -184,10 +176,7 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
                   ? cash <
                     (isHorseQualifiedForRace(selectedHorse, race)
                       ? selectedJockey.ridingFee + getTransportCostForRace(race)
-                      : race.entryFee +
-                        selectedJockey.ridingFee +
-                        getTransportCostForRace(race) +
-                        (wantToClaim ? race.claimingPrice! : 0))
+                      : race.entryFee + selectedJockey.ridingFee + getTransportCostForRace(race))
                   : true
               }
               className="uppercase font-black tracking-wide text-[10px] bg-primary text-primary-foreground px-8"

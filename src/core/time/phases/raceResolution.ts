@@ -14,7 +14,7 @@ import type { AnyImpact } from "@/core/resolver/impacts/index";
 import { rngForRace } from "@/core/race/rngForRace";
 import type { Race } from "@/game/types";
 import type { WeatherState } from "@/core/weather/weatherTypes";
-import type { ClaimingIntent, RaceResolutionIntent } from "@/core/resolver/intents";
+import type { RaceResolutionIntent } from "@/core/resolver/intents";
 import { resolveRacePort } from "@/core/time/pipelinePorts";
 import { recordNpcAiOutcomes } from "./raceResolutionHelpers";
 import { isLivePlayerImpact } from "@/core/race/liveRaceImpacts";
@@ -44,9 +44,6 @@ export const raceResolutionPhase: PipelinePhase = {
     // PRE-INDEX: Use shared context maps built at pipeline entry
     const { horseMap, jockeyMap } = context;
     const npcStableMap = context.stableMap;
-    // All horses once per pass — the per-race helpers need the plain array
-    // for pedigree/history scans and state.horses cannot change mid-phase.
-    const allHorses = Object.values(state.horses);
     const hallOfFameIds = new Set((state.hallOfFame ?? []).map((e) => e.horseId));
 
     // Clone the AI manager so NPC learning updates are applied as a new object.
@@ -146,10 +143,6 @@ export const raceResolutionPhase: PipelinePhase = {
           );
         }
 
-        // Track record, G1 history & Hall of Fame + claiming resolution
-        const claimIntents = context.intents.filter(
-          (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
-        );
         const postImpacts = generatePostRaceImpacts(
           race,
           impactRunners,
@@ -157,9 +150,6 @@ export const raceResolutionPhase: PipelinePhase = {
           newDay,
           state.trackRecords || {},
           hallOfFameIds,
-          claimIntents,
-          allHorses,
-          rng,
           context.ports,
           result,
         );
@@ -231,10 +221,6 @@ export const raceResolutionPhase: PipelinePhase = {
         impacts.push(impact);
       }
 
-      // --- Historical Records & Hall of Fame + claiming resolution ---
-      const claimIntents = context.intents.filter(
-        (i): i is ClaimingIntent => i.type === "claiming" && i.raceId === race.id,
-      );
       const postImpacts = generatePostRaceImpacts(
         race,
         runners,
@@ -242,9 +228,6 @@ export const raceResolutionPhase: PipelinePhase = {
         newDay,
         state.trackRecords || {},
         hallOfFameIds,
-        claimIntents,
-        allHorses,
-        rng,
         context.ports,
         result,
       );

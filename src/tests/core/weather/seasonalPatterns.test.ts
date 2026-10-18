@@ -11,6 +11,7 @@ import {
   REGIONAL_PATTERNS,
   COUNTRY_TO_REGION,
   getSeasonalModifiers,
+  getSeasonalModifiersForTrack,
   applyModifiers,
 } from "@/core/weather/seasonalModifiers";
 
@@ -166,11 +167,12 @@ describe("Seasonal Patterns", () => {
     });
 
     it("Florida: August-October should have hurricane/storm boost", () => {
-      const august = getSeasonalModifiers("USA", 8); // Florida mapped in regional
-
-      // Note: USA defaults to northeast, not Florida
-      // This test documents expected behavior
-      expect(true).toBe(true);
+      const gulfstream = "e0d1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a";
+      for (const month of [8, 9, 10]) {
+        const modifiers = getSeasonalModifiersForTrack(gulfstream, month);
+        expect(modifiers.some((m) => m.stormBoost && m.stormBoost > 0)).toBe(true);
+        expect(modifiers.some((m) => m.rainBoost && m.rainBoost > 0)).toBe(true);
+      }
     });
 
     it("Australia: December-February should have heat boost (bushfire)", () => {

@@ -30,7 +30,9 @@ vi.hoisted(() => {
 });
 
 import { createElement } from "react";
-import { cleanup } from "@testing-library/react";
+import { readdirSync, readFileSync } from "node:fs";
+import { join, relative } from "node:path";
+import { cleanup, screen } from "@testing-library/react";
 import { createRouterMock, NotFoundError } from "@/test-utils/routerMock";
 
 vi.mock("@tanstack/react-router", () => createRouterMock());
@@ -83,25 +85,47 @@ describe("Phase 1.4 — Empty state rendering", () => {
 // ---------------------------------------------------------------------------
 
 describe("Phase 1.4 — Design bible: hardcoded hex colors in components", () => {
-  it("JockeyPortrait uses hex colors for silk rendering (known exception)", () => {
-    expect(true).toBe(true);
+  const APPROVED_HEX_FILES: Record<string, string> = {
+    "components/jockey/JockeyPortrait.tsx": "procedural silk rendering colors",
+    "components/jockey/JockeyAvatar.stories.tsx": "story fixture silk colors",
+    "components/jockey/JockeyFilterPanel.tsx": "silk color filter options",
+    "components/jockey/FaceFeatures.tsx": "procedural portrait rendering",
+    "components/horse/FullBodySvg.tsx": "procedural horse rendering",
+    "components/horse/HeadSvg.tsx": "procedural horse rendering",
+    "components/race/RaceVisualizer.tsx": "race canvas color encoding",
+    "components/race/InRunningSnapshotDialog.tsx": "race visual color encoding",
+    "components/race/RunnerMoodFace.tsx": "procedural runner rendering",
+    "components/ui/chart.tsx": "chart-library CSS selector",
+    "components/briefing/RecapTab.tsx": "silk color fallback for replay charts",
+    "components/awards/VisualTrophy.tsx": "SVG trophy gradient colors",
+    "components/NewGameWizard/steps/StepSilks.tsx": "new-game silk color options",
+  };
+  const hexPattern = /#[0-9a-fA-F]{3,8}\b/;
+
+  function componentFiles(dir: string): string[] {
+    return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) return componentFiles(path);
+      return /\.(ts|tsx)$/.test(entry.name) ? [relative(process.cwd(), path)] : [];
+    });
+  }
+
+  it("keeps hardcoded hex usage limited to evidenced rendering/data exceptions", () => {
+    const files = componentFiles(join(process.cwd(), "src", "components"));
+    const offenders = files.filter((file) => hexPattern.test(readFileSync(file, "utf8")));
+    const normalizedOffenders = offenders
+      .map((file) => file.replaceAll("\\", "/").replace(/^src\//, ""))
+      .sort();
+
+    expect(normalizedOffenders).toEqual(Object.keys(APPROVED_HEX_FILES).sort());
   });
 
-  it("VisualTrophy uses hex colors for SVG gradient rendering (known exception)", () => {
-    expect(true).toBe(true);
-  });
-
-  it("ProceduralHorsePortrait uses hex colors for procedural rendering (known exception)", () => {
-    expect(true).toBe(true);
-  });
-
-  it("chart components use hex colors for data visualization (known exception)", () => {
-    expect(true).toBe(true);
-  });
-
-  it("StepSilks uses hex white as default for new silk configuration (known exception)", () => {
-    expect(true).toBe(true);
-  });
+  it.each(Object.entries(APPROVED_HEX_FILES))(
+    "%s still contains the approved hex usage (%s)",
+    (file) => {
+      expect(hexPattern.test(readFileSync(join(process.cwd(), "src", file), "utf8"))).toBe(true);
+    },
+  );
 });
 
 // ---------------------------------------------------------------------------
@@ -109,18 +133,29 @@ describe("Phase 1.4 — Design bible: hardcoded hex colors in components", () =>
 // ---------------------------------------------------------------------------
 
 describe("Phase 1.4 — Design bible: tabular-nums usage verification", () => {
-  it("AppShell cash display should use tabular-nums", async () => {
-    const mod: any = await import("@/components/AppShell");
-    const Component = mod.AppShell ?? mod.default;
-    if (!Component) return;
-    try {
-      const { container } = renderWithStore(createElement(Component), midGameSeed());
-      const elements = container.querySelectorAll("[class*='tabular-nums']");
-      expect(elements.length).toBeGreaterThan(0);
-    } catch {
-      // AppShell may need router context beyond our mock — skip if it fails
-      expect(true).toBe(true);
-    }
+  it("SidebarNav cash display uses tabular-nums", async () => {
+    const { SidebarNav } = await import("@/components/SidebarNav");
+    const noop = vi.fn();
+    const { container } = renderWithStore(
+      createElement(SidebarNav, {
+        day: 1,
+        cash: 100000,
+        horseCount: 0,
+        unreadCount: 0,
+        unreadMessages: [],
+        isAdvancing: false,
+        onAdvanceDay: noop,
+        onAdvanceWeek: noop,
+        onAdvanceMonth: noop,
+        onOpenAutoSim: noop,
+        onSkipToAuction: noop,
+        onSkipToRace: noop,
+        onStartNewGame: noop,
+      }),
+      midGameSeed(),
+    );
+    const cashDisplay = screen.getByText(/\$100,000/);
+    expect(cashDisplay.className).toContain("tabular-nums");
   });
 });
 

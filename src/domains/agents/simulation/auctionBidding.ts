@@ -1,5 +1,5 @@
 import type { Horse, Stable, AuctionLot } from "@/game/types";
-import { calculateUtilityScore } from "./personalitySystem";
+import { calculateUtilityAdjustment } from "./personalitySystem";
 import { getSuccessRate, getAdaptiveThreshold } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 import type { NpcRelationship } from "./npcCycleAI";
@@ -27,13 +27,13 @@ export function calculateBiddingValue(
   score += Math.max(0, (valueRatio - 1) * 30);
 
   const factors: Record<string, number> = {
-    value_ratio: valueRatio,
-    horse_age: horse.age,
-    horse_rating: horseRating,
-    current_bid: currentBid,
+    value_ratio: Math.max(0, Math.min(1, valueRatio / 2)),
+    horse_age: Math.max(0, 1 - horse.age / 10),
+    horse_rating: Math.max(0, Math.min(1, horseRating / 100)),
+    current_bid: Math.max(0, Math.min(1, currentBid / 100000)),
   };
 
-  score = calculateUtilityScore(aiState.personalityState, "bidding", factors);
+  score += calculateUtilityAdjustment(aiState.personalityState, "bidding", factors);
 
   const contextKey = `${horse.age}`;
   const successRate = getSuccessRate(aiState.learningState, "bidding", contextKey);

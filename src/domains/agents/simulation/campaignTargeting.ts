@@ -1,7 +1,7 @@
 import type { Horse, Stable } from "@/game/types";
 import type { GradedRace } from "@/core/data/gradedRacesAccessor";
 import type { TripleCrownProgress } from "@/core/calendar/campaignTypes";
-import { calculateUtilityScore } from "./personalitySystem";
+import { calculateUtilityAdjustment } from "./personalitySystem";
 import { getSuccessRate, getAdaptiveThreshold } from "./learningModule";
 import { calculateOverallRating } from "@/core/horse/stats";
 import { getTripleCrownKeysForArchetype } from "@/core/breeding/archetypes";
@@ -91,11 +91,11 @@ export function calculateRaceTargetScore(
 
   const factors: Record<string, number> = {
     race_prestige: race.triplecrownKey ? 1 : race.bcKey === "breeders-cup" ? 0.9 : 0.7,
-    horse_quality: calculateOverallRating(horse),
-    distance_fit: score,
+    horse_quality: Math.max(0, Math.min(1, calculateOverallRating(horse) / 100)),
+    distance_fit: Math.max(0, Math.min(1, score / 100)),
   };
 
-  score = calculateUtilityScore(aiState.personalityState, "campaign_targeting", factors);
+  score += calculateUtilityAdjustment(aiState.personalityState, "campaign_targeting", factors);
 
   const contextKey = `${stable.personality}:${race.key}`;
   const successRate = getSuccessRate(aiState.learningState, "campaign_targeting", contextKey);

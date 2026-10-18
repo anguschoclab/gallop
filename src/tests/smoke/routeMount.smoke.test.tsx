@@ -27,18 +27,31 @@ import { createRouterMock, NotFoundError } from "@/test-utils/routerMock";
 vi.mock("@tanstack/react-router", () => createRouterMock());
 
 import { renderWithStore, midGameSeed } from "@/test-utils/renderWithStore";
-import { componentRouteCases, redirectRouteCases } from "@/test-utils/routeDiscovery";
+import {
+  componentRouteCases,
+  discoveredRouteModules,
+  discoveredRouteNames,
+  redirectRouteCases,
+} from "@/test-utils/routeDiscovery";
 
 beforeEach(() => cleanup());
 afterEach(() => cleanup());
 
 describe("route mount smoke (real store)", () => {
-  it("discovers 59 component routes", () => {
-    expect(componentRouteCases.length).toBe(59);
-  });
+  it("discovers and classifies every non-root route", () => {
+    const classified = [...componentRouteCases, ...redirectRouteCases]
+      .map((routeCase) => routeCase.name)
+      .sort();
+    expect(classified).toEqual(discoveredRouteNames);
 
-  it("discovers 16 redirect-only routes", () => {
-    expect(redirectRouteCases.length).toBe(16);
+    for (const [path, mod] of Object.entries(discoveredRouteModules)) {
+      if (path.includes("__root")) continue;
+      const hasComponent = typeof mod.Route?.options?.component === "function";
+      const hasBeforeLoad = typeof mod.Route?.options?.beforeLoad === "function";
+      expect(hasComponent || hasBeforeLoad, `${path} must expose component or beforeLoad`).toBe(
+        true,
+      );
+    }
   });
 
   it.each(componentRouteCases)("$name mounts without throwing", ({ component }) => {

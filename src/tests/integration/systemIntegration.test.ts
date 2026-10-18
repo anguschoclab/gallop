@@ -1,7 +1,7 @@
 /**
  * Phase 1.5 — System Integration Tests (Track D)
  *
- * 1. Full pipeline test — all 52 phases execute in order
+ * 1. Full pipeline test — every registered phase executes through the compiled schedule
  * 2. Intent → Impact → State flow tests for multiple intent types
  * 3. NPC AI 7-day cycle test
  * 4. Awards ceremony flow test

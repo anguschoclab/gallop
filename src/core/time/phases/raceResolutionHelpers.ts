@@ -7,8 +7,6 @@ import type {
 } from "@/core/resolver/impacts/index";
 import type { Race, RaceRunner, Horse, Stable, Jockey } from "@/game/types";
 import type { TrackRecord } from "@/core/history/historyTypes";
-import type { Rng } from "@/core/common/rng";
-import type { ClaimingIntent } from "@/core/resolver/intents";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { recordRaceEntryOutcome } from "@/domains/agents/simulation/raceEntryAIRecording";
@@ -234,36 +232,4 @@ export function checkTrackRecordAndHof(
   }
 
   return impacts;
-}
-
-/**
- * Process claiming resolution for a race.
- *
- * @param race - The claiming race.
- * @param intents - All pipeline intents (filtered for matching claims).
- * @param horses - All horses in game state.
- * @param newDay - Current simulation day.
- * @param rng - Seeded RNG.
- * @param ports
- * @returns Array of claiming impacts.
- */
-export function resolveClaimingForRace(
-  race: Race,
-  intents: ClaimingIntent[],
-  horses: Horse[],
-  newDay: number,
-  rng: Rng,
-  ports?: PipelinePorts,
-): AnyImpact[] {
-  if (!race.claimingPrice || intents.length === 0) return [];
-
-  const resolveClaimingFn = resolveRacePort(ports, "resolveClaiming");
-  const { impacts: claimingImpacts } = resolveClaimingFn({
-    race,
-    claimIntents: intents,
-    horses,
-    newDay,
-    rng,
-  });
-  return claimingImpacts;
 }

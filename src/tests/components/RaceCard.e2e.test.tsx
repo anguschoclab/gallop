@@ -249,6 +249,13 @@ describe("RaceCard — end-to-end integration with WeatherForecastStrip", () => 
     expect(html).toContain("Entered");
   });
 
+  it("renders the claiming badge for the canonical claimingPrice field", () => {
+    const html = render(makeRace({ raceClass: "Claiming", claimingPrice: 25000 }));
+
+    expect(html).toContain("Claiming");
+    expect(html).toContain("25,000");
+  });
+
   // ── different patterns ────────────────────────────────────────────────────
   const PATTERNS = ["clear", "overcast", "shower", "rain", "snow", "storm"] as const;
 

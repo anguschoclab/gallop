@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   createTrainingAIState,
+  calculateTrainingPriority,
   shouldTrainToday,
   getPeriodizedFocus,
   detectOvertraining,
@@ -151,6 +152,28 @@ describe("shouldTrainToday", () => {
     const state = createTrainingAIState(stable);
     const horse = createMockHorse({ energy: 80 });
     expect(shouldTrainToday(state, horse, 100)).toBe(true);
+  });
+});
+
+describe("calculateTrainingPriority", () => {
+  it("prioritizes the deficient stat instead of discarding the base score for a utility fraction", () => {
+    const stable = createMockStable();
+    const state = createTrainingAIState(stable);
+    const horse = createMockHorse({
+      stats: {
+        speed: 40,
+        stamina: 70,
+        acceleration: 70,
+        consistency: 70,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+
+    const speedPriority = calculateTrainingPriority(state, horse, "speed", 10);
+    const staminaPriority = calculateTrainingPriority(state, horse, "stamina", 10);
+
+    expect(speedPriority).toBeGreaterThan(staminaPriority);
   });
 });
 

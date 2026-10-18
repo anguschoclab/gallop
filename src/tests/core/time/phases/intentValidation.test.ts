@@ -57,6 +57,31 @@ describe("intentValidationPhase", () => {
     expect(result.intents).not.toContain(invalidIntent);
   });
 
+  it("emits an explicit rejection outcome for invalid intents", () => {
+    const invalidIntent = {
+      id: "intent-1",
+      entityId: "nonexistent-horse",
+      source: "player" as const,
+      day: 1,
+      priority: 50,
+      type: "training" as const,
+      horseId: "nonexistent-horse",
+      trainingType: "speed" as const,
+    };
+    const state = makeGameState() as GameState;
+    const context = makePipelineContext({
+      state,
+      newDay: 1,
+      intents: [invalidIntent as any],
+    }) as PipelineContext;
+
+    const result = intentValidationPhase.execute(context);
+    expect(result.logs).toContainEqual({
+      day: 1,
+      text: "Intent rejected (training): Horse not found",
+    });
+  });
+
   it("should preserve context state and other properties", () => {
     const state = makeGameState() as GameState;
     const context = makePipelineContext({ state, newDay: 5 }) as PipelineContext;

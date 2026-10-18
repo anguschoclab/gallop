@@ -15,7 +15,7 @@
 
 import type { Horse, Stable } from "@/game/types";
 import { TRAINING_HISTORY_MAX_SIZE } from "@/constants";
-import { getPersonalityAIState, calculateUtilityScore } from "./personalitySystem";
+import { getPersonalityAIState, calculateUtilityAdjustment } from "./personalitySystem";
 import {
   createLearningState,
   recordLearningOutcome,
@@ -93,12 +93,12 @@ export function calculateTrainingPriority(
 
   // Personality modifiers
   const factors: Record<string, number> = {
-    stat_deficiency: deficiency,
-    energy: horse.energy,
-    age: horse.age,
+    stat_deficiency: Math.max(0, Math.min(1, deficiency / 40)),
+    energy: Math.max(0, Math.min(1, horse.energy / 100)),
+    age: Math.max(0, 1 - horse.age / 10),
   };
 
-  score = calculateUtilityScore(aiState.personalityState, "training", factors);
+  score += calculateUtilityAdjustment(aiState.personalityState, "training", factors, 10);
 
   // Learning-based adjustment
   const contextKey = `${horse.age}:${stat}`;

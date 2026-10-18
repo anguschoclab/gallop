@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
-import type { Race, Horse, Claim } from "@/game/types";
+import type { Race, Horse, Claim, GameState } from "@/game/types";
 
 /**
  * Props for the ClaimingRacePanel component.
@@ -27,6 +27,8 @@ interface ClaimingRacePanelProps {
   horses: Horse[];
   /** List of all claims to check for existing player claims. */
   claims: Claim[];
+  /** Pending player intents not yet persisted by the next day advance. */
+  pendingIntents?: NonNullable<GameState["pendingIntents"]>;
   /** Player's current cash balance. */
   cash: number;
   /** Callback function to file a claim. */
@@ -42,6 +44,7 @@ export function ClaimingRacePanel({
   race,
   horses,
   claims,
+  pendingIntents = [],
   cash,
   fileClaim,
 }: ClaimingRacePanelProps) {
@@ -50,9 +53,8 @@ export function ClaimingRacePanel({
   // Pre-calculate hash map for O(1) horse lookups instead of running O(N) .find() inside the map loops.
   const horseMap = useMemo(() => new Map(horses.map((h) => [h.id, h])), [horses]);
 
-  if (!race.claiming) return null;
-
-  const price = race.claiming.price;
+  const price = race.claimingPrice;
+  if (!price) return null;
 
   const pendingHorse = pendingClaimHorseId ? horseMap.get(pendingClaimHorseId) : null;
 
@@ -67,12 +69,20 @@ export function ClaimingRacePanel({
           {race.entries.map((entry) => {
             const entryHorse = horseMap.get(entry.horseId);
             const isOwned = entry.ownership?.type === "player";
-            const playerClaimFiled = claims.some(
-              (c) =>
-                c.raceId === race.id &&
-                c.horseId === entry.horseId &&
-                c.claimantStableId === undefined,
-            );
+            const playerClaimFiled =
+              claims.some(
+                (c) =>
+                  c.raceId === race.id &&
+                  c.horseId === entry.horseId &&
+                  c.claimantStableId === undefined,
+              ) ||
+              pendingIntents.some(
+                (intent) =>
+                  intent.type === "claiming" &&
+                  intent.raceId === race.id &&
+                  intent.horseId === entry.horseId &&
+                  intent.source === "player",
+              );
             const canAfford = cash >= price;
 
             return (
@@ -91,9 +101,7 @@ export function ClaimingRacePanel({
                 <div>
                   {!isOwned &&
                     (playerClaimFiled ? (
-                      <Button size="sm" variant="ghost" disabled className="text-xs">
-                        Claim filed
-                      </Button>
+                      <span className="text-xs text-muted-foreground">Claim filed.</span>
                     ) : canAfford ? (
                       <Button
                         size="sm"

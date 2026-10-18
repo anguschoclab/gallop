@@ -11,11 +11,19 @@ import { extname, join, relative } from "node:path";
 import * as ts from "typescript";
 import { GAME_PHASE_DESCRIPTORS } from "../src/core/time/phases/descriptors";
 import { GAME_PIPELINE_PHASES } from "../src/core/time/phases/index";
+import { ALL_VALIDATORS } from "../src/core/resolver/validators";
+import { INTENT_CAPABILITY_WAIVERS } from "../src/core/resolver/intentCapabilityWaivers";
+import type { AnyIntent } from "../src/core/resolver/intents";
 
 export interface SourceInput {
   path: string;
   text: string;
   family: "intent" | "impact";
+}
+
+export interface RuntimeSourceInput {
+  path: string;
+  text: string;
 }
 
 export interface IntentCoverage {
@@ -241,17 +249,83 @@ export function extractDiscriminatedContracts(inputs: SourceInput[]): string[] {
   return [...literals].sort();
 }
 
-function collectSourceText(projectRoot: string, directories: string[]): string {
+function collectRuntimeSources(projectRoot: string, directories: string[]): RuntimeSourceInput[] {
   return directories
     .flatMap((directory) => collectFiles(join(projectRoot, "src", directory), [".ts", ".tsx"]))
     .filter((path) => !path.includes(".test."))
-    .map(readFileSafe)
-    .join("\n");
+    .map((path) => ({ path: relative(projectRoot, path), text: readFileSafe(path) }));
 }
 
-function hasLiteral(text: string, value: string): boolean {
-  if (text.includes(`"${value}"`) || text.includes(`'${value}'`)) return true;
-  return new RegExp(`\\b${value}\\s*:`).test(text);
+function stringLiteralValue(node: ts.Node): string | undefined {
+  return ts.isStringLiteralLike(node) ? node.text : undefined;
+}
+
+function isTypeDiscriminatorExpression(expression: ts.Expression): boolean {
+  return (
+    (ts.isIdentifier(expression) && expression.text === "type") ||
+    (ts.isPropertyAccessExpression(expression) && expression.name.text === "type")
+  );
+}
+
+function isTypeSwitchCase(node: ts.CaseClause, value: string): boolean {
+  if (stringLiteralValue(node.expression) !== value) return false;
+  const caseBlock = node.parent;
+  const switchStatement = caseBlock?.parent;
+  return (
+    !!switchStatement &&
+    ts.isSwitchStatement(switchStatement) &&
+    isTypeDiscriminatorExpression(switchStatement.expression)
+  );
+}
+
+/**
+ * Detect a runtime `type` production/consumption edge without counting type
+ * declarations, comments, or unrelated string literals. This intentionally
+ * recognizes only executable property assignments, switch cases on `.type`, and
+ * `.type` equality checks.
+ */
+export function containsRuntimeContractLiteral(
+  inputs: readonly RuntimeSourceInput[],
+  value: string,
+): boolean {
+  for (const input of inputs) {
+    const parsed = ts.createSourceFile(input.path, input.text, ts.ScriptTarget.ES2022, true);
+    let found = false;
+    const visit = (node: ts.Node) => {
+      if (found) return;
+      if (
+        ts.isPropertyAssignment(node) &&
+        ((node.name.getText(parsed) === "type" && stringLiteralValue(node.initializer) === value) ||
+          (ts.isIdentifier(node.name) && node.name.text === value) ||
+          (ts.isStringLiteralLike(node.name) && node.name.text === value))
+      ) {
+        found = true;
+        return;
+      }
+      if (ts.isCaseClause(node) && isTypeSwitchCase(node, value)) {
+        found = true;
+        return;
+      }
+      if (
+        ts.isBinaryExpression(node) &&
+        [
+          ts.SyntaxKind.EqualsEqualsToken,
+          ts.SyntaxKind.EqualsEqualsEqualsToken,
+          ts.SyntaxKind.ExclamationEqualsToken,
+          ts.SyntaxKind.ExclamationEqualsEqualsToken,
+        ].includes(node.operatorToken.kind) &&
+        ((isTypeDiscriminatorExpression(node.left) && stringLiteralValue(node.right) === value) ||
+          (isTypeDiscriminatorExpression(node.right) && stringLiteralValue(node.left) === value))
+      ) {
+        found = true;
+        return;
+      }
+      ts.forEachChild(node, visit);
+    };
+    visit(parsed);
+    if (found) return true;
+  }
+  return false;
 }
 
 /** Compatibility view for callers that only need intent producer/resolver sets. */
@@ -320,36 +394,40 @@ export function runCapabilityAudit(projectRoot = process.cwd()): CapabilityAudit
   const impactDeclarations = collectDeclarations(impactInputs);
   const impacts = [...new Set(resolveContractLiterals("AnyImpact", impactDeclarations))].sort();
 
-  const playerText = collectSourceText(projectRoot, [
+  const playerSources = collectRuntimeSources(projectRoot, [
     "components",
     "routes",
     join("game", "store"),
     "hooks",
   ]);
-  const npcText = collectSourceText(projectRoot, [join("domains", "agents", "simulation")]);
-  const systemText = collectSourceText(projectRoot, ["core/time/phases"]);
-  const validatorText = collectSourceText(projectRoot, ["core/resolver/validators"]);
-  const resolverText = collectSourceText(projectRoot, [
+  const npcSources = collectRuntimeSources(projectRoot, [join("domains", "agents", "simulation")]);
+  const systemSources = collectRuntimeSources(projectRoot, ["core/time/phases"]);
+  const resolverSources = collectRuntimeSources(projectRoot, [
     "core/resolver/handlers",
     "core/time/phases",
   ]);
-
-  const byType: Record<string, IntentCoverage> = {};
-  for (const type of intents) {
-    byType[type] = {
-      type,
-      playerProduced: hasLiteral(playerText, type),
-      npcProduced: hasLiteral(npcText, type),
-      systemProduced: hasLiteral(systemText, type),
-      validated: hasLiteral(validatorText, type),
-      resolved: hasLiteral(resolverText, type),
-    };
-  }
 
   const registered = GAME_PIPELINE_PHASES.map((phase) => phase.name);
   const described = GAME_PHASE_DESCRIPTORS.map((descriptor) => descriptor.id);
   const registeredSet = new Set(registered);
   const describedSet = new Set(described);
+
+  const byType: Record<string, IntentCoverage> = {};
+  for (const type of intents) {
+    const phaseManaged =
+      !!INTENT_CAPABILITY_WAIVERS[type as AnyIntent["type"]]?.systemPhase &&
+      registeredSet.has(INTENT_CAPABILITY_WAIVERS[type as AnyIntent["type"]]!.systemPhase!);
+    byType[type] = {
+      type,
+      playerProduced: containsRuntimeContractLiteral(playerSources, type),
+      npcProduced: containsRuntimeContractLiteral(npcSources, type),
+      systemProduced: phaseManaged || containsRuntimeContractLiteral(systemSources, type),
+      validated: ALL_VALIDATORS.some((validator) =>
+        validator.canValidate(type as AnyIntent["type"]),
+      ),
+      resolved: phaseManaged || containsRuntimeContractLiteral(resolverSources, type),
+    };
+  }
 
   const srcFiles = collectFiles(join(projectRoot, "src"), [".ts", ".tsx"]).filter(
     (path) => !path.includes(".test.") && !path.includes(join("tests", "e2e")),
@@ -376,8 +454,8 @@ export function runCapabilityAudit(projectRoot = process.cwd()): CapabilityAudit
     },
     impacts: {
       all: impacts,
-      handled: impacts.filter((type) => hasLiteral(resolverText, type)),
-      unhandled: impacts.filter((type) => !hasLiteral(resolverText, type)),
+      handled: impacts.filter((type) => containsRuntimeContractLiteral(resolverSources, type)),
+      unhandled: impacts.filter((type) => !containsRuntimeContractLiteral(resolverSources, type)),
     },
     phases: {
       registered,
@@ -396,7 +474,9 @@ export function runCapabilityAudit(projectRoot = process.cwd()): CapabilityAudit
       totalIntents: intents.length,
       unhandledIntents: intents.filter((type) => !byType[type].resolved).length,
       totalImpacts: impacts.length,
-      unhandledImpacts: impacts.filter((type) => !hasLiteral(resolverText, type)).length,
+      unhandledImpacts: impacts.filter(
+        (type) => !containsRuntimeContractLiteral(resolverSources, type),
+      ).length,
       phasesRegistered: registered.length,
     },
   };

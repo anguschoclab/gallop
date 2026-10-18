@@ -155,6 +155,24 @@ describe("shouldPurchaseHorse", () => {
     expect(shouldPurchaseHorse(state, horse, 50000, stable, 1)).toBe(false);
   });
 
+  it("buys a clearly underpriced roster-fit horse instead of losing the base value score", () => {
+    const stable = createMockStable({ cash: 100000 });
+    const state = createMarketAIState(stable);
+    const horse = createMockHorse({
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+
+    expect(calculatePurchaseValue(state, horse, 10000, stable)).toBeGreaterThan(50);
+    expect(shouldPurchaseHorse(state, horse, 10000, stable, 1)).toBe(true);
+  });
+
   it("aggressive: threshold - 10 (more likely to buy)", () => {
     const stable = createMockStable({ cash: 1000000, personality: "aggressive" });
     const state = createMarketAIState(stable);
