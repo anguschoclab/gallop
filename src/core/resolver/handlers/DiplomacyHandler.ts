@@ -29,7 +29,7 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
 
 export class DiplomacyHandler implements ImpactHandler {
   canHandle(type: string): boolean {
-    return type in IMPACT_HANDLERS;
+    return Object.hasOwn(IMPACT_HANDLERS, type);
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
