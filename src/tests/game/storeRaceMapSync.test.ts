@@ -134,26 +134,28 @@ describe("races Record sync through store actions", () => {
     useGame.setState({
       day: 1,
       races: r2r([dueRace]),
-      horses: h2r([{
-        id: "h1",
-        ownership: { type: "player" },
-        stats: {
-          speed: 50,
-          stamina: 50,
-          acceleration: 50,
-          temperament: 50,
-          conformation: 50,
-          consistency: 50,
-        },
-        healthStatus: "healthy",
-        lifecycleStatus: "active",
-        racingViable: true,
-        training: {
-          focus: "speed",
-          intensity: "normal"
-        },
-        raceHistory: [],
-      } as any]),
+      horses: h2r([
+        {
+          id: "h1",
+          ownership: { type: "player" },
+          stats: {
+            speed: 50,
+            stamina: 50,
+            acceleration: 50,
+            temperament: 50,
+            conformation: 50,
+            consistency: 50,
+          },
+          healthStatus: "healthy",
+          lifecycleStatus: "active",
+          racingViable: true,
+          training: {
+            focus: "speed",
+            intensity: "normal",
+          },
+          raceHistory: [],
+        } as any,
+      ]),
       cash: 10000,
     });
 
