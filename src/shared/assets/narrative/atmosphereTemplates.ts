@@ -11,6 +11,14 @@ export const ATMOSPHERE_LONG_STRAIGHT_TEMPLATES: string[] = [
   "They're approaching one of the great straights in racing — {straightLength}m at {trackName}.",
   "The {straightLength}m run to the wire at {trackName} — this is where races are won and lost.",
   "A magnificent home straight at {trackName} — {straightLength}m of unadulterated racing.",
+  "They've hit the {straightLength}m straight at {trackName} — now it's a true test of speed.",
+  "{trackName}'s formidable {straightLength}m home straight stretches out in front of them.",
+  "It's a long way home at {trackName} — {straightLength}m to the wire.",
+  "The {straightLength}m straightaway at {trackName} is a beautiful sight for a horse with momentum.",
+  "They level out for the {straightLength}m sprint to the line at {trackName}.",
+  "There is nowhere to hide on the {straightLength}m straight at {trackName}.",
+  "The true champions reveal themselves on this {straightLength}m stretch at {trackName}.",
+  "They face the daunting {straightLength}m run-in that {trackName} is famous for.",
 ];
 
 export const ATMOSPHERE_TIGHT_TURN_TEMPLATES: string[] = [
@@ -26,6 +34,14 @@ export const ATMOSPHERE_TIGHT_TURN_TEMPLATES: string[] = [
   "Racing at {trackName} is all about negotiating those tight turns on the {circumference}m track.",
   "The {circumference}m circumference at {trackName} makes every race a tactical battle.",
   "There's no let-up on the tight {circumference}m track at {trackName}.",
+  "The dizzying {circumference}m circuit at {trackName} tests their balance to the limit.",
+  "Navigating the tight bends of {trackName}'s {circumference}m track is an art form.",
+  "They're cornering hard on this compact {circumference}m oval at {trackName}.",
+  "The sheer lack of straightaway on this {circumference}m track at {trackName} keeps them turning.",
+  "It's constant motion around the {circumference}m circuit here at {trackName}.",
+  "The small {circumference}m footprint of {trackName} makes for electric, close-quarters racing.",
+  "You need an agile horse for the {circumference}m loop at {trackName}.",
+  "Whipping around the turns of the {circumference}m bullring at {trackName}.",
 ];
 
 export const ATMOSPHERE_GRADED_TEMPLATES: string[] = [
@@ -41,6 +57,14 @@ export const ATMOSPHERE_GRADED_TEMPLATES: string[] = [
   "A {grade} race at {trackName} — the kind of race that defines careers.",
   "The {grade} prestige is palpable at {trackName} today.",
   "A top-tier {grade} event at {trackName} — this is what racing is all about.",
+  "The atmosphere crackles — this is {grade} racing at {trackName}.",
+  "Legends are born in {grade} contests like this one at {trackName}.",
+  "The cream of the crop has assembled for this {grade} feature at {trackName}.",
+  "A {grade} battle royale is underway at {trackName}.",
+  "This is what they breed them for — a {grade} showdown at {trackName}.",
+  "The grandstands at {trackName} are packed for this stellar {grade} event.",
+  "Elite company clashes in this highly anticipated {grade} race at {trackName}.",
+  "The tension is palpable for this {grade} classic at {trackName}.",
 ];
 
 export const ATMOSPHERE_TRIPLE_CROWN_TEMPLATES: string[] = [
