@@ -440,12 +440,12 @@
       "evidence": "No producer or registered handler referenced the contract; claim settlement emits horse_transfer and cash_change impacts."
     },
     {
-      "path": "src/hooks/shared/use-mobile.tsx",
+      "path": "src/shared/hooks/use-mobile.tsx",
       "disposition": "quarantined_unique",
       "evidence": "Responsive-layout primitive has no current production consumer; retained as an approved shared utility pending an adaptive-UI requirement."
     },
     {
-      "path": "src/hooks/shared/useIsClient.ts",
+      "path": "src/shared/hooks/useIsClient.ts",
       "disposition": "quarantined_unique",
       "evidence": "Client-hydration guard has dedicated test coverage but no current production consumer; retained as approved internal infrastructure rather than deleted."
     }

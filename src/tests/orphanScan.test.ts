@@ -88,11 +88,18 @@ function readFileSafe(filePath: string): string {
 
 // Collect all source files
 const srcRoot = join(PROJECT_ROOT, "src");
-const allTsxFiles = collectFiles(join(srcRoot, "components"), [".tsx"], [])
-  .concat(collectFiles(join(srcRoot, "routes"), [".tsx"], []))
-  .concat(collectFiles(join(srcRoot, "components"), [".ts"], []));
-
-const allCoreTsFiles = collectFiles(join(srcRoot, "core"), [".ts"], []);
+const allTsxFiles = ["domains", "shared", "platform", "routes"]
+  .flatMap((d) => collectFiles(join(srcRoot, d), [".tsx"], []))
+  .concat(
+    ["domains", "shared"].flatMap((d) =>
+      collectFiles(join(srcRoot, d), [".ts"], []).filter((f) =>
+        f.includes(`${sep}ui${sep}`),
+      ),
+    ),
+  );
+const allCoreTsFiles = ["domains", "platform", "shared"].flatMap((d) =>
+  collectFiles(join(srcRoot, d), [".ts"], []),
+);
 const agentsSimulationRoot = join(srcRoot, "domains", "agents", "simulation");
 const allAgentTsFiles = collectFiles(agentsSimulationRoot, [".ts"], []);
 const agentIntentGeneratorsPath = join(agentsSimulationRoot, "npc", "intentGenerators.ts");
@@ -382,7 +389,7 @@ describe("Orphan Scan: Store Slice Imports", () => {
   const wiredSlices: string[] = [];
 
   for (const slice of storeSlices) {
-    const importPath = `./slices/${slice}`;
+    const importPath = `slices/${slice}`;
     it(`${slice} is imported by store/index.ts`, () => {
       const storeText = readFileSafe(join(srcRoot, "platform", "game", "store", "index.ts"));
       const imported = storeText.includes(importPath);
