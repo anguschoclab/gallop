@@ -89,7 +89,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-purple-400">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.3em] text-cream flex items-center gap-2">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream flex items-center gap-2">
             <Truck className="h-4 w-4 text-purple-400" /> Transportation
           </CardTitle>
           <Badge className="bg-purple-400/10 text-purple-400 border-purple-400/30">

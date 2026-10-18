@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { generateNpcWithdrawalIntents } from "@/core/npc/intents/claimingIntents";
+import { generateNpcWithdrawalIntents } from "@/domains/agents/simulation/npc/intents/claimingIntents";
 import type { GameState, Horse, Race, Stable } from "@/game/types";
 import { createDefaultGameState } from "@/game/store/state";
 

@@ -104,7 +104,7 @@ export const Gazette: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+                    <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
                       Stable conditions across all regional tracks.
                     </div>
                   )}

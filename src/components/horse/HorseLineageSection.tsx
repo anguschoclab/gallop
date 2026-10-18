@@ -25,7 +25,7 @@ export function HorseLineageSection({
     <section id="lineage" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
         <GitBranch className="h-4 w-4 text-blue-400" />
-        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
           Heritage &amp; Ancestry
         </h2>
       </div>

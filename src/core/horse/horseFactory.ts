@@ -57,7 +57,7 @@ import {
 } from "@/core/horse/naming/nameGenerator.ts";
 import { PERSONALITY_CONFIG } from "@/core/stable/stableConfig";
 import { getRegionalSystem } from "@/core/race/naming/raceNameGenerator";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import {
   POTENTIAL_MIN,
   POTENTIAL_MAX,

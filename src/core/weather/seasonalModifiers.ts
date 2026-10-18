@@ -5,6 +5,8 @@
  * hurricane seasons, and other regional climate phenomena.
  */
 
+import { TRACK_BY_ID } from "@/core/data/tracksAccessor";
+
 /** Seasonal modifier configuration */
 export interface SeasonalModifier {
   /** Months (1-12) when modifier applies */
@@ -243,23 +245,64 @@ export const COUNTRY_TO_REGION: Record<string, string> = {
   Belgium: "france", // Similar patterns
 };
 
+/** Track-level region overrides where country defaults are too broad. */
+export const TRACK_REGION_OVERRIDES: Record<string, string> = {
+  // USA
+  "b1a2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d": "midwest_usa", // Churchill Downs
+  "c2b3d4e5-f6a7-4b8c-9d0e-1f2a3b4c5d6e": "northeast_usa", // Pimlico
+  "d3c4e5f6-a7b8-4c9d-0e1f-2a3b4c5d6e7f": "northeast_usa", // Belmont Park
+  "e4d5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a": "northeast_usa", // Saratoga
+  "f5e6a7b8-c9d0-4e1f-2a3b-4c5d6e7f8a9b": "southern_california", // Santa Anita
+  "a6f7b8c9-d0e1-4f2a-3b4c-5d6e7f8a9b0c": "midwest_usa", // Keeneland
+  "b7a8c9d0-e1f2-4a3b-4c5d-6e7f8a9b0c1d": "southern_california", // Del Mar
+  "c8b9d0e1-f2a3-4b4c-5d6e-7f8a9b0c1d2e": "northeast_usa", // Aqueduct
+  "d9c0e1f2-a3b4-4c5d-6e7f-8a9b0c1d2e3f": "gulf_coast", // Oaklawn Park
+  "e0d1f2a3-b4c5-4d6e-7f8a-9b0c1d2e3f4a": "florida", // Gulfstream Park
+  "b53304b4-2747-a9df-c4e0-eae0a22d26d6": "northeast_usa", // Monmouth Park
+  "17811b18-c6f8-189a-e337-3059c7141fc1": "gulf_coast", // Fair Grounds
+  "8f50ddd3-8a52-3d59-1a7c-4dbcfc18f687": "florida", // Tampa Bay Downs
+  "a3c468c5-780d-be43-eb9b-1c52fd9e5293": "gulf_coast", // Lone Star Park
+  "a03edeab-959e-1f62-a2ab-fe5e4d872b7d": "northeast_usa", // Belmont at the Big A
+
+  // Australia
+  "a1b2c3d4-e5f6-4a7b-8c9d-1e2f3a4b5c6d": "australia_vic", // Flemington
+  "b2c3d4e5-f6a7-4b8c-9d0e-2f3a4b5c6d7e": "australia_nsw", // Randwick
+  "c3d4e5f6-a7b8-4c9d-0e1f-3a4b5c6d7e8f": "australia_vic", // Caulfield
+  "d4e5f6a7-b8c9-4d0e-1f2a-4b5c6d7e8f9a": "australia_vic", // Moonee Valley
+  "e5f6a7b8-c9d0-4e1f-2a3b-5c6d7e8f9a0b": "australia_nsw", // Rosehill
+  "15077747-ba2f-c5e3-b512-df3dc38e5b48": "australia_nsw", // Eagle Farm
+  "af5bb92b-4c42-3ac2-8309-684ae631a644": "australia_vic", // Morphettville
+};
+
+function getRegionalSeasonalModifiers(region: string, month: number): SeasonalModifier[] {
+  const patternKeys = REGIONAL_PATTERNS[region] ?? [];
+  const result: SeasonalModifier[] = [];
+  for (const key of patternKeys) {
+    const modifier = SEASONAL_MODIFIERS[key];
+    if (modifier?.months.includes(month)) result.push(modifier);
+  }
+  return result;
+}
+
 /**
  * Get seasonal modifiers for a country and month
  * @param country
  * @param month
  */
 export function getSeasonalModifiers(country: string, month: number): SeasonalModifier[] {
-  const region = COUNTRY_TO_REGION[country] ?? "";
-  const patternKeys = REGIONAL_PATTERNS[region] ?? [];
+  return getRegionalSeasonalModifiers(COUNTRY_TO_REGION[country] ?? "", month);
+}
 
-  const result: SeasonalModifier[] = [];
-  for (const key of patternKeys) {
-    const mod = SEASONAL_MODIFIERS[key];
-    if (mod && mod.months.includes(month)) {
-      result.push(mod);
-    }
-  }
-  return result;
+/**
+ * Get seasonal modifiers for a specific track. Track overrides win so broad
+ * country defaults (for example USA -> northeast) do not erase local climates.
+ * @param trackId - Track identifier used to resolve the regional override
+ * @param month - Month number used for the seasonal pattern lookup
+ */
+export function getSeasonalModifiersForTrack(trackId: string, month: number): SeasonalModifier[] {
+  const track = TRACK_BY_ID[trackId];
+  const region = TRACK_REGION_OVERRIDES[trackId] ?? COUNTRY_TO_REGION[track?.country ?? ""] ?? "";
+  return getRegionalSeasonalModifiers(region, month);
 }
 
 /**

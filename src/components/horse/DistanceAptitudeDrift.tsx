@@ -65,7 +65,7 @@ export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
   if (driftData.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-6 bg-black/20 border border-white/5">
-        <p className="text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+        <p className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
           No aptitude drift data
         </p>
       </div>

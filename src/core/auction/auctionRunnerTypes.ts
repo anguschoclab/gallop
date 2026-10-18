@@ -1,6 +1,6 @@
 import type { AuctionLot, Horse, AuctionBidRecord } from "@/game/types";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
 export type ChantPhase = "open" | "bidding" | "going_once" | "going_twice" | "sold" | "passed";
 

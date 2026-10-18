@@ -4,7 +4,7 @@
  * This file provides the intent collection phase that collects all intents
  * for the current day from player, NPCs, and system.
  *
- * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent), @/core/npc/intentGenerators (generateNpcIntents), @/game/uuid (generateUUID)
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent), @/domains/agents/simulation/npc/intentGenerators (generateNpcIntents), @/game/uuid (generateUUID)
  * Related files: ../pipeline.ts (uses phase)
  */
 
@@ -14,7 +14,7 @@
 import { PHASE_ORDER_INTENT_COLLECTION } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import type { AnyIntent } from "@/core/resolver/intents";
-import { generateNpcIntents } from "@/core/npc/intentGenerators";
+import { generateNpcIntentsDetailed } from "@/domains/agents/simulation/npc/intentGenerators";
 import { generateUUID } from "@/core/uuid";
 
 /**
@@ -41,14 +41,14 @@ export const intentCollectionPhase: PipelinePhase = {
 
     // Collect NPC intents from NPC intent generators
     // Pass cached worldAssessment and pre-built maps from pipeline context to avoid redundant computation
-    const npcIntents = generateNpcIntents(
+    const npcGeneration = generateNpcIntentsDetailed(
       state,
       newDay,
       context.worldAssessment,
       context.horseMap as Map<string, import("@/game/types").Horse>,
       context.raceMap as Map<string, import("@/game/types").Race>,
     );
-    for (const intent of npcIntents) {
+    for (const intent of npcGeneration.intents) {
       intents.push(intent);
     }
 
@@ -95,14 +95,20 @@ export const intentCollectionPhase: PipelinePhase = {
       }
     }
 
+    const diagnosticLogs = npcGeneration.diagnostics.map((diagnostic) => ({
+      day: diagnostic.day,
+      text: `NPC intent generation skipped ${diagnostic.stableId}: ${diagnostic.message}`,
+    }));
+
     return {
       ...context,
       intents,
       state: {
         ...state,
+        npcAIManager: npcGeneration.npcAIManager ?? state.npcAIManager,
         pendingIntents: [], // Clear pending intents after collection
       },
-      logs: [...autoEntryLogs, ...context.logs],
+      logs: [...autoEntryLogs, ...context.logs, ...diagnosticLogs],
     };
   },
 };

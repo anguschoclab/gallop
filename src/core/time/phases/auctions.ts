@@ -19,9 +19,9 @@ import { createAuctionRunner } from "@/core/auction/runner";
 import { dayOfYear } from "@/core/calendar/dateFormatting";
 import { generateUUID } from "@/core/uuid";
 import { PHASE_ORDER_AUCTIONS, AUCTION_RETENTION_DAYS } from "@/constants";
-import { trackAuctionPrices } from "@/core/ai/economyAITracking";
+import { trackAuctionPrices } from "@/domains/agents/simulation/economyAITracking";
 import { calculateOverallRating } from "@/core/horse/stats";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
 /**
  * Phase: Auctions (order 90).

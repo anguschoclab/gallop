@@ -16,7 +16,6 @@ interface Props {
   isHorseQualifiedForRace: (horse: Horse, race: Race) => boolean;
   isNewClaimingRace: boolean;
   claimingPrice: number | undefined;
-  wantToClaim: boolean;
   cash: number;
 }
 
@@ -28,18 +27,13 @@ export function ReviewStep({
   isHorseQualifiedForRace,
   isNewClaimingRace,
   claimingPrice,
-  wantToClaim,
   cash,
 }: Props) {
   const transportCost = getTransportCostForRace(race);
   const qualified = isHorseQualifiedForRace(selectedHorse, race);
 
   const entryFee = qualified ? 0 : race.entryFee;
-  const totalDue =
-    entryFee +
-    selectedJockey.ridingFee +
-    transportCost +
-    (wantToClaim && claimingPrice ? claimingPrice : 0);
+  const totalDue = entryFee + selectedJockey.ridingFee + transportCost;
 
   return (
     <div className="space-y-6 animate-in zoom-in-95 duration-300">

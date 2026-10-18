@@ -5,8 +5,8 @@
  * campaigning in the visible race calendar, so their age, career record,
  * earnings and fame keep evolving instead of staying frozen.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/npc/careerTracker
- * Related files: src/core/npc/careerTracker.ts, phases/index.ts (registers phase)
+ * Dependencies: ../pipeline (PipelineContext), @/domains/agents/simulation/npc/careerTracker
+ * Related files: src/domains/agents/simulation/npc/careerTracker.ts, phases/index.ts (registers phase)
  */
 
 import type { PipelineContext, PipelinePhase } from "../pipeline";
@@ -18,7 +18,7 @@ import {
   isDueForOffscreenStart,
   simulateOffscreenStart,
   applyOffscreenStart,
-} from "@/core/npc/careerTracker";
+} from "@/domains/agents/simulation/npc/careerTracker";
 
 /**
  * Phase: NPC Career Tracker

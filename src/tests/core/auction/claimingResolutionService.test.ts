@@ -1,9 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { resolveClaimingResolution } from "@/core/auction/claimingResolutionService";
 import type { Race } from "@/game/types";
-import type { ClaimingIntent } from "@/core/resolver/intents";
+import type { ClaimResolutionInput } from "@/core/market/claimingImpacts";
 import { createRng } from "@/core/common/rng";
 import { createTestHorse } from "@/tests/helpers";
+import { makeNpcOwned } from "@/core/horse/ownership";
+import { asNpcStableId } from "@/core/types/branded";
 
 function mkRace(
   entries: { horseId: string; withdrawnFromClaiming?: boolean }[],
@@ -15,109 +17,66 @@ function mkRace(
     day: 10,
     claimingPrice,
     resolved: true,
-    entries: entries.map((e) => ({
-      horseId: e.horseId,
-      withdrawnFromClaiming: !!e.withdrawnFromClaiming,
+    entries: entries.map((entry) => ({
+      horseId: entry.horseId,
+      ownership: makeNpcOwned(asNpcStableId("stable0")),
+      withdrawnFromClaiming: !!entry.withdrawnFromClaiming,
     })),
   } as unknown as Race;
 }
 
+function mkClaim(overrides?: Partial<ClaimResolutionInput>): ClaimResolutionInput {
+  return {
+    id: "claim-1",
+    horseId: "h1",
+    claimantStableId: "stable1",
+    price: 10000,
+    ...overrides,
+  };
+}
+
+function resolve(race: Race, claims: ClaimResolutionInput[]) {
+  return resolveClaimingResolution({
+    race,
+    claims,
+    horses: [createTestHorse({ id: "h1", name: "Claimed Horse" })],
+    newDay: 11,
+    rng: createRng("test-seed"),
+    playerCash: 100000,
+    stableCash: new Map([
+      ["stable1", 100000],
+      ["stable2", 100000],
+    ]),
+  });
+}
+
 describe("resolveClaimingResolution", () => {
-  it("should process withdrawn claims and return refunds", () => {
-    const rng = createRng("test-seed");
-    const horse = createTestHorse({ id: "h1", name: "Claimed Horse" });
-    const race = mkRace([{ horseId: "h1", withdrawnFromClaiming: true }]);
-    const claimIntents: ClaimingIntent[] = [
-      {
-        id: "intent1",
-        type: "claiming",
-        horseId: "h1",
-        claimantStableId: "stable1",
-        claimingPrice: 10000,
-        raceId: "r1",
-        entityId: "stable1",
-        source: "player",
-        day: 10,
-        priority: 1,
-      },
-    ];
+  it("voids a withdrawn claim without a cash refund", () => {
+    const { impacts } = resolve(mkRace([{ horseId: "h1", withdrawnFromClaiming: true }]), [
+      mkClaim(),
+    ]);
 
-    const { impacts } = resolveClaimingResolution({
-      race,
-      claimIntents,
-      horses: [horse],
-      newDay: 11,
-      rng,
-    });
-
-    // Should have a refund cash impact and a log impact
-    expect(impacts).toHaveLength(2);
-    expect(
-      impacts.some(
-        (i) => i.type === "cash_change" && i.amount === 10000 && i.entityId === "stable1",
-      ),
-    ).toBe(true);
-    expect(impacts.some((i) => i.type === "log" && i.text.includes("withdrawn"))).toBe(true);
+    expect(impacts).toHaveLength(1);
+    expect(impacts[0]).toMatchObject({ type: "log" });
+    expect((impacts[0] as { text: string }).text).toContain("withdrawn");
   });
 
-  it("should process successful claims and losing claimant refunds", () => {
-    const rng = createRng("test-seed");
-    // Using a mocked rng to deterministically pick the winner if there are multiple
-    vi.spyOn(rng, "int").mockReturnValue(0); // Winner is first intent
+  it("settles one winner and emits no losing-claimant refund", () => {
+    const { impacts, transfers, losingClaims } = resolve(mkRace([{ horseId: "h1" }]), [
+      mkClaim({ id: "claim-1", claimantStableId: "stable1" }),
+      mkClaim({ id: "claim-2", claimantStableId: "stable2" }),
+    ]);
 
-    const horse = createTestHorse({ id: "h1", name: "Claimed Horse" });
-    const race = mkRace([{ horseId: "h1" }]);
-    const claimIntents: ClaimingIntent[] = [
-      {
-        id: "intent1",
-        type: "claiming",
-        horseId: "h1",
-        claimantStableId: "stable1",
-        claimingPrice: 10000,
-        raceId: "r1",
-        entityId: "stable1",
-        source: "player",
-        day: 10,
-        priority: 1,
-      },
-      {
-        id: "intent2",
-        type: "claiming",
-        horseId: "h1",
-        claimantStableId: "stable2",
-        claimingPrice: 10000,
-        raceId: "r1",
-        entityId: "stable2",
-        source: "player",
-        day: 10,
-        priority: 1,
-      },
-    ];
-
-    const { impacts } = resolveClaimingResolution({
-      race,
-      claimIntents,
-      horses: [horse],
-      newDay: 11,
-      rng,
-    });
-
-    // Impacts should include:
-    // 1. Claiming transfer (claiming)
-    // 2. Winner cash deduction (-10000)
-    // 3. Loser cash refund (+10000 for fromStableId if owned, but unowned here, still generates impact)
-    // 4. Logs
-    // 5. Loser refund (+10000 for stable2)
-
-    const claimingImpacts = impacts.filter((i) => i.type === "claiming");
-    expect(claimingImpacts).toHaveLength(1);
-    expect(claimingImpacts[0]).toMatchObject({ toStableId: "stable1" });
-
-    const refundImpacts = impacts.filter(
-      (i) => i.type === "cash_change" && i.amount === 10000 && i.entityId === "stable2",
-    );
-    expect(refundImpacts).toHaveLength(1);
-
-    vi.restoreAllMocks();
+    expect(transfers).toHaveLength(1);
+    expect(losingClaims).toHaveLength(1);
+    expect(impacts.filter((impact) => impact.type === "claiming")).toHaveLength(1);
+    expect(
+      impacts.some(
+        (impact) =>
+          impact.type === "cash_change" &&
+          (impact as any).entityId === losingClaims[0].claimantStableId &&
+          (impact as any).amount > 0,
+      ),
+    ).toBe(false);
   });
 });

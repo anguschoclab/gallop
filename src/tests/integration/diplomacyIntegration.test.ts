@@ -12,9 +12,9 @@ import {
   updateTrust,
   resolveDiplomaticInteractions,
   applyClaimingFriction,
-} from "@/core/ai/diplomacyAI";
+} from "@/domains/agents/simulation/diplomacyAI";
 import type { Stable } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable } from "@/tests/helpers";
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {

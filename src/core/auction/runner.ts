@@ -5,7 +5,7 @@
  * both the live AuctionTheater UI and the day-rollover phase, producing the same
  * final outcomes regardless of which path runs.
  *
- * Dependencies: ./uuid (generateUUID), ./types (AuctionSale, AuctionLot, Horse, Stable, AuctionBidRecord), ./auction (calculateNpcBid, netProceeds), ./rng (createRng, hashStr, Rng), @/core/resolver/impacts/index (AnyImpact), @/core/ai/npcCycleAI (NpcAIManager)
+ * Dependencies: ./uuid (generateUUID), ./types (AuctionSale, AuctionLot, Horse, Stable, AuctionBidRecord), ./auction (calculateNpcBid, netProceeds), ./rng (createRng, hashStr, Rng), @/core/resolver/impacts/index (AnyImpact), @/domains/agents/simulation/npcCycleAI (NpcAIManager)
  * Related files: auction.ts (valuation logic), auctionData.ts (sale configuration)
  */
 

@@ -29,7 +29,7 @@ function getProgressLabel(progress: number): string {
 export function PaceMap({ snapshots, runners }: PaceMapProps) {
   if (snapshots.length === 0) {
     return (
-      <div className="py-4 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+      <div className="py-4 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
         No pace data available for this race.
       </div>
     );

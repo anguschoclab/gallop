@@ -55,7 +55,7 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
           <div className="relative border-b border-gold/20 bg-slate-900/50 p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <div className="flex items-center gap-2 text-gold-bright uppercase tracking-[0.2em] font-[family-name:var(--font-display)] text-sm font-bold">
+                <div className="flex items-center gap-2 text-gold-bright uppercase tracking-[0.15em] font-[family-name:var(--font-display)] text-sm font-bold">
                   <Database className="h-4 w-4" />
                   Save & Load
                 </div>

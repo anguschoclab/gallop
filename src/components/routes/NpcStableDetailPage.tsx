@@ -219,7 +219,7 @@ function NpcStableDetailPage() {
                       </div>
                     ))}
                     {(!stable.staff || Object.keys(stable.staff).length === 0) && (
-                      <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+                      <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
                         No personnel records found.
                       </div>
                     )}
@@ -247,7 +247,7 @@ function NpcStableDetailPage() {
                 </>
               ) : (
                 <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
-                  <CardContent className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+                  <CardContent className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
                     No data yet.
                   </CardContent>
                 </Card>

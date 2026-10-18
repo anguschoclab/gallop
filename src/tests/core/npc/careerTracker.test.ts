@@ -8,7 +8,7 @@ import {
   applyOffscreenStart,
   summarizeNpcCareer,
   REAL_START_COOLDOWN_DAYS,
-} from "@/core/npc/careerTracker";
+} from "@/domains/agents/simulation/npc/careerTracker";
 import { createRng } from "@/core/common/rng";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Horse } from "@/game/types";

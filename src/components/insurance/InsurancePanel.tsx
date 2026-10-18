@@ -63,7 +63,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.3em] text-cream flex items-center gap-2">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream flex items-center gap-2">
             <Shield className="h-4 w-4 text-blue-400" /> Insurance
           </CardTitle>
           {policy && policy.type !== "none" && (

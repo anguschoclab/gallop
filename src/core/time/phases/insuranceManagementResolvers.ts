@@ -5,11 +5,22 @@
  */
 
 import type { PipelineContext } from "../pipeline";
-import type { AnyIntent, InsuranceClaimIntent } from "@/core/resolver/intents";
-import type { AnyImpact, CashImpact, InsurancePayoutImpact } from "@/core/resolver/impacts/index";
+import type {
+  AnyIntent,
+  InsuranceCancelIntent,
+  InsuranceClaimIntent,
+  InsurancePurchaseIntent,
+} from "@/core/resolver/intents";
+import type {
+  AnyImpact,
+  CashImpact,
+  InsuranceCancelImpact,
+  InsurancePayoutImpact,
+  InsurancePurchaseImpact,
+} from "@/core/resolver/impacts/index";
 import { generateUUID } from "@/core/uuid";
 import { calculateBaseHorseValue } from "@/core/horse/pricing";
-import { calculateDailyPremium } from "@/core/insurance/insuranceTypes";
+import { calculateDailyPremium, INSURANCE_CONFIG } from "@/core/insurance/insuranceTypes";
 import { resolveSyndicationIntent } from "@/core/resolver/resolvers/syndicateResolver";
 
 export function resolveInsuranceIntent(
@@ -20,6 +31,47 @@ export function resolveInsuranceIntent(
   const { state, newDay, horseMap, dailyRng } = context;
 
   switch (intent.type) {
+    case "insurance_purchase": {
+      const typedIntent = intent as InsurancePurchaseIntent;
+      const horse = horseMap.get(typedIntent.horseId);
+      if (!horse) return true;
+
+      const horseValue = calculateBaseHorseValue(horse, "mid");
+      impacts.push({
+        id: generateUUID(dailyRng),
+        intentId: intent.id,
+        day: newDay,
+        phase: "managementResolution",
+        logLevel: "always",
+        type: "insurance_purchase",
+        horseId: typedIntent.horseId,
+        policy: {
+          type: typedIntent.policyType,
+          premiumPerDay: calculateDailyPremium(typedIntent.policyType, horseValue),
+          coveragePercent: INSURANCE_CONFIG.COVERAGE[typedIntent.policyType],
+          activeSinceDay: newDay,
+        },
+        reason: `Purchased ${typedIntent.policyType} insurance for ${horse.name}`,
+      } as InsurancePurchaseImpact);
+      return true;
+    }
+
+    case "insurance_cancel": {
+      const typedIntent = intent as InsuranceCancelIntent;
+      if (!horseMap.has(typedIntent.horseId)) return true;
+      impacts.push({
+        id: generateUUID(dailyRng),
+        intentId: intent.id,
+        day: newDay,
+        phase: "managementResolution",
+        logLevel: "always",
+        type: "insurance_cancel",
+        horseId: typedIntent.horseId,
+        reason: "Insurance policy cancelled",
+      } as InsuranceCancelImpact);
+      return true;
+    }
+
     case "insurance_claim": {
       const typedIntent = intent as InsuranceClaimIntent;
       const horse = horseMap.get(typedIntent.horseId);

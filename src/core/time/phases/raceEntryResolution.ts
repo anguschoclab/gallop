@@ -29,10 +29,13 @@ import {
   selectBestJockey,
   createJockeyAIState,
   calculateJockeySuitability,
-} from "@/core/ai/jockeyAI";
-import { recordJockeyAssignment } from "@/core/ai/jockeyAIRetention";
+} from "@/domains/agents/simulation/jockeyAI";
+import { recordJockeyAssignment } from "@/domains/agents/simulation/jockeyAIRetention";
 import { selectBestFreeAgentJockey } from "@/core/jockey/selectFreeAgent";
-import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
+import {
+  getOrCreateStableAIState,
+  type NpcAIManager,
+} from "@/domains/agents/simulation/npcCycleAI";
 import { isPlayerOwned } from "@/core/horse/ownership";
 
 /**
@@ -49,7 +52,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
     const { intents, state, newDay } = context;
     const impacts: AnyImpact[] = [];
     const newTransactions: typeof state.transactions = [];
-    const newTransports = state.transports ?? [];
+    const newTransports = [...(state.transports ?? [])];
 
     // Filter for race entry and withdrawal intents
     const raceEntryIntents = intents.filter((i): i is RaceEntryIntent => i.type === "race_entry");

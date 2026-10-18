@@ -11,7 +11,7 @@ import { asNpcStableId } from "@/core/types/branded";
  */
 
 import { describe, it, expect } from "vitest";
-import { generateNpcIntents } from "@/core/npc/intentGenerators";
+import { generateNpcIntents } from "@/domains/agents/simulation/npc/intentGenerators";
 import { getAvailableTrainingTypes, createNPCFacilities } from "@/core/facilities";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";

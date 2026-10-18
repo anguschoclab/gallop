@@ -8,7 +8,10 @@ import type {
   OutpostImpact,
 } from "@/core/resolver/impacts/index";
 import { h2r } from "@/tests/helpers/sampleGameState";
-import type { Horse } from "@/game/types";
+import type { Horse, Stable } from "@/game/types";
+import { createTestStable } from "@/tests/helpers/createTestStable";
+import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import { createFacilityAIState } from "@/domains/agents/simulation/facilityAITypes";
 
 describe("InfrastructureHandler", () => {
   it("facility_upgrade updates facility level", () => {
@@ -35,6 +38,91 @@ describe("InfrastructureHandler", () => {
     handler.handle(draft, impact);
 
     expect(draft.facilities.training_track.level).toBe("premium");
+  });
+
+  it("facility_upgrade targets the owning NPC stable without changing player facilities", () => {
+    const handler = new InfrastructureHandler();
+    const playerFacility = {
+      type: "main_track",
+      level: "basic",
+      maintenanceCost: 10,
+      upgradeCost: 5000,
+      builtDay: 1,
+    };
+    const npcFacility = { ...playerFacility };
+    const state = {
+      horses: {},
+      facilities: { main_track: playerFacility },
+      npcFacilities: { "stable-1": { main_track: npcFacility } },
+    } as unknown as GameState;
+
+    const impact: FacilityUpgradeImpact = {
+      id: "imp-1",
+      intentId: "",
+      day: 10,
+      phase: "managementResolution",
+      logLevel: "always",
+      type: "facility_upgrade",
+      entityId: "stable-1",
+      facilityId: "main_track",
+      nextLevel: "standard",
+      cost: 5000,
+      reason: "NPC facility upgrade",
+    };
+
+    const draft: any = structuredClone(state);
+    handler.handle(draft, impact);
+
+    expect(draft.npcFacilities["stable-1"].main_track.level).toBe("standard");
+    expect(draft.facilities.main_track.level).toBe("basic");
+  });
+
+  it("records NPC facility investment learning when the upgrade impact is applied", () => {
+    const handler = new InfrastructureHandler();
+    const stable = createTestStable({ id: "stable-1", cash: 100_000 }) as Stable;
+    const stableAI = createStableAIState(stable, 1);
+    stableAI.facilityAI = createFacilityAIState(stable);
+    const facility = {
+      type: "main_track",
+      level: "basic",
+      maintenanceCost: 10,
+      upgradeCost: 5000,
+      builtDay: 1,
+    };
+    const state = {
+      horses: {},
+      npcStables: [stable],
+      npcFacilities: { "stable-1": { main_track: facility } },
+      npcAIManager: { stableStates: { "stable-1": stableAI }, globalDay: 10, regionalKings: {} },
+    } as unknown as GameState;
+    const impact: FacilityUpgradeImpact = {
+      id: "imp-1",
+      intentId: "intent-1",
+      day: 10,
+      phase: "managementResolution",
+      logLevel: "always",
+      type: "facility_upgrade",
+      entityId: "stable-1",
+      facilityId: "main_track",
+      nextLevel: "standard",
+      cost: 5000,
+      reason: "NPC facility upgrade",
+    };
+
+    const draft: any = structuredClone(state);
+    handler.handle(draft, impact);
+
+    const updatedAI = draft.npcAIManager.stableStates["stable-1"].facilityAI;
+    expect(updatedAI.investmentHistory).toHaveLength(1);
+    expect(updatedAI.investmentHistory[0]).toMatchObject({
+      facilityType: "main_track",
+      fromLevel: "basic",
+      toLevel: "standard",
+      cost: 5000,
+      stableId: "stable-1",
+      day: 10,
+    });
+    expect(updatedAI.roiTracking["main_track:standard"].totalInvestment).toBe(5000);
   });
 
   it("staff hire moves staff from pool to hiredStaff and deducts salary", () => {

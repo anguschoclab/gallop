@@ -18,6 +18,7 @@ interface Props {
   isNewClaimingRace: boolean;
   day: number;
   onWithdrawFromClaimingRace: (raceId: string, horseId: string) => void;
+  onWithdrawClaim: (raceId: string, horseId: string) => { ok: boolean; reason?: string };
   onWithdrawRace: (raceId: string, horseId: string) => { ok: boolean; reason?: string };
   onClose: () => void;
 }
@@ -31,6 +32,7 @@ export function HorseSelectionStep({
   isNewClaimingRace,
   day,
   onWithdrawFromClaimingRace,
+  onWithdrawClaim,
   onWithdrawRace,
   onClose,
 }: Props) {
@@ -78,6 +80,7 @@ export function HorseSelectionStep({
             isNewClaimingRace={isNewClaimingRace}
             day={day}
             onWithdrawFromClaimingRace={onWithdrawFromClaimingRace}
+            onWithdrawClaim={onWithdrawClaim}
             onWithdrawRace={onWithdrawRace}
             onClose={onClose}
             eligible={eligible}

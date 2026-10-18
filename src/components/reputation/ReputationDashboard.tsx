@@ -65,7 +65,7 @@ export function ReputationDashboard() {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-purple-400">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.3em] text-cream flex items-center gap-2">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream flex items-center gap-2">
             <Trophy className="h-4 w-4 text-purple-400" /> Reputation
           </CardTitle>
           <Badge className={cn("border-white/10", reputationColor(tier))}>

@@ -1,12 +1,12 @@
 import { describe, it, expect } from "vitest";
-import { createAuctionAIState, shouldConsignHorse } from "@/core/ai/auctionAI";
+import { createAuctionAIState, shouldConsignHorse } from "@/domains/agents/simulation/auctionAI";
 import {
   calculateBiddingValue,
   calculateMaxBid,
   shouldBidOnHorse,
   calculateBidIncrement,
   shouldYieldToAlly,
-} from "@/core/ai/auctionBidding";
+} from "@/domains/agents/simulation/auctionBidding";
 import {
   recordBiddingDecision,
   recordConsignmentDecision,
@@ -16,10 +16,10 @@ import {
   recordHammerPrice,
   evaluateConsignmentTiming,
   generatePostPurchasePlan,
-} from "@/core/ai/auctionRecording";
+} from "@/domains/agents/simulation/auctionRecording";
 import type { Horse, Stable, AuctionLot } from "@/game/types";
-import type { NpcRelationship } from "@/core/ai/npcCycleAI";
-import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
+import type { NpcRelationship } from "@/domains/agents/simulation/npcCycleAI";
+import type { EconomicTrend } from "@/domains/agents/simulation/strategicCoordinator";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
 function createMockHorse(overrides: Partial<Horse> = {}): Horse {
@@ -139,6 +139,24 @@ describe("calculateBiddingValue", () => {
     const goodScore = calculateBiddingValue(state, goodHorse, cheapLot, stable, 1);
     const poorScore = calculateBiddingValue(state, poorHorse, expensiveLot, stable, 1);
     expect(goodScore).toBeGreaterThan(poorScore);
+  });
+
+  it("keeps a clearly underpriced lot above the bidding decision threshold", () => {
+    const stable = createMockStable();
+    const state = createAuctionAIState(stable);
+    const horse = createMockHorse({
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+    const lot = createMockAuctionLot({ reservePrice: 10000, hammerPrice: 10000 });
+
+    expect(calculateBiddingValue(state, horse, lot, stable, 1)).toBeGreaterThan(50);
   });
 
   it("strategic bonus: +10 if portfolio needs horses", () => {

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { generateAllNpcHorses } from "@/core/npc/horseGenerator";
-import { generateAllStables } from "@/core/npc/stables";
+import { generateAllNpcHorses } from "@/domains/agents/simulation/npc/horseGenerator";
+import { generateAllStables } from "@/domains/agents/simulation/npc/stables";
 import { createRng, hashStr } from "@/core/common/rng";
 import { generateFamousStallions } from "@/data/famousStallions";
 

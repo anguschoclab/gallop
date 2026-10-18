@@ -1,0 +1,213 @@
+/**
+ * npc/npcCycle.ts - NPC cycle orchestration
+ *
+ * This file provides the main NPC cycle orchestration that coordinates
+ * NPC training, race entry, horse fame updates, and AI state management.
+ *
+ * Dependencies: @/game/types (Horse, Race, Stable, Jockey), @/core/common/rng (Rng), @/domains/agents/simulation/npcCycleAI (NpcAIManager, getOrCreateStableAIState, updateStableAIState, pruneAllLearningData), ./npcFame (calculateFameGainsForRaces), ./npcRegionalDominance (resolveRegionalDominance, applyFrictionDecay), @/core/horse/fans (calculateFanGainsForRaces)
+ * Related files: intentGenerators.ts (provides intent generation)
+ */
+
+import type { Horse, Race, Stable, Jockey } from "@/game/types";
+import type { ReputationEvent } from "@/core/reputation/reputationTypes";
+import type { Rng } from "@/core/common/rng";
+import {
+  NpcAIManager,
+  getOrCreateStableAIState,
+  updateStableAIState,
+  pruneAllLearningData,
+} from "@/domains/agents/simulation/npcCycleAI";
+import type { PlayerFacilities } from "@/core/facilities/facilityTypes";
+import type { NewsItem } from "@/core/narrative/newsTypes";
+import { calculateFanGainsForRaces } from "@/core/horse/fans";
+import { calculateFameGainsForRaces } from "./npcFame";
+import { resolveRegionalDominance, applyFrictionDecay } from "./npcRegionalDominance";
+
+// Re-export fame functions for backward compatibility
+export { calculateFameGainsForRaces, applyFameGainsToHorses } from "./npcFame";
+
+/**
+ * NPC Cycle Result
+ */
+export interface NpcCycleDiagnostic {
+  stableId?: string;
+  day: number;
+  phase: "npc_cycle";
+  message: string;
+}
+
+export interface NpcCycleResult {
+  horses: Horse[];
+  races: Race[];
+  jockeys: Jockey[];
+  aiManager: NpcAIManager;
+  npcFacilities?: Record<string, PlayerFacilities>;
+  newsItems?: NewsItem[];
+  reputationEvents?: ReputationEvent[];
+  cashChanges?: Array<{ stableId: string; amount: number; reason: string }>;
+  fameChanges?: Array<{ horseId: string; delta: number }>;
+  fanChanges?: Array<{ horseId: string; delta: number }>;
+  diagnostics: NpcCycleDiagnostic[];
+}
+
+/**
+ * Run the complete NPC cycle for a single day
+ * This orchestrates:
+ * 1. NPC Training (handled via Intent pipeline)
+ * 2. NPC Race Entry (handled via Intent pipeline)
+ * 3. Horse Fame Updates for today's resolved races
+ * 4. AI state management and pruning
+ *
+ * @param npcStables - Array of NPC stables
+ * @param horses - Current horse roster
+ * @param jockeys - Current jockeys
+ * @param races - Current race schedule
+ * @param currentDay - The current game day
+ * @param rng - Random number generator
+ * @param raceEntryDaysAhead - How many days ahead to enter races (default: 3)
+ * @param pregnantIds - Set of IDs for pregnant mares
+ * @param aiManager - Existing AI manager
+ * @param npcFacilities - Optional record of NPC facilities
+ * @returns Updated horses, races, and AI manager
+ */
+export function runNpcCycle(
+  npcStables: Stable[],
+  horses: Horse[],
+  jockeys: Jockey[],
+  races: Race[],
+  currentDay: number,
+  rng: Rng,
+  raceEntryDaysAhead: number = 3,
+  pregnantIds: Set<string> = new Set(),
+  aiManager: NpcAIManager = { stableStates: {}, globalDay: currentDay, regionalKings: {} },
+  npcFacilities?: Record<string, PlayerFacilities>,
+): NpcCycleResult {
+  const diagnostics: NpcCycleDiagnostic[] = [];
+  try {
+    // Skip if no NPC stables
+    if (npcStables.length === 0) {
+      return {
+        horses,
+        races,
+        jockeys,
+        aiManager,
+        cashChanges: [],
+        fameChanges: [],
+        fanChanges: [],
+        diagnostics,
+      };
+    }
+
+    // 1. NPC Training and 2. NPC Race Entry are now handled via the Intent/Impact pipeline
+    const horsesAfterTraining = horses;
+    const racesAfterEntry = races;
+    const cashChanges: Array<{ stableId: string; amount: number; reason: string }> = [];
+    let fameChanges: Array<{ horseId: string; delta: number }> = [];
+    let fanChanges: Array<{ horseId: string; delta: number }> = [];
+
+    // 3. Calculate fame gains for horses in today's resolved races (do not mutate horses here).
+    const todaysResolvedRaces = races.filter((r) => r.day === currentDay && r.resolved && r.result);
+
+    if (todaysResolvedRaces.length > 0) {
+      const fameGains = calculateFameGainsForRaces(todaysResolvedRaces);
+      if (fameGains.size > 0) {
+        fameChanges = Array.from(fameGains.entries()).map(([horseId, delta]) => ({
+          horseId,
+          delta,
+        }));
+      }
+
+      const fanGains = calculateFanGainsForRaces(todaysResolvedRaces);
+      if (fanGains.size > 0) {
+        fanChanges = Array.from(fanGains.entries()).map(([horseId, delta]) => ({
+          horseId,
+          delta,
+        }));
+      }
+    }
+
+    // 4. AI state management
+    let updatedAiManager: NpcAIManager = {
+      ...aiManager,
+      globalDay: currentDay,
+      stableStates: Object.fromEntries(
+        Object.entries(aiManager.stableStates).map(([id, s]) => [id, { ...s }]),
+      ),
+      regionalKings: { ...(aiManager.regionalKings || {}) },
+    };
+
+    // Regional dominance & friction decay
+    const dominanceResult = resolveRegionalDominance(
+      todaysResolvedRaces,
+      horses,
+      npcStables,
+      updatedAiManager,
+      currentDay,
+      rng,
+    );
+    updatedAiManager = dominanceResult.aiManager;
+    const newsItems: NewsItem[] = [...dominanceResult.newsItems];
+
+    // Collect smart notification news items from intent generation
+    if (updatedAiManager.pendingNewsItems && updatedAiManager.pendingNewsItems.length > 0) {
+      newsItems.push(...updatedAiManager.pendingNewsItems);
+      updatedAiManager.pendingNewsItems = [];
+    }
+
+    updatedAiManager = applyFrictionDecay(updatedAiManager);
+
+    // Create or update AI state for each stable
+    for (const stable of npcStables) {
+      try {
+        const stableAIState = getOrCreateStableAIState(updatedAiManager, stable, currentDay);
+
+        // Update stable state in manager
+        updatedAiManager.stableStates[stable.id] = updateStableAIState(stableAIState, currentDay);
+      } catch (error) {
+        diagnostics.push({
+          stableId: stable.id,
+          day: currentDay,
+          phase: "npc_cycle",
+          message: error instanceof Error ? error.message : String(error),
+        });
+      }
+    }
+
+    // Prune old learning data
+    const cutoffDay = currentDay - 90;
+    updatedAiManager = pruneAllLearningData(updatedAiManager, cutoffDay);
+
+    return {
+      horses,
+      races: racesAfterEntry,
+      jockeys,
+      aiManager: updatedAiManager,
+      npcFacilities,
+      newsItems,
+      reputationEvents: dominanceResult.reputationEvents,
+      cashChanges,
+      fameChanges,
+      fanChanges,
+      diagnostics,
+    };
+  } catch (error) {
+    diagnostics.push({
+      day: currentDay,
+      phase: "npc_cycle",
+      message: error instanceof Error ? error.message : String(error),
+    });
+    // Return original state on error to prevent corruption
+    return {
+      horses,
+      races,
+      jockeys,
+      aiManager,
+      npcFacilities,
+      newsItems: [],
+      cashChanges: [],
+      fameChanges: [],
+      fanChanges: [],
+      diagnostics,
+    };
+  }
+}

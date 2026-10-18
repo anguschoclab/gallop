@@ -23,7 +23,7 @@ vi.mock("@/hooks/horse/useHorseCard", () => ({
   }),
 }));
 
-vi.mock("@/core/npc/scouting", () => ({
+vi.mock("@/domains/agents/simulation/npc/scouting", () => ({
   calculateScoutCost: () => 100,
   getDisplayableStats: () => ({
     stats: { speed: 70, stamina: 70, acceleration: 70, consistency: 70 },

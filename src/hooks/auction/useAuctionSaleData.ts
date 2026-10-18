@@ -8,7 +8,7 @@ import { useGame, useGameWithShallow } from "@/game/store";
 import type { AuctionLot } from "@/game/types";
 import type { AuctionBrowseSearch } from "@/components/auction/auctionSearchSchema";
 import { filterAndSortLots } from "@/services/auction/auctionLotFilter";
-import { getDisplayableStats } from "@/core/npc/scouting";
+import { getDisplayableStats } from "@/domains/agents/simulation/npc/scouting";
 import {
   useDismissedAuctionErrors,
   type AuctionErrorType,

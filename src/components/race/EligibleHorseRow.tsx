@@ -18,6 +18,7 @@ interface EligibleHorseRowProps {
   isNewClaimingRace: boolean;
   day: number;
   onWithdrawFromClaimingRace: (raceId: string, horseId: string) => void;
+  onWithdrawClaim: (raceId: string, horseId: string) => { ok: boolean; reason?: string };
   onWithdrawRace: (raceId: string, horseId: string) => { ok: boolean; reason?: string };
   onClose: () => void;
   eligible: boolean;
@@ -33,11 +34,16 @@ export function EligibleHorseRow({
   isNewClaimingRace,
   day,
   onWithdrawFromClaimingRace,
+  onWithdrawClaim,
   onWithdrawRace,
   onClose,
   eligible,
   isEntered,
 }: EligibleHorseRowProps) {
+  const raceEntry = race.entries.find((entry) => entry.horseId === horse.id);
+  const optionalClaiming =
+    race.raceClass === "OptionalClaiming" || race.raceClass === "MaidenOptionalClaiming";
+
   return (
     <div
       className={`flex items-center justify-between p-3 rounded-lg border transition-all ${
@@ -78,13 +84,29 @@ export function EligibleHorseRow({
       </button>
       <div className="flex items-center gap-2">
         {isEntered && isNewClaimingRace && (
-          <ClaimingWithdrawButton
-            race={race}
-            horse={horse}
-            day={day}
-            onWithdraw={onWithdrawFromClaimingRace}
-            onClose={onClose}
-          />
+          <div className="flex flex-col items-end gap-1">
+            {optionalClaiming && !raceEntry?.withdrawnFromClaiming && (
+              <ClaimingOptOutButton
+                race={race}
+                horse={horse}
+                day={day}
+                onWithdraw={onWithdrawClaim}
+                onClose={onClose}
+              />
+            )}
+            {raceEntry?.withdrawnFromClaiming && (
+              <Badge variant="outline" className="text-[9px]">
+                Not claimable
+              </Badge>
+            )}
+            <ClaimingWithdrawButton
+              race={race}
+              horse={horse}
+              day={day}
+              onWithdraw={onWithdrawFromClaimingRace}
+              onClose={onClose}
+            />
+          </div>
         )}
         {isEntered && !isNewClaimingRace && (
           <Button
@@ -147,6 +169,44 @@ function TrackVisitsBadge({ horse, race }: { horse: Horse; race: Race }) {
   }
 }
 
+function ClaimingOptOutButton({
+  race,
+  horse,
+  day,
+  onWithdraw,
+  onClose,
+}: {
+  race: Race;
+  horse: Horse;
+  day: number;
+  onWithdraw: (raceId: string, horseId: string) => { ok: boolean; reason?: string };
+  onClose: () => void;
+}) {
+  const canWithdraw = day < race.day;
+  return (
+    <DisabledTooltipWrapper reason={!canWithdraw ? "Post time passed" : false}>
+      <Button
+        variant="outline"
+        size="sm"
+        className="text-[9px] uppercase font-black tracking-wider"
+        disabled={!canWithdraw}
+        onClick={(e) => {
+          e.stopPropagation();
+          const result = onWithdraw(race.id, horse.id);
+          if (result.ok) {
+            toast.success(`${horse.name} withdrawn from claiming and remains entered.`);
+            onClose();
+          } else {
+            toast.error(`Withdrawal failed: ${result.reason}`);
+          }
+        }}
+      >
+        Withdraw from claiming
+      </Button>
+    </DisabledTooltipWrapper>
+  );
+}
+
 function ClaimingWithdrawButton({
   race,
   horse,
@@ -177,7 +237,7 @@ function ClaimingWithdrawButton({
           }
         }}
       >
-        {canWithdraw ? "Withdraw" : "Withdrawal closed"}
+        {canWithdraw ? "Withdraw entry" : "Withdrawal closed"}
       </Button>
     </DisabledTooltipWrapper>
   );

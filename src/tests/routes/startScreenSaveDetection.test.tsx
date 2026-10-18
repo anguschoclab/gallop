@@ -24,7 +24,7 @@ vi.mock("@/assets/hero-racetrack-races.jpg", () => ({ default: "hero2" }));
 vi.mock("@/assets/hero-stable.jpg", () => ({ default: "hero3" }));
 vi.mock("@/assets/hero-grandstand.jpg", () => ({ default: "hero4" }));
 
-import { StartScreen } from "@/routes/start";
+import { StartScreen } from "@/components/routes/StartScreen";
 import { useGame } from "@/game/store";
 import { saveExists } from "@/game/store/storage";
 

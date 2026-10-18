@@ -36,7 +36,7 @@ describe("claimResolutionPhase", () => {
       raceClass: "Stakes" as const,
       entryFee: 100,
       purse: 50000,
-      claiming: { price: 50000 },
+      claimingPrice: 50000,
     };
     const state = makeGameState({
       claims: [claim as any],

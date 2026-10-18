@@ -22,7 +22,6 @@ export function createRaceEntryActions(
   | "withdrawRace"
   | "setRaceTactics"
   | "resolveRaceWithImpacts"
-  | "submitClaim"
   | "withdrawClaim"
   | "purchaseInsurance"
   | "cancelInsurance"
@@ -275,33 +274,23 @@ export function createRaceEntryActions(
       return submit();
     },
 
-    submitClaim: (raceId: string, horseId: string) => {
-      const s = get();
-      const race = s.races[raceId];
-      if (!race) return { ok: false, reason: "Race not found." };
-      const horse = s.horses[horseId];
-      if (!horse) return { ok: false, reason: "Horse not found." };
-      if (isPlayerOwned(horse)) return { ok: false, reason: "Cannot claim your own horse." };
-
-      enqueueIntent({
-        id: generateUUID(),
-        entityId: horseId,
-        source: "player",
-        day: s.day,
-        priority: 100,
-        type: "claiming",
-        raceId,
-        horseId,
-        claimingPrice: race.claimingPrice || 0,
-      });
-
-      return { ok: true };
-    },
-
     withdrawClaim: (raceId: string, horseId: string) => {
       const s = get();
       const race = s.races[raceId];
       if (!race) return { ok: false, reason: "Race not found." };
+      if (race.claimingPrice === undefined) {
+        return { ok: false, reason: "Race is not a claiming race." };
+      }
+      if (race.raceClass !== "OptionalClaiming" && race.raceClass !== "MaidenOptionalClaiming") {
+        return { ok: false, reason: "Withdrawal is only available in optional claiming races." };
+      }
+      const horse = s.horses[horseId];
+      if (!horse) return { ok: false, reason: "Horse not found." };
+      if (!isPlayerOwned(horse)) return { ok: false, reason: "Horse not owned." };
+      if (!race.entries.some((entry) => entry.horseId === horseId)) {
+        return { ok: false, reason: "Horse is not entered in this race." };
+      }
+      if (s.day >= race.day) return { ok: false, reason: "Post time has passed." };
 
       enqueueIntent({
         id: generateUUID(),

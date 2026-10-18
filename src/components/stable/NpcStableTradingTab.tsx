@@ -17,7 +17,7 @@ import { createDefaultExchangeState } from "@/services/market/marketFacade";
 
 const CARD = "bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4";
 const HEAD = "text-[10px] font-black uppercase tracking-wide text-cream/40";
-const EMPTY = "p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic";
+const EMPTY = "p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide";
 
 export function NpcStableTradingTab({ stableId }: { stableId: string }) {
   const syndicates = useGameWithShallow((s: GameState) => s.syndicates ?? {});

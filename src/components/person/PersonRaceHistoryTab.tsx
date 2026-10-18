@@ -139,14 +139,14 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
 
       <Card className="bg-slate-900/40 border-white/5 rounded-none border-l-4 border-l-gold">
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.3em] text-cream">
+          <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.15em] text-cream">
             <History className="h-4 w-4 text-gold" />
             Race History
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {filteredRows.length === 0 ? (
-            <div className="p-12 text-center text-[10px] font-mono text-cream/30 uppercase tracking-wide italic">
+            <div className="p-12 text-center text-[10px] font-mono text-cream/30 uppercase tracking-wide">
               No race records on file.
             </div>
           ) : (

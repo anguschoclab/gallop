@@ -12,7 +12,7 @@ import type { GameState } from "@/game/types";
 import type { RaceEntryIntent, RaceWithdrawalIntent } from "@/core/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { createJockeyAIState } from "@/core/ai/jockeyAI";
+import { createJockeyAIState } from "@/domains/agents/simulation/jockeyAI";
 import { asNpcStableId } from "@/core/types/branded";
 import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 
@@ -66,6 +66,46 @@ describe("raceEntryResolutionPhase", () => {
     expect(result.impacts).toHaveLength(2);
     expect(result.impacts[0].type).toBe("race_entry");
     expect(result.impacts[1].type).toBe("cash_change");
+  });
+
+  it("does not mutate the input transports array while enqueueing transport", () => {
+    const horse = createTestHorse({ id: "horse-1" });
+    const transports: GameState["transports"] = [];
+    const state: GameState = {
+      ...createTestState(),
+      horses: h2r([horse]),
+      transports,
+      races: r2r([
+        {
+          id: "race-1",
+          name: "Test Race",
+          day: 5,
+          distance: 2000,
+          raceClass: "Maiden",
+          entryFee: 500,
+          purse: 10000,
+          minStat: 70,
+          fieldSize: 8,
+          entries: [],
+          resolved: false,
+        },
+      ]),
+    };
+    const intent: RaceEntryIntent = {
+      id: "intent-1",
+      day: 1,
+      type: "race_entry",
+      entityId: "horse-1",
+      priority: 100,
+      source: "player",
+      horseId: "horse-1",
+      raceId: "race-1",
+    };
+
+    const result = raceEntryResolutionPhase.execute(createTestContext(state, [intent]));
+
+    expect(transports).toHaveLength(0);
+    expect(result.state.transports).toHaveLength(1);
   });
 
   it("should skip non-race entry intents", () => {

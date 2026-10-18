@@ -17,7 +17,10 @@ import type { Rng } from "@/core/common/rng";
 import type { AnyIntent } from "@/core/resolver/intents";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { ImpactLogEntry } from "@/core/resolver/resolver";
-import type { WorldAssessment, EconomicTrend } from "@/core/ai/strategicCoordinator";
+import type {
+  WorldAssessment,
+  EconomicTrend,
+} from "@/domains/agents/simulation/strategicCoordinator";
 import type { PipelinePorts } from "@/core/time/pipelinePorts";
 
 export interface PipelineContext {

@@ -28,7 +28,7 @@ export function BeyerChart({ history }: { history: Entry[] }) {
   if (data.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-10 bg-black/20 border border-white/5">
-        <p className="text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+        <p className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
           Zero Velocity Data Logged
         </p>
       </div>

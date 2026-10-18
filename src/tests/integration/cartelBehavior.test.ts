@@ -11,10 +11,10 @@ import {
   coordinateCartelAction,
   calculateDynamicStudFee,
   calculateAuctionReservePrice,
-} from "@/core/ai/economyAICartel";
-import { formCartel } from "@/core/ai/diplomacyAI";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
-import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
+} from "@/domains/agents/simulation/economyAICartel";
+import { formCartel } from "@/domains/agents/simulation/diplomacyAI";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import type { EconomicTrend } from "@/domains/agents/simulation/strategicCoordinator";
 
 function createMockAIState(
   stableId: string,

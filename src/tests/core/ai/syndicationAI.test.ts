@@ -6,7 +6,7 @@ import {
   recordSyndicationOutcome,
   shouldCreateSyndicateWithLearning,
   getSyndicationSuccessRate,
-} from "@/core/ai/syndicationAI";
+} from "@/domains/agents/simulation/syndicationAI";
 import type { Horse, Stable } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
 import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";

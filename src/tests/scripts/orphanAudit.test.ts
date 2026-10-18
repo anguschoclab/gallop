@@ -11,41 +11,34 @@ const PROJECT_ROOT = join(__dirname, "..", "..", "..");
 const SRC_ROOT = join(PROJECT_ROOT, "src");
 
 describe("orphan-audit script", () => {
-  it("exports analysis functions", () => {
-    expect(typeof scanIntentCoverage).toBe("function");
-    expect(typeof scanDormantAiFunctions).toBe("function");
-    expect(typeof scanFacilityTypeParity).toBe("function");
-    expect(typeof runOrphanAudit).toBe("function");
-  });
-
-  it("identifies intent coverage across player, npc, and handlers", () => {
+  it("identifies complete intent coverage across producers and handlers", () => {
     const coverage = scanIntentCoverage(SRC_ROOT);
-    expect(coverage).toBeDefined();
-    expect(Array.isArray(coverage.allIntents)).toBe(true);
-    expect(coverage.allIntents.length).toBeGreaterThanOrEqual(45);
-    expect(coverage.npcGenerated).toBeDefined();
-    expect(coverage.playerGenerated).toBeDefined();
-    expect(coverage.handled).toBeDefined();
+    expect(coverage.allIntents.length).toBeGreaterThan(0);
+    expect(new Set(coverage.allIntents).size).toBe(coverage.allIntents.length);
+    expect(coverage.handled).toEqual(coverage.allIntents);
   });
 
-  it("checks dormant AI functions and reports status", () => {
+  it("requires every tracked dormant-AI probe to have a production caller", () => {
     const dormant = scanDormantAiFunctions(SRC_ROOT);
-    expect(dormant).toBeDefined();
-    expect(Array.isArray(dormant.checkedFunctions)).toBe(true);
     expect(dormant.checkedFunctions).toContain("shouldWithdrawForTrackCondition");
+    for (const fn of dormant.checkedFunctions) {
+      expect(dormant.callers[fn]?.length ?? 0).toBeGreaterThan(0);
+    }
   });
 
-  it("audits facility types vs outpost footprints parity", () => {
+  it("requires every facility type to have an outpost footprint", () => {
     const parity = scanFacilityTypeParity(SRC_ROOT);
-    expect(parity).toBeDefined();
-    expect(parity.outpostFootprints).toContain("jockey_academy");
-    expect(parity.outpostFootprints).toContain("museum");
+    expect(parity.facilityTypes).toContain("jockey_academy");
+    expect(parity.facilityTypes).toContain("museum");
+    expect(parity.missingFootprints).toEqual([]);
   });
 
-  it("runs the full audit and produces a structured result", () => {
+  it("runs the full capability audit without dangling contracts", () => {
     const result = runOrphanAudit(PROJECT_ROOT);
-    expect(result).toBeDefined();
-    expect(result.summary).toBeDefined();
-    expect(typeof result.summary.totalIntents).toBe("number");
+    expect(result.intents.unhandled).toEqual([]);
+    expect(result.intents.unproduced).toEqual([]);
+    expect(result.impacts.unhandled).toEqual([]);
+    expect(result.phases.undescribed).toEqual([]);
+    expect(result.phases.unregisteredDescriptors).toEqual([]);
   });
 });

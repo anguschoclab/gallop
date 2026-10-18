@@ -1,0 +1,24 @@
+{
+  "moves": [
+    {
+      "oldPath": "src/core/ai",
+      "newPath": "src/domains/agents/simulation",
+      "owner": "agents",
+      "kind": "directory",
+      "reason": "NPC agent state, planning, learning, social, and subsystem policy are simulation-owned domain capabilities.",
+      "importers": "TypeScript module import rewrite",
+      "testMoves": "src/tests/core/ai remains centralized for cross-domain suites and updates imports",
+      "verification": ["typecheck", "architecture", "capabilityGraph", "agent tests"]
+    },
+    {
+      "oldPath": "src/core/npc",
+      "newPath": "src/domains/agents/simulation/npc",
+      "owner": "agents",
+      "kind": "directory",
+      "reason": "NPC generation, careers, scouting, and intent adapters are agent simulation internals.",
+      "importers": "TypeScript module import rewrite",
+      "testMoves": "src/tests/core/npc remains centralized for integration suites and updates imports",
+      "verification": ["typecheck", "architecture", "capabilityGraph", "agent tests"]
+    }
+  ]
+}

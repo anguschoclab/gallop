@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { selectHorsesForRaceEntry, runNpcRaceEntry } from "@/core/npc/raceEntry";
+import {
+  selectHorsesForRaceEntry,
+  runNpcRaceEntry,
+} from "@/domains/agents/simulation/npc/raceEntry";
 import { fillRaceWithFillerHorses } from "@/core/race/fieldManager";
 import { createRng } from "@/core/common/rng";
 import type { Horse, Race, Stable } from "@/game/types";

@@ -3,10 +3,11 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const PROJECT_ROOT = join(__dirname, "..", "..", "..", "..");
-const trainingPath = join(PROJECT_ROOT, "src", "core", "npc", "intents", "trainingIntents.ts");
-const auctionPath = join(PROJECT_ROOT, "src", "core", "npc", "intents", "facilityIntents.ts");
-const breedingPath = join(PROJECT_ROOT, "src", "core", "npc", "intents", "breedingIntents.ts");
-const facilityPath = join(PROJECT_ROOT, "src", "core", "npc", "intents", "facilityIntents.ts");
+const intentsPath = join(PROJECT_ROOT, "src", "domains", "agents", "simulation", "npc", "intents");
+const trainingPath = join(intentsPath, "trainingIntents.ts");
+const auctionPath = join(intentsPath, "facilityIntents.ts");
+const breedingPath = join(intentsPath, "breedingIntents.ts");
+const facilityPath = join(intentsPath, "facilityIntents.ts");
 
 const trainingText = readFileSync(trainingPath, "utf-8");
 const auctionText = readFileSync(auctionPath, "utf-8");

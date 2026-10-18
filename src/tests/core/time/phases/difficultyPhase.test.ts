@@ -5,7 +5,7 @@ import type { GameState, Horse, Race } from "@/game/types";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 import { asHorseId, asNpcStableId } from "@/core/types/branded";
 import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
-import type { DifficultyState } from "@/core/ai/npcCycleAI";
+import type { DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
 
 function makeHorse(overrides: Omit<Partial<Horse>, "id"> & { id?: string } = {}): Horse {
   return {

@@ -9,9 +9,39 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { createEconomicState, calculateYearlingPriceAdjustment } from "@/core/ai/economyAIState";
-import { calculateAuctionReservePrice, calculateDynamicStudFee } from "@/core/ai/economyAICartel";
-import type { EconomicTrend } from "@/core/ai/strategicCoordinator";
+import {
+  createEconomicState,
+  calculateYearlingPriceAdjustment,
+} from "@/domains/agents/simulation/economyAIState";
+import {
+  calculateAuctionReservePrice,
+  calculateDynamicStudFee,
+} from "@/domains/agents/simulation/economyAICartel";
+import type { EconomicTrend } from "@/domains/agents/simulation/strategicCoordinator";
+import { generateNpcRaceEntryIntents } from "@/domains/agents/simulation/npc/intents/raceEntryIntents";
+import {
+  calculateStrategicEntryScore,
+  type RaceCompetitorIndex,
+} from "@/domains/agents/simulation/raceEntryAIScoring";
+import { createRaceEntryAIState } from "@/domains/agents/simulation/raceEntryAITypes";
+import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import {
+  createDefaultPlayerFacilities,
+  createFacility,
+  getAvailableTrainingTypes,
+} from "@/core/facilities/facilityDefaults";
+import { trainingResolutionPhase } from "@/core/time/phases/trainingResolution";
+import { createRng } from "@/core/common/rng";
+import { createDefaultGameState } from "@/game/store/state";
+import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { createTestJockey } from "@/tests/helpers/createTestJockey";
+import { createTestStable } from "@/tests/helpers/createTestStable";
+import { h2r } from "@/tests/helpers/sampleGameState";
+import { asRaceId, asStaffId } from "@/core/types/branded";
+import type { PipelineContext } from "@/core/time/pipeline";
+import type { GameState, Race } from "@/game/types";
+import type { StaffMember } from "@/core/staff/staffTypes";
+import type { TrainingIntent } from "@/core/resolver/intents";
 
 describe("Cross-System: Economy → Auction Pricing", () => {
   it("calculateAuctionReservePrice adjusts with yearlingPriceIndex", () => {
@@ -33,9 +63,7 @@ describe("Cross-System: Economy → Auction Pricing", () => {
     };
     const bearPrice = calculateAuctionReservePrice(bearTrend, baseReserve);
 
-    // Bull market should have higher reserve prices
     expect(bullPrice).toBeGreaterThan(neutralPrice);
-    // Bear market should have lower reserve prices
     expect(bearPrice).toBeLessThan(neutralPrice);
   });
 
@@ -71,40 +99,187 @@ describe("Cross-System: Economy → Auction Pricing", () => {
 });
 
 describe("Cross-System: Diplomacy → Race Entry Avoidance", () => {
-  it("diplomacy relationships exist on stableAI state and can be checked", () => {
-    // This verifies the data flow: diplomacy phase creates relationships,
-    // intent generators check them before entering races
-    // The actual check is in generateNpcRaceEntryIntents which skips
-    // races where allies are already entered
-    const relationships = {
-      "stable-2": {
-        trust: 0.7,
-        allianceType: "racing_coalition" as const,
-        history: [],
+  it("a racing coalition suppresses an entry that the same stable would otherwise make", () => {
+    const stable = createTestStable({ id: "stable-1", personality: "aggressive" });
+    const ally = createTestStable({ id: "stable-2", personality: "aggressive" });
+    const ownHorse = createTestHorse({
+      id: "own-horse",
+      ownership: { type: "npc", stableId: stable.id },
+      stats: {
+        speed: 85,
+        stamina: 85,
+        acceleration: 85,
+        consistency: 85,
+        temperament: 70,
+        conformation: 70,
+      },
+      energy: 100,
+    });
+    const allyHorse = createTestHorse({
+      id: "ally-horse",
+      ownership: { type: "npc", stableId: ally.id },
+      energy: 100,
+    });
+    const race: Race = {
+      id: asRaceId("coalition-race"),
+      name: "Coalition Check Stakes",
+      day: 10,
+      distance: 1600,
+      raceClass: "Allowance",
+      entryFee: 1000,
+      purse: 50000,
+      fieldSize: 10,
+      entries: [{ horseId: allyHorse.id, ownership: allyHorse.ownership }],
+      resolved: false,
+      surface: "Turf",
+      handedness: "balanced",
+      trackCondition: "fast",
+    };
+    const state: GameState = {
+      ...createDefaultGameState(),
+      day: 10,
+      horses: h2r([ownHorse, allyHorse]),
+      npcStables: [stable, ally],
+      jockeys: [createTestJockey({ stableId: stable.id })],
+    };
+    const horseMap = new Map(Object.values(state.horses).map((horse) => [horse.id, horse]));
+    const score = calculateStrategicEntryScore(
+      createRaceEntryAIState(stable),
+      ownHorse,
+      race,
+      stable,
+      10,
+      horseMap,
+    );
+    expect(score).toBeGreaterThan(0);
+    const calibratedWeight = 65 / score;
+
+    const neutral = generateNpcRaceEntryIntents(
+      state,
+      stable,
+      undefined,
+      10,
+      [ownHorse],
+      [race],
+      new Map(),
+      horseMap,
+      calibratedWeight,
+      "healthy",
+      undefined,
+      new Map<string, RaceCompetitorIndex>(),
+    );
+    expect(neutral).toHaveLength(1);
+
+    const alliedAI = {
+      ...createStableAIState(stable, 10),
+      raceEntryAI: createRaceEntryAIState(stable),
+      npcRelationships: {
+        [ally.id]: {
+          trust: 80,
+          allianceType: "racing_coalition" as const,
+          history: [],
+        },
       },
     };
-
-    // Verify the relationship structure is correct
-    expect(relationships["stable-2"].allianceType).toBe("racing_coalition");
-    expect(relationships["stable-2"].trust).toBeGreaterThan(0);
+    const allied = generateNpcRaceEntryIntents(
+      state,
+      stable,
+      alliedAI,
+      10,
+      [ownHorse],
+      [race],
+      new Map(),
+      horseMap,
+      calibratedWeight,
+      "healthy",
+      undefined,
+      new Map<string, RaceCompetitorIndex>(),
+    );
+    expect(allied).toEqual([]);
   });
 });
 
 describe("Cross-System: Facility → Training Type Unlock", () => {
-  it("facility levels exist and can unlock training types", () => {
-    // Verify that facility levels are defined and can be checked
-    // for training type availability
-    const facilityLevels = ["basic", "intermediate", "advanced", "elite"];
-    expect(facilityLevels.length).toBe(4);
-    expect(facilityLevels.includes("basic")).toBe(true);
-    expect(facilityLevels.includes("elite")).toBe(true);
+  it("upgrading the exercise pool makes swimming available through the shared selector", () => {
+    const facilities = createDefaultPlayerFacilities(1);
+    expect(getAvailableTrainingTypes(facilities)).not.toContain("swimming");
+
+    facilities.exercise_pool = createFacility("exercise_pool", "standard", 10);
+
+    expect(getAvailableTrainingTypes(facilities)).toContain("swimming");
   });
 });
 
 describe("Cross-System: Staff → Training Effectiveness", () => {
-  it("staff members have roles that affect training", () => {
-    // Verify staff roles exist that would affect training effectiveness
-    const staffRoles = ["trainer", "assistant", "vet", "farrier"];
-    expect(staffRoles.includes("trainer")).toBe(true);
+  function contextFor(state: GameState, intents: TrainingIntent[]): PipelineContext {
+    return {
+      previousDay: 9,
+      newDay: 10,
+      state,
+      logs: [],
+      dailyRng: createRng(12345),
+      intents,
+      impacts: [],
+      impactLog: [],
+      horseMap: new Map(Object.values(state.horses).map((horse) => [horse.id, horse])),
+      raceMap: new Map(Object.values(state.races).map((race) => [race.id, race])),
+      stableMap: new Map((state.npcStables ?? []).map((stable) => [stable.id, stable])),
+      jockeyMap: new Map((state.jockeys ?? []).map((jockey) => [jockey.id, jockey])),
+    };
+  }
+
+  it("a hired nutritionist reduces the energy cost emitted for an NPC workout", () => {
+    const stable = createTestStable({ id: "stable-1" });
+    const horse = createTestHorse({
+      id: "horse-1",
+      ownership: { type: "npc", stableId: stable.id },
+      energy: 100,
+    });
+    const intent: TrainingIntent = {
+      id: "training-1",
+      entityId: horse.id,
+      source: "npc",
+      sourceId: stable.id,
+      day: 10,
+      priority: 50,
+      type: "training",
+      horseId: horse.id,
+      trainingType: "speed",
+    };
+    const baseState: GameState = {
+      ...createDefaultGameState(),
+      day: 10,
+      horses: h2r([horse]),
+      npcStables: [stable],
+      hiredStaff: [],
+    };
+    const staffedState: GameState = {
+      ...baseState,
+      hiredStaff: [
+        {
+          id: asStaffId("nutritionist-1"),
+          name: "Nutritionist",
+          role: "nutritionist",
+          tier: "elite",
+          salary: 1000,
+          bonusValue: 0.25,
+          traits: [],
+          fame: 50,
+          stableId: stable.id,
+        } satisfies StaffMember,
+      ],
+    };
+
+    const base = trainingResolutionPhase.execute(contextFor(baseState, [intent]));
+    const staffed = trainingResolutionPhase.execute(contextFor(staffedState, [intent]));
+    const baseEnergy = base.impacts.find((impact) => impact.type === "energy_change");
+    const staffedEnergy = staffed.impacts.find((impact) => impact.type === "energy_change");
+
+    expect(baseEnergy?.type).toBe("energy_change");
+    expect(staffedEnergy?.type).toBe("energy_change");
+    if (baseEnergy?.type === "energy_change" && staffedEnergy?.type === "energy_change") {
+      expect(staffedEnergy.delta).toBeGreaterThan(baseEnergy.delta);
+      expect(staffedEnergy.delta).toBeCloseTo(baseEnergy.delta * 0.75);
+    }
   });
 });

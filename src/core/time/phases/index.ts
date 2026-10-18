@@ -11,6 +11,7 @@
 
 import { intentCollectionPhase } from "./intentCollection";
 import { intentValidationPhase } from "./intentValidation";
+import { claimRegistrationPhase } from "./claimRegistration";
 import { privateSaleExpiryPhase } from "./privateSaleExpiry";
 import { privateSaleResolutionPhase } from "./privateSaleResolution";
 import { upkeepPhase } from "./upkeep";
@@ -45,7 +46,6 @@ import { breedingResolutionPhase } from "./breedingResolution";
 import { trainingResolutionPhase } from "./trainingResolution";
 import { claimingWithdrawalPhase } from "./claimingWithdrawal";
 import { managementResolutionPhase } from "./managementResolution";
-import { npcClaimingPhase } from "./npcClaiming";
 import { raceResolutionPhase } from "./raceResolution";
 import { stewardsPhase } from "./stewardsPhase";
 import { claimResolutionPhase } from "./claimResolution";
@@ -64,7 +64,6 @@ import { narrativePhase } from "./narrativePhase";
 import { economyPhase } from "./economyPhase";
 import { difficultyPhase } from "./difficultyPhase";
 import { cashPressureHistoryPhase } from "./cashPressureHistoryPhase";
-import { eventTriggersPhase } from "./eventTriggersPhase";
 import { exchangeSettlementPhase } from "./exchangeSettlementPhase";
 import { dailySnapshotPhase } from "./dailySnapshotPhase";
 
@@ -79,6 +78,7 @@ export const GAME_PIPELINE_PHASES = [
   // Intent/impact resolver phases
   intentCollectionPhase,
   intentValidationPhase,
+  claimRegistrationPhase,
   // D2 — Private sale offer expiry (very early, order 3)
   privateSaleExpiryPhase,
   // Private sale NPC decision (order 34, before purchase resolution)
@@ -130,8 +130,6 @@ export const GAME_PIPELINE_PHASES = [
   trainingResolutionPhase,
   claimingWithdrawalPhase,
   managementResolutionPhase,
-  // NPC claim filing (before raceResolution)
-  npcClaimingPhase,
   raceResolutionPhase,
   // Foal development milestone alerts (order 71) — emits inbox messages only.
   foalDevelopmentPhase,
@@ -153,8 +151,6 @@ export const GAME_PIPELINE_PHASES = [
   impactApplicationPhase,
   // Cash-pressure history snapshot (order 201 — after impacts applied, captures end-of-day cash)
   cashPressureHistoryPhase,
-  // Event registry triggers (order 202 — after all state is finalized, observes end-of-day state)
-  eventTriggersPhase,
   // Exchange refresh + NPC settlement (order 203 — runs on end-of-day state every simulated day)
   exchangeSettlementPhase,
   // Daily player snapshot (order 204 — last: captures post-settlement cash/ownership, fills journal outcomes)

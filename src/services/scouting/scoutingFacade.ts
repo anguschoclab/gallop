@@ -1,6 +1,6 @@
 /**
  * scoutingFacade.ts — Service-layer re-exports for NPC scouting domain.
- * Routes component imports away from direct @/core/npc/scouting access.
+ * Routes component imports away from direct @/domains/agents/simulation/npc/scouting access.
  */
 
-export * from "@/core/npc/scoutingThresholds";
+export * from "@/domains/agents/simulation/npc/scoutingThresholds";

@@ -177,15 +177,19 @@ export function validateIntent(
   state: GameState,
   cache?: ValidationCache,
 ): { valid: boolean; reason?: string } {
-  // Find appropriate validator from registry
+  // Compose every matching validator. Specialized checks run first for types
+  // they own; the structural validator then establishes baseline invariants for
+  // every registered intent type.
+  let matched = false;
   for (const validator of ALL_VALIDATORS) {
     if (validator.canValidate(intent.type)) {
-      return validator.validate(intent, state, cache);
+      matched = true;
+      const result = validator.validate(intent, state, cache);
+      if (!result.valid) return result;
     }
   }
 
-  // Default to valid if no specific validator found
-  return { valid: true };
+  return matched ? { valid: true } : { valid: false, reason: "Unknown intent type" };
 }
 
 /**

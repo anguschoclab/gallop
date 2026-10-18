@@ -1,4 +1,5 @@
 import { defineConfig } from "vitest/config";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import type { Plugin } from "vite";
 
@@ -12,6 +13,16 @@ import type { Plugin } from "vite";
  * The rule: strip the "tests/" segment from the importer's directory and use
  * that as the base for the relative specifier.
  */
+function resolveMirroredSource(resolved: string): string | undefined {
+  return [
+    resolved,
+    `${resolved}.ts`,
+    `${resolved}.tsx`,
+    path.join(`${resolved}`, "index.ts"),
+    path.join(`${resolved}`, "index.tsx"),
+  ].find((candidate) => existsSync(candidate));
+}
+
 function testSourceRedirectPlugin(): Plugin {
   const srcRoot = path.resolve(__dirname, "src");
 
@@ -35,9 +46,10 @@ function testSourceRedirectPlugin(): Plugin {
 
       // Resolve the specifier relative to the source root instead
       const resolved = path.resolve(sourceRoot, source);
-      // Only redirect if the resolved path is still within src/
-      if (!resolved.startsWith(srcRoot)) return null;
-      return resolved;
+      // Only redirect if the mirrored source file actually exists.
+      const mirroredSource = resolveMirroredSource(resolved);
+      if (!resolved.startsWith(srcRoot) || !mirroredSource) return null;
+      return mirroredSource;
     },
   };
 }
@@ -53,7 +65,8 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     setupFiles: ["@testing-library/jest-dom/vitest", "src/tests/setup.ts"],
-    include: ["src/tests/**/*.test.ts", "src/tests/**/*.test.tsx"],
+    include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
+    exclude: ["src/tests/e2e/**/*"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html", "lcov"],

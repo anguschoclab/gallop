@@ -51,6 +51,7 @@ bun run typecheck:errors
 - **`RivalIntelTab` uses `playerDominance` and `type`** (not `playerStrength` and `action`). The wrong property names rendered as 0% and undefined. See `src/components/stable/RivalIntelTab.tsx`.
 - **`.jules/` artifacts must not enter `main`** — all AI agent PRs (Bolt, Anvil, Herald, Palette, Groom, Probe) add `.jules/*.md` files. These are gitignored. Strip them from any cherry-pick or merge.
 - **`routeTree.gen.ts` is auto-generated and gitignored** — never commit it. It regenerates on `bun run build`.
+- **Agent simulation domain** — NPC/AI simulation modules live in `src/domains/agents/simulation` (NPC adapters under `src/domains/agents/simulation/npc`). Do not reintroduce `src/core/ai` or `src/core/npc` paths.
 - **Adding a pipeline phase**: Phases are registered declaratively — numeric stage ranges no longer exist (`src/workers/pipelineStages.ts` was removed). To add a phase:
   1. Create the `PipelinePhase` in `src/core/time/phases/` and register it in `src/core/time/phases/index.ts` (`GAME_PIPELINE_PHASES`).
   2. Add a matching `PhaseDescriptor` in `src/core/time/phases/descriptors.ts` (`GAME_PHASE_DESCRIPTORS`) declaring cadence, dependencies, products, and read/write sets. `src/tests/core/time/descriptors.coverage.test.ts` fails if any registered phase lacks a descriptor.

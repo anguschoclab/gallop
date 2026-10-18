@@ -17,7 +17,7 @@ import {
   detectDynastyBeats,
   detectComebackBeats,
   detectAllianceDramaBeats,
-} from "@/core/ai/narrativeAI";
+} from "@/domains/agents/simulation/narrativeAI";
 import type { Stable, Horse } from "@/game/types";
 import type { Race } from "@/core/race/types";
 import type {
@@ -25,7 +25,7 @@ import type {
   StableAIState,
   NarrativeArc,
   NarrativeState,
-} from "@/core/ai/npcCycleAI";
+} from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned, makeUnowned } from "@/core/horse/ownership";
 

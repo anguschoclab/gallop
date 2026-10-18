@@ -4,7 +4,7 @@
  * This file provides the market refresh phase that refreshes the horse market
  * and handles NPC AI-driven purchases.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/market/marketRefresh (refreshMarket), @/core/common/rng (createRng, hashStr), @/core/ai/marketAI (shouldPurchaseHorse, calculateMaxPurchasePrice, createMarketAIState, recordMarketPurchase), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/staff/staffGenerator (generateStaffPool)
+ * Dependencies: ../pipeline (PipelineContext), @/core/market/marketRefresh (refreshMarket), @/core/common/rng (createRng, hashStr), @/domains/agents/simulation/marketAI (shouldPurchaseHorse, calculateMaxPurchasePrice, createMarketAIState, recordMarketPurchase), @/domains/agents/simulation/npcCycleAI (getOrCreateStableAIState), @/core/staff/staffGenerator (generateStaffPool)
  * Related files: ../pipeline.ts (uses phase)
  */
 
@@ -12,16 +12,19 @@ import { PHASE_ORDER_MARKET } from "@/constants";
 import type { PipelineContext } from "../pipeline";
 import { refreshMarket } from "@/core/market/marketRefresh";
 import { calculateRaceRating } from "@/core/horse/stats";
-import { shouldPurchaseHorse, calculateMaxPurchasePrice } from "@/core/ai/marketAIValue";
-import { createMarketAIState } from "@/core/ai/marketAITypes";
-import { recordMarketPurchase } from "@/core/ai/marketAIRecording";
-import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { trackMarketPrices } from "@/core/ai/economyAITracking";
+import {
+  shouldPurchaseHorse,
+  calculateMaxPurchasePrice,
+} from "@/domains/agents/simulation/marketAIValue";
+import { createMarketAIState } from "@/domains/agents/simulation/marketAITypes";
+import { recordMarketPurchase } from "@/domains/agents/simulation/marketAIRecording";
+import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import { trackMarketPrices } from "@/domains/agents/simulation/economyAITracking";
 import {
   HORSE_RATING_TO_VALUE_MULTIPLIER,
   DEFAULT_SUBSYSTEM_WEIGHT,
 } from "@/constants/aiConstants";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { generateStaffPool } from "@/core/staff/staffGenerator";
 import { generateUUID } from "@/core/uuid";
 import type { AnyImpact } from "@/core/resolver/impacts/index";

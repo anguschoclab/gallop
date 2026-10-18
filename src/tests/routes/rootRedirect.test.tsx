@@ -33,7 +33,7 @@ vi.mock("@/game/store/storage", () => ({
   hydrationComplete: { value: false },
 }));
 
-import { RootComponent } from "@/routes/__root";
+import { RootComponent } from "@/components/routes/RootComponent";
 import { rehydrateStore } from "@/game/store";
 import { saveExists, hydrationComplete } from "@/game/store/storage";
 

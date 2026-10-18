@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { generateNpcIntents } from "@/core/npc/intentGenerators";
+import { generateNpcIntents } from "@/domains/agents/simulation/npc/intentGenerators";
 import type { GameState, Stable, Horse, Race } from "@/game/types";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
@@ -7,7 +7,7 @@ import { makeNpcOwned } from "@/core/horse/ownership";
 
 let shouldThrowForStable1 = false;
 
-vi.mock("@/core/ai/npcCycleAI", () => ({
+vi.mock("@/domains/agents/simulation/npcCycleAI", () => ({
   getOrCreateStableAIState: vi.fn((manager: any, stable: Stable, _day: number) => {
     if (stable.id === "stable1" && shouldThrowForStable1) {
       throw new Error("Simulated AI error for stable 1");
@@ -21,7 +21,7 @@ vi.mock("@/core/ai/npcCycleAI", () => ({
   updateStableAIState: vi.fn((state: any) => ({ ...state, updated: true })),
 }));
 
-vi.mock("@/core/ai/strategicCoordinator", () => ({
+vi.mock("@/domains/agents/simulation/strategicCoordinator", () => ({
   assessWorldState: vi.fn(() => ({
     playerDominance: 0.5,
     regionalPowerBalance: {},

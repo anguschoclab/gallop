@@ -6,7 +6,7 @@
  * their horses via a special auction, buys out any player syndicate shares,
  * dissolves the stable, and spawns a replacement budget-tier stable.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/uuid (generateUUID), @/core/horse/pricing (horsePrice), @/core/ai/syndicationAI (calculateSharePrice), @/core/breeding/devolutionUtils (findMajorityOwner), @/core/stable/stableGeneration (generateFillerStable), @/core/npc/horseGenerator (generateStableHorses), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/constants (PHASE_ORDER_NPC_BANKRUPTCY)
+ * Dependencies: ../pipeline (PipelineContext), @/core/uuid (generateUUID), @/core/horse/pricing (horsePrice), @/domains/agents/simulation/syndicationAI (calculateSharePrice), @/core/breeding/devolutionUtils (findMajorityOwner), @/core/stable/stableGeneration (generateFillerStable), @/domains/agents/simulation/npc/horseGenerator (generateStableHorses), @/domains/agents/simulation/npcCycleAI (getOrCreateStableAIState), @/constants (PHASE_ORDER_NPC_BANKRUPTCY)
  * Related files: ../pipeline.ts (uses phase), ./index.ts (registers phase)
  */
 
@@ -24,11 +24,11 @@ import type { Horse } from "@/game/types";
 import type { Syndicate } from "@/core/breeding/types";
 import { generateUUID } from "@/core/uuid";
 import { horsePrice } from "@/core/horse/pricing";
-import { calculateSharePrice } from "@/core/ai/syndicationAI";
+import { calculateSharePrice } from "@/domains/agents/simulation/syndicationAI";
 import { findMajorityOwner } from "@/core/breeding/devolutionUtils";
 import { generateFillerStable } from "@/core/stable/stableGeneration";
-import { generateStableHorses } from "@/core/npc/horseGenerator";
-import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
+import { generateStableHorses } from "@/domains/agents/simulation/npc/horseGenerator";
+import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { PHASE_ORDER_NPC_BANKRUPTCY } from "@/constants";
 import { DEFAULT_WORLD_SIZE } from "@/core/stable/worldSizeConfig";
 import { makePlayerOwned, makeNpcOwned } from "@/core/horse/ownership";

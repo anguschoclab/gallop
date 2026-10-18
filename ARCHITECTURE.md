@@ -16,11 +16,16 @@ during refactoring passes.
 | `game-types` | Shared game type definitions.                                     | `src/game/types.ts` |
 | `data`       | Immutable domain data (tracks, graded races, pedigrees).          | `src/data/`         |
 | `constants`  | Compile-time constants.                                           | `src/constants/`    |
+| `domains`    | Domain-owned modules split by model/simulation/application/UI.    | `src/domains/`      |
+
+The agent domain is the first migrated domain: NPC/AI simulation policy lives in
+`src/domains/agents/simulation`. New agent-facing code belongs there rather than
+under the legacy `src/core/ai` or `src/core/npc` paths.
 
 ## File Naming
 
 - **All source files**: `camelCase.ts` or `camelCase.tsx`.
-- **Test files**: `<moduleName>.test.ts` colocated under `src/tests/` mirroring the source path.
+- **Test files**: `<moduleName>.test.ts` colocated beside a domain unit or centralized under `src/tests/` for cross-domain architecture, integration, performance, and E2E coverage.
 - **Helper files**: `<feature>Helpers.ts` for pure helpers extracted from a slice or component.
 - **Service facades**: `<feature>Service.ts` for service-layer re-exports of core functions.
 - **Detector registries**: `<feature>Detectors.ts` for arrays of strategy functions.

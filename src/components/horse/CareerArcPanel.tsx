@@ -29,7 +29,7 @@ export function CareerArcPanel({ horseId }: CareerArcPanelProps) {
   return (
     <Card className="border-gold/30 bg-slate-900/40 overflow-hidden">
       <CardHeader className="bg-gold/5 border-b border-gold/10">
-        <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2 text-gold">
+        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
           <Sparkles size={16} />
           Career Arc
         </CardTitle>

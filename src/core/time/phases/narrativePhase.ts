@@ -5,13 +5,13 @@
  * and produces news items for the Gallop Gazette.
  * Runs after season standings (order 195) so seasonal results inform narratives.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/ai/narrativeAI (runNarrativeCycle), @/core/ai/npcCycleAI (NpcAIManager)
+ * Dependencies: ../pipeline (PipelineContext), @/domains/agents/simulation/narrativeAI (runNarrativeCycle), @/domains/agents/simulation/npcCycleAI (NpcAIManager)
  * Related files: ../pipeline.ts (uses phase), index.ts (aggregates phase)
  */
 
 import type { PipelineContext } from "../pipeline";
-import { runNarrativeCycle, detectRaceBeats } from "@/core/ai/narrativeAI";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { runNarrativeCycle, detectRaceBeats } from "@/domains/agents/simulation/narrativeAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { PHASE_ORDER_NARRATIVE } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type { NewsImpact } from "@/core/resolver/impacts/index";

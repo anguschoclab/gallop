@@ -142,7 +142,7 @@ export function JockeyFilterPanel({
         <div className="text-[8px] font-black uppercase text-blue-400/40 tracking-wide mb-2 px-1">
           Rider Standards
         </div>
-        <p className="text-[8px] font-mono text-cream/20 uppercase leading-relaxed italic">
+        <p className="text-[8px] font-mono text-cream/20 uppercase leading-relaxed">
           All retained riders must maintain active health certification and gear standards.
         </p>
       </div>

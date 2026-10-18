@@ -16,7 +16,7 @@ export function HorseIdentitySection({ horse, peakingStatus }: HorseIdentitySect
     <section id="stats" className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
         <FileText className="h-4 w-4 text-gold" />
-        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-cream">Equipment</h2>
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">Equipment</h2>
       </div>
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
         <CardContent className="p-6 space-y-6">

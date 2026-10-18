@@ -29,7 +29,7 @@ export function GallopGazette() {
 
   return (
     <Card className="border-gold bg-parchment text-newspaper-ink overflow-hidden shadow-2xl ring-1 ring-gold/20 group">
-      <CardHeader className="py-3 px-6 border-b-2 border-double border-newspaper-ink flex flex-row items-center justify-between bg-[#ece8df]">
+      <CardHeader className="py-3 px-6 border-b-2 border-double border-newspaper-ink flex flex-row items-center justify-between bg-newspaper-divider/30">
         <div className="flex items-center gap-3">
           <Newspaper className="h-5 w-5 animate-in fade-in slide-in-from-left duration-500" />
           <CardTitle className="text-2xl font-black uppercase tracking-tighter font-[family-name:var(--font-display)] pt-1">

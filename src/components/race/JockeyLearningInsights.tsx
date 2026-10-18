@@ -27,7 +27,7 @@ export const JockeyLearningInsights = memo(function JockeyLearningInsights({
         <div className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wide text-cyan-400/40">
           <Brain className="h-3 w-3" /> Learning Insights · {jockeyName}
         </div>
-        <div className="text-[9px] font-mono text-cream/20 italic">
+        <div className="text-[9px] font-mono text-cream/20">
           No race history yet. {insights.totalRaces} recorded races.
         </div>
       </div>

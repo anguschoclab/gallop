@@ -9,10 +9,10 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { assessWorldState } from "@/core/ai/strategicCoordinator";
-import { runEconomicCycle } from "@/core/ai/economyAITracking";
+import { assessWorldState } from "@/domains/agents/simulation/strategicCoordinator";
+import { runEconomicCycle } from "@/domains/agents/simulation/economyAITracking";
 import type { GameState, Stable, Horse } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
 

@@ -32,7 +32,22 @@ export const DEDICATED_BUCKET_KEYS: ReadonlySet<PropertyKey> = new Set([
  * player horses + NPC summaries). It remains here so partialize includes it
  * in the state passed to setItem, where the splitting occurs.
  */
-export const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
+export type PersistedStateKey = keyof GameState | "storeVersion";
+
+/**
+ * GameState fields that must remain session-local. They are engine-command,
+ * pending-work, or in-flight execution records and must never enter either
+ * persisted bucket. Adding a GameState field now requires an explicit choice:
+ * PERSISTED_KEYS or this list.
+ */
+export const TRANSIENT_STATE_KEYS: (keyof GameState)[] = [
+  "engineGeneration",
+  "engineRevision",
+  "execution",
+  "pendingIntents",
+];
+
+export const PERSISTED_KEYS: PersistedStateKey[] = [
   "day",
   "cash",
   "horses",
@@ -75,7 +90,7 @@ export const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "seasonRecords",
   "hallOfFame",
   "trackRecords",
-  "trackLedger" as keyof GameState,
+  "trackLedger",
   "horseLeaderboards",
   "founders",
   "lastFounderUpdateDay",
@@ -83,71 +98,71 @@ export const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
   "staffPool",
   "hiredStaff",
   // Phase 3 — dynamic weather sim per track
-  "weather" as keyof GameState,
+  "weather",
   // Inbox / Message Centre — must persist so unread counts survive reloads
-  "inbox" as keyof GameState,
+  "inbox",
   // Stewards inquiry system
-  "stewardsInquiries" as keyof GameState,
+  "stewardsInquiries",
   // Tutorial / guided first-session coach
-  "tutorial" as keyof GameState,
+  "tutorial",
   // Stakes nomination system
-  "playerNominations" as keyof GameState,
+  "playerNominations",
   // Player-facing syndication investors
-  "syndicateInvestors" as keyof GameState,
+  "syndicateInvestors",
   // Persisted state format version — used to detect incompatible stored data
-  "storeVersion" as keyof GameState,
+  "storeVersion",
   // Season standings — last top-10 rank for change detection
-  "lastTopTenRank" as keyof GameState,
+  "lastTopTenRank",
   // Share transaction history for syndicates
-  "shareTransactions" as keyof GameState,
-  "shareActivityFeed" as keyof GameState,
-  "syndicateValueSnapshots" as keyof GameState,
+  "shareTransactions",
+  "shareActivityFeed",
+  "syndicateValueSnapshots",
   // Imperial Expansion: player outposts
-  "outposts" as keyof GameState,
+  "outposts",
   // Sire leaderboards and trend data
-  "sireLeaderboards" as keyof GameState,
-  "sireTrendHistory" as keyof GameState,
-  "leaderboardsUpdatedDay" as keyof GameState,
-  "damsireLeaderboard" as keyof GameState,
-  "blueHenLeaderboard" as keyof GameState,
+  "sireLeaderboards",
+  "sireTrendHistory",
+  "leaderboardsUpdatedDay",
+  "damsireLeaderboard",
+  "blueHenLeaderboard",
   // Regional awards tracking
-  "lastAwardYear" as keyof GameState,
-  "pendingAwardCeremonies" as keyof GameState,
-  "awardCeremonyInvitations" as keyof GameState,
-  "currentCeremonyIndex" as keyof GameState,
+  "lastAwardYear",
+  "pendingAwardCeremonies",
+  "awardCeremonyInvitations",
+  "currentCeremonyIndex",
   // Industry analytics for AEI calculation
-  "industryMeanEarnings" as keyof GameState,
-  "industryEarningsUpdatedDay" as keyof GameState,
+  "industryMeanEarnings",
+  "industryEarningsUpdatedDay",
   // Career arc narrative tracking
-  "narrativeArcs" as keyof GameState,
+  "narrativeArcs",
   // Solvency / fail-state tracking
-  "consecutiveDaysInDebt" as keyof GameState,
-  "solvencyTier" as keyof GameState,
-  "runEnded" as keyof GameState,
-  "runEndSnapshot" as keyof GameState,
-  "solvencyAuditLog" as keyof GameState,
+  "consecutiveDaysInDebt",
+  "solvencyTier",
+  "runEnded",
+  "runEndSnapshot",
+  "solvencyAuditLog",
   // Saved mating plans for breeding season planner
-  "savedMatingPlans" as keyof GameState,
+  "savedMatingPlans",
   // World size selection for entity count regulation
-  "worldSize" as keyof GameState,
+  "worldSize",
   // Cash-pressure history snapshots (last 90 days per stable)
-  "cashPressureHistory" as keyof GameState,
-  "horseDailyProgress" as keyof GameState,
-  "rankingsHistory" as keyof GameState,
-  "stableRankingsHistory" as keyof GameState,
-  "strategyJournal" as keyof GameState,
-  "stableGoals" as keyof GameState,
+  "cashPressureHistory",
+  "horseDailyProgress",
+  "rankingsHistory",
+  "stableRankingsHistory",
+  "strategyJournal",
+  "stableGoals",
   // Bloodstock exchange: open orders, trade tape and price history
   "exchange",
   // Player auction bidding history
-  "playerBiddingHistory" as keyof GameState,
+  "playerBiddingHistory",
   // Auto-syndicate preference
-  "autoSyndicateEnabled" as keyof GameState,
+  "autoSyndicateEnabled",
   // Market price alerts and pushed trade-notification keys
-  "priceAlerts" as keyof GameState,
-  "notifiedTradeKeys" as keyof GameState,
+  "priceAlerts",
+  "notifiedTradeKeys",
   // Player's market buying-strategy settings
-  "marketStrategy" as keyof GameState,
+  "marketStrategy",
 ];
 
 /**
@@ -155,5 +170,5 @@ export const PERSISTED_KEYS: (keyof GameState | "storeVersion")[] = [
  * npcStables). Derived from PERSISTED_KEYS so the two lists cannot drift.
  */
 export const META_KEYS = PERSISTED_KEYS.filter(
-  (k) => !DEDICATED_BUCKET_KEYS.has(k),
-) as (keyof GameState)[];
+  (k): k is Exclude<PersistedStateKey, "storeVersion"> => !DEDICATED_BUCKET_KEYS.has(k),
+);

@@ -42,7 +42,6 @@ export type CoreSlice = CoreState & {
     factorLedgers?: Record<string, import("@/core/race/factorLedger").RunnerFactorLedger>,
     snapshots?: import("@/core/race/engine/raceSnapshotTypes").RaceSnapshot[],
   ) => Promise<void>;
-  submitClaim: (raceId: string, horseId: string) => ActionResult;
   withdrawClaim: (raceId: string, horseId: string) => ActionResult;
   purchaseInsurance: (
     horseId: string,

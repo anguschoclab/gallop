@@ -4,16 +4,16 @@
  * Runs the strategic coordinator's world state assessment early in the pipeline,
  * caching the result so subsequent phases (intent collection, NPC cycle) can use it.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/ai/strategicCoordinator (assessWorldState), @/core/ai/npcCycleAI (NpcAIManager)
+ * Dependencies: ../pipeline (PipelineContext), @/domains/agents/simulation/strategicCoordinator (assessWorldState), @/domains/agents/simulation/npcCycleAI (NpcAIManager)
  * Related files: ../pipeline.ts (uses phase), index.ts (aggregates phase)
  */
 
 import type { PipelineContext } from "../pipeline";
-import { assessWorldState } from "@/core/ai/strategicCoordinator";
-import type { WorldAssessment } from "@/core/ai/strategicCoordinator";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
-import { getOrCreateStableAIState } from "@/core/ai/npcCycleAI";
-import { assessFinancialDistressWithPersonality } from "@/core/ai/financialDistressAI";
+import { assessWorldState } from "@/domains/agents/simulation/strategicCoordinator";
+import type { WorldAssessment } from "@/domains/agents/simulation/strategicCoordinator";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import { createStableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import { assessFinancialDistressWithPersonality } from "@/domains/agents/simulation/financialDistressAI";
 import { UPKEEP_PER_HORSE } from "@/constants";
 
 const PHASE_ORDER_WORLD_ASSESSMENT = 2;
@@ -61,7 +61,7 @@ export const worldAssessmentPhase = {
     // Also compute distress for stables that don't yet have AI state
     for (const stable of state.npcStables) {
       if (!updatedStableStates[stable.id]) {
-        const stableAI = getOrCreateStableAIState(aiManager, stable, newDay);
+        const stableAI = createStableAIState(stable, newDay);
         const horseCount = horseCountsByStable.get(stable.id) ?? 0;
         const dailyUpkeep = horseCount * UPKEEP_PER_HORSE;
         stableAI.financialDistress = assessFinancialDistressWithPersonality(stable, dailyUpkeep);

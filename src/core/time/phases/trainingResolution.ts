@@ -4,7 +4,7 @@
  * This file provides the training resolution phase that converts TrainingIntents
  * into impacts (stat changes, energy changes, cash changes).
  *
- * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, TrainingIntent), @/core/resolver/impacts/index (AnyImpact), @/game/rng (createRng, hashStr), @/core/facilities (getFacilityBonus), @/core/expenses (createExpense), @/game/uuid (generateUUID), @/core/transactions (createTransaction), @/core/ai/npcCycleAI (getOrCreateStableAIState), @/core/ai/trainingAI (recordTrainingOutcome)
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/core/resolver/intents (AnyIntent, TrainingIntent), @/core/resolver/impacts/index (AnyImpact), @/game/rng (createRng, hashStr), @/core/facilities (getFacilityBonus), @/core/expenses (createExpense), @/game/uuid (generateUUID), @/core/transactions (createTransaction), @/domains/agents/simulation/npcCycleAI (getOrCreateStableAIState), @/domains/agents/simulation/trainingAI (recordTrainingOutcome)
  * Related files: ../pipeline.ts (uses phase)
  */
 
@@ -30,8 +30,11 @@ import { getFacilityBonus } from "@/core/facilities";
 import { createExpense } from "@/core/expenses";
 import { generateUUID } from "@/core/uuid";
 import { createTransaction } from "@/core/transactions";
-import { getOrCreateStableAIState, type NpcAIManager } from "@/core/ai/npcCycleAI";
-import { recordTrainingOutcome } from "@/core/ai/trainingAI";
+import {
+  getOrCreateStableAIState,
+  type NpcAIManager,
+} from "@/domains/agents/simulation/npcCycleAI";
+import { recordTrainingOutcome } from "@/domains/agents/simulation/trainingAI";
 import { BANISTER_CONSTANTS, calculateImpulse } from "@/core/health/banister";
 import { getOutpostSpecialty } from "@/core/facilities/outpostTypes";
 import { getBranchModifiers } from "@/core/facilities/facilityBranching";
@@ -150,29 +153,32 @@ export const trainingResolutionPhase: PipelinePhase = {
       if (intent.trainingType !== "rest") {
         // Different workout types have different costs
         const cost = TRAINING_COST_MAP[intent.trainingType] ?? TRAINING_COST;
+        const ownerId = horse.ownership?.type === "npc" ? horse.ownership.stableId : "player";
 
-        newExpenses.push(
-          createExpense(
-            "training",
-            cost,
-            `${intent.trainingType} training for ${horse.name}`,
-            newDay,
-            { horseId: horse.id },
-          ),
-        );
+        if (ownerId === "player") {
+          newExpenses.push(
+            createExpense(
+              "training",
+              cost,
+              `${intent.trainingType} training for ${horse.name}`,
+              newDay,
+              { horseId: horse.id },
+            ),
+          );
 
-        // Record transaction for training expense
-        newTransactions.push(
-          createTransaction(
-            "expense",
-            "training",
-            -cost,
-            `${intent.trainingType} training for ${horse.name}`,
-            newDay,
-            state.cash - cost,
-            { horseId: horse.id },
-          ),
-        );
+          // Record transaction for training expense
+          newTransactions.push(
+            createTransaction(
+              "expense",
+              "training",
+              -cost,
+              `${intent.trainingType} training for ${horse.name}`,
+              newDay,
+              state.cash - cost,
+              { horseId: horse.id },
+            ),
+          );
+        }
 
         // Add cash change impact
         impacts.push({
@@ -182,7 +188,7 @@ export const trainingResolutionPhase: PipelinePhase = {
           phase: "trainingResolution",
           logLevel: "conditional",
           type: "cash_change",
-          entityId: "player",
+          entityId: ownerId,
           amount: -cost,
           reason: `${intent.trainingType} training cost`,
         } as CashImpact);

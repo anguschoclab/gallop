@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { StrategicDirectivesPanel } from "@/components/npc/StrategicDirectivesPanel";
-import type { StrategicDirective } from "@/core/ai/strategicCoordinator";
+import type { StrategicDirective } from "@/domains/agents/simulation/strategicCoordinator";
 
 describe("StrategicDirectivesPanel", () => {
   it("renders empty state when no directives", () => {

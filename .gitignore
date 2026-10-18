@@ -59,3 +59,4 @@ audit-findings.md
 * 2.tsx
 tsc-results.txt
 bench-results/
+storybook-static/

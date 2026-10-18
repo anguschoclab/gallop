@@ -68,7 +68,7 @@ export function FoalDevelopmentPanel({ horse }: Props) {
     <section id="foal-development" className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
         <Sprout className="h-4 w-4 text-gold" />
-        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
           Pre-Race Preparation
         </h2>
       </div>

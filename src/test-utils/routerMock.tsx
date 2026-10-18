@@ -41,7 +41,14 @@ export function createRouterMock() {
     useParams: () => MOCK_PARAMS,
     useLocation: () => ({ pathname: "/", search: {}, hash: "" }),
     useRouter: () => ({ navigate: noopAsync, history: { back: noop } }),
-    useRouterState: () => ({ location: { pathname: "/", search: {} } }),
+    useRouterState: (options?: {
+      select?: (state: {
+        location: { pathname: string; search: Record<string, never> };
+      }) => unknown;
+    }) => {
+      const state = { location: { pathname: "/", search: {} } };
+      return options?.select ? options.select(state) : state;
+    },
     getRouteApi: () => routeApi,
     notFound: () => new NotFoundError(),
     redirect: (opts: unknown) => opts,

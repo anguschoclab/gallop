@@ -31,7 +31,7 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
     <section id="beyer" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
         <Activity className="h-4 w-4 text-fame" />
-        <h2 className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
           Beyer Performance Analysis
         </h2>
       </div>

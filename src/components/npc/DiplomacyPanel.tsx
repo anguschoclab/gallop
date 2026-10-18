@@ -27,7 +27,7 @@ export function DiplomacyPanel({ stableId }: DiplomacyPanelProps) {
       {relationships && Object.keys(relationships).length > 0 && (
         <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
           <CardHeader>
-            <CardTitle className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+            <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream">
               Diplomacy
             </CardTitle>
           </CardHeader>
@@ -106,7 +106,7 @@ function CartelSection({
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-amber-400">
       <CardHeader>
-        <CardTitle className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream">
           Active Cartels
         </CardTitle>
       </CardHeader>

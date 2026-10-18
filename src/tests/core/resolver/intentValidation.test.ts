@@ -9,10 +9,11 @@ import type {
   AnyIntent,
   TrainingIntent,
   RaceEntryIntent,
+  WithdrawFromClaimingIntent,
   BreedingIntent,
   PurchaseIntent,
 } from "@/core/resolver/intents";
-import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
 
@@ -259,6 +260,125 @@ describe("validateIntent", () => {
     expect(result.reason).toBe("Insufficient energy");
   });
 
+  it("rejects a player race entry for a horse owned by another stable", () => {
+    const horse = createTestNpcHorse({ id: "horse-1", energy: 80 });
+    const state: GameState = {
+      ...createTestState(),
+      horses: h2r([horse]),
+      races: r2r([
+        {
+          id: "race-1",
+          name: "Test Race",
+          day: 5,
+          distance: 2000,
+          raceClass: "Maiden",
+          entryFee: 500,
+          purse: 10000,
+          minStat: 70,
+          fieldSize: 8,
+          entries: [],
+          resolved: false,
+        },
+      ]),
+    };
+    const intent: RaceEntryIntent = {
+      id: "intent-1",
+      day: 1,
+      type: "race_entry",
+      entityId: "horse-1",
+      priority: 100,
+      source: "player",
+      horseId: "horse-1",
+      raceId: "race-1",
+    };
+
+    expect(validateIntent(intent, state)).toEqual({
+      valid: false,
+      reason: "Intent source does not own horse",
+    });
+  });
+
+  it("requires an NPC race entry source to match the horse owner", () => {
+    const horse = createTestNpcHorse({ id: "horse-1", energy: 80 });
+    const state: GameState = {
+      ...createTestState(),
+      horses: h2r([horse]),
+      races: r2r([
+        {
+          id: "race-1",
+          name: "Test Race",
+          day: 5,
+          distance: 2000,
+          raceClass: "Maiden",
+          entryFee: 500,
+          purse: 10000,
+          minStat: 70,
+          fieldSize: 8,
+          entries: [],
+          resolved: false,
+        },
+      ]),
+    };
+    const intent: RaceEntryIntent = {
+      id: "intent-1",
+      day: 1,
+      type: "race_entry",
+      entityId: "horse-1",
+      priority: 100,
+      source: "npc",
+      sourceId: "different-stable",
+      horseId: "horse-1",
+      raceId: "race-1",
+    };
+
+    expect(validateIntent(intent, state)).toEqual({
+      valid: false,
+      reason: "Intent source does not own horse",
+    });
+    expect(validateIntent({ ...intent, sourceId: "test-npc-stable-1" }, state)).toEqual({
+      valid: true,
+    });
+  });
+
+  it("rejects a player claiming withdrawal for an NPC-owned horse", () => {
+    const horse = createTestNpcHorse({ id: "horse-1", energy: 80 });
+    const state: GameState = {
+      ...createTestState(),
+      horses: h2r([horse]),
+      races: r2r([
+        {
+          id: "race-1",
+          name: "Optional Claiming",
+          day: 5,
+          distance: 2000,
+          raceClass: "OptionalClaiming",
+          claimingPrice: 25000,
+          entryFee: 500,
+          purse: 10000,
+          minStat: 70,
+          fieldSize: 8,
+          entries: [{ horseId: "horse-1", ownership: horse.ownership }],
+          resolved: false,
+        },
+      ]),
+    };
+    const intent: WithdrawFromClaimingIntent = {
+      id: "intent-1",
+      day: 1,
+      type: "withdraw_from_claiming",
+      entityId: "horse-1",
+      priority: 100,
+      source: "player",
+      horseId: "horse-1",
+      raceId: "race-1",
+    };
+
+    expect(validateIntent(intent, state)).toEqual({
+      valid: false,
+      reason: "Intent source does not own horse",
+    });
+  });
+
   it("should validate valid breeding intent", () => {
     const sire = createTestHorse({ id: "sire-1", gender: "horse", age: 5 });
     const dam = createTestHorse({ id: "dam-1", gender: "mare", age: 5 });
@@ -482,7 +602,29 @@ describe("validateIntent", () => {
     expect(result.reason).toBe("Insufficient funds");
   });
 
-  it("should pass through for unknown intent types", () => {
+  it("applies structural validation even when a specialized validator accepts the intent", () => {
+    const horse = createTestHorse({ id: "horse-1" });
+    const state: GameState = {
+      ...createTestState(),
+      cash: 10000,
+      market: [horse],
+    };
+
+    const intent = {
+      day: 1,
+      type: "purchase",
+      entityId: "player",
+      priority: 100,
+      source: "player",
+      horseId: "horse-1",
+      price: 5000,
+    } as unknown as AnyIntent;
+
+    const result = validateIntent(intent, state);
+    expect(result).toEqual({ valid: false, reason: "Intent id missing" });
+  });
+
+  it("rejects unknown intent types explicitly", () => {
     const state = createTestState();
 
     const intent: AnyIntent = {
@@ -498,7 +640,7 @@ describe("validateIntent", () => {
     };
 
     const result = validateIntent(intent, state);
-    expect(result.valid).toBe(true);
+    expect(result).toEqual({ valid: false, reason: "Unknown intent type" });
   });
 
   it("rejects breeding intent for parent-child pair (by ID)", () => {

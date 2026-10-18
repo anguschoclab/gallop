@@ -5,7 +5,7 @@ import {
   runNpcCycle,
   applyFameGainsToHorses,
   calculateFameGainsForRaces,
-} from "@/core/npc/npcCycle";
+} from "@/domains/agents/simulation/npc/npcCycle";
 import { calculateFanGainsForRaces } from "@/core/horse/fans";
 import { createRng } from "@/core/common/rng";
 import type { Horse, Race, Stable, Jockey } from "@/game/types";

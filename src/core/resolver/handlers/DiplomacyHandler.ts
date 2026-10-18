@@ -4,7 +4,7 @@
  * This file provides the handler for processing diplomatic and cartel impacts
  * into the game state, updating NPC AI manager relationship and cartel state.
  *
- * Dependencies: ./types (ImpactHandler), @/core/ai/npcCycleAI (NpcAIManager)
+ * Dependencies: ./types (ImpactHandler), @/domains/agents/simulation/npcCycleAI (NpcAIManager)
  */
 
 import type { WritableDraft } from "immer";
@@ -12,7 +12,7 @@ import type { GameState } from "@/game/types";
 import type { AnyImpact } from "../impacts";
 import type { ImpactHandler, LookupMaps } from "./types";
 import type { DiplomaticImpact, CartelImpact } from "../impacts/miscImpacts";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
 export class DiplomacyHandler implements ImpactHandler {
   canHandle(type: string): boolean {

@@ -10,7 +10,7 @@ import { type Rng } from "@/core/common/rng";
 import { rngForRace } from "@/core/race/rngForRace";
 export { rngForRace };
 import { calculateAssignedWeight } from "@/core/race/entryScoring";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { RunnerBonuses } from "@/core/race/engine/runnerBuilder";
 import { MIN_GATE, GATE_SORT_FALLBACK } from "@/constants/gateConstants";

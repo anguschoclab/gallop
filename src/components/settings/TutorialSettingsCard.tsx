@@ -14,7 +14,7 @@ export function TutorialSettingsCard() {
   return (
     <Card className="bg-slate-900/40 border-white/5">
       <CardHeader>
-        <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2 text-cream">
+        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-2 text-cream">
           <GraduationCap className="h-4 w-4" />
           Tutorial
         </CardTitle>

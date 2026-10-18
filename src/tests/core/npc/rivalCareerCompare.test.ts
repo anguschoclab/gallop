@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildRivalCareerProfile, buildRivalCareerProfiles } from "@/core/npc/rivalCareerCompare";
+import {
+  buildRivalCareerProfile,
+  buildRivalCareerProfiles,
+} from "@/domains/agents/simulation/npc/rivalCareerCompare";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import type { Horse } from "@/game/types";
 

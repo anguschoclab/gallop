@@ -102,6 +102,10 @@ describe("STORE_STATE_VERSION constant", () => {
     expect(STORE_STATE_VERSION).toBeGreaterThan(0);
     expect(Number.isInteger(STORE_STATE_VERSION)).toBe(true);
   });
+
+  it("bumps once for the normalized campaign schema", () => {
+    expect(STORE_STATE_VERSION).toBe(10);
+  });
 });
 
 describe("Version-key rehydration guard", () => {

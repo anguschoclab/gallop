@@ -7,10 +7,10 @@ import { asNpcStableId } from "@/core/types/branded";
  */
 
 import { describe, it, expect, beforeEach } from "vitest";
-import { runNpcCycle } from "@/core/npc/npcCycle";
+import { runNpcCycle } from "@/domains/agents/simulation/npc/npcCycle";
 import { createRng } from "@/core/common/rng";
 import type { Horse, Race, Stable, Jockey } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager, StableAIState } from "@/domains/agents/simulation/npcCycleAI";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makeNpcOwned, makePlayerOwned } from "@/core/horse/ownership";
 

@@ -1,17 +1,20 @@
 import { describe, it, expect } from "vitest";
-import { createClaimingAIState } from "@/core/ai/claimingAITypes";
-import { calculateClaimingValue, calculateClaimingRisk } from "@/core/ai/claimingAIValue";
+import { createClaimingAIState } from "@/domains/agents/simulation/claimingAITypes";
+import {
+  calculateClaimingValue,
+  calculateClaimingRisk,
+} from "@/domains/agents/simulation/claimingAIValue";
 import {
   shouldClaimHorse,
   recordClaimingDecision,
   recordClaimingOutcome,
   getClaimingInsights,
-} from "@/core/ai/claimingAIRecording";
+} from "@/domains/agents/simulation/claimingAIRecording";
 import {
   generatePostClaimPlan,
   shouldDefendFromClaim,
   detectClaimingArbitrage,
-} from "@/core/ai/claimingAI";
+} from "@/domains/agents/simulation/claimingAI";
 import type { Horse, Race, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makePlayerOwned } from "@/core/horse/ownership";

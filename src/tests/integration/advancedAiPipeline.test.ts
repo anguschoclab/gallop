@@ -5,21 +5,37 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { generateNpcIntents } from "@/core/npc/intentGenerators";
+import { generateNpcIntents } from "@/domains/agents/simulation/npc/intentGenerators";
 import {
   assessWorldState,
   generateStrategicDirectives,
   allocateBudget,
-} from "@/core/ai/strategicCoordinator";
-import { resolveDiplomaticInteractions, initializeRelationships } from "@/core/ai/diplomacyAI";
-import { runNarrativeCycle, createNarrativeState } from "@/core/ai/narrativeAI";
-import { runEconomicCycle } from "@/core/ai/economyAITracking";
-import { createEconomicState, calculateStudFeeAdjustment } from "@/core/ai/economyAIState";
+} from "@/domains/agents/simulation/strategicCoordinator";
+import {
+  resolveDiplomaticInteractions,
+  initializeRelationships,
+} from "@/domains/agents/simulation/diplomacyAI";
+import { runNarrativeCycle, createNarrativeState } from "@/domains/agents/simulation/narrativeAI";
+import { runEconomicCycle } from "@/domains/agents/simulation/economyAITracking";
+import {
+  createEconomicState,
+  calculateStudFeeAdjustment,
+} from "@/domains/agents/simulation/economyAIState";
 import type { GameState, Stable, Horse } from "@/game/types";
-import type { NpcAIManager, StableAIState } from "@/core/ai/npcCycleAI";
+import {
+  createStableAIState,
+  type NpcAIManager,
+  type StableAIState,
+} from "@/domains/agents/simulation/npcCycleAI";
+import { createInitialState } from "@/game/store/initialization";
+import { GAME_PHASE_DESCRIPTORS } from "@/core/time/phases/descriptors";
+import { runPipelineForDay } from "@/tests/helpers/runPipeline";
 import { createTestStable, createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/core/horse/ownership";
-import { asNpcStableId } from "@/core/types/branded";
+import { asNpcStableId, asRaceId } from "@/core/types/branded";
+import type { Race } from "@/core/race/types";
+
+const BASE_STATE = createInitialState();
 
 function createMockStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({
@@ -55,15 +71,7 @@ function createMockHorse(overrides: Partial<Horse> = {}): Horse {
 }
 
 function createMockAIState(stableId: string): StableAIState {
-  return {
-    stableId,
-    personalityState: { personality: "aggressive" } as any,
-    learningState: { outcomes: [], adaptations: {} } as any,
-    lastUpdateDay: 1,
-    friction: 0,
-    winsAgainstPlayer: 0,
-    regionalPrestige: {},
-  } as any;
+  return createStableAIState(createMockStable({ id: stableId }), 100);
 }
 
 function createMockManager(stableIds: string[]): NpcAIManager {
@@ -75,22 +83,39 @@ function createMockManager(stableIds: string[]): NpcAIManager {
 }
 
 function createMockGameState(stables: Stable[], horses: Horse[]): GameState {
+  const state = structuredClone(BASE_STATE);
   const horseMap: Record<string, Horse> = {};
   for (const h of horses) horseMap[h.id] = h;
 
+  state.day = 100;
+  state.cash = 500000;
+  state.horses = horseMap;
+  state.races = {};
+  state.pregnancies = [];
+  state.npcStables = stables;
+  state.jockeys = [];
+  state.news = [];
+  state.inbox = [];
+  state.transactions = [];
+  state.pendingIntents = [];
+  return state;
+}
+
+function createMockRace(overrides: Partial<Race> = {}): Race {
   return {
-    day: 100,
-    cash: 500000,
-    horses: horseMap,
-    races: {},
-    pregnancies: [],
-    npcStables: stables,
-    jockeys: [],
-    news: [],
-    inbox: [],
-    transactions: [],
-    pendingIntents: [],
-  } as unknown as GameState;
+    id: asRaceId("r1"),
+    name: "Test Sprint",
+    day: 102,
+    distance: 1600,
+    raceClass: "Maiden",
+    entryFee: 0,
+    purse: 50000,
+    fieldSize: 14,
+    entries: [],
+    resolved: false,
+    cancelled: false,
+    ...overrides,
+  };
 }
 
 describe("Pipeline integration: strategic coordinator → intent generation", () => {
@@ -280,8 +305,8 @@ describe("Pipeline integration: full coordination chain", () => {
 
 // ─── Phase 7d: Performance Profiling ─────────────────────────────────────────
 
-describe("Phase 7d: Performance profiling", () => {
-  it("assessWorldState completes in under 5ms with 20 stables", () => {
+describe("Phase 7d: deterministic bounded scale", () => {
+  it("assessWorldState is deterministic and bounded across 20 stables", () => {
     const stables: Stable[] = [];
     const horses: Horse[] = [];
     for (let i = 0; i < 20; i++) {
@@ -297,14 +322,17 @@ describe("Phase 7d: Performance profiling", () => {
     const state = createMockGameState(stables, horses);
     state.npcAIManager = manager;
 
-    const start = performance.now();
-    assessWorldState(state, manager);
-    const elapsed = performance.now() - start;
+    const first = assessWorldState(state, manager);
+    const second = assessWorldState(state, manager);
 
-    expect(elapsed).toBeLessThan(5);
+    expect(second).toEqual(first);
+    expect(first.playerDominance).toBeGreaterThanOrEqual(0);
+    expect(first.playerDominance).toBeLessThanOrEqual(1);
+    expect(first.breedingMarketSaturation).toBeGreaterThanOrEqual(0);
+    expect(first.breedingMarketSaturation).toBeLessThanOrEqual(1);
   });
 
-  it("generateNpcIntents completes in under 50ms with 10 stables", () => {
+  it("generateNpcIntents emits unique NPC intents without player-owned horses", () => {
     const stables: Stable[] = [];
     const horses: Horse[] = [];
     for (let i = 0; i < 10; i++) {
@@ -316,15 +344,18 @@ describe("Phase 7d: Performance profiling", () => {
         );
       }
     }
+    horses.push(createMockHorse({ id: "player-horse", ownership: undefined }));
     const manager = createMockManager(stables.map((s) => s.id));
     const state = createMockGameState(stables, horses);
     state.npcAIManager = manager;
 
-    const start = performance.now();
-    generateNpcIntents(state, 100);
-    const elapsed = performance.now() - start;
+    const first = generateNpcIntents(state, 100);
+    const second = generateNpcIntents(state, 100);
 
-    expect(elapsed).toBeLessThan(50);
+    expect(second.map((intent) => intent.type)).toEqual(first.map((intent) => intent.type));
+    expect(new Set(first.map((intent) => intent.id)).size).toBe(first.length);
+    expect(first.every((intent) => intent.source === "npc")).toBe(true);
+    expect(first.some((intent) => intent.entityId === "player-horse")).toBe(false);
   });
 });
 
@@ -359,18 +390,8 @@ describe("Phase 7e: AI behavior diversity", () => {
     const manager = createMockManager(["agg", "con"]);
     const state = createMockGameState([aggressiveStable, conservativeStable], horses);
     state.npcAIManager = manager;
-    state.races = {
-      r1: {
-        id: "r1",
-        name: "Test Sprint",
-        distance: 1600,
-        day: 102,
-        entries: [],
-        resolved: false,
-        cancelled: false,
-        purse: 50000,
-      } as any,
-    };
+    const race = createMockRace();
+    state.races = { [race.id]: race };
 
     const intents = generateNpcIntents(state, 100);
     const aggHorseIds = new Set(["h1"]);
@@ -471,31 +492,41 @@ describe("Phase 7e: Narrative coverage validation", () => {
 
 // ─── Phase 7f: Regression Testing ────────────────────────────────────────────
 
-describe("Phase 7f: Pipeline phase ordering regression", () => {
-  it("economy phase runs before market phase", () => {
-    // Verify phase order constants
-    // This is a static check — if the constants change, this test will catch it
-    const economyOrder = 48; // PHASE_ORDER_ECONOMY
-    const marketOrder = 50; // PHASE_ORDER_MARKET
-    expect(economyOrder).toBeLessThan(marketOrder);
+describe("Phase 7f: production executor regression", () => {
+  it("persists bounded decision traces and action plans through the production executor", () => {
+    const stable = createMockStable({ id: "npc-executor", personality: "aggressive" });
+    const horse = createMockHorse({
+      id: "executor-horse",
+      ownership: makeNpcOwned(asNpcStableId(stable.id)),
+    });
+    const state = createMockGameState([stable], [horse]);
+    state.day = 1;
+    state.npcAIManager = createMockManager([stable.id]);
+
+    const result = runPipelineForDay(state, 2);
+    const updated = result.state.npcAIManager?.stableStates[stable.id];
+
+    expect(updated?.worldAssessment).toBeDefined();
+    expect(updated?.strategicDirectives?.length).toBeGreaterThan(0);
+    expect(updated?.actionPlans).toBeDefined();
+    expect(updated?.decisionTraces).toBeDefined();
+    expect(updated!.decisionTraces!.length).toBe(updated!.actionPlans!.length);
+
+    const planIds = new Set(updated!.actionPlans!.map((plan) => plan.actionId));
+    for (const trace of updated!.decisionTraces!) {
+      expect(planIds.has(trace.actionId)).toBe(true);
+      expect(trace.intentIds).toHaveLength(trace.intentCount);
+    }
   });
 
-  it("diplomacy phase runs after npcCycle phase", () => {
-    const npcCycleOrder = 80; // PHASE_ORDER_NPC_CYCLE
-    const diplomacyOrder = 81; // PHASE_ORDER_DIPLOMACY
-    expect(diplomacyOrder).toBeGreaterThan(npcCycleOrder);
-  });
+  it("uses the descriptor dependency graph rather than hardcoded phase numbers", () => {
+    const descriptors = new Map(GAME_PHASE_DESCRIPTORS.map((phase) => [phase.id, phase]));
 
-  it("narrative phase runs after season standings", () => {
-    const seasonStandingsOrder = 195; // PHASE_ORDER_SEASON_STANDINGS
-    const narrativeOrder = 196; // PHASE_ORDER_NARRATIVE
-    expect(narrativeOrder).toBeGreaterThan(seasonStandingsOrder);
-  });
-
-  it("world assessment phase runs before intent collection", () => {
-    const worldAssessmentOrder = 2; // PHASE_ORDER_WORLD_ASSESSMENT
-    const intentCollectionOrder = 5; // PHASE_ORDER_INTENT_COLLECTION
-    expect(worldAssessmentOrder).toBeLessThan(intentCollectionOrder);
+    expect(descriptors.get("intentCollection")?.dependsOn).toContain("worldAssessment");
+    expect(descriptors.get("market")?.dependsOn).toContain("economy");
+    expect(descriptors.get("economy")?.dependsOn).toContain("worldAssessment");
+    expect(descriptors.get("diplomacy")?.dependsOn).toContain("worldAssessment");
+    expect(descriptors.get("narrative")?.dependsOn).toContain("worldAssessment");
   });
 });
 

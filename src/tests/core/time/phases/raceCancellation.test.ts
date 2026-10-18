@@ -12,7 +12,7 @@ import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
 import { raceEntryResolutionPhase } from "@/core/time/phases/raceEntryResolution";
-import { runNpcRaceEntry } from "@/core/npc/raceEntry";
+import { runNpcRaceEntry } from "@/domains/agents/simulation/npc/raceEntry";
 import { runAutoEntries, reconcileSlotStatuses } from "@/core/campaign/autoEntry";
 import { pruneOldRaces } from "@/core/market/marketRefresh";
 import { archivingPhase } from "@/core/time/phases/archivingPhase";

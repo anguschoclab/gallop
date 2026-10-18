@@ -30,6 +30,7 @@ export function resolveFacilityIntent(
   switch (intent.type) {
     case "facility_upgrade": {
       const typedIntent = intent as FacilityUpgradeIntent;
+      const ownerId = typedIntent.source === "npc" ? typedIntent.sourceId : "player";
       impacts.push({
         id: generateUUID(dailyRng),
         intentId: intent.id,
@@ -37,6 +38,7 @@ export function resolveFacilityIntent(
         phase: "managementResolution",
         logLevel: "always",
         type: "facility_upgrade",
+        entityId: ownerId,
         facilityId: typedIntent.facilityId,
         nextLevel: typedIntent.nextLevel,
         cost: typedIntent.cost,
@@ -51,7 +53,7 @@ export function resolveFacilityIntent(
           phase: "managementResolution",
           logLevel: "always",
           type: "cash_change",
-          entityId: "player",
+          entityId: ownerId,
           amount: -typedIntent.cost,
           reason: `Upgrade ${typedIntent.facilityId}`,
         } as CashImpact);

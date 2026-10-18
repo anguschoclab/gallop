@@ -190,7 +190,7 @@ describe("RacingValidator — invitation gating", () => {
   const validator = new RacingValidator();
 
   it("rejects race_entry for uninvited horse in invite-only race", () => {
-    const horse = makeHorse({ id: "h1", energy: 100 });
+    const horse = makeHorse({ id: "h1", energy: 100, ownership: makePlayerOwned() });
     const race = makeRace({
       id: "race-1",
       graded: {
@@ -226,7 +226,7 @@ describe("RacingValidator — invitation gating", () => {
   });
 
   it("accepts race_entry for invited horse in invite-only race", () => {
-    const horse = makeHorse({ id: "h1", energy: 100 });
+    const horse = makeHorse({ id: "h1", energy: 100, ownership: makePlayerOwned() });
     const race = makeRace({
       id: "race-1",
       graded: {

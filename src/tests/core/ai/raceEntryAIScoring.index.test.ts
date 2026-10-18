@@ -2,8 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   calculateStrategicEntryScore,
   buildRaceCompetitorIndex,
-} from "@/core/ai/raceEntryAIScoring";
-import { createRaceEntryAIState } from "@/core/ai/raceEntryAITypes";
+} from "@/domains/agents/simulation/raceEntryAIScoring";
+import { createRaceEntryAIState } from "@/domains/agents/simulation/raceEntryAITypes";
 import { createTestHorse } from "@/tests/helpers";
 import type { Horse, Race, Stable } from "@/game/types";
 import type { StaffRole } from "@/core/staff/staffTypes";

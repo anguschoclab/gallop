@@ -7,7 +7,7 @@ import { RaceCard } from "@/components/race/RaceCard";
 import { NumericValue } from "@/components/horse/HorseBits";
 import { formatCurrency } from "@/services/financial/financialFacade";
 import { cn } from "@/lib/cn";
-import type { Race, Claim, Horse } from "@/game/types";
+import type { Race, Claim, Horse, GameState } from "@/game/types";
 import { List, LayoutGrid, Target, MapPin, Globe } from "lucide-react";
 
 interface RaceFeedProps {
@@ -17,6 +17,7 @@ interface RaceFeedProps {
   onEnterRace: (race: Race) => void;
   horses: Horse[];
   claims: Claim[];
+  pendingIntents?: NonNullable<GameState["pendingIntents"]>;
   cash: number;
   fileClaim: (raceId: string, horseId: string) => { ok: boolean; reason?: string };
 }
@@ -28,6 +29,7 @@ export function RaceFeed({
   onEnterRace,
   horses,
   claims,
+  pendingIntents = [],
   cash,
   fileClaim,
 }: RaceFeedProps) {
@@ -35,7 +37,7 @@ export function RaceFeed({
     return (
       <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
         <Globe className="h-16 w-16 mx-auto mb-6 text-cream/5" />
-        <p className="font-bold text-cream/40 uppercase tracking-[0.3em] font-[family-name:var(--font-display)]">
+        <p className="font-bold text-cream/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
           No Races Found
         </p>
         <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">
@@ -117,7 +119,7 @@ export function RaceFeed({
             <tbody className="divide-y divide-white/5">
               {races.map((r) => {
                 const isEntered = r.entries.some((e) => e.ownership?.type === "player");
-                const isClaiming = !!r.claiming;
+                const isClaiming = r.claimingPrice !== undefined;
 
                 return (
                   <React.Fragment key={r.id}>
@@ -194,13 +196,14 @@ export function RaceFeed({
                         )}
                       </td>
                     </tr>
-                    {isClaiming && isEntered && (
+                    {isClaiming && (
                       <tr>
                         <td colSpan={7} className="bg-success/[0.01] p-0 border-none">
                           <ClaimingRacePanel
                             race={r}
                             horses={horses}
                             claims={claims}
+                            pendingIntents={pendingIntents}
                             cash={cash}
                             fileClaim={fileClaim}
                           />

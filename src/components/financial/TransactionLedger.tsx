@@ -258,7 +258,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                         >
                           {formatProfitLoss(t.amount)}
                         </td>
-                        <td className="px-8 py-3 text-[11px] font-mono text-cream/40 group-hover:text-cream/60 transition-colors uppercase italic truncate max-w-xs">
+                        <td className="px-8 py-3 text-[11px] font-mono text-cream/40 group-hover:text-cream/60 transition-colors uppercase truncate max-w-xs">
                           {t.description}
                         </td>
                       </tr>
@@ -286,7 +286,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                         <td className="px-4 py-3 font-black font-mono text-xs text-right tabular-nums tracking-tighter text-destructive">
                           {formatProfitLoss(row.amount)}
                         </td>
-                        <td className="px-8 py-3 text-[11px] font-mono text-cream/40 group-hover:text-cream/60 transition-colors uppercase italic">
+                        <td className="px-8 py-3 text-[11px] font-mono text-cream/40 group-hover:text-cream/60 transition-colors uppercase">
                           <span className="inline-flex items-center gap-1.5">
                             {isOpen ? (
                               <ChevronDown className="w-3 h-3" />
@@ -321,7 +321,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                             <td className="px-4 py-2 font-mono text-[11px] text-right tabular-nums text-destructive/80">
                               {formatProfitLoss(t.amount)}
                             </td>
-                            <td className="px-8 py-2 text-[10px] font-mono text-cream/30 uppercase italic truncate max-w-xs">
+                            <td className="px-8 py-2 text-[10px] font-mono text-cream/30 uppercase truncate max-w-xs">
                               {t.raceId ? (
                                 <Link
                                   to="/race/$raceId"

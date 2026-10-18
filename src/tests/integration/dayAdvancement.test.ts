@@ -1,139 +1,58 @@
 /**
- * Integration Tests: Day Advancement Pipeline
- * Tests that all phases execute in order and state mutations work correctly across phases
+ * Integration tests for day advancement through the production executor.
+ *
+ * These tests intentionally run the compiled GAME_PHASE_DESCRIPTORS schedule
+ * rather than calling executePipeline with caller-selected phases.
  */
 
 import { describe, it, expect } from "vitest";
-import { executePipeline } from "@/core/time/pipeline";
-import { upkeepPhase } from "@/core/time/phases/upkeep";
-import { agingPhase } from "@/core/time/phases/aging";
-import { raceResolutionPhase } from "@/core/time/phases/raceResolution";
-import { impactApplicationPhase } from "@/core/time/phases/impactApplication";
-import { createRng } from "@/core/common/rng";
+import { runPipelineForDay } from "@/tests/helpers/runPipeline";
 import { createTestHorse } from "@/tests/helpers";
-import { makeGameState } from "@/tests/helpers/sampleGameState";
-import type { PipelineContext } from "@/core/time/pipeline";
+import { makeGameState, h2r } from "@/tests/helpers/sampleGameState";
 import type { GameState } from "@/game/types";
-import { h2r } from "@/tests/helpers/sampleGameState";
+import type { CashImpact } from "@/core/resolver/impacts/financialImpacts";
 
-describe("Day Advancement Pipeline Integration", () => {
-  it("should execute phases in correct order", () => {
-    const phases = [upkeepPhase, agingPhase, raceResolutionPhase];
+describe("day advancement production path", () => {
+  it("runs the registered descriptor schedule and advances the day", () => {
+    const state = makeGameState({
+      day: 1,
+      cash: 10000,
+      horses: h2r([createTestHorse({ id: "horse-1" })]),
+    }) as GameState;
+    const result = runPipelineForDay(state, 2);
 
-    const state: GameState = makeGameState({ day: 1, cash: 10000 }) as GameState;
-
-    const context: PipelineContext = {
-      previousDay: 0,
-      newDay: 1,
-      state,
-      logs: [],
-      dailyRng: createRng(12345),
-      intents: [],
-      impacts: [],
-      impactLog: [],
-      horseMap: new Map(Object.values(state.horses).map((h) => [h.id, h])),
-      raceMap: new Map(Object.values(state.races).map((r) => [r.id, r])),
-      stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
-      jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
-    };
-
-    const result = executePipeline(phases, context);
-
-    // Verify phases executed in order by checking order values
-    expect(upkeepPhase.order).toBeLessThan(agingPhase.order);
-    expect(agingPhase.order).toBeLessThan(raceResolutionPhase.order);
-
-    // Verify result structure
-    expect(result.state).toBeDefined();
-    expect(result.logs).toBeDefined();
+    expect(result.state.day).toBe(2);
+    expect(result.state.pendingIntents).toEqual([]);
+    expect(result.state.cash).toBe(9950);
   });
 
-  it("should handle phase skip conditions", () => {
-    const phases = [upkeepPhase];
+  it("applies phase-produced impacts through the central impact application phase", () => {
+    const state = makeGameState({
+      day: 10,
+      cash: 10000,
+      horses: h2r([createTestHorse({ id: "horse-1" })]),
+    }) as GameState;
+    const result = runPipelineForDay(state, 11);
+    const upkeepImpact = result.impacts.find(
+      (impact): impact is CashImpact => impact.type === "cash_change" && impact.amount < 0,
+    );
 
-    const state: GameState = makeGameState({ day: 10, cash: 10000 }) as GameState;
-
-    const context: PipelineContext = {
-      previousDay: 9,
-      newDay: 10,
-      state,
-      logs: [],
-      dailyRng: createRng(12345),
-      intents: [],
-      impacts: [],
-      impactLog: [],
-      horseMap: new Map(Object.values(state.horses).map((h) => [h.id, h])),
-      raceMap: new Map(Object.values(state.races).map((r) => [r.id, r])),
-      stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
-      jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
-    };
-
-    const result = executePipeline(phases, context);
-
-    // Verify phase executed
-    expect(result.state).toBeDefined();
+    expect(upkeepImpact?.entityId).toBe("player");
+    expect(result.state.cash).toBe(9950);
   });
 
-  it("should aggregate logs across phases", () => {
-    const phases = [upkeepPhase, agingPhase];
-
-    const state: GameState = makeGameState({ day: 10, cash: 10000 }) as GameState;
-
-    const context: PipelineContext = {
-      previousDay: 9,
-      newDay: 10,
-      state,
-      logs: [{ day: 9, text: "Initial log" }],
-      dailyRng: createRng(12345),
-      intents: [],
-      impacts: [],
-      impactLog: [],
-      horseMap: new Map(Object.values(state.horses).map((h) => [h.id, h])),
-      raceMap: new Map(Object.values(state.races).map((r) => [r.id, r])),
-      stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
-      jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
-    };
-
-    const result = executePipeline(phases, context);
-
-    // Logs should be preserved across phases
-    expect(result.logs).toContainEqual({ day: 9, text: "Initial log" });
-  });
-
-  it("should apply state mutations from all phases", () => {
-    const phases = [upkeepPhase, impactApplicationPhase];
-
-    const horse = createTestHorse({
-      id: "horse-1",
-      name: "Horse 1",
-      age: 3,
-      gender: "colt",
-    });
-
-    const state: GameState = makeGameState({
+  it("keeps state mutations inside the executor-owned phase sequence", () => {
+    const horse = createTestHorse({ id: "horse-1", name: "Horse 1", age: 3, gender: "colt" });
+    const state = makeGameState({
       day: 10,
       cash: 10000,
       horses: h2r([horse]),
     }) as GameState;
 
-    const context: PipelineContext = {
-      previousDay: 9,
-      newDay: 10,
-      state,
-      logs: [],
-      dailyRng: createRng(12345),
-      intents: [],
-      impacts: [],
-      impactLog: [],
-      horseMap: new Map(Object.values(state.horses).map((h) => [h.id, h])),
-      raceMap: new Map(Object.values(state.races).map((r) => [r.id, r])),
-      stableMap: new Map((state.npcStables ?? []).map((s) => [s.id, s])),
-      jockeyMap: new Map((state.jockeys ?? []).map((j) => [j.id, j])),
-    };
+    const result = runPipelineForDay(state, 11);
 
-    const result = executePipeline(phases, context);
-
-    // Upkeep phase emits a cash_change impact; impactApplicationPhase applies it.
+    expect(result.state.horses["horse-1"]).toBeDefined();
     expect(result.state.cash).toBe(9950);
+    expect(result.impacts.some((impact) => impact.phase === "upkeep")).toBe(true);
   });
 });

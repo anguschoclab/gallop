@@ -19,7 +19,7 @@ export function StrategicDirectivesPanel({ directives }: StrategicDirectivesPane
       </CardHeader>
       <CardContent className="p-0">
         {sorted.length === 0 ? (
-          <div className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+          <div className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
             No active directives
           </div>
         ) : (

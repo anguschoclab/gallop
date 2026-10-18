@@ -16,6 +16,7 @@ import { resolveFacilityIntent } from "./facilityManagementResolvers";
 import { resolveHorseIntent } from "./horseManagementResolvers";
 import { resolveCampaignIntent } from "./campaignManagementResolvers";
 import { resolveInsuranceIntent } from "./insuranceManagementResolvers";
+import { resolveStaffIntent } from "./staffManagementResolvers";
 
 // Re-export applyInsurancePremiums for backward compatibility
 export { applyInsurancePremiums } from "./insuranceManagementResolvers";
@@ -39,4 +40,5 @@ export function resolveManagementIntent(
   if (resolveHorseIntent(intent, context, impacts)) return;
   if (resolveCampaignIntent(intent, context, impacts)) return;
   if (resolveInsuranceIntent(intent, context, impacts)) return;
+  if (resolveStaffIntent(intent, context, impacts)) return;
 }

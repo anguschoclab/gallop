@@ -4,13 +4,13 @@
  * This file provides the NPC cycle phase that runs NPC training, race entry,
  * fame updates, and AI state management.
  *
- * Dependencies: ../pipeline (PipelineContext), @/core/npc/npcCycle (runNpcCycle), @/core/ai/npcCycleAI (NpcAIManager)
+ * Dependencies: ../pipeline (PipelineContext), @/domains/agents/simulation/npc/npcCycle (runNpcCycle), @/domains/agents/simulation/npcCycleAI (NpcAIManager)
  * Related files: ../pipeline.ts (uses phase)
  */
 
 import type { PipelineContext } from "../pipeline";
-import { runNpcCycle } from "@/core/npc/npcCycle";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import { runNpcCycle } from "@/domains/agents/simulation/npc/npcCycle";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { PHASE_ORDER_NPC_CYCLE } from "@/constants";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
 import type {
@@ -64,6 +64,7 @@ export const npcCyclePhase = {
       cashChanges,
       fameChanges,
       fanChanges,
+      diagnostics,
     } = runNpcCycle(
       state.npcStables,
       Object.values(state.horses),
@@ -170,6 +171,13 @@ export const npcCyclePhase = {
         npcAIManager: updatedAiManager,
       },
       impacts: [...context.impacts, ...impacts],
+      logs: [
+        ...context.logs,
+        ...diagnostics.map((diagnostic) => ({
+          day: newDay,
+          text: `NPC cycle diagnostic${diagnostic.stableId ? ` (${diagnostic.stableId})` : ""}: ${diagnostic.message}`,
+        })),
+      ],
     };
   },
 };

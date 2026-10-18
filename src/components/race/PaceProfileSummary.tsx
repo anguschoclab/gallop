@@ -12,7 +12,7 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
 
   if (racesWithPace.length === 0) {
     return (
-      <div className="text-[10px] font-mono text-cream/20 uppercase tracking-wide italic">
+      <div className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
         No pace data available
       </div>
     );

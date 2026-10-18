@@ -85,7 +85,7 @@ export function PrivateTrialDialog({ horse, horses, cash }: PrivateTrialDialogPr
       )}
       <DialogContent className="max-w-2xl bg-slate-950 border border-gold-muted/40 rounded-none text-cream shadow-2xl overflow-y-auto max-h-[90vh]">
         <DialogHeader className="border-b border-white/5 pb-4">
-          <DialogTitle className="text-sm font-black uppercase tracking-[0.3em] text-cream">
+          <DialogTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream">
             Private Trial Simulator
           </DialogTitle>
           <DialogDescription className="text-xs text-cream-muted uppercase font-mono tracking-wider">

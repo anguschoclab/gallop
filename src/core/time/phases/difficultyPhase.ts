@@ -5,14 +5,14 @@
  * multiplier on a 30-day cycle. When the player wins too much, NPC competence
  * increases (up to 1.3x). When the player loses too much, it decreases (down to 0.7x).
  *
- * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/constants (PHASE_ORDER_DIFFICULTY), @/core/ai/npcCycleAI (DifficultyState, NpcAIManager), @/core/horse/ownership (isPlayerOwned)
+ * Dependencies: ../pipeline (PipelineContext, PipelinePhase), @/constants (PHASE_ORDER_DIFFICULTY), @/domains/agents/simulation/npcCycleAI (DifficultyState, NpcAIManager), @/core/horse/ownership (isPlayerOwned)
  * Related files: ./index.ts (registers phase), ./raceResolution.ts (produces results)
  */
 
 import { PHASE_ORDER_DIFFICULTY, DIFFICULTY_ADJUSTMENT_PERIOD } from "@/constants";
 import type { PipelineContext, PipelinePhase } from "../pipeline";
 import { isPlayerOwned } from "@/core/horse/ownership";
-import type { DifficultyState, NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { DifficultyState, NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
 const MIN_MULTIPLIER = 0.7;
 const MAX_MULTIPLIER = 1.3;

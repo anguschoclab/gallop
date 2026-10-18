@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { seedStore } from "@/test-utils/renderWithStore";
 import { useGame } from "@/game/store";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
-import type { PrivateSaleOffer, Horse, Stable } from "@/game/types";
-import { makeNpcOwned, getStableId } from "@/core/horse/ownership";
+import type { PrivateSaleOffer, Horse, Race, Stable } from "@/game/types";
+import { makeNpcOwned, makePlayerOwned, getStableId } from "@/core/horse/ownership";
 import { asNpcStableId } from "@/core/types/branded";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
@@ -27,6 +27,22 @@ const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
     ownership: makeNpcOwned(asNpcStableId("stable-1")),
     ...overrides,
   });
+
+const mkClaimingRace = (overrides: Partial<Race> = {}): Race =>
+  ({
+    id: "race-1",
+    name: "Claiming Stakes",
+    day: 10,
+    distance: 1600,
+    raceClass: "Claiming",
+    entryFee: 0,
+    purse: 50000,
+    fieldSize: 8,
+    entries: [],
+    resolved: false,
+    claimingPrice: 25000,
+    ...overrides,
+  }) as Race;
 
 const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({
@@ -193,5 +209,90 @@ describe("privateSaleSlice", () => {
     const result = useGame.getState().proposePrivateSale("horse-1", "stable-1", 50000);
     expect(result.ok).toBe(false);
     expect(result.reason).toBe("horse_not_in_stable");
+  });
+
+  it("enterClaimingRace accepts the canonical claimingPrice field", () => {
+    const horse = mkHorse({ ownership: makePlayerOwned() });
+    const race = mkClaimingRace();
+    seedStore({
+      day: 5,
+      horses: h2r([horse]),
+      races: { [race.id]: race },
+    });
+
+    const result = useGame.getState().enterClaimingRace(race.id, horse.id);
+    expect(result.ok).toBe(true);
+    expect(useGame.getState().pendingIntents).toEqual([
+      expect.objectContaining({
+        type: "race_entry",
+        raceId: race.id,
+        horseId: horse.id,
+        source: "player",
+      }),
+    ]);
+  });
+
+  it("fileClaim accepts canonical claimingPrice races and rejects duplicate pending claims", () => {
+    const horse = mkHorse();
+    const race = mkClaimingRace({
+      entries: [{ horseId: horse.id, ownership: horse.ownership }],
+    });
+    seedStore({
+      day: 5,
+      cash: 100000,
+      horses: h2r([horse]),
+      races: { [race.id]: race },
+      pendingIntents: [],
+      claims: [],
+    });
+
+    const result = useGame.getState().fileRaceClaim(race.id, horse.id);
+    expect(result.ok).toBe(true);
+    expect(useGame.getState().pendingIntents).toEqual([
+      expect.objectContaining({
+        type: "claiming",
+        raceId: race.id,
+        horseId: horse.id,
+        claimingPrice: 25000,
+        source: "player",
+      }),
+    ]);
+
+    const duplicate = useGame.getState().fileRaceClaim(race.id, horse.id);
+    expect(duplicate).toEqual({ ok: false, reason: "duplicate_claim" });
+    expect(useGame.getState().pendingIntents).toHaveLength(1);
+  });
+
+  it("fileRaceClaim rejects horses that are not entered and already resolved races", () => {
+    const horse = mkHorse();
+    const race = mkClaimingRace();
+    seedStore({
+      day: 5,
+      cash: 100000,
+      horses: h2r([horse]),
+      races: { [race.id]: race },
+      pendingIntents: [],
+      claims: [],
+    });
+
+    expect(useGame.getState().fileRaceClaim(race.id, horse.id)).toEqual({
+      ok: false,
+      reason: "horse_not_entered",
+    });
+    expect(useGame.getState().pendingIntents).toEqual([]);
+
+    seedStore({
+      races: {
+        [race.id]: {
+          ...race,
+          resolved: true,
+          entries: [{ horseId: horse.id, ownership: horse.ownership }],
+        },
+      },
+    });
+    expect(useGame.getState().fileRaceClaim(race.id, horse.id)).toEqual({
+      ok: false,
+      reason: "race_resolved",
+    });
   });
 });

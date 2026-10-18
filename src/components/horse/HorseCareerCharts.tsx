@@ -89,7 +89,7 @@ export function HorseCareerCharts({ horse }: HorseCareerChartsProps) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="text-[10px] font-mono uppercase tracking-[0.18em] text-cream/40">
+        <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-cream/40">
           Last {timeWindowLabel(weeks)} · {history.length} starts
         </span>
         <TimeWindowSelect />

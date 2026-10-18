@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { createGeldingAIState, shouldGeldHorse } from "@/core/ai/geldingAI";
-import { generateNpcIntents } from "@/core/npc/intentGenerators";
+import { createGeldingAIState, shouldGeldHorse } from "@/domains/agents/simulation/geldingAI";
+import { generateNpcIntents } from "@/domains/agents/simulation/npc/intentGenerators";
 import { BreedingValidator } from "@/core/resolver/validators/BreedingValidator";
 import { HorseHandler } from "@/core/resolver/handlers/HorseHandler";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";

@@ -1,17 +1,17 @@
 import { describe, it, expect } from "vitest";
-import { createMarketAIState } from "@/core/ai/marketAITypes";
+import { createMarketAIState } from "@/domains/agents/simulation/marketAITypes";
 import {
   calculatePurchaseValue,
   shouldPurchaseHorse,
   calculateMaxPurchasePrice,
-} from "@/core/ai/marketAIValue";
+} from "@/domains/agents/simulation/marketAIValue";
 import {
   recordMarketPurchase,
   recordMarketOutcome,
   getMarketInsights,
   getMarketTimingRecommendation,
   calculateNegotiatedPrice,
-} from "@/core/ai/marketAIRecording";
+} from "@/domains/agents/simulation/marketAIRecording";
 import type { Horse, Stable } from "@/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 
@@ -153,6 +153,24 @@ describe("shouldPurchaseHorse", () => {
     const state = createMarketAIState(stable);
     const horse = createMockHorse();
     expect(shouldPurchaseHorse(state, horse, 50000, stable, 1)).toBe(false);
+  });
+
+  it("buys a clearly underpriced roster-fit horse instead of losing the base value score", () => {
+    const stable = createMockStable({ cash: 100000 });
+    const state = createMarketAIState(stable);
+    const horse = createMockHorse({
+      stats: {
+        speed: 80,
+        stamina: 80,
+        acceleration: 80,
+        consistency: 80,
+        temperament: 50,
+        conformation: 50,
+      },
+    });
+
+    expect(calculatePurchaseValue(state, horse, 10000, stable)).toBeGreaterThan(50);
+    expect(shouldPurchaseHorse(state, horse, 10000, stable, 1)).toBe(true);
   });
 
   it("aggressive: threshold - 10 (more likely to buy)", () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { runNpcCycle } from "@/core/npc/npcCycle";
+import { runNpcCycle } from "@/domains/agents/simulation/npc/npcCycle";
 import type { Race, Stable } from "@/game/types";
 
 describe("npcCycle error handling", () => {
@@ -12,7 +12,14 @@ describe("npcCycle error handling", () => {
 
     const result = runNpcCycle(npcStables, [], [], races, 10, {} as any);
 
-    expect(consoleSpy).toHaveBeenCalledWith("Error in runNpcCycle:", expect.any(TypeError));
+    expect(consoleSpy).not.toHaveBeenCalled();
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({
+        day: 10,
+        phase: "npc_cycle",
+        message: expect.any(String),
+      }),
+    ]);
     expect(result.races).toBeNull();
 
     consoleSpy.mockRestore();
@@ -53,11 +60,15 @@ describe("npcCycle error handling", () => {
 
     const result = runNpcCycle(npcStables, [], [], [], 10, {} as any);
 
-    // It should have logged the error for the specific stable
-    expect(consoleSpy).toHaveBeenCalledWith(
-      "Error processing stable stable-error in NPC cycle:",
-      expect.any(TypeError),
-    );
+    expect(consoleSpy).not.toHaveBeenCalled();
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({
+        stableId: "stable-error",
+        day: 10,
+        phase: "npc_cycle",
+        message: expect.any(String),
+      }),
+    ]);
 
     // The cycle should complete
     expect(result.races).toBeDefined();

@@ -1,234 +1,178 @@
 /**
  * phases/claimResolution.ts - Claim resolution phase
  *
- * This file provides the claim resolution phase that settles all claims after
- * races have been resolved, including cash transfers and horse ownership transfers.
- *
- * Dependencies: ../pipeline (PipelineContext), @/game/types (Race, Claim, Horse, Stable), @/game/auction (netProceeds), @/game/rng (hashStr), @/game/uuid (generateUUID), @/lib/formatting (formatCurrency)
- * Related files: ../pipeline.ts (uses phase)
+ * Settles persisted claims after race resolution. Claims are filed by
+ * claimRegistration and applied exactly once here; losing and withdrawn claims
+ * leave state without producing cash impacts.
  */
 
 import type { PipelineContext } from "../pipeline";
-import type { Claim } from "@/game/types";
-import { netProceeds } from "@/core/auction/engine";
-import { hashStr } from "@/core/common/rng";
-import { generateUUID } from "@/core/uuid";
+import type { Claim, GameState, Horse } from "@/game/types";
 import { PHASE_ORDER_CLAIM_RESOLUTION } from "@/constants";
-import { formatCurrency } from "@/core/common/formatting";
 import type { AnyImpact } from "@/core/resolver/impacts/index";
-import type { HorseTransferImpact, CashImpact } from "@/core/resolver/impacts/index";
-import { applyClaimingFriction } from "@/core/ai/diplomacyAI";
-import { trackClaimingActivity } from "@/core/ai/economyAITracking";
+import { applyClaimingFriction } from "@/domains/agents/simulation/diplomacyAI";
+import { trackClaimingActivity } from "@/domains/agents/simulation/economyAITracking";
+import { resolveClaimingResolution } from "@/core/auction/claimingResolutionService";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
+import { getOrCreateStableAIState } from "@/domains/agents/simulation/npcCycleAI";
+import { createClaimingAIState } from "@/domains/agents/simulation/claimingAITypes";
+import { recordClaimingOutcome } from "@/domains/agents/simulation/claimingAIRecording";
+import { calculateOverallRating } from "@/core/horse/stats";
+
+function cloneNpcAIManager(manager: NpcAIManager | undefined): NpcAIManager | undefined {
+  if (!manager) return undefined;
+  return {
+    ...manager,
+    stableStates: Object.fromEntries(
+      Object.entries(manager.stableStates).map(([id, stableState]) => [id, { ...stableState }]),
+    ),
+  };
+}
+
+function recordOutcome(
+  manager: NpcAIManager | undefined,
+  state: GameState,
+  claim: Claim,
+  success: boolean,
+  value: number,
+  newDay: number,
+): void {
+  if (!manager || !claim.claimantStableId) return;
+  const stable = state.npcStables.find((s) => s.id === claim.claimantStableId);
+  if (!stable) return;
+  const stableAI = getOrCreateStableAIState(manager, stable, newDay);
+  const claimingAI = stableAI.claimingAI ?? createClaimingAIState(stable);
+  stableAI.claimingAI = recordClaimingOutcome(
+    claimingAI,
+    claim.horseId,
+    claim.raceId,
+    success,
+    value,
+    newDay,
+  );
+  manager.stableStates[stable.id] = stableAI;
+}
 
 /**
  * Phase: Claim Resolution
- * After races have been resolved, settle all claims.
- *
- * For each claiming race:
- *   - Group claims by horse
- *   - Randomly select a winner per horse (seeded by raceId + horseId)
- *   - Debit claimant's cash, credit original owner's net proceeds
- *   - Transfer horse ownership
- *   - Emit ClaimResolutionImpact via logs
- *
- * Prize money is credited to the original owner by the race resolution phase,
- * so no adjustment is needed here.
+ * After races have been resolved, settle all claims filed for those races.
  */
 export const claimResolutionPhase = {
   name: "claimResolution",
-  order: PHASE_ORDER_CLAIM_RESOLUTION, // After raceResolution (~65-70)
+  order: PHASE_ORDER_CLAIM_RESOLUTION,
   execute: (context: PipelineContext): PipelineContext => {
     const { state, newDay, logs } = context;
     const allClaims: Claim[] = state.claims ?? [];
-    const { horseMap, raceMap, stableMap } = context;
+    const { horseMap } = context;
 
-    const claimsToday = allClaims.filter((c: Claim) => {
-      const race = raceMap.get(c.raceId);
-      return race?.resolved && race.day === newDay && race.claiming;
+    const claimsToday = allClaims.filter((claim) => {
+      const race = state.races[claim.raceId];
+      return race?.resolved && race.day === newDay && race.claimingPrice !== undefined;
     });
 
     if (claimsToday.length === 0) return context;
 
     const impacts: AnyImpact[] = [];
-    let privateSaleOffers = [...(state.privateSaleOffers ?? [])];
     const newLogs = [...logs];
-    const newClaims: Claim[] = [...allClaims];
-
-    // Group by (raceId, horseId)
-    const grouped = new Map<string, Claim[]>();
+    const claimsByRace = new Map<string, Claim[]>();
     for (const claim of claimsToday) {
-      const key = `${claim.raceId}:${claim.horseId}`;
-      if (!grouped.has(key)) grouped.set(key, []);
-      grouped.get(key)!.push(claim);
+      const raceClaims = claimsByRace.get(claim.raceId) ?? [];
+      raceClaims.push(claim);
+      claimsByRace.set(claim.raceId, raceClaims);
     }
 
-    for (const [key, horseClaims] of grouped) {
-      if (horseClaims.length === 0) continue;
-      const [raceId, horseId] = key.split(":");
+    let privateSaleOffers = [...(state.privateSaleOffers ?? [])];
+    let playerCash = state.cash;
+    const stableCash = new Map(state.npcStables.map((stable) => [stable.id, stable.cash]));
+    let npcAIManager = cloneNpcAIManager(state.npcAIManager);
+    const consumedClaimIds = new Set<string>();
+    const transferredHorseIds = new Set<string>();
+    let claimActivityCount = 0;
 
-      // Deterministic random selection using raceId + horseId seed
-      const seed = hashStr(raceId + horseId);
-      const winnerIdx = seed % horseClaims.length;
-      const winnerClaim = horseClaims[winnerIdx];
-
-      const horse = horseMap.get(horseId);
-      if (!horse) continue;
-
-      const race = raceMap.get(raceId);
+    for (const [raceId, raceClaims] of claimsByRace) {
+      const race = state.races[raceId];
       if (!race) continue;
+      const result = resolveClaimingResolution({
+        race,
+        claims: raceClaims,
+        horses: Object.values(state.horses),
+        newDay,
+        rng: context.dailyRng,
+        playerCash,
+        stableCash,
+      });
+      impacts.push(...result.impacts);
+      claimActivityCount += raceClaims.length;
 
-      const price = winnerClaim.price;
-      const proceeds = netProceeds(price);
-
-      // Transfer horse
-      const originalStableId =
-        horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined;
-      const originalOwnerIsPlayer = !originalStableId;
-
-      impacts.push({
-        id: generateUUID(),
-        intentId: "",
-        day: newDay,
-        phase: "claimResolution",
-        logLevel: "always",
-        type: "horse_transfer",
-        horseId,
-        fromStableId: originalStableId,
-        toStableId: winnerClaim.claimantStableId,
-        price,
-        reason: `Claiming race resolution for ${race.name}`,
-      } as HorseTransferImpact);
-
-      // Cash flows
-      if (winnerClaim.claimantStableId) {
-        // NPC wins the claim — debit NPC cash
-        impacts.push({
-          id: generateUUID(),
-          intentId: "",
-          day: newDay,
-          phase: "claimResolution",
-          logLevel: "conditional",
-          type: "cash_change",
-          entityId: winnerClaim.claimantStableId,
-          amount: -price,
-          reason: `Claim purchase of ${horse.name}`,
-        } as CashImpact);
-      } else {
-        // Player wins the claim — debit player cash
-        impacts.push({
-          id: generateUUID(),
-          intentId: "",
-          day: newDay,
-          phase: "claimResolution",
-          logLevel: "conditional",
-          type: "cash_change",
-          entityId: "player",
-          amount: -price,
-          reason: `Claim purchase of ${horse.name}`,
-        } as CashImpact);
-      }
-
-      // Credit original owner
-      if (originalOwnerIsPlayer) {
-        impacts.push({
-          id: generateUUID(),
-          intentId: "",
-          day: newDay,
-          phase: "claimResolution",
-          logLevel: "conditional",
-          type: "cash_change",
-          entityId: "player",
-          amount: proceeds,
-          reason: `Claim proceeds for ${horse.name}`,
-        } as CashImpact);
-        newLogs.push({
-          day: newDay,
-          text: `${horse.name} was claimed by ${winnerClaim.claimantStableId ? (stableMap.get(winnerClaim.claimantStableId)?.name ?? "an NPC") : "your stable"} for ${formatCurrency(price)} after ${race.name}. Net proceeds: ${formatCurrency(proceeds)}.`,
-        });
-      } else {
-        // Credit NPC consignor
-        impacts.push({
-          id: generateUUID(),
-          intentId: "",
-          day: newDay,
-          phase: "claimResolution",
-          logLevel: "conditional",
-          type: "cash_change",
-          entityId: originalStableId,
-          amount: proceeds,
-          reason: `Claim proceeds for ${horse.name}`,
-        } as CashImpact);
-      }
-
-      // If player won: log it
-      if (!winnerClaim.claimantStableId) {
-        newLogs.push({
-          day: newDay,
-          text: `Your claim on ${horse.name} was successful. They join your stable for ${formatCurrency(price)}.`,
-        });
-      }
-
-      // Log player losing claim (if they had one but weren't the winner)
-      const playerClaim = horseClaims.find((c: Claim) => !c.claimantStableId);
-      if (playerClaim && playerClaim.id !== winnerClaim.id) {
-        const loserCount = horseClaims.length - 1;
-        newLogs.push({
-          day: newDay,
-          text: `Your claim on ${horse.name} was not drawn (${loserCount + 1} stables filed claims). No charge.`,
-        });
-      }
-
-      // Remove settled claims from state (keep unresolved claims)
-      const settledIds = new Set(horseClaims.map((c: Claim) => c.id));
-      for (const id of settledIds) {
-        const idx = newClaims.findIndex((c: Claim) => c.id === id);
-        if (idx !== -1) newClaims.splice(idx, 1);
-      }
-
-      // Void any pending private sale offers on claimed horses (per spec)
-      privateSaleOffers = privateSaleOffers.map((o) =>
-        o.horseId === horseId && (o.status === "pending" || o.status === "countered")
-          ? { ...o, status: "declined" as const }
-          : o,
+      const winningKeys = new Set(
+        result.transfers.map((transfer) => `${transfer.horseId}:${transfer.toStableId}`),
       );
-    }
+      const withdrawnIds = new Set(result.withdrawnClaims.map((claim) => claim.id));
+      const voidedIds = new Set(result.voidedClaims.map((claim) => claim.id));
+      const unaffordableIds = new Set(result.unaffordableClaims.map((claim) => claim.id));
+      const losingIds = new Set(result.losingClaims.map((claim) => claim.id));
 
-    // Process diplomacy friction for NPC-to-NPC claims
-    let updatedNpcAIManager = state.npcAIManager;
-    if (updatedNpcAIManager) {
-      let claimCount = 0;
-      for (const [key, horseClaims] of grouped) {
-        if (horseClaims.length === 0) continue;
-        const [raceId, horseId] = key.split(":");
-        const seed = hashStr(raceId + horseId);
-        const winnerIdx = seed % horseClaims.length;
-        const winnerClaim = horseClaims[winnerIdx];
-        const horse = horseMap.get(horseId);
-        if (!horse) continue;
+      for (const claim of raceClaims) {
+        consumedClaimIds.add(claim.id);
+        const won = winningKeys.has(`${claim.horseId}:${claim.claimantStableId ?? ""}`);
+        const horse = horseMap.get(claim.horseId);
+        if (won && horse) {
+          transferredHorseIds.add(claim.horseId);
+          recordOutcome(
+            npcAIManager,
+            state,
+            claim,
+            true,
+            calculateOverallRating(horse as Horse) * 1000 - claim.price,
+            newDay,
+          );
+        } else if (
+          withdrawnIds.has(claim.id) ||
+          voidedIds.has(claim.id) ||
+          unaffordableIds.has(claim.id) ||
+          losingIds.has(claim.id)
+        ) {
+          recordOutcome(npcAIManager, state, claim, false, 0, newDay);
+        }
+      }
 
-        claimCount++;
-        const originalStableId =
-          horse.ownership?.type === "npc" ? horse.ownership.stableId : undefined;
-        // Only process friction for NPC-to-NPC claims
-        if (winnerClaim.claimantStableId && originalStableId) {
-          updatedNpcAIManager = applyClaimingFriction(
-            updatedNpcAIManager,
-            winnerClaim.claimantStableId,
-            originalStableId,
+      for (const transfer of result.transfers) {
+        if (transfer.toStableId) {
+          stableCash.set(
+            transfer.toStableId,
+            (stableCash.get(transfer.toStableId) ?? 0) - transfer.price,
+          );
+        } else {
+          playerCash -= transfer.price;
+        }
+        if (transfer.fromStableId && transfer.toStableId && npcAIManager) {
+          npcAIManager = applyClaimingFriction(
+            npcAIManager,
+            transfer.toStableId,
+            transfer.fromStableId,
           );
         }
       }
-      // Track claiming market activity for economy AI
-      updatedNpcAIManager = trackClaimingActivity(updatedNpcAIManager, claimCount);
+
+      privateSaleOffers = privateSaleOffers.map((offer) =>
+        transferredHorseIds.has(offer.horseId) &&
+        (offer.status === "pending" || offer.status === "countered")
+          ? { ...offer, status: "declined" as const }
+          : offer,
+      );
+    }
+
+    if (npcAIManager) {
+      npcAIManager = trackClaimingActivity(npcAIManager, claimActivityCount);
     }
 
     return {
       ...context,
       state: {
         ...context.state,
-        claims: newClaims,
+        claims: allClaims.filter((claim) => !consumedClaimIds.has(claim.id)),
         privateSaleOffers,
-        ...(updatedNpcAIManager ? { npcAIManager: updatedNpcAIManager } : {}),
+        ...(npcAIManager ? { npcAIManager } : {}),
       },
       impacts: [...context.impacts, ...impacts],
       logs: newLogs,

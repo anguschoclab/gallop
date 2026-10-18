@@ -7,7 +7,7 @@ import {
   getDisplayableStats,
   getScoutStatus,
   getIntelSummary,
-} from "@/core/npc/scouting";
+} from "@/domains/agents/simulation/npc/scouting";
 import type { Horse, Stable, ScoutReport } from "@/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";

@@ -7,7 +7,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import { selectPrepRace } from "@/core/ai/campaignTargeting";
+import { selectPrepRace } from "@/domains/agents/simulation/campaignTargeting";
 import { GRADED_RACES_BY_KEY } from "@/data/gradedRaces";
 import type { GradedRace } from "@/data/gradedRaces";
 

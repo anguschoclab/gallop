@@ -6,7 +6,7 @@ import { makePlayerOwned, makeUnowned } from "@/core/horse/ownership";
 import { asHorseId, asJockeyId } from "@/core/types/branded";
 import type { StaffMember } from "@/core/staff/staffTypes";
 import type { RaceSnapshot, PaceSnapshot } from "@/core/race/engine/raceSnapshotTypes";
-import type { NpcAIManager } from "@/core/ai/npcCycleAI";
+import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { DEFAULT_DT, defaultMaxTime } from "@/constants/raceEngineConstants";
 import type { RunnerFactorLedger } from "@/core/race/factorLedger";
 
