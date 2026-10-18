@@ -117,7 +117,7 @@ describe("races Record sync through store actions", () => {
 
   it("races Record entries reflect resolved status after race resolution", async () => {
     const dueRace = makeRace("r-due", 1, { resolved: false });
-    dueRace.entries = [{ horseId: "h1", jockeyId: "j1", form: 1, position: 1 }];
+    dueRace.entries = [{ horseId: "h1", jockeyId: "j1", formMultiplier: 1, position: 1 } as any];
 
     useGame.setState({
       day: 1,
