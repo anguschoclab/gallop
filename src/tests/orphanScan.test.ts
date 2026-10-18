@@ -92,9 +92,7 @@ const allTsxFiles = ["domains", "shared", "platform", "routes"]
   .flatMap((d) => collectFiles(join(srcRoot, d), [".tsx"], []))
   .concat(
     ["domains", "shared"].flatMap((d) =>
-      collectFiles(join(srcRoot, d), [".ts"], []).filter((f) =>
-        f.includes(`${sep}ui${sep}`),
-      ),
+      collectFiles(join(srcRoot, d), [".ts"], []).filter((f) => f.includes(`${sep}ui${sep}`)),
     ),
   );
 const allCoreTsFiles = ["domains", "platform", "shared"].flatMap((d) =>
@@ -546,7 +544,9 @@ describe("Orphan Scan: Dormant AI Functions", () => {
 
 describe("Orphan Scan: Facility Type Parity", () => {
   it("FacilityType includes imperial facilities (jockey_academy, museum)", () => {
-    const facilityTypesText = readFileSafe(join(srcRoot, "domains", "facilities", "model", "facilityTypes.ts"));
+    const facilityTypesText = readFileSafe(
+      join(srcRoot, "domains", "facilities", "model", "facilityTypes.ts"),
+    );
     expect(facilityTypesText.includes('"jockey_academy"')).toBe(true);
     expect(facilityTypesText.includes('"museum"')).toBe(true);
   });

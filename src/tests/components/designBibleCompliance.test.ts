@@ -14,10 +14,7 @@ import { join } from "path";
 function readComponent(name: string): string {
   const [domain, file] = name.split("/");
   const targetDomain = domain === "npc" ? "agents" : domain;
-  return readFileSync(
-    join(__dirname, "..", "..", "domains", targetDomain, "ui", file),
-    "utf-8",
-  );
+  return readFileSync(join(__dirname, "..", "..", "domains", targetDomain, "ui", file), "utf-8");
 }
 
 describe("Design Bible Compliance: EconomicIndicators", () => {

@@ -30,7 +30,17 @@ type StableSearch = {
 };
 
 function StablePage() {
-  const { tab, status, rivalQ, rivalTier, view, tendency, trip, surface, compareIds } = useSearch({
+  const {
+    tab = "roster",
+    status = "active",
+    rivalQ = "",
+    rivalTier = "all",
+    view = "ledger",
+    tendency = "any",
+    trip = "any",
+    surface = "any",
+    compareIds = [],
+  } = useSearch({
     from: "/stable/",
   });
   const navigate = useNavigate({ from: "/stable/" });

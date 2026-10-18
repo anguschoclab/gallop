@@ -4,7 +4,7 @@
  * Encapsulates all timeout/interval management for flash effects and error states.
  */
 
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
 export function useAuctionTimers() {
   const activePaddleTimerRef = useRef<number | null>(null);
@@ -69,13 +69,24 @@ export function useAuctionTimers() {
     if (timerRef.current) clearInterval(timerRef.current);
   }, []);
 
-  return {
-    setActivePaddleFlash,
-    setHammerFlash,
-    setBannerFlash,
-    setBidError,
-    startInterval,
-    stopInterval,
-    clearAll,
-  };
+  return useMemo(
+    () => ({
+      setActivePaddleFlash,
+      setHammerFlash,
+      setBannerFlash,
+      setBidError,
+      startInterval,
+      stopInterval,
+      clearAll,
+    }),
+    [
+      setActivePaddleFlash,
+      setHammerFlash,
+      setBannerFlash,
+      setBidError,
+      startInterval,
+      stopInterval,
+      clearAll,
+    ],
+  );
 }

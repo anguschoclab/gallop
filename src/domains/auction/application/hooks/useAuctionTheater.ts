@@ -100,6 +100,13 @@ export function useAuctionTheater(saleId: string) {
     eventProcessor.stepAndRender,
   );
 
+  // Destructure stable members so the init effect below depends on stable
+  // identities — the composable hooks return fresh container objects each
+  // render, and depending on them reset the runner on every commit.
+  const { setPlayerMaxBidState, setBidError: setBiddingError } = bidding;
+  const { setBidError: scheduleBidError, clearAll: clearAllTimers } = timers;
+  const { prevLotIndexRef } = eventProcessor;
+
   // Initialize runner once per sale
   useEffect(() => {
     if (!sale) return;
@@ -108,11 +115,10 @@ export function useAuctionTheater(saleId: string) {
       onAutoRaise: (amount) => {
         const result = debitForLiveBid(amount);
         if (!result.ok) {
-          bidding.setPlayerMaxBidState(undefined);
-          bidding.setBidError(`Auto-bid cancelled: ${result.reason ?? "insufficient funds"}`);
-          timers.setBidError(
-            `Auto-bid cancelled: ${result.reason ?? "insufficient funds"}`,
-            (err) => bidding.setBidError(err),
+          setPlayerMaxBidState(undefined);
+          setBiddingError(`Auto-bid cancelled: ${result.reason ?? "insufficient funds"}`);
+          scheduleBidError(`Auto-bid cancelled: ${result.reason ?? "insufficient funds"}`, (err) =>
+            setBiddingError(err),
           );
           return false;
         }
@@ -121,24 +127,26 @@ export function useAuctionTheater(saleId: string) {
     });
     setUiState((prev) => ({ ...prev, chantLines: [] }));
     setTheaterState((prev) => ({ ...prev, done: false, committed: false }));
-    bidding.setPlayerMaxBidState(undefined);
+    setPlayerMaxBidState(undefined);
     setUiState((prev) => ({ ...prev, historyOpen: false, winOverlay: null }));
-    eventProcessor.prevLotIndexRef.current = 0;
+    prevLotIndexRef.current = 0;
     prevLeadingRef.current = undefined;
     forceTick();
 
     return () => {
-      timers.clearAll();
+      clearAllTimers();
     };
   }, [
     sale?.id,
+    sale,
     stables,
     horses,
     debitForLiveBid,
-    sale,
-    bidding,
-    timers,
-    eventProcessor.prevLotIndexRef,
+    setPlayerMaxBidState,
+    setBiddingError,
+    scheduleBidError,
+    clearAllTimers,
+    prevLotIndexRef,
   ]);
 
   // Sync player max bid to runner

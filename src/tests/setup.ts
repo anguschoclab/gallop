@@ -44,6 +44,17 @@ class ResizeObserverMock {
 }
 (globalThis as any).ResizeObserver = ResizeObserverMock;
 
+// jsdom doesn't implement IntersectionObserver
+class IntersectionObserverMock {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+  takeRecords() {
+    return [];
+  }
+}
+(globalThis as any).IntersectionObserver = IntersectionObserverMock;
+
 beforeEach(() => {
   store.clear();
   ssStore.clear();
