@@ -4,7 +4,11 @@ import type { Horse, Race, Jockey } from "@/platform/game/types";
 import type { WeatherState } from "@/domains/weather/model/weatherTypes";
 import { getCurrentYear } from "@/domains/race/simulation/schedule";
 import { isHorseEligibleForRace } from "@/domains/race/simulation/eligibility";
-import { buildInstructions, type PresetId } from "@/domains/race/application/TacticOptions";
+import {
+  buildInstructions,
+  getPreset,
+  type PresetId,
+} from "@/domains/race/application/TacticOptions";
 import { toast } from "sonner";
 import { formatCurrency } from "@/shared/common/formatting";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
@@ -80,19 +84,7 @@ export function useRaceEntry(race: Race) {
         completeTutorialBeat(1);
         assignJockey(race.id, selectedHorseId, selectedJockeyId);
         const instructions = buildInstructions(
-          {
-            id: selectedPreset,
-            name: "",
-            desc: "",
-            instructions: {
-              horseId: selectedHorseId,
-              raceId: race.id,
-              ridingStyle: "tactical",
-              earlyPosition: "midpack",
-              moveTiming: "mid",
-              aggressiveness: 50,
-            },
-          },
+          getPreset(selectedPreset),
           selectedHorseId,
           race.id,
         );
