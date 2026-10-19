@@ -80,6 +80,8 @@ Dependency rules (enforced by `src/tests/architecture/layeringRules.test.ts`, ze
 - **Fixture determinism**: `createInitialState` mints entity UUIDs via the ambient stream — any script/test that compares two worlds must wrap fixture creation in `withUuidStream(createRng(hashStr(seed)), ...)` or the comparison measures fixture randomness, not simulation divergence.
 
 <!-- LOVABLE:BEGIN -->
+
 - Period campaign filters use attributed player race starts and the same race identities for summary totals so drilldowns agree.
 - Mount TooltipProvider in the root shell so full-screen race views and ordinary pages share tooltip context.
+
 <!-- LOVABLE:END -->
