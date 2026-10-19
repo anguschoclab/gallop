@@ -296,9 +296,22 @@ export const raceEntryResolutionPhase: PipelinePhase = {
         jockeyId,
         entryFee: race.entryFee,
         bumpEntryHorseId,
-        jockeyInstructions: intent.jockeyInstructions,
+        jockeyInstructions,
         reason: bumpEntryHorseId ? "Race entry (bump)" : "Race entry",
       } as RaceEntryImpact);
+
+      if (race.day <= newDay) {
+        sameDayAdds.push({
+          raceId: race.id,
+          bumpEntryHorseId,
+          entry: {
+            horseId: horse.id,
+            ownership: horse.ownership,
+            jockeyId: jockeyId as JockeyId | undefined,
+            jockeyInstructions,
+          },
+        });
+      }
 
       // Add transport cost for player-owned horses (simplified: fixed cost based on race grade)
       if (isPlayerOwned(horse)) {
