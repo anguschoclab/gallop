@@ -16,6 +16,7 @@ import {
   DEFAULT_STABLE_GOALS,
   GOAL_CLASSES,
   goalProgress,
+  playerNetWorthBreakdown,
   type StableGoals,
 } from "@/domains/stable/simulation/stableGoals";
 
