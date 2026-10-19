@@ -12,3 +12,5 @@
 - [ ] Jockey plan on race entries: show each entered horse's riding plan wherever the stable sees its entries, not only in Race Advisor
 - [ ] Compare page: 7-day timeline of each compared horse's rating, form and price
 - [ ] Fix race-record gap: watched (live) races must write to the horse's race history so journal, Plan Effectiveness and daily comparisons fill in
+- [ ] Rankings History: show each horse's current market value in its row next to price trends
+- [ ] Stable Campaign: include horse values in the net-worth total, not just prize money
