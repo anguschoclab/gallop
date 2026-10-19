@@ -7,4 +7,5 @@
 - [x] Daily rankings comparison: player horses versus daily leaders, with rank, points, reputation and price gaps (six tests pass; populated live-game check remains unverified)
 - [ ] Verify Race Advisor save → completed race → Plan Effectiveness win rate and position in the running game (saved-plan UI verified; test race has results but no horse history/journal outcome, so populated scores remain unverified)
 - [x] Add Campaign history filtering and contributing races to Compare Periods (filter and saved campaign verified in-game; calculation tests pass; populated race table remains unverified)
-- [ ] Campaign history: per-race horse auction price/value changes so net worth reflects wins and market shifts
+- [x] Campaign history: per-race horse auction price/value changes so net worth reflects wins and market shifts
+- [ ] In-game check: auto-adjusted Stable Campaign goals rise and log after several races (logic tests pass; live play unverified)
