@@ -44,9 +44,14 @@ src/tests/e2e/fixtures/*.json
 
 # Bot config artifacts (Jules, etc.)
 .jules/
+.Jules/
 .lovable/
 .gemini/
 .windsurf/
+
+# Generated test artifacts (never commit)
+test-results/
+playwright-report/
 
 # Auto-generated route tree
 src/routeTree.gen.ts
