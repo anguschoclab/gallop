@@ -89,4 +89,26 @@ describe("interruptionForDay", () => {
     const plan = buildAdvancePlan(state, 7, true);
     expect(interruptionForDay(plan, state, 3)).toBeUndefined();
   });
+
+  it("does not stop again for a race already watched live", () => {
+    const base = stateWithRace(raceOnDay(3));
+    const state = {
+      ...base,
+      pendingIntents: [
+        {
+          id: "res-1",
+          entityId: "race-3",
+          source: "system",
+          day: 2,
+          priority: 10,
+          type: "race_resolution",
+          raceId: "race-3",
+          results: [{ horseId: "h1", position: 1, time: 90 }],
+          liveImpactsApplied: true,
+        },
+      ],
+    } as unknown as GameState;
+    const plan = buildAdvancePlan(state, 7, false);
+    expect(interruptionForDay(plan, state, 3)).toBeUndefined();
+  });
 });
