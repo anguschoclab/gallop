@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { JARGON_DEFINITIONS } from "@/domains/horse/simulation/jargon";
+import { JARGON_DEFINITIONS } from "@/shared/data/jargon";
 
 describe("JARGON_DEFINITIONS — facility terms", () => {
   it("defines Tier as a non-empty string", () => {

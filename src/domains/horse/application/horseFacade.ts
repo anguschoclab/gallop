@@ -12,7 +12,7 @@ export * from "@/domains/horse/simulation/paceTendency";
 export * from "@/domains/horse/simulation/horseFactory";
 export * from "@/domains/horse/simulation/attachment";
 export * from "@/domains/horse/simulation/pricing";
-export * from "@/domains/horse/simulation/jargon";
+export * from "@/shared/data/jargon";
 export * from "@/domains/horse/simulation/insightMetrics";
 export * from "@/domains/horse/simulation/gender";
 export * from "@/domains/horse/simulation/foalDevelopment";
