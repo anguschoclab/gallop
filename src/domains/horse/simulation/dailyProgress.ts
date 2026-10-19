@@ -77,3 +77,32 @@ export function recordDailyProgress(
   }
   return next;
 }
+
+/**
+ * Snapshots from the last `days` game days (inclusive of today), oldest first.
+ * @param snaps - A horse's recorded daily snapshots
+ * @param currentDay - Current game day
+ * @param days - Window length in days (default 7)
+ */
+export function recentSnapshots(
+  snaps: HorseDailySnapshot[] | undefined,
+  currentDay: number,
+  days = 7,
+): HorseDailySnapshot[] {
+  const from = currentDay - days + 1;
+  return (snaps ?? []).filter((s) => s.day >= from && s.day <= currentDay);
+}
+
+/**
+ * First-to-last change of one metric across a snapshot window; undefined with
+ * fewer than two snapshots.
+ * @param snaps - Snapshots, oldest first
+ * @param key - Metric to compare
+ */
+export function windowChange(
+  snaps: HorseDailySnapshot[],
+  key: "ovr" | "form" | "price",
+): number | undefined {
+  if (snaps.length < 2) return undefined;
+  return snaps[snaps.length - 1][key] - snaps[0][key];
+}

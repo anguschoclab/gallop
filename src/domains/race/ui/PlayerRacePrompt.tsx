@@ -10,13 +10,13 @@ import { buildRaceField, rngForRace } from "@/domains/race/application/raceFacad
 import { runRaceToCompletion, toRaceRunner } from "@/domains/race/application/raceFacade";
 import { getCourseForRace } from "@/shared/data/tracks";
 import { formatCurrency } from "@/domains/race/application/raceFacade";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   INSTRUCTION_PRESETS,
   buildInstructions,
+  getPreset,
   type PresetId,
 } from "@/domains/race/application/TacticOptions";
-import { AGGRESSIVENESS_DEFAULT } from "@/shared/constants/tacticsConstants";
 import { DEFAULT_DT, defaultMaxTime } from "@/domains/race/model/engine/constants";
 
 export function PlayerRacePrompt() {
@@ -45,7 +45,21 @@ export function PlayerRacePrompt() {
     return ownedEntry ? horses[ownedEntry.horseId] : undefined;
   }, [race, horses]);
 
-  if (!race) return null;
+  // The race was already watched (its result is queued for the day's
+  // processing): drop the stale prompt so the paused advance can carry on.
+  const alreadyRun = useGame((s) =>
+    (s.pendingIntents ?? []).some(
+      (i) => i.type === "race_resolution" && (i as { raceId?: string }).raceId === pendingRaceId,
+    ),
+  );
+  useEffect(() => {
+    if (!pendingRaceId || !alreadyRun) return;
+    const ex = useGame.getState().execution;
+    if (ex?.interruptRaceId === pendingRaceId)
+      useGame.setState({ execution: { ...ex, interruptRaceId: undefined } });
+  }, [pendingRaceId, alreadyRun]);
+
+  if (!race || alreadyRun) return null;
 
   function clearPending() {
     const ex = useGame.getState().execution;
@@ -70,19 +84,7 @@ export function PlayerRacePrompt() {
     // Set tactics before resolving
     if (enteredHorse) {
       const instructions = buildInstructions(
-        {
-          id: selectedPreset,
-          name: "",
-          desc: "",
-          instructions: {
-            horseId: enteredHorse.id,
-            raceId: race!.id,
-            ridingStyle: "tactical",
-            earlyPosition: "midpack",
-            moveTiming: "mid",
-            aggressiveness: AGGRESSIVENESS_DEFAULT,
-          },
-        },
+        getPreset(selectedPreset),
         enteredHorse.id,
         race!.id,
       );

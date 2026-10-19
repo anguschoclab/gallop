@@ -6,6 +6,7 @@ import { Input } from "@/shared/ui/input";
 import { Sparkline } from "@/shared/ui/charts/Sparkline";
 import { useGameWithShallow } from "@/platform/game/store";
 import { formatCurrency } from "@/shared/common/formatting";
+import { horseMarketValue } from "@/domains/horse/simulation/pricing";
 import type {
   RankingsHistory,
   RankingsSnapshot,
@@ -74,16 +75,25 @@ function RankingsHistoryPage() {
   );
 
   const rows = useMemo(() => {
+    const all = Object.values(horses);
     return Object.entries(history)
       .map(([horseId, snaps]) => {
         const latest = snaps[snaps.length - 1];
         const prev = snaps.length > 1 ? snaps[snaps.length - 2] : undefined;
+        const horse = horses[horseId];
+        // Live market value today; falls back to the last recorded price for
+        // horses that have left the world.
+        const value = horse?.stats ? horseMarketValue(horse, all) : latest?.price;
+        const first = snaps[0];
         return {
           horseId,
-          name: horses[horseId]?.name ?? "Unknown horse",
+          name: horse?.name ?? "Unknown horse",
           latest,
           prev,
           snaps,
+          value,
+          /** Value change since the horse's first recorded snapshot. */
+          valueShift: value !== undefined && first ? value - first.price : undefined,
         };
       })
       .filter((r) => r.latest)
@@ -185,6 +195,18 @@ function RankingsHistoryPage() {
                         {r.latest.rank ?? "—"}
                       </span>
                       <span className="flex-1 truncate font-sans font-bold">{r.name}</span>
+                      {r.value !== undefined ? (
+                        <span className="flex flex-col items-end leading-tight tabular-nums">
+                          <span className="text-foreground/80">{formatCurrency(r.value)}</span>
+                          {r.valueShift ? (
+                            <span
+                              className={`text-[9px] ${r.valueShift > 0 ? "text-success" : "text-destructive"}`}
+                            >
+                              {signed(r.valueShift, true)}
+                            </span>
+                          ) : null}
+                        </span>
+                      ) : null}
                       {rankDelta ? (
                         <span
                           className={`tabular-nums ${rankDelta.up ? "text-success" : "text-destructive"}`}
@@ -229,6 +251,15 @@ function RankingsHistoryPage() {
                   <Stat label="Points" value={selected.latest.points.toFixed(1)} />
                   <Stat label="Reputation" value={String(selected.latest.reputation)} />
                   <Stat label="Auction price" value={formatCurrency(selected.latest.price)} />
+                  {selected.value !== undefined ? (
+                    <Stat label="Market value now" value={formatCurrency(selected.value)} />
+                  ) : null}
+                  {selected.valueShift !== undefined ? (
+                    <Stat
+                      label={`Since day ${selected.snaps[0].day}`}
+                      value={signed(selected.valueShift, true)}
+                    />
+                  ) : null}
                 </CardContent>
               </Card>
 
@@ -261,10 +292,13 @@ function RankingsHistoryPage() {
                         <th scope="col" className="p-2 text-right">
                           Price
                         </th>
+                        <th scope="col" className="p-2 text-right">
+                          Change
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
-                      {[...selected.snaps].reverse().map((s: RankingsSnapshot) => (
+                      {[...selected.snaps].reverse().map((s: RankingsSnapshot, i, arr) => (
                         <tr key={s.day} className="text-foreground/80">
                           <td className="p-2 tabular-nums">Day {s.day}</td>
                           <td className="p-2 text-right tabular-nums font-black text-primary">
@@ -273,6 +307,19 @@ function RankingsHistoryPage() {
                           <td className="p-2 text-right tabular-nums">{s.points.toFixed(1)}</td>
                           <td className="p-2 text-right tabular-nums">{s.reputation}</td>
                           <td className="p-2 text-right tabular-nums">{formatCurrency(s.price)}</td>
+                          <td className="p-2 text-right tabular-nums">
+                            {(() => {
+                              const before = arr[i + 1];
+                              const d = before ? s.price - before.price : 0;
+                              if (!before || d === 0)
+                                return <span className="text-foreground/30">—</span>;
+                              return (
+                                <span className={d > 0 ? "text-success" : "text-destructive"}>
+                                  {signed(d, true)}
+                                </span>
+                              );
+                            })()}
+                          </td>
                         </tr>
                       ))}
                     </tbody>

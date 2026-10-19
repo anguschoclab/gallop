@@ -6,6 +6,7 @@ import { CompareHeaderRow } from "@/domains/horse/ui/CompareHeaderRow";
 import { CompareMetricTable } from "@/domains/horse/ui/CompareMetricTable";
 import { SurfaceAptitudeSection } from "@/domains/horse/ui/SurfaceAptitudeSection";
 import { CompareStatBars } from "@/domains/horse/ui/CompareStatBars";
+import { CompareTimeline } from "@/domains/horse/ui/CompareTimeline";
 import { MIN_COMPARE_HORSES } from "@/shared/constants/uiConstants";
 
 interface HorseCompareProps {
@@ -37,6 +38,7 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
             <CompareMetricTable horses={horses} rows={rows} />
             <SurfaceAptitudeSection horses={horses} />
             <CompareStatBars horses={horses} />
+            <CompareTimeline horses={horses} />
           </div>
         )}
 

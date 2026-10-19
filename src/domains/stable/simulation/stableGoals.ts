@@ -67,13 +67,33 @@ export function raceHistoryGoalClass(grade?: string, raceClass?: string): GoalCl
   return historyClass(grade, raceClass);
 }
 
-export function playerNetWorth(horses: Horse[], cash: number): number {
-  let total = cash;
+export interface NetWorthBreakdown {
+  cash: number;
+  /** Sum of the player's horses' current market values. */
+  horseValue: number;
+  horses: Array<{ id: string; name: string; value: number }>;
+  total: number;
+}
+
+/**
+ * Net worth split into cash and each owned horse's current market value,
+ * horses sorted by value (highest first). `total` equals `playerNetWorth`.
+ * @param horses - All horses in game
+ * @param cash - Player cash on hand
+ */
+export function playerNetWorthBreakdown(horses: Horse[], cash: number): NetWorthBreakdown {
+  const owned: NetWorthBreakdown["horses"] = [];
   for (const h of horses) {
     if (!h?.stats || !isPlayerOwned(h) || h.lifecycleStatus === "deceased") continue;
-    total += horseMarketValue(h);
+    owned.push({ id: h.id, name: h.name, value: horseMarketValue(h) });
   }
-  return Math.round(total);
+  owned.sort((a, b) => b.value - a.value);
+  const horseValue = owned.reduce((sum, h) => sum + h.value, 0);
+  return { cash, horseValue, horses: owned, total: Math.round(cash + horseValue) };
+}
+
+export function playerNetWorth(horses: Horse[], cash: number): number {
+  return playerNetWorthBreakdown(horses, cash).total;
 }
 
 export function goalProgress(goals: StableGoals, horses: Horse[], cash: number): GoalProgress {

@@ -7,12 +7,14 @@ import { getTransportCostForRace } from "@/domains/race/application/raceFacade";
 import type { Horse, Jockey, Race } from "@/platform/game/types";
 import { formatCurrency } from "@/domains/race/application/raceFacade";
 import type { JockeyInstructions } from "@/domains/tactics/application/tacticsFacade";
+import { summarizePlan } from "@/domains/tactics/model/racePlan";
 
 interface Props {
   race: Race;
   selectedHorse: Horse;
   selectedJockey: Jockey;
   selectedInstructions: JockeyInstructions;
+  planName?: string;
   isHorseQualifiedForRace: (horse: Horse, race: Race) => boolean;
   isNewClaimingRace: boolean;
   claimingPrice: number | undefined;
@@ -24,6 +26,7 @@ export function ReviewStep({
   selectedHorse,
   selectedJockey,
   selectedInstructions,
+  planName,
   isHorseQualifiedForRace,
   isNewClaimingRace,
   claimingPrice,
@@ -92,10 +95,13 @@ export function ReviewStep({
       </div>
 
       <div className="space-y-2 px-4">
-        <div className="flex justify-between text-sm">
-          <span className="text-muted-foreground">Instructions</span>
-          <span className="font-bold uppercase text-primary">
-            {selectedInstructions.ridingStyle.replace("_", " ")} / {selectedInstructions.moveTiming}
+        <div className="flex justify-between gap-4 text-sm">
+          <span className="text-muted-foreground">Jockey plan</span>
+          <span className="text-right">
+            {planName && <span className="font-bold uppercase text-primary">{planName}</span>}
+            <span className="block text-xs text-muted-foreground">
+              {summarizePlan(selectedInstructions)}
+            </span>
           </span>
         </div>
         <div className="flex justify-between text-sm">

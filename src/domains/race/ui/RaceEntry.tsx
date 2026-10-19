@@ -9,7 +9,7 @@ import { TacticsSelectionStep } from "@/domains/race/ui/TacticsSelectionStep";
 import { ReviewStep } from "@/domains/race/ui/ReviewStep";
 import { ClaimingStep } from "@/domains/race/ui/ClaimingStep";
 import { RaceEntryHeader } from "@/domains/race/ui/RaceEntryHeader";
-import { buildInstructions } from "@/domains/race/application/TacticOptions";
+import { buildInstructions, getPreset } from "@/domains/race/application/TacticOptions";
 import { useRaceEntry } from "@/domains/race/application/hooks/useRaceEntry";
 
 interface RaceEntryProps {
@@ -106,22 +106,11 @@ export function RaceEntry({ race, isOpen, onClose }: RaceEntryProps) {
               selectedHorse={selectedHorse}
               selectedJockey={selectedJockey}
               selectedInstructions={buildInstructions(
-                {
-                  id: selectedPreset,
-                  name: "",
-                  desc: "",
-                  instructions: {
-                    horseId: selectedHorse.id,
-                    raceId: race.id,
-                    ridingStyle: "tactical",
-                    earlyPosition: "midpack",
-                    moveTiming: "mid",
-                    aggressiveness: 50,
-                  },
-                },
+                getPreset(selectedPreset),
                 selectedHorse.id,
                 race.id,
               )}
+              planName={getPreset(selectedPreset).name}
               isHorseQualifiedForRace={isHorseQualifiedForRace}
               isNewClaimingRace={isNewClaimingRace}
               claimingPrice={claimingPrice}

@@ -82,9 +82,18 @@ export function interruptionForDay(
   day: number,
 ): Interruption | undefined {
   if (plan.headless || !plan.playerRaceDays.has(day)) return undefined;
+  // A race already watched live carries a queued race_resolution intent — the
+  // day's pipeline finishes it, so don't stop and prompt for it a second time.
+  const alreadyRun = new Set<string>();
+  for (const i of state.pendingIntents ?? []) {
+    if (i.type === "race_resolution") alreadyRun.add((i as { raceId: string }).raceId);
+  }
   const race = Object.values(state.races).find(
     (r: Race) =>
-      !r.resolved && r.day === day && r.entries.some((e) => e.ownership?.type === "player"),
+      !r.resolved &&
+      r.day === day &&
+      !alreadyRun.has(r.id) &&
+      r.entries.some((e) => e.ownership?.type === "player"),
   );
   return race ? { day, raceId: race.id, reason: "player_race" } : undefined;
 }

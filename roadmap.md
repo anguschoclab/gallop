@@ -9,3 +9,9 @@
 - [x] Add Campaign history filtering and contributing races to Compare Periods (filter and saved campaign verified in-game; calculation tests pass; populated race table remains unverified)
 - [x] Campaign history: per-race horse auction price/value changes so net worth reflects wins and market shifts
 - [ ] In-game check: auto-adjusted Stable Campaign goals rise and log after several races (logic tests pass; live play unverified)
+- [ ] Jockey plan on race entries: show each entered horse's riding plan wherever the stable sees its entries, not only in Race Advisor
+- [ ] Compare page: 7-day timeline of each compared horse's rating, form and price
+- [ ] Fix race-record gap: watched (live) races must write to the horse's race history so journal, Plan Effectiveness and daily comparisons fill in
+- [ ] Rankings History: show each horse's current market value in its row next to price trends
+- [ ] Stable Campaign: include horse values in the net-worth total, not just prize money
+- [ ] Auto-Register and Daily Auto-Entry: once a day, enter each horse in its next campaign goal race outright (not just weighted)

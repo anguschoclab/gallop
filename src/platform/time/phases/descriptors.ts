@@ -389,7 +389,7 @@ export const GAME_PHASE_DESCRIPTORS: PhaseDescriptor[] = [
   describePhase(raceEntryResolutionPhase, {
     label: "Race entries",
     cadence: "daily",
-    reads: ["transports", "jockeys", "npcAIManager", "transactions"],
+    reads: ["races", "transports", "jockeys", "npcAIManager", "transactions"],
     writes: ["races", "impacts", "transactions", "transports", "log", "npcAIManager"],
   }),
   describePhase(consignmentResolutionPhase, {
