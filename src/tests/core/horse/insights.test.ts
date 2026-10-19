@@ -949,3 +949,46 @@ describe("Tipster: Sire Value insight", () => {
     expect(insight?.label).not.toBe("Value Sire");
   });
 });
+
+describe("Tipster: Earnings Yield insight", () => {
+  it("detects Rainmaker when earnings per start is >= 100k", () => {
+    const horse = {
+      careerStarts: 5,
+      lifetimeEarnings: 550000,
+      raceHistory: [{}, {}, {}, {}, {}],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Rainmaker");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("detects Prize Fighter when earnings per start is >= 25k but < 100k", () => {
+    const horse = {
+      careerStarts: 10,
+      lifetimeEarnings: 300000,
+      raceHistory: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Prize Fighter");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("does not detect Earnings Yield if less than 5 starts", () => {
+    const horse = {
+      careerStarts: 4,
+      lifetimeEarnings: 500000,
+      raceHistory: [{}, {}, {}, {}],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight?.label).not.toBe("Rainmaker");
+    expect(insight?.label).not.toBe("Prize Fighter");
+  });
+});

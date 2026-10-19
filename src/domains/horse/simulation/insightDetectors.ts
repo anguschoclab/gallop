@@ -608,6 +608,32 @@ export const detectGateAffinity: InsightDetector = (horse) => {
   return null;
 };
 
+// 5.1 Check for Earnings Yield
+export const detectEarningsYield: InsightDetector = (horse) => {
+  const starts = horse.careerStarts ?? horse.raceHistory?.length ?? 0;
+  const earnings = horse.lifetimeEarnings ?? 0;
+
+  if (starts >= 5 && earnings > 0) {
+    const yieldPerStart = earnings / starts;
+    if (yieldPerStart >= 100000) {
+      return {
+        label: "Rainmaker",
+        value: "Elite Earnings Per Start",
+        context: `Averages $${Math.round(yieldPerStart).toLocaleString()} in prize money for every trip to the starting gate`,
+        type: "positive",
+      };
+    } else if (yieldPerStart >= 25000) {
+      return {
+        label: "Prize Fighter",
+        value: "High Earnings Per Start",
+        context: `Averages $${Math.round(yieldPerStart).toLocaleString()} in prize money per start`,
+        type: "positive",
+      };
+    }
+  }
+  return null;
+};
+
 // Check for Sire Value (Stallion outperforming his fee)
 export const detectSireValue: InsightDetector = (horse) => {
   if (!horse.stud || !horse.stud.atStud || horse.stud.lifetimeFoals < 15) return null;
@@ -674,5 +700,6 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceVersatility,
   detectGateAffinity,
   detectEarningsMilestone,
+  detectEarningsYield,
   detectSireValue,
 ];
