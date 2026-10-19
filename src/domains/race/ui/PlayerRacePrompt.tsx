@@ -14,9 +14,9 @@ import { useMemo, useState } from "react";
 import {
   INSTRUCTION_PRESETS,
   buildInstructions,
+  getPreset,
   type PresetId,
 } from "@/domains/race/application/TacticOptions";
-import { AGGRESSIVENESS_DEFAULT } from "@/shared/constants/tacticsConstants";
 import { DEFAULT_DT, defaultMaxTime } from "@/domains/race/model/engine/constants";
 
 export function PlayerRacePrompt() {
@@ -70,19 +70,7 @@ export function PlayerRacePrompt() {
     // Set tactics before resolving
     if (enteredHorse) {
       const instructions = buildInstructions(
-        {
-          id: selectedPreset,
-          name: "",
-          desc: "",
-          instructions: {
-            horseId: enteredHorse.id,
-            raceId: race!.id,
-            ridingStyle: "tactical",
-            earlyPosition: "midpack",
-            moveTiming: "mid",
-            aggressiveness: AGGRESSIVENESS_DEFAULT,
-          },
-        },
+        getPreset(selectedPreset),
         enteredHorse.id,
         race!.id,
       );
