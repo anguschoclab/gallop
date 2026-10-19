@@ -20,7 +20,7 @@ function TierLegend() {
 
   return (
     <div className="bg-black/40 border border-white/5 p-4">
-      <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide mb-3">
+      <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide mb-3">
         Tier Reference
       </div>
       <div className="grid grid-cols-4 gap-2">
@@ -30,16 +30,16 @@ function TierLegend() {
           const upgradeCost = FACILITY_UPGRADE_COSTS[level];
           return (
             <div key={level} className="border border-white/5 p-2 space-y-1">
-              <div className="text-[9px] font-black uppercase text-gold tracking-wide">
+              <div className="text-[9px] font-black uppercase text-primary tracking-wide">
                 {FACILITY_TIER_LABELS[level]}
               </div>
-              <div className="text-[8px] font-mono text-cream/60 tabular-nums">
+              <div className="text-[8px] font-mono text-foreground/60 tabular-nums">
                 {bonus === 0 ? "0%" : `+${bonus * 100}%`}
               </div>
-              <div className="text-[8px] font-mono text-cream/40 tabular-nums">
+              <div className="text-[8px] font-mono text-foreground/40 tabular-nums">
                 {formatCurrency(maintenance)}/day
               </div>
-              <div className="text-[8px] font-mono text-cream/40 tabular-nums">
+              <div className="text-[8px] font-mono text-foreground/40 tabular-nums">
                 {upgradeCost === null ? "Max" : formatCurrency(upgradeCost)}
               </div>
             </div>
@@ -75,7 +75,7 @@ export function FacilitiesPanel() {
       name: "Physical Optimization",
       types: ["main_track", "starting_gates", "treadmill", "exercise_pool"],
       icon: Dumbbell,
-      color: "text-gold",
+      color: "text-primary",
     },
     {
       name: "Medical & Wellness",
@@ -101,18 +101,18 @@ export function FacilitiesPanel() {
   return (
     <div className="space-y-12">
       <div className="flex items-center justify-between bg-black/40 p-6 border border-white/5 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-1 h-full bg-gold" />
+        <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
         <div className="relative z-10">
-          <h2 className="text-xl font-black font-[family-name:var(--font-display)] text-cream uppercase tracking-widest flex items-center gap-2">
-            <ShieldCheck className="h-5 w-5 text-gold" />
+          <h2 className="text-xl font-black font-[family-name:var(--font-display)] text-foreground uppercase tracking-widest flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-primary" />
             Infrastructure Liquidity
           </h2>
-          <p className="text-[10px] font-mono text-cream/40 uppercase tracking-tighter mt-1">
+          <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-tighter mt-1">
             Available operational capital for asset upgrades
           </p>
         </div>
         <div className="relative z-10 text-right">
-          <div className="text-[10px] font-mono text-gold-muted/60 uppercase font-black tracking-wide mb-1">
+          <div className="text-[10px] font-mono text-primary/20 uppercase font-black tracking-wide mb-1">
             Cash on Hand
           </div>
           <div className="text-3xl font-black font-mono text-success tabular-nums leading-none tracking-tighter">

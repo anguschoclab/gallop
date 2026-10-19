@@ -135,7 +135,7 @@ export const SYNDICATE_INTENT_META: Record<
   prestige: {
     label: "Prestige",
     blurb: "Pays up only for proven G1 quality, then wants the nameplate.",
-    tone: "text-gold border-gold/40",
+    tone: "text-primary border-primary/40",
   },
   steady: {
     label: "Steady",
@@ -145,7 +145,7 @@ export const SYNDICATE_INTENT_META: Record<
   conservative: {
     label: "Conservative",
     blurb: "Small stake, low cash exposure. Slow to commit.",
-    tone: "text-cream-muted border-cream/20",
+    tone: "text-muted-foreground border-foreground/20",
   },
 };
 

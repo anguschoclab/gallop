@@ -37,7 +37,7 @@ const EVENT_LABELS: Record<string, string> = {
 function StakeSparkline({ points }: { points: { day: number; stakeValue: number }[] }) {
   if (points.length < 2) {
     return (
-      <div className="flex h-16 items-center justify-center text-[10px] text-cream/40 font-mono">
+      <div className="flex h-16 items-center justify-center text-[10px] text-foreground/40 font-mono">
         {points.length === 0
           ? "No daily snapshots yet — stake value is recorded each day you hold shares."
           : "One snapshot so far — the chart fills in as days pass."}
@@ -55,7 +55,7 @@ function StakeSparkline({ points }: { points: { day: number; stakeValue: number 
       <div className="w-full max-w-md" role="img" aria-label="Stake value over time">
         <Sparkline data={values} height={64} />
       </div>
-      <div className="flex justify-between max-w-md text-[9px] font-mono text-cream/40">
+      <div className="flex justify-between max-w-md text-[9px] font-mono text-foreground/40">
         <span>Day {minD}</span>
         <span>
           {formatCurrency(minV)} – {formatCurrency(maxV)}
@@ -93,7 +93,7 @@ export function SyndicateLedgerPanel({ syndicateId }: { syndicateId: string }) {
 
   return (
     <div className="space-y-3 border-t border-purple-500/20 pt-3 mt-3">
-      <div className="text-[10px] font-black uppercase text-cream/70 tracking-wider flex items-center justify-between">
+      <div className="text-[10px] font-black uppercase text-foreground/70 tracking-wider flex items-center justify-between">
         <div className="flex items-center gap-1.5">
           <TrendingUp className="h-3.5 w-3.5 text-purple-400" />
           Syndicate Ledger · your stake over time
@@ -106,14 +106,14 @@ export function SyndicateLedgerPanel({ syndicateId }: { syndicateId: string }) {
 
       <StakeSparkline points={series} />
       {latest && (
-        <div className="text-[10px] font-mono text-cream/50">
+        <div className="text-[10px] font-mono text-foreground/50">
           Cumulative dividend income: {formatCurrency(latest.cumulativePlayerIncome)} · day {day}
         </div>
       )}
 
       {events.length > 0 && (
         <div>
-          <div className="text-[9px] font-black uppercase tracking-wider text-cream/40 pb-1">
+          <div className="text-[9px] font-black uppercase tracking-wider text-foreground/40 pb-1">
             Payouts &amp; events
           </div>
           <div className="space-y-1 max-h-40 overflow-y-auto pr-1">
@@ -123,8 +123,10 @@ export function SyndicateLedgerPanel({ syndicateId }: { syndicateId: string }) {
                 className="bg-black/40 border border-white/5 p-2 flex items-center justify-between gap-3 text-xs"
               >
                 <div className="flex items-center gap-2.5 min-w-0">
-                  <span className="font-mono text-[9px] text-cream/40 shrink-0">Day {e.day}</span>
-                  <span className="text-[11px] text-cream/90 truncate">
+                  <span className="font-mono text-[9px] text-foreground/40 shrink-0">
+                    Day {e.day}
+                  </span>
+                  <span className="text-[11px] text-foreground/90 truncate">
                     {EVENT_LABELS[e.type] ?? e.type}
                     {e.type === "fee_distribution" && e.totalFee
                       ? ` (pool ${formatCurrency(e.totalFee)})`
@@ -133,7 +135,7 @@ export function SyndicateLedgerPanel({ syndicateId }: { syndicateId: string }) {
                 </div>
                 <span
                   className={`font-mono font-black text-xs shrink-0 ${
-                    e.cashMoved > 0 ? "text-emerald-400" : "text-cream/40"
+                    e.cashMoved > 0 ? "text-emerald-400" : "text-foreground/40"
                   }`}
                 >
                   {e.cashMoved > 0 ? `+${formatCurrency(e.cashMoved)}` : "—"}
@@ -146,7 +148,7 @@ export function SyndicateLedgerPanel({ syndicateId }: { syndicateId: string }) {
 
       {txs.length > 0 && (
         <div>
-          <div className="text-[9px] font-black uppercase tracking-wider text-cream/40 pb-1">
+          <div className="text-[9px] font-black uppercase tracking-wider text-foreground/40 pb-1">
             Share transactions
           </div>
           <div className="space-y-1 max-h-32 overflow-y-auto pr-1">
@@ -160,15 +162,17 @@ export function SyndicateLedgerPanel({ syndicateId }: { syndicateId: string }) {
                   className="bg-black/40 border border-white/5 p-2 flex items-center justify-between gap-3 text-xs"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className="font-mono text-[9px] text-cream/40 shrink-0">Day {t.day}</span>
-                    <span className="text-[11px] text-cream/90 truncate">
+                    <span className="font-mono text-[9px] text-foreground/40 shrink-0">
+                      Day {t.day}
+                    </span>
+                    <span className="text-[11px] text-foreground/90 truncate">
                       {mine
                         ? `Bought ${t.shares} shares`
                         : `${t.buyerStableId} bought ${t.shares} shares from ${t.sellerStableId}`}{" "}
                       @ {formatCurrency(t.pricePerShare)}
                     </span>
                   </div>
-                  <span className="font-mono text-xs shrink-0 text-cream/70">
+                  <span className="font-mono text-xs shrink-0 text-foreground/70">
                     {formatCurrency(t.shares * t.pricePerShare)}
                   </span>
                 </div>
@@ -179,7 +183,7 @@ export function SyndicateLedgerPanel({ syndicateId }: { syndicateId: string }) {
       )}
 
       {events.length === 0 && txs.length === 0 && (
-        <p className="text-[10px] text-cream/40 font-mono">
+        <p className="text-[10px] text-foreground/40 font-mono">
           No ledger entries yet — dividends and share trades will appear here.
         </p>
       )}

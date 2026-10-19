@@ -54,9 +54,9 @@ export function RaceWinsDashboard({ wins }: { wins: PlayerRaceWinRecord[] }) {
   if (wins.length === 0) {
     return (
       <div className="rounded-xl border border-white/5 bg-slate-900/40 p-10 text-center">
-        <Trophy className="mx-auto h-6 w-6 text-cream/30" />
-        <p className="mt-3 text-sm text-cream/70">No wins yet.</p>
-        <p className="mt-1 text-xs text-cream-muted">
+        <Trophy className="mx-auto h-6 w-6 text-foreground/30" />
+        <p className="mt-3 text-sm text-foreground/70">No wins yet.</p>
+        <p className="mt-1 text-xs text-muted-foreground">
           Win a race and your earnings by course, grade and distance appear here.
         </p>
       </div>

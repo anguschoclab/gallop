@@ -56,7 +56,7 @@ export function RecordAlmanac({ records }: { records: TrackRecord[] }) {
                 className={`rounded-md px-3 py-1.5 text-[10px] font-black uppercase tracking-wide transition-colors ${
                   kind === d.kind
                     ? "bg-primary text-primary-foreground"
-                    : "bg-muted/50 text-cream-muted hover:text-cream"
+                    : "bg-muted/50 text-muted-foreground hover:text-foreground"
                 }`}
               >
                 {d.label}
@@ -64,7 +64,7 @@ export function RecordAlmanac({ records }: { records: TrackRecord[] }) {
               </button>
             ))}
           </div>
-          <p className="text-xs text-cream-muted">{active.blurb}</p>
+          <p className="text-xs text-muted-foreground">{active.blurb}</p>
           {buckets.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
               <button type="button" onClick={() => setBucket(null)} aria-pressed={bucket === null}>

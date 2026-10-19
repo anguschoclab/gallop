@@ -27,12 +27,12 @@ export function CampaignAddPanel({ horsesWithoutCampaign, onCreate }: CampaignAd
   if (horsesWithoutCampaign.length === 0) return null;
 
   return (
-    <Card className="border-dashed border-gold-muted">
+    <Card className="border-dashed border-border">
       <CardContent className="pt-4">
         {addingHorseId === null ? (
           <Button
             variant="ghost"
-            className="w-full gap-2 text-cream-muted"
+            className="w-full gap-2 text-muted-foreground"
             onClick={() => setAddingHorseId(horsesWithoutCampaign[0]?.id ?? "")}
           >
             <Plus className="h-4 w-4" />

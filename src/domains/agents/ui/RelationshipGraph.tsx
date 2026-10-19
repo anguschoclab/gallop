@@ -26,11 +26,11 @@ export const RelationshipGraph = memo(function RelationshipGraph({
     return (
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
         <CardHeader className="bg-black/20 border-b border-white/5">
-          <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+          <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40 flex items-center gap-2">
             <Network className="h-3 w-3 text-blue-400" /> Relationship Graph
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+        <CardContent className="p-8 text-center text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
           No diplomatic relationships established yet.
         </CardContent>
       </Card>
@@ -42,7 +42,7 @@ export const RelationshipGraph = memo(function RelationshipGraph({
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-indigo-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40 flex items-center gap-2">
           <Network className="h-3 w-3 text-indigo-400" /> Relationship Graph
         </CardTitle>
       </CardHeader>
@@ -59,7 +59,9 @@ export const RelationshipGraph = memo(function RelationshipGraph({
               data-testid="relationship-row"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-cream">{otherStable?.name || otherId}</span>
+                <span className="text-xs font-bold text-foreground">
+                  {otherStable?.name || otherId}
+                </span>
                 {rel.allianceType && (
                   <Badge
                     className={cn(
@@ -69,7 +71,7 @@ export const RelationshipGraph = memo(function RelationshipGraph({
                         : rel.allianceType === "breeding_partnership"
                           ? "bg-purple-400/10 text-purple-400 border-purple-400/30"
                           : rel.allianceType === "economic_cartel"
-                            ? "bg-gold/10 text-gold border-gold/30"
+                            ? "bg-primary/10 text-primary border-primary/30"
                             : "bg-gray-400/10 text-gray-400 border-gray-400/30",
                     )}
                   >
@@ -79,7 +81,7 @@ export const RelationshipGraph = memo(function RelationshipGraph({
               </div>
 
               <div className="flex items-center justify-between text-xs">
-                <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                   Trust
                 </span>
                 <span
@@ -105,18 +107,21 @@ export const RelationshipGraph = memo(function RelationshipGraph({
 
               {rel.history.length > 0 && (
                 <div className="space-y-1 pt-1 border-t border-white/5">
-                  <div className="text-[9px] font-black uppercase tracking-wide text-cream/30">
+                  <div className="text-[9px] font-black uppercase tracking-wide text-foreground/30">
                     Diplomatic Timeline
                   </div>
                   {rel.history.slice(-3).map((event, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-[10px] text-cream/50">
+                    <div
+                      key={idx}
+                      className="flex items-start gap-2 text-[10px] text-foreground/50"
+                    >
                       {event.type === "betrayal" ? (
                         <AlertTriangle className="h-3 w-3 text-red-400 shrink-0 mt-0.5" />
                       ) : (
                         <Handshake className="h-3 w-3 text-green-400 shrink-0 mt-0.5" />
                       )}
                       <span>
-                        <span className="font-mono text-cream/30">Day {event.day}</span>{" "}
+                        <span className="font-mono text-foreground/30">Day {event.day}</span>{" "}
                         {event.description}
                       </span>
                     </div>
@@ -129,12 +134,15 @@ export const RelationshipGraph = memo(function RelationshipGraph({
 
         {stableCartels.length > 0 && (
           <div className="pt-2 border-t border-white/5 space-y-1">
-            <div className="text-[9px] font-black uppercase tracking-wide text-cream/30">
+            <div className="text-[9px] font-black uppercase tracking-wide text-foreground/30">
               Cartel Membership
             </div>
             {stableCartels.map((cartel) => (
-              <div key={cartel.id} className="flex items-center gap-2 text-[10px] text-cream/50">
-                <Badge className="bg-gold/10 text-gold border border-gold/30 text-[8px] uppercase tracking-wide">
+              <div
+                key={cartel.id}
+                className="flex items-center gap-2 text-[10px] text-foreground/50"
+              >
+                <Badge className="bg-primary/10 text-primary border border-primary/30 text-[8px] uppercase tracking-wide">
                   {cartel.type} cartel
                 </Badge>
                 <span className="font-mono">{cartel.memberStableIds.length} members</span>

@@ -17,11 +17,12 @@ function PrestigeChip({
   delta: number;
   isPlayer: boolean;
 }) {
-  const tone = delta > 0 ? "text-emerald-400" : delta < 0 ? "text-rose-400" : "text-cream-muted";
+  const tone =
+    delta > 0 ? "text-emerald-400" : delta < 0 ? "text-rose-400" : "text-muted-foreground";
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] ${
-        isPlayer ? "bg-primary/15 text-cream" : "bg-muted/40 text-cream-muted"
+        isPlayer ? "bg-primary/15 text-foreground" : "bg-muted/40 text-muted-foreground"
       }`}
     >
       <span className="truncate max-w-[9rem]">{label}</span>
@@ -46,9 +47,9 @@ function RaceCard({ race }: { race: TrackLedgerEntry }) {
                   {race.grade}
                 </Badge>
               )}
-              <span className="truncate text-sm font-medium text-cream">{race.raceName}</span>
+              <span className="truncate text-sm font-medium text-foreground">{race.raceName}</span>
             </div>
-            <p className="text-[11px] text-cream-muted">
+            <p className="text-[11px] text-muted-foreground">
               Yr {race.year} · D{race.day} · {race.distance}m
               {race.surface ? ` · ${race.surface}` : ""} · field of {race.fieldSize} ·{" "}
               {formatCurrency(race.purse)}
@@ -63,11 +64,11 @@ function RaceCard({ race }: { race: TrackLedgerEntry }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-cream">
-          <Crown className="h-3.5 w-3.5 text-gold shrink-0" />
+        <div className="flex items-center gap-2 text-xs text-foreground">
+          <Crown className="h-3.5 w-3.5 text-primary shrink-0" />
           <span className="font-medium truncate">{race.winnerName}</span>
           {race.winnerStableName && (
-            <span className="text-cream-muted truncate">· {race.winnerStableName}</span>
+            <span className="text-muted-foreground truncate">· {race.winnerStableName}</span>
           )}
           {race.winnerIsPlayer && (
             <Badge variant="default" className="text-[10px]">
@@ -75,7 +76,7 @@ function RaceCard({ race }: { race: TrackLedgerEntry }) {
             </Badge>
           )}
           {race.runnerUpName && (
-            <span className="text-cream-muted truncate hidden sm:inline">
+            <span className="text-muted-foreground truncate hidden sm:inline">
               · 2nd {race.runnerUpName}
             </span>
           )}
@@ -99,7 +100,7 @@ function RaceCard({ race }: { race: TrackLedgerEntry }) {
             <Button
               variant="ghost"
               size="sm"
-              className="h-6 px-2 text-[10px] uppercase tracking-wide text-cream-muted hover:text-cream"
+              className="h-6 px-2 text-[10px] uppercase tracking-wide text-muted-foreground hover:text-foreground"
               onClick={() => setExpanded((v) => !v)}
               aria-expanded={expanded}
             >
@@ -113,12 +114,22 @@ function RaceCard({ race }: { race: TrackLedgerEntry }) {
             {expanded && (
               <table className="mt-1 w-full text-[11px]">
                 <thead>
-                  <tr className="text-left text-[9px] font-black uppercase tracking-wide text-cream/40">
-                    <th className="py-1 pr-2 w-8">Pos</th>
-                    <th className="pr-2">Horse</th>
-                    <th className="pr-2">Stable</th>
-                    <th className="pr-2 text-right">Payout</th>
-                    <th className="pr-2 text-right">Time</th>
+                  <tr className="text-left text-[9px] font-black uppercase tracking-wide text-foreground/40">
+                    <th scope="col" className="py-1 pr-2 w-8">
+                      Pos
+                    </th>
+                    <th scope="col" className="pr-2">
+                      Horse
+                    </th>
+                    <th scope="col" className="pr-2">
+                      Stable
+                    </th>
+                    <th scope="col" className="pr-2 text-right">
+                      Payout
+                    </th>
+                    <th scope="col" className="pr-2 text-right">
+                      Time
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -127,8 +138,10 @@ function RaceCard({ race }: { race: TrackLedgerEntry }) {
                       key={`${race.raceId}-${f.horseId}-${f.position}`}
                       className={`border-t border-white/5 ${f.isPlayer ? "bg-primary/10" : ""}`}
                     >
-                      <td className="py-1 pr-2 font-mono tabular-nums text-cream">{f.position}</td>
-                      <td className="py-1 pr-2 text-cream">
+                      <td className="py-1 pr-2 font-mono tabular-nums text-foreground">
+                        {f.position}
+                      </td>
+                      <td className="py-1 pr-2 text-foreground">
                         {f.horseName}
                         {f.isPlayer && (
                           <Badge variant="default" className="ml-1.5 text-[9px]">
@@ -136,17 +149,17 @@ function RaceCard({ race }: { race: TrackLedgerEntry }) {
                           </Badge>
                         )}
                       </td>
-                      <td className="py-1 pr-2 text-cream-muted truncate max-w-[10rem]">
+                      <td className="py-1 pr-2 text-muted-foreground truncate max-w-[10rem]">
                         {f.stableName ?? "—"}
                       </td>
                       <td className="py-1 pr-2 text-right font-mono tabular-nums">
                         {f.payout > 0 ? (
                           <span className="text-emerald-400">{formatCurrency(f.payout)}</span>
                         ) : (
-                          <span className="text-cream/30">—</span>
+                          <span className="text-foreground/30">—</span>
                         )}
                       </td>
-                      <td className="py-1 pr-2 text-right font-mono tabular-nums text-cream-muted">
+                      <td className="py-1 pr-2 text-right font-mono tabular-nums text-muted-foreground">
                         <RaceTimeDisplay seconds={f.time} distance={race.distance} />
                       </td>
                     </tr>
@@ -171,7 +184,7 @@ export function TrackLedgerRaces({
   if (races.length === 0) {
     return (
       <Card className="border-white/5 bg-slate-900/40">
-        <CardContent className="p-6 text-sm text-cream-muted flex items-center gap-2">
+        <CardContent className="p-6 text-sm text-muted-foreground flex items-center gap-2">
           <Timer className="h-4 w-4" />
           {emptyMessage}
         </CardContent>

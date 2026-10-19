@@ -46,7 +46,7 @@ function NpcStableDetailPage() {
   if (!stable) {
     return (
       <div className="p-12 text-center space-y-4">
-        <h1 className="text-4xl font-black font-[family-name=var(--font-display)] text-cream">
+        <h1 className="text-4xl font-black font-[family-name=var(--font-display)] text-foreground">
           Stable not found
         </h1>
         <Link
@@ -71,18 +71,18 @@ function NpcStableDetailPage() {
             to="/stable"
             label="Stables"
             search={{ tab: "rivals" }}
-            className="text-[10px] font-black text-cream/30 hover:text-blue-400 mb-4 gap-2"
+            className="text-[10px] font-black text-foreground/30 hover:text-blue-400 mb-4 gap-2"
           />
           <div className="flex items-center gap-4 mb-2">
             <div
-              className="w-10 h-10 rounded-sm rotate-45 border border-white/20 shadow-[0_0_15px_rgba(0,0,0,0.5)] shrink-0"
+              className="w-10 h-10 rounded-sm rotate-45 border border-white/20 shadow-[0_0_15px_color-mix(in oklab, black 50%, transparent)] shrink-0"
               style={{ backgroundColor: stable.colors.primary }}
             />
-            <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name=var(--font-display)] uppercase text-left">
+            <h1 className="text-4xl font-bold tracking-tighter text-foreground font-[family-name=var(--font-display)] uppercase text-left">
               {stable.name}
             </h1>
           </div>
-          <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-wide text-cream/40">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
             <span>
               <Globe className="h-3 w-3 inline mr-1" />
               {stable.country}
@@ -104,7 +104,7 @@ function NpcStableDetailPage() {
             subtitle={`${stable.country} · ${stable.personality}`}
             variant="full"
           />
-          <div className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+          <div className="text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
             Liquid Capital
           </div>
           <div className="text-2xl font-black font-mono text-success tabular-nums tracking-tighter">
@@ -199,14 +199,14 @@ function NpcStableDetailPage() {
             <TabsContent value="staff" className="mt-0 animate-in fade-in duration-300">
               <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
                 <CardHeader className="bg-black/20 border-b border-white/5">
-                  <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+                  <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
                     Retained Personnel
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="divide-y divide-white/5">
                     {(hiredStaff ?? []).filter((m) => m.stableId === stableId).length === 0 ? (
-                      <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+                      <div className="p-12 text-center text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
                         No personnel records found.
                       </div>
                     ) : (
@@ -217,10 +217,10 @@ function NpcStableDetailPage() {
                             key={member.id}
                             className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors"
                           >
-                            <span className="text-[9px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+                            <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40 flex items-center gap-2">
                               <Briefcase className="h-3 w-3" /> {member.role.replace(/_/g, " ")}
                             </span>
-                            <span className="text-xs font-bold text-cream uppercase text-right">
+                            <span className="text-xs font-bold text-foreground uppercase text-right">
                               {member.person.biography.displayName}
                             </span>
                           </div>
@@ -250,7 +250,7 @@ function NpcStableDetailPage() {
                 </>
               ) : (
                 <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
-                  <CardContent className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+                  <CardContent className="p-12 text-center text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
                     No data yet.
                   </CardContent>
                 </Card>
@@ -264,22 +264,22 @@ function NpcStableDetailPage() {
             <TabsContent value="history" className="mt-0 animate-in fade-in duration-300">
               <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
                 <CardHeader className="bg-black/20 border-b border-white/5">
-                  <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+                  <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
                     Entity Records
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="divide-y divide-white/5">
                     <div className="flex justify-between p-4">
-                      <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
+                      <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40">
                         Established
                       </span>
-                      <span className="font-mono text-xs text-cream tabular-nums">
+                      <span className="font-mono text-xs text-foreground tabular-nums">
                         {stable.founded}
                       </span>
                     </div>
                     <div className="flex justify-between p-4">
-                      <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
+                      <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40">
                         Reputation
                       </span>
                       <span className="font-mono text-xs text-fame tabular-nums">
@@ -287,7 +287,7 @@ function NpcStableDetailPage() {
                       </span>
                     </div>
                     <div className="flex justify-between p-4">
-                      <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
+                      <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40">
                         Cash on Hand
                       </span>
                       <span className="font-mono text-xs text-success tabular-nums">

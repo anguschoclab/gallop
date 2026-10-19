@@ -85,7 +85,7 @@ owns: engineering:documentation
 
 - `useGame((s) => s.auction)` for lots.
 - Daily refresh tied to `s.day` advance.
-- NPC bidders simulated in [src/services/](../../../src/services/) (auction service, future).
+- NPC bidders simulated in [src/domains/](../../../src/domains/) (auction service, future).
 
 ## Copy
 

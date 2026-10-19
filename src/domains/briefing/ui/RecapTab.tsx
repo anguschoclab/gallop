@@ -9,7 +9,8 @@ import { SpeedBreakdownChart } from "@/domains/race/ui/SpeedBreakdownChart";
 import { calculateBeyerForResult } from "@/domains/race/application/raceFacade";
 import { gradeColor } from "@/shared/common/uiTokens";
 import { calculateClassBonus } from "@/shared/common/classBonus";
-import { Trophy, Medal, Award, Clock } from "lucide-react";
+import { Trophy, Medal, Award, Clock, Flag } from "lucide-react";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 import { NumericValue } from "@/domains/horse/ui/HorseBits";
 import { SilkDot } from "@/domains/shell/ui/SilkDot";
 import { cn } from "@/shared/lib/cn";
@@ -21,12 +22,11 @@ export function RecapTab() {
 
   if (recentGradedRaces.length === 0) {
     return (
-      <Card className="border-gold-muted">
-        <CardContent className="p-8 text-center text-cream-muted italic font-[family-name:var(--font-body)]">
-          No graded races completed in the past 7 days. Check back after the weekend stakes have
-          been run!
-        </CardContent>
-      </Card>
+      <EmptyState
+        icon={Flag}
+        title="No recaps yet"
+        description="No graded races completed in the past 7 days. Check back after the weekend stakes have been run."
+      />
     );
   }
 
@@ -50,7 +50,7 @@ export function RecapTab() {
           .filter((f): f is NonNullable<typeof f> => f !== null);
 
         return (
-          <Card key={race.id} className="border-l-4 border-l-gold border-gold-muted">
+          <Card key={race.id} className="border-l-4 border-l-primary border-border">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1">
@@ -63,11 +63,11 @@ export function RecapTab() {
                     <Badge className={cn(gradeColor, "font-[family-name:var(--font-mono)]")}>
                       {race.graded!.grade}
                     </Badge>
-                    <Badge className="bg-t700 text-cream font-[family-name:var(--font-mono)] tabular-nums">
+                    <Badge className="bg-muted text-foreground font-[family-name:var(--font-mono)] tabular-nums">
                       Day <NumericValue value={race.day} />
                     </Badge>
                   </div>
-                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-cream-muted font-[family-name:var(--font-body)]">
+                  <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground font-[family-name:var(--font-body)]">
                     <span>{race.graded!.track}</span>
                     <span>
                       <NumericValue value={race.distance} suffix="m" />
@@ -86,7 +86,7 @@ export function RecapTab() {
                   index === 0 ? (
                     <Trophy className="h-4 w-4 text-fame" />
                   ) : index === 1 ? (
-                    <Medal className="h-4 w-4 text-cream-muted" />
+                    <Medal className="h-4 w-4 text-muted-foreground" />
                   ) : (
                     <Award className="h-4 w-4 text-warning" />
                   );
@@ -94,7 +94,7 @@ export function RecapTab() {
                 return (
                   <div
                     key={finisher.horse.id}
-                    className="flex items-center justify-between p-3 rounded-lg bg-t700"
+                    className="flex items-center justify-between p-3 rounded-lg bg-muted"
                   >
                     <div className="flex items-center gap-3">
                       {positionIcon}
@@ -103,11 +103,11 @@ export function RecapTab() {
                         <Link
                           to="/stable/$horseId"
                           params={{ horseId: finisher.horse.id }}
-                          className="font-medium font-[family-name:var(--font-display)] text-cream hover:underline hover:text-gold"
+                          className="font-medium font-[family-name:var(--font-display)] text-foreground hover:underline hover:text-primary"
                         >
                           {finisher.horse.name}
                         </Link>
-                        <div className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+                        <div className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
                           <NumericValue
                             value={finisher.result.time.toFixed(2)}
                             suffix="s"
@@ -135,8 +135,8 @@ export function RecapTab() {
               {race.sectionalSplits && race.sectionalSplits.length > 0 && (
                 <div className="pt-3 border-t border-white/10 space-y-4">
                   <div className="flex items-center gap-2">
-                    <Clock className="h-3 w-3 text-gold/60" />
-                    <span className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+                    <Clock className="h-3 w-3 text-primary/60" />
+                    <span className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
                       Pace / Position Graph
                     </span>
                   </div>
@@ -147,15 +147,15 @@ export function RecapTab() {
                       return {
                         horseId: r.horseId,
                         name: horse?.name || "Unknown",
-                        silk: horse?.silk || "#000000",
+                        silk: horse?.silk || "var(--coat-black)",
                         owned: horse ? isPlayerOwned(horse) : false,
                       };
                     })}
                     distance={race.distance}
                   />
                   <div className="flex items-center gap-2 pt-2">
-                    <Clock className="h-3 w-3 text-gold/60" />
-                    <span className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+                    <Clock className="h-3 w-3 text-primary/60" />
+                    <span className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
                       Sectional Splits
                     </span>
                   </div>
@@ -166,7 +166,7 @@ export function RecapTab() {
                       return {
                         horseId: r.horseId,
                         name: horse?.name || "Unknown",
-                        silk: horse?.silk || "#000000",
+                        silk: horse?.silk || "var(--coat-black)",
                         owned: horse ? isPlayerOwned(horse) : false,
                       };
                     })}
@@ -180,7 +180,7 @@ export function RecapTab() {
                         return {
                           horseId: r.horseId,
                           name: horse?.name || "Unknown",
-                          silk: horse?.silk || "#000000",
+                          silk: horse?.silk || "var(--coat-black)",
                           owned: horse ? isPlayerOwned(horse) : false,
                         };
                       })}

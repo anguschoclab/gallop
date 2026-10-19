@@ -55,18 +55,18 @@ export function CatalogIndex({
       {!isResolved && (
         <section className="space-y-4">
           <div className="flex items-center gap-2 mb-2 px-1">
-            <Search className="h-3.5 w-3.5 text-gold/60" />
-            <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+            <Search className="h-3.5 w-3.5 text-primary/60" />
+            <h2 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
               Catalog Search
             </h2>
           </div>
-          <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2 border-l-gold/40">
+          <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2 border-l-primary/40">
             <CardContent className="p-5 space-y-4">
               <div className="relative">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream/20" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground/20" />
                 <Input
                   placeholder="Horse or sire name..."
-                  className="h-10 bg-slate-950/60 border-white/5 text-xs font-mono pl-8 uppercase tracking-tighter focus-visible:ring-gold/30"
+                  className="h-10 bg-slate-950/60 border-white/5 text-xs font-mono pl-8 uppercase tracking-tighter focus-visible:ring-primary/30"
                   value={searchDraft}
                   onChange={(e) => setSearchDraft(e.target.value)}
                 />
@@ -84,8 +84,8 @@ export function CatalogIndex({
 
       <section className="space-y-4">
         <div className="flex items-center gap-2 mb-2 px-1">
-          <History className="h-3.5 w-3.5 text-cream/30" />
-          <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+          <History className="h-3.5 w-3.5 text-foreground/30" />
+          <h2 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
             Catalog Index
           </h2>
         </div>
@@ -103,25 +103,27 @@ export function CatalogIndex({
                   className={cn(
                     "px-4 py-3 cursor-pointer transition-all flex items-center justify-between group",
                     isActive
-                      ? "bg-gold/10 border-l-2 border-l-gold"
+                      ? "bg-primary/10 border-l-2 border-l-primary"
                       : "hover:bg-white/[0.02] border-l-2 border-l-transparent",
                   )}
                 >
                   <div className="space-y-0.5">
                     <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-mono text-cream/20 group-hover:text-gold/40 transition-colors">
+                      <span className="text-[9px] font-mono text-foreground/20 group-hover:text-primary/40 transition-colors">
                         #{String(idx + 1).padStart(3, "0")}
                       </span>
                       <span
                         className={cn(
                           "text-xs font-bold uppercase tracking-tight transition-colors",
-                          isActive ? "text-gold" : "text-cream/60 group-hover:text-cream",
+                          isActive
+                            ? "text-primary"
+                            : "text-foreground/60 group-hover:text-foreground",
                         )}
                       >
                         {lotHorse?.name || "Unknown"}
                       </span>
                     </div>
-                    <div className="text-[8px] font-mono text-cream/20 uppercase tracking-tighter">
+                    <div className="text-[8px] font-mono text-foreground/20 uppercase tracking-tighter">
                       {lotHorse ? `${ageLabel(lotHorse)} · ${lotHorse.gender}` : "NA"}
                     </div>
                   </div>

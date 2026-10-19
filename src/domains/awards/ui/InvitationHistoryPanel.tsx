@@ -93,16 +93,16 @@ export function InvitationHistoryPanel({ invitations, awards, day }: Props) {
   const hasFilters = region !== "all" || attendance !== "all" || outcome !== "all";
 
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardHeader>
-        <CardTitle className="text-base text-cream font-[family-name:var(--font-display)] flex items-center gap-2">
-          <History className="w-4 h-4 text-gold" />
+        <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)] flex items-center gap-2">
+          <History className="w-4 h-4 text-primary" />
           Invitation History
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
         {past.length === 0 ? (
-          <p className="text-sm text-cream-muted">
+          <p className="text-sm text-muted-foreground">
             No past invitations yet. Ceremonies you are invited to will be recorded here after they
             are held.
           </p>
@@ -126,7 +126,7 @@ export function InvitationHistoryPanel({ invitations, awards, day }: Props) {
             />
 
             {filtered.length === 0 ? (
-              <p className="text-sm text-cream-muted">No invitations match these filters.</p>
+              <p className="text-sm text-muted-foreground">No invitations match these filters.</p>
             ) : (
               filtered.map((inv) => (
                 <InvitationHistoryRow
@@ -218,7 +218,7 @@ function InvitationFilterControls({
           Clear
         </Button>
       )}
-      <span className="text-xs text-cream-muted ml-auto">
+      <span className="text-xs text-muted-foreground ml-auto">
         {filteredCount} of {totalCount}
       </span>
     </div>
@@ -244,23 +244,23 @@ function InvitationHistoryRow({
   const attended = didAttend(inv, day);
 
   return (
-    <div className="rounded-md border border-gold-muted/50 p-3 space-y-2">
+    <div className="rounded-md border border-border/50 p-3 space-y-2">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <Link
             to="/ceremony/$invitationId"
             params={{ invitationId: inv.id }}
-            className="font-semibold text-cream hover:text-gold"
+            className="font-semibold text-foreground hover:text-primary"
           >
             {inv.ceremonyName}
           </Link>
-          <div className="text-xs text-cream-muted">
+          <div className="text-xs text-muted-foreground">
             {REGION_AWARD_NAMES[inv.region]} · Year {inv.year} · Day {inv.ceremonyDay}
           </div>
         </div>
         <CeremonyRsvpBadge invitation={inv} day={day} />
       </div>
-      <div className="text-sm text-cream-muted">
+      <div className="text-sm text-muted-foreground">
         {inv.qualifiers.length} qualifying Grade 1 placing
         {inv.qualifiers.length === 1 ? "" : "s"} ·{" "}
         {attended ? "Attended in person" : "Followed from the stable"}
@@ -271,7 +271,7 @@ function InvitationHistoryRow({
             <Link key={a.id} to="/awards/$category" params={{ category: a.category }}>
               <Badge
                 variant="outline"
-                className="border-gold text-gold flex items-center gap-1 hover:bg-gold/10 transition-colors"
+                className="border-primary text-primary flex items-center gap-1 hover:bg-primary/10 transition-colors"
               >
                 <Trophy className="w-3 h-3" />
                 {CATEGORY_DISPLAY_NAMES[a.category]} — {a.horseName}
@@ -280,7 +280,7 @@ function InvitationHistoryRow({
           ))}
         </div>
       ) : (
-        <div className="text-xs text-cream-muted/70">No awards won at this ceremony.</div>
+        <div className="text-xs text-muted-foreground/70">No awards won at this ceremony.</div>
       )}
       <div>
         <Button
@@ -293,7 +293,7 @@ function InvitationHistoryRow({
           {openAudit === inv.id ? "Hide" : "Show"} RSVP audit log
         </Button>
         {openAudit === inv.id && (
-          <div className="mt-2 border-t border-gold-muted/40 pt-2">
+          <div className="mt-2 border-t border-border/40 pt-2">
             <InvitationAuditList invitation={inv} />
           </div>
         )}

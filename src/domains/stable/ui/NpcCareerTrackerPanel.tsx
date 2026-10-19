@@ -39,15 +39,15 @@ function stageColor(stage: NpcCareerStage): string {
     case "rising":
       return "bg-blue-500/20 text-blue-300 border-blue-400/30";
     case "juvenile":
-      return "bg-gold/20 text-gold border-gold/30";
+      return "bg-primary/20 text-primary border-primary/30";
     case "declining":
       return "bg-orange-500/20 text-orange-300 border-orange-400/30";
     case "veteran":
       return "bg-destructive/20 text-destructive border-destructive/30";
     case "retired":
-      return "bg-slate-700/40 text-cream/50 border-white/10";
+      return "bg-slate-700/40 text-foreground/50 border-white/10";
     default:
-      return "bg-white/5 text-cream/50 border-white/10";
+      return "bg-white/5 text-foreground/50 border-white/10";
   }
 }
 
@@ -102,18 +102,18 @@ export function NpcCareerTrackerPanel({ horses, day }: NpcCareerTrackerPanelProp
         >
           <div className="grid grid-cols-2 gap-2 px-3 py-4">
             <div className="bg-black/20 border border-white/5 p-3 text-center">
-              <div className="text-[9px] font-black uppercase text-cream/30 tracking-wide mb-1">
+              <div className="text-[9px] font-black uppercase text-foreground/30 tracking-wide mb-1">
                 Prize Money
               </div>
-              <div className="text-lg font-bold font-mono text-gold">
+              <div className="text-lg font-bold font-mono text-primary">
                 {formatCurrencyCompact(totals.earnings)}
               </div>
             </div>
             <div className="bg-black/20 border border-white/5 p-3 text-center">
-              <div className="text-[9px] font-black uppercase text-cream/30 tracking-wide mb-1">
+              <div className="text-[9px] font-black uppercase text-foreground/30 tracking-wide mb-1">
                 Strike Rate
               </div>
-              <div className="text-lg font-bold font-mono text-cream">
+              <div className="text-lg font-bold font-mono text-foreground">
                 {totals.starts ? Math.round((totals.wins / totals.starts) * 100) : 0}%
               </div>
             </div>
@@ -126,15 +126,29 @@ export function NpcCareerTrackerPanel({ horses, day }: NpcCareerTrackerPanelProp
           <div className="overflow-x-auto">
             <table className="w-full text-xs">
               <thead>
-                <tr className="border-b border-white/5 text-[9px] font-black uppercase tracking-wide text-cream/30">
-                  <th className="px-4 py-2 text-left">Horse</th>
-                  <th className="px-3 py-2 text-left">Stage</th>
-                  <th className="px-3 py-2 text-right">Age</th>
-                  <th className="px-3 py-2 text-right">Starts</th>
-                  <th className="px-3 py-2 text-right">Wins</th>
-                  <th className="px-3 py-2 text-right">Earnings</th>
-                  <th className="px-4 py-2 text-right">Last Run</th>
-                  <th className="w-12 px-3 py-2">
+                <tr className="border-b border-white/5 text-[9px] font-black uppercase tracking-wide text-foreground/30">
+                  <th scope="col" className="px-4 py-2 text-left">
+                    Horse
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-left">
+                    Stage
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-right">
+                    Age
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-right">
+                    Starts
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-right">
+                    Wins
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-right">
+                    Earnings
+                  </th>
+                  <th scope="col" className="px-4 py-2 text-right">
+                    Last Run
+                  </th>
+                  <th scope="col" className="w-12 px-3 py-2">
                     <span className="sr-only">Career timeline</span>
                   </th>
                 </tr>
@@ -145,10 +159,10 @@ export function NpcCareerTrackerPanel({ horses, day }: NpcCareerTrackerPanelProp
                   return (
                     <Fragment key={horse.id}>
                       <tr className="border-b border-white/5 last:border-0">
-                        <td className="px-4 py-2 font-semibold text-cream">
+                        <td className="px-4 py-2 font-semibold text-foreground">
                           <Button
                             variant="link"
-                            className="h-auto p-0 text-left text-xs font-semibold text-cream no-underline hover:text-gold"
+                            className="h-auto p-0 text-left text-xs font-semibold text-foreground no-underline hover:text-primary"
                             onClick={() => setExpandedHorseId(expanded ? null : horse.id)}
                             aria-expanded={expanded}
                             aria-controls={`career-timeline-${horse.id}`}
@@ -167,19 +181,19 @@ export function NpcCareerTrackerPanel({ horses, day }: NpcCareerTrackerPanelProp
                             {careerStageLabel(career.stage)}
                           </Badge>
                         </td>
-                        <td className="px-3 py-2 text-right font-mono text-cream/70">
+                        <td className="px-3 py-2 text-right font-mono text-foreground/70">
                           {Math.floor(horse.age)}
                         </td>
-                        <td className="px-3 py-2 text-right font-mono text-cream/70">
+                        <td className="px-3 py-2 text-right font-mono text-foreground/70">
                           {career.starts}
                         </td>
-                        <td className="px-3 py-2 text-right font-mono text-cream/70">
+                        <td className="px-3 py-2 text-right font-mono text-foreground/70">
                           {career.wins}
                         </td>
-                        <td className="px-3 py-2 text-right font-mono text-gold">
+                        <td className="px-3 py-2 text-right font-mono text-primary">
                           {formatCurrencyCompact(career.earnings)}
                         </td>
-                        <td className="px-4 py-2 text-right font-mono text-cream/50">
+                        <td className="px-4 py-2 text-right font-mono text-foreground/50">
                           {career.daysSinceStart === null ? "—" : `${career.daysSinceStart}d ago`}
                         </td>
                         <td className="px-3 py-2 text-right">

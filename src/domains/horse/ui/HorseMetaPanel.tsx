@@ -17,7 +17,7 @@ export function HorseMetaPanel({ horse, isAdvanced, onToggleView }: HorseMetaPan
           {horse.runningStyle && (
             <Badge
               variant="outline"
-              className="text-[8px] font-mono uppercase bg-white/[0.02] text-cream/60 border-white/10 rounded-none tracking-tighter"
+              className="text-[8px] font-mono uppercase bg-white/[0.02] text-foreground/60 border-white/10 rounded-none tracking-tighter"
             >
               STY: {horse.runningStyle.replace("-", " ")}
             </Badge>
@@ -25,7 +25,7 @@ export function HorseMetaPanel({ horse, isAdvanced, onToggleView }: HorseMetaPan
           {horse.distanceAptitude != null && (
             <Badge
               variant="outline"
-              className="text-[8px] font-mono uppercase bg-white/[0.02] text-cream/60 border-white/10 rounded-none tracking-tighter"
+              className="text-[8px] font-mono uppercase bg-white/[0.02] text-foreground/60 border-white/10 rounded-none tracking-tighter"
             >
               DIST: {Math.round(horse.distanceAptitude)}m
             </Badge>
@@ -33,7 +33,7 @@ export function HorseMetaPanel({ horse, isAdvanced, onToggleView }: HorseMetaPan
           {horse.surfaceAptitude && (
             <Badge
               variant="outline"
-              className="text-[8px] font-mono uppercase bg-white/[0.02] text-cream/60 border-white/10 rounded-none tracking-tighter"
+              className="text-[8px] font-mono uppercase bg-white/[0.02] text-foreground/60 border-white/10 rounded-none tracking-tighter"
             >
               SURF:{" "}
               {(() => {
@@ -45,7 +45,7 @@ export function HorseMetaPanel({ horse, isAdvanced, onToggleView }: HorseMetaPan
           {horse.conformation && (
             <Badge
               variant="outline"
-              className="text-[8px] font-mono uppercase bg-white/[0.02] text-cream/60 border-white/10 rounded-none tracking-tighter"
+              className="text-[8px] font-mono uppercase bg-white/[0.02] text-foreground/60 border-white/10 rounded-none tracking-tighter"
             >
               CNF: {isAdvanced ? horse.conformation : scoutGrade(horse.conformation)}
             </Badge>
@@ -66,7 +66,7 @@ export function HorseMetaPanel({ horse, isAdvanced, onToggleView }: HorseMetaPan
           <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-wide">
             Genetic Lineage
           </div>
-          <div className="flex items-center gap-2 text-[10px] font-mono text-cream/60 uppercase truncate">
+          <div className="flex items-center gap-2 text-[10px] font-mono text-foreground/60 uppercase truncate">
             <span className="truncate">{horse.sireName || "UNKNOWN"}</span>
             <span className="text-pink-500/40">×</span>
             <span className="truncate">{horse.damName || "UNKNOWN"}</span>
@@ -77,7 +77,7 @@ export function HorseMetaPanel({ horse, isAdvanced, onToggleView }: HorseMetaPan
       <div className="flex justify-end">
         <button
           onClick={onToggleView}
-          className="text-[9px] font-mono uppercase tracking-wide text-cream/20 hover:text-cream/60 transition-colors"
+          className="text-[9px] font-mono uppercase tracking-wide text-foreground/20 hover:text-foreground/60 transition-colors"
         >
           {isAdvanced ? "Simple view" : "Advanced metrics"}
         </button>

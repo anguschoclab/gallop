@@ -8,8 +8,10 @@ import {
   initInitializationWorker,
 } from "@/platform/game/store";
 import { saveExists, hydrationComplete } from "@/platform/game/store/storage";
+import { useTheme } from "@/domains/shell/application/hooks/useTheme";
 
 export function RootComponent() {
+  useTheme();
   const [isHydrated, setIsHydrated] = useState(false);
   const [rehydrateError, setRehydrateError] = useState<Error | null>(null);
   const [timedOut, setTimedOut] = useState(false);
@@ -63,17 +65,17 @@ export function RootComponent() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background px-4">
         <div className="max-w-md text-center">
-          <h2 className="text-2xl font-bold text-cream font-[family-name:var(--font-display)] mb-4">
+          <h2 className="text-2xl font-bold text-foreground font-[family-name:var(--font-display)] mb-4">
             {timedOut ? "Loading timed out" : "Failed to load"}
           </h2>
-          <p className="text-sm text-cream-muted font-[family-name:var(--font-body)] mb-6">
+          <p className="text-sm text-muted-foreground font-[family-name:var(--font-body)] mb-6">
             {rehydrateError
               ? rehydrateError.message
               : "The game took too long to load. This might be a storage issue."}
           </p>
           <button
             onClick={doRehydrate}
-            className="inline-flex items-center justify-center rounded-md bg-gold px-6 py-2 text-sm font-bold text-slate-950 transition-colors hover:bg-gold/90"
+            className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-2 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Retry
           </button>
@@ -86,8 +88,8 @@ export function RootComponent() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent mx-auto mb-4"></div>
-          <p className="text-cream-muted font-[family-name:var(--font-body)]">Loading...</p>
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
+          <p className="text-muted-foreground font-[family-name:var(--font-body)]">Loading...</p>
         </div>
       </div>
     );

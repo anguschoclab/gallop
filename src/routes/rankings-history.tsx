@@ -105,10 +105,10 @@ function RankingsHistoryPage() {
       <header className="flex items-center gap-2">
         <TrendingUp className="h-5 w-5 text-primary" />
         <div>
-          <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-cream">
+          <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-foreground">
             Rankings History
           </h1>
-          <p className="text-sm text-cream-muted">
+          <p className="text-sm text-muted-foreground">
             Position, reputation and auction price over time — recorded daily
           </p>
         </div>
@@ -118,8 +118,8 @@ function RankingsHistoryPage() {
         <section className="space-y-4 border-b border-border pb-5">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 className="text-sm font-black text-cream">My horses vs daily leaders</h2>
-              <p className="text-[10px] font-mono uppercase text-cream/40">
+              <h2 className="text-sm font-black text-foreground">My horses vs daily leaders</h2>
+              <p className="text-[10px] font-mono uppercase text-foreground/40">
                 Gaps compare with that day’s #1
               </p>
             </div>
@@ -150,7 +150,7 @@ function RankingsHistoryPage() {
 
       {rows.length === 0 ? (
         <Card className="border-white/5 bg-slate-900/40">
-          <CardContent className="p-6 text-center text-[11px] font-mono uppercase tracking-wide text-cream/40">
+          <CardContent className="p-6 text-center text-[11px] font-mono uppercase tracking-wide text-foreground/40">
             No rankings recorded yet. Advance a day after races have been run and snapshots will
             appear here.
           </CardContent>
@@ -177,8 +177,8 @@ function RankingsHistoryPage() {
                       onClick={() => setSelectedId(r.horseId)}
                       className={`flex h-auto w-full justify-start items-center gap-2 p-2 text-left text-[11px] font-mono transition-colors ${
                         selected?.horseId === r.horseId
-                          ? "bg-white/10 text-cream"
-                          : "text-cream/70 hover:bg-white/5"
+                          ? "bg-white/10 text-foreground"
+                          : "text-foreground/70 hover:bg-white/5"
                       }`}
                     >
                       <span className="w-7 text-right font-black tabular-nums text-primary">
@@ -197,7 +197,7 @@ function RankingsHistoryPage() {
                   );
                 })}
                 {filtered.length === 0 ? (
-                  <p className="p-3 text-[10px] font-mono uppercase text-cream/30">
+                  <p className="p-3 text-[10px] font-mono uppercase text-foreground/30">
                     No horses match.
                   </p>
                 ) : null}
@@ -213,11 +213,11 @@ function RankingsHistoryPage() {
                     <Link
                       to="/stable/$horseId"
                       params={{ horseId: selected.horseId }}
-                      className="text-base font-black text-cream hover:text-primary"
+                      className="text-base font-black text-foreground hover:text-primary"
                     >
                       {selected.name}
                     </Link>
-                    <p className="text-[10px] font-mono uppercase tracking-wide text-cream/40">
+                    <p className="text-[10px] font-mono uppercase tracking-wide text-foreground/40">
                       {selected.snaps.length} daily snapshot
                       {selected.snaps.length === 1 ? "" : "s"}
                     </p>
@@ -245,17 +245,27 @@ function RankingsHistoryPage() {
                 <CardContent className="p-0">
                   <table className="w-full text-[11px] font-mono">
                     <thead>
-                      <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-wide text-cream/40">
-                        <th className="p-2">Day</th>
-                        <th className="p-2 text-right">Rank</th>
-                        <th className="p-2 text-right">Points</th>
-                        <th className="p-2 text-right">Reputation</th>
-                        <th className="p-2 text-right">Price</th>
+                      <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-wide text-foreground/40">
+                        <th scope="col" className="p-2">
+                          Day
+                        </th>
+                        <th scope="col" className="p-2 text-right">
+                          Rank
+                        </th>
+                        <th scope="col" className="p-2 text-right">
+                          Points
+                        </th>
+                        <th scope="col" className="p-2 text-right">
+                          Reputation
+                        </th>
+                        <th scope="col" className="p-2 text-right">
+                          Price
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
                       {[...selected.snaps].reverse().map((s: RankingsSnapshot) => (
-                        <tr key={s.day} className="text-cream/80">
+                        <tr key={s.day} className="text-foreground/80">
                           <td className="p-2 tabular-nums">Day {s.day}</td>
                           <td className="p-2 text-right tabular-nums font-black text-primary">
                             {s.rank ? `#${s.rank}` : "Unranked"}
@@ -280,8 +290,8 @@ function RankingsHistoryPage() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[9px] font-mono uppercase tracking-wide text-cream/40">{label}</p>
-      <p className="text-sm font-black tabular-nums text-cream">{value}</p>
+      <p className="text-[9px] font-mono uppercase tracking-wide text-foreground/40">{label}</p>
+      <p className="text-sm font-black tabular-nums text-foreground">{value}</p>
     </div>
   );
 }
@@ -304,24 +314,36 @@ function ComparisonTable({
     <div className="overflow-x-auto">
       <p className="mb-1 text-[10px] font-mono uppercase tracking-wide text-primary">{title}</p>
       {rows.length === 0 ? (
-        <p className="text-[11px] text-cream/40">{empty}</p>
+        <p className="text-[11px] text-foreground/40">{empty}</p>
       ) : (
         <table className="w-full min-w-[620px] text-[11px] font-mono">
           <thead>
-            <tr className="text-left text-[9px] uppercase text-cream/40">
-              <th className="p-1.5">Horse</th>
-              <th className="text-right">Rank</th>
-              <th className="text-right">Points</th>
-              <th className="text-right">Reputation</th>
-              <th className="text-right">Price</th>
-              <th className="pl-3">Gap to #1</th>
+            <tr className="text-left text-[9px] uppercase text-foreground/40">
+              <th scope="col" className="p-1.5">
+                Horse
+              </th>
+              <th scope="col" className="text-right">
+                Rank
+              </th>
+              <th scope="col" className="text-right">
+                Points
+              </th>
+              <th scope="col" className="text-right">
+                Reputation
+              </th>
+              <th scope="col" className="text-right">
+                Price
+              </th>
+              <th scope="col" className="pl-3">
+                Gap to #1
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
             {rows.map((r) => (
               <tr
                 key={r.horseId}
-                className={r.isPlayer ? "bg-primary/10 text-cream" : "text-cream/75"}
+                className={r.isPlayer ? "bg-primary/10 text-foreground" : "text-foreground/75"}
               >
                 <td className="p-1.5 font-sans font-bold">
                   {r.name}
@@ -335,7 +357,7 @@ function ComparisonTable({
                 <td className="text-right tabular-nums">
                   {r.snapshot ? formatCurrency(r.snapshot.price) : "—"}
                 </td>
-                <td className="pl-3 text-[10px] text-cream/50">
+                <td className="pl-3 text-[10px] text-foreground/50">
                   {r.gap
                     ? `${r.gap.rank === null ? "Unranked" : r.gap.rank === 0 ? "Leader" : `${r.gap.rank} places`} · ${signed(r.gap.points)} pts · ${signed(r.gap.reputation)} rep · ${signed(r.gap.price, true)}`
                     : "—"}
@@ -353,11 +375,13 @@ function TrendCard({ title, data }: { title: string; data: number[] }) {
   return (
     <Card className="border-white/5 bg-slate-900/40">
       <CardContent className="p-3">
-        <p className="mb-1 text-[10px] font-mono uppercase tracking-wide text-cream/40">{title}</p>
+        <p className="mb-1 text-[10px] font-mono uppercase tracking-wide text-foreground/40">
+          {title}
+        </p>
         {data.length > 1 ? (
           <Sparkline data={data} height={56} />
         ) : (
-          <p className="py-4 text-center text-[10px] font-mono uppercase text-cream/30">
+          <p className="py-4 text-center text-[10px] font-mono uppercase text-foreground/30">
             Needs 2+ days
           </p>
         )}

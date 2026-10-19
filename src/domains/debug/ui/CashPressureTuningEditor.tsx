@@ -95,7 +95,7 @@ export function CashPressureTuningEditor() {
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
             {NUMERIC_FIELDS.map((f) => (
               <div key={f.key}>
-                <label className="text-xs text-cream-muted">{f.label}</label>
+                <label className="text-xs text-muted-foreground">{f.label}</label>
                 <Input
                   type="number"
                   step={f.step}
@@ -117,7 +117,7 @@ export function CashPressureTuningEditor() {
           <div className="grid grid-cols-3 gap-3">
             {LABEL_FIELDS.map((f) => (
               <div key={f.key}>
-                <label className="text-xs text-cream-muted">{f.label}</label>
+                <label className="text-xs text-muted-foreground">{f.label}</label>
                 <Input
                   type="number"
                   step="0.05"
@@ -146,7 +146,7 @@ export function CashPressureTuningEditor() {
               }}
               className="h-4 w-4"
             />
-            <label className="text-sm text-cream-muted">
+            <label className="text-sm text-muted-foreground">
               Emit <code>[trace]</code> log entries for NPC private sale decisions
             </label>
           </div>
@@ -158,7 +158,7 @@ export function CashPressureTuningEditor() {
           <CardTitle>Effective values (live)</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-2 text-xs text-cream-muted md:grid-cols-3">
+          <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground md:grid-cols-3">
             <span>comfortDays: {effective.comfortDays}</span>
             <span>crisisDays: {effective.crisisDays}</span>
             <span>maxDiscount: {effective.maxThresholdDiscount}</span>
@@ -167,7 +167,7 @@ export function CashPressureTuningEditor() {
             <span>trace: {effective.enableDecisionTrace ? "on" : "off"}</span>
           </div>
           <div className="mt-2">
-            <Badge variant="outline" className="text-xs text-cream-muted">
+            <Badge variant="outline" className="text-xs text-muted-foreground">
               Labels: desperate≥{effective.labelThresholds.desperate} · strained≥
               {effective.labelThresholds.strained} · tight≥{effective.labelThresholds.tight}
             </Badge>

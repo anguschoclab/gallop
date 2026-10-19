@@ -22,7 +22,7 @@ export function HorseCompare({ horses, allHorses = [], open, onOpenChange }: Hor
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto w-[95vw]">
         <DialogHeader>
-          <DialogTitle className="font-[family-name:var(--font-display)] uppercase tracking-widest text-sm text-gold">
+          <DialogTitle className="font-[family-name:var(--font-display)] uppercase tracking-widest text-sm text-primary">
             Compare Horses · {horses.length}
           </DialogTitle>
         </DialogHeader>

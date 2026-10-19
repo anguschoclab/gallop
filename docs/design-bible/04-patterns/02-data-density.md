@@ -20,7 +20,7 @@ When the user needs to **compare across rows** on the same attributes. If they'r
 
 ### Table conventions
 
-- **`<Table>`** primitive ([src/components/ui/table.tsx](../../../src/components/ui/table.tsx)).
+- **`<Table>`** primitive ([src/shared/ui/table.tsx](../../../src/shared/ui/table.tsx)).
 - **Numeric columns** — `text-right` aligned, `tabular-nums` always.
 - **Text columns** — `text-left`.
 - **Header row** — `text-xs uppercase tracking-wide text-muted-foreground`. Quiet, not shouty.

@@ -98,14 +98,14 @@ export function PriceAlertsPanel() {
     <div className="space-y-6">
       <Card className="bg-slate-900/40 border-white/5">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-cream text-lg">
+          <CardTitle className="flex items-center gap-2 text-foreground text-lg">
             <BellRing className="h-4 w-4 text-primary" />
             New alert
           </CardTitle>
         </CardHeader>
         <CardContent className="grid gap-4 md:grid-cols-5">
           <div className="space-y-1">
-            <Label className="text-[10px] uppercase text-cream/50">Watch</Label>
+            <Label className="text-[10px] uppercase text-foreground/50">Watch</Label>
             <Select value={kind} onValueChange={(v) => setKind(v as ScopeKind)}>
               <SelectTrigger aria-label="Alert scope">
                 <SelectValue />
@@ -120,7 +120,7 @@ export function PriceAlertsPanel() {
 
           {kind === "grade" && (
             <div className="space-y-1">
-              <Label className="text-[10px] uppercase text-cream/50">Grade</Label>
+              <Label className="text-[10px] uppercase text-foreground/50">Grade</Label>
               <Select value={grade} onValueChange={setGrade}>
                 <SelectTrigger aria-label="Grade segment">
                   <SelectValue />
@@ -138,7 +138,7 @@ export function PriceAlertsPanel() {
 
           {kind === "track" && (
             <div className="space-y-1">
-              <Label className="text-[10px] uppercase text-cream/50">Track</Label>
+              <Label className="text-[10px] uppercase text-foreground/50">Track</Label>
               <Select value={trackId} onValueChange={setTrackId}>
                 <SelectTrigger aria-label="Track">
                   <SelectValue />
@@ -155,7 +155,7 @@ export function PriceAlertsPanel() {
           )}
 
           <div className="space-y-1">
-            <Label className="text-[10px] uppercase text-cream/50">Direction</Label>
+            <Label className="text-[10px] uppercase text-foreground/50">Direction</Label>
             <Select value={direction} onValueChange={(v) => setDirection(v as PriceAlertDirection)}>
               <SelectTrigger aria-label="Alert direction">
                 <SelectValue />
@@ -169,7 +169,7 @@ export function PriceAlertsPanel() {
           </div>
 
           <div className="space-y-1">
-            <Label className="text-[10px] uppercase text-cream/50" htmlFor="alert-threshold">
+            <Label className="text-[10px] uppercase text-foreground/50" htmlFor="alert-threshold">
               Move %
             </Label>
             <Input
@@ -181,7 +181,7 @@ export function PriceAlertsPanel() {
           </div>
 
           <div className="space-y-1">
-            <Label className="text-[10px] uppercase text-cream/50" htmlFor="alert-window">
+            <Label className="text-[10px] uppercase text-foreground/50" htmlFor="alert-window">
               Window (days)
             </Label>
             <Input
@@ -206,7 +206,7 @@ export function PriceAlertsPanel() {
               <Bell className="mr-2 h-4 w-4" />
               Create alert
             </Button>
-            <p className="mt-2 text-[10px] font-mono uppercase text-cream/40">
+            <p className="mt-2 text-[10px] font-mono uppercase text-foreground/40">
               Alerts are checked every time you advance a day. Fills on your own orders always
               notify you, no alert needed.
             </p>
@@ -216,11 +216,11 @@ export function PriceAlertsPanel() {
 
       <Card className="bg-slate-900/40 border-white/5">
         <CardHeader>
-          <CardTitle className="text-cream text-lg">Your alerts ({alerts.length})</CardTitle>
+          <CardTitle className="text-foreground text-lg">Your alerts ({alerts.length})</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           {rows.length === 0 ? (
-            <p className="text-sm text-cream/50">
+            <p className="text-sm text-foreground/50">
               No alerts yet. Watch a track or a grade to get told when prices move.
             </p>
           ) : (
@@ -231,16 +231,16 @@ export function PriceAlertsPanel() {
                   className="flex flex-wrap items-end gap-4 border border-primary/30 bg-slate-950/60 p-3"
                 >
                   <div className="space-y-1">
-                    <span className="font-bold text-cream">
+                    <span className="font-bold text-foreground">
                       {scopeLabel(alert.scope, trackName)}
                     </span>
-                    <div className="text-[10px] font-mono uppercase text-cream/40">
+                    <div className="text-[10px] font-mono uppercase text-foreground/40">
                       Editing alert
                     </div>
                   </div>
                   <div className="space-y-1">
                     <Label
-                      className="text-[10px] uppercase text-cream/50"
+                      className="text-[10px] uppercase text-foreground/50"
                       htmlFor={`edit-direction-${alert.id}`}
                     >
                       Direction
@@ -261,7 +261,7 @@ export function PriceAlertsPanel() {
                   </div>
                   <div className="space-y-1">
                     <Label
-                      className="text-[10px] uppercase text-cream/50"
+                      className="text-[10px] uppercase text-foreground/50"
                       htmlFor={`edit-threshold-${alert.id}`}
                     >
                       Move %
@@ -277,7 +277,7 @@ export function PriceAlertsPanel() {
                   </div>
                   <div className="space-y-1">
                     <Label
-                      className="text-[10px] uppercase text-cream/50"
+                      className="text-[10px] uppercase text-foreground/50"
                       htmlFor={`edit-window-${alert.id}`}
                     >
                       Window (days)
@@ -317,7 +317,7 @@ export function PriceAlertsPanel() {
                 >
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-cream">
+                      <span className="font-bold text-foreground">
                         {scopeLabel(alert.scope, trackName)}
                       </span>
                       <Badge variant="outline" className="text-[10px]">
@@ -334,7 +334,7 @@ export function PriceAlertsPanel() {
                         </Badge>
                       )}
                     </div>
-                    <div className="flex items-center gap-2 font-mono text-[11px] text-cream/60">
+                    <div className="flex items-center gap-2 font-mono text-[11px] text-foreground/60">
                       {index.movePct >= 0 ? (
                         <TrendingUp className="h-3 w-3 text-success" />
                       ) : (

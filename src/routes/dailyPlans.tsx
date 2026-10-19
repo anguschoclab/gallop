@@ -53,11 +53,11 @@ const EMPTY_JOURNAL: StrategyJournalEntry[] = [];
 
 const scoreTone = (score: number | null) =>
   score === null
-    ? "text-cream/40 border-white/10"
+    ? "text-foreground/40 border-white/10"
     : score >= 70
       ? "text-emerald-400 border-emerald-400/40"
       : score >= 40
-        ? "text-gold border-gold/40"
+        ? "text-primary border-primary/40"
         : "text-rose-400 border-rose-400/40";
 
 function DailyPlansPage() {
@@ -115,16 +115,16 @@ function DailyPlansPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-cream">
+        <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-foreground">
           Daily Plans
         </h1>
         <p className="text-sm text-muted-foreground">
           Each day's race choices, the{" "}
-          <Link to="/stableCampaign" className="text-gold hover:underline">
+          <Link to="/stableCampaign" className="text-primary hover:underline">
             campaign goals
           </Link>{" "}
           they served, and how well the journaled plans worked — from your{" "}
-          <Link to="/strategyJournal" className="text-gold hover:underline">
+          <Link to="/strategyJournal" className="text-primary hover:underline">
             Strategy Journal
           </Link>
           .
@@ -236,7 +236,7 @@ function DailyPlansPage() {
                   {d.score === null ? "no scored plan" : `plan score ${d.score}`}
                 </Badge>
                 {d.goalsServed.map((c) => (
-                  <Badge key={c} variant="default" className="bg-gold text-slate-950">
+                  <Badge key={c} variant="default" className="bg-primary text-slate-950">
                     {c} goal win
                   </Badge>
                 ))}
@@ -250,12 +250,24 @@ function DailyPlansPage() {
               <table className="w-full text-sm">
                 <thead className="text-left text-xs uppercase text-muted-foreground">
                   <tr>
-                    <th className="py-1 pr-3">Horse</th>
-                    <th className="pr-3">Race</th>
-                    <th className="pr-3">Class</th>
-                    <th className="pr-3">Finish</th>
-                    <th className="pr-3 text-right">Prize</th>
-                    <th className="pr-3">Plan</th>
+                    <th scope="col" className="py-1 pr-3">
+                      Horse
+                    </th>
+                    <th scope="col" className="pr-3">
+                      Race
+                    </th>
+                    <th scope="col" className="pr-3">
+                      Class
+                    </th>
+                    <th scope="col" className="pr-3">
+                      Finish
+                    </th>
+                    <th scope="col" className="pr-3 text-right">
+                      Prize
+                    </th>
+                    <th scope="col" className="pr-3">
+                      Plan
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -265,7 +277,7 @@ function DailyPlansPage() {
                         <Link
                           to="/stable/$horseId"
                           params={{ horseId: r.horseId }}
-                          className="hover:text-gold hover:underline"
+                          className="hover:text-primary hover:underline"
                         >
                           {r.horseName}
                         </Link>
@@ -274,7 +286,7 @@ function DailyPlansPage() {
                         <Link
                           to="/race/$raceId"
                           params={{ raceId: r.raceId }}
-                          className="hover:text-gold hover:underline"
+                          className="hover:text-primary hover:underline"
                         >
                           {r.raceName}
                         </Link>
@@ -284,7 +296,7 @@ function DailyPlansPage() {
                         {r.position}
                         {r.fieldSize ? `/${r.fieldSize}` : ""}
                         {r.countedForGoal && r.position === 1 && (
-                          <span className="text-gold"> ★</span>
+                          <span className="text-primary"> ★</span>
                         )}
                       </td>
                       <td className="pr-3 text-right font-mono">
@@ -294,7 +306,7 @@ function DailyPlansPage() {
                           "—"
                         )}
                       </td>
-                      <td className="pr-3 text-xs text-cream-muted max-w-[14rem]">
+                      <td className="pr-3 text-xs text-muted-foreground max-w-[14rem]">
                         {r.planText ? (
                           <span className="block truncate" title={r.planText}>
                             {r.planText}

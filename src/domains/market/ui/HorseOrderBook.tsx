@@ -42,16 +42,17 @@ export function HorseOrderBook({
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-3 text-xs">
-        <span className="text-cream-muted">
+        <span className="text-muted-foreground">
           Fair value{" "}
-          <span className="text-cream tabular-nums">{formatCurrency(book.fairValue)}</span>
+          <span className="text-foreground tabular-nums">{formatCurrency(book.fairValue)}</span>
         </span>
-        <span className="text-cream-muted">
-          Mid <span className="text-cream tabular-nums">{formatCurrency(book.mid)}</span>
+        <span className="text-muted-foreground">
+          Mid <span className="text-foreground tabular-nums">{formatCurrency(book.mid)}</span>
         </span>
         {book.spread !== undefined && (
-          <span className="text-cream-muted">
-            Spread <span className="text-cream tabular-nums">{formatCurrency(book.spread)}</span>
+          <span className="text-muted-foreground">
+            Spread{" "}
+            <span className="text-foreground tabular-nums">{formatCurrency(book.spread)}</span>
           </span>
         )}
         {book.lastTrade !== undefined && (
@@ -79,11 +80,11 @@ export function HorseOrderBook({
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-1.5">
-          <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
+          <h4 className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
             Asks (sellers)
           </h4>
           {book.asks.length === 0 ? (
-            <p className="text-xs text-cream-muted">No sellers.</p>
+            <p className="text-xs text-muted-foreground">No sellers.</p>
           ) : (
             book.asks.map((a) => (
               <div
@@ -100,17 +101,17 @@ export function HorseOrderBook({
                     [yardLabel(a.sellerId), a.standingNote].filter(Boolean).join(" — ") || undefined
                   }
                 >
-                  <span className="relative min-w-0 truncate text-cream-muted">
+                  <span className="relative min-w-0 truncate text-muted-foreground">
                     {a.sellerName}
                     {a.sellerTier && (
-                      <span className="ml-1 text-[9px] uppercase tracking-wide text-gold/60">
+                      <span className="ml-1 text-[9px] uppercase tracking-wide text-primary/60">
                         {a.sellerTier}
                       </span>
                     )}
                   </span>
                 </Hint>
                 <span className="relative flex items-center gap-2">
-                  <span className="tabular-nums text-cream">{formatCurrency(a.price)}</span>
+                  <span className="tabular-nums text-foreground">{formatCurrency(a.price)}</span>
                   {a.sellerId === "player" ? (
                     <Button size="sm" variant="ghost" onClick={() => onCancelAsk(a.id)}>
                       Cancel
@@ -132,11 +133,11 @@ export function HorseOrderBook({
         </div>
 
         <div className="space-y-1.5">
-          <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
+          <h4 className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
             Bids (buyers)
           </h4>
           {book.bids.length === 0 ? (
-            <p className="text-xs text-cream-muted">No bids.</p>
+            <p className="text-xs text-muted-foreground">No bids.</p>
           ) : (
             book.bids.map((b) => (
               <div
@@ -155,7 +156,7 @@ export function HorseOrderBook({
                       : ""
                   }`}
                 >
-                  <span className="relative min-w-0 truncate text-cream-muted">
+                  <span className="relative min-w-0 truncate text-muted-foreground">
                     {b.bidderName}
                     {b.bidderId === "player" && (
                       <span className="ml-1 rounded bg-primary/20 px-1 text-[9px] uppercase tracking-wide text-primary">
@@ -163,19 +164,19 @@ export function HorseOrderBook({
                       </span>
                     )}
                     {b.bidderTier && (
-                      <span className="ml-1 text-[9px] uppercase tracking-wide text-gold/60">
+                      <span className="ml-1 text-[9px] uppercase tracking-wide text-primary/60">
                         {b.bidderTier}
                       </span>
                     )}
                     {b.intent && (
-                      <span className="ml-1 text-[9px] uppercase tracking-wide text-cream-muted/70">
+                      <span className="ml-1 text-[9px] uppercase tracking-wide text-muted-foreground/70">
                         {b.intent}
                       </span>
                     )}
                   </span>
                 </Hint>
                 <span className="relative flex items-center gap-2">
-                  <span className="tabular-nums text-cream">{formatCurrency(b.price)}</span>
+                  <span className="tabular-nums text-foreground">{formatCurrency(b.price)}</span>
                   {b.bidderId === "player" ? (
                     <Button
                       size="sm"

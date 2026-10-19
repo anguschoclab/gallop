@@ -23,8 +23,8 @@ export const Route = createFileRoute("/jockey/$jockeyId")({
   component: JockeyPage,
   notFoundComponent: () => (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-cream">Jockey not found</h1>
-      <Link to="/jockeys" className="text-gold underline mt-4 block">
+      <h1 className="text-2xl font-bold text-foreground">Jockey not found</h1>
+      <Link to="/jockeys" className="text-primary underline mt-4 block">
         Back to Jockeys
       </Link>
     </div>
@@ -55,7 +55,7 @@ function JockeyPage() {
     <div className="space-y-6 max-w-4xl mx-auto p-4 md:p-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between mb-4">
         <Link to="/jockeys">
-          <Button variant="ghost" size="sm" className="text-cream-muted hover:text-cream">
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
             <ChevronLeft className="h-4 w-4 mr-2" />
             Back to Roster
           </Button>
@@ -137,15 +137,15 @@ function JockeyPage() {
         <TabsContent value="traits">
           <div className="space-y-4 max-w-2xl mx-auto">
             <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="h-5 w-5 text-gold/60" />
-              <h2 className="text-lg font-bold text-cream uppercase tracking-tight">
+              <Sparkles className="h-5 w-5 text-primary/60" />
+              <h2 className="text-lg font-bold text-foreground uppercase tracking-tight">
                 Trait Development
               </h2>
             </div>
 
             {(jockey.traits?.length ?? 0) > 0 && (
               <div className="space-y-2">
-                <h3 className="text-[10px] font-black uppercase text-cream/40 tracking-wide">
+                <h3 className="text-[10px] font-black uppercase text-foreground/40 tracking-wide">
                   Active Traits
                 </h3>
                 <div className="flex flex-wrap gap-2">
@@ -153,7 +153,7 @@ function JockeyPage() {
                     <Badge
                       key={trait}
                       variant="outline"
-                      className="text-[10px] font-bold uppercase tracking-wider h-6 px-2.5 rounded-none border-gold/30 text-gold/80 bg-gold/5"
+                      className="text-[10px] font-bold uppercase tracking-wider h-6 px-2.5 rounded-none border-primary/30 text-primary/80 bg-primary/5"
                     >
                       {formatJockeyTrait(trait)}
                     </Badge>
@@ -164,7 +164,7 @@ function JockeyPage() {
 
             {jockey.traitProgression && (
               <div className="space-y-3">
-                <h3 className="text-[10px] font-black uppercase text-cream/40 tracking-wide">
+                <h3 className="text-[10px] font-black uppercase text-foreground/40 tracking-wide">
                   Progression
                 </h3>
                 {Object.entries(jockey.traitProgression.xp).map(([traitKey, xp]) => {
@@ -175,17 +175,17 @@ function JockeyPage() {
                   return (
                     <div key={traitKey} className="space-y-1">
                       <div className="flex items-center justify-between text-[10px] font-mono">
-                        <span className={isUnlocked ? "text-gold/80" : "text-cream/50"}>
+                        <span className={isUnlocked ? "text-primary/80" : "text-foreground/50"}>
                           {formatJockeyTrait(typedTraitKey)}
                         </span>
-                        <span className="text-cream/40">
+                        <span className="text-foreground/40">
                           {xp} / {TRAIT_XP_UNLOCK_THRESHOLD} XP
                           {isUnlocked && unlockDay ? ` · Unlocked Day ${unlockDay}` : ""}
                         </span>
                       </div>
                       <div className="h-1.5 bg-white/5 rounded-sm overflow-hidden">
                         <div
-                          className={isUnlocked ? "h-full bg-gold/60" : "h-full bg-blue-400/40"}
+                          className={isUnlocked ? "h-full bg-primary/60" : "h-full bg-blue-400/40"}
                           style={{ width: `${pct}%` }}
                         />
                       </div>
@@ -201,7 +201,7 @@ function JockeyPage() {
             )}
 
             {(jockey.traits?.length ?? 0) === 0 && !jockey.traitProgression && (
-              <p className="text-sm text-cream/40 italic">
+              <p className="text-sm text-foreground/40 italic">
                 No trait development yet. Race this jockey to earn trait XP.
               </p>
             )}

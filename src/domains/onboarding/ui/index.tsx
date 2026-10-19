@@ -36,18 +36,18 @@ export function NewGameWizard() {
       <div className="min-h-screen bg-background flex items-center justify-center p-6">
         <div className="w-full max-w-3xl">
           <header className="mb-8 text-center">
-            <h1 className="text-5xl font-bold text-cream font-[family-name:var(--font-display)]">
+            <h1 className="text-5xl font-bold text-foreground font-[family-name:var(--font-display)]">
               Gallop
             </h1>
-            <p className="mt-2 text-cream-muted font-[family-name:var(--font-body)]">
+            <p className="mt-2 text-muted-foreground font-[family-name:var(--font-body)]">
               Found your stable
             </p>
             <StepIndicator step={step} />
           </header>
 
-          <Card className="bg-t900/60 border-t700">
+          <Card className="bg-surface/60 border-muted">
             <CardHeader>
-              <CardTitle className="font-[family-name:var(--font-display)] text-cream">
+              <CardTitle className="font-[family-name:var(--font-display)] text-foreground">
                 {STEP_TITLES[step]}
               </CardTitle>
             </CardHeader>
@@ -110,15 +110,15 @@ export function NewGameWizard() {
           </div>
           {submitting && initProgress && (
             <div className="mt-4 space-y-2">
-              <div className="h-2 w-full overflow-hidden rounded-full bg-t700">
+              <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
                 <div
-                  className="h-full rounded-full bg-gold transition-all duration-300"
+                  className="h-full rounded-full bg-primary transition-all duration-300"
                   style={{
                     width: `${Math.round((initProgress.stage / initProgress.total) * 100)}%`,
                   }}
                 />
               </div>
-              <p className="text-center text-sm text-cream-muted">
+              <p className="text-center text-sm text-muted-foreground">
                 {initProgress.name} ({initProgress.stage}/{initProgress.total})
               </p>
             </div>
@@ -133,14 +133,16 @@ const STEP_TITLES = ["Stable identity", "Silks", "Backstory", "World size", "Rev
 
 function StepIndicator({ step }: { step: Step }) {
   return (
-    <ol className="mt-4 flex items-center justify-center gap-2 text-xs uppercase tracking-wider text-cream-muted">
+    <ol className="mt-4 flex items-center justify-center gap-2 text-xs uppercase tracking-wider text-muted-foreground">
       {STEP_TITLES.map((title, i) => (
         <li
           key={title}
-          className={i === step ? "text-gold" : i < step ? "text-cream" : "text-cream-muted/50"}
+          className={
+            i === step ? "text-primary" : i < step ? "text-foreground" : "text-muted-foreground/50"
+          }
         >
           {i + 1}. {title}
-          {i < STEP_TITLES.length - 1 && <span className="ml-2 text-cream-muted/30">›</span>}
+          {i < STEP_TITLES.length - 1 && <span className="ml-2 text-muted-foreground/30">›</span>}
         </li>
       ))}
     </ol>

@@ -35,7 +35,7 @@ export function ImperialOutpostManager() {
       <div className="space-y-6">
         <div className="text-center py-20 border-2 border-dashed border-white/5 rounded-xl">
           <Globe size={48} className="mx-auto text-white/10 mb-4" />
-          <p className="text-cream-muted">
+          <p className="text-muted-foreground">
             No outposts established yet. Expand to new regions to begin.
           </p>
         </div>
@@ -57,8 +57,8 @@ export function ImperialOutpostManager() {
             className={cn(
               "gap-2 shrink-0",
               selectedOutpost.id === outpost.id
-                ? "bg-gold text-t950"
-                : "border-gold-muted text-cream-muted",
+                ? "bg-primary text-background"
+                : "border-border text-muted-foreground",
             )}
             onClick={() => setSelectedOutpostId(outpost.id)}
           >
@@ -68,7 +68,7 @@ export function ImperialOutpostManager() {
         ))}
         <Button
           variant="outline"
-          className="gap-2 border-dashed border-gold-muted text-gold shrink-0"
+          className="gap-2 border-dashed border-border text-primary shrink-0"
         >
           <MapPin className="w-4 h-4" /> Expand to New Region
         </Button>
@@ -76,7 +76,7 @@ export function ImperialOutpostManager() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Acreage Plot Grid */}
-        <Card className="lg:col-span-2 border-gold-muted bg-t900/50">
+        <Card className="lg:col-span-2 border-border bg-surface/50">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -87,7 +87,7 @@ export function ImperialOutpostManager() {
                   {usedSlots} / {selectedOutpost.totalSlots} Slots Developed
                 </CardDescription>
               </div>
-              <Badge variant="outline" className="text-gold border-gold/30">
+              <Badge variant="outline" className="text-primary border-primary/30">
                 {selectedOutpost.region.toUpperCase()}
               </Badge>
             </div>
@@ -111,18 +111,18 @@ export function ImperialOutpostManager() {
                           ? "bg-green-900/40 border-green-700/50"
                           : facilityAtSlot.branch === "dirt"
                             ? "bg-amber-900/40 border-amber-700/50"
-                            : "bg-t800 border-gold-muted/30",
+                            : "bg-card border-border/30",
                       )}
                       style={{
                         gridColumn: `span ${Math.min(footprint, 2)}`,
                         gridRow: `span ${Math.ceil(footprint / 2)}`,
                       }}
                     >
-                      <Hammer className="w-3 h-3 text-gold" />
-                      <span className="text-[10px] font-bold text-cream uppercase leading-tight">
+                      <Hammer className="w-3 h-3 text-primary" />
+                      <span className="text-[10px] font-bold text-foreground uppercase leading-tight">
                         {FACILITY_NAMES[facilityAtSlot.type].split(" ")[0]}
                       </span>
-                      <Badge className="h-3 text-[8px] px-1 bg-t700 text-gold-muted">
+                      <Badge className="h-3 text-[8px] px-1 bg-muted text-primary/30">
                         {facilityLevelToTierLabel(facilityAtSlot.level)}
                       </Badge>
                     </div>
@@ -132,9 +132,9 @@ export function ImperialOutpostManager() {
                 return (
                   <div
                     key={i}
-                    className="aspect-square rounded border border-dashed border-gold-muted/20 bg-t950/30 flex items-center justify-center group cursor-pointer hover:border-gold/50"
+                    className="aspect-square rounded border border-dashed border-border/20 bg-background/30 flex items-center justify-center group cursor-pointer hover:border-primary/50"
                   >
-                    <span className="text-[10px] text-cream-muted group-hover:text-gold">
+                    <span className="text-[10px] text-muted-foreground group-hover:text-primary">
                       Empty
                     </span>
                   </div>
@@ -146,24 +146,24 @@ export function ImperialOutpostManager() {
 
         {/* Outpost Strategic Stats */}
         <div className="space-y-4">
-          <Card className="border-gold-muted">
+          <Card className="border-border">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm uppercase tracking-wider text-cream-muted">
+              <CardTitle className="text-sm uppercase tracking-wider text-muted-foreground">
                 Head Trainer
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center gap-3 p-3 bg-t800 rounded border border-gold-muted/10">
-                <div className="w-10 h-10 rounded bg-t700 flex items-center justify-center">
-                  <Users className="w-6 h-6 text-gold-muted" />
+              <div className="flex items-center gap-3 p-3 bg-card rounded border border-border/10">
+                <div className="w-10 h-10 rounded bg-muted flex items-center justify-center">
+                  <Users className="w-6 h-6 text-primary/30" />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-bold text-cream">
+                  <p className="text-sm font-bold text-foreground">
                     {selectedOutpost.headTrainerId
                       ? `Trainer ${selectedOutpost.headTrainerId}`
                       : "No trainer assigned"}
                   </p>
-                  <p className="text-[10px] text-gold uppercase font-bold">Unassigned</p>
+                  <p className="text-[10px] text-primary uppercase font-bold">Unassigned</p>
                 </div>
                 <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
                   <Tooltip>
@@ -172,7 +172,7 @@ export function ImperialOutpostManager() {
                         aria-label="Swap head trainer"
                         size="icon"
                         variant="ghost"
-                        className="h-8 w-8 text-cream-muted"
+                        className="h-8 w-8 text-muted-foreground"
                       >
                         <ArrowRightLeft className="w-4 h-4" />
                       </Button>
@@ -184,41 +184,41 @@ export function ImperialOutpostManager() {
             </CardContent>
           </Card>
 
-          <Card className="border-gold-muted">
+          <Card className="border-border">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm uppercase tracking-wider text-cream-muted">
+              <CardTitle className="text-sm uppercase tracking-wider text-muted-foreground">
                 Specialization
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex flex-col gap-2">
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-cream-muted">Current Focus</span>
-                  <Badge className="bg-t700 text-cream-muted">Not Set</Badge>
+                  <span className="text-muted-foreground">Current Focus</span>
+                  <Badge className="bg-muted text-muted-foreground">Not Set</Badge>
                 </div>
-                <p className="text-[10px] text-cream-muted italic">
+                <p className="text-[10px] text-muted-foreground italic">
                   No specialization assigned. Manage the tech tree to configure bonuses.
                 </p>
               </div>
 
               <Button
                 variant="outline"
-                className="w-full text-xs h-8 border-gold-muted text-gold hover:bg-gold hover:text-t950"
+                className="w-full text-xs h-8 border-border text-primary hover:bg-primary hover:text-background"
               >
                 Manage Tech Tree
               </Button>
             </CardContent>
           </Card>
 
-          <Card className="border-gold-muted">
+          <Card className="border-border">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm uppercase tracking-wider text-cream-muted">
+              <CardTitle className="text-sm uppercase tracking-wider text-muted-foreground">
                 Logistics
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               <div className="flex justify-between items-center text-xs">
-                <span className="text-cream-muted">Daily Upkeep</span>
+                <span className="text-muted-foreground">Daily Upkeep</span>
                 <span className="font-mono text-red-400">
                   -
                   {formatCurrency(
@@ -230,8 +230,8 @@ export function ImperialOutpostManager() {
                 </span>
               </div>
               <div className="flex justify-between items-center text-xs">
-                <span className="text-cream-muted">Transport Fleet</span>
-                <span className="text-cream">Not Deployed</span>
+                <span className="text-muted-foreground">Transport Fleet</span>
+                <span className="text-foreground">Not Deployed</span>
               </div>
             </CardContent>
           </Card>

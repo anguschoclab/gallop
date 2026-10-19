@@ -41,7 +41,7 @@ export function UrgentMessagesStrip({ messages }: UrgentMessagesStripProps) {
         <Card
           key={msg.id}
           className={cn(
-            "bg-t800 border-l-4 transition-all hover:bg-t750 cursor-pointer group",
+            "bg-card border-l-4 transition-all hover:bg-muted cursor-pointer group",
             STRIP_BORDER_CLASSES[msg.priority] ?? STRIP_DEFAULT_BORDER_CLASS,
           )}
           onClick={() => {
@@ -68,15 +68,15 @@ export function UrgentMessagesStrip({ messages }: UrgentMessagesStripProps) {
               )}
             </div>
             <div className="space-y-1 min-w-0">
-              <h3 className="text-sm font-bold text-cream truncate">{msg.title}</h3>
-              <p className="text-xs text-cream-muted line-clamp-2">
+              <h3 className="text-sm font-bold text-foreground truncate">{msg.title}</h3>
+              <p className="text-xs text-muted-foreground line-clamp-2">
                 <NewsContent text={msg.body} />
               </p>
             </div>
             <ChevronRight
               className={cn(
                 ICON_SIZE_SM,
-                "text-cream-muted ml-auto shrink-0 group-hover:text-gold transition-colors",
+                "text-muted-foreground ml-auto shrink-0 group-hover:text-primary transition-colors",
               )}
             />
           </CardContent>

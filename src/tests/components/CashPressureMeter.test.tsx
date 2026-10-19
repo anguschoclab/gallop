@@ -17,7 +17,7 @@ describe("CashPressureMeter", () => {
 
   it("applies comfortable color class for comfortable label", () => {
     const { container } = render(<CashPressureMeter meter={10} label="comfortable" />);
-    const bar = container.querySelector('[class*="bg-cream"]');
+    const bar = container.querySelector('[class*="bg-foreground"]');
     expect(bar).toBeTruthy();
   });
 

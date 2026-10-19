@@ -28,15 +28,29 @@ export function StableRosterLedger({ horses, selectedIds, toggleSelect }: Stable
     <div className="border border-white/5 bg-slate-900/20 overflow-x-auto shadow-2xl">
       <table className="w-full text-left border-collapse">
         <thead className="bg-black/40 border-b border-white/10">
-          <tr className="font-mono text-[10px] uppercase tracking-wide text-gold-muted/60">
-            <th className="px-3 py-3 font-black w-1"></th>
-            <th className="px-3 py-3 font-black w-1">#</th>
-            <th className="px-4 py-3 font-black">Horse</th>
-            <th className="px-4 py-3 font-black text-center">Age</th>
-            <th className="px-4 py-3 font-black text-center">OVR</th>
-            <th className="px-4 py-3 font-black text-center">Condition</th>
-            <th className="px-4 py-3 font-black text-center">Peaking</th>
-            <th className="px-6 py-3 font-black text-right">Actions</th>
+          <tr className="font-mono text-[10px] uppercase tracking-wide text-primary/20">
+            <th scope="col" className="px-3 py-3 font-black w-1"></th>
+            <th scope="col" className="px-3 py-3 font-black w-1">
+              #
+            </th>
+            <th scope="col" className="px-4 py-3 font-black">
+              Horse
+            </th>
+            <th scope="col" className="px-4 py-3 font-black text-center">
+              Age
+            </th>
+            <th scope="col" className="px-4 py-3 font-black text-center">
+              OVR
+            </th>
+            <th scope="col" className="px-4 py-3 font-black text-center">
+              Condition
+            </th>
+            <th scope="col" className="px-4 py-3 font-black text-center">
+              Peaking
+            </th>
+            <th scope="col" className="px-6 py-3 font-black text-right">
+              Actions
+            </th>
           </tr>
         </thead>
         <tbody className="divide-y divide-white/5">
@@ -49,7 +63,7 @@ export function StableRosterLedger({ horses, selectedIds, toggleSelect }: Stable
                 key={h.id}
                 className={cn(
                   "group hover:bg-white/[0.02] transition-colors relative",
-                  isSelected && "bg-gold/5",
+                  isSelected && "bg-primary/5",
                 )}
               >
                 <td className="px-3 py-4">
@@ -66,7 +80,7 @@ export function StableRosterLedger({ horses, selectedIds, toggleSelect }: Stable
                     />
                   </DisabledTooltipWrapper>
                 </td>
-                <td className="px-3 py-4 font-mono text-[10px] text-cream/20 tabular-nums">
+                <td className="px-3 py-4 font-mono text-[10px] text-foreground/20 tabular-nums">
                   {String(i + 1).padStart(2, "0")}
                 </td>
                 <td className="px-4 py-4">
@@ -86,14 +100,18 @@ export function StableRosterLedger({ horses, selectedIds, toggleSelect }: Stable
                     )}
                   </Link>
                 </td>
-                <td className="px-4 py-4 text-center font-mono text-xs text-cream/60">
+                <td className="px-4 py-4 text-center font-mono text-xs text-foreground/60">
                   {Math.floor(h.age)}Y
                 </td>
                 <td className="px-4 py-4 text-center">
                   <div
                     className={cn(
                       "inline-block font-mono font-black text-sm tabular-nums",
-                      ovrVal >= 80 ? "text-fame" : ovrVal >= 70 ? "text-success" : "text-cream",
+                      ovrVal >= 80
+                        ? "text-fame"
+                        : ovrVal >= 70
+                          ? "text-success"
+                          : "text-foreground",
                     )}
                   >
                     {ovrVal}
@@ -114,7 +132,7 @@ export function StableRosterLedger({ horses, selectedIds, toggleSelect }: Stable
                         style={{ width: `${h.energy}%` }}
                       />
                     </div>
-                    <span className="text-[9px] font-mono text-cream/40 uppercase">
+                    <span className="text-[9px] font-mono text-foreground/40 uppercase">
                       E:{Math.round(h.energy)}%
                     </span>
                   </div>
@@ -126,7 +144,7 @@ export function StableRosterLedger({ horses, selectedIds, toggleSelect }: Stable
                       "text-[9px] font-black tracking-tighter uppercase h-5",
                       (h.peakingIndex ?? 0) > 20
                         ? "border-fame text-fame bg-fame/5"
-                        : "border-white/10 text-cream/40",
+                        : "border-white/10 text-foreground/40",
                     )}
                   >
                     {(h.peakingIndex ?? 0) > 20 ? "PEAK" : "STD"}
@@ -148,7 +166,7 @@ export function StableRosterLedger({ horses, selectedIds, toggleSelect }: Stable
                               aria-label={`Open training room for ${h.name}`}
                               variant="ghost"
                               size="sm"
-                              className="h-7 w-7 p-0 hover:bg-gold/10 hover:text-gold text-cream/20"
+                              className="h-7 w-7 p-0 hover:bg-primary/10 hover:text-primary text-foreground/20"
                             >
                               <Zap className="h-3.5 w-3.5" />
                             </Button>
@@ -165,7 +183,7 @@ export function StableRosterLedger({ horses, selectedIds, toggleSelect }: Stable
                               aria-label={`Open mission plan for ${h.name}`}
                               variant="ghost"
                               size="sm"
-                              className="h-7 w-7 p-0 hover:bg-blue-400/10 hover:text-blue-400 text-cream/20"
+                              className="h-7 w-7 p-0 hover:bg-blue-400/10 hover:text-blue-400 text-foreground/20"
                             >
                               <Clock className="h-3.5 w-3.5" />
                             </Button>
@@ -178,7 +196,7 @@ export function StableRosterLedger({ horses, selectedIds, toggleSelect }: Stable
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-7 px-2 font-mono text-[9px] uppercase font-black tracking-tighter text-cream/40 group-hover:text-gold border border-transparent group-hover:border-gold/20"
+                        className="h-7 px-2 font-mono text-[9px] uppercase font-black tracking-tighter text-foreground/40 group-hover:text-primary border border-transparent group-hover:border-primary/20"
                       >
                         View Record <ChevronRight className="h-3 w-3 ml-1" />
                       </Button>

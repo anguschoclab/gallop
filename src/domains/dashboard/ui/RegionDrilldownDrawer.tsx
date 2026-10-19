@@ -164,9 +164,9 @@ export function RegionDrilldownDrawer({
     <Sheet open={!!region} onOpenChange={(o) => !o && onClose()}>
       <SheetContent side="right" className="w-full sm:max-w-3xl overflow-y-auto">
         <SheetHeader>
-          <SheetTitle className="text-cream">
+          <SheetTitle className="text-foreground">
             {region ? regionNameFor(region) : ""} ·{" "}
-            <span className="font-mono text-xs uppercase tracking-wider text-cream/50">
+            <span className="font-mono text-xs uppercase tracking-wider text-foreground/50">
               last {timeWindowLabel(weeks)}
             </span>
           </SheetTitle>
@@ -180,7 +180,7 @@ export function RegionDrilldownDrawer({
               "rounded-md border px-2 py-1 text-[10px] font-mono uppercase tracking-wider transition-colors",
               compare
                 ? "border-[var(--chart-1)] text-[var(--chart-1)]"
-                : "border-white/10 text-cream/60 hover:text-cream",
+                : "border-white/10 text-foreground/60 hover:text-foreground",
             )}
           >
             Compare windows
@@ -193,7 +193,7 @@ export function RegionDrilldownDrawer({
               "rounded-md border px-2 py-1 text-[10px] font-mono uppercase tracking-wider transition-colors",
               metricMode === "raw"
                 ? "border-[var(--chart-1)] text-[var(--chart-1)]"
-                : "border-white/10 text-cream/60 hover:text-cream",
+                : "border-white/10 text-foreground/60 hover:text-foreground",
             )}
           >
             Raw
@@ -205,7 +205,7 @@ export function RegionDrilldownDrawer({
               "rounded-md border px-2 py-1 text-[10px] font-mono uppercase tracking-wider transition-colors",
               metricMode === "rate"
                 ? "border-[var(--chart-1)] text-[var(--chart-1)]"
-                : "border-white/10 text-cream/60 hover:text-cream",
+                : "border-white/10 text-foreground/60 hover:text-foreground",
             )}
           >
             Per-start rates
@@ -213,7 +213,7 @@ export function RegionDrilldownDrawer({
 
           {compare ? (
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="text-[10px] font-mono uppercase tracking-wider text-cream/40">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-foreground/40">
                 A {timeWindowLabel(weeks)} vs B
               </span>
               {TIME_WINDOW_OPTIONS.map((o) => (
@@ -224,8 +224,8 @@ export function RegionDrilldownDrawer({
                   className={cn(
                     "rounded px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider transition-colors",
                     weeksB === o.value
-                      ? "bg-[color-mix(in_oklab,var(--chart-1)_25%,transparent)] text-cream"
-                      : "text-cream/45 hover:text-cream/80",
+                      ? "bg-[color-mix(in_oklab,var(--chart-1)_25%,transparent)] text-foreground"
+                      : "text-foreground/45 hover:text-foreground/80",
                   )}
                 >
                   {o.label}
@@ -240,7 +240,7 @@ export function RegionDrilldownDrawer({
         </div>
 
         <div className="mt-2 flex flex-wrap items-center gap-1.5">
-          <span className="text-[10px] font-mono uppercase tracking-wider text-cream/40">
+          <span className="text-[10px] font-mono uppercase tracking-wider text-foreground/40">
             Surface
           </span>
           {ALL_SURFACES.map((s) => (
@@ -251,15 +251,15 @@ export function RegionDrilldownDrawer({
               className={cn(
                 "rounded px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider transition-colors",
                 surfaceFilter.includes(s)
-                  ? "bg-[color-mix(in_oklab,var(--chart-1)_25%,transparent)] text-cream"
-                  : "text-cream/35 hover:text-cream/70",
+                  ? "bg-[color-mix(in_oklab,var(--chart-1)_25%,transparent)] text-foreground"
+                  : "text-foreground/35 hover:text-foreground/70",
               )}
             >
               {s}
             </button>
           ))}
 
-          <span className="ml-2 text-[10px] font-mono uppercase tracking-wider text-cream/40">
+          <span className="ml-2 text-[10px] font-mono uppercase tracking-wider text-foreground/40">
             Trip
           </span>
           {DIST_PRESETS.map((p) => (
@@ -270,8 +270,8 @@ export function RegionDrilldownDrawer({
               className={cn(
                 "rounded px-1.5 py-0.5 text-[10px] font-mono uppercase tracking-wider transition-colors",
                 distPreset === p.value
-                  ? "bg-[color-mix(in_oklab,var(--chart-1)_25%,transparent)] text-cream"
-                  : "text-cream/35 hover:text-cream/70",
+                  ? "bg-[color-mix(in_oklab,var(--chart-1)_25%,transparent)] text-foreground"
+                  : "text-foreground/35 hover:text-foreground/70",
               )}
             >
               {p.label}
@@ -331,11 +331,11 @@ export function RegionDrilldownDrawer({
                     key={`${r.entry.raceId}-${r.horseId}-${i}`}
                     className="flex items-center justify-between gap-3 rounded-md bg-white/[0.03] px-2 py-1.5 text-[11px]"
                   >
-                    <span className="truncate text-cream/80">
+                    <span className="truncate text-foreground/80">
                       {r.entry.raceName}
-                      <span className="ml-2 font-mono text-cream/40">D{r.entry.day}</span>
+                      <span className="ml-2 font-mono text-foreground/40">D{r.entry.day}</span>
                     </span>
-                    <span className="shrink-0 font-mono tabular-nums text-cream/60">
+                    <span className="shrink-0 font-mono tabular-nums text-foreground/60">
                       {r.horseName} · {r.entry.position}
                       {r.isG1 ? " · G1" : ""} · {formatCurrencyCompact(r.entry.purseEarned ?? 0)}
                     </span>

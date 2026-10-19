@@ -2,12 +2,12 @@ import { useGame, useGameWithShallow } from "@/platform/game/store";
 import { useMemo } from "react";
 import type { GameState, Horse, HorseCampaign } from "@/platform/game/types";
 import { Badge } from "@/shared/ui/badge";
-import { Card, CardContent } from "@/shared/ui/card";
 import { CalendarClock, Flag } from "lucide-react";
 import { gameCalendarDate } from "@/domains/calendar/application/calendarFacade";
 import { CampaignAddPanel } from "@/domains/scheduler/ui/CampaignAddPanel";
 import { CampaignCard } from "@/domains/scheduler/ui/CampaignCard";
 import { isPlayerOwned } from "@/domains/horse/application/horseFacade";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 
 export function SchedulerTab() {
   const day = useGame((s: GameState) => s.day);
@@ -40,7 +40,7 @@ export function SchedulerTab() {
           <h2 className="text-2xl font-bold tracking-tight font-[family-name:var(--font-display)]">
             Campaign Scheduler
           </h2>
-          <p className="text-sm text-cream-muted mt-1 font-[family-name:var(--font-body)]">
+          <p className="text-sm text-muted-foreground mt-1 font-[family-name:var(--font-body)]">
             Plan race campaigns for your horses · {gameCalendarDate(day)}
           </p>
         </div>
@@ -58,15 +58,11 @@ export function SchedulerTab() {
       />
 
       {campaigns.length === 0 && (
-        <Card className="border-gold-muted">
-          <CardContent className="py-12 text-center text-cream-muted">
-            <CalendarClock className="h-10 w-10 mx-auto mb-3 opacity-30" />
-            <p className="font-medium">No campaigns yet</p>
-            <p className="text-sm mt-1">
-              Add a campaign above to start planning your horses' race schedules.
-            </p>
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={CalendarClock}
+          title="No campaigns yet"
+          description="Add a campaign above to start planning your horses' race schedules."
+        />
       )}
 
       {campaigns.map((campaign: HorseCampaign) => {

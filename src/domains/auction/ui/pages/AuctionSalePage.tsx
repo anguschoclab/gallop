@@ -87,7 +87,7 @@ function AuctionSalePage() {
         />
         <button
           onClick={() => navigate({ to: "/auction" })}
-          className="text-gold uppercase font-mono text-xs tracking-wide hover:underline"
+          className="text-primary uppercase font-mono text-xs tracking-wide hover:underline"
         >
           ← Return to Exchange
         </button>
@@ -121,11 +121,11 @@ function AuctionSalePage() {
         <AuctionTheater saleId={saleId} />
       ) : activeLots.length === 0 ? (
         <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
-          <HardDrive className="h-16 w-16 mx-auto mb-6 text-cream/5" />
-          <p className="font-bold text-cream/40 uppercase tracking-[0.15em] font-[family-name=var(--font-display)]">
+          <HardDrive className="h-16 w-16 mx-auto mb-6 text-foreground/5" />
+          <p className="font-bold text-foreground/40 uppercase tracking-[0.15em] font-[family-name=var(--font-display)]">
             No Lots Listed Yet
           </p>
-          <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">
+          <p className="text-[10px] font-mono text-foreground/10 uppercase mt-2">
             Historical data for this window is unavailable.
           </p>
         </div>

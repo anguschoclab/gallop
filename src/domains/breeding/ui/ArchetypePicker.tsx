@@ -30,13 +30,13 @@ export function ArchetypePicker() {
 
   return (
     <div className="space-y-4">
-      <Card className="border-gold-muted">
+      <Card className="border-border">
         <CardHeader>
           <CardTitle className="font-[family-name:var(--font-display)] flex items-center gap-2">
-            <Target className="h-5 w-5 text-gold" />
+            <Target className="h-5 w-5 text-primary" />
             Choose an Archetype
           </CardTitle>
-          <p className="text-sm text-cream-muted font-[family-name:var(--font-body)]">
+          <p className="text-sm text-muted-foreground font-[family-name:var(--font-body)]">
             A breeding program gives you a generational target. The simulator will highlight
             stallions that move your line closer to the archetype.
           </p>
@@ -49,7 +49,9 @@ export function ArchetypePicker() {
                 onClick={() => setFilter(f)}
                 className={cn(
                   "px-2.5 py-1 rounded text-xs font-[family-name:var(--font-mono)] transition-colors",
-                  filter === f ? "bg-gold text-t950" : "bg-t700 text-cream-muted hover:bg-t600",
+                  filter === f
+                    ? "bg-primary text-background"
+                    : "bg-muted text-muted-foreground hover:bg-surface-hover",
                 )}
               >
                 {f === "triple" ? "Triple Crown" : f.charAt(0).toUpperCase() + f.slice(1)}

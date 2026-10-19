@@ -29,18 +29,18 @@ export function ConsignmentSidebar({
     <aside className="lg:col-span-4 space-y-8 lg:sticky lg:top-6">
       <section className="space-y-4">
         <div className="flex items-center gap-2 mb-2 px-1">
-          <Package className="h-3.5 w-3.5 text-gold/60" />
-          <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+          <Package className="h-3.5 w-3.5 text-primary/60" />
+          <h2 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
             Consign to Sale
           </h2>
         </div>
-        <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2 border-l-gold/40">
+        <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2 border-l-primary/40">
           <CardHeader className="pb-2 border-b border-white/5 bg-black/20">
             <div className="flex justify-between items-center">
-              <CardTitle className="text-[9px] font-black uppercase tracking-wide text-cream/40">
+              <CardTitle className="text-[9px] font-black uppercase tracking-wide text-foreground/40">
                 Eligible Horses
               </CardTitle>
-              <span className="text-[9px] font-mono text-gold-bright font-black uppercase">
+              <span className="text-[9px] font-mono text-accent-bright font-black uppercase">
                 Available: {consignablePairs.length}
               </span>
             </div>
@@ -55,7 +55,7 @@ export function ConsignmentSidebar({
                     <div className="flex items-center justify-between gap-3 mb-2">
                       <div className="flex items-center gap-2">
                         <SilkDot color={horse.silk} size="sm" />
-                        <span className="font-bold text-cream uppercase tracking-tight text-xs group-hover:text-gold transition-colors">
+                        <span className="font-bold text-foreground uppercase tracking-tight text-xs group-hover:text-primary transition-colors">
                           {horse.name}
                         </span>
                       </div>
@@ -71,20 +71,20 @@ export function ConsignmentSidebar({
                         )}
                         <Badge
                           variant="outline"
-                          className="h-4 text-[8px] border-white/10 text-cream/40 font-mono"
+                          className="h-4 text-[8px] border-white/10 text-foreground/40 font-mono"
                         >
                           D{sale.day}
                         </Badge>
                       </div>
                     </div>
                     <div className="flex items-center justify-between">
-                      <div className="text-[9px] font-mono text-cream/20 uppercase tracking-tighter">
+                      <div className="text-[9px] font-mono text-foreground/20 uppercase tracking-tighter">
                         {ageLabel(horse)} · {horse.gender}
                       </div>
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="h-6 px-2 text-[9px] font-black uppercase border border-gold/20 hover:bg-gold/10 text-gold"
+                        className="h-6 px-2 text-[9px] font-black uppercase border border-primary/20 hover:bg-primary/10 text-primary"
                         onClick={() => onConsign(horse, sale)}
                       >
                         CONSIGN
@@ -94,14 +94,14 @@ export function ConsignmentSidebar({
                 );
               })}
               {consignablePairs.length === 0 && (
-                <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+                <div className="p-12 text-center text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
                   No assets ready for deployment
                 </div>
               )}
             </div>
           </CardContent>
           <div className="p-3 bg-black/40 border-t border-white/5 text-center">
-            <p className="text-[8px] font-mono text-cream/20 uppercase">
+            <p className="text-[8px] font-mono text-foreground/20 uppercase">
               House Commission Fixed at {Math.round(CONSIGNMENT_COMMISSION * 100)}%
             </p>
           </div>

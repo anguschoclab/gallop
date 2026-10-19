@@ -29,7 +29,7 @@ export function NpcHorseCareerTimeline({ horse, day }: { horse: Horse; day: numb
 
   if (events.length === 0) {
     return (
-      <div className="border-t border-border/30 px-4 py-5 text-center font-mono text-[10px] uppercase text-cream-muted">
+      <div className="border-t border-border/30 px-4 py-5 text-center font-mono text-[10px] uppercase text-muted-foreground">
         No off-screen career events yet
       </div>
     );
@@ -46,8 +46,8 @@ export function NpcHorseCareerTimeline({ horse, day }: { horse: Horse; day: numb
                 className={cn(
                   "absolute -left-[29px] top-0 flex h-4 w-4 items-center justify-center rounded-full border bg-card",
                   event.kind === "start" && event.won
-                    ? "border-gold text-gold"
-                    : "border-border text-cream-muted",
+                    ? "border-primary text-primary"
+                    : "border-border text-muted-foreground",
                 )}
                 aria-hidden="true"
               >
@@ -58,7 +58,7 @@ export function NpcHorseCareerTimeline({ horse, day }: { horse: Horse; day: numb
                 <div>
                   {event.kind === "stage" ? (
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-semibold text-cream">
+                      <span className="text-xs font-semibold text-foreground">
                         Entered {careerStageLabel(event.stage)} stage
                       </span>
                       <Badge variant="outline" className="rounded-none text-[9px] uppercase">
@@ -71,7 +71,7 @@ export function NpcHorseCareerTimeline({ horse, day }: { horse: Horse; day: numb
                         <span
                           className={cn(
                             "text-xs font-semibold",
-                            event.won ? "text-gold" : "text-cream",
+                            event.won ? "text-primary" : "text-foreground",
                           )}
                         >
                           {event.won ? "Won" : `${ordinal(event.position)} finish`} ·{" "}
@@ -83,7 +83,7 @@ export function NpcHorseCareerTimeline({ horse, day }: { horse: Horse; day: numb
                           </Badge>
                         )}
                       </div>
-                      <div className="mt-1 flex flex-wrap gap-x-3 font-mono text-[10px] text-cream-muted">
+                      <div className="mt-1 flex flex-wrap gap-x-3 font-mono text-[10px] text-muted-foreground">
                         <span>
                           Finish {event.position}
                           {event.fieldSize ? `/${event.fieldSize}` : ""}
@@ -97,7 +97,7 @@ export function NpcHorseCareerTimeline({ horse, day }: { horse: Horse; day: numb
                     </>
                   )}
                 </div>
-                <time className="shrink-0 font-mono text-[10px] tabular-nums text-cream-muted">
+                <time className="shrink-0 font-mono text-[10px] tabular-nums text-muted-foreground">
                   {gameCalendarDate(event.day)}
                 </time>
               </div>

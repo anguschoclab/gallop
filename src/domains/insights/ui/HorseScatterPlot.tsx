@@ -164,7 +164,7 @@ export function HorseScatterPlot({
                   x={M.left - 8}
                   y={sy(t) + 3}
                   textAnchor="end"
-                  className="fill-cream/40 font-mono text-[9px]"
+                  className="fill-foreground/40 font-mono text-[9px]"
                 >
                   {yMetric.format(t)}
                 </text>
@@ -183,7 +183,7 @@ export function HorseScatterPlot({
                   x={sx(t)}
                   y={H - M.bottom + 16}
                   textAnchor="middle"
-                  className="fill-cream/40 font-mono text-[9px]"
+                  className="fill-foreground/40 font-mono text-[9px]"
                 >
                   {xMetric.format(t)}
                 </text>
@@ -193,14 +193,14 @@ export function HorseScatterPlot({
               x={M.left + plotW / 2}
               y={H - 8}
               textAnchor="middle"
-              className="fill-cream/60 font-mono text-[10px] uppercase tracking-wide"
+              className="fill-foreground/60 font-mono text-[10px] uppercase tracking-wide"
             >
               {xMetric.label}
             </text>
             <text
               transform={`translate(14 ${M.top + plotH / 2}) rotate(-90)`}
               textAnchor="middle"
-              className="fill-cream/60 font-mono text-[10px] uppercase tracking-wide"
+              className="fill-foreground/60 font-mono text-[10px] uppercase tracking-wide"
             >
               {yMetric.label}
             </text>
@@ -217,10 +217,10 @@ export function HorseScatterPlot({
                   className={cn(
                     "transition-[r] duration-150",
                     isSel
-                      ? "fill-gold stroke-gold"
+                      ? "fill-primary stroke-primary"
                       : p.row.scouted
                         ? "fill-success/70 stroke-success/40"
-                        : "fill-cream/25 stroke-cream/10",
+                        : "fill-foreground/25 stroke-foreground/10",
                   )}
                   strokeWidth={isSel ? 2 : 1}
                   onPointerEnter={() => setHover(p.row)}
@@ -236,15 +236,15 @@ export function HorseScatterPlot({
                 y={dragBox.top}
                 width={Math.max(0, dragBox.right - dragBox.left)}
                 height={Math.max(0, dragBox.bottom - dragBox.top)}
-                className="fill-gold/10 stroke-gold/60"
+                className="fill-primary/10 stroke-primary/60"
                 strokeDasharray="4 3"
               />
             )}
           </svg>
 
           {hover && (
-            <div className="pointer-events-none absolute top-2 right-2 bg-slate-950/95 border border-white/10 px-3 py-2 text-[10px] font-mono text-cream/80 space-y-0.5">
-              <div className="text-cream font-bold uppercase tracking-wider">{hover.name}</div>
+            <div className="pointer-events-none absolute top-2 right-2 bg-slate-950/95 border border-white/10 px-3 py-2 text-[10px] font-mono text-foreground/80 space-y-0.5">
+              <div className="text-foreground font-bold uppercase tracking-wider">{hover.name}</div>
               <div>{hover.ownerLabel}</div>
               <div>
                 {xMetric.short}: {xMetric.format(hover.metrics[xKey])}

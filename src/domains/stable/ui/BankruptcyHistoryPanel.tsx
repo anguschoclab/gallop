@@ -52,7 +52,7 @@ export const BankruptcyHistoryPanel = memo(function BankruptcyHistoryPanel({
   return (
     <Card className="bg-slate-950/50 border-white/5 rounded-none shadow-xl border-l-4 border-l-red-500/40">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40 flex items-center gap-2">
           <Skull className="h-3 w-3 text-red-400" /> Dissolved Stables
         </CardTitle>
       </CardHeader>
@@ -71,14 +71,14 @@ export const BankruptcyHistoryPanel = memo(function BankruptcyHistoryPanel({
                 <Building2 className="h-4 w-4 text-red-400/40 mt-0.5 shrink-0" />
                 <div className="flex-1 min-w-0 space-y-1">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-bold text-cream/80 truncate">
+                    <span className="text-xs font-bold text-foreground/80 truncate">
                       {event.headline}
                     </span>
                     <Badge className="bg-red-400/10 text-red-400 border-red-400/30 rounded-none text-[7px] font-black uppercase tracking-widest px-1">
                       Day {event.day}
                     </Badge>
                   </div>
-                  <p className="text-[10px] text-cream/40 leading-relaxed">{event.body}</p>
+                  <p className="text-[10px] text-foreground/40 leading-relaxed">{event.body}</p>
                   {stableLink && (
                     <Link
                       to="/npc-stables/$stableId"

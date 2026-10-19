@@ -60,7 +60,7 @@ export function AuctionRing({
         <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent pointer-events-none" />
         <HorsePortrait
           appearance={horse.appearance}
-          className="w-[85%] h-[85%] drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)] transition-transform duration-700 group-hover:scale-105"
+          className="w-[85%] h-[85%] drop-shadow-[0_20px_50px_color-mix(in oklab, black 50%, transparent)] transition-transform duration-700 group-hover:scale-105"
         />
 
         {/* Phase Strip Overlay */}
@@ -73,7 +73,7 @@ export function AuctionRing({
                 idx < currentPhaseIndex
                   ? "bg-primary/40"
                   : idx === currentPhaseIndex
-                    ? "bg-primary w-16 shadow-[0_0_15px_rgba(var(--primary),0.6)]"
+                    ? "bg-primary w-16 shadow-[0_0_15px_color-mix(in oklab, var(--primary) 60%, transparent)]"
                     : "bg-white/10",
               )}
             />

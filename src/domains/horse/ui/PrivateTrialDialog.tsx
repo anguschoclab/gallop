@@ -59,7 +59,7 @@ export function PrivateTrialDialog({ horse, horses, cash }: PrivateTrialDialogPr
     <Button
       disabled={isDisabled}
       className={cn(
-        "w-full bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-wide text-xs h-10 rounded-none shadow-lg mt-2",
+        "w-full bg-primary hover:bg-accent-bright text-slate-950 font-black uppercase tracking-wide text-xs h-10 rounded-none shadow-lg mt-2",
         isDisabled && "pointer-events-none",
       )}
     >
@@ -83,12 +83,12 @@ export function PrivateTrialDialog({ horse, horses, cash }: PrivateTrialDialogPr
       ) : (
         <DialogTrigger asChild>{triggerButton}</DialogTrigger>
       )}
-      <DialogContent className="max-w-2xl bg-slate-950 border border-gold-muted/40 rounded-none text-cream shadow-2xl overflow-y-auto max-h-[90vh]">
+      <DialogContent className="max-w-2xl bg-slate-950 border border-border/40 rounded-none text-foreground shadow-2xl overflow-y-auto max-h-[90vh]">
         <DialogHeader className="border-b border-white/5 pb-4">
-          <DialogTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+          <DialogTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
             Private Trial Simulator
           </DialogTitle>
-          <DialogDescription className="text-xs text-cream-muted uppercase font-mono tracking-wider">
+          <DialogDescription className="text-xs text-muted-foreground uppercase font-mono tracking-wider">
             Test {horse.name}&apos;s performance under controlled conditions.
           </DialogDescription>
         </DialogHeader>

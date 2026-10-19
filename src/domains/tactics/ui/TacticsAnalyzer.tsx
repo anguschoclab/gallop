@@ -80,7 +80,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-cyan-400">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream flex items-center gap-2">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground flex items-center gap-2">
             <Target className="h-4 w-4 text-cyan-400" /> Race Tactics
           </CardTitle>
           <Badge className="bg-cyan-400/10 text-cyan-400 border-cyan-400/30">
@@ -91,7 +91,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
       <CardContent className="space-y-4">
         {/* Riding Style */}
         <div className="space-y-2">
-          <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
+          <div className="text-[9px] font-black uppercase text-foreground/40 tracking-wide">
             Riding Style
           </div>
           <div className="grid grid-cols-2 gap-2">
@@ -107,7 +107,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
                     "p-2 border rounded-sm flex items-center gap-2 transition-all",
                     instructions.ridingStyle === style.value
                       ? "border-cyan-400 bg-cyan-400/10 text-cyan-400"
-                      : "border-white/10 hover:border-white/20 text-cream/60",
+                      : "border-white/10 hover:border-white/20 text-foreground/60",
                   )}
                 >
                   <Icon className="h-3 w-3" />
@@ -116,14 +116,14 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
               );
             })}
           </div>
-          <p className="text-[9px] text-cream/40 italic">
+          <p className="text-[9px] text-foreground/40 italic">
             {getRidingStyleDescription(instructions.ridingStyle)}
           </p>
         </div>
 
         {/* Early Position */}
         <div className="space-y-2">
-          <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
+          <div className="text-[9px] font-black uppercase text-foreground/40 tracking-wide">
             Early Position
           </div>
           <div className="grid grid-cols-4 gap-1">
@@ -137,21 +137,21 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
                   "p-1.5 border rounded-sm text-[9px] font-black uppercase transition-all",
                   instructions.earlyPosition === pos.value
                     ? "border-cyan-400 bg-cyan-400/10 text-cyan-400"
-                    : "border-white/10 hover:border-white/20 text-cream/60",
+                    : "border-white/10 hover:border-white/20 text-foreground/60",
                 )}
               >
                 {pos.label}
               </button>
             ))}
           </div>
-          <p className="text-[9px] text-cream/40 italic">
+          <p className="text-[9px] text-foreground/40 italic">
             {getEarlyPositionDescription(instructions.earlyPosition)}
           </p>
         </div>
 
         {/* Move Timing */}
         <div className="space-y-2">
-          <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
+          <div className="text-[9px] font-black uppercase text-foreground/40 tracking-wide">
             Move Timing
           </div>
           <div className="grid grid-cols-3 gap-1">
@@ -165,14 +165,14 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
                   "p-1.5 border rounded-sm text-[9px] font-black uppercase transition-all",
                   instructions.moveTiming === timing.value
                     ? "border-cyan-400 bg-cyan-400/10 text-cyan-400"
-                    : "border-white/10 hover:border-white/20 text-cream/60",
+                    : "border-white/10 hover:border-white/20 text-foreground/60",
                 )}
               >
                 {timing.label}
               </button>
             ))}
           </div>
-          <p className="text-[9px] text-cream/40 italic">
+          <p className="text-[9px] text-foreground/40 italic">
             {getMoveTimingDescription(instructions.moveTiming)}
           </p>
         </div>
@@ -180,7 +180,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
         {/* Aggressiveness */}
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
+            <div className="text-[9px] font-black uppercase text-foreground/40 tracking-wide">
               Aggressiveness
             </div>
             <span className="text-[10px] font-mono text-cyan-400">
@@ -195,7 +195,7 @@ export function TacticsAnalyzer({ horseId, raceId }: TacticsAnalyzerProps) {
             step={AGGRESSIVENESS_STEP}
             className="py-2"
           />
-          <div className="flex justify-between text-[8px] text-cream/30 font-mono">
+          <div className="flex justify-between text-[8px] text-foreground/30 font-mono">
             <span>Conservative</span>
             <span>Aggressive</span>
           </div>

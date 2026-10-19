@@ -102,10 +102,10 @@ export function RacesTab() {
             <Globe className="h-3.5 w-3.5" />
             Race Schedule
           </div>
-          <h2 className="text-3xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
+          <h2 className="text-3xl font-bold tracking-tighter text-foreground font-[family-name:var(--font-display)]">
             Race Schedule
           </h2>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
             <span>
               Races Listed: <NumericValue value={filteredRaces.length} />
             </span>

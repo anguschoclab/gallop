@@ -68,7 +68,7 @@ export function BiddingPanel({
       <div className="bg-black/40 border border-success/20 p-6 space-y-6">
         <div className="flex items-center justify-between border-b border-white/5 pb-4">
           <div className="space-y-0.5">
-            <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
+            <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide">
               Current Bid
             </div>
             <div className="text-3xl font-black font-mono text-success tabular-nums tracking-tighter">
@@ -76,20 +76,20 @@ export function BiddingPanel({
             </div>
           </div>
           <div className="text-right space-y-0.5">
-            <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
+            <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide">
               Next Bid Increment
             </div>
-            <div className="text-sm font-black font-mono text-gold-muted tabular-nums tracking-tighter">
+            <div className="text-sm font-black font-mono text-primary/30 tabular-nums tracking-tighter">
               +{formatCurrency(nextBid - currentPrice)}
             </div>
           </div>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 border-b border-white/5 pb-4 font-mono text-[9px] uppercase tracking-wide text-cream/40">
+        <div className="flex flex-wrap items-center gap-3 border-b border-white/5 pb-4 font-mono text-[9px] uppercase tracking-wide text-foreground/40">
           {house && (
             <>
-              <span className="text-cream/30">
-                Ring: <span className="text-gold-muted">{house.shortName}</span>
+              <span className="text-foreground/30">
+                Ring: <span className="text-primary/30">{house.shortName}</span>
               </span>
               <PrestigeBadge score={house.prestige} />
               <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
@@ -103,7 +103,7 @@ export function BiddingPanel({
                           ? "text-success"
                           : upliftPct < 0
                             ? "text-destructive"
-                            : "text-cream/40",
+                            : "text-foreground/40",
                       )}
                     >
                       Bench {upliftPct > 0 ? "+" : ""}
@@ -120,7 +120,7 @@ export function BiddingPanel({
             </>
           )}
           <span
-            className={cn("font-black", reserveMet ? "text-success" : "text-gold-muted")}
+            className={cn("font-black", reserveMet ? "text-success" : "text-primary/30")}
             aria-label={reserveMet ? "Reserve met" : "Reserve not yet met"}
           >
             {reserve <= 0 ? "No reserve" : reserveMet ? "Reserve met" : "Reserve not met"}
@@ -195,7 +195,7 @@ export function BiddingPanel({
           </div>
         )}
       </div>
-      <p className="text-[8px] text-cream/20 uppercase italic text-center tracking-wide">
+      <p className="text-[8px] text-foreground/20 uppercase italic text-center tracking-wide">
         All bids are binding.
       </p>
     </section>

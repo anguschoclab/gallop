@@ -71,7 +71,7 @@ export function StableCard({ stable }: { stable: Stable }) {
                 aria-label="Compare"
               >
                 <GitCompare
-                  className={`h-4 w-4 ${isSelected ? "text-gold" : "text-cream-muted"}`}
+                  className={`h-4 w-4 ${isSelected ? "text-primary" : "text-muted-foreground"}`}
                 />
               </Button>
             </TooltipTrigger>
@@ -90,7 +90,7 @@ export function StableCard({ stable }: { stable: Stable }) {
         />
       </div>
       <Link to="/npc-stables/$stableId" params={{ stableId: stable.id }}>
-        <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-gold-muted">
+        <Card className="hover:shadow-lg transition-shadow cursor-pointer h-full border-border">
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between">
               <div className="flex items-center gap-2">
@@ -105,14 +105,14 @@ export function StableCard({ stable }: { stable: Stable }) {
                   <CardTitle className="text-lg font-[family-name:var(--font-display)]">
                     {stable.name}
                   </CardTitle>
-                  <p className="text-sm text-cream-muted">{stable.country}</p>
+                  <p className="text-sm text-muted-foreground">{stable.country}</p>
                 </div>
               </div>
               <Badge className={stableTierColor(stable.tier)}>{stable.tier}</Badge>
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-cream-muted mb-3 line-clamp-2">
+            <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
               {stable.description ||
                 `${getStableOwnerName(stable)}'s racing operation with ${stable.horses.length} horses.`}
             </p>
@@ -127,7 +127,7 @@ export function StableCard({ stable }: { stable: Stable }) {
               />
             </div>
             <div className="flex items-center justify-between text-sm">
-              <span className="text-cream-muted">{stable.horses.length} horses</span>
+              <span className="text-muted-foreground">{stable.horses.length} horses</span>
               <CashPressureTrend stableId={stable.id} variant="card" />
               <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
                 <Tooltip>

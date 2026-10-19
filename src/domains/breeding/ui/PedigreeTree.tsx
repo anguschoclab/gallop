@@ -99,7 +99,8 @@ export function PedigreeTree({
     setEdges(rawEdges);
   }, [layoutNodes, rawEdges, setNodes, setEdges]);
 
-  const coiColor = coi > 0.05 ? "text-destructive" : coi > 0.02 ? "text-warning" : "text-cream/40";
+  const coiColor =
+    coi > 0.05 ? "text-destructive" : coi > 0.02 ? "text-warning" : "text-foreground/40";
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
@@ -112,8 +113,8 @@ export function PedigreeTree({
               className={cn(
                 "px-2 py-0.5 text-[9px] font-black uppercase tracking-wide rounded-sm transition-colors",
                 generations === g
-                  ? "bg-gold/20 text-gold border border-gold/40"
-                  : "text-cream/30 hover:text-cream/60 border border-white/5",
+                  ? "bg-primary/20 text-primary border border-primary/40"
+                  : "text-foreground/30 hover:text-foreground/60 border border-white/5",
               )}
             >
               {g} Gen

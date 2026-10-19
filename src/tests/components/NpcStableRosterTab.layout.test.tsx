@@ -18,7 +18,7 @@ vi.mock("@/domains/horse/application/hooks/useHorseCard", () => ({
       overallEstimate: 70,
     },
     genderColor: "text-blue-400",
-    gradeColor: () => "text-gold",
+    gradeColor: () => "text-primary",
     sparklineData: [],
   }),
 }));
@@ -41,7 +41,7 @@ vi.mock("@/domains/horse/simulation/grading", () => ({
 }));
 
 vi.mock("@/shared/common/uiTokens", () => ({
-  statGradeColor: () => "text-gold",
+  statGradeColor: () => "text-primary",
 }));
 
 vi.mock("@/domains/horse/simulation/gender", () => ({
@@ -51,7 +51,7 @@ vi.mock("@/domains/horse/simulation/gender", () => ({
 
 vi.mock("@/domains/horse/simulation/uiHelpers", () => ({
   getCoatColor: () => "#000000",
-  getInjuryColor: () => "text-cream/40",
+  getInjuryColor: () => "text-foreground/40",
   getInjuryLabel: () => "Low",
 }));
 

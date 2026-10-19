@@ -308,7 +308,7 @@ export function PersonPortrait({
           height={h - 2}
           rx={4}
           fill="none"
-          stroke="rgba(255,255,255,0.1)"
+          stroke="color-mix(in oklab, white 10%, transparent)"
           strokeWidth={1}
         />
       )}

@@ -18,9 +18,9 @@ export interface InboxPeekMessage {
 const PEEK_PRIORITY_DOT: Record<InboxPriority, string> = {
   critical: "bg-red-500",
   urgent: "bg-red-400",
-  action: "bg-gold",
-  info: "bg-cream-muted",
-  low: "bg-cream-muted/50",
+  action: "bg-primary",
+  info: "bg-muted-foreground",
+  low: "bg-muted-foreground/50",
 };
 
 interface NavSubItem {
@@ -124,7 +124,7 @@ export function NavSection({
   }, [resetSignal]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const focusRing =
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-1 focus-visible:ring-offset-t950";
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-1 focus-visible:ring-offset-background";
 
   const headerId = `section-header-${label}`;
   const contentId = `section-content-${label}`;
@@ -160,7 +160,7 @@ export function NavSection({
         onClick={() => setOpen((o) => !o)}
         onKeyDown={handleKeyDown}
         className={cn(
-          "w-full flex items-center justify-between mb-2 group rounded-md px-1 py-0.5 transition-colors hover:bg-cream/5",
+          "w-full flex items-center justify-between mb-2 group rounded-md px-1 py-0.5 transition-colors hover:bg-foreground/5",
           focusRing,
         )}
         aria-expanded={open}
@@ -168,7 +168,7 @@ export function NavSection({
         <span
           className={cn(
             "text-[10px] font-bold uppercase tracking-[0.14em] font-[family-name:var(--font-mono)] transition-colors",
-            containsActive ? "text-gold" : "text-cream-muted group-hover:text-cream",
+            containsActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
           )}
         >
           {label}
@@ -176,7 +176,7 @@ export function NavSection({
         <ChevronDown
           className={cn(
             "h-3 w-3 transition-transform duration-200",
-            containsActive ? "text-gold" : "text-cream-muted",
+            containsActive ? "text-primary" : "text-muted-foreground",
             open ? "rotate-0" : "-rotate-90",
           )}
         />
@@ -193,17 +193,17 @@ export function NavSection({
                   "relative flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors group",
                   focusRing,
                   active
-                    ? "bg-gold/15 text-gold font-medium shadow-[inset_0_0_0_1px_rgba(212,175,55,0.25)]"
-                    : "text-cream-muted hover:text-cream hover:bg-cream/5",
+                    ? "bg-primary/15 text-primary font-medium ring-1 ring-inset ring-primary/25"
+                    : "text-muted-foreground hover:text-foreground hover:bg-foreground/5",
                 )}
               >
                 {active && (
-                  <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-gold" />
+                  <span className="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-[3px] rounded-r-full bg-primary" />
                 )}
                 <item.icon
                   className={cn(
                     "h-4 w-4 transition-colors",
-                    active ? "text-gold" : "text-cream-muted group-hover:text-cream",
+                    active ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
                   )}
                 />
                 <span className="flex-1">{item.label}</span>
@@ -221,7 +221,7 @@ export function NavSection({
                   <HoverCard openDelay={150} closeDelay={150}>
                     <HoverCardTrigger asChild>{link}</HoverCardTrigger>
                     <HoverCardContent side="right" align="start">
-                      <p className="px-1 pb-1 text-[9px] font-bold uppercase tracking-[0.14em] text-cream-muted font-[family-name:var(--font-mono)]">
+                      <p className="px-1 pb-1 text-[9px] font-bold uppercase tracking-[0.14em] text-muted-foreground font-[family-name:var(--font-mono)]">
                         Unread messages
                       </p>
                       <div className="space-y-0.5">
@@ -229,7 +229,7 @@ export function NavSection({
                           <Link
                             key={m.id}
                             to="/inbox"
-                            className="flex items-start gap-2 rounded px-1.5 py-1.5 transition-colors hover:bg-cream/5"
+                            className="flex items-start gap-2 rounded px-1.5 py-1.5 transition-colors hover:bg-foreground/5"
                           >
                             <span
                               className={cn(
@@ -239,10 +239,10 @@ export function NavSection({
                             />
                             <span className="min-w-0 flex-1">
                               <span className="flex items-center gap-1">
-                                <span className="truncate text-xs text-cream">{m.title}</span>
-                                {m.pinned && <Pin className="h-2.5 w-2.5 shrink-0 text-gold" />}
+                                <span className="truncate text-xs text-foreground">{m.title}</span>
+                                {m.pinned && <Pin className="h-2.5 w-2.5 shrink-0 text-primary" />}
                               </span>
-                              <span className="block text-[9px] uppercase tracking-[0.1em] text-cream-muted/70 font-[family-name:var(--font-mono)]">
+                              <span className="block text-[9px] uppercase tracking-[0.1em] text-muted-foreground/70 font-[family-name:var(--font-mono)]">
                                 Day {m.day} · {m.category.replace(/_/g, " ")}
                               </span>
                             </span>
@@ -251,7 +251,7 @@ export function NavSection({
                       </div>
                       <Link
                         to="/inbox"
-                        className="mt-1 block border-t border-gold-muted/30 px-1.5 pt-1.5 text-[10px] font-medium text-gold hover:underline"
+                        className="mt-1 block border-t border-border/30 px-1.5 pt-1.5 text-[10px] font-medium text-primary hover:underline"
                       >
                         Open Message Center
                       </Link>
@@ -261,7 +261,7 @@ export function NavSection({
                   link
                 )}
                 {item.subItems && active && (
-                  <div className="ml-7 mt-0.5 space-y-0.5 border-l border-gold-muted/40 pl-2">
+                  <div className="ml-7 mt-0.5 space-y-0.5 border-l border-border/40 pl-2">
                     {item.subItems.map((sub) => {
                       const subActive = isItemActive(pathname, sub.to, sub.exact);
                       return (
@@ -273,11 +273,11 @@ export function NavSection({
                             "flex items-center gap-2 rounded px-2 py-1 text-xs transition-colors",
                             focusRing,
                             subActive
-                              ? "text-gold font-medium bg-gold/10"
-                              : "text-cream-muted/70 hover:text-cream hover:bg-cream/5",
+                              ? "text-primary font-medium bg-primary/10"
+                              : "text-muted-foreground/70 hover:text-foreground hover:bg-foreground/5",
                           )}
                         >
-                          <sub.icon className={cn("h-3 w-3", subActive && "text-gold")} />
+                          <sub.icon className={cn("h-3 w-3", subActive && "text-primary")} />
                           <span>{sub.label}</span>
                         </Link>
                       );
@@ -287,7 +287,7 @@ export function NavSection({
               </div>
             );
           })}
-          {footer && <div className="pt-1.5 mt-1 border-t border-gold-muted/20">{footer}</div>}
+          {footer && <div className="pt-1.5 mt-1 border-t border-border/20">{footer}</div>}
         </div>
       )}
     </div>

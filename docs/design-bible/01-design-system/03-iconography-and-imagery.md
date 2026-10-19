@@ -22,7 +22,7 @@ Gallop uses a small, deliberate set of visual assets. The rule: every image earn
 
 **Colour:** inherit (`currentColor`). Pair the icon with text whose `text-*` class colours both.
 
-**Current navigation icons** ([AppShell.tsx:4](../../../src/components/AppShell.tsx)):
+**Current navigation icons** ([AppShell.tsx:4](../../../src/domains/shell/ui/AppShell.tsx)):
 
 | Icon        | Used for         |
 | ----------- | ---------------- |
@@ -42,7 +42,7 @@ Gallop uses a small, deliberate set of visual assets. The rule: every image earn
 
 ## Horse sprites
 
-Located in [src/assets/](../../../src/assets/) and served from `/assets/horse-*.png`. These are 6-frame running sprite sheets, indexed by coat colour:
+Located in [src/shared/assets/](../../../src/shared/assets/) and served from `/assets/horse-*.png`. These are 6-frame running sprite sheets, indexed by coat colour:
 
 | Coat     | File                               |
 | -------- | ---------------------------------- |
@@ -105,7 +105,7 @@ Silks are how the player and rivals are visually identified. Each horse has a si
 
 (`border-white/40` on dark backgrounds; `border` on light. Always border — the silk dot needs a stroke to read on either surface.)
 
-**Source:** silks are stored on `Runner.silk` (per the type in [src/game/raceSim.ts](../../../src/game/raceSim.ts)) and assigned at horse creation. They are _never_ derived per-screen — this guarantees consistency principle 7 ("the race screen is the constitution").
+**Source:** silks are stored on `Runner.silk` (per the type in [src/domains/race/simulation/raceSimulationService.ts](../../../src/domains/race/simulation/raceSimulationService.ts)) and assigned at horse creation. They are _never_ derived per-screen — this guarantees consistency principle 7 ("the race screen is the constitution").
 
 **The "YOU" badge:** when `r.owned`, render a small `bg-yellow-400 text-black` chip beside the silk. Reserved for the player.
 

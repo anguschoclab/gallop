@@ -56,7 +56,7 @@ Gallop loads fast (most state is in-memory), so loading appears most often durin
 
 ### Skeletons
 
-Use `<Skeleton />` ([src/components/ui/skeleton.tsx](../../../src/components/ui/skeleton.tsx)). Match the dimensions of the real content:
+Use `<Skeleton />` ([src/shared/ui/skeleton.tsx](../../../src/shared/ui/skeleton.tsx)). Match the dimensions of the real content:
 
 ```tsx
 <div className="space-y-3">

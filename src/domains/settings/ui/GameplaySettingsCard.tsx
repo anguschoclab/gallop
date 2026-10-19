@@ -22,9 +22,9 @@ interface GameplaySettingsCardProps {
 
 export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCardProps) {
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
+        <CardTitle className="text-base flex items-center gap-2 text-foreground font-[family-name:var(--font-display)]">
           <Gamepad2 className="h-4 w-4" />
           Gameplay
         </CardTitle>
@@ -33,7 +33,7 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="auto-sim">Auto-Simulation</Label>
-            <p className="text-xs text-cream-muted">Auto-advance when no player races</p>
+            <p className="text-xs text-muted-foreground">Auto-advance when no player races</p>
           </div>
           <Switch
             id="auto-sim"
@@ -45,7 +45,7 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="suggest-entries">Race Entry Suggestions</Label>
-            <p className="text-xs text-cream-muted">Auto-suggest eligible horses for races</p>
+            <p className="text-xs text-muted-foreground">Auto-suggest eligible horses for races</p>
           </div>
           <Switch
             id="suggest-entries"
@@ -57,7 +57,7 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="auto-enter">Daily Auto-Entry</Label>
-            <p className="text-xs text-cream-muted">
+            <p className="text-xs text-muted-foreground">
               Each day, enter idle horses in their best race by stats, past results, class, distance
               and surface
             </p>
@@ -72,7 +72,7 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="daily-earnings">Daily Earnings Summary</Label>
-            <p className="text-xs text-cream-muted">Show summary after each race day</p>
+            <p className="text-xs text-muted-foreground">Show summary after each race day</p>
           </div>
           <Switch
             id="daily-earnings"
@@ -84,7 +84,7 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="pause-events">Pause on Events</Label>
-            <p className="text-xs text-cream-muted">Stop for awards and major races</p>
+            <p className="text-xs text-muted-foreground">Stop for awards and major races</p>
           </div>
           <Switch
             id="pause-events"
@@ -96,7 +96,9 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="parent-name-blending">Parent Name Blending</Label>
-            <p className="text-xs text-cream-muted">Blend parent names for foals when breeding</p>
+            <p className="text-xs text-muted-foreground">
+              Blend parent names for foals when breeding
+            </p>
           </div>
           <Switch
             id="parent-name-blending"
@@ -108,7 +110,9 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
         <div className="space-y-2">
           <div className="space-y-0.5">
             <Label htmlFor="imminent-warning">Imminent Forced Sale Warning</Label>
-            <p className="text-xs text-cream-muted">Days before forced sale to show the alert</p>
+            <p className="text-xs text-muted-foreground">
+              Days before forced sale to show the alert
+            </p>
           </div>
           <div className="flex items-center gap-3">
             <Slider
@@ -120,7 +124,7 @@ export function GameplaySettingsCard({ settings, onUpdate }: GameplaySettingsCar
               onValueChange={(value) => onUpdate({ imminentForcedSaleWarningDays: value[0] })}
               className="flex-1"
             />
-            <span className="text-sm text-cream-muted font-mono tabular-nums w-16 text-right">
+            <span className="text-sm text-muted-foreground font-mono tabular-nums w-16 text-right">
               {settings?.imminentForcedSaleWarningDays ?? 2} day
               {(settings?.imminentForcedSaleWarningDays ?? 2) === 1 ? "" : "s"}
             </span>

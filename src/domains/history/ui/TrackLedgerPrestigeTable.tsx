@@ -15,14 +15,14 @@ export function TrackLedgerPrestigeTable({ rows }: { rows: Row[] }) {
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center gap-2">
           <TrendingUp className="h-4 w-4 text-primary" />
-          <h3 className="text-xs font-black uppercase tracking-wide text-cream/60">
+          <h3 className="text-xs font-black uppercase tracking-wide text-foreground/60">
             Prestige Movement at this Course
           </h3>
         </div>
         <div className="space-y-1.5">
           {rows.slice(0, 20).map((row) => (
             <div key={row.stableId} className="flex items-center gap-3 text-xs">
-              <span className="w-40 shrink-0 truncate text-cream flex items-center gap-1.5">
+              <span className="w-40 shrink-0 truncate text-foreground flex items-center gap-1.5">
                 {row.stableName}
                 {row.isPlayer && (
                   <Badge variant="default" className="text-[9px]">
@@ -30,7 +30,7 @@ export function TrackLedgerPrestigeTable({ rows }: { rows: Row[] }) {
                   </Badge>
                 )}
               </span>
-              <span className="w-28 shrink-0 text-cream-muted tabular-nums">
+              <span className="w-28 shrink-0 text-muted-foreground tabular-nums">
                 {row.races} run{row.races === 1 ? "" : "s"} · {row.wins} win
                 {row.wins === 1 ? "" : "s"}
               </span>
@@ -46,7 +46,7 @@ export function TrackLedgerPrestigeTable({ rows }: { rows: Row[] }) {
                     ? "text-emerald-400"
                     : row.delta < 0
                       ? "text-rose-400"
-                      : "text-cream-muted"
+                      : "text-muted-foreground"
                 }`}
               >
                 {row.delta > 0 ? "+" : ""}

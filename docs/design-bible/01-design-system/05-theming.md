@@ -8,45 +8,48 @@ owns: design:design-system
 
 # Theming
 
-Gallop ships three themes today: light (management), dark (management), and broadcast (live race). Themes are distinct from tokens: the _tokens_ (semantic names) stay constant; the _values_ swap.
+Gallop's product identity is the dark **racing noir** theme — near-black turf greens with gold accents — and it is the default. Light theme exists but is experimental. The broadcast theme is a subtree layer for the live race screen. Themes are distinct from tokens: the _tokens_ (semantic names) stay constant; the _values_ swap.
 
 ---
 
 ## How theming works
 
-Every semantic token has a value in `:root` (light) and `.dark` ([styles.css:64–133](../../../src/styles.css)). The user (or system) toggles `.dark` on `<html>`; every value that was named `--muted`, `--card`, etc. swaps under their feet.
+Semantic token values live in `:root` (dark racing-noir, the default) with overrides under `.light` ([styles.css](../../../src/styles.css)). The resolved theme is applied as a `.dark` / `.light` class on `<html>`.
+
+Three layers cooperate:
+
+1. A pre-hydration inline script in [src/routes/__root.tsx](../../../src/routes/__root.tsx) reads the cached theme from `localStorage` (`gallop.theme`) and applies the class before paint — no flash of wrong theme.
+2. `useTheme` ([src/domains/shell/application/hooks/useTheme.ts](../../../src/domains/shell/application/hooks/useTheme.ts)) reads `userSettings.display.theme` (`"dark" | "light" | "system"`, default `"dark"`), applies the class, and re-resolves on OS changes when set to `system`.
+3. The toggle lives in Display settings ([DisplaySettingsCard.tsx](../../../src/domains/settings/ui/DisplaySettingsCard.tsx)).
 
 **The contract:** components consume tokens via `bg-muted`, `text-muted-foreground`, etc. They never branch on theme. If you find yourself writing `if (theme === 'dark')`, you're doing it wrong — extend the token instead.
 
+**Primitive racing tokens are not consumed directly.** The `t950…t500`, `cream`, `gold*` utility families remain registered for the design bible's reference, but production TSX must use the semantic layer (`background`, `foreground`, `muted-foreground`, `primary`, `border`, `card`, `muted`, `surface`, `surface-hover`, `surface-strong`, `accent`, `accent-bright`). A guardrail test enforces this.
+
 ---
 
-## Light theme — the default
+## Dark theme — the default
 
-White-ish background, deep slate text, restrained accents. Cool and clinical. The default management experience.
+Racing noir: turf-dark surfaces, cream text, gold accent. Applied in `:root` so the first paint is already dark.
 
 Hero values:
+
+- `background` → `--t950` (`oklch(0.06 0.02 150)`) — near-black green.
+- `card` → `--t800`; `surface` → `--t900`; `surface-hover` → `--t600`; `surface-strong` → `--t500`.
+- `foreground` → `--cream`; `muted-foreground` → `--cream-muted`.
+- `primary` → `--gold` (`oklch(0.65 0.15 85)`); `accent` → `--gold-subtle`; `accent-bright` → `--gold-light`.
+- `border` → `--gold-muted` (gold at 30%).
+
+---
+
+## Light theme — experimental
+
+White-ish background, deep slate text, restrained accents. Coherent but not yet audited screen-by-screen; enabled via Settings → Display → Theme = "light" or "system".
 
 - `background: oklch(1 0 0)` — pure white.
 - `foreground: oklch(0.129 0.042 264.695)` — near-black, faintly blue.
-- `primary: oklch(0.208 0.042 265.755)` — dark slate, the highest-emphasis surface (active nav, primary buttons).
-- `chart-1` through `chart-5` — warm orange → teal → navy → gold → amber. A diverse palette without losing harmony.
-
-Use light theme for management screens. Day-light, sober.
-
----
-
-## Dark theme
-
-Dark slate background, near-white text, slightly cooler accents. Same information density, lower energy cost on screens used for hours.
-
-Hero values:
-
-- `background: oklch(0.129 0.042 264.695)` — deep slate.
-- `card: oklch(0.208 0.042 265.755)` — medium slate.
-- `primary: oklch(0.929 0.013 255.508)` — light slate (high contrast against dark background).
-- `chart-1` through `chart-5` — royal blue → emerald → gold → violet → rose. Higher saturation; dark theme can carry it.
-
-**A note on inversion:** in dark theme, `primary` is _light_ and `primary-foreground` is _dark_ — the inverse of light theme. This is by design: filled buttons stay high-contrast on either background.
+- `primary: oklch(0.208 0.042 265.755)` — dark slate.
+- `surface`/`surface-hover`/`surface-strong` — light neutral steps matching the dark ramp's roles.
 
 ---
 

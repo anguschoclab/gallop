@@ -10,6 +10,7 @@ import {
 import { getRegionFlag, getRegionCountryLabel } from "@/shared/common/countryFlag";
 import { AWARD_COMPACT_THRESHOLD } from "@/domains/awards/model/awardsConstants";
 import { Hint } from "@/shared/ui/Hint";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 
 interface AwardsGridProps {
   awards: RegionalAward[];
@@ -18,10 +19,7 @@ interface AwardsGridProps {
 export function AwardsGrid({ awards }: AwardsGridProps) {
   if (awards.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
-        <Trophy className="w-8 h-8 mx-auto mb-2 opacity-50" />
-        <p>No awards in this region yet.</p>
-      </div>
+      <EmptyState icon={Trophy} title="No awards yet" description="No awards in this region yet." />
     );
   }
 

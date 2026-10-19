@@ -43,7 +43,7 @@ function StaffDetailPage() {
     <div className="space-y-6 max-w-4xl mx-auto p-4 md:p-6 animate-in fade-in duration-500">
       <div className="flex items-center justify-between mb-4">
         <Link to="/staff">
-          <Button variant="ghost" size="sm" className="text-cream-muted hover:text-cream">
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
             <ChevronLeft className="h-4 w-4 mr-2" />
             Back to Staff
           </Button>
@@ -75,30 +75,30 @@ function StaffDetailPage() {
         <TabsContent value="profile">
           <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
             <CardHeader className="bg-black/20 border-b border-white/5">
-              <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+              <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
                 Staff Profile
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
               <div className="divide-y divide-white/5">
                 <div className="flex items-center justify-between p-4">
-                  <span className="text-[9px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+                  <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40 flex items-center gap-2">
                     <Briefcase className="h-3 w-3" /> Name
                   </span>
-                  <span className="text-xs font-bold text-cream uppercase">
+                  <span className="text-xs font-bold text-foreground uppercase">
                     {getStaffName(staff)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between p-4">
-                  <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
+                  <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40">
                     Role
                   </span>
-                  <span className="text-xs font-bold text-gold-muted uppercase tracking-wide">
+                  <span className="text-xs font-bold text-primary/30 uppercase tracking-wide">
                     {roleLabel.toUpperCase()}
                   </span>
                 </div>
                 <div className="flex items-center justify-between p-4">
-                  <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
+                  <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40">
                     Tier
                   </span>
                   <Badge
@@ -107,15 +107,15 @@ function StaffDetailPage() {
                       staff.tier === "elite"
                         ? "bg-fame text-slate-950"
                         : staff.tier === "mid"
-                          ? "bg-gold text-slate-950"
-                          : "bg-slate-700 text-cream",
+                          ? "bg-primary text-slate-950"
+                          : "bg-slate-700 text-foreground",
                     )}
                   >
                     {tierLabel.toUpperCase()}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between p-4">
-                  <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
+                  <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40">
                     Day Rate
                   </span>
                   <span className="text-sm font-black font-mono text-destructive tracking-tighter">
@@ -124,7 +124,7 @@ function StaffDetailPage() {
                 </div>
                 {staff.fame !== undefined && (
                   <div className="flex items-center justify-between p-4">
-                    <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
+                    <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40">
                       Fame
                     </span>
                     <span className="flex items-center gap-1 text-xs font-bold text-fame">
@@ -135,7 +135,7 @@ function StaffDetailPage() {
                 )}
                 {staff.traits && staff.traits.length > 0 && (
                   <div className="p-4">
-                    <div className="text-[9px] font-black uppercase tracking-wide text-cream/40 mb-2">
+                    <div className="text-[9px] font-black uppercase tracking-wide text-foreground/40 mb-2">
                       Traits
                     </div>
                     <div className="flex flex-wrap gap-1.5">
@@ -152,14 +152,14 @@ function StaffDetailPage() {
                 )}
                 {staff.specialties && staff.specialties.length > 0 && (
                   <div className="p-4">
-                    <div className="text-[9px] font-black uppercase tracking-wide text-cream/40 mb-2">
+                    <div className="text-[9px] font-black uppercase tracking-wide text-foreground/40 mb-2">
                       Specialties
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {staff.specialties.map((s) => (
                         <div
                           key={s}
-                          className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-gold/60 uppercase tracking-tighter rounded-sm"
+                          className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-primary/60 uppercase tracking-tighter rounded-sm"
                         >
                           {s.toUpperCase()}
                         </div>
@@ -177,29 +177,39 @@ function StaffDetailPage() {
                 )}
                 {staff.raceRecord && (
                   <div className="p-4">
-                    <div className="text-[9px] font-black uppercase tracking-wide text-cream/40 mb-3">
+                    <div className="text-[9px] font-black uppercase tracking-wide text-foreground/40 mb-3">
                       Career Record
                     </div>
                     <div className="grid grid-cols-4 gap-2">
                       <div className="text-center">
-                        <div className="text-[8px] font-mono uppercase text-cream/30">Starts</div>
-                        <div className="text-sm font-black text-cream">
+                        <div className="text-[8px] font-mono uppercase text-foreground/30">
+                          Starts
+                        </div>
+                        <div className="text-sm font-black text-foreground">
                           {staff.raceRecord.starts}
                         </div>
                       </div>
                       <div className="text-center">
-                        <div className="text-[8px] font-mono uppercase text-cream/30">Wins</div>
-                        <div className="text-sm font-black text-gold">{staff.raceRecord.wins}</div>
+                        <div className="text-[8px] font-mono uppercase text-foreground/30">
+                          Wins
+                        </div>
+                        <div className="text-sm font-black text-primary">
+                          {staff.raceRecord.wins}
+                        </div>
                       </div>
                       <div className="text-center">
-                        <div className="text-[8px] font-mono uppercase text-cream/30">Places</div>
-                        <div className="text-sm font-black text-cream/70">
+                        <div className="text-[8px] font-mono uppercase text-foreground/30">
+                          Places
+                        </div>
+                        <div className="text-sm font-black text-foreground/70">
                           {staff.raceRecord.places}
                         </div>
                       </div>
                       <div className="text-center">
-                        <div className="text-[8px] font-mono uppercase text-cream/30">Shows</div>
-                        <div className="text-sm font-black text-cream/70">
+                        <div className="text-[8px] font-mono uppercase text-foreground/30">
+                          Shows
+                        </div>
+                        <div className="text-sm font-black text-foreground/70">
                           {staff.raceRecord.shows}
                         </div>
                       </div>

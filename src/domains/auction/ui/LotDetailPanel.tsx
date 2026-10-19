@@ -40,23 +40,23 @@ export function LotDetailPanel({
 }: LotDetailPanelProps) {
   return (
     <div className="bg-slate-900/60 border border-white/5 shadow-2xl relative overflow-hidden group">
-      <div className="absolute top-0 left-0 w-1 h-full bg-gold/40" />
+      <div className="absolute top-0 left-0 w-1 h-full bg-primary/40" />
 
       <div className="bg-black/40 px-8 py-4 border-b border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="text-center bg-gold/10 border border-gold/20 p-2 min-w-[60px]">
-            <div className="text-[8px] font-black uppercase text-gold/40 tracking-tighter leading-none mb-1">
+          <div className="text-center bg-primary/10 border border-primary/20 p-2 min-w-[60px]">
+            <div className="text-[8px] font-black uppercase text-primary/40 tracking-tighter leading-none mb-1">
               Lot_ID
             </div>
-            <div className="text-xl font-black font-mono text-gold leading-none tabular-nums">
+            <div className="text-xl font-black font-mono text-primary leading-none tabular-nums">
               #{String(lotIndex + 1).padStart(3, "0")}
             </div>
           </div>
           <div className="space-y-0.5">
-            <h2 className="text-4xl font-black text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-gold transition-colors">
+            <h2 className="text-4xl font-black text-foreground font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-primary transition-colors">
               {horse.name}
             </h2>
-            <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wide text-cream/40">
+            <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
               <span>
                 {genderSymbol(horse.gender)} {horse.gender}
               </span>
@@ -89,18 +89,18 @@ export function LotDetailPanel({
             </Badge>
           )}
           {!lot.passed && !isResolved && isPlayerLeading && (
-            <Badge className="bg-success text-slate-950 rounded-none font-black text-[10px] tracking-wide h-8 px-4 animate-pulse shadow-[0_0_15px_rgba(34,197,94,0.3)]">
+            <Badge className="bg-success text-slate-950 rounded-none font-black text-[10px] tracking-wide h-8 px-4 animate-pulse shadow-[0_0_15px_color-mix(in oklab, var(--success) 30%, transparent)]">
               Leading Bidder
             </Badge>
           )}
           {!lot.passed && lot.soldToStableId && isResolved && (
             <div className="text-right">
-              <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide mb-1">
+              <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide mb-1">
                 Acquired_By
               </div>
               <Badge
                 variant="outline"
-                className="border-gold/30 text-gold font-black text-[9px] uppercase tracking-wide h-6 rounded-none px-3 bg-gold/5"
+                className="border-primary/30 text-primary font-black text-[9px] uppercase tracking-wide h-6 rounded-none px-3 bg-primary/5"
               >
                 {consignor?.name?.toUpperCase() ?? "Unknown"}
               </Badge>
@@ -124,8 +124,8 @@ export function LotDetailPanel({
                 size="lg"
               />
               <div className="absolute bottom-4 left-4 bg-black/80 border border-white/10 px-2 py-1 flex items-center gap-2 shadow-xl">
-                <ShieldCheck className="h-3 w-3 text-gold/40" />
-                <span className="text-[8px] font-mono text-gold-muted/60 uppercase tracking-wide">
+                <ShieldCheck className="h-3 w-3 text-primary/40" />
+                <span className="text-[8px] font-mono text-primary/20 uppercase tracking-wide">
                   Confirmed
                 </span>
               </div>
@@ -134,7 +134,7 @@ export function LotDetailPanel({
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-1 px-1">
                 <TrendingUp className="h-3.5 w-3.5 text-pink-500/60" />
-                <h3 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+                <h3 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
                   Pedigree Analysis
                 </h3>
               </div>
@@ -145,7 +145,7 @@ export function LotDetailPanel({
                       <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-wide">
                         Sire Line
                       </div>
-                      <div className="text-xs font-bold text-cream uppercase">
+                      <div className="text-xs font-bold text-foreground uppercase">
                         {horse.sireName || "UNKNOWN"}
                       </div>
                     </div>
@@ -153,14 +153,14 @@ export function LotDetailPanel({
                       <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-wide">
                         Dam Line
                       </div>
-                      <div className="text-xs font-bold text-cream uppercase">
+                      <div className="text-xs font-bold text-foreground uppercase">
                         {horse.damName || "UNKNOWN"}
                       </div>
                     </div>
                   </div>
                   {horse.bruceLoweFamily && (
                     <div className="pt-2 border-t border-white/5">
-                      <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
+                      <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide">
                         Bruce Lowe Family
                       </div>
                       <div className="text-xs font-mono font-bold text-pink-400">
@@ -177,8 +177,8 @@ export function LotDetailPanel({
           <div className="md:col-span-7 space-y-8">
             <section className="space-y-4">
               <div className="flex items-center gap-2 mb-1 px-1">
-                <FileText className="h-3.5 w-3.5 text-gold/60" />
-                <h3 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+                <FileText className="h-3.5 w-3.5 text-primary/60" />
+                <h3 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
                   Technical Specifications
                 </h3>
               </div>
@@ -186,28 +186,28 @@ export function LotDetailPanel({
                 {(["conformation", "temperament", "coatColor", "runningStyle"] as const).map(
                   (spec) => (
                     <div key={spec} className="bg-black/20 p-3 border border-white/5">
-                      <div className="text-[8px] font-black uppercase text-cream/20 tracking-tighter mb-1 leading-none">
+                      <div className="text-[8px] font-black uppercase text-foreground/20 tracking-tighter mb-1 leading-none">
                         {spec.replace(/([A-Z])/g, "_$1").toUpperCase()}
                       </div>
-                      <div className="text-xs font-mono font-bold text-cream/80 uppercase">
+                      <div className="text-xs font-mono font-bold text-foreground/80 uppercase">
                         {horse[spec]?.toString().replace("-", " ") || "—"}
                       </div>
                     </div>
                   ),
                 )}
                 <div className="bg-black/20 p-3 border border-white/5">
-                  <div className="text-[8px] font-black uppercase text-cream/20 tracking-tighter mb-1 leading-none">
+                  <div className="text-[8px] font-black uppercase text-foreground/20 tracking-tighter mb-1 leading-none">
                     PREF_DISTANCE
                   </div>
-                  <div className="text-xs font-mono font-bold text-cream/80 uppercase">
+                  <div className="text-xs font-mono font-bold text-foreground/80 uppercase">
                     {Math.round(horse.distanceAptitude)}m
                   </div>
                 </div>
                 <div className="bg-black/20 p-3 border border-white/5">
-                  <div className="text-[8px] font-black uppercase text-cream/20 tracking-tighter mb-1 leading-none">
+                  <div className="text-[8px] font-black uppercase text-foreground/20 tracking-tighter mb-1 leading-none">
                     BEST_SURFACE
                   </div>
-                  <div className="text-xs font-mono font-bold text-cream/80 uppercase">
+                  <div className="text-xs font-mono font-bold text-foreground/80 uppercase">
                     {(() => {
                       const best = Object.entries(
                         horse.surfaceAptitude || ({} as Record<string, number>),
@@ -222,13 +222,13 @@ export function LotDetailPanel({
               {displayStats && (
                 <div className="pt-4 border-t border-white/5 space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="text-[8px] font-black uppercase text-gold/40 tracking-wide">
+                    <div className="text-[8px] font-black uppercase text-primary/40 tracking-wide">
                       Scouting Report
                     </div>
                     {displayOverallEstimate && (
                       <Badge
                         variant="outline"
-                        className="border-gold/20 text-gold font-mono text-[9px] h-5 rounded-none px-2 uppercase"
+                        className="border-primary/20 text-primary font-mono text-[9px] h-5 rounded-none px-2 uppercase"
                       >
                         Est_OVR: {displayOverallEstimate}
                       </Badge>
@@ -240,10 +240,10 @@ export function LotDetailPanel({
                         key={key}
                         className="flex items-center justify-between border-b border-white/5 pb-1"
                       >
-                        <span className="text-[9px] font-mono text-cream/20 uppercase tracking-tighter">
+                        <span className="text-[9px] font-mono text-foreground/20 uppercase tracking-tighter">
                           {key}
                         </span>
-                        <span className="text-xs font-mono font-black text-cream/60 tabular-nums">
+                        <span className="text-xs font-mono font-black text-foreground/60 tabular-nums">
                           {String(val)}
                         </span>
                       </div>

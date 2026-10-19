@@ -233,7 +233,7 @@ export const MOOD_SVG_EYE_RADIUS = 1.7;
 export const MOOD_SVG_STROKE_WIDTH = 1.8;
 
 /** SVG fill color for eyes and mouth. */
-export const MOOD_SVG_INK_COLOR = "#111827";
+export const MOOD_SVG_INK_COLOR = "var(--background)";
 
 /** z-index class for the mood tooltip when rendered inside a modal overlay. */
 export const MOOD_TOOLTIP_OVERLAY_CLASS = "z-[60]";

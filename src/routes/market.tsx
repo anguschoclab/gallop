@@ -57,10 +57,10 @@ function MarketPage() {
             <Store className="h-3.5 w-3.5" />
             Horse Market
           </div>
-          <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
+          <h1 className="text-4xl font-bold tracking-tighter text-foreground font-[family-name:var(--font-display)]">
             The Horse Market
           </h1>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
             <span>
               Available Units: <NumericValue value={market.length} />
             </span>
@@ -68,7 +68,7 @@ function MarketPage() {
         </div>
 
         <div className="flex flex-col items-end gap-1">
-          <div className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+          <div className="text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
             Available Capital
           </div>
           <div className="text-2xl font-black font-mono text-success tabular-nums tracking-tighter">
@@ -142,15 +142,15 @@ function MarketPage() {
                     <Target className="h-5 w-5 text-success" />
                   </div>
                   <div className="space-y-0.5">
-                    <h3 className="text-lg font-bold text-cream uppercase tracking-tight group-hover:text-success transition-colors">
+                    <h3 className="text-lg font-bold text-foreground uppercase tracking-tight group-hover:text-success transition-colors">
                       Scout Rival Entities
                     </h3>
-                    <p className="text-[10px] font-mono text-cream/40 uppercase tracking-tighter">
+                    <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-tighter">
                       Browse high-value assets owned by competing stables for direct procurement.
                     </p>
                   </div>
                 </div>
-                <ChevronRight className="h-5 w-5 text-cream/20 group-hover:translate-x-1 transition-transform group-hover:text-success" />
+                <ChevronRight className="h-5 w-5 text-foreground/20 group-hover:translate-x-1 transition-transform group-hover:text-success" />
               </CardContent>
             </Card>
           </Link>
@@ -185,7 +185,7 @@ function MarketPage() {
                 <h2 className="text-xl font-black font-[family-name:var(--font-display)] text-blue-400 uppercase tracking-widest">
                   Stallion Syndicates
                 </h2>
-                <p className="text-[10px] font-mono text-cream/40 uppercase tracking-tighter">
+                <p className="text-[10px] font-mono text-foreground/40 uppercase tracking-tighter">
                   Equity-based asset management for G1-tier stallions. High-yield stud fee
                   dividends.
                 </p>

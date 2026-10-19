@@ -5,7 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useGame } from "@/platform/game/store";
 
-const linkCls = "text-[10px] uppercase tracking-wide text-gold hover:underline";
+const linkCls = "text-[10px] uppercase tracking-wide text-primary hover:underline";
 
 const MILESTONE_ICON: Record<RivalMilestoneRecord["kind"], LucideIcon> = {
   debut: Flag,
@@ -40,7 +40,7 @@ export function RivalCareerMilestoneTimeline({
     return ledger?.find((e) => e.raceId === raceId)?.trackId;
   };
   if (milestones.length === 0) {
-    return <span className="text-cream-muted">No milestones yet</span>;
+    return <span className="text-muted-foreground">No milestones yet</span>;
   }
 
   return (
@@ -54,21 +54,25 @@ export function RivalCareerMilestoneTimeline({
           >
             <span
               className={`absolute -left-[25px] top-0 flex h-4 w-4 items-center justify-center rounded-full border bg-card ${
-                milestone.announced ? "border-border text-cream-muted" : "border-gold text-gold"
+                milestone.announced
+                  ? "border-border text-muted-foreground"
+                  : "border-primary text-primary"
               }`}
               aria-hidden="true"
             >
               <Icon className="h-2.5 w-2.5" />
             </span>
-            <div className="text-[10px] font-medium uppercase text-cream-muted">
+            <div className="text-[10px] font-medium uppercase text-muted-foreground">
               {MILESTONE_LABEL[milestone.kind]}
             </div>
             <div
-              className={milestone.announced ? "leading-snug text-cream" : "leading-snug text-gold"}
+              className={
+                milestone.announced ? "leading-snug text-foreground" : "leading-snug text-primary"
+              }
             >
               {milestone.title}
             </div>
-            <div className="mt-0.5 font-mono text-[10px] tabular-nums text-cream-muted">
+            <div className="mt-0.5 font-mono text-[10px] tabular-nums text-muted-foreground">
               {milestone.day === null ? "Date unknown" : gameCalendarDate(milestone.day)}
             </div>
             <div className="mt-1 flex flex-wrap gap-x-3 gap-y-0.5">

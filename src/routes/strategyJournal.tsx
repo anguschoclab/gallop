@@ -145,12 +145,12 @@ function StrategyJournalPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-cream">
+        <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-foreground">
           Strategy Journal
         </h1>
         <p className="text-sm text-muted-foreground">
           Record each race plan, see how it turned out, and note what you learned. Plans from the{" "}
-          <Link to="/race-advisor" className="text-gold hover:underline">
+          <Link to="/race-advisor" className="text-primary hover:underline">
             Race Advisor
           </Link>{" "}
           can be saved here with one click.

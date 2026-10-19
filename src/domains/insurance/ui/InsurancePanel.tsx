@@ -63,7 +63,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream flex items-center gap-2">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground flex items-center gap-2">
             <Shield className="h-4 w-4 text-blue-400" /> Insurance
           </CardTitle>
           {policy && policy.type !== "none" && (
@@ -76,32 +76,34 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
           <div className="space-y-3">
             <div className="bg-black/40 border border-white/5 p-3 space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                   Type
                 </span>
-                <span className="font-mono text-cream capitalize">
+                <span className="font-mono text-foreground capitalize">
                   {policy.type.replace("_", " ")}
                 </span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                   Daily Premium
                 </span>
-                <span className="font-mono text-gold">{formatCurrency(policy.premiumPerDay)}</span>
+                <span className="font-mono text-primary">
+                  {formatCurrency(policy.premiumPerDay)}
+                </span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                   Coverage
                 </span>
-                <span className="font-mono text-cream">
+                <span className="font-mono text-foreground">
                   {Math.round(policy.coveragePercent * 100)}%
                 </span>
               </div>
               <div className="flex justify-between text-xs">
-                <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                   Active Since
                 </span>
-                <span className="font-mono text-cream">Day {policy.activeSinceDay}</span>
+                <span className="font-mono text-foreground">Day {policy.activeSinceDay}</span>
               </div>
             </div>
 
@@ -124,7 +126,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
           </div>
         ) : (
           <div className="space-y-2">
-            <p className="text-xs text-cream/40 italic mb-3">
+            <p className="text-xs text-foreground/40 italic mb-3">
               No active insurance policy. Protect your investment with coverage.
             </p>
             <div className="grid grid-cols-1 gap-2">
@@ -135,7 +137,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
                 disabled={cash < calculateDailyPremium("injury_only", horseValue)}
               >
                 <span>Injury Only</span>
-                <span className="font-mono text-gold">
+                <span className="font-mono text-primary">
                   {formatCurrency(calculateDailyPremium("injury_only", horseValue))}/day
                 </span>
               </Button>
@@ -146,7 +148,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
                 disabled={cash < calculateDailyPremium("mortality_only", horseValue)}
               >
                 <span>Mortality Only</span>
-                <span className="font-mono text-gold">
+                <span className="font-mono text-primary">
                   {formatCurrency(calculateDailyPremium("mortality_only", horseValue))}/day
                 </span>
               </Button>
@@ -157,7 +159,7 @@ export function InsurancePanel({ horseId }: InsurancePanelProps) {
                 disabled={cash < calculateDailyPremium("comprehensive", horseValue)}
               >
                 <span>Comprehensive</span>
-                <span className="font-mono text-gold">
+                <span className="font-mono text-primary">
                   {formatCurrency(calculateDailyPremium("comprehensive", horseValue))}/day
                 </span>
               </Button>

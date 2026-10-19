@@ -13,7 +13,7 @@ export function BackLink({ to, label, className, search }: BackLinkProps) {
     <Link
       to={to}
       search={search}
-      className={`inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-cream/50 hover:text-cream transition-colors ${className ?? ""}`}
+      className={`inline-flex items-center gap-1.5 text-[11px] font-mono uppercase tracking-wider text-foreground/50 hover:text-foreground transition-colors ${className ?? ""}`}
     >
       <ArrowLeft className="h-3 w-3" />
       {label}

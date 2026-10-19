@@ -29,7 +29,7 @@ export function AuctionSummary({ sale, scoreboard, onClose }: AuctionSummaryProp
       <CardHeader className="text-center pb-6 bg-primary/5 border-b border-primary/10 relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent" />
         <div className="relative z-10">
-          <Trophy className="h-12 w-12 mx-auto text-warning drop-shadow-[0_0_15px_rgba(255,193,7,0.3)] mb-2" />
+          <Trophy className="h-12 w-12 mx-auto text-warning drop-shadow-[0_0_15px_color-mix(in oklab, var(--warning) 30%, transparent)] mb-2" />
           <CardTitle className="text-3xl font-black tracking-tight">{sale.name}</CardTitle>
           <p className="text-muted-foreground font-medium uppercase tracking-wide text-[10px] mt-1">
             Sale Concluded

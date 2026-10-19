@@ -87,10 +87,10 @@ export function AuctionHouseDesk() {
                 : "border-white/5 bg-slate-900/40 hover:border-white/20"
             }`}
           >
-            <div className="text-[11px] font-bold uppercase tracking-wide text-cream">
+            <div className="text-[11px] font-bold uppercase tracking-wide text-foreground">
               {h.shortName}
             </div>
-            <div className="text-[9px] font-mono uppercase tracking-wider text-cream/40">
+            <div className="text-[9px] font-mono uppercase tracking-wider text-foreground/40">
               {h.country} · Prestige {h.prestige}
             </div>
           </button>
@@ -98,7 +98,7 @@ export function AuctionHouseDesk() {
       </div>
 
       {/* How your standing is read at the desk */}
-      <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-cream/50">
+      <div className="flex items-center gap-2 text-[10px] font-mono uppercase tracking-wider text-foreground/50">
         <span>Your standing</span>
         <Badge variant="outline" className="text-[9px]">
           {standing.tierLabel}
@@ -117,14 +117,14 @@ export function AuctionHouseDesk() {
               {house.name}
             </h2>
           </div>
-          <p className="text-[11px] font-mono text-cream/50">{house.blurb}</p>
-          <div className="flex flex-wrap gap-3 pt-2 text-[10px] font-mono uppercase tracking-wide text-cream/40">
+          <p className="text-[11px] font-mono text-foreground/50">{house.blurb}</p>
+          <div className="flex flex-wrap gap-3 pt-2 text-[10px] font-mono uppercase tracking-wide text-foreground/40">
             <span>
-              Prestige <span className="text-cream">{house.prestige}</span>
+              Prestige <span className="text-foreground">{house.prestige}</span>
             </span>
             <span>
               Commission{" "}
-              <span className="text-cream">
+              <span className="text-foreground">
                 {((0.04 + house.commissionSurcharge) * 100).toFixed(1)}%
               </span>
             </span>
@@ -140,12 +140,12 @@ export function AuctionHouseDesk() {
 
       {/* Buy board */}
       <section className="space-y-3">
-        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wide text-cream/70">
+        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wide text-foreground/70">
           <ShoppingCart className="h-3.5 w-3.5 text-primary" />
           On offer at {house.shortName}
         </h3>
         {catalogue.length === 0 ? (
-          <p className="text-[11px] font-mono uppercase tracking-wide text-cream/30">
+          <p className="text-[11px] font-mono uppercase tracking-wide text-foreground/30">
             No lots on the board today.
           </p>
         ) : (
@@ -156,27 +156,27 @@ export function AuctionHouseDesk() {
                   <Link
                     to="/stable/$horseId"
                     params={{ horseId: horse.id }}
-                    className="font-bold text-cream hover:text-primary transition-colors"
+                    className="font-bold text-foreground hover:text-primary transition-colors"
                   >
                     {horse.name}
                   </Link>
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-cream/40">
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-foreground/40">
                     {horse.age}yo {horse.gender} · Est. value {formatCurrency(quote.fairValue)}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30">
+                  <div className="text-[9px] font-mono uppercase tracking-wide text-foreground/30">
                     Hammer
                   </div>
-                  <div className="font-mono tabular-nums text-cream/80">
+                  <div className="font-mono tabular-nums text-foreground/80">
                     {formatCurrency(quote.hammerEstimate)}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30">
+                  <div className="text-[9px] font-mono uppercase tracking-wide text-foreground/30">
                     You pay
                   </div>
-                  <div className="font-mono tabular-nums font-bold text-cream">
+                  <div className="font-mono tabular-nums font-bold text-foreground">
                     {formatCurrency(quote.buyPrice)}
                   </div>
                 </div>
@@ -195,12 +195,12 @@ export function AuctionHouseDesk() {
 
       {/* Sell board */}
       <section className="space-y-3">
-        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wide text-cream/70">
+        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wide text-foreground/70">
           <Tag className="h-3.5 w-3.5 text-success" />
           Sell through {house.shortName}
         </h3>
         {myHorses.length === 0 ? (
-          <p className="text-[11px] font-mono uppercase tracking-wide text-cream/30">
+          <p className="text-[11px] font-mono uppercase tracking-wide text-foreground/30">
             You have no horses available to sell.
           </p>
         ) : (
@@ -211,24 +211,24 @@ export function AuctionHouseDesk() {
                   <Link
                     to="/stable/$horseId"
                     params={{ horseId: horse.id }}
-                    className="font-bold text-cream hover:text-success transition-colors"
+                    className="font-bold text-foreground hover:text-success transition-colors"
                   >
                     {horse.name}
                   </Link>
-                  <div className="text-[10px] font-mono uppercase tracking-wider text-cream/40">
+                  <div className="text-[10px] font-mono uppercase tracking-wider text-foreground/40">
                     {horse.age}yo {horse.gender} · Market {formatCurrency(quote.fairValue)}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30">
+                  <div className="text-[9px] font-mono uppercase tracking-wide text-foreground/30">
                     Commission
                   </div>
-                  <div className="font-mono tabular-nums text-cream/60">
+                  <div className="font-mono tabular-nums text-foreground/60">
                     -{formatCurrency(quote.commission)}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30">
+                  <div className="text-[9px] font-mono uppercase tracking-wide text-foreground/30">
                     You net
                   </div>
                   <div className="font-mono tabular-nums font-bold text-success">
@@ -250,12 +250,12 @@ export function AuctionHouseDesk() {
 
       {/* Trade history */}
       <section className="space-y-3">
-        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wide text-cream/70">
-          <History className="h-3.5 w-3.5 text-cream/40" />
+        <h3 className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wide text-foreground/70">
+          <History className="h-3.5 w-3.5 text-foreground/40" />
           Trade history
         </h3>
         {trades.length === 0 ? (
-          <p className="text-[11px] font-mono uppercase tracking-wide text-cream/30">
+          <p className="text-[11px] font-mono uppercase tracking-wide text-foreground/30">
             No trades settled yet.
           </p>
         ) : (
@@ -265,16 +265,18 @@ export function AuctionHouseDesk() {
                 key={t.id}
                 className="flex flex-wrap items-center gap-3 p-2.5 text-[11px] font-mono"
               >
-                <Badge variant="outline" className="text-[9px] text-cream/50">
+                <Badge variant="outline" className="text-[9px] text-foreground/50">
                   Day {t.day}
                 </Badge>
-                <span className="flex-1 min-w-[140px] font-sans font-bold text-cream">
+                <span className="flex-1 min-w-[140px] font-sans font-bold text-foreground">
                   {t.horseName}
                 </span>
-                <span className="text-cream/40 truncate max-w-[220px]">
+                <span className="text-foreground/40 truncate max-w-[220px]">
                   {t.sellerName} → {t.buyerName}
                 </span>
-                <span className="tabular-nums font-bold text-cream">{formatCurrency(t.price)}</span>
+                <span className="tabular-nums font-bold text-foreground">
+                  {formatCurrency(t.price)}
+                </span>
               </div>
             ))}
           </div>

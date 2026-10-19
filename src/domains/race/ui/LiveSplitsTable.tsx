@@ -29,10 +29,12 @@ export function LiveSplitsTable({
       </h3>
       <table className="w-full text-xs font-mono">
         <thead>
-          <tr className="border-b border-white/10 text-cream/30 uppercase tracking-wide text-[9px]">
-            <th className="text-left pb-2 pr-3">Horse</th>
+          <tr className="border-b border-white/10 text-foreground/30 uppercase tracking-wide text-[9px]">
+            <th scope="col" className="text-left pb-2 pr-3">
+              Horse
+            </th>
             {SPLIT_LABELS.map((label) => (
-              <th key={label} className="text-right pb-2 px-2">
+              <th scope="col" key={label} className="text-right pb-2 px-2">
                 {label}
               </th>
             ))}
@@ -47,7 +49,7 @@ export function LiveSplitsTable({
                 <td
                   className={cn(
                     "py-2 pr-3 font-bold truncate max-w-[120px]",
-                    r.isPlayer ? "text-success" : "text-cream/80",
+                    r.isPlayer ? "text-success" : "text-foreground/80",
                   )}
                 >
                   {r.name}
@@ -59,7 +61,7 @@ export function LiveSplitsTable({
                     : null;
                   if (elapsed == null) {
                     return (
-                      <td key={mi} className="text-right px-2 py-2 text-cream/20">
+                      <td key={mi} className="text-right px-2 py-2 text-foreground/20">
                         —
                       </td>
                     );
@@ -67,7 +69,7 @@ export function LiveSplitsTable({
                   const delta = target != null ? elapsed - target : null;
                   return (
                     <td key={mi} className="text-right px-2 py-2 tabular-nums">
-                      <div className="text-cream/80">{formatSplitTime(elapsed)}</div>
+                      <div className="text-foreground/80">{formatSplitTime(elapsed)}</div>
                       {delta != null && (
                         <div
                           className={cn(

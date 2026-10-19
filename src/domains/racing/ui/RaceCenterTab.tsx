@@ -75,10 +75,10 @@ export function RaceCenterTab() {
           <Flag className="h-3.5 w-3.5" />
           Race Center
         </div>
-        <h2 className="text-3xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
+        <h2 className="text-3xl font-bold tracking-tighter text-foreground font-[family-name:var(--font-display)]">
           Entry Desk
         </h2>
-        <p className="text-sm text-cream/50 mt-1">
+        <p className="text-sm text-foreground/50 mt-1">
           Pick a horse, see their eligible races, enter with one click.
         </p>
       </div>

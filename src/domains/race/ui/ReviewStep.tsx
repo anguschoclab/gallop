@@ -69,7 +69,7 @@ export function ReviewStep({
             params={{ horseId: selectedHorse.id }}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-black uppercase tracking-tighter text-center leading-none hover:underline hover:text-gold"
+            className="font-black uppercase tracking-tighter text-center leading-none hover:underline hover:text-primary"
           >
             {selectedHorse.name}
           </Link>
@@ -84,7 +84,7 @@ export function ReviewStep({
             params={{ jockeyId: selectedJockey.id }}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-black uppercase tracking-tighter text-center leading-none hover:underline hover:text-gold"
+            className="font-black uppercase tracking-tighter text-center leading-none hover:underline hover:text-primary"
           >
             {selectedJockey.person.biography.displayName}
           </Link>

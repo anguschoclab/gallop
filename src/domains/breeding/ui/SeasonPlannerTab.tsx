@@ -44,17 +44,17 @@ export function SeasonPlannerTab() {
     <div className="space-y-4 pb-20">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold tracking-tight font-[family-name:var(--font-display)] text-cream">
+          <h2 className="text-xl font-bold tracking-tight font-[family-name:var(--font-display)] text-foreground">
             Season Planner
           </h2>
-          <p className="text-sm text-cream-muted">
+          <p className="text-sm text-muted-foreground">
             Assign sires to all eligible mares at once, save plans, and confirm in a single action.
           </p>
         </div>
         <Badge
           className={cn(
             "font-[family-name:var(--font-mono)] tabular-nums",
-            seasonOpen ? "bg-success text-t950" : "bg-t700 text-cream",
+            seasonOpen ? "bg-success text-background" : "bg-muted text-foreground",
           )}
         >
           <Calendar className="h-3 w-3 mr-1" />
@@ -69,17 +69,17 @@ export function SeasonPlannerTab() {
       </div>
 
       {sortedMares.length === 0 ? (
-        <Card className="border-gold-muted">
+        <Card className="border-border">
           <CardContent className="py-12 text-center">
-            <p className="text-cream-muted">
+            <p className="text-muted-foreground">
               No eligible mares. Retire mares from racing or wait for foals to mature.
             </p>
           </CardContent>
         </Card>
       ) : (
-        <Card className="border-gold-muted">
+        <Card className="border-border">
           <CardContent className="p-0">
-            <div className="flex items-center gap-3 py-2 px-4 border-b border-gold-muted/30 text-xs font-semibold text-cream-muted uppercase tracking-wider">
+            <div className="flex items-center gap-3 py-2 px-4 border-b border-border/30 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               <div className="flex-1">Mare</div>
               <div className="min-w-[200px]">Sire</div>
               <div className="w-[80px]">LFG</div>

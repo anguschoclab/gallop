@@ -25,27 +25,27 @@ export function StepBackstory({ backstoryId, setBackstoryId }: StepBackstoryProp
                 onClick={() => setBackstoryId(b.id)}
                 className={`text-left rounded-lg border-2 p-4 transition-all ${
                   selected
-                    ? "border-gold bg-t800/60"
-                    : "border-t700 bg-t900/40 hover:border-cream-muted"
+                    ? "border-primary bg-card/60"
+                    : "border-muted bg-surface/40 hover:border-muted-foreground"
                 }`}
               >
                 <div className="flex items-baseline justify-between gap-2">
-                  <h3 className="font-[family-name:var(--font-display)] text-lg text-cream">
+                  <h3 className="font-[family-name:var(--font-display)] text-lg text-foreground">
                     {b.label}
                   </h3>
-                  <span className="text-xs uppercase tracking-wider text-cream-muted">
+                  <span className="text-xs uppercase tracking-wider text-muted-foreground">
                     {b.difficulty.replace("_", " ")}
                   </span>
                 </div>
-                <p className="mt-2 text-sm text-cream-muted">{b.blurb}</p>
-                <dl className="mt-3 grid grid-cols-2 gap-1 text-xs text-cream tabular-nums">
-                  <dt className="text-cream-muted">Cash</dt>
+                <p className="mt-2 text-sm text-muted-foreground">{b.blurb}</p>
+                <dl className="mt-3 grid grid-cols-2 gap-1 text-xs text-foreground tabular-nums">
+                  <dt className="text-muted-foreground">Cash</dt>
                   <dd>{formatCurrency(b.startingCash)}</dd>
-                  <dt className="text-cream-muted">Horses</dt>
+                  <dt className="text-muted-foreground">Horses</dt>
                   <dd>{TOTAL_HORSES(b)}</dd>
-                  <dt className="text-cream-muted">Upgraded facilities</dt>
+                  <dt className="text-muted-foreground">Upgraded facilities</dt>
                   <dd>{FACILITY_UPGRADE_COUNT(b)}</dd>
-                  <dt className="text-cream-muted">Reputation</dt>
+                  <dt className="text-muted-foreground">Reputation</dt>
                   <dd>{b.reputationScore}</dd>
                 </dl>
               </button>

@@ -45,6 +45,10 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-bright: var(--accent-bright);
+  --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
+  --color-surface-strong: var(--surface-strong);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -179,8 +183,12 @@
   --silver: oklch(0.72 0.01 260);
 }
 
-.dark {
-  /* Racing Theme as Default */
+/*
+ * Dark is the default theme — racing noir is the product identity and is
+ * applied in :root so pages render dark before the theme setting hydrates.
+ * The .light block overrides these values when the user selects light.
+ */
+:root {
   --background: var(--t950);
   --foreground: var(--cream);
   --card: var(--t800);
@@ -195,6 +203,10 @@
   --muted-foreground: var(--cream-muted);
   --accent: var(--gold-subtle);
   --accent-foreground: var(--gold);
+  --accent-bright: var(--gold-light);
+  --surface: var(--t900);
+  --surface-hover: var(--t600);
+  --surface-strong: var(--t500);
   --destructive: oklch(0.704 0.191 22.216);
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: var(--gold-muted);
@@ -243,6 +255,10 @@
   --muted-foreground: oklch(0.554 0.046 257.417);
   --accent: oklch(0.968 0.007 247.896);
   --accent-foreground: oklch(0.208 0.042 265.755);
+  --accent-bright: oklch(0.35 0.08 265.755);
+  --surface: oklch(0.955 0.007 247.896);
+  --surface-hover: oklch(0.91 0.01 255.508);
+  --surface-strong: oklch(0.87 0.013 255.508);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(0.929 0.013 255.508);

@@ -53,7 +53,7 @@ export function ApprenticeTracker() {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream flex items-center gap-2">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground flex items-center gap-2">
             <GraduationCap className="h-4 w-4 text-blue-400" /> Apprentice Tracker
           </CardTitle>
           <Badge className="bg-blue-400/10 text-blue-400 border-blue-400/30">
@@ -78,12 +78,12 @@ export function ApprenticeTracker() {
                     {apprentice.person.biography.displayName.charAt(0)}
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-cream">
+                    <div className="text-xs font-bold text-foreground">
                       <Link to="/jockey/$jockeyId" params={{ jockeyId: apprentice.id }}>
                         {apprentice.person.biography.displayName}
                       </Link>
                     </div>
-                    <div className="text-[9px] text-cream/40 font-mono">
+                    <div className="text-[9px] text-foreground/40 font-mono">
                       ID: {apprentice.id.slice(0, 8)}
                     </div>
                   </div>
@@ -101,26 +101,26 @@ export function ApprenticeTracker() {
 
               <div className="grid grid-cols-3 gap-2 pt-2 border-t border-white/5">
                 <div className="text-center">
-                  <div className="text-[8px] text-cream/40 uppercase tracking-wide font-black">
+                  <div className="text-[8px] text-foreground/40 uppercase tracking-wide font-black">
                     Career Wins
                   </div>
-                  <div className="text-sm font-mono font-black text-cream">
+                  <div className="text-sm font-mono font-black text-foreground">
                     {apprentice.careerWins || 0}
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-[8px] text-cream/40 uppercase tracking-wide font-black">
+                  <div className="text-[8px] text-foreground/40 uppercase tracking-wide font-black">
                     Allowance
                   </div>
-                  <div className="text-sm font-mono font-black text-gold">
+                  <div className="text-sm font-mono font-black text-primary">
                     {formatWeightAllowance(allowance)}
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-[8px] text-cream/40 uppercase tracking-wide font-black">
+                  <div className="text-[8px] text-foreground/40 uppercase tracking-wide font-black">
                     Contract
                   </div>
-                  <div className="text-sm font-mono font-black text-cream">
+                  <div className="text-sm font-mono font-black text-foreground">
                     {daysUntilContractEnd}d
                   </div>
                 </div>
@@ -129,7 +129,7 @@ export function ApprenticeTracker() {
               {status === "apprentice" && winsUntilGraduation > 0 && (
                 <div className="pt-2 border-t border-white/5">
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-[9px] text-cream/40 uppercase tracking-wide font-black flex items-center gap-1">
+                    <span className="text-[9px] text-foreground/40 uppercase tracking-wide font-black flex items-center gap-1">
                       <TrendingUp className="h-2.5 w-2.5" /> Graduation
                     </span>
                     <span className="text-[10px] font-mono text-blue-400">
@@ -150,7 +150,7 @@ export function ApprenticeTracker() {
               {status === "journeyman" && (
                 <div className="pt-2 border-t border-white/5">
                   <div className="flex items-center justify-between">
-                    <span className="text-[9px] text-cream/40 uppercase tracking-wide font-black flex items-center gap-1">
+                    <span className="text-[9px] text-foreground/40 uppercase tracking-wide font-black flex items-center gap-1">
                       <Award className="h-2.5 w-2.5" /> Senior Track
                     </span>
                     <span className="text-[10px] font-mono text-green-400">

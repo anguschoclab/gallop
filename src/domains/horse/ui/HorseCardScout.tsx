@@ -50,11 +50,11 @@ export function HorseCardScout({ horse, hookData, className = "" }: HorseCardSco
               <span className={cn(genderColor, "text-sm shrink-0")}>
                 {genderSymbol(horse.gender)}
               </span>
-              <span className="font-bold text-lg text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-blue-400 transition-colors truncate min-w-0 flex-1">
+              <span className="font-bold text-lg text-foreground font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-blue-400 transition-colors truncate min-w-0 flex-1">
                 {horse.name}
               </span>
             </div>
-            <div className="flex items-center gap-2 text-[9px] text-cream/40 font-mono uppercase tracking-wide">
+            <div className="flex items-center gap-2 text-[9px] text-foreground/40 font-mono uppercase tracking-wide">
               <span>Age {Math.floor(horse.age)}</span>
               <span className="w-1 h-1 bg-white/20 rounded-full" />
               <span className="text-fame flex items-center gap-1">
@@ -90,9 +90,9 @@ export function HorseCardScout({ horse, hookData, className = "" }: HorseCardSco
             const isUnknown = value === undefined;
             return (
               <div key={stat} className={isUnknown ? "opacity-30" : ""}>
-                <div className="flex justify-between text-[9px] font-black uppercase tracking-wide text-cream/40 mb-1">
+                <div className="flex justify-between text-[9px] font-black uppercase tracking-wide text-foreground/40 mb-1">
                   <span>{stat.substring(0, 3)}</span>
-                  <span className="font-mono text-cream/80">
+                  <span className="font-mono text-foreground/80">
                     {isUnknown ? "---" : isAdvanced ? Math.round(value) : scoutGrade(value)}
                   </span>
                 </div>
@@ -108,10 +108,10 @@ export function HorseCardScout({ horse, hookData, className = "" }: HorseCardSco
         </div>
         <div className="pt-3 border-t border-white/5 flex items-center justify-between bg-black/20 p-2 rounded">
           <div className="space-y-0.5">
-            <div className="text-[8px] font-black uppercase tracking-wide text-cream/30">
+            <div className="text-[8px] font-black uppercase tracking-wide text-foreground/30">
               OVR Estimate
             </div>
-            <div className="text-sm font-black font-mono text-cream">
+            <div className="text-sm font-black font-mono text-foreground">
               {hasAllStats
                 ? isAdvanced
                   ? ovr
@@ -122,7 +122,7 @@ export function HorseCardScout({ horse, hookData, className = "" }: HorseCardSco
             </div>
           </div>
           <div className="text-right space-y-0.5">
-            <div className="text-[8px] font-black uppercase tracking-wide text-cream/30">
+            <div className="text-[8px] font-black uppercase tracking-wide text-foreground/30">
               Form Trend
             </div>
             <div
@@ -132,7 +132,7 @@ export function HorseCardScout({ horse, hookData, className = "" }: HorseCardSco
                   ? "text-success"
                   : horse.form < 0
                     ? "text-destructive"
-                    : "text-cream/40",
+                    : "text-foreground/40",
               )}
             >
               {horse.form > 0 ? "+" : ""}

@@ -49,21 +49,21 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
   return (
     <>
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-2xl bg-slate-950 border-gold/30 p-0 overflow-hidden rounded-none shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+        <DialogContent className="max-w-2xl bg-slate-950 border-primary/30 p-0 overflow-hidden rounded-none shadow-[0_0_50px_color-mix(in oklab, black 50%, transparent)]">
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]" />
 
-          <div className="relative border-b border-gold/20 bg-slate-900/50 p-6">
+          <div className="relative border-b border-primary/20 bg-slate-900/50 p-6">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <div className="flex items-center gap-2 text-gold-bright uppercase tracking-[0.15em] font-[family-name:var(--font-display)] text-sm font-bold">
+                <div className="flex items-center gap-2 text-accent-bright uppercase tracking-[0.15em] font-[family-name:var(--font-display)] text-sm font-bold">
                   <Database className="h-4 w-4" />
                   Save & Load
                 </div>
-                <DialogTitle className="text-3xl font-[family-name:var(--font-display)] text-cream">
+                <DialogTitle className="text-3xl font-[family-name:var(--font-display)] text-foreground">
                   Saved Games
                 </DialogTitle>
               </div>
-              <div className="text-right font-mono text-[10px] text-gold/40 uppercase leading-tight"></div>
+              <div className="text-right font-mono text-[10px] text-primary/40 uppercase leading-tight"></div>
             </div>
           </div>
 
@@ -72,17 +72,17 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
             onValueChange={(v) => setActiveTab(v as "save" | "load")}
             className="w-full"
           >
-            <div className="px-6 py-2 bg-slate-900/30 border-b border-gold/10">
+            <div className="px-6 py-2 bg-slate-900/30 border-b border-primary/10">
               <TabsList className="h-10 bg-transparent gap-8 p-0">
                 <TabsTrigger
                   value="save"
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-gold data-[state=active]:text-gold text-cream-muted uppercase tracking-wide text-xs font-bold transition-all p-0 h-full"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary text-muted-foreground uppercase tracking-wide text-xs font-bold transition-all p-0 h-full"
                 >
                   Save
                 </TabsTrigger>
                 <TabsTrigger
                   value="load"
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-gold data-[state=active]:text-gold text-cream-muted uppercase tracking-wide text-xs font-bold transition-all p-0 h-full"
+                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary text-muted-foreground uppercase tracking-wide text-xs font-bold transition-all p-0 h-full"
                 >
                   Load
                 </TabsTrigger>
@@ -115,14 +115,14 @@ export function SaveLoadDialog({ open, onOpenChange, initialTab = "save" }: Save
             </div>
           </Tabs>
 
-          <div className="p-4 bg-slate-900/80 border-t border-gold/20 flex items-center justify-between">
+          <div className="p-4 bg-slate-900/80 border-t border-primary/20 flex items-center justify-between">
             <div className="flex items-center gap-2 text-[10px] font-mono text-success/60 uppercase">
               <ShieldCheck className="h-3 w-3" />
             </div>
             <Button
               variant="ghost"
               onClick={() => onOpenChange(false)}
-              className="text-gold/60 hover:text-gold hover:bg-gold/5 font-mono text-xs uppercase tracking-wide"
+              className="text-primary/60 hover:text-primary hover:bg-primary/5 font-mono text-xs uppercase tracking-wide"
             >
               Close
             </Button>

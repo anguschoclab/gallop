@@ -38,7 +38,7 @@ export function RaceFilterPanel({
       <section className="space-y-4">
         <div className="flex items-center gap-2 mb-2 px-1">
           <Filter className="h-3.5 w-3.5 text-success/60" />
-          <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+          <h2 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
             Race Filters
           </h2>
         </div>
@@ -52,7 +52,7 @@ export function RaceFilterPanel({
                 Race Name
               </label>
               <div className="relative">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream/20" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground/20" />
                 <Input
                   id={searchId}
                   placeholder="Search races..."
@@ -125,7 +125,7 @@ export function RaceFilterPanel({
                     className={`px-3 py-1.5 text-[9px] font-black uppercase tracking-wide text-left transition-all border-l-2 ${
                       owned === o
                         ? "bg-white/5 border-success text-success"
-                        : "border-transparent text-cream/20 hover:text-cream/40"
+                        : "border-transparent text-foreground/20 hover:text-foreground/40"
                     }`}
                   >
                     {o === "all" ? "All Races" : o === "owned" ? "My Entries" : "Other Races"}
@@ -137,7 +137,7 @@ export function RaceFilterPanel({
             <Button
               variant="ghost"
               size="sm"
-              className="w-full h-8 text-[9px] font-black uppercase tracking-wide text-cream/10 hover:text-cream/30 border border-dashed border-white/5 mt-2"
+              className="w-full h-8 text-[9px] font-black uppercase tracking-wide text-foreground/10 hover:text-foreground/30 border border-dashed border-white/5 mt-2"
               onClick={onReset}
             >
               Reset Filters

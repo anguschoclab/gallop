@@ -194,16 +194,16 @@ function PortfolioPage() {
             <Briefcase className="h-3.5 w-3.5" />
             Holdings
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)]">
             Portfolio
           </h1>
-          <p className="text-cream-muted font-[family-name:var(--font-body)]">
+          <p className="text-muted-foreground font-[family-name:var(--font-body)]">
             Cash, bloodstock, syndicate stakes and prestige for every stable in the world
           </p>
         </div>
         <div>
           <Link to="/syndicate-stakes">
-            <Button size="sm" variant="outline" className="border-white/10 text-cream">
+            <Button size="sm" variant="outline" className="border-white/10 text-foreground">
               <Sparkles className="h-3.5 w-3.5 mr-1 text-purple-400" />
               Syndicate Stakes
             </Button>
@@ -251,7 +251,7 @@ function PortfolioPage() {
           <Card className="border-white/5 bg-slate-900/40">
             <CardContent className="p-4 flex flex-wrap items-center gap-3">
               <div className="relative min-w-[200px] flex-1">
-                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream-muted" />
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
                 <Input
                   value={q}
                   onChange={(e) => setSearch({ q: e.target.value, page: 1 })}
@@ -289,7 +289,7 @@ function PortfolioPage() {
 
           <Card className="border-white/5 bg-slate-900/40">
             <CardContent className="p-3 flex flex-wrap items-center gap-3">
-              <label className="flex items-center gap-2 text-xs text-cream cursor-pointer">
+              <label className="flex items-center gap-2 text-xs text-foreground cursor-pointer">
                 <input
                   type="checkbox"
                   checked={allPageSelected}
@@ -299,7 +299,7 @@ function PortfolioPage() {
                 />
                 Select page
               </label>
-              <span className="text-xs text-cream-muted" aria-live="polite">
+              <span className="text-xs text-muted-foreground" aria-live="polite">
                 {compare.ids.length}/{MAX_COMPARE} selected for comparison
               </span>
               <div className="ml-auto flex items-center gap-2">
@@ -308,7 +308,7 @@ function PortfolioPage() {
                     variant="ghost"
                     size="sm"
                     onClick={() => compare.clear()}
-                    className="text-cream-muted"
+                    className="text-muted-foreground"
                   >
                     Clear
                   </Button>
@@ -318,7 +318,7 @@ function PortfolioPage() {
                     size="sm"
                     variant="outline"
                     disabled={compare.ids.length === 0}
-                    className="border-white/10 text-cream"
+                    className="border-white/10 text-foreground"
                   >
                     Compare selected
                   </Button>
@@ -332,10 +332,10 @@ function PortfolioPage() {
               <div className="flex items-center gap-3">
                 <Sparkles className="h-4 w-4 text-primary" />
                 <div>
-                  <Label htmlFor="auto-syndicate" className="text-cream">
+                  <Label htmlFor="auto-syndicate" className="text-foreground">
                     Auto-syndicate my top horses
                   </Label>
-                  <p className="text-xs text-cream-muted">
+                  <p className="text-xs text-muted-foreground">
                     Each day, open syndicates on your best Grade 1 winners and sell spare shares
                     while keeping control.
                   </p>
@@ -369,7 +369,7 @@ function PortfolioPage() {
           <PortfolioTable rows={paged} sortKey={sortKey} sortDir={sortDir} onSort={handleSort} />
 
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-xs text-cream-muted" aria-live="polite">
+            <p className="text-xs text-muted-foreground" aria-live="polite">
               Showing {(safePage - 1) * PAGE_SIZE + 1}–
               {Math.min(safePage * PAGE_SIZE, sorted.length)} of {sorted.length} stables
             </p>
@@ -379,11 +379,11 @@ function PortfolioPage() {
                 size="sm"
                 disabled={safePage <= 1}
                 onClick={() => setSearch({ page: safePage - 1 })}
-                className="border-white/10 text-cream"
+                className="border-white/10 text-foreground"
               >
                 Previous
               </Button>
-              <span className="text-xs tabular-nums text-cream-muted">
+              <span className="text-xs tabular-nums text-muted-foreground">
                 Page {safePage} of {pageCount}
               </span>
               <Button
@@ -391,7 +391,7 @@ function PortfolioPage() {
                 size="sm"
                 disabled={safePage >= pageCount}
                 onClick={() => setSearch({ page: safePage + 1 })}
-                className="border-white/10 text-cream"
+                className="border-white/10 text-foreground"
               >
                 Next
               </Button>

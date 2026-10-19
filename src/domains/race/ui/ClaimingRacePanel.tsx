@@ -60,7 +60,7 @@ export function ClaimingRacePanel({
 
   return (
     <>
-      <div className="ml-4 mt-1 mb-1 p-3 rounded-b-lg border border-t-0 border-gold-muted/50 bg-t900 space-y-2">
+      <div className="ml-4 mt-1 mb-1 p-3 rounded-b-lg border border-t-0 border-border/50 bg-surface space-y-2">
         <p className="text-xs font-semibold uppercase tracking-wide text-warning flex items-center gap-1">
           <AlertTriangle className="h-3 w-3" />
           Claiming Race Entries — {formatCurrency(price)}
@@ -88,12 +88,12 @@ export function ClaimingRacePanel({
             return (
               <div
                 key={entry.horseId}
-                className="flex items-center justify-between py-1 border-b border-gold-muted/20 last:border-0"
+                className="flex items-center justify-between py-1 border-b border-border/20 last:border-0"
               >
                 <Link
                   to="/stable/$horseId"
                   params={{ horseId: entry.horseId }}
-                  className="text-sm text-cream font-medium hover:underline hover:text-gold"
+                  className="text-sm text-foreground font-medium hover:underline hover:text-primary"
                 >
                   {entryHorse?.name ?? entry.horseId}
                   {isOwned && <span className="ml-2 text-xs text-success">(your horse)</span>}

@@ -58,7 +58,7 @@ export function FinancialDistressIndicator({ distress }: FinancialDistressIndica
       </CardHeader>
       <CardContent className="p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
+          <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40">
             Distress Level
           </span>
           <Badge
@@ -75,7 +75,7 @@ export function FinancialDistressIndicator({ distress }: FinancialDistressIndica
           </Badge>
         </div>
         <div className="flex items-center justify-between">
-          <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
+          <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40">
             Days of Cash
           </span>
           <span className={cn("font-mono text-xs font-bold", config.color)}>
@@ -84,13 +84,13 @@ export function FinancialDistressIndicator({ distress }: FinancialDistressIndica
         </div>
         {distress.recommendedActions.length > 0 && (
           <div className="pt-2 border-t border-white/5 space-y-1">
-            <div className="text-[9px] font-black uppercase tracking-wide text-cream/30">
+            <div className="text-[9px] font-black uppercase tracking-wide text-foreground/30">
               Recommended Actions
             </div>
             {distress.recommendedActions.map((action) => (
               <div
                 key={action}
-                className="text-[10px] font-mono text-cream/60 uppercase tracking-wide"
+                className="text-[10px] font-mono text-foreground/60 uppercase tracking-wide"
               >
                 {formatAction(action)}
               </div>

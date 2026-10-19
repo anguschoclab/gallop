@@ -84,8 +84,8 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
 
   if (wins.length === 0) {
     return (
-      <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-cream-muted">
-        <Trophy className="mx-auto mb-2 h-8 w-8 text-cream-muted/40" />
+      <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-muted-foreground">
+        <Trophy className="mx-auto mb-2 h-8 w-8 text-muted-foreground/40" />
         You haven&apos;t won any races yet. Enter your horses in races to earn prize money and track
         your victories here.
       </div>
@@ -119,7 +119,7 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
 
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-md border border-white/5 bg-slate-900/40 p-3">
         <div className="relative min-w-[200px] flex-1">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream-muted" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
           <Input
             value={q}
             onChange={(e) => setQ(e.target.value)}
@@ -137,7 +137,7 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
       </div>
 
       {sorted.length === 0 ? (
-        <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-cream-muted">
+        <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-muted-foreground">
           No race wins match your filter criteria.
         </div>
       ) : (
@@ -153,8 +153,8 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
                   <button
                     type="button"
                     onClick={() => handleSort("day")}
-                    className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-cream ${
-                      sortKey === "day" ? "text-cream" : "text-cream-muted"
+                    className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-foreground ${
+                      sortKey === "day" ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >
                     Day
@@ -178,8 +178,8 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
                   <button
                     type="button"
                     onClick={() => handleSort("raceName")}
-                    className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-cream ${
-                      sortKey === "raceName" ? "text-cream" : "text-cream-muted"
+                    className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-foreground ${
+                      sortKey === "raceName" ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >
                     Race
@@ -203,8 +203,8 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
                   <button
                     type="button"
                     onClick={() => handleSort("horseName")}
-                    className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-cream ${
-                      sortKey === "horseName" ? "text-cream" : "text-cream-muted"
+                    className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-foreground ${
+                      sortKey === "horseName" ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >
                     Horse
@@ -226,8 +226,8 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
                   <button
                     type="button"
                     onClick={() => handleSort("beyer")}
-                    className={`inline-flex items-center justify-end w-full gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-cream ${
-                      sortKey === "beyer" ? "text-cream" : "text-cream-muted"
+                    className={`inline-flex items-center justify-end w-full gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-foreground ${
+                      sortKey === "beyer" ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >
                     Beyer
@@ -248,8 +248,8 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
                   <button
                     type="button"
                     onClick={() => handleSort("payout")}
-                    className={`inline-flex items-center justify-end w-full gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-cream ${
-                      sortKey === "payout" ? "text-cream" : "text-cream-muted"
+                    className={`inline-flex items-center justify-end w-full gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-foreground ${
+                      sortKey === "payout" ? "text-foreground" : "text-muted-foreground"
                     }`}
                   >
                     Payout
@@ -271,7 +271,7 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
 
                 return (
                   <TableRow key={r.id} className="border-white/5">
-                    <TableCell className="text-cream-muted tabular-nums">{r.day}</TableCell>
+                    <TableCell className="text-muted-foreground tabular-nums">{r.day}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {r.raceId ? (
@@ -279,12 +279,12 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
                             to="/race/$raceId"
                             params={{ raceId: r.raceId }}
                             search={{ phase: "review" }}
-                            className="font-medium text-cream hover:text-primary underline-offset-2 hover:underline"
+                            className="font-medium text-foreground hover:text-primary underline-offset-2 hover:underline"
                           >
                             {r.raceName}
                           </Link>
                         ) : (
-                          <span className="font-medium text-cream">{r.raceName}</span>
+                          <span className="font-medium text-foreground">{r.raceName}</span>
                         )}
                         {r.grade && (
                           <Badge
@@ -297,7 +297,7 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
                         {!r.grade && r.raceClass && (
                           <Badge
                             variant="outline"
-                            className="px-1.5 py-0 text-[10px] text-cream-muted border-white/10"
+                            className="px-1.5 py-0 text-[10px] text-muted-foreground border-white/10"
                           >
                             {r.raceClass}
                           </Badge>
@@ -308,17 +308,17 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
                       <Link
                         to="/stable/$horseId"
                         params={{ horseId: r.horseId }}
-                        className="font-medium text-cream hover:text-primary underline-offset-2 hover:underline"
+                        className="font-medium text-foreground hover:text-primary underline-offset-2 hover:underline"
                       >
                         {r.horseName}
                       </Link>
                       {r.jockeyName && (
-                        <div className="text-[10px] text-cream-muted">
+                        <div className="text-[10px] text-muted-foreground">
                           {r.jockeyId ? (
                             <Link
                               to="/jockey/$jockeyId"
                               params={{ jockeyId: r.jockeyId }}
-                              className="hover:text-cream underline-offset-2 hover:underline"
+                              className="hover:text-foreground underline-offset-2 hover:underline"
                             >
                               Ridden by {r.jockeyName}
                             </Link>
@@ -328,8 +328,10 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
                         </div>
                       )}
                     </TableCell>
-                    <TableCell className="text-xs text-cream-muted">{conditions || "—"}</TableCell>
-                    <TableCell className="text-right tabular-nums text-xs text-cream">
+                    <TableCell className="text-xs text-muted-foreground">
+                      {conditions || "—"}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums text-xs text-foreground">
                       {r.beyer !== undefined ? r.beyer : "—"}
                     </TableCell>
                     <TableCell className="text-right tabular-nums">
@@ -337,7 +339,7 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
                         {formatCurrency(r.payout)}
                       </span>
                       {r.purse && r.purse > r.payout && (
-                        <span className="block text-[10px] text-cream-muted">
+                        <span className="block text-[10px] text-muted-foreground">
                           of {formatCurrency(r.purse)} purse
                         </span>
                       )}

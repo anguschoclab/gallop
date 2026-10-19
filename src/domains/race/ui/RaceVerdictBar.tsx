@@ -23,8 +23,8 @@ export function RaceVerdictBar({ verdict }: RaceVerdictBarProps) {
   const remainingFactors = verdict.factors.filter((f) => !shownKeys.has(f.key));
 
   return (
-    <div className="mt-3 ml-10 p-3 bg-gold/5 border border-gold/10 space-y-2">
-      <div className="text-[11px] font-black uppercase text-gold/80 tracking-tight">
+    <div className="mt-3 ml-10 p-3 bg-primary/5 border border-primary/10 space-y-2">
+      <div className="text-[11px] font-black uppercase text-primary/80 tracking-tight">
         {verdict.headline}
       </div>
 
@@ -39,7 +39,7 @@ export function RaceVerdictBar({ verdict }: RaceVerdictBarProps) {
                   ? "text-success/70"
                   : f.impact === "negative"
                     ? "text-red-400/70"
-                    : "text-cream/40",
+                    : "text-foreground/40",
               )}
             >
               {f.label} {f.impact === "positive" ? "▲" : f.impact === "negative" ? "▼" : "◆"}
@@ -50,7 +50,7 @@ export function RaceVerdictBar({ verdict }: RaceVerdictBarProps) {
 
       {remainingFactors.length > 0 && (
         <Collapsible>
-          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-wide text-gold/40 hover:text-gold transition-colors">
+          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-wide text-primary/40 hover:text-primary transition-colors">
             <ChevronDown className="h-2.5 w-2.5" />
             Full Analysis
           </CollapsibleTrigger>
@@ -65,7 +65,7 @@ export function RaceVerdictBar({ verdict }: RaceVerdictBarProps) {
                       ? "text-success/70"
                       : f.impact === "negative"
                         ? "text-red-400/70"
-                        : "text-cream/40",
+                        : "text-foreground/40",
                   )}
                 >
                   {f.label} {f.impact === "positive" ? "▲" : f.impact === "negative" ? "▼" : "◆"}
@@ -85,7 +85,7 @@ export function RaceVerdictBar({ verdict }: RaceVerdictBarProps) {
                             ? "text-success/50"
                             : f.impact === "negative"
                               ? "text-red-400/50"
-                              : "text-cream/30",
+                              : "text-foreground/30",
                         )}
                       >
                         {f.note}
@@ -99,10 +99,10 @@ export function RaceVerdictBar({ verdict }: RaceVerdictBarProps) {
       )}
 
       {verdict.conditionsNote && (
-        <div className="text-[9px] font-mono text-cream/30">{verdict.conditionsNote}</div>
+        <div className="text-[9px] font-mono text-foreground/30">{verdict.conditionsNote}</div>
       )}
       {verdict.fieldComparison && (
-        <div className="text-[9px] font-mono text-cream/30">{verdict.fieldComparison}</div>
+        <div className="text-[9px] font-mono text-foreground/30">{verdict.fieldComparison}</div>
       )}
     </div>
   );

@@ -56,28 +56,36 @@ export function NpcStableCampaignTab({ stableId, pageData }: NpcStableCampaignTa
     <div className="space-y-6">
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
         <CardHeader className="bg-black/20 border-b border-white/5">
-          <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+          <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
             Campaign head-to-head{startDay > 0 ? ` — since day ${startDay}` : " — career"}
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-white/5 text-left text-[9px] font-black uppercase tracking-wide text-cream/40">
-                <th className="px-4 py-2">Metric</th>
-                <th className="px-4 py-2 text-right">{stable.name}</th>
-                <th className="px-4 py-2 text-right">Your stable</th>
-                <th className="px-4 py-2 text-right">Δ</th>
+              <tr className="border-b border-white/5 text-left text-[9px] font-black uppercase tracking-wide text-foreground/40">
+                <th scope="col" className="px-4 py-2">
+                  Metric
+                </th>
+                <th scope="col" className="px-4 py-2 text-right">
+                  {stable.name}
+                </th>
+                <th scope="col" className="px-4 py-2 text-right">
+                  Your stable
+                </th>
+                <th scope="col" className="px-4 py-2 text-right">
+                  Δ
+                </th>
               </tr>
             </thead>
             <tbody>
               {rows.map((r) => (
                 <tr key={r.label} className="border-b border-white/5 last:border-0">
-                  <td className="px-4 py-2 text-xs text-cream/60">{r.label}</td>
-                  <td className="px-4 py-2 text-right font-mono tabular-nums text-cream">
+                  <td className="px-4 py-2 text-xs text-foreground/60">{r.label}</td>
+                  <td className="px-4 py-2 text-right font-mono tabular-nums text-foreground">
                     {fmt(r.label, r.rival)}
                   </td>
-                  <td className="px-4 py-2 text-right font-mono tabular-nums text-cream">
+                  <td className="px-4 py-2 text-right font-mono tabular-nums text-foreground">
                     {fmt(r.label, r.player)}
                   </td>
                   <td
@@ -86,7 +94,7 @@ export function NpcStableCampaignTab({ stableId, pageData }: NpcStableCampaignTa
                         ? "text-emerald-400"
                         : r.delta < 0
                           ? "text-rose-400"
-                          : "text-cream/40"
+                          : "text-foreground/40"
                     }`}
                   >
                     {r.delta > 0 ? "+" : r.delta < 0 ? "−" : "—"}
@@ -99,15 +107,15 @@ export function NpcStableCampaignTab({ stableId, pageData }: NpcStableCampaignTa
         </CardContent>
       </Card>
 
-      <p className="text-[10px] font-mono uppercase tracking-wide text-cream/30">
+      <p className="text-[10px] font-mono uppercase tracking-wide text-foreground/30">
         Δ is your stable minus {stable.name}: green means you are ahead. Rival class wins are
         counted over the same window as your campaign
         {goals ? "" : " — set campaign goals to compare over a fixed window"}.
       </p>
       {!goals && (
-        <p className="text-xs text-cream/40">
+        <p className="text-xs text-foreground/40">
           No saved campaign — showing whole-career totals.{" "}
-          <Link to="/stableCampaign" className="text-gold hover:underline">
+          <Link to="/stableCampaign" className="text-primary hover:underline">
             Set campaign goals
           </Link>{" "}
           to compare over a fixed window.

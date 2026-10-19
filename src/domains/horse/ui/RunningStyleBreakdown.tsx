@@ -79,8 +79,8 @@ export function RunningStyleBreakdown({ horse }: RunningStyleBreakdownProps) {
     <section className="space-y-4 pt-4">
       <div className="flex items-center justify-between gap-2 mb-2 flex-wrap">
         <div className="flex items-center gap-2">
-          <Gauge className="h-4 w-4 text-gold" />
-          <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+          <Gauge className="h-4 w-4 text-primary" />
+          <h2 className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
             Running Style Breakdown
           </h2>
         </div>
@@ -102,19 +102,19 @@ export function RunningStyleBreakdown({ horse }: RunningStyleBreakdownProps) {
               size="sm"
               variant="ghost"
               onClick={() => setCompareId(null)}
-              className="h-7 px-2 text-[10px] font-black uppercase tracking-wide text-cream/50 hover:text-gold"
+              className="h-7 px-2 text-[10px] font-black uppercase tracking-wide text-foreground/50 hover:text-primary"
             >
               <X className="h-3 w-3 mr-1" /> Exit Compare
             </Button>
           ) : (
             <Select onValueChange={(v) => setCompareId(v)}>
-              <SelectTrigger className="h-7 w-[180px] text-[10px] font-mono uppercase border-gold/30 bg-black/20 text-gold-muted">
+              <SelectTrigger className="h-7 w-[180px] text-[10px] font-mono uppercase border-primary/30 bg-black/20 text-primary/30">
                 <GitCompare className="h-3 w-3 mr-1" />
                 <SelectValue placeholder="Compare with…" />
               </SelectTrigger>
               <SelectContent>
                 {compareOptions.length === 0 ? (
-                  <div className="px-2 py-1.5 text-[10px] text-cream/40 uppercase">
+                  <div className="px-2 py-1.5 text-[10px] text-foreground/40 uppercase">
                     No other horses with race data.
                   </div>
                 ) : (
@@ -173,11 +173,11 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
     stats: getHorseTendencyStats(horse, { distance: b, surface }),
   }));
 
-  const accentLine = accent === "gold" ? "border-l-gold" : "border-l-info";
-  const accentText = accent === "gold" ? "text-gold" : "text-info";
-  const accentBright = accent === "gold" ? "text-gold-bright" : "text-info";
-  const accentBar = accent === "gold" ? "bg-gold-bright/80" : "bg-info/80";
-  const accentBarSoft = accent === "gold" ? "bg-gold/30" : "bg-info/30";
+  const accentLine = accent === "gold" ? "border-l-primary" : "border-l-info";
+  const accentText = accent === "gold" ? "text-primary" : "text-info";
+  const accentBright = accent === "gold" ? "text-accent-bright" : "text-info";
+  const accentBar = accent === "gold" ? "bg-accent-bright/80" : "bg-info/80";
+  const accentBarSoft = accent === "gold" ? "bg-primary/30" : "bg-info/30";
 
   return (
     <Card
@@ -185,10 +185,10 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
     >
       <CardContent className="p-5 space-y-5">
         <div className="flex items-baseline justify-between gap-2">
-          <div className="text-[10px] font-black uppercase text-cream/30 tracking-wide">
+          <div className="text-[10px] font-black uppercase text-foreground/30 tracking-wide">
             {horse.name}
           </div>
-          <div className="text-[9px] font-mono uppercase text-cream/30 tabular-nums">
+          <div className="text-[9px] font-mono uppercase text-foreground/30 tabular-nums">
             {races.length} race{races.length === 1 ? "" : "s"} ·{" "}
             {surface === "any" ? "all surfaces" : surface}
           </div>
@@ -197,19 +197,19 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
         {/* Declared vs observed */}
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-black/30 border border-white/5 p-3">
-            <div className="text-[9px] font-black uppercase text-cream/30 tracking-wide mb-1">
+            <div className="text-[9px] font-black uppercase text-foreground/30 tracking-wide mb-1">
               Declared
             </div>
             <div className="flex items-baseline gap-2">
               <span className={cn("font-mono text-xl font-black", accentText)}>{declared}</span>
-              <span className="text-[10px] font-bold text-cream/80 uppercase tracking-wide">
+              <span className="text-[10px] font-bold text-foreground/80 uppercase tracking-wide">
                 {declaredMeta.label}
               </span>
             </div>
-            <p className="text-[10px] text-cream/40 mt-1 leading-snug">{declaredMeta.blurb}</p>
+            <p className="text-[10px] text-foreground/40 mt-1 leading-snug">{declaredMeta.blurb}</p>
           </div>
           <div className="bg-black/30 border border-white/5 p-3">
-            <div className="text-[9px] font-black uppercase text-cream/30 tracking-wide mb-1">
+            <div className="text-[9px] font-black uppercase text-foreground/30 tracking-wide mb-1">
               Observed
             </div>
             {observed ? (
@@ -217,10 +217,10 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
                 {observed}
               </div>
             ) : (
-              <div className="text-[10px] font-mono text-cream/30 uppercase">No pace data</div>
+              <div className="text-[10px] font-mono text-foreground/30 uppercase">No pace data</div>
             )}
             {overall.dominant && (
-              <p className="text-[10px] text-cream/40 mt-1 leading-snug">
+              <p className="text-[10px] text-foreground/40 mt-1 leading-snug">
                 Dominant tendency: {TENDENCY_LABEL[overall.dominant]} (
                 {(overall.dominantShare * 100).toFixed(0)}%)
               </p>
@@ -231,7 +231,7 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
         {/* Overall tendency bars */}
         {overall.sample > 0 && (
           <div className="space-y-2">
-            <div className="text-[10px] font-black uppercase text-cream/30 tracking-wide">
+            <div className="text-[10px] font-black uppercase text-foreground/30 tracking-wide">
               First-Call Tendency · Win Rate by Position
             </div>
             {TENDENCY_ORDER.map((t) => {
@@ -241,7 +241,7 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
               const winPct = runs ? (wins / runs) * 100 : 0;
               return (
                 <div key={t} className="flex items-center gap-2">
-                  <div className="w-16 text-[10px] font-bold uppercase tracking-wider text-cream/60">
+                  <div className="w-16 text-[10px] font-bold uppercase tracking-wider text-foreground/60">
                     {TENDENCY_LABEL[t].split("-")[0]}
                   </div>
                   <div className="flex-1 h-5 bg-black/40 border border-white/5 relative overflow-hidden">
@@ -253,11 +253,11 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
                       className={cn("absolute inset-y-0 left-0", accentBar)}
                       style={{ width: `${sharePct * (winPct / 100)}%` }}
                     />
-                    <div className="absolute inset-0 flex items-center justify-between px-2 text-[9px] font-mono text-cream/80 tabular-nums">
+                    <div className="absolute inset-0 flex items-center justify-between px-2 text-[9px] font-mono text-foreground/80 tabular-nums">
                       <span>
                         {runs} · {sharePct.toFixed(0)}%
                       </span>
-                      <span className={winPct > 0 ? accentBright : "text-cream/30"}>
+                      <span className={winPct > 0 ? accentBright : "text-foreground/30"}>
                         {wins}W · {winPct.toFixed(0)}%
                       </span>
                     </div>
@@ -270,19 +270,31 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
 
         {/* Trip drilldown */}
         <div className="space-y-2 pt-3 border-t border-white/5">
-          <div className="text-[10px] font-black uppercase text-cream/30 tracking-wide">
+          <div className="text-[10px] font-black uppercase text-foreground/30 tracking-wide">
             By Trip · Sample Size & Tendency
           </div>
           <div className="overflow-hidden border border-white/5">
             <table className="w-full text-[10px] font-mono">
-              <thead className="bg-black/40 text-cream/30 uppercase tracking-widest">
+              <thead className="bg-black/40 text-foreground/30 uppercase tracking-widest">
                 <tr>
-                  <th className="text-left px-2 py-1.5 font-black">Trip</th>
-                  <th className="text-center px-2 py-1.5 font-black">N</th>
-                  <th className="text-center px-2 py-1.5 font-black">Front</th>
-                  <th className="text-center px-2 py-1.5 font-black">Mid</th>
-                  <th className="text-center px-2 py-1.5 font-black">Off</th>
-                  <th className="text-right px-2 py-1.5 font-black">W · ITM</th>
+                  <th scope="col" className="text-left px-2 py-1.5 font-black">
+                    Trip
+                  </th>
+                  <th scope="col" className="text-center px-2 py-1.5 font-black">
+                    N
+                  </th>
+                  <th scope="col" className="text-center px-2 py-1.5 font-black">
+                    Front
+                  </th>
+                  <th scope="col" className="text-center px-2 py-1.5 font-black">
+                    Mid
+                  </th>
+                  <th scope="col" className="text-center px-2 py-1.5 font-black">
+                    Off
+                  </th>
+                  <th scope="col" className="text-right px-2 py-1.5 font-black">
+                    W · ITM
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -292,10 +304,10 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
                   const dominant = stats.dominant;
                   return (
                     <tr key={bucket} className={stats.sample === 0 ? "opacity-40" : ""}>
-                      <td className="px-2 py-1.5 text-cream/80 uppercase">
+                      <td className="px-2 py-1.5 text-foreground/80 uppercase">
                         {BUCKET_LABEL[bucket]}
                       </td>
-                      <td className="px-2 py-1.5 text-center text-cream/60 tabular-nums">
+                      <td className="px-2 py-1.5 text-center text-foreground/60 tabular-nums">
                         {stats.sample}
                       </td>
                       {TENDENCY_ORDER.map((t) => (
@@ -305,13 +317,13 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
                             "px-2 py-1.5 text-center tabular-nums",
                             dominant === t && stats.sample > 0
                               ? accentBright + " font-black"
-                              : "text-cream/50",
+                              : "text-foreground/50",
                           )}
                         >
                           {stats.counts[t]}
                         </td>
                       ))}
-                      <td className="px-2 py-1.5 text-right tabular-nums text-cream/60">
+                      <td className="px-2 py-1.5 text-right tabular-nums text-foreground/60">
                         {totalWins}W · {totalItm}I
                       </td>
                     </tr>
@@ -320,7 +332,7 @@ function HorsePaceCard({ horse, surface, accent }: HorsePaceCardProps) {
               </tbody>
             </table>
           </div>
-          <p className="text-[9px] font-mono text-cream/30 uppercase tracking-wide">
+          <p className="text-[9px] font-mono text-foreground/30 uppercase tracking-wide">
             Sample sizes &lt; 3 should be read with caution.
           </p>
         </div>

@@ -24,7 +24,7 @@ export function FilterSelect({ label, value, options, onChange }: FilterSelectPr
       </label>
       <select
         id={id}
-        className="w-full h-9 bg-slate-950/60 border border-white/5 text-[10px] font-bold uppercase rounded-none tracking-wide text-cream px-2"
+        className="w-full h-9 bg-slate-950/60 border border-white/5 text-[10px] font-bold uppercase rounded-none tracking-wide text-foreground px-2"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       >

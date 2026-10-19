@@ -170,7 +170,7 @@ export function AwardCeremony({ isOpen, onClose, ceremonies, onComplete }: Award
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       <span className="truncate">{award.horseName}</span>
                       <span>•</span>
-                      <span className="text-gold font-semibold">{award.points} pts</span>
+                      <span className="text-primary font-semibold">{award.points} pts</span>
                     </div>
                   </div>
                   {award.isHistoric && <Star className="w-4 h-4 text-fame fill-fame" />}

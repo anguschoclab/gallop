@@ -134,8 +134,8 @@ export function PaceGraph({ splits, runners, distance, className }: PaceGraphPro
               />
               <Tooltip
                 contentStyle={{
-                  background: "rgba(2, 6, 23, 0.95)",
-                  border: "1px solid rgba(255,255,255,0.1)",
+                  background: "var(--card)",
+                  border: "1px solid color-mix(in oklab, white 10%, transparent)",
                   borderRadius: 0,
                   fontSize: 11,
                   fontFamily: "var(--font-mono)",

@@ -56,7 +56,7 @@ export function RaceControlBar({
   return (
     <div className="relative z-10 p-4 flex items-center justify-between border-b border-white/10 bg-broadcast-marquee backdrop-blur-sm">
       <div>
-        <h1 className="text-xl font-bold text-cream flex items-center gap-2">
+        <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
           {race.name}
           {race.graded?.requiresInvitation && (
             <span className="inline-block bg-amber-600 text-white text-[10px] font-bold uppercase px-1.5 py-0.5 rounded">

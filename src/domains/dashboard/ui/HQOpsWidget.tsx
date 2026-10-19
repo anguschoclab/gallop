@@ -24,13 +24,13 @@ export function HQOpsWidget() {
   const recentReputationEvents = reputation?.events?.slice(-3).reverse() ?? [];
 
   return (
-    <Card className="border-gold-muted flex flex-col bg-slate-900/20 group hover:border-gold/40 transition-all duration-300">
+    <Card className="border-border flex flex-col bg-slate-900/20 group hover:border-primary/40 transition-all duration-300">
       <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-white/5 bg-white/[0.02]">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded bg-gold/10 flex items-center justify-center border border-gold/20 group-hover:bg-gold/20 transition-colors">
-            <Building2 className="h-4 w-4 text-gold" />
+          <div className="h-8 w-8 rounded bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20 transition-colors">
+            <Building2 className="h-4 w-4 text-primary" />
           </div>
-          <CardTitle className="text-xl font-bold font-[family-name:var(--font-display)] text-cream tracking-tight">
+          <CardTitle className="text-xl font-bold font-[family-name:var(--font-display)] text-foreground tracking-tight">
             H.Q. Ops
           </CardTitle>
         </div>
@@ -42,7 +42,7 @@ export function HQOpsWidget() {
                   size="icon"
                   variant="ghost"
                   aria-label="Go to H.Q. Ops financial report"
-                  className="h-8 w-8 text-cream-muted hover:text-gold group-hover:translate-x-0.5 transition-transform"
+                  className="h-8 w-8 text-muted-foreground hover:text-primary group-hover:translate-x-0.5 transition-transform"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -54,7 +54,7 @@ export function HQOpsWidget() {
       </CardHeader>
       <CardContent className="pt-4 flex-1 flex flex-col justify-between space-y-4">
         <div className="space-y-3">
-          <div className="text-[10px] font-bold uppercase tracking-wide text-gold-muted/60 mb-2 px-1 flex justify-between">
+          <div className="text-[10px] font-bold uppercase tracking-wide text-primary/20 mb-2 px-1 flex justify-between">
             <span>Facility Health</span>
             <span>Rank</span>
           </div>
@@ -67,10 +67,10 @@ export function HQOpsWidget() {
                     key={key}
                     className="flex items-center justify-between text-xs bg-black/20 p-2 border border-white/5 rounded hover:bg-black/40 transition-colors"
                   >
-                    <span className="text-cream/80 font-medium">
+                    <span className="text-foreground/80 font-medium">
                       {FACILITY_NAMES[key as FacilityType] ?? key}
                     </span>
-                    <Badge className="bg-gold-subtle text-gold text-[10px] h-4 font-bold border border-gold/20">
+                    <Badge className="bg-accent text-primary text-[10px] h-4 font-bold border border-primary/20">
                       LVL{" "}
                       {f?.level === "elite"
                         ? 4
@@ -85,7 +85,7 @@ export function HQOpsWidget() {
           </div>
 
           <div className="pt-2">
-            <div className="text-[10px] font-bold uppercase tracking-wide text-gold-muted/60 mb-2 px-1">
+            <div className="text-[10px] font-bold uppercase tracking-wide text-primary/20 mb-2 px-1">
               Reputation Ledger
             </div>
             <div className="space-y-1.5">
@@ -94,7 +94,7 @@ export function HQOpsWidget() {
                   key={i}
                   className="flex justify-between items-center text-[11px] border-b border-white/5 pb-1.5 last:border-0"
                 >
-                  <span className="text-cream/60 truncate max-w-[140px] italic">
+                  <span className="text-foreground/60 truncate max-w-[140px] italic">
                     &ldquo;
                     <NewsContent text={e.description} />
                     &rdquo;
@@ -117,7 +117,7 @@ export function HQOpsWidget() {
           <Link to="/facilities" className="w-full">
             <Button
               variant="outline"
-              className="w-full h-8 text-[10px] uppercase font-bold tracking-wide border-gold/20 hover:bg-gold/10 text-gold-muted"
+              className="w-full h-8 text-[10px] uppercase font-bold tracking-wide border-primary/20 hover:bg-primary/10 text-primary/30"
             >
               Manage Horses
             </Button>
@@ -125,7 +125,7 @@ export function HQOpsWidget() {
           <Link to="/settings" className="w-full">
             <Button
               variant="outline"
-              className="w-full h-8 text-[10px] uppercase font-bold tracking-wide border-white/10 hover:bg-white/5 text-cream/40"
+              className="w-full h-8 text-[10px] uppercase font-bold tracking-wide border-white/10 hover:bg-white/5 text-foreground/40"
             >
               Configuration
             </Button>

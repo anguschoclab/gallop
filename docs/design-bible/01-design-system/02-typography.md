@@ -90,7 +90,7 @@ See [02-voice/02-ux-copy-patterns.md](../02-voice/02-ux-copy-patterns.md) for th
 
 ## Examples in the wild
 
-- Cash in the sidebar — [AppShell.tsx:67](../../../src/components/AppShell.tsx) — `text-lg font-bold tabular-nums`.
+- Cash in the sidebar — [AppShell.tsx:67](../../../src/domains/shell/ui/AppShell.tsx) — `text-lg font-bold tabular-nums`.
 - Race name on live race — [race.$raceId.tsx:214](../../../src/routes/race.$raceId.tsx) — `text-xl font-bold`.
 - Beyer badge — [race.$raceId.tsx:288](../../../src/routes/race.$raceId.tsx) — `text-[10px] tabular-nums`.
 

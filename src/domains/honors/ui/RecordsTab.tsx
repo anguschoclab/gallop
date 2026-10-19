@@ -33,10 +33,10 @@ export function RecordsTab() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-cream font-[family-name:var(--font-display)]">
+        <h2 className="text-2xl font-bold text-foreground font-[family-name:var(--font-display)]">
           Lifetime Records
         </h2>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">
+        <p className="text-muted-foreground font-[family-name:var(--font-body)]">
           The Hall of Champions — All-Time Rankings
         </p>
       </div>
@@ -44,51 +44,51 @@ export function RecordsTab() {
       <Card className="border-white/5 bg-slate-900/40">
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-3">
-            <RefreshCw className="h-4 w-4 text-gold/60" />
-            <h3 className="text-xs font-black uppercase tracking-wide text-cream/40">
+            <RefreshCw className="h-4 w-4 text-primary/60" />
+            <h3 className="text-xs font-black uppercase tracking-wide text-foreground/40">
               Data Freshness
             </h3>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-xs">
             <div>
-              <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
+              <span className="text-foreground/40 uppercase text-[10px] font-black tracking-wide">
                 Leaderboards
               </span>
-              <p className="text-cream font-mono">
+              <p className="text-foreground font-mono">
                 {leaderboardsUpdatedDay !== undefined ? `Day ${leaderboardsUpdatedDay}` : "—"}
               </p>
             </div>
             <div>
-              <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
+              <span className="text-foreground/40 uppercase text-[10px] font-black tracking-wide">
                 Top Ten Rank
               </span>
-              <p className="text-cream font-mono">
+              <p className="text-foreground font-mono">
                 {lastTopTenRank !== undefined ? `#${lastTopTenRank}` : "—"}
               </p>
             </div>
             <div>
-              <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
+              <span className="text-foreground/40 uppercase text-[10px] font-black tracking-wide">
                 Industry Earnings
               </span>
-              <p className="text-cream font-mono">
+              <p className="text-foreground font-mono">
                 {industryEarningsUpdatedDay !== undefined
                   ? `Day ${industryEarningsUpdatedDay}`
                   : "—"}
               </p>
             </div>
             <div>
-              <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
+              <span className="text-foreground/40 uppercase text-[10px] font-black tracking-wide">
                 Founder Update
               </span>
-              <p className="text-cream font-mono">
+              <p className="text-foreground font-mono">
                 {lastFounderUpdateDay !== undefined ? `Day ${lastFounderUpdateDay}` : "—"}
               </p>
             </div>
             <div>
-              <span className="text-cream/40 uppercase text-[10px] font-black tracking-wide">
+              <span className="text-foreground/40 uppercase text-[10px] font-black tracking-wide">
                 Last Awards
               </span>
-              <p className="text-cream font-mono">
+              <p className="text-foreground font-mono">
                 {lastAwardYear !== undefined ? `Year ${lastAwardYear}` : "—"}
               </p>
             </div>
@@ -115,7 +115,7 @@ export function RecordsTab() {
         <TabsContent value="earnings">
           <LeaderboardTable
             leaderboard={horseLeaderboards.earnings}
-            icon={<DollarSign className="text-gold" />}
+            icon={<DollarSign className="text-primary" />}
             valueFormatter={(val: number) => formatCurrency(val)}
           />
         </TabsContent>

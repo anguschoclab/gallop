@@ -19,17 +19,17 @@ function BroodmaresPage() {
         <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">
           Broodmare Management
         </h1>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">
+        <p className="text-muted-foreground font-[family-name:var(--font-body)]">
           {sortedBroodmares.length} pregnant mare{sortedBroodmares.length !== 1 ? "s" : ""}
         </p>
       </div>
 
       {sortedBroodmares.length === 0 ? (
-        <Card className="border-gold-muted">
+        <Card className="border-border">
           <CardContent className="p-12 text-center">
-            <Heart className="h-12 w-12 mx-auto text-cream-muted mb-4" />
+            <Heart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
             <h3 className="text-lg font-semibold mb-2">No pregnant mares</h3>
-            <p className="text-sm text-cream-muted mb-4">
+            <p className="text-sm text-muted-foreground mb-4">
               Visit the Breeding Shed to mate your horses and start building your broodmare band.
             </p>
             <Link to="/breeding">
@@ -40,7 +40,7 @@ function BroodmaresPage() {
       ) : (
         <div className="space-y-4">
           {sortedBroodmares.map(({ pregnancy, dam, sire, daysRemaining, maternityLog }) => (
-            <Card key={pregnancy.id} className="border-l-4 border-l-gold border-gold-muted">
+            <Card key={pregnancy.id} className="border-l-4 border-l-primary border-border">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
@@ -48,7 +48,7 @@ function BroodmaresPage() {
                       <CardTitle className="text-lg font-[family-name:var(--font-display)]">
                         {dam?.name}
                       </CardTitle>
-                      <Badge className="bg-t700 text-cream">Age {dam?.age}</Badge>
+                      <Badge className="bg-muted text-foreground">Age {dam?.age}</Badge>
                       {daysRemaining <= 0 && (
                         <Badge variant="default" className="bg-destructive">
                           Due Now
@@ -60,15 +60,15 @@ function BroodmaresPage() {
                         </Badge>
                       )}
                     </div>
-                    <p className="text-sm text-cream-muted">
+                    <p className="text-sm text-muted-foreground">
                       Bred to {pregnancy.sireName} · Conceived Day {pregnancy.conceivedDay}
                     </p>
-                    <p className="text-xs text-cream-muted mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Dam: {Math.round(dam?.distanceAptitude ?? 0)}m · Sire:{" "}
                       {Math.round(sire?.distanceAptitude ?? 0)}m
                     </p>
                     {dam?.blueHenStatus && (
-                      <p className="text-xs text-cream-muted mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         {dam.blueHenStatus.stakesWinnersProduced} stakes winners ·{" "}
                         {dam.blueHenStatus.group1WinnersProduced} G1 winners · Score:{" "}
                         {dam.blueHenStatus.blueHenScore}
@@ -120,13 +120,13 @@ function BroodmaresPage() {
                   <Button
                     size="sm"
                     variant="outline"
-                    className="h-7 text-xs border-gold-muted/50 hover:bg-t700 text-cream-muted hover:text-cream transition-colors"
+                    className="h-7 text-xs border-border/50 hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <FileText className="h-3.5 w-3.5 mr-1.5" />
                     <span>Maternity Log</span>
                     <Badge
                       variant="secondary"
-                      className="ml-2 h-4 px-1 text-[10px] bg-t800 text-gold-muted border-gold-muted/30"
+                      className="ml-2 h-4 px-1 text-[10px] bg-card text-primary/30 border-border/30"
                     >
                       {maternityLog.length}
                     </Badge>
@@ -134,24 +134,24 @@ function BroodmaresPage() {
                 </div>
 
                 {maternityLog.length > 0 && (
-                  <div className="mt-3 p-3 bg-t700 rounded-md border border-gold-muted">
-                    <p className="text-xs font-medium text-cream-muted mb-2">
+                  <div className="mt-3 p-3 bg-muted rounded-md border border-border">
+                    <p className="text-xs font-medium text-muted-foreground mb-2">
                       Recent maternity activity:
                     </p>
                     <div className="space-y-1">
                       {maternityLog.slice(0, 3).map((entry, idx) => (
                         <div
                           key={idx}
-                          className="text-xs py-1 border-b border-gold-muted last:border-0 flex gap-2"
+                          className="text-xs py-1 border-b border-border last:border-0 flex gap-2"
                         >
-                          <span className="text-cream-muted tabular-nums shrink-0">
+                          <span className="text-muted-foreground tabular-nums shrink-0">
                             D{entry.day}
                           </span>
-                          <span className="text-cream">{entry.text}</span>
+                          <span className="text-foreground">{entry.text}</span>
                         </div>
                       ))}
                       {maternityLog.length > 3 && (
-                        <p className="text-xs text-cream-muted">
+                        <p className="text-xs text-muted-foreground">
                           +{maternityLog.length - 3} more entries
                         </p>
                       )}

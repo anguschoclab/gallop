@@ -49,12 +49,12 @@ Per visible region of the screen:
 
 ## Component map
 
-| Component   | File                           | Why this one   |
-| ----------- | ------------------------------ | -------------- |
-| `Button`    | `src/components/ui/button.tsx` | Primary CTA    |
-| `Card`      | `src/components/ui/card.tsx`   | Container      |
-| `HorseCard` | `src/components/HorseCard.tsx` | Each horse row |
-| ...         |                                |                |
+| Component   | File                                     | Why this one   |
+| ----------- | ---------------------------------------- | -------------- |
+| `Button`    | `src/shared/ui/button.tsx`               | Primary CTA    |
+| `Card`      | `src/shared/ui/card.tsx`                 | Container      |
+| `HorseCard` | `src/domains/horse/ui/HorseCardFull.tsx` | Each horse row |
+| ...         |                                          |                |
 
 If a new component is introduced, link to its [03-components/](../03-components/) entry (or, if not yet documented, a stub). New components don't ship without a doc.
 

@@ -21,8 +21,8 @@ function FoalDevelopmentPage() {
   if (!horse) {
     return (
       <div className="p-12 text-center space-y-4">
-        <h1 className="text-4xl font-black text-cream">Horse not found</h1>
-        <Link to="/stable" className="text-gold uppercase font-mono text-xs tracking-wide">
+        <h1 className="text-4xl font-black text-foreground">Horse not found</h1>
+        <Link to="/stable" className="text-primary uppercase font-mono text-xs tracking-wide">
           Back to Stable
         </Link>
       </div>
@@ -61,28 +61,30 @@ function FoalDevelopmentPage() {
         <Link
           to="/stable/$horseId"
           params={{ horseId: horse.id }}
-          className="text-gold uppercase font-mono text-[10px] tracking-wide hover:underline"
+          className="text-primary uppercase font-mono text-[10px] tracking-wide hover:underline"
         >
           View Horse
         </Link>
       </div>
 
       <header className="space-y-1">
-        <div className="flex items-center gap-2 text-gold uppercase font-mono text-[10px] tracking-wide">
+        <div className="flex items-center gap-2 text-primary uppercase font-mono text-[10px] tracking-wide">
           <Sprout className="h-3 w-3" /> Pre-Race Preparation
         </div>
-        <h1 className="text-4xl font-black text-cream">{horse.name}</h1>
+        <h1 className="text-4xl font-black text-foreground">{horse.name}</h1>
         {isReadOnly && (
-          <p className="text-xs text-cream/50 font-mono uppercase tracking-wide">Read-only view</p>
+          <p className="text-xs text-foreground/50 font-mono uppercase tracking-wide">
+            Read-only view
+          </p>
         )}
       </header>
 
       {activeMilestone ? (
         <>
-          <Card className="bg-slate-900/40 border-white/5 border-l-4 border-l-gold">
+          <Card className="bg-slate-900/40 border-white/5 border-l-4 border-l-primary">
             <CardHeader className="border-b border-white/5">
-              <CardTitle className="text-cream text-2xl">{activeMilestone.label}</CardTitle>
-              <p className="text-xs text-cream/50 font-mono">
+              <CardTitle className="text-foreground text-2xl">{activeMilestone.label}</CardTitle>
+              <p className="text-xs text-foreground/50 font-mono">
                 Triggered day {activeMilestone.triggerDay}. Choose an approach — the outcome is
                 permanent.
               </p>
@@ -92,12 +94,12 @@ function FoalDevelopmentPage() {
                 <button
                   key={choice.key}
                   onClick={() => handleChoose(choice)}
-                  className="text-left p-5 bg-slate-950/60 border border-white/10 hover:border-gold rounded transition-colors space-y-3 focus:outline-none focus:ring-2 focus:ring-gold"
+                  className="text-left p-5 bg-slate-950/60 border border-white/10 hover:border-primary rounded transition-colors space-y-3 focus:outline-none focus:ring-2 focus:ring-primary"
                 >
-                  <div className="font-black text-cream uppercase tracking-wide text-sm">
+                  <div className="font-black text-foreground uppercase tracking-wide text-sm">
                     {choice.label}
                   </div>
-                  <p className="text-xs text-cream/70 leading-relaxed">{choice.description}</p>
+                  <p className="text-xs text-foreground/70 leading-relaxed">{choice.description}</p>
                   <ul className="space-y-0.5 text-[11px] font-mono">
                     {Object.entries(choice.delta).map(([stat, delta]) => {
                       const d = delta as number;
@@ -116,7 +118,7 @@ function FoalDevelopmentPage() {
           </Card>
 
           {pending.length > 1 && (
-            <p className="text-xs text-cream/50 font-mono">
+            <p className="text-xs text-foreground/50 font-mono">
               {pending.length - 1} additional milestone
               {pending.length - 1 === 1 ? "" : "s"} awaiting a future day.
             </p>
@@ -126,13 +128,13 @@ function FoalDevelopmentPage() {
         <Card className="bg-slate-900/40 border-white/5">
           <CardContent className="p-8 space-y-4">
             {isFullyResolved ? (
-              <div className="flex items-center gap-3 text-cream">
+              <div className="flex items-center gap-3 text-foreground">
                 <CheckCircle2 className="h-5 w-5 text-emerald-400" />
                 <span>All development milestones are complete. This horse is ready to train.</span>
               </div>
             ) : upcoming ? (
-              <div className="flex items-center gap-3 text-cream">
-                <Clock className="h-5 w-5 text-cream/60" />
+              <div className="flex items-center gap-3 text-foreground">
+                <Clock className="h-5 w-5 text-foreground/60" />
                 <span>
                   Next milestone <span className="font-semibold">{upcoming.label}</span> unlocks on
                   day {upcoming.triggerDay} (in {upcoming.triggerDay - currentDay} day
@@ -147,7 +149,7 @@ function FoalDevelopmentPage() {
       {resolved.length > 0 && (
         <Card className="bg-slate-900/40 border-white/5">
           <CardHeader className="border-b border-white/5 pb-2">
-            <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+            <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
               Resolved Milestones
             </CardTitle>
           </CardHeader>
@@ -157,12 +159,12 @@ function FoalDevelopmentPage() {
               return (
                 <div key={m.key} className="flex items-center gap-2 text-sm">
                   <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                  <span className="text-cream/40 uppercase tracking-wide font-mono text-[10px]">
+                  <span className="text-foreground/40 uppercase tracking-wide font-mono text-[10px]">
                     {m.label}
                   </span>
-                  <span className="text-cream">{chosen?.label ?? m.resolvedChoiceKey}</span>
+                  <span className="text-foreground">{chosen?.label ?? m.resolvedChoiceKey}</span>
                   {m.resolvedOnDay !== undefined && (
-                    <span className="ml-auto text-cream/40 font-mono text-[10px]">
+                    <span className="ml-auto text-foreground/40 font-mono text-[10px]">
                       day {m.resolvedOnDay}
                     </span>
                   )}

@@ -41,7 +41,7 @@ export function TrackHistoryTimeline({
 
       {events.length === 0 ? (
         <Card className="border-white/5 bg-slate-900/40">
-          <CardContent className="p-6 text-sm text-cream-muted flex items-center gap-2">
+          <CardContent className="p-6 text-sm text-muted-foreground flex items-center gap-2">
             <History className="h-4 w-4" />
             No history recorded yet.
           </CardContent>
@@ -52,7 +52,7 @@ export function TrackHistoryTimeline({
             <li key={e.id} className="relative">
               <span
                 className={`absolute -left-[21px] top-2 h-2 w-2 rounded-full ${
-                  e.kind === "g1" ? "bg-gold" : "bg-primary"
+                  e.kind === "g1" ? "bg-primary" : "bg-primary"
                 }`}
                 aria-hidden
               />
@@ -61,13 +61,15 @@ export function TrackHistoryTimeline({
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
                       {e.kind === "g1" ? (
-                        <Trophy className="h-3.5 w-3.5 text-gold shrink-0" />
+                        <Trophy className="h-3.5 w-3.5 text-primary shrink-0" />
                       ) : (
                         <Timer className="h-3.5 w-3.5 text-primary shrink-0" />
                       )}
-                      <span className="truncate text-sm font-medium text-cream">{e.title}</span>
+                      <span className="truncate text-sm font-medium text-foreground">
+                        {e.title}
+                      </span>
                     </div>
-                    <p className="text-[11px] text-cream-muted truncate">{e.detail}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{e.detail}</p>
                   </div>
                   <Badge variant="outline" className="text-[10px] shrink-0">
                     Yr {e.year} · D{e.day}

@@ -32,7 +32,7 @@ describe("FacilityCategory — tooltip wrapping", () => {
       <FacilityCategory
         category="Physical Optimization"
         icon={Dumbbell}
-        color="text-gold"
+        color="text-primary"
         types={["main_track", "starting_gates", "treadmill", "exercise_pool"]}
         facilities={makeFacilities()}
         cash={100000}
@@ -48,7 +48,7 @@ describe("FacilityCategory — tooltip wrapping", () => {
       <FacilityCategory
         category="Physical Optimization"
         icon={Dumbbell}
-        color="text-gold"
+        color="text-primary"
         types={["main_track"]}
         facilities={makeFacilities()}
         cash={100000}
@@ -64,7 +64,7 @@ describe("FacilityCategory — tooltip wrapping", () => {
       <FacilityCategory
         category="Physical Optimization"
         icon={Dumbbell}
-        color="text-gold"
+        color="text-primary"
         types={["main_track"]}
         facilities={makeFacilities()}
         cash={100000}
@@ -80,7 +80,7 @@ describe("FacilityCategory — tooltip wrapping", () => {
       <FacilityCategory
         category="Physical Optimization"
         icon={Dumbbell}
-        color="text-gold"
+        color="text-primary"
         types={["main_track"]}
         facilities={makeFacilities()}
         cash={100000}

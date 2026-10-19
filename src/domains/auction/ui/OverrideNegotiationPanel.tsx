@@ -51,7 +51,7 @@ export function OverrideNegotiationPanel({
 
   return (
     <div className="space-y-2 border-t border-border/60 pt-3">
-      <p className="text-xs font-medium text-cream-muted">Override options</p>
+      <p className="text-xs font-medium text-muted-foreground">Override options</p>
 
       <div className="flex flex-wrap gap-2">
         {/* Premium Buyout */}

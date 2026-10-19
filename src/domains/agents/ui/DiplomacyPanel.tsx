@@ -27,7 +27,7 @@ export function DiplomacyPanel({ stableId }: DiplomacyPanelProps) {
       {relationships && Object.keys(relationships).length > 0 && (
         <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-blue-400">
           <CardHeader>
-            <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+            <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
               Diplomacy
             </CardTitle>
           </CardHeader>
@@ -40,7 +40,7 @@ export function DiplomacyPanel({ stableId }: DiplomacyPanelProps) {
               return (
                 <div key={otherId} className="bg-black/40 border border-white/5 p-3 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-cream">
+                    <span className="text-xs font-bold text-foreground">
                       {otherStable?.name || otherId}
                     </span>
                     {rel.allianceType && (
@@ -59,7 +59,7 @@ export function DiplomacyPanel({ stableId }: DiplomacyPanelProps) {
                     )}
                   </div>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                    <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                       Trust
                     </span>
                     <span
@@ -106,7 +106,7 @@ function CartelSection({
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-amber-400">
       <CardHeader>
-        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
           Active Cartels
         </CardTitle>
       </CardHeader>
@@ -114,7 +114,7 @@ function CartelSection({
         {relevantCartels.map((cartel) => (
           <div key={cartel.id} className="bg-black/40 border border-white/5 p-3 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-cream uppercase tracking-wider">
+              <span className="text-xs font-bold text-foreground uppercase tracking-wider">
                 {cartel.type} Cartel
               </span>
               <Badge className="text-[9px] font-black uppercase tracking-wider border bg-amber-400/10 text-amber-400 border-amber-400/30">
@@ -125,7 +125,7 @@ function CartelSection({
               {cartel.memberStableIds.map((id) => (
                 <span
                   key={id}
-                  className="text-[10px] text-cream/60 font-mono bg-white/5 px-2 py-0.5 rounded"
+                  className="text-[10px] text-foreground/60 font-mono bg-white/5 px-2 py-0.5 rounded"
                 >
                   {npcStablesMap.get(id)?.name || id}
                 </span>
@@ -149,18 +149,18 @@ const EVENT_COLORS: Record<DiplomaticEvent["type"], string> = {
 function DiplomacyTimeline({ events }: { events: DiplomaticEvent[] }) {
   return (
     <div className="space-y-1 pt-1 border-t border-white/5">
-      <div className="text-[8px] font-black uppercase tracking-wide text-cream/30">
+      <div className="text-[8px] font-black uppercase tracking-wide text-foreground/30">
         Recent Events
       </div>
       {events.map((event, i) => (
         <div key={i} className="flex items-start gap-1.5 text-[10px]">
-          <span className="font-mono text-cream/30 tabular-nums shrink-0">D{event.day}</span>
+          <span className="font-mono text-foreground/30 tabular-nums shrink-0">D{event.day}</span>
           <span
             className={cn("font-mono uppercase tracking-wider shrink-0", EVENT_COLORS[event.type])}
           >
             {event.type.replace(/_/g, " ")}
           </span>
-          <span className="text-cream/40 truncate">{event.description}</span>
+          <span className="text-foreground/40 truncate">{event.description}</span>
         </div>
       ))}
     </div>

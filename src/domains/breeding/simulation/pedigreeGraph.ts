@@ -295,7 +295,7 @@ export function buildPedigreeGraph(
     source: e.source,
     target: e.target,
     type: "smoothstep" as const,
-    style: { stroke: "rgba(255,255,255,0.15)" },
+    style: { stroke: "color-mix(in oklab, white 15%, transparent)" },
   }));
 
   return { nodes: flowNodes, edges: flowEdges, coi, coiLabel };

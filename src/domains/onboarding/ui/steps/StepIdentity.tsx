@@ -68,10 +68,10 @@ function FieldWithRandom({
   return (
     <div className="space-y-2">
       <div className="flex items-baseline justify-between">
-        <label htmlFor={inputId} className="text-sm font-medium text-cream cursor-help">
+        <label htmlFor={inputId} className="text-sm font-medium text-foreground cursor-help">
           {label}
         </label>
-        <span className="text-xs text-cream-muted tabular-nums">
+        <span className="text-xs text-muted-foreground tabular-nums">
           {value.length}/{maxLength}
         </span>
       </div>

@@ -1,18 +1,14 @@
-import { createFileRoute, lazyRouteComponent, Link } from "@tanstack/react-router";
+import { createFileRoute, lazyRouteComponent } from "@tanstack/react-router";
+import { ErrorState } from "@/shared/ui/common/ErrorState";
 
 export const Route = createFileRoute("/stable/$horseId")({
   component: lazyRouteComponent(() => import("@/domains/horse/ui/pages/HorseDetail")),
   notFoundComponent: () => (
-    <div className="p-12 text-center space-y-4">
-      <h1 className="text-4xl font-black font-[family-name:var(--font-display)] text-cream">
-        Horse not found
-      </h1>
-      <Link
-        to="/stable"
-        className="text-gold uppercase font-mono text-xs tracking-wide hover:underline"
-      >
-        Back to Stable
-      </Link>
-    </div>
+    <ErrorState
+      title="Horse not found"
+      description="This horse may have been sold or is no longer in the registry."
+      backTo="/stable"
+      backLabel="Back to Stable"
+    />
   ),
 });

@@ -104,10 +104,10 @@ function RaceAdvisorPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)]">
           Race Advisor
         </h1>
-        <p className="text-cream-muted">
+        <p className="text-muted-foreground">
           Your race analyst studies the horse, the trip, the going and the rivals, then suggests a
           plan.
         </p>
@@ -152,15 +152,15 @@ function RaceAdvisorPage() {
           ? "★ marks races that serve your Stable Campaign goals; they're listed first."
           : "Set goals on the "}
         {!goals && (
-          <Link to="/stableCampaign" className="text-gold hover:underline">
+          <Link to="/stableCampaign" className="text-primary hover:underline">
             Stable Campaign
           </Link>
         )}
         {!goals && " page to have the advisor prioritise them."}
       </p>
       {race && bonusOf(race).reasons.length > 0 && (
-        <div className="rounded-md border border-gold/40 p-3 text-sm">
-          <div className="mb-1 text-xs uppercase text-gold">Campaign goal fit</div>
+        <div className="rounded-md border border-primary/40 p-3 text-sm">
+          <div className="mb-1 text-xs uppercase text-primary">Campaign goal fit</div>
           <ul className="list-disc pl-5">
             {bonusOf(race).reasons.map((t) => (
               <li key={t}>{t}</li>
@@ -170,7 +170,7 @@ function RaceAdvisorPage() {
       )}
 
       {myHorses.length === 0 && (
-        <p className="text-cream-muted">You have no active racehorses yet.</p>
+        <p className="text-muted-foreground">You have no active racehorses yet.</p>
       )}
 
       {advice && horse && race && (

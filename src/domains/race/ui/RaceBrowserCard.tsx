@@ -14,13 +14,13 @@ export function RaceBrowserCard({ race }: Props) {
 
   return (
     <Card
-      className={`border-l-4 border-gold-muted ${hasOwnedEntry ? "border-l-success bg-success/10" : "border-l-gold"}`}
+      className={`border-l-4 border-border ${hasOwnedEntry ? "border-l-success bg-success/10" : "border-l-primary"}`}
     >
       <CardContent className="p-5">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <h3 className="text-lg font-bold text-cream font-[family-name:var(--font-display)]">
+              <h3 className="text-lg font-bold text-foreground font-[family-name:var(--font-display)]">
                 {race.name}
               </h3>
               {race.graded?.grade && (
@@ -28,17 +28,17 @@ export function RaceBrowserCard({ race }: Props) {
                   {race.graded.grade}
                 </Badge>
               )}
-              {hasOwnedEntry && <Badge className="bg-success text-t950">Entered</Badge>}
+              {hasOwnedEntry && <Badge className="bg-success text-background">Entered</Badge>}
             </div>
-            <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-cream-muted">
-              <span className="font-medium text-cream">{race.graded?.track}</span>
+            <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+              <span className="font-medium text-foreground">{race.graded?.track}</span>
               <span>· {race.graded && getCountry(race.graded.track)}</span>
               <span>· {race.distance}m</span>
               <span>· {race.graded?.surface}</span>
               <span>· Day {race.day}</span>
               <span>
                 · Purse{" "}
-                <span className="font-medium text-cream">${race.purse.toLocaleString()}</span>
+                <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span>
               </span>
             </div>
             <div className="mt-2">
@@ -51,28 +51,28 @@ export function RaceBrowserCard({ race }: Props) {
               <div className="flex flex-wrap gap-1.5 mt-2">
                 {race.restrictions.minAge !== undefined &&
                   race.restrictions.maxAge !== undefined && (
-                    <Badge variant="outline" className="text-xs border-gold-muted text-cream">
+                    <Badge variant="outline" className="text-xs border-border text-foreground">
                       {race.restrictions.minAge}-{race.restrictions.maxAge}YO
                     </Badge>
                   )}
                 {race.restrictions.minAge !== undefined &&
                   race.restrictions.maxAge === undefined && (
-                    <Badge variant="outline" className="text-xs border-gold-muted text-cream">
+                    <Badge variant="outline" className="text-xs border-border text-foreground">
                       {race.restrictions.minAge}+ YO
                     </Badge>
                   )}
                 {race.restrictions.gender && (
-                  <Badge variant="outline" className="text-xs border-gold-muted text-cream">
+                  <Badge variant="outline" className="text-xs border-border text-foreground">
                     {race.restrictions.gender}
                   </Badge>
                 )}
                 {race.restrictions.minAgeNorthern !== undefined && (
-                  <Badge variant="outline" className="text-xs border-gold-muted text-cream">
+                  <Badge variant="outline" className="text-xs border-border text-foreground">
                     {race.restrictions.minAgeNorthern}+ YO (Northern)
                   </Badge>
                 )}
                 {race.restrictions.minAgeSouthern !== undefined && (
-                  <Badge variant="outline" className="text-xs border-gold-muted text-cream">
+                  <Badge variant="outline" className="text-xs border-border text-foreground">
                     {race.restrictions.minAgeSouthern}+ YO (Southern)
                   </Badge>
                 )}

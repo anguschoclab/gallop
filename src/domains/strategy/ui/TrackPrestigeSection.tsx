@@ -50,7 +50,7 @@ export function TrackPrestigeSection({ slots, getRace }: TrackPrestigeSectionPro
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <Building2 className="w-5 h-5 text-purple-400" />
-            <CardTitle className="text-lg font-black tracking-wide text-cream font-[family-name:var(--font-display)]">
+            <CardTitle className="text-lg font-black tracking-wide text-foreground font-[family-name:var(--font-display)]">
               Track Prestige Intelligence
             </CardTitle>
           </div>
@@ -64,20 +64,20 @@ export function TrackPrestigeSection({ slots, getRace }: TrackPrestigeSectionPro
         {/* Prestige Summary Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 rounded-xl bg-slate-950/50 border border-white/5 space-y-1">
-            <span className="text-xs text-cream-muted uppercase font-mono tracking-wider">
+            <span className="text-xs text-muted-foreground uppercase font-mono tracking-wider">
               Average Campaign Prestige
             </span>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-cream font-mono">{avgPrestige}</span>
-              <span className="text-xs text-cream-muted font-mono">/ 100</span>
+              <span className="text-3xl font-black text-foreground font-mono">{avgPrestige}</span>
+              <span className="text-xs text-muted-foreground font-mono">/ 100</span>
             </div>
-            <p className="text-[11px] text-cream-muted">
+            <p className="text-[11px] text-muted-foreground">
               Higher venue prestige scales national prominence.
             </p>
           </div>
 
           <div className="p-4 rounded-xl bg-slate-950/50 border border-white/5 space-y-1">
-            <span className="text-xs text-cream-muted uppercase font-mono tracking-wider">
+            <span className="text-xs text-muted-foreground uppercase font-mono tracking-wider">
               Fame & Valuation Boost
             </span>
             <div className="flex items-baseline gap-2">
@@ -88,22 +88,22 @@ export function TrackPrestigeSection({ slots, getRace }: TrackPrestigeSectionPro
                 <TrendingUp className="w-3 h-3" /> +{Math.round((avgPrestige / 100) * 20)}%
               </span>
             </div>
-            <p className="text-[11px] text-cream-muted">
+            <p className="text-[11px] text-muted-foreground">
               Prestige multiplier applied to career reputation.
             </p>
           </div>
 
           <div className="p-4 rounded-xl bg-slate-950/50 border border-white/5 space-y-1">
-            <span className="text-xs text-cream-muted uppercase font-mono tracking-wider">
+            <span className="text-xs text-muted-foreground uppercase font-mono tracking-wider">
               Venues Represented
             </span>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-gold font-mono">
+              <span className="text-3xl font-black text-primary font-mono">
                 {campaignTracks.length || 0}
               </span>
-              <span className="text-xs text-cream-muted font-mono">tracks planned</span>
+              <span className="text-xs text-muted-foreground font-mono">tracks planned</span>
             </div>
-            <p className="text-[11px] text-cream-muted">
+            <p className="text-[11px] text-muted-foreground">
               Diverse track exposure sharpens adaptability.
             </p>
           </div>
@@ -112,7 +112,7 @@ export function TrackPrestigeSection({ slots, getRace }: TrackPrestigeSectionPro
         {/* Track Venue List */}
         {campaignTracks.length > 0 && (
           <div className="space-y-2">
-            <div className="text-xs font-mono font-bold uppercase text-cream-muted tracking-wider">
+            <div className="text-xs font-mono font-bold uppercase text-muted-foreground tracking-wider">
               Planned Racecourse Venues
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
@@ -124,8 +124,8 @@ export function TrackPrestigeSection({ slots, getRace }: TrackPrestigeSectionPro
                   <div className="flex items-center gap-2">
                     <Landmark className="w-4 h-4 text-purple-400/80" />
                     <div>
-                      <div className="text-sm font-bold text-cream">{t.name}</div>
-                      <div className="text-[10px] text-cream-muted font-mono">
+                      <div className="text-sm font-bold text-foreground">{t.name}</div>
+                      <div className="text-[10px] text-muted-foreground font-mono">
                         Multiplier: ×{t.multiplier.toFixed(2)}
                       </div>
                     </div>

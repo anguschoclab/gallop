@@ -33,14 +33,14 @@ export function EligibleRaceList({
     return (
       <div className="rounded-lg border border-muted/40 p-8 text-center">
         <Search className="h-10 w-10 mx-auto mb-3 text-muted-foreground/40" />
-        <p className="font-medium text-cream">No eligible races in the next 30 days</p>
+        <p className="font-medium text-foreground">No eligible races in the next 30 days</p>
         {firstEligibleRace && onAdvanceToDay ? (
           <div className="mt-4 rounded-lg border border-success/20 bg-success/5 p-4">
-            <p className="text-sm text-cream/70">
+            <p className="text-sm text-foreground/70">
               First eligible race:{" "}
-              <span className="font-semibold text-cream">{firstEligibleRace.name}</span>
+              <span className="font-semibold text-foreground">{firstEligibleRace.name}</span>
             </p>
-            <p className="text-xs text-cream/50 mt-1">
+            <p className="text-xs text-foreground/50 mt-1">
               Day {firstEligibleRace.day} ({gameCalendarDate(firstEligibleRace.day)})
             </p>
             <Button
@@ -92,7 +92,7 @@ export function EligibleRaceList({
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-sm text-cream truncate">
+                    <span className="font-semibold text-sm text-foreground truncate">
                       {row.race.name}
                     </span>
                     {grade && (
@@ -104,19 +104,21 @@ export function EligibleRaceList({
                       </Badge>
                     )}
                   </div>
-                  <div className="mt-1 flex items-center gap-3 text-[11px] font-mono text-cream/50">
+                  <div className="mt-1 flex items-center gap-3 text-[11px] font-mono text-foreground/50">
                     <span>Day {row.race.day}</span>
                     <span>{row.race.distance}m</span>
                     {row.race.surface && <span>{row.race.surface}</span>}
-                    <span className="text-cream/40">Purse {formatCurrency(row.race.purse)}</span>
+                    <span className="text-foreground/40">
+                      Purse {formatCurrency(row.race.purse)}
+                    </span>
                   </div>
-                  <div className="mt-1.5 flex items-center gap-2 text-[10px] font-mono text-cream/40">
+                  <div className="mt-1.5 flex items-center gap-2 text-[10px] font-mono text-foreground/40">
                     <span>Entry {formatCurrency(row.entryFee)}</span>
                     <span>·</span>
                     <span>Jockey {formatCurrency(row.estimatedJockeyFee)}</span>
                     <span>·</span>
                     <span>Transport {formatCurrency(row.transportCost)}</span>
-                    <span className="text-cream/60 font-bold">
+                    <span className="text-foreground/60 font-bold">
                       = {formatCurrency(row.totalCost)}
                     </span>
                   </div>

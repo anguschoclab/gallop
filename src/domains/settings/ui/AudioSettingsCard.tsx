@@ -17,9 +17,9 @@ interface AudioSettingsCardProps {
 
 export function AudioSettingsCard({ settings, onUpdate }: AudioSettingsCardProps) {
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
+        <CardTitle className="text-base flex items-center gap-2 text-foreground font-[family-name:var(--font-display)]">
           <Volume2 className="h-4 w-4" />
           Audio
         </CardTitle>
@@ -28,7 +28,7 @@ export function AudioSettingsCard({ settings, onUpdate }: AudioSettingsCardProps
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="sound-effects">Sound Effects</Label>
-            <p className="text-xs text-cream-muted">UI sounds and game events</p>
+            <p className="text-xs text-muted-foreground">UI sounds and game events</p>
           </div>
           <Switch
             id="sound-effects"
@@ -40,7 +40,7 @@ export function AudioSettingsCard({ settings, onUpdate }: AudioSettingsCardProps
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="race-ambience">Race Ambience</Label>
-            <p className="text-xs text-cream-muted">Crowd and track atmosphere</p>
+            <p className="text-xs text-muted-foreground">Crowd and track atmosphere</p>
           </div>
           <Switch
             id="race-ambience"
@@ -52,7 +52,7 @@ export function AudioSettingsCard({ settings, onUpdate }: AudioSettingsCardProps
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label htmlFor="ui-sounds">UI Click Sounds</Label>
-            <p className="text-xs text-cream-muted">Button and interaction sounds</p>
+            <p className="text-xs text-muted-foreground">Button and interaction sounds</p>
           </div>
           <Switch
             id="ui-sounds"
@@ -61,7 +61,7 @@ export function AudioSettingsCard({ settings, onUpdate }: AudioSettingsCardProps
           />
         </div>
         <div className="pt-2">
-          <p className="text-xs text-cream-muted italic">
+          <p className="text-xs text-muted-foreground italic">
             Master volume and audio implementation coming in a future update.
           </p>
         </div>

@@ -24,11 +24,11 @@ export function HorseStatsRadar({ horse }: HorseStatsRadarProps) {
     <div className="h-[250px] w-full relative">
       <ResponsiveContainer width="100%" height="100%">
         <RadarChart cx="50%" cy="50%" outerRadius="70%" data={data}>
-          <PolarGrid stroke="rgba(212,175,55,0.2)" gridType="polygon" radialLines={true} />
+          <PolarGrid stroke="var(--border)" gridType="polygon" radialLines={true} />
           <PolarAngleAxis
             dataKey="stat"
             tick={{
-              fill: "rgba(245,245,220,0.6)",
+              fill: "var(--muted-foreground)",
               fontSize: 10,
               fontFamily: "monospace",
               fontWeight: "bold",
@@ -39,9 +39,9 @@ export function HorseStatsRadar({ horse }: HorseStatsRadarProps) {
           <Radar
             name="Stat Profile"
             dataKey="value"
-            stroke="var(--gold)" // Gold
+            stroke="var(--primary)" // Gold
             strokeWidth={2}
-            fill="var(--gold)"
+            fill="var(--primary)"
             fillOpacity={0.3}
             animationDuration={1000}
           />
@@ -49,7 +49,7 @@ export function HorseStatsRadar({ horse }: HorseStatsRadarProps) {
       </ResponsiveContainer>
 
       {/* Decorative center point */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-gold rounded-full shadow-[0_0_8px_rgba(212,175,55,0.8)]" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-primary rounded-full shadow-[0_0_8px_var(--primary)]" />
     </div>
   );
 }

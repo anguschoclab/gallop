@@ -26,7 +26,7 @@ describe("ImperialOutpostManager — tier label display", () => {
         },
       ],
     });
-    const badges = container.querySelectorAll(".bg-t700");
+    const badges = container.querySelectorAll(".bg-muted");
     badges.forEach((badge) => {
       const text = badge.textContent?.toLowerCase() ?? "";
       expect(text).not.toBe("basic");
@@ -58,7 +58,7 @@ describe("ImperialOutpostManager — tier label display", () => {
         },
       ],
     });
-    const badges = container.querySelectorAll(".bg-t700");
+    const badges = container.querySelectorAll(".bg-muted");
     const tierBadges = Array.from(badges).filter((b) => /Tier 0/i.test(b.textContent ?? ""));
     expect(tierBadges.length).toBeGreaterThanOrEqual(1);
   });

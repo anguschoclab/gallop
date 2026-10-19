@@ -22,21 +22,21 @@ function EpiloguePage() {
   if (!snapshot) {
     return (
       <div className="min-h-[60vh] flex items-center justify-center">
-        <p className="text-cream-muted">No run to memorialize yet.</p>
+        <p className="text-muted-foreground">No run to memorialize yet.</p>
       </div>
     );
   }
 
   return (
     <div className="max-w-3xl mx-auto py-16 px-6 space-y-10 animate-fade-in">
-      <header className="border-b border-gold/20 pb-6 text-center space-y-2">
-        <p className="text-[10px] uppercase tracking-wide text-gold-bright font-mono">
+      <header className="border-b border-primary/20 pb-6 text-center space-y-2">
+        <p className="text-[10px] uppercase tracking-wide text-accent-bright font-mono">
           Final Chapter
         </p>
-        <h1 className="text-5xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
+        <h1 className="text-5xl font-bold tracking-tighter text-foreground font-[family-name:var(--font-display)]">
           The Stable Falls Silent
         </h1>
-        <p className="text-cream-muted italic">{snapshot.causeOfDeath}</p>
+        <p className="text-muted-foreground italic">{snapshot.causeOfDeath}</p>
       </header>
 
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -47,10 +47,10 @@ function EpiloguePage() {
       </section>
 
       <section className="border border-white/5 rounded-lg bg-slate-950/60 p-6 space-y-3">
-        <h2 className="text-xs uppercase tracking-wide text-gold-bright font-mono">
+        <h2 className="text-xs uppercase tracking-wide text-accent-bright font-mono">
           Legacy epitaph
         </h2>
-        <p className="text-cream leading-relaxed">
+        <p className="text-foreground leading-relaxed">
           At day {snapshot.day.toLocaleString()}, the ledger read {formatCurrency(snapshot.cash)}.
           The horses were led away, the silks folded, the stalls swept clean. What remains is{" "}
           {snapshot.lifetimeEarnings > 0
@@ -65,11 +65,11 @@ function EpiloguePage() {
           <h2 className="text-xs uppercase tracking-wide text-red-300 font-mono">
             Final creditor action
           </h2>
-          <p className="text-cream leading-relaxed">
+          <p className="text-foreground leading-relaxed">
             The last horse creditors seized was{" "}
-            <span className="font-bold text-cream">{snapshot.lastSeizure.horseName}</span>, assessed
-            at {formatCurrency(snapshot.lastSeizure.assessedValue)} and sold at a distressed rate
-            for {formatCurrency(snapshot.lastSeizure.salePrice)}.
+            <span className="font-bold text-foreground">{snapshot.lastSeizure.horseName}</span>,
+            assessed at {formatCurrency(snapshot.lastSeizure.assessedValue)} and sold at a
+            distressed rate for {formatCurrency(snapshot.lastSeizure.salePrice)}.
           </p>
           <div className="grid grid-cols-3 gap-3 pt-2">
             <StatCell
@@ -90,13 +90,13 @@ function EpiloguePage() {
 
       {solvencyLog && solvencyLog.length > 0 && (
         <section className="border border-white/5 rounded-lg bg-slate-950/60 p-6 space-y-3">
-          <h2 className="text-xs uppercase tracking-wide text-gold-bright font-mono">
+          <h2 className="text-xs uppercase tracking-wide text-accent-bright font-mono">
             Solvency Audit Trail
           </h2>
           <div className="space-y-1 max-h-48 overflow-y-auto">
             {solvencyLog.slice(-10).map((entry, i) => (
               <div key={i} className="flex justify-between text-xs border-b border-white/5 pb-1">
-                <span className="text-cream-muted font-mono">
+                <span className="text-muted-foreground font-mono">
                   Day {entry.day} · {entry.kind}
                 </span>
                 <span
@@ -114,13 +114,13 @@ function EpiloguePage() {
       <footer className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
         <Link
           to="/start"
-          className="inline-flex items-center px-6 py-3 bg-gold text-slate-950 font-bold rounded uppercase tracking-wide text-xs hover:bg-gold-bright transition-colors"
+          className="inline-flex items-center px-6 py-3 bg-primary text-slate-950 font-bold rounded uppercase tracking-wide text-xs hover:bg-accent-bright transition-colors"
         >
           Begin a new stable
         </Link>
         <Link
           to="/hall-of-fame"
-          className="text-sm text-cream-muted underline underline-offset-4 hover:text-cream"
+          className="text-sm text-muted-foreground underline underline-offset-4 hover:text-foreground"
         >
           Visit the Hall of Fame
         </Link>
@@ -132,10 +132,10 @@ function EpiloguePage() {
 function StatCell({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="border border-white/5 bg-slate-950/40 p-4 text-center">
-      <div className="text-[9px] uppercase tracking-wide text-cream-muted/60 font-mono mb-1">
+      <div className="text-[9px] uppercase tracking-wide text-muted-foreground/60 font-mono mb-1">
         {label}
       </div>
-      <div className="text-xl font-bold text-cream font-mono tabular-nums">{value}</div>
+      <div className="text-xl font-bold text-foreground font-mono tabular-nums">{value}</div>
     </div>
   );
 }

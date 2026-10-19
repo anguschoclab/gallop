@@ -30,21 +30,21 @@ export function StallionsTab() {
 
   return (
     <Tabs defaultValue="roster" className="w-full">
-      <TabsList className="grid w-full grid-cols-2 max-w-md bg-t900/50">
+      <TabsList className="grid w-full grid-cols-2 max-w-md bg-surface/50">
         <TabsTrigger value="roster">Stallion Roster</TabsTrigger>
         <TabsTrigger value="manage">My Stallions ({myStallions.length})</TabsTrigger>
       </TabsList>
 
       <TabsContent value="roster" className="space-y-6 mt-6">
-        <Card className="border-gold-muted">
+        <Card className="border-border">
           <CardHeader>
-            <CardTitle className="text-cream font-[family-name:var(--font-display)]">
+            <CardTitle className="text-foreground font-[family-name:var(--font-display)]">
               Filters
             </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-cream-muted">Hemisphere</label>
+              <label className="text-xs text-muted-foreground">Hemisphere</label>
               <Select
                 value={hemisphere}
                 onValueChange={(v) => setHemisphere(v as Hemisphere | "all")}
@@ -60,7 +60,7 @@ export function StallionsTab() {
               </Select>
             </div>
             <div>
-              <label className="text-xs text-cream-muted">Your mare</label>
+              <label className="text-xs text-muted-foreground">Your mare</label>
               <Select value={selectedMareId} onValueChange={setSelectedMareId}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select a mare to book…" />
@@ -94,7 +94,7 @@ export function StallionsTab() {
             />
           ))}
           {filtered.length === 0 && (
-            <p className="text-sm text-cream-muted col-span-full">
+            <p className="text-sm text-muted-foreground col-span-full">
               No stallions are currently standing at stud in the selected hemisphere.
             </p>
           )}
@@ -116,7 +116,7 @@ export function StallionsTab() {
             />
           ))}
           {myStallions.length === 0 && (
-            <p className="text-sm text-cream-muted col-span-full">
+            <p className="text-sm text-muted-foreground col-span-full">
               You don't have any stallions at stud. Retire a colt or horse to stud from their stable
               page.
             </p>

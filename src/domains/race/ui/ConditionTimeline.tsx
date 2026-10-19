@@ -122,7 +122,7 @@ function ConditionTimeline({
       className={cn("rounded-lg border border-white/10 bg-black/30 px-3 py-2 space-y-2", className)}
     >
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
+        <span className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
           Condition timeline{horseName ? ` · ${horseName}` : ""}
         </span>
         <div className="flex items-center gap-2">
@@ -184,7 +184,7 @@ function ConditionTimeline({
                   type="button"
                   data-testid="condition-filter-all"
                   onClick={showAll}
-                  className="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-cream/70 hover:text-white transition-colors"
+                  className="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-foreground/70 hover:text-white transition-colors"
                 >
                   All
                 </button>
@@ -192,7 +192,7 @@ function ConditionTimeline({
                   type="button"
                   data-testid="condition-filter-none"
                   onClick={hideAll}
-                  className="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-cream/70 hover:text-white transition-colors"
+                  className="px-1.5 py-0.5 rounded bg-white/5 hover:bg-white/10 text-foreground/70 hover:text-white transition-colors"
                 >
                   None
                 </button>

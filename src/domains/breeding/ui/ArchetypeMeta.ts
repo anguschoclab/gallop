@@ -10,9 +10,9 @@ export const ARCHETYPE_META: Record<string, { color: string; emoji: string }> = 
   "triple-crown-usa": { color: "border-red-500 bg-red-900/20", emoji: "🏆" },
   "triple-crown-canada": { color: "border-red-400 bg-red-900/20", emoji: "🍁" },
   "triple-crown-uk-classics": { color: "border-rose-500 bg-rose-900/20", emoji: "👑" },
-  "triple-crown-specialist": { color: "border-gold-400 bg-amber-900/30", emoji: "🥇" },
+  "triple-crown-specialist": { color: "border-primary bg-amber-900/30", emoji: "🥇" },
 };
 
 export function archetypeMeta(id: string) {
-  return ARCHETYPE_META[id] ?? { color: "border-gold-muted", emoji: "🐎" };
+  return ARCHETYPE_META[id] ?? { color: "border-border", emoji: "🐎" };
 }

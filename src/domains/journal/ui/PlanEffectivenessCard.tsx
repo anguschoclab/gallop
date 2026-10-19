@@ -45,13 +45,27 @@ export function PlanEffectivenessCard({ journal }: { journal: StrategyJournalEnt
           <table className="w-full text-sm font-mono">
             <thead className="text-xs uppercase text-muted-foreground">
               <tr>
-                <th className="py-1 text-left">Plan</th>
-                <th className="text-right">Score</th>
-                <th className="text-right">Runs</th>
-                <th className="text-right">Win %</th>
-                <th className="text-right">Top 3 %</th>
-                <th className="text-right">Avg finish</th>
-                <th className="text-right">Prize money</th>
+                <th scope="col" className="py-1 text-left">
+                  Plan
+                </th>
+                <th scope="col" className="text-right">
+                  Score
+                </th>
+                <th scope="col" className="text-right">
+                  Runs
+                </th>
+                <th scope="col" className="text-right">
+                  Win %
+                </th>
+                <th scope="col" className="text-right">
+                  Top 3 %
+                </th>
+                <th scope="col" className="text-right">
+                  Avg finish
+                </th>
+                <th scope="col" className="text-right">
+                  Prize money
+                </th>
               </tr>
             </thead>
             <tbody>

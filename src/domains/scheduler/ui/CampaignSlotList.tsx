@@ -5,17 +5,17 @@ import { ChevronRight } from "lucide-react";
 import type { CampaignRaceSlot, Race } from "@/platform/game/types";
 
 const SLOT_STATUS_COLORS: Record<string, string> = {
-  planned: "bg-t700 text-cream",
-  entered: "bg-warning text-t950",
-  completed: "bg-success text-t950",
-  skipped: "bg-t600 text-cream-muted",
-  cancelled: "bg-destructive text-t950",
+  planned: "bg-muted text-foreground",
+  entered: "bg-warning text-background",
+  completed: "bg-success text-background",
+  skipped: "bg-surface-hover text-muted-foreground",
+  cancelled: "bg-destructive text-background",
 };
 
 function SlotStatusBadge({ status }: { status: string }) {
   return (
     <span
-      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${SLOT_STATUS_COLORS[status] ?? "bg-t700 text-cream-muted"}`}
+      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${SLOT_STATUS_COLORS[status] ?? "bg-muted text-muted-foreground"}`}
     >
       {status}
     </span>
@@ -30,7 +30,7 @@ interface CampaignSlotListProps {
 export function CampaignSlotList({ slots, getRace }: CampaignSlotListProps) {
   if (slots.length === 0) {
     return (
-      <p className="text-xs text-cream-muted italic">
+      <p className="text-xs text-muted-foreground italic">
         No upcoming slots — slots are refreshed every 7 days automatically.
       </p>
     );
@@ -38,7 +38,7 @@ export function CampaignSlotList({ slots, getRace }: CampaignSlotListProps) {
 
   return (
     <div className="space-y-1">
-      <p className="text-xs font-medium text-cream-muted uppercase tracking-wide mb-2">
+      <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
         Upcoming races
       </p>
       {slots.map((slot: CampaignRaceSlot, si: number) => {
@@ -46,16 +46,16 @@ export function CampaignSlotList({ slots, getRace }: CampaignSlotListProps) {
         return (
           <div
             key={si}
-            className="flex items-center justify-between py-1.5 px-3 rounded-md bg-t700 text-sm"
+            className="flex items-center justify-between py-1.5 px-3 rounded-md bg-muted text-sm"
           >
             <div className="flex items-center gap-3">
-              <span className="text-xs text-cream-muted tabular-nums w-20">
+              <span className="text-xs text-muted-foreground tabular-nums w-20">
                 {gameCalendarDate(slot.dayTarget)}
               </span>
               <span className="font-medium truncate max-w-[180px]">
                 {race?.name ?? slot.raceKey ?? "TBD"}
               </span>
-              <Badge variant="outline" className="text-xs capitalize border-gold-muted text-cream">
+              <Badge variant="outline" className="text-xs capitalize border-border text-foreground">
                 {slot.role}
               </Badge>
             </div>
@@ -65,7 +65,7 @@ export function CampaignSlotList({ slots, getRace }: CampaignSlotListProps) {
                 <Link
                   to="/race/$raceId"
                   params={{ raceId: race.id }}
-                  className="text-cream-muted hover:text-cream"
+                  className="text-muted-foreground hover:text-foreground"
                 >
                   <ChevronRight className="h-3.5 w-3.5" />
                 </Link>

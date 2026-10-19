@@ -14,9 +14,9 @@ Every Gallop screen lives inside one of three layouts. Pick the right one for th
 
 ## Layout 1 — `AppShell` (default management layout)
 
-[AppShell.tsx](../../../src/components/AppShell.tsx). 240px sidebar + main content. Used for everything except the live race screen.
+[AppShell.tsx](../../../src/domains/shell/ui/AppShell.tsx). 240px sidebar + main content. Used for everything except the live race screen.
 
-```
+```text
 ┌──────────┬─────────────────────────────────┐
 │ Sidebar  │ Main (max-w-6xl, mx-auto, p-6)  │
 │ • Brand  │                                 │
@@ -30,7 +30,15 @@ Every Gallop screen lives inside one of three layouts. Pick the right one for th
 - **Main:** centred content column, capped at `max-w-6xl` (~1152px). Padding `p-6`.
 - **Background:** `bg-muted/30` for the page; cards inside use `bg-card`. The slight backdrop tint is what makes cards float.
 
-**The 7 nav items** — Dashboard, Stable, Races, Breeding, Auction, Market, Settings — are deliberate. Adding an 8th needs a vision-level conversation, not just an icon. Secondary screens (Recap, Awards, Rivals, Broodmares) have been integrated into these primary pillars.
+**The primary nav is deliberately small** — three sections, eleven items, plus a collapsed "More" disclosure for every secondary screen:
+
+| Section | Items                                        |
+| ------- | -------------------------------------------- |
+| Stable  | Dashboard, Stable, Breeding, Briefing, Inbox |
+| Racing  | Race Center, Calendar, Replays               |
+| Market  | Auction, Market, Portfolio                   |
+
+Adding a twelfth primary item needs a vision-level conversation, not just an icon. Secondary screens (Analytics, Honors, Awards, NPC Stables, Settings, and the rest) live under **More** — always reachable, never crowding the primary path. Folded narrative routes (`/gazette`, `/recap`, `/races`, `/race-browser`) redirect to their hub tabs (`/briefing`, `/racing`).
 
 ---
 
@@ -38,7 +46,7 @@ Every Gallop screen lives inside one of three layouts. Pick the right one for th
 
 `AppShell` early-returns `<Outlet />` for any path starting with `/race/`. The race screen owns its full-bleed layout:
 
-```
+```text
 ┌────────────────────────────────────────────────┐
 │ Race header (title, conditions, controls)      │
 ├────────────────────────────────┬───────────────┤
@@ -74,9 +82,9 @@ Some interactions belong on top of the current screen, not as a new route:
 
 ## Navigation principles
 
-### 1. Top-level nav is flat
+### 1. Top-level nav is small, "More" holds the rest
 
-The sidebar shows seven destinations, no nesting. Sub-paths (`/stable/$horseId`, `/auction/$saleId`) are reachable from inside the parent screen, not the sidebar.
+The sidebar shows three sections — Stable, Racing, Market — with ≤12 primary destinations between them, plus a collapsed "More" group for secondary screens. Sub-paths (`/stable/$horseId`, `/auction/$saleId`) are reachable from inside the parent screen, not the sidebar.
 
 ### 2. Active state is obvious
 
@@ -84,7 +92,7 @@ Active nav item: `bg-primary text-primary-foreground`. Inactive: `text-muted-for
 
 ### 3. Back-out is the player's job
 
-Routes don't auto-redirect. If a player ends up at `/stable/$horseId` for a horse they sold, the screen shows an empty state with _"This horse is no longer in your stable"_ and a link back. We don't kick them out.
+Routes don't auto-redirect — except folded hubs (`/gazette`, `/recap` → `/briefing`; `/races`, `/race-browser` → `/racing`), which permanently forward to their replacement tab. If a player ends up at `/stable/$horseId` for a horse they sold, the screen shows an empty state with _"This horse is no longer in your stable"_ and a link back. We don't kick them out.
 
 ### 4. URL is the source of truth
 

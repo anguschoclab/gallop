@@ -38,7 +38,7 @@ export function PortfolioTable({
   const compare = useCompareStables();
   if (rows.length === 0) {
     return (
-      <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-cream-muted">
+      <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-muted-foreground">
         No stables match these filters.
       </div>
     );
@@ -62,8 +62,8 @@ export function PortfolioTable({
                 <button
                   type="button"
                   onClick={() => onSort(c.key)}
-                  className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-cream ${
-                    sortKey === c.key ? "text-cream" : "text-cream-muted"
+                  className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wide transition-colors hover:text-foreground ${
+                    sortKey === c.key ? "text-foreground" : "text-muted-foreground"
                   } ${c.numeric ? "justify-end w-full" : ""}`}
                 >
                   {c.label}
@@ -100,7 +100,7 @@ export function PortfolioTable({
                     onClick={() => setExpanded(expanded === r.id ? null : r.id)}
                     aria-expanded={expanded === r.id}
                     aria-label={`${expanded === r.id ? "Hide" : "Show"} ${r.name} roster`}
-                    className="text-cream-muted transition-colors hover:text-cream"
+                    className="text-muted-foreground transition-colors hover:text-foreground"
                   >
                     {expanded === r.id ? (
                       <ChevronDown className="h-3.5 w-3.5" />
@@ -111,14 +111,14 @@ export function PortfolioTable({
                 </TableCell>
                 <TableCell className="min-w-[200px]">
                   <div className="flex items-center gap-2">
-                    {r.isPlayer && <Crown className="h-3.5 w-3.5 text-gold shrink-0" />}
+                    {r.isPlayer && <Crown className="h-3.5 w-3.5 text-primary shrink-0" />}
                     {r.isPlayer ? (
-                      <span className="font-semibold text-cream">{r.name}</span>
+                      <span className="font-semibold text-foreground">{r.name}</span>
                     ) : (
                       <Link
                         to="/npc-stables/$stableId"
                         params={{ stableId: r.id }}
-                        className="font-semibold text-cream hover:text-primary transition-colors"
+                        className="font-semibold text-foreground hover:text-primary transition-colors"
                       >
                         {r.name}
                       </Link>
@@ -129,60 +129,60 @@ export function PortfolioTable({
                       </Badge>
                     )}
                   </div>
-                  <p className="text-[10px] text-cream-muted truncate">
+                  <p className="text-[10px] text-muted-foreground truncate">
                     {r.owner}
                     {r.country ? ` · ${r.country}` : ""}
                     {r.topHorseName ? ` · Top: ${r.topHorseName}` : ""}
                   </p>
                   {r.yard && (
-                    <p className="flex items-center gap-1 text-[10px] text-cream-muted/70 truncate">
+                    <p className="flex items-center gap-1 text-[10px] text-muted-foreground/70 truncate">
                       <Home className="h-3 w-3 shrink-0" />
                       {formatYard(r.yard)} · {r.yard.boxes} boxes
                     </p>
                   )}
                 </TableCell>
-                <TableCell className="text-right tabular-nums text-cream">
+                <TableCell className="text-right tabular-nums text-foreground">
                   {formatCurrency(r.cash)}
                 </TableCell>
-                <TableCell className="text-right tabular-nums text-cream">
+                <TableCell className="text-right tabular-nums text-foreground">
                   {r.horseCount}
-                  <span className="block text-[10px] text-cream-muted">
+                  <span className="block text-[10px] text-muted-foreground">
                     {r.broodmares} mares · {r.stallions} studs
                   </span>
                 </TableCell>
-                <TableCell className="text-right tabular-nums text-cream">
+                <TableCell className="text-right tabular-nums text-foreground">
                   {formatCurrency(r.horseValue)}
                 </TableCell>
-                <TableCell className="text-right tabular-nums text-cream">
+                <TableCell className="text-right tabular-nums text-foreground">
                   {formatCurrency(r.syndicateValue)}
-                  <span className="block text-[10px] text-cream-muted">
+                  <span className="block text-[10px] text-muted-foreground">
                     {r.syndicateShares} sh · {r.syndicateCount} synd
                   </span>
                 </TableCell>
                 <TableCell className="text-right">
-                  <span className="tabular-nums text-cream">{r.prestige}</span>
-                  <span className="block text-[10px] text-cream-muted">
+                  <span className="tabular-nums text-foreground">{r.prestige}</span>
+                  <span className="block text-[10px] text-muted-foreground">
                     {PRESTIGE_TIER_LABELS[r.prestigeTier]}
                   </span>
                 </TableCell>
-                <TableCell className="text-right tabular-nums text-cream-muted">
+                <TableCell className="text-right tabular-nums text-muted-foreground">
                   {formatCurrency(r.lifetimeEarnings)}
-                  <span className="block text-[10px] text-cream-muted">
+                  <span className="block text-[10px] text-muted-foreground">
                     {r.careerWins} win{r.careerWins === 1 ? "" : "s"}
                   </span>
                 </TableCell>
-                <TableCell className="text-right tabular-nums font-semibold text-cream">
+                <TableCell className="text-right tabular-nums font-semibold text-foreground">
                   {formatCurrency(r.netWorth)}
                 </TableCell>
               </TableRow>
               {expanded === r.id && (
                 <TableRow className="border-white/5 bg-slate-950/40">
                   <TableCell colSpan={COLUMNS.length + 2} className="p-4">
-                    <div className="mb-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
+                    <div className="mb-2 text-[10px] font-black uppercase tracking-wide text-muted-foreground">
                       {r.yard ? `${r.yard.name} — ${r.yard.town}` : "Roster"}
                     </div>
                     {r.roster.length === 0 ? (
-                      <p className="text-xs text-cream-muted">No horses in this yard.</p>
+                      <p className="text-xs text-muted-foreground">No horses in this yard.</p>
                     ) : (
                       <div className="grid gap-1.5 sm:grid-cols-2 lg:grid-cols-3">
                         {r.roster.slice(0, 12).map((h) => (
@@ -192,15 +192,15 @@ export function PortfolioTable({
                             params={{ horseId: h.id }}
                             className="flex items-center justify-between gap-2 rounded border border-white/5 bg-slate-900/60 px-2 py-1.5 text-xs transition-colors hover:border-primary/40"
                           >
-                            <span className="min-w-0 truncate text-cream">
+                            <span className="min-w-0 truncate text-foreground">
                               {h.name}
-                              <span className="ml-1 text-[10px] text-cream-muted">
+                              <span className="ml-1 text-[10px] text-muted-foreground">
                                 {h.age}yo {h.gender}
                                 {h.retired ? " · retired" : ""}
                               </span>
                             </span>
-                            <span className="shrink-0 text-right text-[10px] text-cream-muted">
-                              <span className="block tabular-nums text-cream">
+                            <span className="shrink-0 text-right text-[10px] text-muted-foreground">
+                              <span className="block tabular-nums text-foreground">
                                 {formatCurrency(h.value)}
                               </span>
                               {h.starts > 0 ? `${h.wins}/${h.starts}` : "unraced"}
@@ -210,7 +210,7 @@ export function PortfolioTable({
                       </div>
                     )}
                     {r.roster.length > 12 && (
-                      <p className="mt-2 text-[10px] text-cream-muted">
+                      <p className="mt-2 text-[10px] text-muted-foreground">
                         +{r.roster.length - 12} more in the yard
                       </p>
                     )}

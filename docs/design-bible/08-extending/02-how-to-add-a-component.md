@@ -17,23 +17,23 @@ Adding a component is heavier than adding a token. Components carry behaviour, s
 ```
 Do I need this component, or am I about to invent something that already exists?
 │
-├── Already exists in src/components/ui/   → use it as-is.
-├── Already exists in src/components/      → use it; if it doesn't fit, propose an enhancement.
+├── Already exists in src/shared/ui/   → use it as-is.
+├── Already exists in src/domains/      → use it; if it doesn't fit, propose an enhancement.
 │
 └── Genuinely new
     │
-    ├── Is it generic (could it appear in any product)?      → primitive (src/components/ui/)
+    ├── Is it generic (could it appear in any product)?      → primitive (src/shared/ui/)
     │   ├── Yes  → try shadcn first; copy in if available.
     │   └── No   → don't write it as a primitive.
     │
     └── Is it domain-specific (knows about horses, races, breeding)?
         │
-        ├── Used by ≥2 screens             → domain component (src/components/)
+        ├── Used by ≥2 screens             → domain component (src/domains/)
         ├── Used by exactly 1 screen        → keep it inline; revisit when a 2nd use case appears
         │
         └── Race-screen-specific
             │
-            ├── Used by ≥2 race surfaces   → src/components/race/
+            ├── Used by ≥2 race surfaces   → src/domains/race/ui/
             └── Used by exactly 1           → inline in the route file
 ```
 
@@ -43,12 +43,12 @@ Do I need this component, or am I about to invent something that already exists?
 
 ## Where each kind lives
 
-| Kind                                    | Folder                                            | Examples                             |
-| --------------------------------------- | ------------------------------------------------- | ------------------------------------ |
-| **Primitive** (Radix wrapper)           | [src/components/ui/](../../../src/components/ui/) | `Button`, `Card`, `Tooltip`          |
-| **Domain** (knows the racing world)     | [src/components/](../../../src/components/)       | `HorseCard`, `BeyerBadge`, `Lineage` |
-| **Race-only** (live race screen)        | `src/components/race/` (when needed)              | future `RaceCommentary`, `OddsBoard` |
-| **Page-local** (only used by one route) | inline in the route file                          | one-off layout tweaks                |
+| Kind                                    | Folder                                    | Examples                             |
+| --------------------------------------- | ----------------------------------------- | ------------------------------------ |
+| **Primitive** (Radix wrapper)           | [src/shared/ui/](../../../src/shared/ui/) | `Button`, `Card`, `Tooltip`          |
+| **Domain** (knows the racing world)     | [src/domains/](../../../src/domains/)     | `HorseCard`, `BeyerBadge`, `Lineage` |
+| **Race-only** (live race screen)        | `src/domains/race/ui/` (when needed)      | future `RaceCommentary`, `OddsBoard` |
+| **Page-local** (only used by one route) | inline in the route file                  | one-off layout tweaks                |
 
 ---
 
@@ -56,13 +56,13 @@ Do I need this component, or am I about to invent something that already exists?
 
 ### 1. File and naming
 
-- Create `src/components/ComponentName.tsx`.
+- Create `src/domains/ComponentName.tsx`.
 - Export the React component matching the file name: `export function ComponentName(...)`.
 - Use PascalCase. No `Container` / `Wrapper` / `Layout` suffixes.
 
 ### 2. Composition
 
-- Compose primitives from `src/components/ui/`. Don't reach for raw HTML when a primitive exists.
+- Compose primitives from `src/shared/ui/`. Don't reach for raw HTML when a primitive exists.
 - Consume tokens via Tailwind utilities. Never inline hex / oklch / rgb (silks are the documented exception).
 - If you need a colour that doesn't exist, follow [01-how-to-add-a-token.md](01-how-to-add-a-token.md) first.
 

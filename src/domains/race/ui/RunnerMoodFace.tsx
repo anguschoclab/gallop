@@ -28,9 +28,9 @@ interface RunnerMoodFaceProps {
 }
 
 const FACE_STYLES = {
-  happy: { fill: "var(--color-success, #34d399)", ring: "ring-success/40" },
-  neutral: { fill: "var(--color-warning, #facc15)", ring: "ring-warning/40" },
-  unhappy: { fill: "var(--color-destructive, #ef4444)", ring: "ring-destructive/40" },
+  happy: { fill: "var(--success)", ring: "ring-success/40" },
+  neutral: { fill: "var(--warning)", ring: "ring-warning/40" },
+  unhappy: { fill: "var(--destructive)", ring: "ring-destructive/40" },
 } as const;
 
 export function RunnerMoodFace({

@@ -25,7 +25,7 @@ export function MetricInfo({ definition, formula, className }: MetricInfoProps) 
             aria-label="Metric definition"
             onClick={(e) => e.preventDefault()}
             className={cn(
-              "inline-flex h-4 w-4 items-center justify-center rounded-full text-cream/35",
+              "inline-flex h-4 w-4 items-center justify-center rounded-full text-foreground/35",
               "transition-colors hover:text-[var(--chart-1)] focus-visible:outline-none",
               "focus-visible:ring-1 focus-visible:ring-[var(--chart-1)]",
               className,

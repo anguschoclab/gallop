@@ -28,8 +28,8 @@ const TIER_COLORS: Record<NominationTier, string> = {
 };
 
 const GRADE_COLORS: Record<"G1" | "G2" | "G3", string> = {
-  G1: "bg-gold/20 text-gold border-gold/50",
-  G2: "bg-cream/20 text-cream border-cream/40",
+  G1: "bg-primary/20 text-primary border-primary/50",
+  G2: "bg-foreground/20 text-foreground border-foreground/40",
   G3: "bg-bronze/20 text-bronze border-bronze/40",
 };
 
@@ -68,20 +68,24 @@ export function NominationsTab() {
       <div className="grid grid-cols-3 gap-4">
         <Card>
           <CardContent className="pt-6">
-            <div className="text-xs text-cream-muted uppercase tracking-wide">Active</div>
-            <div className="text-2xl font-bold text-cream">{activeNoms.length}</div>
+            <div className="text-xs text-muted-foreground uppercase tracking-wide">Active</div>
+            <div className="text-2xl font-bold text-foreground">{activeNoms.length}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-xs text-cream-muted uppercase tracking-wide">Fees committed</div>
-            <div className="text-2xl font-bold text-gold">${paidTotal.toLocaleString()}</div>
+            <div className="text-xs text-muted-foreground uppercase tracking-wide">
+              Fees committed
+            </div>
+            <div className="text-2xl font-bold text-primary">${paidTotal.toLocaleString()}</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="pt-6">
-            <div className="text-xs text-cream-muted uppercase tracking-wide">Cash on hand</div>
-            <div className="text-2xl font-bold text-cream">${cash.toLocaleString()}</div>
+            <div className="text-xs text-muted-foreground uppercase tracking-wide">
+              Cash on hand
+            </div>
+            <div className="text-2xl font-bold text-foreground">${cash.toLocaleString()}</div>
           </CardContent>
         </Card>
       </div>
@@ -89,12 +93,12 @@ export function NominationsTab() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Flag className="h-5 w-5 text-gold" /> Upcoming graded races
+            <Flag className="h-5 w-5 text-primary" /> Upcoming graded races
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           {gradedRaces.length === 0 ? (
-            <div className="text-cream-muted text-sm">
+            <div className="text-muted-foreground text-sm">
               No upcoming graded stakes on the calendar.
             </div>
           ) : (
@@ -119,12 +123,12 @@ export function NominationsTab() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Trophy className="h-5 w-5 text-gold" /> My nominations
+            <Trophy className="h-5 w-5 text-primary" /> My nominations
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           {noms.length === 0 ? (
-            <div className="text-cream-muted text-sm">
+            <div className="text-muted-foreground text-sm">
               No nominations yet. Nominate early to lock in the cheapest fees.
             </div>
           ) : (
@@ -136,19 +140,19 @@ export function NominationsTab() {
                 return (
                   <div
                     key={n.id}
-                    className="flex flex-wrap items-center gap-3 rounded-md border border-cream/10 bg-broadcast-panel px-3 py-2"
+                    className="flex flex-wrap items-center gap-3 rounded-md border border-foreground/10 bg-broadcast-panel px-3 py-2"
                   >
                     <Badge className={`border ${GRADE_COLORS[n.grade]}`}>{n.grade}</Badge>
                     <div className="flex-1 min-w-0">
-                      <div className="text-cream font-medium truncate">
+                      <div className="text-foreground font-medium truncate">
                         {horse?.name ?? n.horseId} — {n.raceName}
                       </div>
-                      <div className="text-xs text-cream-muted">
+                      <div className="text-xs text-muted-foreground">
                         Day {n.raceDay} · nominated day {n.nominatedDay}
                       </div>
                     </div>
                     <Badge className={`border capitalize ${TIER_COLORS[n.tier]}`}>{n.tier}</Badge>
-                    <div className="text-gold text-sm font-semibold">
+                    <div className="text-primary text-sm font-semibold">
                       ${n.feePaid.toLocaleString()}
                     </div>
                     <Badge
@@ -157,8 +161,8 @@ export function NominationsTab() {
                         n.status === "entered"
                           ? "text-emerald-300 border-emerald-400/40"
                           : n.status === "scratched"
-                            ? "text-cream-muted line-through"
-                            : "text-cream border-cream/30"
+                            ? "text-muted-foreground line-through"
+                            : "text-foreground border-foreground/30"
                       }
                     >
                       {n.status}
@@ -171,7 +175,7 @@ export function NominationsTab() {
                     <Link
                       to="/race/$raceId"
                       params={{ raceId: n.raceId }}
-                      className="text-xs text-gold hover:underline"
+                      className="text-xs text-primary hover:underline"
                     >
                       View
                     </Link>
@@ -216,18 +220,18 @@ export function RaceNominationRow({
   );
 
   return (
-    <div className="flex flex-wrap items-center gap-3 rounded-md border border-cream/10 bg-broadcast-panel px-3 py-2">
+    <div className="flex flex-wrap items-center gap-3 rounded-md border border-foreground/10 bg-broadcast-panel px-3 py-2">
       <Badge className={`border ${GRADE_COLORS[grade]}`}>{grade}</Badge>
       <div className="flex-1 min-w-0">
-        <div className="text-cream font-medium truncate">{race.name}</div>
-        <div className="text-xs text-cream-muted">
+        <div className="text-foreground font-medium truncate">{race.name}</div>
+        <div className="text-xs text-muted-foreground">
           Day {race.day} · {daysOut}d out · purse ${race.purse.toLocaleString()}
         </div>
       </div>
       <Badge className={`border capitalize ${TIER_COLORS[tier]}`}>{tier}</Badge>
       <div className="text-sm font-semibold min-w-[80px] text-right">
         {fee != null ? (
-          <span className="text-gold">${fee.toLocaleString()}</span>
+          <span className="text-primary">${fee.toLocaleString()}</span>
         ) : (
           <span className="text-red-400 flex items-center gap-1 justify-end">
             <Lock className="h-3 w-3" /> closed

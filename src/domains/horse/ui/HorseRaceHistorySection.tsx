@@ -24,8 +24,8 @@ export function HorseRaceHistorySection({
     <section id="history" className="space-y-4 pt-4">
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-2">
-          <History className="h-4 w-4 text-gold" />
-          <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+          <History className="h-4 w-4 text-primary" />
+          <h2 className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
             Service History
           </h2>
         </div>
@@ -43,10 +43,10 @@ export function HorseRaceHistorySection({
 
       <GradedHistoryPanel history={horse.raceHistory ?? []} />
 
-      <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
+      <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-primary">
         <CardContent className="p-0">
           {displayed.length === 0 ? (
-            <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+            <div className="p-12 text-center text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
               No race records on file.
             </div>
           ) : (
@@ -60,24 +60,24 @@ export function HorseRaceHistorySection({
                     className={cn(
                       "text-[10px] font-black font-mono w-5 text-center",
                       r.position === 1
-                        ? "text-gold"
+                        ? "text-primary"
                         : r.position <= 3
-                          ? "text-cream/60"
-                          : "text-cream/20",
+                          ? "text-foreground/60"
+                          : "text-foreground/20",
                     )}
                   >
                     {r.position}
                   </span>
                   <div>
-                    <div className="text-xs font-bold text-cream truncate">
+                    <div className="text-xs font-bold text-foreground truncate">
                       {r.raceName}
                       {r.offscreen && (
-                        <span className="ml-2 text-[9px] font-mono font-normal uppercase text-cream/30">
+                        <span className="ml-2 text-[9px] font-mono font-normal uppercase text-foreground/30">
                           off-screen
                         </span>
                       )}
                     </div>
-                    <div className="text-[10px] font-mono text-cream/30">Day {r.day}</div>
+                    <div className="text-[10px] font-mono text-foreground/30">Day {r.day}</div>
                   </div>
                   {r.grade && (
                     <Badge
@@ -85,22 +85,24 @@ export function HorseRaceHistorySection({
                       className={cn(
                         "text-[9px] rounded-none",
                         r.grade === "G1"
-                          ? "border-gold text-gold"
+                          ? "border-primary text-primary"
                           : r.grade === "G2"
                             ? "border-silver text-silver"
-                            : "border-white/20 text-cream/60",
+                            : "border-white/20 text-foreground/60",
                       )}
                     >
                       {r.grade}
                     </Badge>
                   )}
                   {typeof r.beyer === "number" && (
-                    <span className="font-mono text-[10px] text-gold-bright">{r.beyer}</span>
+                    <span className="font-mono text-[10px] text-accent-bright">{r.beyer}</span>
                   )}
                   {typeof r.gate === "number" && (
-                    <span className="text-[10px] font-mono text-cream/30">G{r.gate}</span>
+                    <span className="text-[10px] font-mono text-foreground/30">G{r.gate}</span>
                   )}
-                  <span className="text-[10px] font-mono text-cream/30">{r.surface ?? "—"}</span>
+                  <span className="text-[10px] font-mono text-foreground/30">
+                    {r.surface ?? "—"}
+                  </span>
                 </div>
               ))}
             </div>

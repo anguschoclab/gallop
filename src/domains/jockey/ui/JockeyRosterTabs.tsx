@@ -35,7 +35,7 @@ export function JockeyRosterTabs({
             </TabsTrigger>
             <TabsTrigger
               value="market"
-              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-6 transition-all"
+              className="gap-2 uppercase text-[10px] font-black tracking-wide data-[state=active]:bg-primary data-[state=active]:text-slate-950 h-full px-6 transition-all"
             >
               <Users className="w-3.5 h-3.5" />
               Available
@@ -62,11 +62,11 @@ export function JockeyRosterTabs({
             </div>
           ) : (
             <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
-              <Users className="h-16 w-16 mx-auto mb-6 text-cream/5" />
-              <p className="font-bold text-cream/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
+              <Users className="h-16 w-16 mx-auto mb-6 text-foreground/5" />
+              <p className="font-bold text-foreground/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
                 No Jockeys Signed
               </p>
-              <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">
+              <p className="text-[10px] font-mono text-foreground/10 uppercase mt-2">
                 Browse the market to hire a jockey.
               </p>
             </div>

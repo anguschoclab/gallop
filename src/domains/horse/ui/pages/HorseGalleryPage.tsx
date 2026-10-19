@@ -42,13 +42,13 @@ function HorseGalleryPage() {
           <h1 className="text-3xl font-bold tracking-tight font-[family-name=var(--font-display)]">
             Horse Gallery
           </h1>
-          <p className="text-cream-muted font-[family-name=var(--font-body)]">
+          <p className="text-muted-foreground font-[family-name=var(--font-body)]">
             Browse all {horses.length} horses in your stable with coat details.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-cream-muted" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search name or trait..."
               value={search}
@@ -99,7 +99,7 @@ function HorseGalleryPage() {
                 <SelectItem key={coat.value} value={coat.value}>
                   {coat.label}
                   {coat.value !== "all" && coatCounts[coat.value] > 0 && (
-                    <span className="ml-2 text-cream-muted">({coatCounts[coat.value]})</span>
+                    <span className="ml-2 text-muted-foreground">({coatCounts[coat.value]})</span>
                   )}
                 </SelectItem>
               ))}
@@ -120,9 +120,9 @@ function HorseGalleryPage() {
       </div>
 
       {filteredHorses.length === 0 ? (
-        <Card className="border-gold-muted">
+        <Card className="border-border">
           <CardContent className="p-12 text-center">
-            <p className="text-cream-muted">
+            <p className="text-muted-foreground">
               {horses.length === 0
                 ? "No horses in your stable yet. Visit the market or auction to acquire stock."
                 : "No horses match the selected filters."}
@@ -165,8 +165,8 @@ function HorseGalleryPage() {
                 params={{ horseId: horse.id }}
                 className="group"
               >
-                <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full border-gold-muted">
-                  <div className="aspect-square bg-t700 flex items-center justify-center p-4">
+                <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 h-full border-border">
+                  <div className="aspect-square bg-muted flex items-center justify-center p-4">
                     <HorsePortrait
                       id={horse.id}
                       coatColor={horse.coatColor}
@@ -179,12 +179,12 @@ function HorseGalleryPage() {
                   </div>
                   <CardHeader className="pb-2">
                     <div className="flex items-start justify-between gap-2">
-                      <CardTitle className="text-lg truncate text-cream font-[family-name=var(--font-display)]">
+                      <CardTitle className="text-lg truncate text-foreground font-[family-name=var(--font-display)]">
                         {horse.name}
                       </CardTitle>
                       <Badge
                         variant="outline"
-                        className="text-xs shrink-0 border-gold-muted text-cream"
+                        className="text-xs shrink-0 border-border text-foreground"
                       >
                         {ovr} OVR
                       </Badge>
@@ -192,13 +192,13 @@ function HorseGalleryPage() {
                   </CardHeader>
                   <CardContent className="space-y-2">
                     <div className="flex items-center gap-2 text-sm">
-                      <Badge className="capitalize text-xs bg-t700 text-cream">
+                      <Badge className="capitalize text-xs bg-muted text-foreground">
                         {horse.coatColor?.replace("-", " ") ?? "Unknown"}
                       </Badge>
-                      <span className="text-cream-muted">·</span>
-                      <span className="text-cream-muted">{Math.floor(horse.age)} years</span>
+                      <span className="text-muted-foreground">·</span>
+                      <span className="text-muted-foreground">{Math.floor(horse.age)} years</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-cream-muted">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
                       <Zap className="w-3 h-3" />
                       <span>Energy {horse.energy}%</span>
                       {horse.form !== 0 && (

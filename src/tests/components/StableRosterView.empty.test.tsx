@@ -42,8 +42,8 @@ describe("StableRosterView empty states", () => {
     );
 
     expect(getByText(/Stable is Empty/i)).toBeTruthy();
-    expect(container.textContent).toMatch(/Go to Market|Market/i);
-    expect(container.textContent).toMatch(/Auction/i);
+    // Single primary CTA per the cohesion spec: browse the auction.
+    expect(container.textContent).toMatch(/Browse auction/i);
   });
 
   it("shows 'Stable is Empty' in gallery view too", () => {

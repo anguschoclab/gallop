@@ -440,7 +440,7 @@ export function jockeyGradeColorClass(grade: JockeyReportGrade): string {
     case "B":
       return "text-broadcast-accent border-broadcast-accent/40 bg-broadcast-accent/10";
     case "C":
-      return "text-cream border-white/20 bg-white/5";
+      return "text-foreground border-white/20 bg-white/5";
     case "D":
       return "text-warning border-warning/40 bg-warning/10";
     case "F":

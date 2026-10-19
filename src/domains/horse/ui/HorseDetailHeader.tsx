@@ -35,7 +35,7 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
           <div className="absolute -bottom-2 -left-2">
             <SilkDot color={horse.silk} size="sm" />
           </div>
-          <div className="absolute -bottom-2 -right-2 bg-slate-900 border border-gold/40 text-gold font-mono text-[10px] font-black px-1.5 py-0.5 rounded shadow-lg">
+          <div className="absolute -bottom-2 -right-2 bg-slate-900 border border-primary/40 text-primary font-mono text-[10px] font-black px-1.5 py-0.5 rounded shadow-lg">
             {String(ovr).padStart(2, "0")}
           </div>
         </div>
@@ -44,7 +44,7 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="border-gold/30 text-gold-muted font-mono text-[9px] uppercase tracking-wide h-5 rounded-none px-2 bg-gold/5"
+              className="border-primary/30 text-primary/30 font-mono text-[9px] uppercase tracking-wide h-5 rounded-none px-2 bg-primary/5"
             >
               ID: {horse.id.substring(0, 8).toUpperCase()}
             </Badge>
@@ -58,7 +58,7 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
             )}
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-5xl font-black tracking-tighter text-cream font-[family-name:var(--font-display)] uppercase">
+            <h1 className="text-5xl font-black tracking-tighter text-foreground font-[family-name:var(--font-display)] uppercase">
               {horse.name}
             </h1>
             <BookmarkButton
@@ -71,29 +71,29 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
           </div>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-2">
             <div className="space-y-0.5">
-              <span className="block text-[9px] uppercase font-black tracking-wide text-cream/20 leading-none">
+              <span className="block text-[9px] uppercase font-black tracking-wide text-foreground/20 leading-none">
                 Vitals
               </span>
-              <span className="text-xs font-mono text-cream/60">
+              <span className="text-xs font-mono text-foreground/60">
                 Age: {Math.floor(horse.age)} · {horse.gender}
               </span>
             </div>
             <div className="space-y-0.5">
-              <span className="block text-[9px] uppercase font-black tracking-wide text-cream/20 leading-none">
+              <span className="block text-[9px] uppercase font-black tracking-wide text-foreground/20 leading-none">
                 Pedigree Family
               </span>
-              <span className="text-xs font-mono text-cream/60">
+              <span className="text-xs font-mono text-foreground/60">
                 Family {horse.bruceLoweFamily ?? "—"}
               </span>
             </div>
             <div className="space-y-0.5">
-              <span className="block text-[9px] uppercase font-black tracking-wide text-cream/20 leading-none">
+              <span className="block text-[9px] uppercase font-black tracking-wide text-foreground/20 leading-none">
                 Active Status
               </span>
               <span
                 className={cn(
                   "text-xs font-mono font-bold",
-                  horse.lifecycleStatus === "active" ? "text-success" : "text-cream/40",
+                  horse.lifecycleStatus === "active" ? "text-success" : "text-foreground/40",
                 )}
               >
                 {horse.lifecycleStatus.toUpperCase()}
@@ -104,13 +104,13 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
 
         <div className="grid grid-cols-3 gap-2 w-full md:w-auto">
           <div className="bg-black/40 border border-white/5 p-3 text-center min-w-[100px]">
-            <div className="text-[9px] font-black uppercase text-cream/20 tracking-tighter mb-1">
+            <div className="text-[9px] font-black uppercase text-foreground/20 tracking-tighter mb-1">
               Potential
             </div>
-            <div className="text-2xl font-bold font-mono text-gold-bright">{horse.potential}</div>
+            <div className="text-2xl font-bold font-mono text-accent-bright">{horse.potential}</div>
           </div>
           <div className="bg-black/40 border border-white/5 p-3 text-center min-w-[100px]">
-            <div className="text-[9px] font-black uppercase text-cream/20 tracking-tighter mb-1">
+            <div className="text-[9px] font-black uppercase text-foreground/20 tracking-tighter mb-1">
               Energy
             </div>
             <div
@@ -123,7 +123,7 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
             </div>
           </div>
           <div className="bg-black/40 border border-white/5 p-3 text-center min-w-[100px]">
-            <div className="text-[9px] font-black uppercase text-cream/20 tracking-tighter mb-1">
+            <div className="text-[9px] font-black uppercase text-foreground/20 tracking-tighter mb-1">
               Fans
             </div>
             <div className="text-2xl font-bold font-mono text-blue-300/80 flex items-center justify-center gap-1">

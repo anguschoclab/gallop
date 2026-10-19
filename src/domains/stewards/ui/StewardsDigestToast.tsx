@@ -27,12 +27,12 @@ export function StewardsDigestToast() {
 
   return (
     <div className="fixed bottom-4 right-4 z-40 max-w-sm animate-in slide-in-from-bottom-4">
-      <Card className="bg-t800 border-l-4 border-l-red-500 shadow-lg">
+      <Card className="bg-card border-l-4 border-l-red-500 shadow-lg">
         <CardContent className="p-4 flex items-start gap-3">
           <AlertCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-cream">Stewards' Inquiry</h3>
-            <p className="text-xs text-cream-muted mt-1 line-clamp-2">{inquiry.description}</p>
+            <h3 className="text-sm font-bold text-foreground">Stewards' Inquiry</h3>
+            <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{inquiry.description}</p>
           </div>
           <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
             <Tooltip>

@@ -16,11 +16,11 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-destructive-foreground shadow hover:bg-destructive/80",
         outline: "text-foreground",
         // Grade badge variants (design bible colors)
-        g1: "border-transparent bg-fame text-t950 shadow",
+        g1: "border-transparent bg-fame text-background shadow",
         g2: "border-transparent bg-muted text-muted-foreground",
         g3: "border-transparent bg-info text-info-foreground",
-        listed: "border-transparent bg-t600 text-cream-muted",
-        maiden: "border-transparent bg-t700 text-cream-muted",
+        listed: "border-transparent bg-surface-hover text-muted-foreground",
+        maiden: "border-transparent bg-muted text-muted-foreground",
       },
     },
     defaultVariants: {

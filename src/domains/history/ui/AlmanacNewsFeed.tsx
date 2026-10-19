@@ -165,7 +165,7 @@ export function AlmanacNewsFeed() {
                   "rounded-md px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5",
                   category === "all"
                     ? "bg-primary text-primary-foreground shadow"
-                    : "bg-muted/40 text-cream-muted hover:text-cream hover:bg-muted/60",
+                    : "bg-muted/40 text-muted-foreground hover:text-foreground hover:bg-muted/60",
                 )}
               >
                 All News
@@ -180,7 +180,7 @@ export function AlmanacNewsFeed() {
                   "rounded-md px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5",
                   category === "track"
                     ? "bg-emerald-600 text-white shadow"
-                    : "bg-muted/40 text-cream-muted hover:text-cream hover:bg-muted/60",
+                    : "bg-muted/40 text-muted-foreground hover:text-foreground hover:bg-muted/60",
                 )}
               >
                 <Trophy className="h-3.5 w-3.5" />
@@ -196,7 +196,7 @@ export function AlmanacNewsFeed() {
                   "rounded-md px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5",
                   category === "transfer"
                     ? "bg-amber-600 text-white shadow"
-                    : "bg-muted/40 text-cream-muted hover:text-cream hover:bg-muted/60",
+                    : "bg-muted/40 text-muted-foreground hover:text-foreground hover:bg-muted/60",
                 )}
               >
                 <ArrowLeftRight className="h-3.5 w-3.5" />
@@ -212,7 +212,7 @@ export function AlmanacNewsFeed() {
                   "rounded-md px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition-colors flex items-center gap-1.5",
                   category === "stable"
                     ? "bg-sky-600 text-white shadow"
-                    : "bg-muted/40 text-cream-muted hover:text-cream hover:bg-muted/60",
+                    : "bg-muted/40 text-muted-foreground hover:text-foreground hover:bg-muted/60",
                 )}
               >
                 <Building2 className="h-3.5 w-3.5" />
@@ -223,18 +223,18 @@ export function AlmanacNewsFeed() {
 
             {/* Keyword Search */}
             <div className="relative min-w-[240px] max-w-sm">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream-muted" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
               <Input
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Filter by horse, track, stable..."
-                className="pl-9 pr-8 h-9 text-xs bg-black/20 border-white/10 text-cream placeholder:text-cream-muted/50 rounded-md"
+                className="pl-9 pr-8 h-9 text-xs bg-black/20 border-white/10 text-foreground placeholder:text-muted-foreground/50 rounded-md"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery("")}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-cream-muted hover:text-cream p-0.5"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5"
                   aria-label="Clear search"
                 >
                   <X className="h-3 w-3" />
@@ -246,8 +246,8 @@ export function AlmanacNewsFeed() {
           {/* Optional Year Filters when spanning multiple years */}
           {years.length > 1 && (
             <div className="flex items-center gap-2 pt-2 border-t border-white/5">
-              <Calendar className="h-3 w-3 text-cream-muted" />
-              <span className="text-[11px] font-mono text-cream-muted uppercase tracking-wider">
+              <Calendar className="h-3 w-3 text-muted-foreground" />
+              <span className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
                 Year:
               </span>
               <button
@@ -256,8 +256,8 @@ export function AlmanacNewsFeed() {
                 className={cn(
                   "px-2 py-0.5 rounded text-[11px] font-mono transition-colors",
                   selectedYear === undefined
-                    ? "bg-white/10 text-cream font-bold"
-                    : "text-cream-muted hover:text-cream",
+                    ? "bg-white/10 text-foreground font-bold"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 All Years
@@ -270,8 +270,8 @@ export function AlmanacNewsFeed() {
                   className={cn(
                     "px-2 py-0.5 rounded text-[11px] font-mono transition-colors",
                     selectedYear === y
-                      ? "bg-white/10 text-cream font-bold"
-                      : "text-cream-muted hover:text-cream",
+                      ? "bg-white/10 text-foreground font-bold"
+                      : "text-muted-foreground hover:text-foreground",
                   )}
                 >
                   {y}
@@ -286,9 +286,9 @@ export function AlmanacNewsFeed() {
       {masterFeed.length === 0 ? (
         <Card className="border-white/5 bg-slate-900/40">
           <CardContent className="py-16 text-center space-y-3">
-            <Newspaper className="h-10 w-10 text-cream-muted/30 mx-auto" />
-            <p className="text-cream font-medium">No news recorded yet</p>
-            <p className="text-xs text-cream-muted max-w-md mx-auto leading-relaxed">
+            <Newspaper className="h-10 w-10 text-muted-foreground/30 mx-auto" />
+            <p className="text-foreground font-medium">No news recorded yet</p>
+            <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
               Your world's history will be chronicled here as races are run, horses are traded, and
               stable operations unfold.
             </p>
@@ -297,8 +297,8 @@ export function AlmanacNewsFeed() {
       ) : filteredFeed.length === 0 ? (
         <Card className="border-white/5 bg-slate-900/40">
           <CardContent className="py-12 text-center space-y-3">
-            <p className="text-cream font-medium">No events match your criteria</p>
-            <p className="text-xs text-cream-muted">
+            <p className="text-foreground font-medium">No events match your criteria</p>
+            <p className="text-xs text-muted-foreground">
               Try broadening your category filter or clearing the search keyword.
             </p>
             <Button
@@ -319,18 +319,18 @@ export function AlmanacNewsFeed() {
               <div key={group.day} className="space-y-4">
                 {/* Date Header Node */}
                 <div className="relative flex items-center gap-3 -ml-[31px]">
-                  <div className="h-3 w-3 rounded-full bg-gold ring-4 ring-slate-950" />
+                  <div className="h-3 w-3 rounded-full bg-primary ring-4 ring-slate-950" />
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-bold text-cream font-[family-name:var(--font-display)] tracking-tight">
+                    <span className="text-sm font-bold text-foreground font-[family-name:var(--font-display)] tracking-tight">
                       {group.calendarDate}
                     </span>
                     <Badge
                       variant="outline"
-                      className="text-[10px] font-mono border-white/10 text-cream/60 py-0 h-4"
+                      className="text-[10px] font-mono border-white/10 text-foreground/60 py-0 h-4"
                     >
                       Day {String(group.day).padStart(3, "0")}
                     </Badge>
-                    <span className="text-[11px] text-cream-muted/70 italic">
+                    <span className="text-[11px] text-muted-foreground/70 italic">
                       · {group.relativeDate}
                     </span>
                   </div>
@@ -353,7 +353,7 @@ export function AlmanacNewsFeed() {
                 variant="outline"
                 size="sm"
                 onClick={() => setVisibleLimit((prev) => prev + PAGE_INCREMENT)}
-                className="text-xs gap-2 border-white/10 bg-slate-900/60 hover:bg-slate-800 text-cream"
+                className="text-xs gap-2 border-white/10 bg-slate-900/60 hover:bg-slate-800 text-foreground"
               >
                 <ChevronDown className="h-4 w-4" />
                 Show older news ({filteredFeed.length - visibleLimit} more)
@@ -375,7 +375,7 @@ function TimelineEventCard({ item }: { item: AlmanacFeedItem }) {
     <Card
       className={cn(
         "relative border-white/5 bg-slate-900/40 hover:bg-slate-900/60 transition-all group",
-        item.importance === "high" && "border-gold/30 bg-slate-900/50",
+        item.importance === "high" && "border-primary/30 bg-slate-900/50",
       )}
     >
       <CardContent className="p-4 space-y-2">
@@ -403,44 +403,44 @@ function TimelineEventCard({ item }: { item: AlmanacFeedItem }) {
             )}
 
             {/* Subcategory Chip */}
-            <span className="text-[10px] font-mono uppercase tracking-wider text-cream-muted/60">
+            <span className="text-[10px] font-mono uppercase tracking-wider text-muted-foreground/60">
               · {item.subcategory}
             </span>
 
             {/* High Importance Tag */}
             {item.importance === "high" && (
-              <Badge className="bg-gold/20 text-gold-bright border border-gold/40 text-[9px] font-black uppercase px-1 py-0 h-4 gap-0.5">
+              <Badge className="bg-primary/20 text-accent-bright border border-primary/40 text-[9px] font-black uppercase px-1 py-0 h-4 gap-0.5">
                 <Sparkles className="h-2.5 w-2.5" />
                 Featured
               </Badge>
             )}
           </div>
 
-          <span className="text-[11px] font-mono text-cream-muted/50 tabular-nums">
+          <span className="text-[11px] font-mono text-muted-foreground/50 tabular-nums">
             {item.calendarDate}
           </span>
         </div>
 
         {/* Headline with Active Entity Links */}
-        <h3 className="font-semibold text-cream group-hover:text-gold transition-colors text-sm sm:text-base leading-snug">
+        <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors text-sm sm:text-base leading-snug">
           <NewsContent text={item.headline} links={item.entityLinks} />
         </h3>
 
         {/* Detail Body */}
-        <p className="text-xs text-cream-muted leading-relaxed">
+        <p className="text-xs text-muted-foreground leading-relaxed">
           <NewsContent text={item.detail} links={item.entityLinks} />
         </p>
 
         {/* Metadata Chips if present */}
         {item.meta && (
-          <div className="flex flex-wrap gap-2 pt-1 border-t border-white/5 text-[11px] font-mono text-cream-muted/70">
+          <div className="flex flex-wrap gap-2 pt-1 border-t border-white/5 text-[11px] font-mono text-muted-foreground/70">
             {item.meta.price !== undefined && (
-              <span className="text-gold font-bold">
+              <span className="text-primary font-bold">
                 Value: ${item.meta.price.toLocaleString()}
               </span>
             )}
             {item.meta.grade && (
-              <span className="text-cream font-medium">Grade: {item.meta.grade}</span>
+              <span className="text-foreground font-medium">Grade: {item.meta.grade}</span>
             )}
             {item.meta.time !== undefined && <span>Time: {item.meta.time.toFixed(2)}s</span>}
             {item.meta.trackName && <span>Track: {item.meta.trackName}</span>}

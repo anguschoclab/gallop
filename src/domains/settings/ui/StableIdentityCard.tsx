@@ -13,10 +13,10 @@ export function StableIdentityCard() {
   if (!playerProfile || !owner) return null;
 
   return (
-    <Card className="bg-card border-gold/20 rounded-none">
+    <Card className="bg-card border-primary/20 rounded-none">
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-[family-name:var(--font-display)] flex items-center gap-2">
-          <User className="h-5 w-5 text-gold" />
+          <User className="h-5 w-5 text-primary" />
           Stable Identity
         </CardTitle>
       </CardHeader>
@@ -32,12 +32,12 @@ export function StableIdentityCard() {
             />
           </div>
           <div className="min-w-0">
-            <div className="text-base font-bold text-cream truncate">
+            <div className="text-base font-bold text-foreground truncate">
               {getPlayerOwnerName(playerProfile)}
             </div>
-            <div className="text-sm text-cream-muted">{playerProfile.stableName}</div>
+            <div className="text-sm text-muted-foreground">{playerProfile.stableName}</div>
             {owner.biography.nationality && (
-              <div className="text-xs text-cream-muted/60 uppercase tracking-wide mt-1">
+              <div className="text-xs text-muted-foreground/60 uppercase tracking-wide mt-1">
                 {owner.biography.nationality}
               </div>
             )}

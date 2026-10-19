@@ -10,35 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/shared/ui/alert-dialog";
-import {
-  Home,
-  Trophy,
-  Store,
-  Calendar,
-  Plus,
-  Heart,
-  Gavel,
-  Settings,
-  User,
-  DollarSign,
-  Building2,
-  Award,
-  Users,
-  Map,
-  LayoutGrid,
-  BarChart3,
-  Bookmark,
-  Bell,
-  Newspaper,
-  RotateCcw,
-  BookOpen,
-  Briefcase,
-  Scale,
-  Activity,
-  Film,
-  Sparkles,
-  Landmark,
-} from "lucide-react";
+import { Gavel, Plus, RotateCcw, Settings, Trophy } from "lucide-react";
 
 import { formatCurrency } from "@/shared/common/formatting";
 import { gameCalendarDate } from "@/domains/calendar/application/calendarFacade";
@@ -46,75 +18,10 @@ import { TOOLTIP_DELAY_MS, SIDEBAR_WIDTH_PX } from "@/shared/constants/uiConstan
 import {
   NavSection,
   type InboxPeekMessage,
-  type NavItem,
   clearAllSidebarStorage,
 } from "@/domains/shell/ui/NavSection";
+import { navSections, moreNavGroup } from "@/domains/shell/ui/navModel";
 import { useState } from "react";
-
-const navSections: { label: string; items: NavItem[] }[] = [
-  {
-    label: "Headquarters",
-    items: [
-      { to: "/", label: "Dashboard", icon: Home, exact: true },
-      { to: "/inbox", label: "Inbox", icon: Bell, exact: false },
-      { to: "/briefing", label: "Briefing", icon: Newspaper, exact: false },
-      { to: "/gazette", label: "Gazette", icon: Newspaper, exact: false },
-      { to: "/recap", label: "Recap", icon: RotateCcw, exact: false },
-      { to: "/analytics", label: "Analytics", icon: BarChart3, exact: false },
-      { to: "/financial-report", label: "Finances", icon: DollarSign, exact: false },
-      { to: "/bookmarks", label: "Bookmarks", icon: Bookmark, exact: false },
-    ],
-  },
-  {
-    label: "My Stable",
-    items: [
-      { to: "/stable", label: "Stables", icon: Trophy, exact: false },
-      { to: "/horse-gallery", label: "Horses", icon: LayoutGrid, exact: false },
-      { to: "/breeding", label: "Breeding", icon: Heart, exact: false },
-      { to: "/broodmares", label: "Broodmares", icon: Heart, exact: false },
-      { to: "/syndicate-stakes", label: "Syndicate Stakes", icon: Sparkles, exact: false },
-      { to: "/staff", label: "Staff", icon: Users, exact: false },
-      { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
-      { to: "/race-advisor", label: "Race Advisor", icon: User, exact: false },
-      { to: "/stableCampaign", label: "Stable Campaign", icon: User, exact: false },
-      { to: "/strategyJournal", label: "Strategy Journal", icon: User, exact: false },
-      { to: "/dailyPlans", label: "Daily Plans", icon: User, exact: false },
-      { to: "/facilities", label: "Facilities", icon: Building2, exact: false },
-      { to: "/vet", label: "Vet Report", icon: Activity, exact: false },
-      { to: "/stewards", label: "Stewards", icon: Scale, exact: false },
-      { to: "/replays", label: "Replays", icon: Film, exact: false },
-      { to: "/honors", label: "Honors", icon: Award, exact: false },
-      { to: "/hall-of-fame", label: "Hall of Fame", icon: Trophy, exact: false },
-      { to: "/awards", label: "Awards", icon: Award, exact: false },
-    ],
-  },
-  {
-    label: "The World",
-    items: [
-      { to: "/racing", label: "Racing", icon: Calendar, exact: false },
-      { to: "/calendar", label: "Calendar", icon: Calendar, exact: false },
-      { to: "/records", label: "Records", icon: BarChart3, exact: false },
-      { to: "/rankings-history", label: "Rankings History", icon: BarChart3, exact: false },
-      { to: "/stable-rankings", label: "Stable Rankings", icon: Building2, exact: false },
-      { to: "/almanac", label: "Almanac", icon: BookOpen, exact: false },
-      { to: "/track-history", label: "Course Histories", icon: Landmark, exact: false },
-      { to: "/market", label: "Market", icon: Store, exact: false },
-      { to: "/portfolio", label: "Portfolio", icon: Briefcase, exact: false },
-      { to: "/auction", label: "Auctions", icon: Gavel, exact: false },
-      { to: "/npc-stables", label: "Stables", icon: Map, exact: false },
-      {
-        to: "/npc-stables/rival-careers",
-        label: "Rival Careers",
-        icon: BarChart3,
-        exact: false,
-      },
-    ],
-  },
-  {
-    label: "Configuration",
-    items: [{ to: "/settings", label: "Settings", icon: Settings, exact: false }],
-  },
-] as const;
 
 interface SidebarNavProps {
   day: number;
@@ -156,24 +63,26 @@ export function SidebarNav({
     setResetSignal((n) => n + 1);
   }
 
+  const groups = [...navSections, moreNavGroup];
+
   return (
     <aside
-      className="w-[248px] shrink-0 border-r border-gold-muted bg-t950 flex flex-col"
+      className="w-[248px] shrink-0 border-r border-sidebar-border bg-sidebar flex flex-col"
       style={{ width: SIDEBAR_WIDTH_PX }}
     >
-      <div className="p-5 border-b border-gold-muted">
-        <h1 className="text-[21px] font-bold text-gold font-[family-name:var(--font-display)] tracking-[0.04em] leading-none">
+      <div className="p-5 border-b border-sidebar-border">
+        <h1 className="text-[21px] font-bold text-sidebar-primary font-[family-name:var(--font-display)] tracking-[0.04em] leading-none">
           Gallop
         </h1>
-        <p className="text-[9px] tracking-[0.14em] uppercase text-cream-muted font-[family-name:var(--font-mono)] tabular-nums mt-1 block">
+        <p className="text-[9px] tracking-[0.14em] uppercase text-sidebar-foreground/60 font-[family-name:var(--font-mono)] tabular-nums mt-1 block">
           {gameCalendarDate(day)}
         </p>
       </div>
       <div
-        className="p-3 border-t border-gold-muted space-y-3 flex-1 overflow-y-auto"
+        className="p-3 border-t border-sidebar-border space-y-3 flex-1 overflow-y-auto"
         data-accordion-container
       >
-        {navSections.map((section, idx) => (
+        {groups.map((section, idx) => (
           <NavSection
             key={section.label}
             label={section.label}
@@ -184,13 +93,13 @@ export function SidebarNav({
             defaultCollapsed={idx > 0}
             resetSignal={resetSignal}
             footer={
-              idx === 3 ? (
+              idx === groups.length - 1 ? (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleResetSidebar}
                   aria-label="Reset sidebar layout"
-                  className="w-full justify-start text-[10px] text-cream-muted hover:text-cream"
+                  className="w-full justify-start text-[10px] text-muted-foreground hover:text-foreground"
                 >
                   <RotateCcw className="h-3 w-3 mr-1.5" />
                   Reset sidebar layout
@@ -200,13 +109,13 @@ export function SidebarNav({
           />
         ))}
       </div>
-      <div className="p-3 border-t border-gold-muted space-y-2">
-        <div className="px-3 py-2 rounded-md bg-t800 border border-gold-muted">
-          <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">Cash</p>
-          <p className="text-[22px] font-bold text-cream font-[family-name:var(--font-mono)] tabular-nums">
+      <div className="p-3 border-t border-sidebar-border space-y-2">
+        <div className="px-3 py-2 rounded-md bg-card border border-border">
+          <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">Cash</p>
+          <p className="text-[22px] font-bold text-foreground font-[family-name:var(--font-mono)] tabular-nums">
             {formatCurrency(cash)}
           </p>
-          <p className="text-[10px] text-cream-muted/60 mt-1">{horseCount} horses</p>
+          <p className="text-[10px] text-muted-foreground/60 mt-1">{horseCount} horses</p>
           <div className="grid grid-cols-4 gap-1">
             <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
               <Tooltip>

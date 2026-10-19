@@ -41,15 +41,15 @@ export function RealWorldDataCard() {
   };
 
   return (
-    <Card className="md:col-span-2 border-gold-muted bg-slate-900/50">
+    <Card className="md:col-span-2 border-border bg-slate-900/50">
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
+        <CardTitle className="text-base flex items-center gap-2 text-foreground font-[family-name:var(--font-display)]">
           <Globe2 className="h-4 w-4" />
           Real-World Racing Data
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-xs text-cream-muted">
+        <p className="text-xs text-muted-foreground">
           Upload real race results, track records and horse careers (CSV or JSON). They appear
           alongside the built-in records in the Almanac&apos;s Real World tab and as a “Real world”
           group in Scouting Insights. Stored in this browser only — never part of your save.
@@ -63,7 +63,7 @@ export function RealWorldDataCard() {
             </Badge>
           )}
         </div>
-        <label className="flex items-center gap-2 text-xs text-cream-muted">
+        <label className="flex items-center gap-2 text-xs text-muted-foreground">
           <input type="checkbox" checked={merge} onChange={(e) => setMerge(e.target.checked)} />
           Add to existing uploads instead of replacing them
         </label>
@@ -100,7 +100,7 @@ export function RealWorldDataCard() {
           </Button>
         </div>
         {skipped.length > 0 && (
-          <ul className="max-h-28 overflow-auto text-[11px] text-cream-muted list-disc pl-4">
+          <ul className="max-h-28 overflow-auto text-[11px] text-muted-foreground list-disc pl-4">
             {skipped.slice(0, 20).map((s) => (
               <li key={s}>{s}</li>
             ))}

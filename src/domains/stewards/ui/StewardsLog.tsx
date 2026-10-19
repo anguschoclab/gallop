@@ -49,8 +49,8 @@ export function StewardsLog() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <Scale className="h-5 w-5 text-cream" />
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name=var(--font-display)]">
+        <Scale className="h-5 w-5 text-foreground" />
+        <h1 className="text-3xl font-bold tracking-tight text-foreground font-[family-name=var(--font-display)]">
           Stewards Log
         </h1>
       </div>
@@ -59,8 +59,8 @@ export function StewardsLog() {
       <div className="grid grid-cols-4 gap-3">
         <Card className="bg-slate-900/40 border-white/5">
           <CardContent className="p-3 text-center">
-            <div className="text-2xl font-black tabular-nums text-cream">{summary.total}</div>
-            <div className="text-[10px] uppercase text-cream-muted">Total</div>
+            <div className="text-2xl font-black tabular-nums text-foreground">{summary.total}</div>
+            <div className="text-[10px] uppercase text-muted-foreground">Total</div>
           </CardContent>
         </Card>
         <Card className="bg-slate-900/40 border-white/5">
@@ -68,7 +68,7 @@ export function StewardsLog() {
             <div className="text-2xl font-black tabular-nums text-green-400">
               {summary.resolved}
             </div>
-            <div className="text-[10px] uppercase text-cream-muted">Resolved</div>
+            <div className="text-[10px] uppercase text-muted-foreground">Resolved</div>
           </CardContent>
         </Card>
         <Card className="bg-slate-900/40 border-white/5">
@@ -76,7 +76,7 @@ export function StewardsLog() {
             <div className="text-2xl font-black tabular-nums text-yellow-400">
               {summary.pending}
             </div>
-            <div className="text-[10px] uppercase text-cream-muted">Pending</div>
+            <div className="text-[10px] uppercase text-muted-foreground">Pending</div>
           </CardContent>
         </Card>
         <Card className="bg-slate-900/40 border-white/5">
@@ -84,7 +84,7 @@ export function StewardsLog() {
             <div className="text-2xl font-black tabular-nums text-red-400">
               {summary.disqualifications}
             </div>
-            <div className="text-[10px] uppercase text-cream-muted">DQs</div>
+            <div className="text-[10px] uppercase text-muted-foreground">DQs</div>
           </CardContent>
         </Card>
       </div>
@@ -98,8 +98,8 @@ export function StewardsLog() {
             className={cn(
               "px-3 py-1 text-xs font-bold uppercase tracking-wide border transition-colors",
               outcomeFilter === of
-                ? "bg-cream/10 border-cream/30 text-cream"
-                : "bg-transparent border-white/5 text-cream-muted hover:text-cream",
+                ? "bg-foreground/10 border-foreground/30 text-foreground"
+                : "bg-transparent border-white/5 text-muted-foreground hover:text-foreground",
             )}
           >
             {of === "all" ? "All" : formatInquiryOutcome(of)}
@@ -110,7 +110,7 @@ export function StewardsLog() {
       {/* Inquiry timeline */}
       {inquiries.length === 0 ? (
         <Card className="bg-slate-900/40 border-white/5">
-          <CardContent className="p-8 text-center text-cream-muted">
+          <CardContent className="p-8 text-center text-muted-foreground">
             No inquiries recorded yet.
           </CardContent>
         </Card>
@@ -141,16 +141,16 @@ export function StewardsLog() {
                       </Badge>
                     )}
                   </div>
-                  <span className="text-[10px] text-cream-muted tabular-nums">
+                  <span className="text-[10px] text-muted-foreground tabular-nums">
                     Day {inquiry.day}
                   </span>
                 </div>
-                <p className="text-sm text-cream">{inquiry.description}</p>
-                <div className="flex items-center gap-3 text-[10px] text-cream-muted">
+                <p className="text-sm text-foreground">{inquiry.description}</p>
+                <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                   <Link
                     to="/race/$raceId"
                     params={{ raceId: inquiry.raceId }}
-                    className="text-cream-muted hover:text-cream underline"
+                    className="text-muted-foreground hover:text-foreground underline"
                   >
                     View Race
                   </Link>

@@ -14,17 +14,17 @@ export function TutorialSettingsCard() {
   return (
     <Card className="bg-slate-900/40 border-white/5">
       <CardHeader>
-        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-2 text-cream">
+        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-2 text-foreground">
           <GraduationCap className="h-4 w-4" />
           Tutorial
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        <p className="text-xs text-cream-muted font-[family-name=var(--font-body)]">
+        <p className="text-xs text-muted-foreground font-[family-name=var(--font-body)]">
           The guided first-session coach walks new players through their first race. Replay it any
           time to review the basics.
         </p>
-        <div className="text-[10px] text-cream-muted uppercase tracking-wide">
+        <div className="text-[10px] text-muted-foreground uppercase tracking-wide">
           Status:{" "}
           {tutorial?.skipped
             ? "Skipped"

@@ -34,7 +34,7 @@ export function ReputationBadge() {
               {formatReputationTier(tier)}
             </Badge>
             {reputation.score > 0 && (
-              <span className="text-sm text-cream-muted">{reputation.score} pts</span>
+              <span className="text-sm text-muted-foreground">{reputation.score} pts</span>
             )}
           </div>
         </TooltipTrigger>
@@ -47,7 +47,7 @@ export function ReputationBadge() {
               graded-race finishes and rivalry losses reduce it. Higher reputation also makes rival
               stables less likely to poach your jockeys.
             </p>
-            <ul className="text-[10px] space-y-0.5 text-cream/80">
+            <ul className="text-[10px] space-y-0.5 text-foreground/80">
               <li>Unranked: 0–149</li>
               <li>Local: 150–299</li>
               <li>Regional: 300–449</li>

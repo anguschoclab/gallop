@@ -27,7 +27,7 @@ export function SilkDot({ color, size = "md", initials, className }: SilkDotProp
     <div
       className={cn(
         "rounded-full flex items-center justify-center font-bold shrink-0",
-        "border-2 border-white/40 dark:border-white/40 border-cream-muted/50",
+        "border-2 border-white/40 dark:border-white/40 border-muted-foreground/50",
         sizeClasses[size],
         className,
       )}

@@ -9,7 +9,7 @@ import { CashPressureMeter } from "@/domains/stable/ui/CashPressureMeter";
 import type { Stable } from "@/platform/game/types";
 
 const LABEL_STYLES: Record<CashPressure["label"], string> = {
-  comfortable: "text-cream-muted border-border/60",
+  comfortable: "text-muted-foreground border-border/60",
   tight: "text-amber-300 border-amber-400/40 bg-amber-400/10",
   strained: "text-orange-300 border-orange-400/40 bg-orange-400/10",
   desperate: "text-red-300 border-red-400/40 bg-red-400/10",
@@ -84,27 +84,27 @@ export function CashPressureBadge({ stable, className, ask, offerAmount }: CashP
           <p className="font-medium">
             Cash pressure: {pressure.label} ({pressure.meter}/100)
           </p>
-          <ul className="space-y-0.5 text-xs text-cream-muted">
+          <ul className="space-y-0.5 text-xs text-muted-foreground">
             <li>
               Upkeep runway:{" "}
-              <span className="tabular-nums text-cream">
+              <span className="tabular-nums text-foreground">
                 {runwayDays} day{runwayDays === 1 ? "" : "s"}
               </span>{" "}
               ({formatCurrency(Math.round(pressure.dailyUpkeep))}/day)
             </li>
             <li>
-              Accept threshold: <span className="tabular-nums text-cream">{acceptPct}%</span> of
-              their ask
+              Accept threshold: <span className="tabular-nums text-foreground">{acceptPct}%</span>{" "}
+              of their ask
               {acceptPct !== basePct && <> (down from {basePct}% under cash pressure)</>}
             </li>
             {thresholds.acceptAmount !== undefined && (
               <li>
                 Accepts around{" "}
-                <span className="tabular-nums text-cream">
+                <span className="tabular-nums text-foreground">
                   {formatCurrency(thresholds.acceptAmount)}
                 </span>
                 ; counters above{" "}
-                <span className="tabular-nums text-cream">
+                <span className="tabular-nums text-foreground">
                   {formatCurrency(thresholds.counterAmount ?? 0)}
                 </span>
               </li>
@@ -112,31 +112,31 @@ export function CashPressureBadge({ stable, className, ask, offerAmount }: CashP
             {thresholds.offerRatio !== undefined && (
               <li>
                 Your offer:{" "}
-                <span className="tabular-nums text-cream">
+                <span className="tabular-nums text-foreground">
                   {Math.round(thresholds.offerRatio * 100)}%
                 </span>{" "}
                 of ask —{" "}
                 {thresholds.shortfallAmount && thresholds.shortfallAmount > 0 ? (
-                  <span className="text-cream">
+                  <span className="text-foreground">
                     {formatCurrency(thresholds.shortfallAmount)} (
                     {(thresholds.shortfallPercent ?? 0).toFixed(1)} pts) below threshold
                   </span>
                 ) : (
-                  <span className="text-cream">at or above their threshold</span>
+                  <span className="text-foreground">at or above their threshold</span>
                 )}
               </li>
             )}
             {thresholds.likelyCounterTerms !== undefined && (
               <li>
                 Likely counter:{" "}
-                <span className="tabular-nums text-cream">
+                <span className="tabular-nums text-foreground">
                   {formatCurrency(thresholds.likelyCounterTerms)}
                 </span>
               </li>
             )}
           </ul>
           {pressure.label !== "comfortable" && (
-            <p className="text-xs text-cream-muted">
+            <p className="text-xs text-muted-foreground">
               Short of cash — more likely to accept lower offers or counter softly.
             </p>
           )}

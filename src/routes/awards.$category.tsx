@@ -44,14 +44,14 @@ function CategoryHistoryPage() {
   if (!ALL_CATEGORIES.has(category)) {
     return (
       <div className="container mx-auto p-6 max-w-3xl space-y-4">
-        <h1 className="text-2xl font-bold text-cream font-[family-name:var(--font-display)]">
+        <h1 className="text-2xl font-bold text-foreground font-[family-name:var(--font-display)]">
           Category not found
         </h1>
-        <p className="text-cream-muted">The award category "{category}" is not recognized.</p>
+        <p className="text-muted-foreground">The award category "{category}" is not recognized.</p>
         <Link
           to="/honors"
           search={{ tab: "awards" as const }}
-          className="text-sm text-gold hover:underline"
+          className="text-sm text-primary hover:underline"
         >
           Back to Awards
         </Link>
@@ -77,23 +77,23 @@ function CategoryHistoryPage() {
         to="/honors"
         label="Back to Awards"
         search={{ tab: "awards" }}
-        className="text-sm text-cream-muted hover:text-gold gap-2"
+        className="text-sm text-muted-foreground hover:text-primary gap-2"
       />
 
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)] flex items-center gap-3">
-          <Trophy className="h-7 w-7 text-gold" />
+        <h1 className="text-3xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)] flex items-center gap-3">
+          <Trophy className="h-7 w-7 text-primary" />
           {displayName}
         </h1>
-        <p className="text-cream-muted text-sm leading-relaxed">{description}</p>
-        <div className="text-xs text-cream-muted">
+        <p className="text-muted-foreground text-sm leading-relaxed">{description}</p>
+        <div className="text-xs text-muted-foreground">
           {categoryAwards.length} award{categoryAwards.length === 1 ? "" : "s"} across all regions
         </div>
       </div>
 
       {categoryAwards.length === 0 ? (
-        <Card className="border-gold-muted">
-          <CardContent className="py-8 text-center text-cream-muted">
+        <Card className="border-border">
+          <CardContent className="py-8 text-center text-muted-foreground">
             No winners have been determined for this category yet.
           </CardContent>
         </Card>
@@ -102,9 +102,9 @@ function CategoryHistoryPage() {
           const regionAwards = byRegion[region];
           if (regionAwards.length === 0) return null;
           return (
-            <Card key={region} className="border-gold-muted">
+            <Card key={region} className="border-border">
               <CardHeader>
-                <CardTitle className="text-base text-cream font-[family-name:var(--font-display)] flex items-center gap-2">
+                <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)] flex items-center gap-2">
                   {REGION_AWARD_NAMES[region]}
                 </CardTitle>
               </CardHeader>
@@ -112,26 +112,26 @@ function CategoryHistoryPage() {
                 {regionAwards.map((a) => (
                   <div
                     key={a.id}
-                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-gold-muted/50 p-3"
+                    className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/50 p-3"
                   >
                     <div className="flex items-center gap-3">
-                      <Badge variant="outline" className="border-gold text-gold font-mono">
+                      <Badge variant="outline" className="border-primary text-primary font-mono">
                         Y{a.year}
                       </Badge>
                       <Link
                         to="/stable/$horseId"
                         params={{ horseId: a.horseId }}
-                        className="font-semibold text-cream hover:text-gold"
+                        className="font-semibold text-foreground hover:text-primary"
                       >
                         {a.horseName}
                       </Link>
                       {a.isHistoric && (
-                        <span className="text-xs text-gold" title="Historic victory">
+                        <span className="text-xs text-primary" title="Historic victory">
                           ★
                         </span>
                       )}
                     </div>
-                    <div className="text-sm text-cream-muted">
+                    <div className="text-sm text-muted-foreground">
                       {a.points} pts
                       {a.runnerUpPoints > 0 && ` · runner-up ${a.runnerUpPoints} pts`}
                     </div>

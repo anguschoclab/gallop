@@ -7,6 +7,8 @@ import type { NextActionKind } from "@/domains/dashboard/simulation/nextAction";
  * Display/visual settings
  */
 export interface DisplaySettings {
+  /** Color theme: dark (racing noir), light, or follow the OS preference */
+  theme: "dark" | "light" | "system";
   /** Compact UI mode - smaller cards and tighter spacing */
   compactMode: boolean;
   /** Show animations in race viewer and UI transitions */
@@ -122,6 +124,7 @@ export interface UserSettings {
 export function createDefaultUserSettings(currentDay: number = 1): UserSettings {
   return {
     display: {
+      theme: "dark",
       compactMode: false,
       animationsEnabled: true,
       dashboardLayout: "grid",

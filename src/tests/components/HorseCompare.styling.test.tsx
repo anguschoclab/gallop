@@ -109,7 +109,7 @@ describe("HorseCompare styling improvements", () => {
       } as any,
     });
     render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
-    const goldCells = document.body.querySelectorAll("[class*='bg-gold']");
+    const goldCells = document.body.querySelectorAll("[class*='bg-primary']");
     expect(goldCells.length).toBeGreaterThan(0);
   });
 
@@ -139,7 +139,7 @@ describe("HorseCompare styling improvements", () => {
       } as any,
     });
     render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
-    const goldCells = document.body.querySelectorAll("td[class*='bg-gold']");
+    const goldCells = document.body.querySelectorAll("td[class*='bg-primary']");
     expect(goldCells.length).toBe(0);
   });
 

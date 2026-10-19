@@ -97,7 +97,7 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
           <BackLink
             to="/stable"
             label="Back to Stable"
-            className="text-[10px] font-black text-cream/30 hover:text-gold mb-8 gap-2"
+            className="text-[10px] font-black text-foreground/30 hover:text-primary mb-8 gap-2"
           />
 
           <nav className="space-y-1">
@@ -109,10 +109,10 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
                   data-section-id={s.id}
                   onClick={detail.handleScrollToSection}
                   className={cn(
-                    "w-full flex items-center gap-3 px-3 py-2 text-[10px] font-black uppercase tracking-wide border-l-2 transition-all",
+                    "w-full flex items-center gap-3 px-3 py-2 text-sm font-medium border-l-2 transition-all",
                     detail.activeSection === s.id
-                      ? "border-gold text-gold bg-gold/5"
-                      : "border-transparent text-cream/20 hover:text-cream/60 hover:bg-white/[0.02]",
+                      ? "border-primary text-primary bg-primary/5"
+                      : "border-transparent text-muted-foreground hover:text-foreground hover:bg-white/[0.02]",
                   )}
                 >
                   {Icon && <Icon className="h-3.5 w-3.5" />}
@@ -123,7 +123,7 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
           </nav>
 
           <div className="pt-6 border-t border-white/5 space-y-4">
-            <div className="text-[9px] font-black uppercase tracking-tighter text-gold/40 px-3">
+            <div className="text-[9px] font-black uppercase tracking-tighter text-primary/40 px-3">
               Actions
             </div>
             <div className="px-3 space-y-2">
@@ -131,7 +131,7 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="w-full h-8 text-[9px] font-black uppercase border-gold/20 hover:bg-gold/10 text-gold"
+                  className="w-full h-8 text-[9px] font-black uppercase border-primary/20 hover:bg-primary/10 text-primary"
                   onClick={() => detail.setSyndicateDialogOpen(true)}
                 >
                   Syndicate
@@ -143,7 +143,7 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full h-8 text-[9px] font-black uppercase border-gold/20 hover:bg-gold/10 text-gold-bright"
+                      className="w-full h-8 text-[9px] font-black uppercase border-primary/20 hover:bg-primary/10 text-accent-bright"
                     >
                       Retire to Stud
                     </Button>
@@ -200,18 +200,18 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
           <div className="lg:col-span-7 space-y-8">
             <section id="training" className="space-y-4">
               <div className="flex items-center gap-2 mb-2">
-                <Zap className="h-4 w-4 text-gold" />
-                <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+                <Zap className="h-4 w-4 text-primary" />
+                <h2 className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
                   Training
                 </h2>
               </div>
-              <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
+              <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-primary">
                 <CardHeader className="pb-2 border-b border-white/5">
                   <div className="flex justify-between items-center">
-                    <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+                    <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
                       Training Schedule
                     </CardTitle>
-                    <span className="text-[10px] font-mono text-gold-bright font-black uppercase">
+                    <span className="text-[10px] font-mono text-accent-bright font-black uppercase">
                       {detail.slotsLeft} slots left
                     </span>
                   </div>

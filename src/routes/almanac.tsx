@@ -76,10 +76,10 @@ function AlmanacPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)]">
           Almanac
         </h1>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">
+        <p className="text-muted-foreground font-[family-name:var(--font-body)]">
           Track records, world news feed, transfer timeline, and the Grade 1 roll of honour
         </p>
       </div>
@@ -147,7 +147,7 @@ function AlmanacPage() {
         <TabsContent value="roll-of-honour" className="space-y-2">
           {honours.length === 0 ? (
             <Card className="border-white/5 bg-slate-900/40">
-              <CardContent className="p-6 text-sm text-cream-muted flex items-center gap-2">
+              <CardContent className="p-6 text-sm text-muted-foreground flex items-center gap-2">
                 <BookOpen className="h-4 w-4" />
                 No Grade 1 races have been run yet.
               </CardContent>
@@ -161,9 +161,9 @@ function AlmanacPage() {
                       <Badge variant="outline" className="text-xs">
                         {r.grade}
                       </Badge>
-                      <span className="truncate text-cream font-semibold">{r.raceName}</span>
+                      <span className="truncate text-foreground font-semibold">{r.raceName}</span>
                     </div>
-                    <p className="text-xs text-cream-muted">
+                    <p className="text-xs text-muted-foreground">
                       Year {r.year} · Day {r.day} · {r.winnerName} · {r.jockeyName}
                     </p>
                   </div>

@@ -96,8 +96,8 @@ export function TargetGradesSection({
       <CardHeader className="border-b border-white/5 pb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <Target className="w-5 h-5 text-gold" />
-            <CardTitle className="text-lg font-black tracking-wide text-cream font-[family-name:var(--font-display)]">
+            <Target className="w-5 h-5 text-primary" />
+            <CardTitle className="text-lg font-black tracking-wide text-foreground font-[family-name:var(--font-display)]">
               Target Grade & Goal Objectives
             </CardTitle>
           </div>
@@ -135,25 +135,27 @@ export function TargetGradesSection({
                 type="button"
                 onClick={() => setSelectedGoal(g.value)}
                 className={cn(
-                  "p-4 rounded-xl text-left border transition-all flex flex-col justify-between space-y-2 focus:outline-none focus:ring-1 focus:ring-gold",
+                  "p-4 rounded-xl text-left border transition-all flex flex-col justify-between space-y-2 focus:outline-none focus:ring-1 focus:ring-primary",
                   isSelected
-                    ? "bg-gold/10 border-gold shadow-md shadow-gold/5 text-cream"
-                    : "bg-slate-950/40 border-white/5 hover:border-white/20 text-cream/70 hover:text-cream",
+                    ? "bg-primary/10 border-primary shadow-md shadow-primary/5 text-foreground"
+                    : "bg-slate-950/40 border-white/5 hover:border-white/20 text-foreground/70 hover:text-foreground",
                 )}
               >
                 <div className="flex items-center justify-between w-full">
-                  <span className="font-bold text-sm text-cream">{g.label}</span>
+                  <span className="font-bold text-sm text-foreground">{g.label}</span>
                   <Badge
                     variant="outline"
                     className={cn(
                       "text-[9px] font-mono",
-                      isSelected ? "border-gold text-gold" : "border-white/10 text-cream-muted",
+                      isSelected
+                        ? "border-primary text-primary"
+                        : "border-white/10 text-muted-foreground",
                     )}
                   >
                     {g.badge}
                   </Badge>
                 </div>
-                <p className="text-[11px] text-cream-muted leading-relaxed line-clamp-2">
+                <p className="text-[11px] text-muted-foreground leading-relaxed line-clamp-2">
                   {g.desc}
                 </p>
               </button>
@@ -163,22 +165,22 @@ export function TargetGradesSection({
 
         {/* Marquee Target Selector (if Chase Major Race selected) */}
         {selectedGoal === "chase_major_race" && (
-          <div className="p-4 rounded-xl bg-slate-950/60 border border-gold/30 space-y-3 animate-fade-in">
-            <div className="flex items-center gap-2 text-gold font-mono text-xs font-bold uppercase">
+          <div className="p-4 rounded-xl bg-slate-950/60 border border-primary/30 space-y-3 animate-fade-in">
+            <div className="flex items-center gap-2 text-primary font-mono text-xs font-bold uppercase">
               <Trophy className="w-4 h-4" /> Select Target Marquee Stakes
             </div>
             <Select value={selectedTargetKey} onValueChange={setSelectedTargetKey}>
-              <SelectTrigger className="w-full bg-slate-900 border-white/10 text-cream font-medium">
+              <SelectTrigger className="w-full bg-slate-900 border-white/10 text-foreground font-medium">
                 <SelectValue placeholder="Choose a marquee race..." />
               </SelectTrigger>
-              <SelectContent className="bg-slate-900 border-white/10 text-cream max-h-64">
+              <SelectContent className="bg-slate-900 border-white/10 text-foreground max-h-64">
                 {GRADED_RACES.map((race) => (
                   <SelectItem
                     key={race.key}
                     value={race.key}
-                    className="focus:bg-gold/20 focus:text-gold font-mono text-xs"
+                    className="focus:bg-primary/20 focus:text-primary font-mono text-xs"
                   >
-                    <span className="font-bold text-cream">{race.name}</span> ({race.grade} ·{" "}
+                    <span className="font-bold text-foreground">{race.name}</span> ({race.grade} ·{" "}
                     {race.surface} · {race.distance}m · Day {race.dayOfYear})
                   </SelectItem>
                 ))}
@@ -190,8 +192,8 @@ export function TargetGradesSection({
         {/* Aptitude Compatibility Strip */}
         <div className="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-white/5">
           <div className="flex items-center gap-4 text-xs font-mono">
-            <div className="flex items-center gap-1.5 text-cream-muted">
-              <Compass className="w-4 h-4 text-gold/70" />
+            <div className="flex items-center gap-1.5 text-muted-foreground">
+              <Compass className="w-4 h-4 text-primary/70" />
               <span>Confirmed Aptitude:</span>
             </div>
             <Badge className="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-mono uppercase">
@@ -207,14 +209,14 @@ export function TargetGradesSection({
               variant="outline"
               size="sm"
               onClick={handleApplyGoal}
-              className="border-white/10 hover:border-gold hover:text-gold text-xs font-mono uppercase"
+              className="border-white/10 hover:border-primary hover:text-primary text-xs font-mono uppercase"
             >
               Update Goal
             </Button>
             <Button
               size="sm"
               onClick={handleGenerate}
-              className="bg-gold hover:bg-gold-bright text-slate-950 font-black text-xs uppercase gap-2 shadow-lg shadow-gold/20"
+              className="bg-primary hover:bg-accent-bright text-slate-950 font-black text-xs uppercase gap-2 shadow-lg shadow-primary/20"
             >
               <Sparkles className="w-3.5 h-3.5" />
               Auto-Generate Prep Chain

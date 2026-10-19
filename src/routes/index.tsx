@@ -27,12 +27,12 @@ import { useNextActionBanner } from "@/domains/dashboard/application/hooks/useNe
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Command Center — Gallop" },
+      { title: "Dashboard — Gallop" },
       {
         name: "description",
         content: "Manage your Gallop racing stable, horses, finances and upcoming races.",
       },
-      { property: "og:title", content: "Command Center — Gallop" },
+      { property: "og:title", content: "Dashboard — Gallop" },
       {
         property: "og:description",
         content: "Manage your Gallop racing stable, horses, finances and upcoming races.",
@@ -47,6 +47,7 @@ export const Route = createFileRoute("/")({
 function Dashboard() {
   const {
     day,
+    ownedHorses,
     lowEnergyHorses,
     nextOwnedRace,
     activeAuctions,
@@ -71,13 +72,13 @@ function Dashboard() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-1">
-          <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
-            Command Center
+          <h1 className="text-4xl font-bold tracking-tighter text-foreground font-[family-name:var(--font-display)]">
+            {ownedHorses.length === 0 ? "Welcome to your stable." : "Welcome back"}
           </h1>
           <div className="flex items-center gap-3">
             <Badge
               variant="outline"
-              className="border-gold/30 text-gold bg-gold/5 font-mono tracking-wide text-[10px] uppercase h-5"
+              className="border-primary/30 text-primary bg-primary/5 font-mono tracking-wide text-[10px] uppercase h-5"
             >
               {gameCalendarDate(day)}
             </Badge>
@@ -86,7 +87,7 @@ function Dashboard() {
         </div>
         <div className="flex flex-wrap gap-2">
           {nextOwnedRace && (
-            <Badge className="bg-fame text-slate-950 gap-1.5 py-1 font-black uppercase tracking-tighter shadow-[0_0_10px_rgba(212,175,55,0.3)]">
+            <Badge className="bg-fame text-slate-950 gap-1.5 py-1 font-black uppercase tracking-tighter shadow-[0_0_10px_var(--border)]">
               <Zap className="h-3 w-3 fill-current" />
               Next Race: D{nextOwnedRace.day}
             </Badge>
@@ -117,7 +118,7 @@ function Dashboard() {
           <button
             type="button"
             onClick={restore}
-            className="text-xs text-cream-muted hover:text-gold transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded px-2 py-1"
+            className="text-xs text-muted-foreground hover:text-primary transition focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded px-2 py-1"
           >
             Show next action
           </button>

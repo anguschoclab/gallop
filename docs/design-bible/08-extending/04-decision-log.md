@@ -12,7 +12,7 @@ Append-only. Each entry is a decision that was made deliberately and could be qu
 
 Format:
 
-```
+```text
 ## NNNN — Title (yyyy-mm-dd)
 
 **Status.** Active / Superseded by NNNN / Reversed
@@ -44,7 +44,7 @@ Newest entries at the **bottom**. Don't edit old entries — supersede them.
 
 ## 0002 — Sidebar nav is flat, 7 items (2026-05-03)
 
-**Status.** Active.
+**Status.** Superseded by 0009.
 
 **Context.** Considering nested nav (e.g. _"Stable" > "Mares" > "Stallions"_).
 
@@ -140,9 +140,9 @@ Newest entries at the **bottom**. Don't edit old entries — supersede them.
 
 **Status.** Active.
 
-**Context.** Graded stakes (G1, G2, G3) need color coding. Options: traditional racing colors (yellow/slate/amber) vs app theme colors (fame/muted-foreground/info). The canonical `getGradeColorClass` in `src/core/race/grading.ts` used traditional colors, but several route files had duplicated implementations using app theme colors.
+**Context.** Graded stakes (G1, G2, G3) need color coding. Options: traditional racing colors (yellow/slate/amber) vs app theme colors (fame/muted-foreground/info). The canonical `getGradeColorClass` in `src/domains/race/simulation/grading.ts` used traditional colors, but several route files had duplicated implementations using app theme colors.
 
-**Decision.** Use app theme colors (fame/muted-foreground/info) for consistency with the rest of the UI. G1 = fame (gold/celebratory), G2 = muted-foreground (silver/secondary), G3 = info (bronze/tertiary). Consolidate all grade color references to single source of truth in `src/core/race/grading.ts`.
+**Decision.** Use app theme colors (fame/muted-foreground/info) for consistency with the rest of the UI. G1 = fame (gold/celebratory), G2 = muted-foreground (silver/secondary), G3 = info (bronze/tertiary). Consolidate all grade color references to single source of truth in `src/domains/race/simulation/grading.ts`.
 
 **Consequences.**
 
@@ -150,6 +150,29 @@ Newest entries at the **bottom**. Don't edit old entries — supersede them.
 - Eliminates duplicate grade color logic (DRY violation).
 - Traditional racing enthusiasts may notice the color difference, but the semantic meaning (gold/silver/bronze hierarchy) remains clear.
 - All inline `gradeLabelColor` constants and `getGradeColor` functions deleted from route files.
+
+---
+
+## 0009 — Racing-noir dark is the default theme; semantic tokens only; 3-section nav (2026-10-19)
+
+**Status.** Active.
+
+**Context.** The UI had drifted: `<html className="dark">` was hardcoded, ~4,000 class usages reached past the semantic layer into the `t*`/`cream`/`gold` primitives, ~60 files carried raw hex/rgba literals, the sidebar had grown to 4 sections / ~32 items, and 55 design-bible path references pointed at deleted files.
+
+**Decision.**
+
+- Dark racing-noir is the product identity and lives in `:root`; `.light` is experimental. `userSettings.display.theme` (`dark`/`light`/`system`, default `dark`) drives the `<html>` class via `useTheme` + a pre-hydration script; no animated palette transitions.
+- Production TSX consumes the semantic layer only (`background`, `foreground`, `muted-foreground`, `primary`, `border`, `card`, `muted`, `surface`, `surface-hover`, `surface-strong`, `accent`, `accent-bright`). New semantic tokens `surface`, `surface-hover`, `surface-strong`, `accent-bright` cover the t900/t600/t500/gold-light roles. Primitive classes are forbidden by test.
+- Sidebar reorganised to three sections (Stable, Racing, Market), 11 primary items, plus a collapsed "More" group holding every secondary route. `/gazette`, `/recap` → `/briefing` tabs; `/races`, `/race-browser` → `/racing` tabs.
+- Canvas painting reads `--broadcast-*` custom properties via `getComputedStyle` with deterministic fallbacks; `prefers-reduced-motion` and `display.animationsEnabled` gate decorative animation while positions keep updating.
+- Raw hex/rgb literals are forbidden in production TSX outside `styles.css`, the canvas reader, and an explicit data allowlist (silk/coat/palette/portrait/investor colour data — user/game data, not theme).
+- Zero backwards-compatibility stance: no legacy route aliases beyond the hub redirects, no save migration for the new settings field (missing `theme` resolves to `dark`).
+
+**Consequences.**
+
+- Baseline → final: ~4,089 primitive-token class usages → 0; raw literal sites in theme-owned UI → 0 (data modules remain); stale bible paths: 55 → 0; sidebar primary items: ~32 → 11.
+- `bg-t900` reads as `bg-surface`, `bg-t600`/`bg-t500` as `surface-hover`/`surface-strong`, `text-gold-light` as `text-accent-bright`.
+- Light theme renders coherently but is not screen-audited; expect contrast quirks until it graduates from experimental.
 
 ---
 

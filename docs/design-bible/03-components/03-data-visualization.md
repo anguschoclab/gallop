@@ -10,7 +10,7 @@ owns: design:design-system
 
 Charts in Gallop serve Maya's archetype most directly: the player who wants to _see_ a distribution, a trend, or a comparison at a glance. They follow strict rules so that across screens they read like one chart family.
 
-**Library:** Recharts, wrapped via `<ChartContainer>` ([src/components/ui/chart.tsx](../../../src/components/ui/chart.tsx)).
+**Library:** Recharts, wrapped via `<ChartContainer>` ([src/shared/ui/chart.tsx](../../../src/shared/ui/chart.tsx)).
 
 ---
 
@@ -107,10 +107,10 @@ Most Gallop charts assume desktop width. On narrow viewports:
 
 ## Examples in code
 
-- [BeyerChart.tsx](../../../src/components/BeyerChart.tsx) — line, time series.
-- [GradedStatsChart.tsx](../../../src/components/GradedStatsChart.tsx) — bar.
-- [HorseStatsRadar.tsx](../../../src/components/HorseStatsRadar.tsx) — radar.
-- [BreedingRadarChart.tsx](../../../src/components/BreedingRadarChart.tsx) — radar (compatibility).
+- [BeyerChart.tsx](../../../src/domains/race/ui/BeyerChart.tsx) — line, time series.
+- [GradedStatsChart.tsx](../../../src/domains/race/ui/GradedStatsChart.tsx) — bar.
+- [HorseStatsRadar.tsx](../../../src/domains/horse/ui/HorseStatsRadar.tsx) — radar.
+- [BreedingRadarChart.tsx](../../../src/domains/breeding/ui/BreedingRadarChart.tsx) — radar (compatibility).
 
 ---
 

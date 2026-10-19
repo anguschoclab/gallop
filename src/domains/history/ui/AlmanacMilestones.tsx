@@ -26,7 +26,7 @@ export function AlmanacMilestones({
   if (milestones.length === 0) {
     return (
       <Card className="border-white/5 bg-slate-900/40">
-        <CardContent className="p-6 text-sm text-cream-muted flex items-center gap-2">
+        <CardContent className="p-6 text-sm text-muted-foreground flex items-center gap-2">
           <Landmark className="h-4 w-4" />
           No track records have been set yet.
         </CardContent>
@@ -41,7 +41,7 @@ export function AlmanacMilestones({
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Filter tracks"
         aria-label="Filter tracks"
-        className="w-full max-w-xs rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-cream placeholder:text-cream-muted"
+        className="w-full max-w-xs rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground"
       />
       <div className="grid gap-3 md:grid-cols-2">
         {visible.map((m) => (
@@ -49,8 +49,8 @@ export function AlmanacMilestones({
             <CardContent className="p-4 space-y-2">
               <div className="flex items-start justify-between gap-2">
                 <div>
-                  <h3 className="font-semibold text-cream">{m.trackName}</h3>
-                  <p className="text-[10px] uppercase tracking-wide text-cream-muted">
+                  <h3 className="font-semibold text-foreground">{m.trackName}</h3>
+                  <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
                     {m.surfaces.join(" · ")} · {m.distances.length} trips
                   </p>
                 </div>
@@ -60,10 +60,10 @@ export function AlmanacMilestones({
               </div>
 
               {m.fastest && (
-                <div className="flex items-center justify-between gap-2 text-xs text-cream-muted">
+                <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
                   <span className="flex items-center gap-1.5">
                     <Gauge className="h-3.5 w-3.5 text-primary" />
-                    Fastest: <span className="text-cream">{m.fastest.horseName}</span>{" "}
+                    Fastest: <span className="text-foreground">{m.fastest.horseName}</span>{" "}
                     {m.fastest.distance}m {m.fastest.surface}
                   </span>
                   <RaceTimeDisplay
@@ -74,14 +74,14 @@ export function AlmanacMilestones({
                 </div>
               )}
 
-              <div className="grid grid-cols-2 gap-2 text-[11px] text-cream-muted">
+              <div className="grid grid-cols-2 gap-2 text-[11px] text-muted-foreground">
                 <span>First record: Year {m.earliest?.year ?? "—"}</span>
                 <span>Latest record: Year {m.latest?.year ?? "—"}</span>
               </div>
 
               {m.g1Count > 0 && (
-                <p className="flex items-center gap-1.5 text-[11px] text-cream-muted">
-                  <Trophy className="h-3.5 w-3.5 text-gold" />
+                <p className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+                  <Trophy className="h-3.5 w-3.5 text-primary" />
                   {m.g1Count} Grade 1 result{m.g1Count === 1 ? "" : "s"} logged here
                 </p>
               )}

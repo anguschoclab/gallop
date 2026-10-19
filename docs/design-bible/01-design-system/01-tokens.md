@@ -36,21 +36,27 @@ All colours use OKLCH (`oklch(L C H)`), not hex or HSL. OKLCH is perceptually un
 
 ### Semantic palette
 
-| Token                                    | Role                              | Light value                  | Dark value                                |
-| ---------------------------------------- | --------------------------------- | ---------------------------- | ----------------------------------------- |
-| `background`                             | Page background                   | `oklch(1 0 0)` (white)       | `oklch(0.129 0.042 264.695)` (deep slate) |
-| `foreground`                             | Primary text on `background`      | deep slate                   | near-white                                |
-| `card`                                   | Card / panel background           | white                        | medium slate                              |
-| `card-foreground`                        | Text on `card`                    | deep slate                   | near-white                                |
-| `popover` / `popover-foreground`         | Floating layers (menus, tooltips) | white / deep slate           | medium slate / near-white                 |
-| `primary` / `primary-foreground`         | Highest-emphasis surfaces         | dark slate / off-white       | off-white / dark slate (inverts)          |
-| `secondary` / `secondary-foreground`     | Lower-emphasis filled surfaces    | very pale slate / dark slate | mid-dark slate / off-white                |
-| `muted` / `muted-foreground`             | Backdrops, subtle text            | very pale slate / mid-grey   | mid-dark slate / mid-grey                 |
-| `accent` / `accent-foreground`           | Hover and pressed states          | very pale slate / dark slate | mid-dark slate / off-white                |
-| `destructive` / `destructive-foreground` | Errors, dangerous actions         | red / off-white              | red / off-white                           |
-| `border`                                 | Component borders                 | pale slate                   | white at 10% alpha                        |
-| `input`                                  | Form-field borders                | pale slate                   | white at 15% alpha                        |
-| `ring`                                   | Focus rings                       | mid slate                    | mid slate                                 |
+Dark racing-noir is the default theme (`:root`); `.light` values are experimental.
+
+| Token                                    | Role                               | Racing-noir (default)        | Light value             |
+| ---------------------------------------- | ---------------------------------- | ---------------------------- | ----------------------- |
+| `background`                             | Page background                    | `--t950` near-black green    | white                   |
+| `foreground`                             | Primary text                       | `--cream`                    | deep slate              |
+| `card`                                   | Card / panel background            | `--t800`                     | white                   |
+| `surface`                                | Elevated surface (between bg/card) | `--t900`                     | pale slate              |
+| `surface-hover`                          | Hovered/pressed surface            | `--t600`                     | light neutral           |
+| `surface-strong`                         | Strongest surface tier             | `--t500`                     | light neutral           |
+| `muted` / `muted-foreground`             | Backdrops, subtle text             | `--t700` / `--cream-muted`   | pale slate / mid-grey   |
+| `primary` / `primary-foreground`         | Highest-emphasis surfaces          | `--gold` / `--t950`          | dark slate / off-white  |
+| `secondary` / `secondary-foreground`     | Lower-emphasis filled surfaces     | `--t700` / `--cream`         | pale slate / dark slate |
+| `accent` / `accent-foreground`           | Hover and pressed states           | `--gold-subtle` / `--gold`   | pale slate / dark slate |
+| `accent-bright`                          | Brighter accent (hovers, glow)     | `--gold-light`               | darker slate            |
+| `destructive` / `destructive-foreground` | Errors, dangerous actions          | red / off-white              | red / off-white         |
+| `border`                                 | Component borders                  | `--gold-muted` (gold at 30%) | pale slate              |
+| `input`                                  | Form-field borders                 | `--gold-subtle`              | pale slate              |
+| `ring`                                   | Focus rings                        | `--gold`                     | mid slate               |
+
+The racing primitives (`t950…t500`, `cream`, `cream-muted`, `cream-faint`, `gold`, `gold-light`, `gold-muted`, `gold-subtle`) remain registered in `@theme inline` for reference but are **forbidden in production TSX** — a guardrail test enforces semantic-only usage.
 
 ### Status tokens
 
@@ -135,7 +141,7 @@ The race screen uses different units (36px lane height, 280px sidebar) because i
 
 Any column or row of numbers should use the `tabular-nums` Tailwind class. This is a non-negotiable expression of principle 1 ("Numbers are the protagonist").
 
-Examples in the codebase: cash counter in [AppShell.tsx](../../../src/components/AppShell.tsx) (line 67), every leaderboard row in [race.$raceId.tsx](../../../src/routes/race.$raceId.tsx).
+Examples in the codebase: cash counter in [AppShell.tsx](../../../src/domains/shell/ui/AppShell.tsx) (line 67), every leaderboard row in [race.$raceId.tsx](../../../src/routes/race.$raceId.tsx).
 
 ---
 

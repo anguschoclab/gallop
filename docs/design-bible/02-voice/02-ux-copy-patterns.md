@@ -140,7 +140,7 @@ Title case is reserved for actual names. Everything else is sentence case.
 
 ## Time / day references
 
-The in-game calendar drives all date copy. Use [gameCalendarDate(day)](../../../src/core/calendar/dateFormatting.ts) for absolute dates (_"Year 3, Apr 14"_) and relative phrasing for upcoming events (_"in 3 days"_, _"tomorrow"_, _"Friday"_).
+The in-game calendar drives all date copy. Use [gameCalendarDate(day)](../../../src/domains/calendar/simulation/dateFormatting.ts) for absolute dates (_"Year 3, Apr 14"_) and relative phrasing for upcoming events (_"in 3 days"_, _"tomorrow"_, _"Friday"_).
 
 | Don't                      | Do                                     |
 | -------------------------- | -------------------------------------- |

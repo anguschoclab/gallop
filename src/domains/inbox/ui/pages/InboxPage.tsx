@@ -46,10 +46,10 @@ function InboxPage() {
     >
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-cream font-[family-name=var(--font-display)]">
+          <h1 className="text-3xl font-bold text-foreground font-[family-name=var(--font-display)]">
             Message Center
           </h1>
-          <p className="text-cream-muted text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             Your hub for critical stable updates and decisions.
           </p>
         </div>
@@ -163,8 +163,8 @@ function InboxPage() {
 
       <div className="space-y-4">
         {filteredMessages.length === 0 ? (
-          <Card className="bg-t800 border-gold-muted/30 py-12">
-            <CardContent className="flex flex-col items-center justify-center text-cream-muted">
+          <Card className="bg-card border-border/30 py-12">
+            <CardContent className="flex flex-col items-center justify-center text-muted-foreground">
               <Bell className={cn(EMPTY_STATE_ICON_SIZE, "mb-4", EMPTY_STATE_ICON_OPACITY)} />
               <p>No messages to display.</p>
             </CardContent>
@@ -174,8 +174,8 @@ function InboxPage() {
             <Card
               key={msg.id}
               className={cn(
-                "bg-t800 border-gold-muted/30 transition-all hover:border-gold/50 relative overflow-hidden",
-                !msg.readAt && "border-l-4 border-l-gold shadow-lg shadow-gold/5",
+                "bg-card border-border/30 transition-all hover:border-primary/50 relative overflow-hidden",
+                !msg.readAt && "border-l-4 border-l-primary shadow-lg shadow-primary/5",
                 msg.priority === "urgent" && "border-l-4 border-l-red-500",
                 msg.priority === "critical" && "border-l-4 border-l-red-600",
               )}
@@ -188,19 +188,19 @@ function InboxPage() {
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <CardTitle className="text-lg text-cream">
+                        <CardTitle className="text-lg text-foreground">
                           <NewsContent text={msg.title} />
                         </CardTitle>
                         {!msg.readAt && (
                           <span
-                            className={cn(UNREAD_DOT_SIZE, "rounded-full bg-gold animate-pulse")}
+                            className={cn(UNREAD_DOT_SIZE, "rounded-full bg-primary animate-pulse")}
                           />
                         )}
                         {msg.pinnedUntil && msg.pinnedUntil >= day && (
-                          <Pin className={cn(ICON_SIZE_PIN, "text-gold fill-gold")} />
+                          <Pin className={cn(ICON_SIZE_PIN, "text-primary fill-primary")} />
                         )}
                       </div>
-                      <p className="text-xs text-cream-muted font-mono">
+                      <p className="text-xs text-muted-foreground font-mono">
                         Day {msg.day} • {msg.category.toUpperCase()}
                       </p>
                     </div>
@@ -242,7 +242,7 @@ function InboxPage() {
                 </div>
               </CardHeader>
               <CardContent>
-                <p className="text-cream-muted text-sm mb-4 leading-relaxed">
+                <p className="text-muted-foreground text-sm mb-4 leading-relaxed">
                   <NewsContent text={msg.body} />
                 </p>
                 {msg.cta?.params?.invitationId && (

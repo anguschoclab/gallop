@@ -81,8 +81,8 @@ export function PlayerConsignmentsPanel({
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between gap-2">
                     <div>
-                      <p className="font-semibold text-cream">{lotHorse?.name ?? "Unknown"}</p>
-                      <p className="text-xs text-cream-muted">
+                      <p className="font-semibold text-foreground">{lotHorse?.name ?? "Unknown"}</p>
+                      <p className="text-xs text-muted-foreground">
                         {lotHorse
                           ? `${lotHorse.gender.charAt(0).toUpperCase() + lotHorse.gender.slice(1)} · Age ${Math.floor(lotHorse.age)}${lotHorse.hemisphere === "Southern" ? " · Southern" : ""}`
                           : ""}
@@ -96,17 +96,17 @@ export function PlayerConsignmentsPanel({
                   </div>
                   <div className="border-t mt-2 pt-2 space-y-1 text-sm">
                     {lot.passed || !lot.hammerPrice ? (
-                      <p className="text-cream-muted italic">Reserve not met</p>
+                      <p className="text-muted-foreground italic">Reserve not met</p>
                     ) : (
                       <>
                         <div className="flex items-center justify-between">
-                          <span className="text-cream-muted">Hammer price</span>
+                          <span className="text-muted-foreground">Hammer price</span>
                           <span className="tabular-nums font-medium">
                             {formatCurrency(lot.hammerPrice)}
                           </span>
                         </div>
                         <div className="flex items-center justify-between">
-                          <span className="text-cream-muted">
+                          <span className="text-muted-foreground">
                             Commission ({Math.round(effectiveRate * 100)}%)
                           </span>
                           <span className="tabular-nums text-destructive">
@@ -114,7 +114,7 @@ export function PlayerConsignmentsPanel({
                           </span>
                         </div>
                         <div className="flex items-center justify-between font-semibold">
-                          <span className="text-cream-muted">Net proceeds</span>
+                          <span className="text-muted-foreground">Net proceeds</span>
                           <span className="tabular-nums text-success">
                             {formatCurrency(netProceeds(lot.hammerPrice, house))}
                           </span>
@@ -122,7 +122,7 @@ export function PlayerConsignmentsPanel({
                       </>
                     )}
                     <div className="flex items-center justify-between text-xs pt-0.5">
-                      <span className="text-cream-muted">Sold to</span>
+                      <span className="text-muted-foreground">Sold to</span>
                       <span className="font-medium">
                         {lot.passed ? "Passed — reserve not met" : buyer ? buyer.name : "Unknown"}
                       </span>
@@ -136,10 +136,10 @@ export function PlayerConsignmentsPanel({
       })}
 
       {soldLots.length > 0 && (
-        <p className="text-sm text-cream-muted tabular-nums">
-          <strong className="text-cream">{soldLots.length}</strong>{" "}
+        <p className="text-sm text-muted-foreground tabular-nums">
+          <strong className="text-foreground">{soldLots.length}</strong>{" "}
           {soldLots.length === 1 ? "horse" : "horses"} sold · Total net proceeds:{" "}
-          <strong className="text-cream">{formatCurrency(totalNet)}</strong> (after{" "}
+          <strong className="text-foreground">{formatCurrency(totalNet)}</strong> (after{" "}
           {Math.round(effectiveRate * 100)}% commission)
         </p>
       )}

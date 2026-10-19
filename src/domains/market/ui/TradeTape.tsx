@@ -30,18 +30,18 @@ export function TradeTape({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
+        <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-muted-foreground">
           <Activity className="h-3.5 w-3.5 text-primary" />
           Trade Tape
         </h3>
-        <span className="flex items-center gap-1.5 text-[10px] text-cream-muted">
+        <span className="flex items-center gap-1.5 text-[10px] text-muted-foreground">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-success" aria-hidden />
           {todayCount} today
         </span>
       </div>
 
       {tape.length === 0 ? (
-        <p className="text-xs text-cream-muted">No trades settled yet.</p>
+        <p className="text-xs text-muted-foreground">No trades settled yet.</p>
       ) : (
         <ul className="space-y-1">
           {tape.map((t) => {
@@ -62,17 +62,17 @@ export function TradeTape({
                     ) : (
                       <ArrowDownRight className="h-3 w-3 shrink-0 text-success" aria-hidden />
                     )}
-                    <span className="truncate text-cream">{t.horseName}</span>
+                    <span className="truncate text-foreground">{t.horseName}</span>
                     {playerSide && (
                       <Badge variant="outline" className="shrink-0 text-[9px] uppercase">
                         You {playerSide}
                       </Badge>
                     )}
                   </span>
-                  <span className="min-w-0 truncate text-[10px] text-cream-muted">
+                  <span className="min-w-0 truncate text-[10px] text-muted-foreground">
                     {t.sellerName} → {t.buyerName} · D{t.day}
                   </span>
-                  <span className="shrink-0 tabular-nums text-cream">
+                  <span className="shrink-0 tabular-nums text-foreground">
                     {formatCurrency(t.price)}
                   </span>
                 </li>

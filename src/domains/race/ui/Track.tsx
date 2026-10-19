@@ -313,7 +313,7 @@ export function Track({
                   )}
                 {r.jockeyInstructions?.earlyPosition === "lead" &&
                   r.position >= leaderPos - LEADING_PROXIMITY_METRES && (
-                    <div className="px-1.5 py-0.5 rounded-full bg-gold/80 text-[8px] font-black text-t950 flex items-center gap-1">
+                    <div className="px-1.5 py-0.5 rounded-full bg-primary/80 text-[8px] font-black text-background flex items-center gap-1">
                       LEADING
                     </div>
                   )}

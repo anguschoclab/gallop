@@ -29,7 +29,7 @@ export function BeyerExplainer({ beyerScore }: BeyerExplainerProps) {
         </CardTitle>
       </CardHeader>
       <CardContent className="p-6 space-y-4">
-        <p className="text-sm text-cream font-[family-name=var(--font-body)]">
+        <p className="text-sm text-foreground font-[family-name=var(--font-body)]">
           The Beyer Speed Figure is a number that measures how fast your horse ran regardless of the
           track surface or conditions. Higher is better — a figure in the 90s is a solid
           performance, 100+ is exceptional.
@@ -42,7 +42,7 @@ export function BeyerExplainer({ beyerScore }: BeyerExplainerProps) {
             {beyerScore}
           </span>
         </div>
-        <p className="text-xs text-cream-muted italic">
+        <p className="text-xs text-muted-foreground italic">
           Compare figures across races to see if your horse is improving. A rising figure means your
           horse is getting faster.
         </p>

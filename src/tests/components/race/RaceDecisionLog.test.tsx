@@ -80,7 +80,7 @@ describe("RaceDecisionLog", () => {
     const { container } = render(
       <RaceDecisionLog snapshots={createMockSnapshots()} runners={runners} distance={1600} />,
     );
-    const ownedElements = container.querySelectorAll(".border-l-gold");
+    const ownedElements = container.querySelectorAll(".border-l-primary");
     expect(ownedElements.length).toBeGreaterThan(0);
   });
 

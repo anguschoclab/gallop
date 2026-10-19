@@ -87,7 +87,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <p className="mt-2 text-[10px] uppercase tracking-wide text-cream-muted cursor-help">
+                        <p className="mt-2 text-[10px] uppercase tracking-wide text-muted-foreground cursor-help">
                           {attachment.label} · asks ×{attachment.askMultiplier.toFixed(2)} of market
                         </p>
                       </TooltipTrigger>
@@ -130,7 +130,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                       }}
                       disabled={!!activeOffer || hasInAuction}
                       className={cn(
-                        "h-7 px-3 text-[9px] font-black uppercase tracking-wide border-white/10 hover:bg-gold/10 hover:text-gold hover:border-gold/30 rounded-none bg-slate-950/80 backdrop-blur-sm text-cream/60",
+                        "h-7 px-3 text-[9px] font-black uppercase tracking-wide border-white/10 hover:bg-primary/10 hover:text-primary hover:border-primary/30 rounded-none bg-slate-950/80 backdrop-blur-sm text-foreground/60",
                         (!!activeOffer || hasInAuction) && "pointer-events-none",
                       )}
                     >
@@ -148,7 +148,7 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
                         onClick={handleScout}
                         disabled={cash < scoutCost}
                         className={cn(
-                          "h-7 px-3 text-[9px] font-black uppercase tracking-wide border-white/10 hover:bg-blue-400/10 hover:text-blue-400 hover:border-blue-400/30 rounded-none bg-slate-950/80 backdrop-blur-sm text-cream/60",
+                          "h-7 px-3 text-[9px] font-black uppercase tracking-wide border-white/10 hover:bg-blue-400/10 hover:text-blue-400 hover:border-blue-400/30 rounded-none bg-slate-950/80 backdrop-blur-sm text-foreground/60",
                           cash < scoutCost && "pointer-events-none",
                         )}
                       >
@@ -176,8 +176,8 @@ export function NpcStableRosterTab({ pageData }: NpcStableRosterTabProps) {
       </div>
       {stableHorses.length === 0 && (
         <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
-          <ShieldCheck className="h-16 w-16 mx-auto mb-6 text-cream/5" />
-          <p className="font-bold text-cream/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
+          <ShieldCheck className="h-16 w-16 mx-auto mb-6 text-foreground/5" />
+          <p className="font-bold text-foreground/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
             No Horses
           </p>
         </div>

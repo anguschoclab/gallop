@@ -41,14 +41,14 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
 
   return (
     <div className="border-t border-white/10 pt-4" data-testid="head-to-head-section">
-      <h4 className="text-[11px] uppercase tracking-wide font-mono text-cream/50 mb-3">
+      <h4 className="text-[11px] uppercase tracking-wide font-mono text-foreground/50 mb-3">
         Head-to-Head Projection
       </h4>
 
       {/* Selectors */}
       <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-4">
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] uppercase tracking-wide font-mono text-cream/40">
+          <span className="text-[10px] uppercase tracking-wide font-mono text-foreground/40">
             Distance
           </span>
           <select
@@ -57,7 +57,7 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
               setDistance(Number(e.target.value));
               clearSim();
             }}
-            className="bg-slate-900 border border-white/10 rounded px-2 py-1 text-xs font-mono text-cream"
+            className="bg-slate-900 border border-white/10 rounded px-2 py-1 text-xs font-mono text-foreground"
           >
             {DISTANCE_OPTIONS.map((d) => (
               <option key={d.value} value={d.value}>
@@ -67,7 +67,7 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
           </select>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="text-[10px] uppercase tracking-wide font-mono text-cream/40">
+          <span className="text-[10px] uppercase tracking-wide font-mono text-foreground/40">
             Surface
           </span>
           <div className="flex gap-1">
@@ -79,8 +79,8 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
                 className={cn(
                   "h-6 px-2 text-[10px] font-mono uppercase tracking-wider",
                   surface === s.value
-                    ? "bg-gold/20 text-gold border border-gold/30"
-                    : "text-cream/50 border border-white/5",
+                    ? "bg-primary/20 text-primary border border-primary/30"
+                    : "text-foreground/50 border border-white/5",
                 )}
                 onClick={() => {
                   setSurface(s.value);
@@ -103,28 +103,28 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
             <div key={h.id} className="rounded border border-white/5 p-3 bg-white/[0.02]">
               <div className="flex items-center gap-1.5 mb-2">
                 <SilkDot color={h.silk} size="sm" />
-                <span className="text-xs font-bold text-cream">{h.name}</span>
+                <span className="text-xs font-bold text-foreground">{h.name}</span>
               </div>
               <div className="space-y-1">
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/50">Win %</span>
+                  <span className="text-foreground/50">Win %</span>
                   <NumericValue
                     value={(o.winPct * 100).toFixed(1)}
                     suffix="%"
-                    className="text-gold font-bold"
+                    className="text-primary font-bold"
                   />
                 </div>
                 <Progress value={o.winPct * 100} className="h-1.5" />
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/50">Proj. Beyer</span>
-                  <NumericValue value={o.projectedBeyer} className="text-cream/80" />
+                  <span className="text-foreground/50">Proj. Beyer</span>
+                  <NumericValue value={o.projectedBeyer} className="text-foreground/80" />
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/50">Finish Time</span>
+                  <span className="text-foreground/50">Finish Time</span>
                   <NumericValue
                     value={o.projectedFinishTime.toFixed(1)}
                     suffix="s"
-                    className="text-cream/80"
+                    className="text-foreground/80"
                   />
                 </div>
               </div>
@@ -145,7 +145,7 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
           {simRunning ? "Running..." : `Run Simulation (${SIM_ITERATIONS}×)`}
         </Button>
         {simResults && (
-          <span className="text-[10px] font-mono text-cream/40">
+          <span className="text-[10px] font-mono text-foreground/40">
             {SIM_ITERATIONS} iterations completed
           </span>
         )}
@@ -157,40 +157,40 @@ export function HeadToHeadSection({ horses }: { horses: Horse[] }) {
             const r = simResultsMap?.get(h.id);
             if (!r) return null;
             return (
-              <div key={h.id} className="rounded border border-gold/10 p-3 bg-gold/[0.02]">
+              <div key={h.id} className="rounded border border-primary/10 p-3 bg-primary/[0.02]">
                 <div className="flex items-center gap-1.5 mb-2">
                   <SilkDot color={h.silk} size="sm" />
-                  <span className="text-xs font-bold text-cream">{h.name}</span>
+                  <span className="text-xs font-bold text-foreground">{h.name}</span>
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between text-xs">
-                    <span className="text-cream/50">Sim Win %</span>
+                    <span className="text-foreground/50">Sim Win %</span>
                     <NumericValue
                       value={(r.winPct * 100).toFixed(1)}
                       suffix="%"
-                      className="text-gold font-bold"
+                      className="text-primary font-bold"
                     />
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-cream/50">Avg Finish</span>
+                    <span className="text-foreground/50">Avg Finish</span>
                     <NumericValue
                       value={r.avgFinishPosition.toFixed(2)}
-                      className="text-cream/80"
+                      className="text-foreground/80"
                     />
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-cream/50">Avg Time</span>
+                    <span className="text-foreground/50">Avg Time</span>
                     <NumericValue
                       value={r.avgFinishTime.toFixed(1)}
                       suffix="s"
-                      className="text-cream/80"
+                      className="text-foreground/80"
                     />
                   </div>
                   <div className="flex justify-between text-xs">
-                    <span className="text-cream/50">Beyer Range</span>
+                    <span className="text-foreground/50">Beyer Range</span>
                     <NumericValue
                       value={`${r.beyerRange[0]}–${r.beyerRange[1]}`}
-                      className="text-cream/80"
+                      className="text-foreground/80"
                     />
                   </div>
                 </div>

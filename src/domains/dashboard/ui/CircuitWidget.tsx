@@ -22,13 +22,13 @@ export function CircuitWidget() {
   const activeAuctions = auctions?.filter((a) => !a.resolved) ?? [];
 
   return (
-    <Card className="border-gold-muted flex flex-col bg-slate-900/20 group hover:border-gold/40 transition-all duration-300">
+    <Card className="border-border flex flex-col bg-slate-900/20 group hover:border-primary/40 transition-all duration-300">
       <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-white/5 bg-white/[0.02]">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded bg-success/10 flex items-center justify-center border border-success/20 group-hover:bg-success/20 transition-colors">
             <Globe className="h-4 w-4 text-success" />
           </div>
-          <CardTitle className="text-xl font-bold font-[family-name:var(--font-display)] text-cream tracking-tight">
+          <CardTitle className="text-xl font-bold font-[family-name:var(--font-display)] text-foreground tracking-tight">
             The Circuit
           </CardTitle>
         </div>
@@ -51,7 +51,7 @@ export function CircuitWidget() {
                   size="icon"
                   variant="ghost"
                   aria-label="Go to The Circuit races"
-                  className="h-8 w-8 text-cream-muted hover:text-success group-hover:translate-x-0.5 transition-transform"
+                  className="h-8 w-8 text-muted-foreground hover:text-success group-hover:translate-x-0.5 transition-transform"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -74,24 +74,24 @@ export function CircuitWidget() {
                 className="flex items-center justify-between p-2 rounded bg-black/20 border border-white/5 hover:bg-black/40 transition-colors"
               >
                 <div className="space-y-0.5 min-w-0">
-                  <div className="text-[11px] font-bold text-cream truncate">
+                  <div className="text-[11px] font-bold text-foreground truncate">
                     <Link to="/race/$raceId" params={{ raceId: r.id }}>
                       {r.name}
                     </Link>
                   </div>
-                  <div className="text-[9px] text-cream-muted uppercase font-mono tracking-tighter opacity-60">
+                  <div className="text-[9px] text-muted-foreground uppercase font-mono tracking-tighter opacity-60">
                     {r.distance}m · {r.raceClass}
                   </div>
                 </div>
                 {r.entries.some(
                   (e: { ownership?: { type: string } }) => e.ownership?.type === "player",
                 ) ? (
-                  <Badge className="bg-success text-slate-950 text-[8px] h-4 font-black px-1 border-none shadow-[0_0_8px_rgba(34,197,94,0.3)]">
+                  <Badge className="bg-success text-slate-950 text-[8px] h-4 font-black px-1 border-none shadow-[0_0_8px_color-mix(in oklab, var(--success) 30%, transparent)]">
                     ENTERED
                   </Badge>
                 ) : (
                   <div className="text-right">
-                    <div className="text-[10px] font-mono font-bold text-cream">D{r.day}</div>
+                    <div className="text-[10px] font-mono font-bold text-foreground">D{r.day}</div>
                     <NumericValue
                       value={formatCurrency(r.purse)}
                       className="text-[9px] font-bold text-success/70"
@@ -112,7 +112,7 @@ export function CircuitWidget() {
             <div className="flex items-center justify-between text-[11px] bg-black/20 p-2 rounded border border-white/5">
               <div className="flex items-center gap-2">
                 <Store className="h-3 w-3 text-success/60" />
-                <span className="text-cream/70 font-medium">Daily Market</span>
+                <span className="text-foreground/70 font-medium">Daily Market</span>
               </div>
               <Badge
                 variant="outline"
@@ -124,11 +124,13 @@ export function CircuitWidget() {
             <div className="flex items-center justify-between text-[11px] bg-black/20 p-2 rounded border border-white/5">
               <div className="flex items-center gap-2">
                 <Gavel className="h-3 w-3 text-success/60" />
-                <span className="text-cream/70 font-medium">Public Auctions</span>
+                <span className="text-foreground/70 font-medium">Public Auctions</span>
               </div>
-              <span className="font-mono font-bold text-cream tabular-nums">
+              <span className="font-mono font-bold text-foreground tabular-nums">
                 {activeAuctions.length}{" "}
-                <span className="text-[9px] text-cream/40 font-normal uppercase ml-1">Open</span>
+                <span className="text-[9px] text-foreground/40 font-normal uppercase ml-1">
+                  Open
+                </span>
               </span>
             </div>
           </div>
@@ -145,7 +147,7 @@ export function CircuitWidget() {
           <Link to="/auction" className="w-full">
             <Button
               variant="outline"
-              className="w-full h-8 text-[10px] uppercase font-bold tracking-wide border-white/10 hover:bg-white/5 text-cream/40"
+              className="w-full h-8 text-[10px] uppercase font-bold tracking-wide border-white/10 hover:bg-white/5 text-foreground/40"
             >
               Auction Block
             </Button>

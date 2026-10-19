@@ -22,7 +22,7 @@ export function RaceFieldDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-slate-900 border-white/10">
         <DialogHeader>
-          <DialogTitle className="text-cream font-black uppercase tracking-widest text-sm">
+          <DialogTitle className="text-foreground font-black uppercase tracking-widest text-sm">
             Field — {raceName}
           </DialogTitle>
         </DialogHeader>

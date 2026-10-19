@@ -63,11 +63,11 @@ export function ScoutingAssignmentsPanel() {
         <CardContent className="p-5 space-y-4">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <div className="flex items-center gap-2 text-gold uppercase tracking-wide font-mono text-[10px] font-bold">
+              <div className="flex items-center gap-2 text-primary uppercase tracking-wide font-mono text-[10px] font-bold">
                 <ClipboardList className="h-3.5 w-3.5" />
                 Scouting Assignments
               </div>
-              <p className="text-[11px] text-cream-muted mt-1 font-mono">
+              <p className="text-[11px] text-muted-foreground mt-1 font-mono">
                 {enabledCount} active order(s) — they run automatically each morning within budget.
               </p>
             </div>
@@ -95,7 +95,7 @@ export function ScoutingAssignmentsPanel() {
           </div>
 
           {assignments.length === 0 && (
-            <p className="text-xs text-cream-muted font-mono">
+            <p className="text-xs text-muted-foreground font-mono">
               No standing orders yet. Create one to have scouts sent automatically at every horse
               that clears your thresholds.
             </p>
@@ -117,7 +117,7 @@ export function ScoutingAssignmentsPanel() {
                     aria-label="Assignment name"
                   />
                   <div className="flex items-center gap-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-wide text-cream/40">
+                    <Label className="font-mono text-[9px] uppercase tracking-wide text-foreground/40">
                       Daily budget
                     </Label>
                     <Input
@@ -133,7 +133,7 @@ export function ScoutingAssignmentsPanel() {
                     />
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <Label className="font-mono text-[9px] uppercase tracking-wide text-cream/40">
+                    <Label className="font-mono text-[9px] uppercase tracking-wide text-foreground/40">
                       Max / day
                     </Label>
                     <Input
@@ -192,15 +192,18 @@ export function ScoutingAssignmentsPanel() {
                     <Badge
                       key={chip}
                       variant="outline"
-                      className="border-white/10 text-[10px] text-cream/60"
+                      className="border-white/10 text-[10px] text-foreground/60"
                     >
                       {chip}
                     </Badge>
                   ))}
-                  <Badge variant="outline" className="border-gold/30 text-[10px] text-gold">
+                  <Badge variant="outline" className="border-primary/30 text-[10px] text-primary">
                     {a.totalScouted} scouted · {formatCurrency(a.totalSpent)}
                   </Badge>
-                  <Badge variant="outline" className="border-white/10 text-[10px] text-cream/40">
+                  <Badge
+                    variant="outline"
+                    className="border-white/10 text-[10px] text-foreground/40"
+                  >
                     {a.lastRunDay === null
                       ? "Never run"
                       : `Last run day ${a.lastRunDay} (today ${day})`}

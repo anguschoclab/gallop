@@ -33,11 +33,11 @@ export function HorseCardHeader({ horse, genderColor }: HorseCardHeaderProps) {
               <span className={cn(genderColor, "text-sm leading-none")}>
                 {genderSymbol(horse.gender)}
               </span>
-              <span className="font-bold text-xl text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-gold transition-colors truncate">
+              <span className="font-bold text-xl text-foreground font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-primary transition-colors truncate">
                 {horse.name}
               </span>
             </div>
-            <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-wide text-cream/40 flex-wrap">
+            <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-wide text-foreground/40 flex-wrap">
               <span className="flex items-center gap-1">
                 <Calendar className="h-3 w-3" /> Age: {Math.floor(horse.age)}
               </span>
@@ -74,7 +74,7 @@ export function HorseCardHeader({ horse, genderColor }: HorseCardHeaderProps) {
               className={cn(
                 "rounded-none text-[8px] font-black tracking-wide uppercase h-4 px-1",
                 horse.lifecycleStatus === "retired"
-                  ? "border-gold text-gold bg-gold/5"
+                  ? "border-primary text-primary bg-primary/5"
                   : "border-destructive text-destructive bg-destructive/5",
               )}
             >

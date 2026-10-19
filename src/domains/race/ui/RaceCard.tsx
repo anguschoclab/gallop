@@ -29,7 +29,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
   return (
     <Card
       className={cn(
-        "overflow-hidden hover:bg-t700 transition-colors border-gold-muted relative",
+        "overflow-hidden hover:bg-muted transition-colors border-border relative",
         ownedCount > 0 && "border-success/30 bg-success/5",
       )}
     >
@@ -98,12 +98,12 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
             )}
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-gold-muted text-[11px]">
+          <div className="flex items-center justify-between pt-2 border-t border-border text-[11px]">
             <div className="flex gap-3 text-muted-foreground tabular-nums">
               <span>{race.distance}m</span>
               <JargonTooltip term={race.surface || "Turf"}>{race.surface || "Turf"}</JargonTooltip>
               <span>{race.raceClass}</span>
-              <span className="font-bold text-cream">
+              <span className="font-bold text-foreground">
                 <JargonTooltip term="ML">ML</JargonTooltip>: {favoriteOdds}
               </span>
             </div>
@@ -112,7 +112,7 @@ export function RaceCard({ race, onEnter }: RaceCardProps) {
                 Day {race.day}
               </span>
               {ownedCount > 0 && (
-                <Badge variant="default" className="h-4 px-1 text-[9px] bg-success text-t950">
+                <Badge variant="default" className="h-4 px-1 text-[9px] bg-success text-background">
                   {ownedCount} Entered
                 </Badge>
               )}

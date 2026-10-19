@@ -24,13 +24,13 @@ export function StableRosterWidget() {
     .slice(0, 3);
 
   return (
-    <Card className="border-gold-muted flex flex-col bg-slate-900/20 group hover:border-gold/40 transition-all duration-300 shadow-xl">
+    <Card className="border-border flex flex-col bg-slate-900/20 group hover:border-primary/40 transition-all duration-300 shadow-xl">
       <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-white/5 bg-white/[0.02]">
         <div className="flex items-center gap-2">
           <div className="h-8 w-8 rounded bg-blue-400/10 flex items-center justify-center border border-blue-400/20 group-hover:bg-blue-400/20 transition-colors">
             <LayoutGrid className="h-4 w-4 text-blue-400" />
           </div>
-          <CardTitle className="text-xl font-bold font-[family-name:var(--font-display)] text-cream tracking-tight">
+          <CardTitle className="text-xl font-bold font-[family-name:var(--font-display)] text-foreground tracking-tight">
             Stable & Roster
           </CardTitle>
         </div>
@@ -42,7 +42,7 @@ export function StableRosterWidget() {
                   size="icon"
                   variant="ghost"
                   aria-label="Go to Stable & Roster"
-                  className="h-8 w-8 text-cream-muted hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"
+                  className="h-8 w-8 text-muted-foreground hover:text-blue-400 group-hover:translate-x-0.5 transition-transform"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </Button>
@@ -71,9 +71,9 @@ export function StableRosterWidget() {
                   <div className="flex items-center gap-3">
                     <NumericValue
                       value={overall(h)}
-                      className="text-xs font-bold text-cream-muted group-hover/item:text-blue-400 transition-colors"
+                      className="text-xs font-bold text-muted-foreground group-hover/item:text-blue-400 transition-colors"
                     />
-                    <Badge className="bg-black/40 text-cream text-[9px] h-4 px-1.5 font-mono border border-white/5">
+                    <Badge className="bg-black/40 text-foreground text-[9px] h-4 px-1.5 font-mono border border-white/5">
                       E{Math.round(h.energy)}
                     </Badge>
                   </div>
@@ -92,18 +92,18 @@ export function StableRosterWidget() {
             <div className="flex items-center justify-between text-[11px] bg-black/20 p-2 rounded border border-white/5">
               <div className="flex items-center gap-2">
                 <Users className="h-3 w-3 text-blue-400/60" />
-                <span className="text-cream/70 font-medium">Active Jockeys</span>
+                <span className="text-foreground/70 font-medium">Active Jockeys</span>
               </div>
-              <span className="font-mono font-bold text-cream tabular-nums">
+              <span className="font-mono font-bold text-foreground tabular-nums">
                 {jockeys?.filter((j) => j.stableId === "player").length ?? 0}
               </span>
             </div>
             <div className="flex items-center justify-between text-[11px] bg-black/20 p-2 rounded border border-white/5">
               <div className="flex items-center gap-2">
                 <Briefcase className="h-3 w-3 text-blue-400/60" />
-                <span className="text-cream/70 font-medium">Support Staff</span>
+                <span className="text-foreground/70 font-medium">Support Staff</span>
               </div>
-              <span className="font-mono font-bold text-cream tabular-nums">
+              <span className="font-mono font-bold text-foreground tabular-nums">
                 {hiredStaff?.length ?? 0}
               </span>
             </div>

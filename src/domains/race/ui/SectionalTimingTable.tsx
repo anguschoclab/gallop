@@ -28,16 +28,28 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
       <table className="w-full text-[10px] border-collapse">
         <thead>
           <tr className="border-b border-white/10 bg-white/5">
-            <th className="text-left py-3 px-4 font-black uppercase tracking-tighter text-muted-foreground/60">
+            <th
+              scope="col"
+              className="text-left py-3 px-4 font-black uppercase tracking-tighter text-muted-foreground/60"
+            >
               Marker
             </th>
-            <th className="text-left py-3 px-4 font-black uppercase tracking-tighter text-muted-foreground/60">
+            <th
+              scope="col"
+              className="text-left py-3 px-4 font-black uppercase tracking-tighter text-muted-foreground/60"
+            >
               Leader Time
             </th>
-            <th className="text-left py-3 px-4 font-black uppercase tracking-tighter text-muted-foreground/60">
+            <th
+              scope="col"
+              className="text-left py-3 px-4 font-black uppercase tracking-tighter text-muted-foreground/60"
+            >
               Pace Setter
             </th>
-            <th className="text-left py-3 px-4 font-black uppercase tracking-tighter text-muted-foreground/60">
+            <th
+              scope="col"
+              className="text-left py-3 px-4 font-black uppercase tracking-tighter text-muted-foreground/60"
+            >
               Running Order
             </th>
           </tr>
@@ -50,13 +62,13 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
 
             return (
               <tr key={split.label} className="hover:bg-white/[0.02] transition-colors group">
-                <td className="py-4 px-4 font-mono font-bold text-cream/80">
+                <td className="py-4 px-4 font-mono font-bold text-foreground/80">
                   <span className="text-broadcast-accent mr-1">{split.label}</span>
                   <span className="text-muted-foreground/40 font-normal">
                     ({Math.round(split.distanceMeters)}m)
                   </span>
                 </td>
-                <td className="py-4 px-4 font-mono tabular-nums text-cream font-black">
+                <td className="py-4 px-4 font-mono tabular-nums text-foreground font-black">
                   {leaderEntry ? `${leaderEntry.cumulativeTime.toFixed(2)}s` : "-"}
                 </td>
                 <td className="py-4 px-4">
@@ -65,7 +77,7 @@ export function SectionalTimingTable({ splits, runners, distance }: SectionalTim
                     <span
                       className={cn(
                         "font-bold truncate max-w-[120px]",
-                        leader?.owned ? "text-broadcast-accent" : "text-cream/90",
+                        leader?.owned ? "text-broadcast-accent" : "text-foreground/90",
                       )}
                     >
                       {leader?.name || "Unknown"}

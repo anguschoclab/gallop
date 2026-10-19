@@ -17,13 +17,13 @@ export function AiActivityFeed({ news, filterActive }: AiActivityFeedProps) {
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-emerald-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40 flex items-center gap-2">
           <Activity className="h-3 w-3 text-emerald-400" /> Activity Feed
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         {filtered.length === 0 ? (
-          <div className="p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+          <div className="p-8 text-center text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
             No recent AI activity to report.
           </div>
         ) : (
@@ -33,12 +33,12 @@ export function AiActivityFeed({ news, filterActive }: AiActivityFeedProps) {
                 <div className="flex items-center justify-between">
                   <Badge
                     variant="outline"
-                    className="text-[8px] font-black uppercase tracking-wide border-white/10 text-cream/40 rounded-none"
+                    className="text-[8px] font-black uppercase tracking-wide border-white/10 text-foreground/40 rounded-none"
                   >
                     {item.category}
                   </Badge>
                   <div className="flex items-center gap-2">
-                    <span className="text-[9px] font-mono text-cream/20">Day {item.day}</span>
+                    <span className="text-[9px] font-mono text-foreground/20">Day {item.day}</span>
                     <div
                       data-testid="importance-indicator"
                       className={cn(
@@ -46,14 +46,16 @@ export function AiActivityFeed({ news, filterActive }: AiActivityFeedProps) {
                         item.importance === "high"
                           ? "bg-red-400"
                           : item.importance === "medium"
-                            ? "bg-gold"
-                            : "bg-cream/20",
+                            ? "bg-primary"
+                            : "bg-foreground/20",
                       )}
                     />
                   </div>
                 </div>
-                <p className="text-xs font-bold text-cream/70 leading-tight">{item.headline}</p>
-                <p className="text-[10px] text-cream/40 leading-relaxed">{item.body}</p>
+                <p className="text-xs font-bold text-foreground/70 leading-tight">
+                  {item.headline}
+                </p>
+                <p className="text-[10px] text-foreground/40 leading-relaxed">{item.body}</p>
               </div>
             ))}
           </div>

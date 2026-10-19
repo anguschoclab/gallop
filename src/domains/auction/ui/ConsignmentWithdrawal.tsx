@@ -45,7 +45,7 @@ export function ConsignmentWithdrawal({
           <div className="text-xs font-black text-destructive uppercase tracking-wide flex items-center gap-2">
             <Info className="h-3 w-3" /> Withdrawal protocol active
           </div>
-          <p className="text-[10px] font-mono text-cream/30 uppercase tracking-tighter">
+          <p className="text-[10px] font-mono text-foreground/30 uppercase tracking-tighter">
             Emergency decommissioning of asset from public catalog.
           </p>
         </div>
@@ -64,7 +64,7 @@ export function ConsignmentWithdrawal({
                 <AlertDialogTitle className="text-destructive uppercase font-black tracking-widest">
                   Confirm Withdrawal
                 </AlertDialogTitle>
-                <AlertDialogDescription className="text-cream/60 font-mono text-xs uppercase tracking-tighter">
+                <AlertDialogDescription className="text-foreground/60 font-mono text-xs uppercase tracking-tighter">
                   Removal of <strong>{horse.name}</strong> from catalog. No transaction proceeds
                   will be generated.
                 </AlertDialogDescription>

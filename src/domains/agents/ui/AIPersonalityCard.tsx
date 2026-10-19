@@ -20,7 +20,7 @@ export function AIPersonalityCard({ stableAI }: AIPersonalityCardProps) {
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-purple-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40 flex items-center gap-2">
           <Brain className="h-3 w-3 text-purple-400" /> Personality
         </CardTitle>
       </CardHeader>
@@ -34,7 +34,7 @@ export function AIPersonalityCard({ stableAI }: AIPersonalityCardProps) {
           </Badge>
           <Badge
             variant="outline"
-            className="px-2 py-1 border-white/10 text-cream/60 rounded-none font-mono text-[9px] uppercase"
+            className="px-2 py-1 border-white/10 text-foreground/60 rounded-none font-mono text-[9px] uppercase"
           >
             {p.currentStrategy.replace(/_/g, " ")}
           </Badge>
@@ -64,9 +64,9 @@ export function AIPersonalityCard({ stableAI }: AIPersonalityCardProps) {
         </div>
 
         <div className="space-y-1 pt-2 border-t border-white/5">
-          <div className="flex justify-between text-[10px] font-mono uppercase tracking-wide text-cream/30">
+          <div className="flex justify-between text-[10px] font-mono uppercase tracking-wide text-foreground/30">
             <span>Strategy Confidence</span>
-            <span className="text-cream/60">{Math.round(p.strategyConfidence * 100)}%</span>
+            <span className="text-foreground/60">{Math.round(p.strategyConfidence * 100)}%</span>
           </div>
           <div className="h-1 bg-white/5 rounded-full overflow-hidden">
             <div
@@ -87,10 +87,10 @@ export function AIPersonalityCard({ stableAI }: AIPersonalityCardProps) {
 function StatRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div className="flex items-center justify-between bg-black/20 p-2 border border-white/5">
-      <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wide text-cream/30">
+      <span className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wide text-foreground/30">
         {icon} {label}
       </span>
-      <span className="font-mono text-xs text-cream tabular-nums">{value}</span>
+      <span className="font-mono text-xs text-foreground tabular-nums">{value}</span>
     </div>
   );
 }
@@ -103,17 +103,19 @@ function BudgetAllocationView({
   const categories: Array<{ key: keyof typeof budget; label: string; color: string }> = [
     { key: "training", label: "Training", color: "bg-blue-400" },
     { key: "facilities", label: "Facilities", color: "bg-green-400" },
-    { key: "auctions", label: "Auctions", color: "bg-gold" },
+    { key: "auctions", label: "Auctions", color: "bg-primary" },
     { key: "claiming", label: "Claiming", color: "bg-orange-400" },
     { key: "breeding", label: "Breeding", color: "bg-pink-400" },
   ];
 
   return (
     <div className="space-y-2 pt-2 border-t border-white/5">
-      <div className="text-[9px] font-black uppercase tracking-wide text-cream/30">
+      <div className="text-[9px] font-black uppercase tracking-wide text-foreground/30">
         Budget Allocation
       </div>
-      <div className="text-xs font-mono text-cream/60">Total: {formatCurrency(budget.total)}</div>
+      <div className="text-xs font-mono text-foreground/60">
+        Total: {formatCurrency(budget.total)}
+      </div>
       <div className="flex h-2 rounded-full overflow-hidden bg-black/40">
         {categories.map((cat) => {
           const pct = budget.total > 0 ? (budget[cat.key] as number) / budget.total : 0;
@@ -126,7 +128,7 @@ function BudgetAllocationView({
       </div>
       <div className="grid grid-cols-2 gap-1 text-[9px] font-mono">
         {categories.map((cat) => (
-          <div key={cat.key} className="flex items-center gap-1 text-cream/40">
+          <div key={cat.key} className="flex items-center gap-1 text-foreground/40">
             <div className={`w-2 h-2 ${cat.color} rounded-sm`} />
             {cat.label}: {formatCurrency(budget[cat.key] as number)}
           </div>
@@ -152,7 +154,7 @@ function LearningInsightsView({ stableAI }: { stableAI: StableAIState }) {
 
   return (
     <div className="space-y-2 pt-2 border-t border-white/5">
-      <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wide text-cream/30">
+      <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wide text-foreground/30">
         <BookOpen className="h-3 w-3 text-cyan-400" /> Learning Insights
       </div>
       <div className="grid grid-cols-2 gap-3">
@@ -179,18 +181,18 @@ function LearningInsightsView({ stableAI }: { stableAI: StableAIState }) {
       </div>
       {insights.totalRaces > 0 && (
         <div className="space-y-1">
-          <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30">
+          <div className="text-[9px] font-mono uppercase tracking-wide text-foreground/30">
             Style Usage
           </div>
           <div className="flex gap-2">
             {Object.entries(insights.styleUsage).map(([style, count]) => (
               <div
                 key={style}
-                className="flex items-center gap-1 text-[10px] font-mono text-cream/50"
+                className="flex items-center gap-1 text-[10px] font-mono text-foreground/50"
               >
                 <Badge
                   variant="outline"
-                  className="px-1.5 py-0 border-white/10 text-cream/60 rounded-none font-mono text-[8px] uppercase"
+                  className="px-1.5 py-0 border-white/10 text-foreground/60 rounded-none font-mono text-[8px] uppercase"
                 >
                   {styleLabels[style] ?? style}
                 </Badge>

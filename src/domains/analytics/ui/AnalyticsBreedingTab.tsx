@@ -31,8 +31,8 @@ export function AnalyticsBreedingTab() {
   return (
     <div className="space-y-6">
       <header>
-        <h2 className="font-display text-2xl text-cream">Breeding analytics</h2>
-        <p className="text-cream-muted mt-1 text-sm">
+        <h2 className="font-display text-2xl text-foreground">Breeding analytics</h2>
+        <p className="text-muted-foreground mt-1 text-sm">
           Sire performance trends and leaderboard movement.
         </p>
       </header>
@@ -54,7 +54,7 @@ export function AnalyticsBreedingTab() {
                 format={(n) => n.toFixed(2)}
               />
             ) : (
-              <div className="text-[11px] text-cream/40 font-mono">No leaderboard yet</div>
+              <div className="text-[11px] text-foreground/40 font-mono">No leaderboard yet</div>
             )}
           </div>
         </ChartCard>
@@ -68,19 +68,21 @@ export function AnalyticsBreedingTab() {
               const series = sireTrendMap.get(r.stallionId) ?? [];
               return (
                 <div key={r.stallionId} className="flex items-center gap-3">
-                  <div className="w-32 text-[11px] truncate text-cream/80">{r.stallionName}</div>
+                  <div className="w-32 text-[11px] truncate text-foreground/80">
+                    {r.stallionName}
+                  </div>
                   <div className="flex-1">
                     {series.length > 1 ? (
                       <Sparkline data={series} height={28} variant="line" />
                     ) : (
-                      <div className="text-[10px] text-cream/30 font-mono">no trend</div>
+                      <div className="text-[10px] text-foreground/30 font-mono">no trend</div>
                     )}
                   </div>
                 </div>
               );
             })}
             {rankings.length === 0 ? (
-              <div className="text-[11px] text-cream/40 font-mono">No data</div>
+              <div className="text-[11px] text-foreground/40 font-mono">No data</div>
             ) : null}
           </div>
         </ChartCard>

@@ -64,14 +64,14 @@ describe("CeremonyTimeline", () => {
     const entries = [mkEntry({ day: 290, kind: "reminder_sent", note: "Reminder sent." })];
     const { container } = render(<CeremonyTimeline invitation={mkInvitation(entries)} />);
     const dot = container.querySelector("[data-testid='timeline-dot']");
-    expect(dot?.className).toContain("bg-gold");
+    expect(dot?.className).toContain("bg-primary");
   });
 
   it("highlights rsvp_change entries with accent class", () => {
     const entries = [mkEntry({ day: 292, kind: "rsvp_change", note: "RSVP changed." })];
     const { container } = render(<CeremonyTimeline invitation={mkInvitation(entries)} />);
     const dot = container.querySelector("[data-testid='timeline-dot']");
-    expect(dot?.className).toContain("bg-gold");
+    expect(dot?.className).toContain("bg-primary");
   });
 
   it("renders all five audit kinds", () => {

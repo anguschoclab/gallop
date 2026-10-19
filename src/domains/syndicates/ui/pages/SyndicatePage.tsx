@@ -81,7 +81,7 @@ function SyndicatePage() {
 
   if (!syndicate) {
     return (
-      <div className="p-6 text-cream">
+      <div className="p-6 text-foreground">
         <BackLink to="/breeding" label="Back" />
         <div className="mt-4">Syndicate not found.</div>
       </div>
@@ -99,10 +99,10 @@ function SyndicatePage() {
   return (
     <div className="space-y-6 p-6">
       <div className="flex items-center gap-3">
-        <Link to="/breeding" className="text-cream hover:text-gold">
+        <Link to="/breeding" className="text-foreground hover:text-primary">
           <ArrowLeft className="h-5 w-5" />
         </Link>
-        <h1 className="text-3xl font-bold text-cream">{syndicate.stallionName} Syndicate</h1>
+        <h1 className="text-3xl font-bold text-foreground">{syndicate.stallionName} Syndicate</h1>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -115,17 +115,17 @@ function SyndicatePage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <HandCoins className="h-5 w-5 text-gold" /> Solicit new investor
+            <HandCoins className="h-5 w-5 text-primary" /> Solicit new investor
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="text-sm text-cream-muted">
+          <div className="text-sm text-muted-foreground">
             Offer shares from your holdings. An NPC investor with a random personality will bite,
             paying the current share price. They arrive with expectations you'll have to meet.
           </div>
           <div className="flex flex-wrap items-end gap-3">
             <div>
-              <label className="text-xs text-cream-muted">Shares to offer</label>
+              <label className="text-xs text-muted-foreground">Shares to offer</label>
               <Input
                 type="number"
                 min={1}
@@ -135,9 +135,9 @@ function SyndicatePage() {
                 className="w-28"
               />
             </div>
-            <div className="text-cream">
+            <div className="text-foreground">
               Sale price:{" "}
-              <span className="text-gold font-semibold">
+              <span className="text-primary font-semibold">
                 ${(sharesToOffer * syndicate.sharePrice).toLocaleString()}
               </span>
             </div>
@@ -153,8 +153,8 @@ function SyndicatePage() {
             </Button>
           </div>
           {counterofferForecast && counterofferForecast.total > 0 && (
-            <div className="rounded-md border border-cream/10 bg-broadcast-panel px-3 py-2 text-xs text-cream-muted">
-              <span className="text-cream">Counteroffer forecast</span> (investor is chosen at
+            <div className="rounded-md border border-foreground/10 bg-broadcast-panel px-3 py-2 text-xs text-muted-foreground">
+              <span className="text-foreground">Counteroffer forecast</span> (investor is chosen at
               random — this is a projection of rival interest):
               <div className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
                 <span>
@@ -176,12 +176,12 @@ function SyndicatePage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-gold" /> Investors ({myInvestors.length})
+            <Users className="h-5 w-5 text-primary" /> Investors ({myInvestors.length})
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           {myInvestors.length === 0 ? (
-            <div className="text-cream-muted text-sm">No investors yet.</div>
+            <div className="text-muted-foreground text-sm">No investors yet.</div>
           ) : (
             myInvestors.map((inv) => {
               const meta = INVESTOR_PERSONALITY_META[inv.personality];
@@ -191,14 +191,14 @@ function SyndicatePage() {
               return (
                 <div
                   key={inv.id}
-                  className="rounded-md border border-cream/10 bg-broadcast-panel p-3 space-y-2"
+                  className="rounded-md border border-foreground/10 bg-broadcast-panel p-3 space-y-2"
                 >
                   <div className="flex flex-wrap items-center gap-3">
-                    <div className="text-cream font-medium">{inv.name}</div>
+                    <div className="text-foreground font-medium">{inv.name}</div>
                     <Badge style={{ borderColor: meta.color, color: meta.color }} variant="outline">
                       {meta.label}
                     </Badge>
-                    <Badge variant="outline" className="text-cream border-cream/30">
+                    <Badge variant="outline" className="text-foreground border-foreground/30">
                       {inv.shares} shares
                     </Badge>
                     <Badge
@@ -214,7 +214,7 @@ function SyndicatePage() {
                       {inv.satisfaction}% sat
                     </Badge>
                     <div className="ml-auto flex items-center gap-2">
-                      <span className="text-xs text-cream-muted">
+                      <span className="text-xs text-muted-foreground">
                         Buyout ${buyoutCost.toLocaleString()}
                       </span>
                       <Button
@@ -231,12 +231,12 @@ function SyndicatePage() {
                       </Button>
                     </div>
                   </div>
-                  <div className="text-xs text-cream-muted">{meta.blurb}</div>
-                  <ul className="text-xs text-cream-muted space-y-0.5">
+                  <div className="text-xs text-muted-foreground">{meta.blurb}</div>
+                  <ul className="text-xs text-muted-foreground space-y-0.5">
                     {inv.expectations.map((e, idx) => (
                       <li key={idx}>
                         • Expects{" "}
-                        <span className="text-cream">
+                        <span className="text-foreground">
                           {e.kind === "asset_appreciation"
                             ? `share price ≥ $${e.target.toLocaleString()}`
                             : `${e.kind === "dividend" ? "dividends" : "prize share"} ≥ $${e.target.toLocaleString()}`}
@@ -272,7 +272,7 @@ function SyndicatePage() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-gold" /> Transaction History
+              <DollarSign className="h-5 w-5 text-primary" /> Transaction History
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -291,10 +291,10 @@ function SyndicatePage() {
                     key={tx.id}
                     className="flex items-center justify-between text-xs border-b border-white/5 pb-1"
                   >
-                    <span className="text-cream-muted font-mono">
+                    <span className="text-muted-foreground font-mono">
                       Day {tx.day} · {buyerName} ← {sellerName}
                     </span>
-                    <span className="font-mono tabular-nums text-cream">
+                    <span className="font-mono tabular-nums text-foreground">
                       {tx.shares} @ ${(tx.pricePerShare / 1000).toFixed(0)}k = $
                       {((tx.shares * tx.pricePerShare) / 1000).toFixed(0)}k
                     </span>
@@ -306,7 +306,7 @@ function SyndicatePage() {
         </Card>
       )}
 
-      <div className="text-xs text-cream-muted flex items-center gap-4">
+      <div className="text-xs text-muted-foreground flex items-center gap-4">
         <span className="flex items-center gap-1">
           <TrendingUp className="h-3 w-3" /> Lifetime stud earnings: $
           {syndicate.lifetimeEarnings.toLocaleString()}
@@ -324,8 +324,8 @@ function StatCard({ label, value }: { label: string; value: string }) {
   return (
     <Card>
       <CardContent className="pt-6">
-        <div className="text-xs text-cream-muted uppercase tracking-wide">{label}</div>
-        <div className="text-2xl font-bold text-cream">{value}</div>
+        <div className="text-xs text-muted-foreground uppercase tracking-wide">{label}</div>
+        <div className="text-2xl font-bold text-foreground">{value}</div>
       </CardContent>
     </Card>
   );

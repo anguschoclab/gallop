@@ -81,7 +81,7 @@ export function HorseManagementSection({
     <section id="management" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
         <Tag className="h-4 w-4 text-purple-400" />
-        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
           Racing &amp; Status
         </h2>
       </div>
@@ -90,21 +90,21 @@ export function HorseManagementSection({
           {isConsigned && consignedSale ? (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Gavel className="h-4 w-4 text-gold" />
-                <span className="text-sm font-bold text-cream">Consigned to Auction</span>
+                <Gavel className="h-4 w-4 text-primary" />
+                <span className="text-sm font-bold text-foreground">Consigned to Auction</span>
               </div>
               <div className="bg-black/40 border border-white/5 p-3 space-y-1">
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                  <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                     Sale
                   </span>
-                  <span className="font-mono text-cream">{consignedSale.name}</span>
+                  <span className="font-mono text-foreground">{consignedSale.name}</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                  <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                     Day
                   </span>
-                  <span className="font-mono text-cream">{consignedSale.day}</span>
+                  <span className="font-mono text-foreground">{consignedSale.day}</span>
                 </div>
               </div>
               <Link
@@ -118,37 +118,39 @@ export function HorseManagementSection({
           ) : eligibleSale ? (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
-                <Gavel className="h-4 w-4 text-cream/40" />
-                <span className="text-sm font-bold text-cream">Eligible for Upcoming Sale</span>
+                <Gavel className="h-4 w-4 text-foreground/40" />
+                <span className="text-sm font-bold text-foreground">
+                  Eligible for Upcoming Sale
+                </span>
               </div>
               <div className="bg-black/40 border border-white/5 p-3 space-y-1">
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                  <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                     Sale
                   </span>
-                  <span className="font-mono text-cream">{eligibleSale.name}</span>
+                  <span className="font-mono text-foreground">{eligibleSale.name}</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                  <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                     Day
                   </span>
-                  <span className="font-mono text-cream">{eligibleSale.day}</span>
+                  <span className="font-mono text-foreground">{eligibleSale.day}</span>
                 </div>
               </div>
             </div>
           ) : (
-            <div className="text-xs text-cream/30 font-mono">No auction activity.</div>
+            <div className="text-xs text-foreground/30 font-mono">No auction activity.</div>
           )}
 
           <div className="pt-4 border-t border-white/5 space-y-1">
             <div className="flex justify-between text-xs">
-              <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+              <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                 Career Starts
               </span>
-              <span className="font-mono text-cream">{horse.raceHistory?.length ?? 0}</span>
+              <span className="font-mono text-foreground">{horse.raceHistory?.length ?? 0}</span>
             </div>
             <div className="flex justify-between text-xs">
-              <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+              <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                 Career Earnings
               </span>
               <span className="font-mono text-success">
@@ -159,7 +161,7 @@ export function HorseManagementSection({
 
           {/* Management Actions */}
           <div className="pt-4 border-t border-white/5 space-y-2">
-            <div className="text-[9px] font-black uppercase tracking-wide text-cream/40 mb-2">
+            <div className="text-[9px] font-black uppercase tracking-wide text-foreground/40 mb-2">
               Management Actions
             </div>
             <div className="grid grid-cols-2 gap-2">
@@ -167,7 +169,7 @@ export function HorseManagementSection({
                 onClick={handleRename}
                 variant="outline"
                 size="sm"
-                className="h-8 text-[9px] font-black uppercase border-white/10 hover:bg-white/5 text-cream"
+                className="h-8 text-[9px] font-black uppercase border-white/10 hover:bg-white/5 text-foreground"
               >
                 <Edit className="h-3 w-3 mr-1" /> Rename
               </Button>
@@ -206,7 +208,7 @@ export function HorseManagementSection({
                   onClick={handleUpdateStudFee}
                   variant="outline"
                   size="sm"
-                  className="h-8 text-[9px] font-black uppercase border-gold/30 hover:bg-gold/10 text-gold"
+                  className="h-8 text-[9px] font-black uppercase border-primary/30 hover:bg-primary/10 text-primary"
                 >
                   <DollarSign className="h-3 w-3 mr-1" /> Update Fee
                 </Button>

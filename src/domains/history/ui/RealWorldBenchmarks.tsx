@@ -109,7 +109,7 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
     <div className="space-y-4">
       {/* Information Header */}
       <Card className="border-white/5 bg-slate-900/40">
-        <CardContent className="p-4 flex items-start gap-2 text-xs text-cream-muted">
+        <CardContent className="p-4 flex items-start gap-2 text-xs text-muted-foreground">
           <Globe2 className="h-4 w-4 shrink-0 text-primary mt-0.5" />
           <p>
             Explore authentic historical track records by course and distance alongside curated
@@ -123,33 +123,41 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
       {/* KPI Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         <div className="border border-white/5 bg-slate-900/60 p-2.5 rounded-lg flex flex-col justify-between">
-          <div className="text-[10px] font-mono uppercase tracking-wide text-cream/50">
+          <div className="text-[10px] font-mono uppercase tracking-wide text-foreground/50">
             Reference Records
           </div>
-          <div className="font-mono text-xl font-bold text-cream my-0.5">{kpis.totalRecords}</div>
-          <div className="text-[10px] font-mono text-cream/40">Across world venues</div>
+          <div className="font-mono text-xl font-bold text-foreground my-0.5">
+            {kpis.totalRecords}
+          </div>
+          <div className="text-[10px] font-mono text-foreground/40">Across world venues</div>
         </div>
 
         <div className="border border-white/5 bg-slate-900/60 p-2.5 rounded-lg flex flex-col justify-between">
-          <div className="text-[10px] font-mono uppercase tracking-wide text-cream/50">Tracks</div>
-          <div className="font-mono text-xl font-bold text-cream my-0.5">{kpis.distinctTracks}</div>
-          <div className="text-[10px] font-mono text-cream/40">Official racecourses</div>
+          <div className="text-[10px] font-mono uppercase tracking-wide text-foreground/50">
+            Tracks
+          </div>
+          <div className="font-mono text-xl font-bold text-foreground my-0.5">
+            {kpis.distinctTracks}
+          </div>
+          <div className="text-[10px] font-mono text-foreground/40">Official racecourses</div>
         </div>
 
         <div className="border border-white/5 bg-slate-900/60 p-2.5 rounded-lg flex flex-col justify-between">
-          <div className="text-[10px] font-mono uppercase tracking-wide text-cream/50">
+          <div className="text-[10px] font-mono uppercase tracking-wide text-foreground/50">
             Exact Track Matches
           </div>
-          <div className="font-mono text-xl font-bold text-cream my-0.5">{kpis.exactMatches}</div>
-          <div className="text-[10px] font-mono text-cream/40">Same course & distance</div>
+          <div className="font-mono text-xl font-bold text-foreground my-0.5">
+            {kpis.exactMatches}
+          </div>
+          <div className="text-[10px] font-mono text-foreground/40">Same course & distance</div>
         </div>
 
         <div className="border border-white/5 bg-slate-900/60 p-2.5 rounded-lg flex flex-col justify-between">
-          <div className="text-[10px] font-mono uppercase tracking-wide text-cream/50">
+          <div className="text-[10px] font-mono uppercase tracking-wide text-foreground/50">
             Records Outpaced
           </div>
           <div className="font-mono text-xl font-bold text-emerald-400 my-0.5">{kpis.outpaced}</div>
-          <div className="text-[10px] font-mono text-cream/40">Beaten by your world</div>
+          <div className="text-[10px] font-mono text-foreground/40">Beaten by your world</div>
         </div>
       </div>
 
@@ -166,7 +174,7 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                 "rounded-md px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-colors",
                 sourceFilter === "all"
                   ? "bg-primary text-primary-foreground"
-                  : "bg-muted/50 text-cream-muted hover:text-cream",
+                  : "bg-muted/50 text-muted-foreground hover:text-foreground",
               )}
             >
               All Sources
@@ -180,7 +188,7 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                 "rounded-md px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-colors",
                 sourceFilter === "curated"
                   ? "bg-primary text-primary-foreground"
-                  : "bg-muted/50 text-cream-muted hover:text-cream",
+                  : "bg-muted/50 text-muted-foreground hover:text-foreground",
               )}
             >
               Curated
@@ -194,7 +202,7 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                 "rounded-md px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-colors",
                 sourceFilter === "track_record"
                   ? "bg-primary text-primary-foreground"
-                  : "bg-muted/50 text-cream-muted hover:text-cream",
+                  : "bg-muted/50 text-muted-foreground hover:text-foreground",
               )}
             >
               Track Records
@@ -209,7 +217,7 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                   "rounded-md px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide transition-colors",
                   sourceFilter === "imported"
                     ? "bg-primary text-primary-foreground"
-                    : "bg-muted/50 text-cream-muted hover:text-cream",
+                    : "bg-muted/50 text-muted-foreground hover:text-foreground",
                 )}
               >
                 Your Data
@@ -221,12 +229,12 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
           {/* Search bar & Category filters */}
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-cream-muted" />
+              <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-muted-foreground" />
               <Input
                 placeholder="Search by horse, track, or race..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 h-8 text-xs bg-slate-950/40 border-white/10 text-cream"
+                className="pl-8 h-8 text-xs bg-slate-950/40 border-white/10 text-foreground"
               />
             </div>
 
@@ -241,7 +249,7 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                     "px-2.5 py-1 text-[11px] rounded transition-colors",
                     surfaceFilter === s
                       ? "bg-primary/20 text-primary font-semibold border border-primary/30"
-                      : "text-cream-muted hover:text-cream border border-transparent",
+                      : "text-muted-foreground hover:text-foreground border border-transparent",
                   )}
                 >
                   {s === "all" ? "All Surfaces" : s}
@@ -268,7 +276,7 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                     "px-2 py-1 text-[11px] rounded transition-colors",
                     tripFilter === t.id
                       ? "bg-primary/20 text-primary font-semibold border border-primary/30"
-                      : "text-cream-muted hover:text-cream border border-transparent",
+                      : "text-muted-foreground hover:text-foreground border border-transparent",
                   )}
                 >
                   {t.label}
@@ -282,7 +290,7 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
       {/* Benchmark Cards Grid */}
       {filtered.length === 0 ? (
         <Card className="border-white/5 bg-slate-900/40">
-          <CardContent className="p-8 text-center text-sm text-cream-muted">
+          <CardContent className="p-8 text-center text-sm text-muted-foreground">
             No historical records match your filters.
           </CardContent>
         </Card>
@@ -294,7 +302,7 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5 flex-wrap">
-                      <h3 className="font-semibold text-cream truncate">{benchmark.horse}</h3>
+                      <h3 className="font-semibold text-foreground truncate">{benchmark.horse}</h3>
                       <Badge
                         variant="outline"
                         className={cn(
@@ -311,7 +319,7 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                             : "Track Record"}
                       </Badge>
                     </div>
-                    <p className="text-[11px] text-cream-muted truncate">
+                    <p className="text-[11px] text-muted-foreground truncate">
                       {benchmark.race} · {benchmark.track} ({benchmark.country}) · {benchmark.year}
                     </p>
                   </div>
@@ -321,7 +329,7 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                 </div>
 
                 <div className="flex items-center justify-between gap-2 text-xs">
-                  <span className="text-cream-muted">Real-world mark</span>
+                  <span className="text-muted-foreground">Real-world mark</span>
                   <RaceTimeDisplay
                     seconds={benchmark.seconds}
                     distance={benchmark.distanceMeters}
@@ -333,14 +341,14 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                   <div className="space-y-1 border-t border-white/5 pt-2">
                     <div className="flex items-center justify-between gap-2 text-xs">
                       <div className="flex items-center gap-1.5 min-w-0 truncate">
-                        <span className="text-cream-muted truncate">
+                        <span className="text-muted-foreground truncate">
                           Your world:{" "}
                           <button
                             type="button"
                             onClick={() =>
                               setSelected({ id: gameRecord.horseId, name: gameRecord.horseName })
                             }
-                            className="text-cream underline decoration-dotted underline-offset-2 hover:text-gold focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold rounded-sm"
+                            className="text-foreground underline decoration-dotted underline-offset-2 hover:text-primary focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded-sm"
                             aria-label={`Compare ${gameRecord.horseName} against reference times`}
                           >
                             {gameRecord.horseName}
@@ -374,12 +382,12 @@ export function RealWorldBenchmarks({ records }: { records: TrackRecord[] }) {
                     )}
                   </div>
                 ) : (
-                  <p className="border-t border-white/5 pt-2 text-[11px] text-cream-muted">
+                  <p className="border-t border-white/5 pt-2 text-[11px] text-muted-foreground">
                     No comparable record set in your world yet.
                   </p>
                 )}
 
-                <p className="text-[11px] italic text-cream-muted">{benchmark.note}</p>
+                <p className="text-[11px] italic text-muted-foreground">{benchmark.note}</p>
               </CardContent>
             </Card>
           ))}

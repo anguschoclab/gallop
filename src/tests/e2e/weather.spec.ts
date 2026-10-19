@@ -171,7 +171,7 @@ test.describe("Weather E2E", () => {
     await expect(page.getByText("Weather Alert")).toBeVisible();
     await expect(page.getByText("Storm forecast at Test Track")).toBeVisible();
 
-    const unreadDot = page.locator(".bg-gold.animate-pulse");
+    const unreadDot = page.locator(".bg-primary.animate-pulse");
     await expect(unreadDot).toBeVisible();
   });
 

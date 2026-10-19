@@ -12,7 +12,7 @@ import { cn } from "@/shared/lib/cn";
 import type { CashPressure } from "@/domains/stable/application/stableFacade";
 
 const METER_STYLES: Record<CashPressure["label"], string> = {
-  comfortable: "bg-cream-muted",
+  comfortable: "bg-muted-foreground",
   tight: "bg-amber-400",
   strained: "bg-orange-400",
   desperate: "bg-red-400",
@@ -36,7 +36,7 @@ export function CashPressureMeter({ meter, label, className }: CashPressureMeter
           style={{ width: `${meter}%` }}
         />
       </span>
-      <span className="text-xs tabular-nums text-cream-muted">{meter}</span>
+      <span className="text-xs tabular-nums text-muted-foreground">{meter}</span>
     </span>
   );
 }

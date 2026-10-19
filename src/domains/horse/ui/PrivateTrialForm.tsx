@@ -44,14 +44,14 @@ export function PrivateTrialForm({
     <div className="space-y-6 pt-4">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">
+          <Label className="text-[10px] font-black uppercase tracking-wider text-foreground/60">
             Distance
           </Label>
           <Select value={String(distance)} onValueChange={(v) => setDistance(Number(v))}>
-            <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-cream font-mono uppercase">
+            <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-foreground font-mono uppercase">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-slate-900 border-white/5 text-cream rounded-none uppercase font-mono">
+            <SelectContent className="bg-slate-900 border-white/5 text-foreground rounded-none uppercase font-mono">
               {DISTANCES.map((d) => (
                 <SelectItem key={d.value} value={String(d.value)}>
                   {d.label}
@@ -62,17 +62,17 @@ export function PrivateTrialForm({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">
+          <Label className="text-[10px] font-black uppercase tracking-wider text-foreground/60">
             Surface
           </Label>
           <Select
             value={surface}
             onValueChange={(v: "Turf" | "Dirt" | "Synthetic") => setSurface(v)}
           >
-            <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-cream font-mono uppercase">
+            <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-foreground font-mono uppercase">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-slate-900 border-white/5 text-cream rounded-none uppercase font-mono">
+            <SelectContent className="bg-slate-900 border-white/5 text-foreground rounded-none uppercase font-mono">
               <SelectItem value="Turf">Turf</SelectItem>
               <SelectItem value="Dirt">Dirt</SelectItem>
             </SelectContent>
@@ -80,14 +80,14 @@ export function PrivateTrialForm({
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[10px] font-black uppercase tracking-wider text-cream/60">
+          <Label className="text-[10px] font-black uppercase tracking-wider text-foreground/60">
             Opponent
           </Label>
           <Select value={opponentId} onValueChange={setOpponentId}>
-            <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-cream font-mono uppercase">
+            <SelectTrigger className="bg-slate-900 border-white/5 rounded-none text-foreground font-mono uppercase">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-slate-900 border-white/5 text-cream rounded-none uppercase font-mono">
+            <SelectContent className="bg-slate-900 border-white/5 text-foreground rounded-none uppercase font-mono">
               <SelectItem value="pacemaker">Pacemaker (AI)</SelectItem>
               {eligibleOpponents.map((opp) => (
                 <SelectItem key={opp.id} value={opp.id}>
@@ -99,10 +99,10 @@ export function PrivateTrialForm({
         </div>
       </div>
 
-      <div className="bg-white/[0.02] border border-white/5 p-4 space-y-2 text-xs font-mono uppercase tracking-wider text-cream-muted">
+      <div className="bg-white/[0.02] border border-white/5 p-4 space-y-2 text-xs font-mono uppercase tracking-wider text-muted-foreground">
         <div className="flex justify-between">
           <span>Cost:</span>
-          <span className="text-gold font-bold">$250</span>
+          <span className="text-primary font-bold">$250</span>
         </div>
         <div className="flex justify-between">
           <span>{horse.name} energy requirement:</span>

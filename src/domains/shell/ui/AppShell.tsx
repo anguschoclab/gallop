@@ -78,7 +78,7 @@ export function AppShell() {
   const showSidebar = !!playerProfile;
 
   return (
-    <div className="flex min-h-screen bg-t900 animate-fade-in">
+    <div className="flex min-h-screen bg-surface animate-fade-in">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md"
@@ -129,21 +129,23 @@ export function AppShell() {
       <AutoSimPanel open={autoSimOpen} onClose={() => setAutoSimOpen(false)} />
       <StewardsDigestToast />
       {isAdvancing && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-t950/80 backdrop-blur-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
           <div className="text-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-gold border-t-transparent mx-auto mb-4"></div>
-            <p className="text-cream-muted font-[family-name=var(--font-body)]">Advancing days…</p>
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent mx-auto mb-4"></div>
+            <p className="text-muted-foreground font-[family-name=var(--font-body)]">
+              Advancing days…
+            </p>
             {batchProgress && (
               <div className="mt-3 space-y-1">
-                <div className="h-1.5 w-48 overflow-hidden rounded-full bg-t700 mx-auto">
+                <div className="h-1.5 w-48 overflow-hidden rounded-full bg-muted mx-auto">
                   <div
-                    className="h-full rounded-full bg-gold transition-all duration-300"
+                    className="h-full rounded-full bg-primary transition-all duration-300"
                     style={{
                       width: `${Math.round((batchProgress.day / batchProgress.total) * 100)}%`,
                     }}
                   />
                 </div>
-                <p className="text-xs text-cream-muted">
+                <p className="text-xs text-muted-foreground">
                   Day {batchProgress.day} of {batchProgress.total}
                 </p>
               </div>
@@ -151,7 +153,7 @@ export function AppShell() {
             <button
               type="button"
               onClick={() => cancelAdvance?.()}
-              className="mt-4 rounded-md border border-t600 px-3 py-1.5 text-xs text-cream-muted hover:bg-t800 transition-colors"
+              className="mt-4 rounded-md border border-surface-hover px-3 py-1.5 text-xs text-muted-foreground hover:bg-card transition-colors"
             >
               Cancel
             </button>

@@ -20,7 +20,7 @@ export function HorseNameLink({ horseId, name, className, children, onClick }: H
       to="/stable/$horseId"
       params={{ horseId }}
       onClick={onClick}
-      className={cn("hover:underline hover:text-gold transition-colors", className)}
+      className={cn("hover:underline hover:text-primary transition-colors", className)}
     >
       {children ?? name}
     </Link>

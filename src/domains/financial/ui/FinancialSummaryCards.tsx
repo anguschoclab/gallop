@@ -19,18 +19,18 @@ interface FinancialSummaryCardsProps {
 export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCardsProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <Card className="bg-slate-950 border border-gold/40 rounded-none shadow-2xl relative overflow-hidden group">
-        <div className="absolute top-0 left-0 w-full h-1 bg-gold/20 group-hover:bg-gold transition-colors" />
+      <Card className="bg-slate-950 border border-primary/40 rounded-none shadow-2xl relative overflow-hidden group">
+        <div className="absolute top-0 left-0 w-full h-1 bg-primary/20 group-hover:bg-primary transition-colors" />
         <CardHeader className="pb-2">
-          <CardDescription className="text-[9px] uppercase font-black tracking-wide text-gold-bright/60 flex items-center gap-1.5">
+          <CardDescription className="text-[9px] uppercase font-black tracking-wide text-accent-bright/60 flex items-center gap-1.5">
             <Wallet className="h-3 w-3" /> Cash on Hand
           </CardDescription>
-          <CardTitle className="text-2xl font-black text-cream font-mono tracking-tighter tabular-nums pt-1">
+          <CardTitle className="text-2xl font-black text-foreground font-mono tracking-tighter tabular-nums pt-1">
             {formatCurrency(cash)}
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 border-t border-white/5 bg-black/20 py-2">
-          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-wide">
+          <div className="text-[8px] font-mono text-foreground/20 uppercase tracking-wide">
             Stable Cash Balance
           </div>
         </CardContent>
@@ -46,7 +46,7 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 border-t border-white/5 bg-black/20 py-2">
-          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-wide">
+          <div className="text-[8px] font-mono text-foreground/20 uppercase tracking-wide">
             {periodData.label}
           </div>
         </CardContent>
@@ -62,7 +62,7 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 border-t border-white/5 bg-black/20 py-2">
-          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-wide">
+          <div className="text-[8px] font-mono text-foreground/20 uppercase tracking-wide">
             {periodData.label}
           </div>
         </CardContent>
@@ -75,7 +75,7 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
         )}
       >
         <CardHeader className="pb-2">
-          <CardDescription className="text-[9px] uppercase font-black tracking-wide text-cream/40 flex items-center gap-1.5">
+          <CardDescription className="text-[9px] uppercase font-black tracking-wide text-foreground/40 flex items-center gap-1.5">
             <Activity className="h-3 w-3" /> Net Yield
           </CardDescription>
           <CardTitle
@@ -88,7 +88,7 @@ export function FinancialSummaryCards({ cash, periodData }: FinancialSummaryCard
           </CardTitle>
         </CardHeader>
         <CardContent className="pt-0 border-t border-white/5 bg-black/20 py-2 flex items-center justify-between">
-          <div className="text-[8px] font-mono text-cream/20 uppercase tracking-wide">
+          <div className="text-[8px] font-mono text-foreground/20 uppercase tracking-wide">
             Yield Performance
           </div>
           <Badge

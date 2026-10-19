@@ -31,10 +31,10 @@ export function NpcStablesCompare() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-[family-name:var(--font-display)] text-cream">
+        <h1 className="text-2xl font-[family-name:var(--font-display)] text-foreground">
           Compare NPC Stables
         </h1>
-        <p className="text-sm text-cream-muted mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           Select up to {MAX_COMPARE} major stables to compare cash pressure, runway, and
           private-sale thresholds side by side.
         </p>
@@ -68,15 +68,15 @@ export function NpcStablesCompare() {
                     aria-label={stable.name}
                     className="h-4 w-4 rounded border-border"
                   />
-                  <span className="text-sm text-cream">{stable.name}</span>
-                  <span className="text-xs text-cream-muted">
+                  <span className="text-sm text-foreground">{stable.name}</span>
+                  <span className="text-xs text-muted-foreground">
                     {stable.horses.length} horses · {stable.tier}
                   </span>
                 </label>
               );
             })}
             {filtered.length === 0 && (
-              <p className="text-sm text-cream-muted py-4 text-center">
+              <p className="text-sm text-muted-foreground py-4 text-center">
                 No stables match "{filter}".
               </p>
             )}

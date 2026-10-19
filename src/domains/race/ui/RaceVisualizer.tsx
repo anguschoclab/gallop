@@ -1,5 +1,6 @@
 import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
-import React, { useRef, useEffect, useMemo, useCallback } from "react";
+import { useGame } from "@/platform/game/store";
+import React, { useRef, useEffect, useMemo, useCallback, useState } from "react";
 import {
   Play,
   Pause,
@@ -16,6 +17,13 @@ import {
 import type { RaceSnapshot } from "@/domains/race/application/raceFacade";
 import { useRaceReplay } from "@/domains/race/application/hooks/useRaceReplay";
 import { Tooltip, TooltipTrigger, TooltipContent } from "@/shared/ui/tooltip";
+import {
+  CANVAS_FALLBACK,
+  readCanvasTheme,
+  prefersReducedMotion,
+  resolveFrameTime,
+  type CanvasTheme,
+} from "@/domains/race/ui/broadcastCanvas";
 import "./RaceVisualizer.css";
 
 interface RunnerInfo {
@@ -41,14 +49,8 @@ const C = {
   HORSE_RADIUS: 12,
   MAX_LANES: 8,
   Y_OFFSET: 100,
-  // Canvas fillStyle does not support CSS var() — these hex values mirror
-  // --broadcast-turf and --broadcast-dirt tokens in styles.css.
-  TRACK_COLOR_TURF: "#2d5a27",
-  TRACK_COLOR_DIRT: "#8b4513",
-  LANE_COLOR: "rgba(255, 255, 255, 0.3)",
   LANE_WIDTH: 2,
   FINISH_LINE_WIDTH: 5,
-  MARKER_COLOR: "rgba(255, 255, 255, 0.5)",
   MARKER_INTERVAL: 200,
   DEFAULT_PLAYBACK_SPEED: 1,
   FAST_PLAYBACK_SPEED: 2,
@@ -67,6 +69,10 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const bgCanvasRef = useRef<HTMLCanvasElement | null>(null); // static lane/track background
   const scrubberRef = useRef<HTMLInputElement>(null);
+  const themeRef = useRef<CanvasTheme>(CANVAS_FALLBACK);
+  const lastAnnouncedRankRef = useRef(0);
+  const [trackLabel, setTrackLabel] = useState("Race track visualization");
+  const animationsEnabled = useGame((s) => s.userSettings?.display?.animationsEnabled ?? true);
 
   const duration = useMemo(() => getReplayDuration(snapshots), [snapshots]);
 
@@ -109,11 +115,13 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     bg.height = C.CANVAS_HEIGHT;
     const ctx = bg.getContext("2d");
     if (!ctx) return bg;
+    const theme = readCanvasTheme();
+    themeRef.current = theme;
     // Track
-    ctx.fillStyle = trackType === "Turf" ? C.TRACK_COLOR_TURF : C.TRACK_COLOR_DIRT;
+    ctx.fillStyle = trackType === "Turf" ? theme.turf : theme.dirt;
     ctx.fillRect(0, 0, bg.width, bg.height);
     // Lane stripes (stationary on screen, so safe to bake)
-    ctx.strokeStyle = C.LANE_COLOR;
+    ctx.strokeStyle = theme.lane;
     ctx.lineWidth = C.LANE_WIDTH;
     for (let i = 0; i <= C.MAX_LANES; i++) {
       const y = C.Y_OFFSET + i * C.LANE_HEIGHT;
@@ -138,8 +146,31 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    const currentTime = timeRef.current;
+    const theme = themeRef.current;
+    // Reduced-motion preference (OS or the animationsEnabled setting) gates the
+    // smooth interpolation; positions still update, just in discrete steps.
+    const motionAllowed = animationsEnabled && !prefersReducedMotion();
+    const currentTime = resolveFrameTime(timeRef.current, motionAllowed);
     const currentHorses = interpolateSnapshots(snapshots, currentTime);
+
+    // Keep the canvas aria-label honest: describe the owned horse's live rank.
+    if (playerHorseId) {
+      let rank = 0;
+      const sorted = [...currentHorses].sort((a, b) => b.position - a.position);
+      for (let i = 0; i < sorted.length; i++) {
+        if (sorted[i].horseId === playerHorseId) {
+          rank = i + 1;
+          break;
+        }
+      }
+      if (rank > 0 && rank !== lastAnnouncedRankRef.current) {
+        lastAnnouncedRankRef.current = rank;
+        const name = runnerMap.get(playerHorseId)?.name ?? "Your horse";
+        setTrackLabel(
+          `Race track visualization. ${name} is in position ${rank} of ${sorted.length}.`,
+        );
+      }
+    }
 
     // Single-pass max position (avoid Math.max(...arr.map(...)) allocations)
     let maxPos = 0;
@@ -172,7 +203,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     // Dynamic finish line (moves with camera)
     const finishX = distance * C.PIXELS_PER_METER + offsetX;
     if (finishX > -10 && finishX < viewportWidth + 10) {
-      ctx.strokeStyle = "#fff";
+      ctx.strokeStyle = theme.finish;
       ctx.lineWidth = C.FINISH_LINE_WIDTH;
       ctx.setLineDash([10, 10]);
       ctx.beginPath();
@@ -183,9 +214,9 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
     }
 
     // Furlong markers — only those visible on screen
-    ctx.fillStyle = C.MARKER_COLOR;
+    ctx.fillStyle = theme.marker;
     ctx.font = "10px Inter";
-    ctx.strokeStyle = C.MARKER_COLOR;
+    ctx.strokeStyle = theme.marker;
     ctx.lineWidth = 1;
     const firstM = Math.max(
       0,
@@ -210,22 +241,33 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
       if (x < -C.HORSE_RADIUS * 2 || x > viewportWidth + C.HORSE_RADIUS * 2) continue;
       const y = C.Y_OFFSET + (h.lane + 0.5) * C.LANE_HEIGHT;
       const runner = runnerMap.get(h.horseId);
-      ctx.fillStyle = runner?.silk || "#666";
+      const silk = runner?.silk;
+      // Canvas cannot resolve var() strings — fall back to the resolved silver token.
+      ctx.fillStyle = silk && !silk.startsWith("var(") ? silk : theme.silkFallback;
       ctx.beginPath();
       ctx.arc(x, y, C.HORSE_RADIUS, 0, Math.PI * 2);
       ctx.fill();
       if (runner?.owned) {
-        ctx.strokeStyle = "#facc15";
+        ctx.strokeStyle = theme.accent;
         ctx.lineWidth = C.HORSE_OUTLINE_WIDTH;
         ctx.stroke();
       }
-      ctx.fillStyle = "#fff";
+      ctx.fillStyle = theme.text;
       ctx.font = "bold 10px Inter";
       ctx.fillText(runner?.name || "Unknown", x, y - C.HORSE_RADIUS - C.NAME_TEXT_OFFSET_Y);
     }
 
     return maxPos;
-  }, [snapshots, distance, cameraMode, playerHorseId, runnerMap, ensureBackground]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    snapshots,
+    distance,
+    cameraMode,
+    playerHorseId,
+    runnerMap,
+    ensureBackground,
+    animationsEnabled,
+    timeRef,
+  ]);
 
   // Animation loop. We intentionally do NOT setState every frame; React rerenders are
   // expensive and were dominating CPU. Stats/progress are updated via refs at ~10Hz.
@@ -332,7 +374,7 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
         height={C.CANVAS_HEIGHT}
         className="race-visualizer-canvas"
         role="img"
-        aria-label="Race track visualization"
+        aria-label={trackLabel}
       />
 
       <div className="race-overlay">
@@ -424,7 +466,12 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
               onClick={toggleCamera}
               aria-label={`Toggle camera focus: currently following ${cameraMode}`}
             >
-              <Camera size={20} color={cameraMode === "player" ? "#facc15" : "#fff"} />
+              <Camera
+                size={20}
+                color={
+                  cameraMode === "player" ? "var(--broadcast-accent)" : "var(--broadcast-rail)"
+                }
+              />
             </button>
           </TooltipTrigger>
           <TooltipContent>Toggle camera focus</TooltipContent>
@@ -436,7 +483,10 @@ export const RaceVisualizer: React.FC<RaceVisualizerProps> = ({
               onClick={toggleSpeed}
               aria-label={`Toggle playback speed: currently ${playbackSpeed}x`}
             >
-              <SkipForward size={20} color={playbackSpeed > 1 ? "#facc15" : "#fff"} />
+              <SkipForward
+                size={20}
+                color={playbackSpeed > 1 ? "var(--broadcast-accent)" : "var(--broadcast-rail)"}
+              />
             </button>
           </TooltipTrigger>
           <TooltipContent>Toggle playback speed</TooltipContent>

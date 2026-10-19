@@ -48,7 +48,7 @@ const mkHookData = (
     overallEstimate: 70,
   } as any,
   genderColor: "text-blue-400",
-  gradeColor: () => "text-gold",
+  gradeColor: () => "text-primary",
   sparklineData: [],
   ...overrides,
 });

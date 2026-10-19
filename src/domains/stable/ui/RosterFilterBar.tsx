@@ -42,7 +42,7 @@ const STATUS_FILTERS = [
     icon: Tag,
     color: "text-warning",
   },
-  { key: "all", label: "Global", countKey: "all" as const, icon: Users, color: "text-cream" },
+  { key: "all", label: "Global", countKey: "all" as const, icon: Users, color: "text-foreground" },
 ] as const;
 
 export function RosterFilterBar({ status, counts, onStatusChange }: RosterFilterBarProps) {
@@ -58,8 +58,8 @@ export function RosterFilterBar({ status, counts, onStatusChange }: RosterFilter
             className={cn(
               "px-4 py-2 flex items-center gap-3 border font-mono text-[10px] uppercase font-bold tracking-wide transition-all",
               status === key
-                ? "bg-white/5 border-gold text-gold shadow-[0_0_15px_rgba(212,175,55,0.1)]"
-                : "border-white/5 text-cream/40 hover:text-cream hover:bg-white/[0.02]",
+                ? "bg-white/5 border-primary text-primary shadow-[0_0_15px_var(--accent)]"
+                : "border-white/5 text-foreground/40 hover:text-foreground hover:bg-white/[0.02]",
             )}
           >
             <Icon className={cn("h-3.5 w-3.5", status === key ? color : "opacity-40")} />
@@ -71,17 +71,17 @@ export function RosterFilterBar({ status, counts, onStatusChange }: RosterFilter
 
       <div className="flex items-center gap-2">
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream/20" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground/20" />
           <Input
             placeholder="Search horses..."
-            className="h-8 bg-slate-950/50 border-white/5 text-[10px] font-mono pl-8 w-48 focus-visible:ring-gold/30 uppercase"
+            className="h-8 bg-slate-950/50 border-white/5 text-[10px] font-mono pl-8 w-48 focus-visible:ring-primary/30 uppercase"
           />
         </div>
         <Button
           aria-label="Filter roster"
           variant="outline"
           size="sm"
-          className="h-8 w-8 p-0 border-white/5 text-cream/20 hover:text-cream"
+          className="h-8 w-8 p-0 border-white/5 text-foreground/20 hover:text-foreground"
         >
           <Filter className="h-3.5 w-3.5" />
         </Button>

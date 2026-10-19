@@ -20,8 +20,8 @@ interface StableCompareTableProps {
   stables: Stable[];
 }
 
-const ROW_LABEL_CLASS = "text-xs text-cream-muted font-medium py-2 pr-3 text-right";
-const CELL_CLASS = "text-xs text-cream py-2 px-3 text-center min-w-[120px]";
+const ROW_LABEL_CLASS = "text-xs text-muted-foreground font-medium py-2 pr-3 text-right";
+const CELL_CLASS = "text-xs text-foreground py-2 px-3 text-center min-w-[120px]";
 
 /**
  * Render a side-by-side comparison table of NPC stable financial metrics.
@@ -29,7 +29,7 @@ const CELL_CLASS = "text-xs text-cream py-2 px-3 text-center min-w-[120px]";
 export function StableCompareTable({ stables }: StableCompareTableProps) {
   if (stables.length === 0) {
     return (
-      <div className="py-8 text-center text-sm text-cream-muted">
+      <div className="py-8 text-center text-sm text-muted-foreground">
         No stables selected for comparison. Use the compare toggle on stable cards or the checkboxes
         on this page to add stables.
       </div>
@@ -41,11 +41,13 @@ export function StableCompareTable({ stables }: StableCompareTableProps) {
       <table className="w-full border-collapse">
         <thead>
           <tr className="border-b border-border">
-            <th className={`${ROW_LABEL_CLASS} text-left`}>Stable</th>
+            <th scope="col" className={`${ROW_LABEL_CLASS} text-left`}>
+              Stable
+            </th>
             {stables.map((s) => (
               <th
                 key={s.id}
-                className={`${CELL_CLASS} font-[family-name:var(--font-display)] text-sm text-cream`}
+                className={`${CELL_CLASS} font-[family-name:var(--font-display)] text-sm text-foreground`}
               >
                 {s.name}
               </th>

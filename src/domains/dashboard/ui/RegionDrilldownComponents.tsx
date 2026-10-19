@@ -13,9 +13,9 @@ import { EntityDetailPanel } from "@/domains/dashboard/ui/EntityDetailPanel";
 import { type MetricDef, weeklySeries } from "@/domains/dashboard/ui/regionalMetrics";
 
 function EntityName({ kind, row }: { kind: EntityKind; row: DrilldownEntity }) {
-  if (row.id === "player") return <span className="truncate text-cream/85">{row.name}</span>;
+  if (row.id === "player") return <span className="truncate text-foreground/85">{row.name}</span>;
 
-  const className = "truncate text-cream/85 hover:text-[var(--chart-1)]";
+  const className = "truncate text-foreground/85 hover:text-[var(--chart-1)]";
 
   if (kind === "jockeys") {
     return (
@@ -42,7 +42,7 @@ function EntityName({ kind, row }: { kind: EntityKind; row: DrilldownEntity }) {
 
 function EmptyState() {
   return (
-    <p className="py-6 text-center text-[11px] font-mono uppercase tracking-wider text-cream/40">
+    <p className="py-6 text-center text-[11px] font-mono uppercase tracking-wider text-foreground/40">
       Nothing recorded for this region in the selected window.
     </p>
   );
@@ -84,14 +84,16 @@ export function EntityTable({
     <div className="max-h-[60vh] overflow-auto pt-2">
       <table className="w-full text-[11px]">
         <thead>
-          <tr className="text-cream/45">
-            <th className="px-2 py-1 text-left font-mono uppercase tracking-wider">Name</th>
+          <tr className="text-foreground/45">
+            <th scope="col" className="px-2 py-1 text-left font-mono uppercase tracking-wider">
+              Name
+            </th>
             {metrics.map((m) => (
-              <th key={m.key} className="px-2 py-1 text-right">
+              <th scope="col" key={m.key} className="px-2 py-1 text-right">
                 <button
                   type="button"
                   onClick={() => onSort(m.key)}
-                  className="inline-flex items-center gap-1 font-mono uppercase tracking-wider hover:text-cream"
+                  className="inline-flex items-center gap-1 font-mono uppercase tracking-wider hover:text-foreground"
                 >
                   {m.label}
                   <ArrowUpDown
@@ -168,7 +170,10 @@ function EntityRow({
           <EntityName kind={kind} row={row} />
         </td>
         {metrics.map((m) => (
-          <td key={m.key} className="px-2 py-1.5 text-right font-mono tabular-nums text-cream/70">
+          <td
+            key={m.key}
+            className="px-2 py-1.5 text-right font-mono tabular-nums text-foreground/70"
+          >
             {m.format(m.value(row))}
           </td>
         ))}
@@ -237,7 +242,7 @@ export function CompareCards({
           <div key={r.id} className="rounded-lg border border-white/5 bg-white/[0.02] p-2.5">
             <div className="flex items-center justify-between gap-2">
               <EntityName kind={kind} row={r} />
-              <span className="shrink-0 font-mono text-[10px] uppercase tracking-wider text-cream/35">
+              <span className="shrink-0 font-mono text-[10px] uppercase tracking-wider text-foreground/35">
                 A {timeWindowLabel(weeks)} · B {timeWindowLabel(weeksB)}
               </span>
             </div>
@@ -249,7 +254,7 @@ export function CompareCards({
                 return (
                   <div key={m.key} className="rounded-md bg-white/[0.03] px-2 py-1.5">
                     <div className="flex items-center gap-1">
-                      <span className="text-[10px] font-mono uppercase tracking-wider text-cream/45">
+                      <span className="text-[10px] font-mono uppercase tracking-wider text-foreground/45">
                         {m.label}
                       </span>
                       <MetricInfo
@@ -262,7 +267,7 @@ export function CompareCards({
                       />
                     </div>
                     <div className="mt-0.5 flex items-baseline justify-between gap-1.5">
-                      <span className="font-mono text-xs tabular-nums text-cream">
+                      <span className="font-mono text-xs tabular-nums text-foreground">
                         {m.format(a)}
                       </span>
                       <DeltaPill value={a - bv} asPercent={m.asPercent} />

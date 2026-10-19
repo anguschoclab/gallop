@@ -34,7 +34,7 @@ function renderCompactCategory(category: RegionalAwardCategory, sorted: Regional
       to="/awards/$category"
       params={{ category }}
       title={CATEGORY_DESCRIPTIONS[category]}
-      className="flex items-center justify-between gap-2 p-2 rounded-md border border-gold/20 bg-card hover:bg-accent/50 transition-colors"
+      className="flex items-center justify-between gap-2 p-2 rounded-md border border-primary/20 bg-card hover:bg-accent/50 transition-colors"
     >
       <div className="flex items-center gap-2 min-w-0">
         <AwardIcon region={sorted[0].region} category={category} size="tiny" />

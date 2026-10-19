@@ -47,10 +47,10 @@ function RegionalCalendarPage() {
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-cream-muted mb-1">
+          <div className="flex items-center gap-2 text-muted-foreground mb-1">
             <Link
               to="/races"
-              className="hover:text-cream flex items-center gap-1"
+              className="hover:text-foreground flex items-center gap-1"
               search={{
                 grade: "all",
                 country: "all",
@@ -69,21 +69,23 @@ function RegionalCalendarPage() {
               Calendars
             </span>
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+          <h1 className="text-3xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)]">
             {region.title}
           </h1>
-          <p className="text-cream-muted font-[family-name:var(--font-body)]">{region.subtitle}</p>
+          <p className="text-muted-foreground font-[family-name:var(--font-body)]">
+            {region.subtitle}
+          </p>
         </div>
         <RegionSwitcher currentRegion={region} />
       </div>
 
       {/* Filters */}
-      <Card className="border-gold-muted">
+      <Card className="border-border">
         <CardContent className="p-4">
           <div className="flex flex-wrap gap-4 items-center justify-between">
             <div className="flex flex-wrap gap-4 items-center">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-cream">Grade:</span>
+                <span className="text-sm font-medium text-foreground">Grade:</span>
                 <div className="flex gap-1">
                   {(["all", "G1", "G2", "G3"] as const).map((g) => (
                     <Button
@@ -143,7 +145,7 @@ function RegionalCalendarPage() {
             )}
           </div>
 
-          <div className="mt-3 text-sm text-cream-muted">
+          <div className="mt-3 text-sm text-muted-foreground">
             Showing {filteredRaces.length} of {regionRaces.length} races
           </div>
         </CardContent>
@@ -156,8 +158,8 @@ function RegionalCalendarPage() {
       )}
 
       {filteredRaces.length === 0 && (
-        <Card className="border-gold-muted">
-          <CardContent className="p-8 text-center text-cream-muted">
+        <Card className="border-border">
+          <CardContent className="p-8 text-center text-muted-foreground">
             No races match your filters.
           </CardContent>
         </Card>

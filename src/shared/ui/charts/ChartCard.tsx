@@ -45,20 +45,20 @@ export function ChartCard({
         "group relative h-full flex flex-col rounded-xl border border-white/5 bg-card/40",
         "backdrop-blur-sm transition-colors duration-200",
         "hover:border-[color-mix(in_oklab,var(--chart-1)_60%,transparent)]",
-        "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.03)]",
+        "shadow-[inset_0_1px_0_0_color-mix(in oklab, white 3%, transparent)]",
         className,
       )}
     >
       <header className="flex items-start justify-between gap-3 px-4 pt-3.5 pb-2">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5">
-            <h3 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-cream/70 truncate">
+            <h3 className="text-[11px] font-semibold uppercase tracking-[0.15em] text-foreground/70 truncate">
               {title}
             </h3>
             {info ? <MetricInfo definition={info} formula={infoFormula} /> : null}
           </div>
           {subtitle ? (
-            <div className="mt-1 text-cream font-mono text-lg leading-tight tabular-nums">
+            <div className="mt-1 text-foreground font-mono text-lg leading-tight tabular-nums">
               {subtitle}
             </div>
           ) : null}
@@ -66,7 +66,7 @@ export function ChartCard({
         <div className="flex items-center gap-1.5 shrink-0">
           {trailing}
           {href ? (
-            <ArrowUpRight className="h-3.5 w-3.5 text-cream/30 group-hover:text-[var(--chart-1)] transition-colors" />
+            <ArrowUpRight className="h-3.5 w-3.5 text-foreground/30 group-hover:text-[var(--chart-1)] transition-colors" />
           ) : null}
         </div>
       </header>
@@ -79,7 +79,7 @@ export function ChartCard({
         {children}
       </div>
       {footnote ? (
-        <div className="px-4 pb-3 pt-1 text-[10px] font-mono uppercase tracking-wider text-cream/40">
+        <div className="px-4 pb-3 pt-1 text-[10px] font-mono uppercase tracking-wider text-foreground/40">
           {footnote}
         </div>
       ) : null}

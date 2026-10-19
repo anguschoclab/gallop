@@ -9,13 +9,13 @@ const SURFACES: Array<"Turf" | "Dirt" | "Synthetic"> = ["Turf", "Dirt", "Synthet
 export function SurfaceAptitudeSection({ horses }: { horses: Horse[] }) {
   return (
     <div>
-      <h4 className="text-[11px] uppercase tracking-wide font-mono text-cream/50 mb-2">
+      <h4 className="text-[11px] uppercase tracking-wide font-mono text-foreground/50 mb-2">
         Surface aptitude
       </h4>
       <div className={cn("grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3")}>
         {horses.map((h) => (
           <div key={h.id} className="space-y-2">
-            <div className="text-xs font-medium text-cream/70">{h.name}</div>
+            <div className="text-xs font-medium text-foreground/70">{h.name}</div>
             {SURFACES.map((s) => {
               const val = Math.round((h.surfaceAptitude[s] ?? 0) * STAT_SCALE_MAX);
               return (

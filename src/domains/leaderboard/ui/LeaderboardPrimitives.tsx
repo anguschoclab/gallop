@@ -33,12 +33,12 @@ export function LeaderboardShell({
   return (
     <Card className={cn("bg-card border-white/5 overflow-hidden", className)}>
       <CardHeader className="bg-muted/30 border-b border-white/5">
-        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
+        <CardTitle className="text-sm font-black uppercase tracking-widest flex items-center gap-2 text-foreground font-[family-name:var(--font-display)]">
           {icon}
           {title}
         </CardTitle>
         {description && (
-          <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+          <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
             {description}
           </p>
         )}
@@ -97,19 +97,19 @@ export function LeaderboardRow({
         </span>
         <div className="min-w-0">
           <div className="flex items-center gap-2 flex-wrap">
-            <p className="font-bold uppercase tracking-tight text-cream truncate">{name}</p>
+            <p className="font-bold uppercase tracking-tight text-foreground truncate">{name}</p>
             {badges}
           </div>
           {meta && (
-            <p className="text-[11px] text-cream-muted mt-0.5 uppercase tracking-wide line-clamp-1 sm:line-clamp-none">
+            <p className="text-[11px] text-muted-foreground mt-0.5 uppercase tracking-wide line-clamp-1 sm:line-clamp-none">
               {meta}
             </p>
           )}
         </div>
       </div>
       <div className="text-right shrink-0">
-        <p className="text-lg sm:text-xl font-black tabular-nums text-cream">{value}</p>
-        <p className="text-[10px] text-cream-muted uppercase tracking-wide">{valueLabel}</p>
+        <p className="text-lg sm:text-xl font-black tabular-nums text-foreground">{value}</p>
+        <p className="text-[10px] text-muted-foreground uppercase tracking-wide">{valueLabel}</p>
       </div>
     </div>
   );
@@ -125,11 +125,11 @@ export function LeaderboardHeading({ title, description, rightSlot }: Leaderboar
   return (
     <div className={cn(rightSlot && "flex items-center justify-between gap-4")}>
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)]">
           {title}
         </h2>
         {description && (
-          <p className="text-cream-muted font-[family-name:var(--font-body)]">{description}</p>
+          <p className="text-muted-foreground font-[family-name:var(--font-body)]">{description}</p>
         )}
       </div>
       {rightSlot}

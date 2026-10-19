@@ -120,17 +120,17 @@ function TrackHistoryPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)]">
           Course Histories
         </h1>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">
+        <p className="text-muted-foreground font-[family-name:var(--font-body)]">
           Every race held at each racecourse — winners, times and prestige movement
         </p>
       </div>
 
       {ledger.length === 0 ? (
         <Card className="border-white/5 bg-slate-900/40">
-          <CardContent className="p-6 text-sm text-cream-muted flex items-center gap-2">
+          <CardContent className="p-6 text-sm text-muted-foreground flex items-center gap-2">
             <Landmark className="h-4 w-4" />
             No races have been run yet. Advance a few days and results will start filling in here.
           </CardContent>
@@ -153,15 +153,15 @@ function TrackHistoryPage() {
                   aria-pressed={s.trackId === activeId}
                   className={`w-full rounded-md px-3 py-2 text-left transition-colors ${
                     s.trackId === activeId
-                      ? "bg-primary/20 text-cream"
-                      : "bg-muted/30 text-cream-muted hover:text-cream"
+                      ? "bg-primary/20 text-foreground"
+                      : "bg-muted/30 text-muted-foreground hover:text-foreground"
                   }`}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="truncate text-sm font-medium">{s.trackName}</span>
                     <span className="tabular-nums text-[11px]">{s.raceCount}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] text-cream-muted">
+                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
                     <MapPin className="h-3 w-3" />
                     {s.country}
                     {s.gradedCount > 0 && <span>· {s.gradedCount} graded</span>}
@@ -170,7 +170,9 @@ function TrackHistoryPage() {
                 </button>
               ))}
               {filtered.length === 0 && (
-                <p className="px-3 py-2 text-xs text-cream-muted">No courses match that search.</p>
+                <p className="px-3 py-2 text-xs text-muted-foreground">
+                  No courses match that search.
+                </p>
               )}
             </div>
           </div>
@@ -180,8 +182,10 @@ function TrackHistoryPage() {
               <Card className="border-white/5 bg-slate-900/40">
                 <CardContent className="p-4 flex flex-wrap items-center gap-4">
                   <div className="min-w-0">
-                    <h2 className="text-xl font-bold text-cream truncate">{active.trackName}</h2>
-                    <p className="text-xs text-cream-muted">
+                    <h2 className="text-xl font-bold text-foreground truncate">
+                      {active.trackName}
+                    </h2>
+                    <p className="text-xs text-muted-foreground">
                       {active.country} · Day {active.firstDay}–{active.lastDay}
                     </p>
                   </div>
@@ -200,7 +204,7 @@ function TrackHistoryPage() {
             <Card className="border-white/5 bg-slate-900/40">
               <CardContent className="p-4">
                 <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-[8rem_8rem_minmax(10rem,1fr)_minmax(12rem,1fr)_auto] xl:items-end">
-                  <label className="space-y-1 text-[11px] font-semibold uppercase text-cream-muted">
+                  <label className="space-y-1 text-[11px] font-semibold uppercase text-muted-foreground">
                     From day
                     <Input
                       type="number"
@@ -211,7 +215,7 @@ function TrackHistoryPage() {
                       aria-label="From game day"
                     />
                   </label>
-                  <label className="space-y-1 text-[11px] font-semibold uppercase text-cream-muted">
+                  <label className="space-y-1 text-[11px] font-semibold uppercase text-muted-foreground">
                     To day
                     <Input
                       type="number"
@@ -222,7 +226,7 @@ function TrackHistoryPage() {
                       aria-label="To game day"
                     />
                   </label>
-                  <label className="space-y-1 text-[11px] font-semibold uppercase text-cream-muted">
+                  <label className="space-y-1 text-[11px] font-semibold uppercase text-muted-foreground">
                     Race type
                     <Select value={raceType} onValueChange={setRaceType}>
                       <SelectTrigger aria-label="Race type">
@@ -238,7 +242,7 @@ function TrackHistoryPage() {
                       </SelectContent>
                     </Select>
                   </label>
-                  <label className="space-y-1 text-[11px] font-semibold uppercase text-cream-muted">
+                  <label className="space-y-1 text-[11px] font-semibold uppercase text-muted-foreground">
                     Stable
                     <Select value={stableId} onValueChange={setStableId}>
                       <SelectTrigger aria-label="Stable">
@@ -266,7 +270,7 @@ function TrackHistoryPage() {
                     Clear filters
                   </Button>
                 </div>
-                <p className="mt-3 text-xs text-cream-muted" aria-live="polite">
+                <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
                   Showing {races.length} of {courseLedger.length} races
                 </p>
               </CardContent>

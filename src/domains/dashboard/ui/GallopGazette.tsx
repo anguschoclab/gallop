@@ -28,7 +28,7 @@ export function GallopGazette() {
   const news = useGame((s) => s.news);
 
   return (
-    <Card className="border-gold bg-parchment text-newspaper-ink overflow-hidden shadow-2xl ring-1 ring-gold/20 group">
+    <Card className="border-primary bg-parchment text-newspaper-ink overflow-hidden shadow-2xl ring-1 ring-primary/20 group">
       <CardHeader className="py-3 px-6 border-b-2 border-double border-newspaper-ink flex flex-row items-center justify-between bg-newspaper-divider/30">
         <div className="flex items-center gap-3">
           <Newspaper className="h-5 w-5 animate-in fade-in slide-in-from-left duration-500" />
@@ -66,27 +66,27 @@ export function GallopGazette() {
                     {item.category}
                   </Badge>
                   {item.partNumber && item.totalParts && item.totalParts > 1 && (
-                    <Badge className="bg-gold/80 text-newspaper-ink rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-wide">
+                    <Badge className="bg-primary/80 text-newspaper-ink rounded-none text-[9px] font-bold h-4 px-1.5 uppercase tracking-wide">
                       Part {item.partNumber}/{item.totalParts}
                     </Badge>
                   )}
                   <h3
                     className={cn(
-                      "font-extrabold leading-[1.05] tracking-tighter text-newspaper-headline font-[family-name:var(--font-display)] group-hover:text-gold-dark transition-colors",
+                      "font-extrabold leading-[1.05] tracking-tighter text-newspaper-headline font-[family-name:var(--font-display)] group-hover:text-primary transition-colors",
                       item.importance === "high" ? "text-2xl" : "text-xl",
                     )}
                   >
                     <NewsContent
                       text={item.headline}
                       links={item.entityLinks}
-                      linkClassName="text-newspaper-headline hover:text-gold-dark border-b border-dotted border-newspaper-headline/40"
+                      linkClassName="text-newspaper-headline hover:text-primary border-b border-dotted border-newspaper-headline/40"
                     />
                   </h3>
                   <p className="text-sm line-clamp-3 leading-relaxed opacity-90 font-serif italic text-newspaper-body">
                     <NewsContent
                       text={item.body}
                       links={item.entityLinks}
-                      linkClassName="text-newspaper-body hover:text-gold-dark border-b border-dotted border-newspaper-body/40"
+                      linkClassName="text-newspaper-body hover:text-primary border-b border-dotted border-newspaper-body/40"
                     />
                   </p>
                 </div>

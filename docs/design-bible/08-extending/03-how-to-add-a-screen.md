@@ -60,11 +60,11 @@ Iterate. Status moves to `Needs review` until both sign-off.
 ### Layout
 
 - Default: live inside `AppShell` automatically (any path that doesn't start with `/race/`).
-- Full-bleed: only if your screen file justifies it. Edit [AppShell.tsx](../../../src/components/AppShell.tsx) `isRace` check, or refactor to a generic full-bleed pattern (decision log entry required).
+- Full-bleed: only if your screen file justifies it. Edit [AppShell.tsx](../../../src/domains/shell/ui/AppShell.tsx) `isRace` check, or refactor to a generic full-bleed pattern (decision log entry required).
 
 ### Navigation
 
-- If the screen is **top-level**, add an entry to `navItems` in [AppShell.tsx](../../../src/components/AppShell.tsx). The 7-item nav is deliberate — adding an 8th needs vision-level approval.
+- If the screen is **top-level**, add an entry to `navItems` in [AppShell.tsx](../../../src/domains/shell/ui/AppShell.tsx). The 7-item nav is deliberate — adding an 8th needs vision-level approval.
 - If the screen is **drill-in only** (e.g. detail of a list item), no nav entry is needed.
 
 ### Filters and state
@@ -121,7 +121,7 @@ The PR template should ask:
 
 - Move screen file status to `Stable`.
 - If your screen introduced a non-obvious decision, append to [04-decision-log.md](04-decision-log.md).
-- If a future screen would benefit from the same pattern, consider promoting an inline component to `src/components/` (see [02-how-to-add-a-component.md](02-how-to-add-a-component.md)).
+- If a future screen would benefit from the same pattern, consider promoting an inline component to `src/domains/` (see [02-how-to-add-a-component.md](02-how-to-add-a-component.md)).
 
 ---
 

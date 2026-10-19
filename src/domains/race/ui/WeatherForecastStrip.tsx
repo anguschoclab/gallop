@@ -66,7 +66,7 @@ export function WeatherForecastStrip({ trackId, trackCondition }: Props) {
             return (
               <JargonTooltip key={w.day} term={w.pattern}>
                 <Icon
-                  className="h-3 w-3 text-muted-foreground hover:text-cream transition-colors"
+                  className="h-3 w-3 text-muted-foreground hover:text-foreground transition-colors"
                   aria-label={w.pattern}
                 />
               </JargonTooltip>

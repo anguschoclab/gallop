@@ -43,12 +43,12 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
 
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none group hover:border-white/20 transition-all duration-300 relative overflow-hidden shadow-xl">
-      <div className="absolute top-0 left-0 w-full h-0.5 bg-white/5 group-hover:bg-gold/40 transition-colors" />
+      <div className="absolute top-0 left-0 w-full h-0.5 bg-white/5 group-hover:bg-primary/40 transition-colors" />
 
       <CardHeader className="pb-3 bg-black/20 border-b border-white/5">
         <div className="flex items-start justify-between">
           <div className="space-y-1">
-            <CardTitle className="text-sm font-black uppercase tracking-tight text-cream group-hover:text-gold transition-colors leading-none">
+            <CardTitle className="text-sm font-black uppercase tracking-tight text-foreground group-hover:text-primary transition-colors leading-none">
               {FACILITY_NAMES[type]}
             </CardTitle>
             <div className="flex gap-1 pt-1">
@@ -57,7 +57,7 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
                   key={i}
                   className={cn(
                     "h-1 w-3 rounded-full",
-                    i <= rankVal ? "bg-gold shadow-[0_0_8px_rgba(212,175,55,0.4)]" : "bg-white/5",
+                    i <= rankVal ? "bg-primary shadow-[0_0_8px_var(--border)]" : "bg-white/5",
                   )}
                 />
               ))}
@@ -67,7 +67,9 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
             variant="outline"
             className={cn(
               "text-[8px] font-black uppercase tracking-wide h-5 rounded-none px-2",
-              rankVal === 4 ? "border-gold text-gold bg-gold/5" : "border-white/10 text-cream/40",
+              rankVal === 4
+                ? "border-primary text-primary bg-primary/5"
+                : "border-white/10 text-foreground/40",
             )}
           >
             <JargonTooltip term="Tier" className="no-underline decoration-none">
@@ -80,17 +82,17 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
       <CardContent className="p-5 space-y-5">
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
-            <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
+            <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide">
               Maintenance
             </div>
-            <div className="text-xs font-mono font-bold text-cream/60 tabular-nums">
+            <div className="text-xs font-mono font-bold text-foreground/60 tabular-nums">
               -{formatCurrency(facility.maintenanceCost)}
               <span className="text-[8px] opacity-40">/D</span>
             </div>
           </div>
           {!maxLevel && (
             <div className="space-y-1 text-right">
-              <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
+              <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide">
                 Upgrade Cost
               </div>
               <div
@@ -107,7 +109,7 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
 
         {enabledWorkouts.length > 0 && (
           <div className="space-y-2">
-            <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide flex items-center gap-1.5 px-1">
+            <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide flex items-center gap-1.5 px-1">
               <HardDrive className="h-2.5 w-2.5 opacity-40" />
               <JargonTooltip term="Regimens Unlocked" className="no-underline decoration-none">
                 Regimens Unlocked
@@ -117,7 +119,7 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
               {enabledWorkouts.map((workout: string) => (
                 <div
                   key={workout}
-                  className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-cream/60 uppercase tracking-tighter rounded-sm"
+                  className="px-2 py-0.5 bg-black/40 border border-white/5 text-[9px] font-mono text-foreground/60 uppercase tracking-tighter rounded-sm"
                 >
                   {workout.replace(/_/g, " ")}
                 </div>
@@ -146,8 +148,8 @@ function FacilityCard({ type, facility, cash, reputationTier, onUpgrade }: Facil
                       className={cn(
                         "w-full h-10 uppercase text-[10px] font-black tracking-wide rounded-none transition-all",
                         canUpgrade
-                          ? "bg-gold hover:bg-gold-bright text-slate-950 shadow-lg"
-                          : "border-white/5 text-cream/20 bg-transparent",
+                          ? "bg-primary hover:bg-accent-bright text-slate-950 shadow-lg"
+                          : "border-white/5 text-foreground/20 bg-transparent",
                       )}
                     >
                       <ArrowUp className="h-3 w-3 mr-2" />
@@ -191,7 +193,9 @@ export function FacilityCategory({
     <section className="space-y-6">
       <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
         <Icon className={cn("h-4 w-4", color)} />
-        <h3 className="text-xs font-black uppercase tracking-wide text-cream/60">{category}</h3>
+        <h3 className="text-xs font-black uppercase tracking-wide text-foreground/60">
+          {category}
+        </h3>
       </div>
 
       <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

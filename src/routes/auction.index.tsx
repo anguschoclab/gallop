@@ -145,16 +145,16 @@ function AuctionPage() {
   return (
     <div className="space-y-6 pb-20 animate-fade-in">
       {/* Auction Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gold/20 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-primary/20 pb-6">
         <div>
-          <div className="flex items-center gap-2 text-gold-bright uppercase tracking-wide font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
+          <div className="flex items-center gap-2 text-accent-bright uppercase tracking-wide font-[family-name:var(--font-display)] text-xs font-bold mb-1 opacity-60">
             <Gavel className="h-3.5 w-3.5" />
             Public Sales
           </div>
-          <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
+          <h1 className="text-4xl font-bold tracking-tighter text-foreground font-[family-name:var(--font-display)]">
             The Auction Block
           </h1>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
             <span>
               Active Windows: <NumericValue value={activeUpcoming.length} />
             </span>
@@ -172,7 +172,7 @@ function AuctionPage() {
         <div className="flex gap-2">
           <Badge
             variant="outline"
-            className="border-gold/30 text-gold-muted bg-gold/5 font-mono text-[10px] uppercase tracking-wide px-3 py-1 h-8 rounded-none"
+            className="border-primary/30 text-primary/30 bg-primary/5 font-mono text-[10px] uppercase tracking-wide px-3 py-1 h-8 rounded-none"
           >
             Buyer Access
           </Badge>

@@ -22,15 +22,17 @@ export function StatCard({
   return (
     <Card className="border-white/5 bg-slate-900/40">
       <CardContent className="p-4">
-        <p className="text-[10px] font-black uppercase tracking-wide text-cream-muted">{label}</p>
+        <p className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
+          {label}
+        </p>
         <p
-          className={`font-bold tabular-nums text-cream ${
+          className={`font-bold tabular-nums text-foreground ${
             size === "xl" ? "text-xl" : size === "lg" ? "text-lg" : "text-base"
           }`}
         >
           {value}
         </p>
-        <p className="text-[10px] text-cream-muted mt-0.5">{sub}</p>
+        <p className="text-[10px] text-muted-foreground mt-0.5">{sub}</p>
       </CardContent>
     </Card>
   );

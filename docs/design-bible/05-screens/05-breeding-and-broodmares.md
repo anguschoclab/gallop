@@ -83,8 +83,8 @@ Two related screens. Tomás's home turf.
 ## Data
 
 - `useGame((s) => s.horses)` filtered to mares / stallions.
-- Compatibility derived in [src/game/breedingCompatibility.ts](../../../src/game/breedingCompatibility.ts).
-- Foal genetics: [src/game/foalGen.ts](../../../src/game/foalGen.ts).
+- Compatibility derived in [src/domains/breeding/simulation/compatibility.ts](../../../src/domains/breeding/simulation/compatibility.ts).
+- Foal genetics: [src/domains/breeding/simulation/populationGenetics.ts](../../../src/domains/breeding/simulation/populationGenetics.ts).
 
 ## Copy
 

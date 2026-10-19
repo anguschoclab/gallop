@@ -27,8 +27,8 @@ export function AnalyticsStableTab() {
   return (
     <div className="space-y-6">
       <header>
-        <h2 className="font-display text-2xl text-cream">Stable analytics</h2>
-        <p className="text-cream-muted mt-1 text-sm">
+        <h2 className="font-display text-2xl text-foreground">Stable analytics</h2>
+        <p className="text-muted-foreground mt-1 text-sm">
           Fleet composition, energy, and per-horse return.
         </p>
       </header>
@@ -39,7 +39,7 @@ export function AnalyticsStableTab() {
             {ageRows.length > 0 ? (
               <MiniBar rows={ageRows} />
             ) : (
-              <div className="text-[11px] text-cream/40 font-mono">No horses</div>
+              <div className="text-[11px] text-foreground/40 font-mono">No horses</div>
             )}
           </div>
         </ChartCard>
@@ -87,7 +87,7 @@ export function AnalyticsStableTab() {
                   .map((r) => (r.position <= 3 ? 1 : 0));
                 return (
                   <div key={h.id} className="flex items-center gap-3">
-                    <div className="w-32 text-[11px] truncate text-cream/80">{h.name}</div>
+                    <div className="w-32 text-[11px] truncate text-foreground/80">{h.name}</div>
                     <div className="flex-1">
                       <Sparkline data={series} height={28} variant="line" />
                     </div>

@@ -13,11 +13,11 @@ import {
 } from "@/domains/prestige/application/prestigeFacade";
 
 const TIER_CLASSES = {
-  world: "bg-gold/20 text-gold border-gold/40",
-  premier: "bg-gold/10 text-gold-muted border-gold/25",
+  world: "bg-primary/20 text-primary border-primary/40",
+  premier: "bg-primary/10 text-primary/30 border-primary/25",
   national: "bg-sky-500/10 text-sky-300 border-sky-400/25",
-  regional: "bg-slate-500/10 text-cream/60 border-white/15",
-  provincial: "bg-slate-700/30 text-cream/40 border-white/10",
+  regional: "bg-slate-500/10 text-foreground/60 border-white/15",
+  provincial: "bg-slate-700/30 text-foreground/40 border-white/10",
 } as const;
 
 interface PrestigeBadgeProps {

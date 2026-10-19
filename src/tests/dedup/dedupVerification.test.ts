@@ -200,15 +200,15 @@ describe("B.5 — gradeColorClass duplication verification (NOT true duplicates)
     expect(gradeColorJockey("A+")).toContain("text-fame");
     expect(gradeColorJockey("A")).toContain("text-success");
     expect(gradeColorJockey("B")).toContain("text-broadcast-accent");
-    expect(gradeColorJockey("C")).toContain("text-cream");
+    expect(gradeColorJockey("C")).toContain("text-foreground");
     expect(gradeColorJockey("D")).toContain("text-warning");
     expect(gradeColorJockey("F")).toContain("text-destructive");
   });
 
   it("grading version accepts LetterGrade (S/A+/A/B+/B/C+/C/D)", () => {
     expect(gradeColorHorse("S")).toContain("text-fame");
-    expect(gradeColorHorse("A+")).toContain("text-gold");
-    expect(gradeColorHorse("A")).toContain("text-gold");
+    expect(gradeColorHorse("A+")).toContain("text-primary");
+    expect(gradeColorHorse("A")).toContain("text-primary");
     expect(gradeColorHorse("B+")).toContain("text-success");
     expect(gradeColorHorse("B")).toContain("text-success");
     expect(gradeColorHorse("C+")).toContain("text-warning");
@@ -229,7 +229,7 @@ describe("B.5 — gradeColorClass duplication verification (NOT true duplicates)
   });
 
   it("grading version has default fallback for unknown grades", () => {
-    expect(gradeColorHorse("X" as any)).toContain("text-cream/20");
+    expect(gradeColorHorse("X" as any)).toContain("text-foreground/20");
   });
 });
 

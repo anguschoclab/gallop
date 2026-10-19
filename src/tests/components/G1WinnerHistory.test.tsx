@@ -186,7 +186,7 @@ describe("G1WinnerHistory", () => {
     await user.click(screen.getByRole("tab", { name: /Chronological/i }));
 
     const winnerLink = screen.getByText("MyHorse");
-    expect(winnerLink.className).toContain("text-gold");
+    expect(winnerLink.className).toContain("text-primary");
   });
 
   it("winner names link to horse page", async () => {

@@ -12,7 +12,7 @@ export function DecadeLeaders({ records }: { records: TrackRecord[] }) {
   if (decades.length === 0) {
     return (
       <Card className="border-white/5 bg-slate-900/40">
-        <CardContent className="p-6 text-sm text-cream-muted flex items-center gap-2">
+        <CardContent className="p-6 text-sm text-muted-foreground flex items-center gap-2">
           <CalendarRange className="h-4 w-4" />
           No records to rank by decade yet.
         </CardContent>
@@ -26,7 +26,7 @@ export function DecadeLeaders({ records }: { records: TrackRecord[] }) {
         <Card key={d.decade} className="border-white/5 bg-slate-900/40">
           <CardContent className="p-4 space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="font-semibold text-cream">{d.label}</h3>
+              <h3 className="font-semibold text-foreground">{d.label}</h3>
               <Badge variant="outline" className="text-xs">
                 {d.recordCount} records
               </Badge>
@@ -39,14 +39,14 @@ export function DecadeLeaders({ records }: { records: TrackRecord[] }) {
                   className="flex items-center justify-between gap-3 text-xs"
                 >
                   <span className="flex min-w-0 items-center gap-2">
-                    <span className="w-4 tabular-nums text-cream-muted">{i + 1}</span>
-                    <span className="truncate font-medium text-cream">{r.horseName}</span>
-                    <span className="truncate text-cream-muted">
+                    <span className="w-4 tabular-nums text-muted-foreground">{i + 1}</span>
+                    <span className="truncate font-medium text-foreground">{r.horseName}</span>
+                    <span className="truncate text-muted-foreground">
                       {r.trackName} · {r.distance}m {r.surface}
                     </span>
                   </span>
                   <span className="flex shrink-0 items-center gap-2">
-                    <span className="tabular-nums text-cream-muted">
+                    <span className="tabular-nums text-muted-foreground">
                       {recordSpeed(r).toFixed(2)} m/s
                     </span>
                     <RaceTimeDisplay seconds={r.time} distance={r.distance} className="text-xs" />
@@ -57,7 +57,7 @@ export function DecadeLeaders({ records }: { records: TrackRecord[] }) {
 
             {d.prolific.length > 0 && (
               <div className="flex flex-wrap items-center gap-1.5 border-t border-white/5 pt-2">
-                <span className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
+                <span className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
                   Most records
                 </span>
                 {d.prolific.map((h) => (

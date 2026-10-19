@@ -105,12 +105,12 @@ export function RaceQuickFilters({ filters, onPatch, onReset, matchCount }: Race
   return (
     <div className="flex items-center gap-2 p-2 border border-white/5 bg-slate-900/40 flex-wrap">
       <div className="flex items-center gap-2 pr-2 border-r border-white/5">
-        <span className="text-[10px] font-mono uppercase tracking-wide text-cream/40">
+        <span className="text-[10px] font-mono uppercase tracking-wide text-foreground/40">
           Quick Filters
         </span>
         <Badge
           variant="outline"
-          className="h-5 px-1.5 text-[9px] font-mono tabular-nums border-gold/30 text-gold-muted"
+          className="h-5 px-1.5 text-[9px] font-mono tabular-nums border-primary/30 text-primary/30"
         >
           {matchCount}
         </Badge>
@@ -128,8 +128,8 @@ export function RaceQuickFilters({ filters, onPatch, onReset, matchCount }: Race
             className={cn(
               "h-7 px-2.5 gap-1.5 text-[10px] font-black uppercase tracking-wider rounded-none transition-colors",
               active
-                ? "bg-gold text-slate-950 hover:bg-gold hover:text-slate-950"
-                : "text-cream/60 hover:text-gold hover:bg-gold/10",
+                ? "bg-primary text-slate-950 hover:bg-primary hover:text-slate-950"
+                : "text-foreground/60 hover:text-primary hover:bg-primary/10",
             )}
           >
             <Icon className="h-3 w-3" />
@@ -143,7 +143,7 @@ export function RaceQuickFilters({ filters, onPatch, onReset, matchCount }: Race
           size="sm"
           variant="ghost"
           onClick={onReset}
-          className="h-7 px-2 gap-1 text-[10px] font-mono uppercase tracking-wide text-cream/40 hover:text-destructive ml-auto"
+          className="h-7 px-2 gap-1 text-[10px] font-mono uppercase tracking-wide text-foreground/40 hover:text-destructive ml-auto"
         >
           <RotateCcw className="h-3 w-3" />
           Reset

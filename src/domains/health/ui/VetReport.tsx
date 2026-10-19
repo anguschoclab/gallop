@@ -23,8 +23,8 @@ export function VetReport() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <Activity className="h-5 w-5 text-cream" />
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name=var(--font-display)]">
+        <Activity className="h-5 w-5 text-foreground" />
+        <h1 className="text-3xl font-bold tracking-tight text-foreground font-[family-name=var(--font-display)]">
           Vet Report
         </h1>
       </div>
@@ -33,14 +33,14 @@ export function VetReport() {
       <div className="grid grid-cols-5 gap-3">
         <Card className="bg-slate-900/40 border-white/5">
           <CardContent className="p-3 text-center">
-            <div className="text-2xl font-black tabular-nums text-cream">{summary.total}</div>
-            <div className="text-[10px] uppercase text-cream-muted">Total</div>
+            <div className="text-2xl font-black tabular-nums text-foreground">{summary.total}</div>
+            <div className="text-[10px] uppercase text-muted-foreground">Total</div>
           </CardContent>
         </Card>
         <Card className="bg-slate-900/40 border-white/5">
           <CardContent className="p-3 text-center">
             <div className="text-2xl font-black tabular-nums text-green-400">{summary.healthy}</div>
-            <div className="text-[10px] uppercase text-cream-muted">Healthy</div>
+            <div className="text-[10px] uppercase text-muted-foreground">Healthy</div>
           </CardContent>
         </Card>
         <Card className="bg-slate-900/40 border-white/5">
@@ -48,21 +48,21 @@ export function VetReport() {
             <div className="text-2xl font-black tabular-nums text-yellow-400">
               {summary.recovering}
             </div>
-            <div className="text-[10px] uppercase text-cream-muted">Recovering</div>
+            <div className="text-[10px] uppercase text-muted-foreground">Recovering</div>
           </CardContent>
         </Card>
         <Card className="bg-slate-900/40 border-white/5">
           <CardContent className="p-3 text-center">
             <div className="text-2xl font-black tabular-nums text-red-400">{summary.injured}</div>
-            <div className="text-[10px] uppercase text-cream-muted">Injured</div>
+            <div className="text-[10px] uppercase text-muted-foreground">Injured</div>
           </CardContent>
         </Card>
         <Card className="bg-slate-900/40 border-white/5">
           <CardContent className="p-3 text-center">
-            <div className="text-2xl font-black tabular-nums text-cream">
+            <div className="text-2xl font-black tabular-nums text-foreground">
               {Math.round(summary.avgFitness)}
             </div>
-            <div className="text-[10px] uppercase text-cream-muted">Avg Fitness</div>
+            <div className="text-[10px] uppercase text-muted-foreground">Avg Fitness</div>
           </CardContent>
         </Card>
       </div>
@@ -70,7 +70,7 @@ export function VetReport() {
       {/* Horse health table */}
       {rows.length === 0 ? (
         <Card className="bg-slate-900/40 border-white/5">
-          <CardContent className="p-8 text-center text-cream-muted">
+          <CardContent className="p-8 text-center text-muted-foreground">
             No horses in the stable.
           </CardContent>
         </Card>
@@ -81,30 +81,39 @@ export function VetReport() {
               <thead>
                 <tr className="border-b border-white/5">
                   <th
-                    className="text-left p-3 text-[10px] font-black uppercase tracking-wide text-cream-muted cursor-pointer hover:text-cream"
+                    className="text-left p-3 text-[10px] font-black uppercase tracking-wide text-muted-foreground cursor-pointer hover:text-foreground"
                     onClick={() => handleSort("name")}
                   >
                     Horse
                   </th>
                   <th
-                    className="text-left p-3 text-[10px] font-black uppercase tracking-wide text-cream-muted cursor-pointer hover:text-cream"
+                    className="text-left p-3 text-[10px] font-black uppercase tracking-wide text-muted-foreground cursor-pointer hover:text-foreground"
                     onClick={() => handleSort("status")}
                   >
                     Status
                   </th>
-                  <th className="text-left p-3 text-[10px] font-black uppercase tracking-wide text-cream-muted">
+                  <th
+                    scope="col"
+                    className="text-left p-3 text-[10px] font-black uppercase tracking-wide text-muted-foreground"
+                  >
                     Injury
                   </th>
-                  <th className="text-right p-3 text-[10px] font-black uppercase tracking-wide text-cream-muted">
+                  <th
+                    scope="col"
+                    className="text-right p-3 text-[10px] font-black uppercase tracking-wide text-muted-foreground"
+                  >
                     Recovery
                   </th>
                   <th
-                    className="text-right p-3 text-[10px] font-black uppercase tracking-wide text-cream-muted cursor-pointer hover:text-cream"
+                    className="text-right p-3 text-[10px] font-black uppercase tracking-wide text-muted-foreground cursor-pointer hover:text-foreground"
                     onClick={() => handleSort("fitness")}
                   >
                     Fitness
                   </th>
-                  <th className="text-right p-3 text-[10px] font-black uppercase tracking-wide text-cream-muted">
+                  <th
+                    scope="col"
+                    className="text-right p-3 text-[10px] font-black uppercase tracking-wide text-muted-foreground"
+                  >
                     Fatigue
                   </th>
                 </tr>
@@ -116,7 +125,7 @@ export function VetReport() {
                       <Link
                         to="/stable/$horseId"
                         params={{ horseId: row.horseId }}
-                        className="text-sm font-bold text-cream hover:text-cream-bright"
+                        className="text-sm font-bold text-foreground hover:text-foreground"
                       >
                         {row.horseName}
                       </Link>
@@ -131,17 +140,17 @@ export function VetReport() {
                         {row.status}
                       </span>
                     </td>
-                    <td className="p-3 text-sm text-cream">
+                    <td className="p-3 text-sm text-foreground">
                       {row.activeInjury ? (
                         <span className="flex items-center gap-1 text-red-400">
                           <AlertCircle className="h-3 w-3" />
                           {row.activeInjury.type}
                         </span>
                       ) : (
-                        <span className="text-cream-muted">—</span>
+                        <span className="text-muted-foreground">—</span>
                       )}
                     </td>
-                    <td className="p-3 text-right text-sm tabular-nums text-cream">
+                    <td className="p-3 text-right text-sm tabular-nums text-foreground">
                       {row.recoveryDays > 0
                         ? formatRecoveryDays(
                             row.recoveryDays,
@@ -149,10 +158,10 @@ export function VetReport() {
                           )
                         : "—"}
                     </td>
-                    <td className="p-3 text-right text-sm tabular-nums text-cream">
+                    <td className="p-3 text-right text-sm tabular-nums text-foreground">
                       {Math.round(row.fitness)}
                     </td>
-                    <td className="p-3 text-right text-sm tabular-nums text-cream">
+                    <td className="p-3 text-right text-sm tabular-nums text-foreground">
                       {Math.round(row.fatigue)}
                     </td>
                   </tr>

@@ -39,10 +39,10 @@ export function LiveExchangeFloor({ sales }: LiveExchangeFloorProps) {
                 <Badge className="bg-success text-slate-950 font-black uppercase text-[10px] tracking-wide rounded-none px-3">
                   Active Ring
                 </Badge>
-                <h3 className="text-4xl font-black text-cream font-[family-name:var(--font-display)] uppercase tracking-tight">
+                <h3 className="text-4xl font-black text-foreground font-[family-name:var(--font-display)] uppercase tracking-tight">
                   {sale.name}
                 </h3>
-                <p className="text-xs font-mono text-cream/40 uppercase tracking-tighter">
+                <p className="text-xs font-mono text-foreground/40 uppercase tracking-tighter">
                   {KIND_LABELS[sale.kind as keyof typeof KIND_LABELS] ?? sale.kind} ·{" "}
                   <NumericValue value={sale.lots.filter((l) => !l.withdrawn).length} /> Lots Listed
                 </p>
@@ -50,7 +50,7 @@ export function LiveExchangeFloor({ sales }: LiveExchangeFloorProps) {
               <Link to="/auction/$saleId" params={{ saleId: sale.id }} className="w-full md:w-auto">
                 <Button
                   size="lg"
-                  className="w-full h-14 px-8 bg-success hover:bg-success/90 text-slate-950 font-black uppercase tracking-wide rounded-none text-xs shadow-[0_0_30px_rgba(34,197,94,0.2)]"
+                  className="w-full h-14 px-8 bg-success hover:bg-success/90 text-slate-950 font-black uppercase tracking-wide rounded-none text-xs shadow-[0_0_30px_color-mix(in oklab, var(--success) 20%, transparent)]"
                 >
                   <Gavel className="h-4 w-4 mr-3" />
                   Enter Sale

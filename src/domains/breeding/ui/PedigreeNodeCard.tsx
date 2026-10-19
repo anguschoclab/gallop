@@ -29,11 +29,11 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({
         className={cn(
           "rounded-sm border px-2 py-1.5 text-left transition-colors select-none relative",
           "bg-slate-900/80 border-white/10 shadow-lg",
-          data.isReal && "cursor-pointer hover:border-gold/50 hover:bg-slate-800/80",
+          data.isReal && "cursor-pointer hover:border-primary/50 hover:bg-slate-800/80",
           !data.isReal && "opacity-40",
           data.inbreedCount >= 2 && "ring-2 ring-offset-1 ring-offset-slate-950",
           data.inbreedCount >= 2 && data.ringColor,
-          data.generation === 0 && "border-gold/40 bg-black/40",
+          data.generation === 0 && "border-primary/40 bg-black/40",
         )}
         style={{ width: 150, minHeight: 72 }}
       >
@@ -46,7 +46,7 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({
           <Hint content={data.name}>
             <span
               className={cn(
-                "text-[10px] font-black truncate text-cream leading-tight uppercase tracking-tight",
+                "text-[10px] font-black truncate text-foreground leading-tight uppercase tracking-tight",
                 !data.isReal && "italic font-normal opacity-60",
               )}
             >
@@ -56,7 +56,7 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({
         </div>
 
         <div className="flex items-center justify-between gap-1 mt-auto">
-          <div className="flex items-center gap-1.5 text-[8px] font-mono text-cream/40 uppercase tracking-wide">
+          <div className="flex items-center gap-1.5 text-[8px] font-mono text-foreground/40 uppercase tracking-wide">
             {data.gender && (
               <span
                 className={cn(
@@ -69,16 +69,16 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({
               </span>
             )}
             <span className="opacity-60">{data.isSire ? "S" : "D"}</span>
-            {data.birthYear && <span className="text-cream/20">b.{data.birthYear}</span>}
+            {data.birthYear && <span className="text-foreground/20">b.{data.birthYear}</span>}
           </div>
 
           {data.bestBeyer !== undefined && (
-            <span className="text-[8px] font-mono font-black text-gold bg-gold/10 px-1 rounded-sm">
+            <span className="text-[8px] font-mono font-black text-primary bg-primary/10 px-1 rounded-sm">
               {data.bestBeyer}
             </span>
           )}
           {data.distanceAptitude !== undefined && (
-            <span className="text-[8px] font-mono font-black text-cream/60 bg-white/5 px-1 rounded-sm">
+            <span className="text-[8px] font-mono font-black text-foreground/60 bg-white/5 px-1 rounded-sm">
               {Math.round(data.distanceAptitude)}m
             </span>
           )}

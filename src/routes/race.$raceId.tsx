@@ -10,11 +10,11 @@ export const Route = createFileRoute("/race/$raceId")({
   component: lazyRouteComponent(() => import("@/domains/race/ui/pages/LiveRace")),
   notFoundComponent: () => (
     <div className="p-6">
-      <h1 className="text-2xl font-bold text-cream">Race not found</h1>
+      <h1 className="text-2xl font-bold text-foreground">Race not found</h1>
       <Link
         to="/races"
         search={{ grade: "all", country: "all", surface: "all", track: "all", owned: "all", q: "" }}
-        className="text-gold underline"
+        className="text-primary underline"
       >
         Back
       </Link>

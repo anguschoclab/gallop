@@ -76,7 +76,7 @@ export function BreedingCompatibilityCard({ compatibility }: BreedingCompatibili
           },
         ]}
       />
-      <Card className="bg-t700 border-gold-muted">
+      <Card className="bg-muted border-border">
         <CardHeader>
           <CardTitle className="text-sm flex items-center gap-2">
             <Info className="h-4 w-4" />
@@ -99,14 +99,14 @@ export function BreedingCompatibilityCard({ compatibility }: BreedingCompatibili
               {Math.round(compatibility.overallScore * 100)}%
             </Badge>
           </div>
-          <p className="text-cream-muted">{compatibility.recommendation}</p>
+          <p className="text-muted-foreground">{compatibility.recommendation}</p>
 
           <div className="space-y-2 pt-2 border-t">
             <div className="flex items-center justify-between text-xs">
               <JargonTooltip term="Nicking">Nicking</JargonTooltip>
               <span
                 className={
-                  compatibility.factors.nicking.score > 0 ? "text-success" : "text-cream-muted"
+                  compatibility.factors.nicking.score > 0 ? "text-success" : "text-muted-foreground"
                 }
               >
                 {compatibility.factors.nicking.description}
@@ -116,7 +116,9 @@ export function BreedingCompatibilityCard({ compatibility }: BreedingCompatibili
               <JargonTooltip term="Dosage">Dosage</JargonTooltip>
               <span
                 className={
-                  compatibility.factors.dosage.score >= 0.7 ? "text-success" : "text-cream-muted"
+                  compatibility.factors.dosage.score >= 0.7
+                    ? "text-success"
+                    : "text-muted-foreground"
                 }
               >
                 {compatibility.factors.dosage.description}
@@ -134,7 +136,7 @@ export function BreedingCompatibilityCard({ compatibility }: BreedingCompatibili
                   ` (${compatibility.factors.inbreeding.warning})`}
               </span>
             </div>
-            <div className="flex items-center justify-between text-xs text-cream-muted">
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
               <span>COI Depth</span>
               <span>8 generations (weighted)</span>
             </div>
@@ -144,7 +146,7 @@ export function BreedingCompatibilityCard({ compatibility }: BreedingCompatibili
                 className={
                   compatibility.factors.parentPerformance.score >= 0.5
                     ? "text-success"
-                    : "text-cream-muted"
+                    : "text-muted-foreground"
                 }
               >
                 {compatibility.factors.parentPerformance.description}
@@ -158,7 +160,7 @@ export function BreedingCompatibilityCard({ compatibility }: BreedingCompatibili
                     ? "text-info"
                     : compatibility.factors.blueHen.score >= 0.5
                       ? "text-success"
-                      : "text-cream-muted"
+                      : "text-muted-foreground"
                 }
               >
                 {compatibility.factors.blueHen.description}

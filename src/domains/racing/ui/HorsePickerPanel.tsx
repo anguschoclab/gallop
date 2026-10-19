@@ -66,8 +66,10 @@ export function HorsePickerPanel({
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-sm text-cream truncate">{horse.name}</span>
-                  <span className="shrink-0 rounded bg-muted/40 px-1.5 py-0.5 text-[10px] font-mono font-bold text-cream/60">
+                  <span className="font-semibold text-sm text-foreground truncate">
+                    {horse.name}
+                  </span>
+                  <span className="shrink-0 rounded bg-muted/40 px-1.5 py-0.5 text-[10px] font-mono font-bold text-foreground/60">
                     {ovr} OVR
                   </span>
                 </div>
@@ -78,7 +80,7 @@ export function HorsePickerPanel({
                       style={{ width: `${horse.energy}%` }}
                     />
                   </div>
-                  <span className="shrink-0 text-[10px] font-mono text-cream/40">
+                  <span className="shrink-0 text-[10px] font-mono text-foreground/40">
                     {Math.round(horse.energy)}%
                   </span>
                 </div>

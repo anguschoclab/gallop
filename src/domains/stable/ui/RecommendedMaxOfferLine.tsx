@@ -49,9 +49,11 @@ export function RecommendedMaxOfferLine({
   const basePct = Math.round(result.baseAcceptThreshold * 100);
 
   return (
-    <div className={cn("flex flex-wrap items-center gap-1.5 text-xs text-cream-muted", className)}>
+    <div
+      className={cn("flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground", className)}
+    >
       <span>
-        Max offer <span className="tabular-nums text-cream">~{acceptPct}%</span> of ask
+        Max offer <span className="tabular-nums text-foreground">~{acceptPct}%</span> of ask
       </span>
       {result.softeningPoints > 0.5 && (
         <span className="text-amber-300">
@@ -60,7 +62,10 @@ export function RecommendedMaxOfferLine({
       )}
       {result.maxOfferAmount !== undefined && (
         <span>
-          · <span className="tabular-nums text-cream">{formatCurrency(result.maxOfferAmount)}</span>{" "}
+          ·{" "}
+          <span className="tabular-nums text-foreground">
+            {formatCurrency(result.maxOfferAmount)}
+          </span>{" "}
           to seal it
         </span>
       )}

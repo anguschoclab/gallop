@@ -17,7 +17,7 @@ const STATUS_CONFIG: Record<
   { icon: typeof Flame; color: string; progress: number }
 > = {
   setup: { icon: BookOpen, color: "text-blue-400", progress: 25 },
-  rising_action: { icon: Sparkles, color: "text-gold", progress: 50 },
+  rising_action: { icon: Sparkles, color: "text-primary", progress: 50 },
   climax: { icon: Flame, color: "text-destructive", progress: 75 },
   resolution: { icon: CheckCircle, color: "text-green-400", progress: 100 },
 };
@@ -35,7 +35,7 @@ export const NarrativeArcCard = memo(function NarrativeArcCard({
     <Card
       className={cn(
         "bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-2",
-        arc.status === "resolution" ? "border-l-green-400" : "border-l-gold/40",
+        arc.status === "resolution" ? "border-l-green-400" : "border-l-primary/40",
       )}
     >
       <CardContent className="p-4 space-y-3">
@@ -44,11 +44,11 @@ export const NarrativeArcCard = memo(function NarrativeArcCard({
             <StatusIcon className={cn("h-3.5 w-3.5", config.color)} />
             <Badge
               variant="outline"
-              className="text-[8px] h-3.5 px-1 font-black uppercase border-gold/20 text-gold-muted rounded-none tracking-wide"
+              className="text-[8px] h-3.5 px-1 font-black uppercase border-primary/20 text-primary/30 rounded-none tracking-wide"
             >
               {arc.type.replace(/_/g, " ")}
             </Badge>
-            <span className="text-[9px] font-mono text-cream/20">Day {arc.startDay}</span>
+            <span className="text-[9px] font-mono text-foreground/20">Day {arc.startDay}</span>
           </div>
           <div className="flex items-center gap-1.5">
             {isRivalry && (
@@ -63,7 +63,7 @@ export const NarrativeArcCard = memo(function NarrativeArcCard({
                   ? "bg-destructive/10 text-destructive border-destructive/30"
                   : arc.status === "resolution"
                     ? "bg-green-400/10 text-green-400 border-green-400/30"
-                    : "bg-gold/10 text-gold border-gold/30",
+                    : "bg-primary/10 text-primary border-primary/30",
               )}
             >
               {arc.status.replace(/_/g, " ")}
@@ -71,7 +71,7 @@ export const NarrativeArcCard = memo(function NarrativeArcCard({
           </div>
         </div>
 
-        <div className="text-xs font-bold text-cream/80">{stableName}</div>
+        <div className="text-xs font-bold text-foreground/80">{stableName}</div>
 
         <div className="space-y-1" data-testid="arc-progress">
           <div className="h-1 bg-white/5 rounded-full overflow-hidden">
@@ -84,15 +84,15 @@ export const NarrativeArcCard = memo(function NarrativeArcCard({
 
         {latestBeat ? (
           <div className="space-y-1">
-            <p className="text-xs font-bold text-cream/70 leading-tight">
+            <p className="text-xs font-bold text-foreground/70 leading-tight">
               <NewsContent text={latestBeat.headline} />
             </p>
-            <p className="text-[10px] text-cream/40 leading-relaxed italic">
+            <p className="text-[10px] text-foreground/40 leading-relaxed italic">
               <NewsContent text={latestBeat.body} />
             </p>
           </div>
         ) : (
-          <p className="text-[10px] text-cream/30 italic">Story in progress...</p>
+          <p className="text-[10px] text-foreground/30 italic">Story in progress...</p>
         )}
       </CardContent>
     </Card>

@@ -40,12 +40,12 @@ export function HorseCardFull({ horse, hookData, onClick, className = "" }: Hors
       className={cn(
         "bg-slate-900/60 border-white/5 rounded-none shadow-2xl relative overflow-hidden group flex flex-col h-full",
         onClick &&
-          "cursor-pointer hover:border-gold/40 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none",
+          "cursor-pointer hover:border-primary/40 transition-all duration-300 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
         className,
       )}
       onClick={onClick}
     >
-      <div className="absolute top-0 left-0 w-full h-1 bg-gold/20 group-hover:bg-gold transition-colors z-10" />
+      <div className="absolute top-0 left-0 w-full h-1 bg-primary/20 group-hover:bg-primary transition-colors z-10" />
 
       <div className="absolute top-2 right-2 z-20">
         <BookmarkButton
@@ -60,13 +60,13 @@ export function HorseCardFull({ horse, hookData, onClick, className = "" }: Hors
 
       <CardContent className="p-0 flex-1 flex flex-col">
         {/* Biometrics Strip */}
-        <div className="flex items-center justify-between px-5 py-2 bg-white/[0.02] border-b border-white/5 text-[9px] font-mono uppercase tracking-wide text-cream/40">
+        <div className="flex items-center justify-between px-5 py-2 bg-white/[0.02] border-b border-white/5 text-[9px] font-mono uppercase tracking-wide text-foreground/40">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <Ruler className="h-3 w-3 text-gold/40" /> {horse.height?.toFixed(1)}HH
+              <Ruler className="h-3 w-3 text-primary/40" /> {horse.height?.toFixed(1)}HH
             </span>
             <span className="flex items-center gap-1">
-              <Weight className="h-3 w-3 text-gold/40" /> {Math.round(horse.weight ?? 0)}KG
+              <Weight className="h-3 w-3 text-primary/40" /> {Math.round(horse.weight ?? 0)}KG
             </span>
           </div>
           <div className="flex items-center gap-1">

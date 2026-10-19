@@ -54,12 +54,12 @@ export function AnalyticsOverviewTab() {
     <div className="space-y-6">
       <header className="flex items-baseline justify-between">
         <div>
-          <h2 className="font-display text-2xl text-cream">Overview</h2>
-          <p className="text-cream-muted mt-1 text-sm">
+          <h2 className="font-display text-2xl text-foreground">Overview</h2>
+          <p className="text-muted-foreground mt-1 text-sm">
             Stable performance at a glance — drill into any tile for detail.
           </p>
         </div>
-        <div className="text-[10px] font-mono uppercase tracking-wide text-cream/40">
+        <div className="text-[10px] font-mono uppercase tracking-wide text-foreground/40">
           Day {d.day}
         </div>
       </header>
@@ -253,7 +253,7 @@ function TopSireCard({
         {topSireTrend.length > 1 ? (
           <Sparkline data={topSireTrend} height={70} />
         ) : (
-          <div className="text-[11px] text-cream/40 font-mono">Trend pending</div>
+          <div className="text-[11px] text-foreground/40 font-mono">Trend pending</div>
         )}
       </div>
     </ChartCard>
@@ -271,7 +271,7 @@ function TopExpensesCard({ expenseRows }: { expenseRows: { label: string; value:
         {expenseRows.length > 0 ? (
           <MiniBar rows={expenseRows} format={formatCurrencyCompact} />
         ) : (
-          <div className="text-[11px] text-cream/40 font-mono">No expenses recorded</div>
+          <div className="text-[11px] text-foreground/40 font-mono">No expenses recorded</div>
         )}
       </div>
     </ChartCard>

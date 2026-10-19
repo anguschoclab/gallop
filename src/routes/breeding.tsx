@@ -47,6 +47,20 @@ const BREEDING_TABS = [
   "blue-hen-leaderboard",
 ] as const;
 
+/**
+ * Secondary tabs grouped under a single "Records & Sires" top-level tab so the
+ * tab bar stays at seven visible triggers. All values remain valid `?tab=`
+ * deep links — selecting the group opens a nested tab list.
+ */
+const RECORDS_TABS: readonly (typeof BREEDING_TABS)[number][] = [
+  "history",
+  "stallions",
+  "sire-watch",
+  "sire-leaderboards",
+  "damsire-leaderboard",
+  "blue-hen-leaderboard",
+];
+
 export const Route = createFileRoute("/breeding")({
   validateSearch: z.object({
     tab: z.enum(BREEDING_TABS).optional(),
@@ -58,6 +72,7 @@ function BreedingPage() {
   const pageData = useBreedingPage();
   const { activePregnanciesCount, seasonOpen, nextSeasonStart } = pageData;
   const { tab, setTab } = useTabParam("planner", BREEDING_TABS);
+  const topTab = (RECORDS_TABS as readonly string[]).includes(tab) ? "records" : tab;
 
   return (
     <div className="space-y-6">
@@ -66,13 +81,13 @@ function BreedingPage() {
           <h1 className="text-3xl font-bold tracking-tight font-[family-name:var(--font-display)]">
             Breeding & Bloodstock
           </h1>
-          <p className="text-cream-muted font-[family-name:var(--font-body)]">
+          <p className="text-muted-foreground font-[family-name:var(--font-body)]">
             Manage your matings and track gestation for the next generation.
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Link to="/syndicate-stakes">
-            <Button size="sm" variant="outline" className="border-white/10 text-cream">
+            <Button size="sm" variant="outline" className="border-white/10 text-foreground">
               <Sparkles className="h-3.5 w-3.5 mr-1 text-purple-400" />
               Syndicate Stakes
             </Button>
@@ -80,7 +95,7 @@ function BreedingPage() {
           <Badge
             className={cn(
               "font-[family-name:var(--font-mono)] tabular-nums",
-              seasonOpen ? "bg-success text-t950" : "bg-t700 text-cream",
+              seasonOpen ? "bg-success text-background" : "bg-muted text-foreground",
             )}
           >
             <Calendar className="h-3 w-3 mr-1" />
@@ -96,8 +111,11 @@ function BreedingPage() {
       </div>
 
       <Tabs
-        value={tab}
-        onValueChange={(v) => setTab(v as (typeof BREEDING_TABS)[number])}
+        value={topTab}
+        onValueChange={(v) => {
+          if (v !== "records") setTab(v as (typeof BREEDING_TABS)[number]);
+          else if (!(RECORDS_TABS as readonly string[]).includes(tab)) setTab("history");
+        }}
         className="space-y-4"
       >
         <TabsList>
@@ -113,14 +131,10 @@ function BreedingPage() {
             <Baby className="h-4 w-4" />
             Broodmares{" "}
             {activePregnanciesCount > 0 && (
-              <Badge className="ml-1 h-4 px-1 text-[10px] font-[family-name:var(--font-mono)] tabular-nums bg-t700 text-cream">
+              <Badge className="ml-1 h-4 px-1 text-[10px] font-[family-name:var(--font-mono)] tabular-nums bg-muted text-foreground">
                 {activePregnanciesCount}
               </Badge>
             )}
-          </TabsTrigger>
-          <TabsTrigger value="history" className="gap-2">
-            <FileText className="h-4 w-4" />
-            History
           </TabsTrigger>
           <TabsTrigger value="bred" className="gap-2">
             <Baby className="h-4 w-4" />
@@ -134,25 +148,9 @@ function BreedingPage() {
             <Target className="h-4 w-4" />
             Programs
           </TabsTrigger>
-          <TabsTrigger value="stallions" className="gap-2">
-            <Users className="h-4 w-4" />
-            Stallions
-          </TabsTrigger>
-          <TabsTrigger value="sire-watch" className="gap-2">
-            <BarChart2 className="h-4 w-4" />
-            Sire Watch
-          </TabsTrigger>
-          <TabsTrigger value="sire-leaderboards" className="gap-2">
+          <TabsTrigger value="records" className="gap-2">
             <Trophy className="h-4 w-4" />
-            Sire Leaderboards
-          </TabsTrigger>
-          <TabsTrigger value="damsire-leaderboard" className="gap-2">
-            <Heart className="h-4 w-4" />
-            Broodmare Sires
-          </TabsTrigger>
-          <TabsTrigger value="blue-hen-leaderboard" className="gap-2">
-            <Sparkles className="h-4 w-4" />
-            Blue Hens
+            Records &amp; Sires
           </TabsTrigger>
         </TabsList>
 
@@ -168,10 +166,6 @@ function BreedingPage() {
           <BroodmaresTab pageData={pageData} />
         </TabsContent>
 
-        <TabsContent value="history" className="space-y-4">
-          <BreedingHistoryTab pageData={pageData} />
-        </TabsContent>
-
         <TabsContent value="bred" className="space-y-4">
           <BredHorsesTab />
         </TabsContent>
@@ -184,24 +178,63 @@ function BreedingPage() {
           <BreedingProgramPanel />
         </TabsContent>
 
-        <TabsContent value="stallions" className="space-y-4">
-          <StallionsTab />
-        </TabsContent>
+        <TabsContent value="records" className="space-y-4">
+          <Tabs
+            value={tab}
+            onValueChange={(v) => setTab(v as (typeof BREEDING_TABS)[number])}
+            className="space-y-4"
+          >
+            <TabsList>
+              <TabsTrigger value="history" className="gap-2">
+                <FileText className="h-4 w-4" />
+                History
+              </TabsTrigger>
+              <TabsTrigger value="stallions" className="gap-2">
+                <Users className="h-4 w-4" />
+                Stallions
+              </TabsTrigger>
+              <TabsTrigger value="sire-watch" className="gap-2">
+                <BarChart2 className="h-4 w-4" />
+                Sire Watch
+              </TabsTrigger>
+              <TabsTrigger value="sire-leaderboards" className="gap-2">
+                <Trophy className="h-4 w-4" />
+                Sire Leaderboards
+              </TabsTrigger>
+              <TabsTrigger value="damsire-leaderboard" className="gap-2">
+                <Heart className="h-4 w-4" />
+                Broodmare Sires
+              </TabsTrigger>
+              <TabsTrigger value="blue-hen-leaderboard" className="gap-2">
+                <Sparkles className="h-4 w-4" />
+                Blue Hens
+              </TabsTrigger>
+            </TabsList>
 
-        <TabsContent value="sire-watch" className="space-y-4">
-          <SireWatchTab />
-        </TabsContent>
+            <TabsContent value="history" className="space-y-4">
+              <BreedingHistoryTab pageData={pageData} />
+            </TabsContent>
 
-        <TabsContent value="sire-leaderboards" className="space-y-4">
-          <SireLeaderboardsTab />
-        </TabsContent>
+            <TabsContent value="stallions" className="space-y-4">
+              <StallionsTab />
+            </TabsContent>
 
-        <TabsContent value="damsire-leaderboard" className="space-y-4">
-          <DamsireLeaderboardTab />
-        </TabsContent>
+            <TabsContent value="sire-watch" className="space-y-4">
+              <SireWatchTab />
+            </TabsContent>
 
-        <TabsContent value="blue-hen-leaderboard" className="space-y-4">
-          <BlueHenLeaderboardTab />
+            <TabsContent value="sire-leaderboards" className="space-y-4">
+              <SireLeaderboardsTab />
+            </TabsContent>
+
+            <TabsContent value="damsire-leaderboard" className="space-y-4">
+              <DamsireLeaderboardTab />
+            </TabsContent>
+
+            <TabsContent value="blue-hen-leaderboard" className="space-y-4">
+              <BlueHenLeaderboardTab />
+            </TabsContent>
+          </Tabs>
         </TabsContent>
       </Tabs>
     </div>

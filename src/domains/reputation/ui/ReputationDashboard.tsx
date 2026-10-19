@@ -58,14 +58,14 @@ export function ReputationDashboard() {
     if (source.includes("loss") || source === "syndication_exit") {
       return "text-red-400";
     }
-    return "text-cream/60";
+    return "text-foreground/60";
   };
 
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-purple-400">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream flex items-center gap-2">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground flex items-center gap-2">
             <Trophy className="h-4 w-4 text-purple-400" /> Reputation
           </CardTitle>
           <Badge className={cn("border-white/10", reputationColor(tier))}>
@@ -77,7 +77,7 @@ export function ReputationDashboard() {
         {/* Score Overview */}
         <div className="bg-black/40 border border-white/5 p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-black uppercase text-cream/40 tracking-wide">
+            <span className="text-[10px] font-black uppercase text-foreground/40 tracking-wide">
               Reputation Score
             </span>
             <span className="text-2xl font-mono font-black text-purple-400">
@@ -92,24 +92,26 @@ export function ReputationDashboard() {
           </div>
           <div className="grid grid-cols-3 gap-2 text-center">
             <div>
-              <div className="text-[9px] text-cream/40 uppercase tracking-wide font-black">
+              <div className="text-[9px] text-foreground/40 uppercase tracking-wide font-black">
                 Total Wins
               </div>
-              <div className="text-sm font-mono font-black text-cream">{reputation.totalWins}</div>
+              <div className="text-sm font-mono font-black text-foreground">
+                {reputation.totalWins}
+              </div>
             </div>
             <div>
-              <div className="text-[9px] text-cream/40 uppercase tracking-wide font-black">
+              <div className="text-[9px] text-foreground/40 uppercase tracking-wide font-black">
                 G1 Wins
               </div>
-              <div className="text-sm font-mono font-black text-gold">
+              <div className="text-sm font-mono font-black text-primary">
                 {reputation.gradedWins.G1}
               </div>
             </div>
             <div>
-              <div className="text-[9px] text-cream/40 uppercase tracking-wide font-black">
+              <div className="text-[9px] text-foreground/40 uppercase tracking-wide font-black">
                 Years Active
               </div>
-              <div className="text-sm font-mono font-black text-cream">
+              <div className="text-sm font-mono font-black text-foreground">
                 {reputation.yearsActive}
               </div>
             </div>
@@ -118,30 +120,30 @@ export function ReputationDashboard() {
 
         {/* Graded Wins Breakdown */}
         <div className="bg-black/40 border border-white/5 p-3 space-y-2">
-          <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
+          <div className="text-[9px] font-black uppercase text-foreground/40 tracking-wide">
             Graded Stakes Wins
           </div>
           <div className="grid grid-cols-4 gap-2 text-center">
             <div>
-              <div className="text-[8px] text-cream/40 uppercase">G1</div>
+              <div className="text-[8px] text-foreground/40 uppercase">G1</div>
               <div className="text-xs font-mono font-black text-yellow-400">
                 {reputation.gradedWins.G1}
               </div>
             </div>
             <div>
-              <div className="text-[8px] text-cream/40 uppercase">G2</div>
+              <div className="text-[8px] text-foreground/40 uppercase">G2</div>
               <div className="text-xs font-mono font-black text-orange-400">
                 {reputation.gradedWins.G2}
               </div>
             </div>
             <div>
-              <div className="text-[8px] text-cream/40 uppercase">G3</div>
+              <div className="text-[8px] text-foreground/40 uppercase">G3</div>
               <div className="text-xs font-mono font-black text-red-400">
                 {reputation.gradedWins.G3}
               </div>
             </div>
             <div>
-              <div className="text-[8px] text-cream/40 uppercase">Listed</div>
+              <div className="text-[8px] text-foreground/40 uppercase">Listed</div>
               <div className="text-xs font-mono font-black text-blue-400">
                 {reputation.gradedWins.Listed}
               </div>
@@ -152,7 +154,7 @@ export function ReputationDashboard() {
         {/* Recent Events */}
         {recentEvents.length > 0 && (
           <div className="space-y-2">
-            <div className="text-[9px] font-black uppercase text-cream/40 tracking-wide">
+            <div className="text-[9px] font-black uppercase text-foreground/40 tracking-wide">
               Recent Activity (30 Days)
             </div>
             <div className="space-y-1 max-h-48 overflow-y-auto">
@@ -161,14 +163,14 @@ export function ReputationDashboard() {
                   key={event.id}
                   className="bg-black/20 border border-white/5 p-2 flex items-center gap-2"
                 >
-                  <div className={cn("text-cream/60", getSourceColor(event.source))}>
+                  <div className={cn("text-foreground/60", getSourceColor(event.source))}>
                     {getSourceIcon(event.source)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-[10px] text-cream/80 truncate">
+                    <div className="text-[10px] text-foreground/80 truncate">
                       <NewsContent text={event.description} />
                     </div>
-                    <div className="text-[8px] text-cream/40 font-mono">Day {event.day}</div>
+                    <div className="text-[8px] text-foreground/40 font-mono">Day {event.day}</div>
                   </div>
                   <div
                     className={cn(

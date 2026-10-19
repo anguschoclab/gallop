@@ -133,10 +133,10 @@ function StableRankingsPage() {
       <header className="flex items-center gap-2">
         <Building2 className="h-5 w-5 text-primary" />
         <div>
-          <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-cream">
+          <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-foreground">
             Stable Rankings
           </h1>
-          <p className="text-sm text-cream-muted">
+          <p className="text-sm text-muted-foreground">
             Position, points, reputation and stable value vs every yard — recorded daily
           </p>
         </div>
@@ -144,20 +144,23 @@ function StableRankingsPage() {
 
       {rows.length === 0 ? (
         <Card className="border-white/5 bg-slate-900/40">
-          <CardContent className="p-6 text-center text-[11px] font-mono uppercase tracking-wide text-cream/40">
+          <CardContent className="p-6 text-center text-[11px] font-mono uppercase tracking-wide text-foreground/40">
             No stable rankings recorded yet. Advance a day and snapshots will appear here.
           </CardContent>
         </Card>
       ) : (
         <>
           {playerRow ? (
-            <Card className="border-gold/30 bg-slate-900/40">
+            <Card className="border-primary/30 bg-slate-900/40">
               <CardContent className="flex flex-wrap items-center gap-4 p-4">
                 <div className="min-w-[160px] flex-1">
-                  <Link to="/stable" className="text-base font-black text-gold hover:text-primary">
+                  <Link
+                    to="/stable"
+                    className="text-base font-black text-primary hover:text-primary"
+                  >
                     {playerRow.name}
                   </Link>
-                  <p className="text-[10px] font-mono uppercase tracking-wide text-cream/40">
+                  <p className="text-[10px] font-mono uppercase tracking-wide text-foreground/40">
                     Your stable · {playerRow.snaps.length} daily snapshot
                     {playerRow.snaps.length === 1 ? "" : "s"} ·{" "}
                     {formatReputationTier(reputation?.tier ?? "unknown")}
@@ -219,14 +222,28 @@ function StableRankingsPage() {
               <div className="max-h-[560px] overflow-y-auto">
                 <table className="w-full text-[11px] font-mono">
                   <thead className="sticky top-0 bg-slate-900">
-                    <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-wide text-cream/40">
-                      <th className="p-2 w-8 text-right">#</th>
-                      <th className="p-2">Stable</th>
-                      <th className="p-2 text-right">Points</th>
-                      <th className="p-2 text-right">Earned</th>
-                      <th className="p-2 text-right">Earnings</th>
-                      <th className="p-2 text-right">Rep</th>
-                      <th className="p-2 text-right">Value</th>
+                    <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-wide text-foreground/40">
+                      <th scope="col" className="p-2 w-8 text-right">
+                        #
+                      </th>
+                      <th scope="col" className="p-2">
+                        Stable
+                      </th>
+                      <th scope="col" className="p-2 text-right">
+                        Points
+                      </th>
+                      <th scope="col" className="p-2 text-right">
+                        Earned
+                      </th>
+                      <th scope="col" className="p-2 text-right">
+                        Earnings
+                      </th>
+                      <th scope="col" className="p-2 text-right">
+                        Rep
+                      </th>
+                      <th scope="col" className="p-2 text-right">
+                        Value
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -238,7 +255,7 @@ function StableRankingsPage() {
                           selected?.stableId === r.stableId
                             ? "bg-white/10"
                             : r.isPlayer
-                              ? "bg-gold/10 hover:bg-gold/15"
+                              ? "bg-primary/10 hover:bg-primary/15"
                               : "hover:bg-white/5"
                         }`}
                       >
@@ -248,7 +265,7 @@ function StableRankingsPage() {
                         <td className="p-2">
                           <span className="flex items-center gap-2 font-sans font-bold">
                             {r.silkColor ? <SilkDot color={r.silkColor} size="sm" /> : null}
-                            <span className={r.isPlayer ? "text-gold" : "text-cream/80"}>
+                            <span className={r.isPlayer ? "text-primary" : "text-foreground/80"}>
                               {r.isPlayer ? (
                                 r.name
                               ) : (
@@ -264,26 +281,26 @@ function StableRankingsPage() {
                             {!r.isPlayer ? (
                               <Badge
                                 variant="outline"
-                                className="text-[8px] h-3.5 px-1 text-cream/40 border-white/10"
+                                className="text-[8px] h-3.5 px-1 text-foreground/40 border-white/10"
                               >
                                 {getStableReputationTierMeta(r.latest.reputation).label}
                               </Badge>
                             ) : null}
                           </span>
                         </td>
-                        <td className="p-2 text-right tabular-nums text-cream/80">
+                        <td className="p-2 text-right tabular-nums text-foreground/80">
                           {r.latest.points.toFixed(1)}
                         </td>
-                        <td className="p-2 text-right tabular-nums text-cream/80">
+                        <td className="p-2 text-right tabular-nums text-foreground/80">
                           {r.latest.earnedPoints.toFixed(1)}
                         </td>
-                        <td className="p-2 text-right tabular-nums text-cream/80">
+                        <td className="p-2 text-right tabular-nums text-foreground/80">
                           {formatCurrency(r.latest.earnings)}
                         </td>
-                        <td className="p-2 text-right tabular-nums text-cream/80">
+                        <td className="p-2 text-right tabular-nums text-foreground/80">
                           {r.latest.reputation}
                         </td>
-                        <td className="p-2 text-right tabular-nums text-cream/80">
+                        <td className="p-2 text-right tabular-nums text-foreground/80">
                           {formatCurrency(r.latest.price)}
                         </td>
                       </tr>
@@ -291,7 +308,7 @@ function StableRankingsPage() {
                   </tbody>
                 </table>
                 {filtered.length === 0 ? (
-                  <p className="p-3 text-[10px] font-mono uppercase text-cream/30">
+                  <p className="p-3 text-[10px] font-mono uppercase text-foreground/30">
                     No stables match.
                   </p>
                 ) : null}
@@ -307,7 +324,7 @@ function StableRankingsPage() {
                     {selected.isPlayer ? (
                       <Link
                         to="/stable"
-                        className="text-base font-black text-gold hover:text-primary"
+                        className="text-base font-black text-primary hover:text-primary"
                       >
                         {selected.name}
                       </Link>
@@ -315,12 +332,12 @@ function StableRankingsPage() {
                       <Link
                         to="/npc-stables/$stableId"
                         params={{ stableId: selected.stableId }}
-                        className="text-base font-black text-cream hover:text-primary"
+                        className="text-base font-black text-foreground hover:text-primary"
                       >
                         {selected.name}
                       </Link>
                     )}
-                    <p className="text-[10px] font-mono uppercase tracking-wide text-cream/40">
+                    <p className="text-[10px] font-mono uppercase tracking-wide text-foreground/40">
                       {selected.isPlayer
                         ? formatReputationTier(reputation?.tier ?? "unknown")
                         : getStableReputationTierMeta(selected.latest.reputation).label}{" "}
@@ -353,19 +370,33 @@ function StableRankingsPage() {
                 <CardContent className="p-0">
                   <table className="w-full text-[11px] font-mono">
                     <thead>
-                      <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-wide text-cream/40">
-                        <th className="p-2">Day</th>
-                        <th className="p-2 text-right">Rank</th>
-                        <th className="p-2 text-right">Points</th>
-                        <th className="p-2 text-right">Earned</th>
-                        <th className="p-2 text-right">Earnings</th>
-                        <th className="p-2 text-right">Rep</th>
-                        <th className="p-2 text-right">Value</th>
+                      <tr className="border-b border-white/10 text-left text-[10px] uppercase tracking-wide text-foreground/40">
+                        <th scope="col" className="p-2">
+                          Day
+                        </th>
+                        <th scope="col" className="p-2 text-right">
+                          Rank
+                        </th>
+                        <th scope="col" className="p-2 text-right">
+                          Points
+                        </th>
+                        <th scope="col" className="p-2 text-right">
+                          Earned
+                        </th>
+                        <th scope="col" className="p-2 text-right">
+                          Earnings
+                        </th>
+                        <th scope="col" className="p-2 text-right">
+                          Rep
+                        </th>
+                        <th scope="col" className="p-2 text-right">
+                          Value
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
                       {[...selected.snaps].reverse().map((s: StableRankingsSnapshot) => (
-                        <tr key={s.day} className="text-cream/80">
+                        <tr key={s.day} className="text-foreground/80">
                           <td className="p-2 tabular-nums">Day {s.day}</td>
                           <td className="p-2 text-right tabular-nums font-black text-primary">
                             {s.rank ? `#${s.rank}` : "Unranked"}
@@ -396,8 +427,8 @@ function StableRankingsPage() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[9px] font-mono uppercase tracking-wide text-cream/40">{label}</p>
-      <p className="text-sm font-black tabular-nums text-cream">{value}</p>
+      <p className="text-[9px] font-mono uppercase tracking-wide text-foreground/40">{label}</p>
+      <p className="text-sm font-black tabular-nums text-foreground">{value}</p>
     </div>
   );
 }
@@ -415,8 +446,8 @@ function DeltaStat({
 }) {
   return (
     <div>
-      <p className="text-[9px] font-mono uppercase tracking-wide text-cream/40">{label}</p>
-      <p className="text-sm font-black tabular-nums text-cream">
+      <p className="text-[9px] font-mono uppercase tracking-wide text-foreground/40">{label}</p>
+      <p className="text-sm font-black tabular-nums text-foreground">
         {value}
         {d ? (
           <span
@@ -436,11 +467,13 @@ function TrendCard({ title, data }: { title: string; data: number[] }) {
   return (
     <Card className="border-white/5 bg-slate-900/40">
       <CardContent className="p-3">
-        <p className="mb-1 text-[10px] font-mono uppercase tracking-wide text-cream/40">{title}</p>
+        <p className="mb-1 text-[10px] font-mono uppercase tracking-wide text-foreground/40">
+          {title}
+        </p>
         {data.length > 1 ? (
           <Sparkline data={data} height={56} />
         ) : (
-          <p className="py-4 text-center text-[10px] font-mono uppercase text-cream/30">
+          <p className="py-4 text-center text-[10px] font-mono uppercase text-foreground/30">
             Needs 2+ days
           </p>
         )}

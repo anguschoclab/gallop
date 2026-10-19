@@ -36,7 +36,7 @@ export function PaddleCard({
       }
     >
       {isLeading && (
-        <div className="absolute -top-1 -right-1 w-3 h-3 bg-gold rounded-full animate-pulse" />
+        <div className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full animate-pulse" />
       )}
       <div
         className={cn(
@@ -50,7 +50,7 @@ export function PaddleCard({
       <p
         className={cn(
           "text-xs font-medium mt-1 text-center max-w-[80px] truncate",
-          isPlayer ? "text-success" : "text-cream",
+          isPlayer ? "text-success" : "text-foreground",
         )}
       >
         {isPlayer ? "You" : stableName}

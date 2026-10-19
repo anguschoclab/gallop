@@ -21,9 +21,9 @@ export function OperationsTicker() {
   );
 
   return (
-    <Card className="border-gold-muted bg-slate-900/60 backdrop-blur-xl shadow-inner border-l-4 border-l-gold">
+    <Card className="border-border bg-slate-900/60 backdrop-blur-xl shadow-inner border-l-4 border-l-primary">
       <CardHeader className="pb-2 border-b border-white/5 bg-black/20">
-        <CardTitle className="text-[10px] font-bold uppercase tracking-wide text-gold-muted flex items-center gap-2">
+        <CardTitle className="text-[10px] font-bold uppercase tracking-wide text-primary/30 flex items-center gap-2">
           <Activity className="h-3 w-3" />
           Stable Overview
         </CardTitle>
@@ -31,7 +31,7 @@ export function OperationsTicker() {
       <CardContent className="pt-4 space-y-5">
         <div className="grid grid-cols-2 gap-3">
           <div className="bg-black/40 p-3 border border-white/5 rounded shadow-sm">
-            <div className="text-[9px] text-cream-muted uppercase font-bold tracking-wide mb-1 opacity-60">
+            <div className="text-[9px] text-muted-foreground uppercase font-bold tracking-wide mb-1 opacity-60">
               Liquidity
             </div>
             <div className="text-xl font-bold text-success font-mono tabular-nums leading-none tracking-tighter">
@@ -39,29 +39,31 @@ export function OperationsTicker() {
             </div>
           </div>
           <div className="bg-black/40 p-3 border border-white/5 rounded shadow-sm">
-            <div className="text-[9px] text-cream-muted uppercase font-bold tracking-wide mb-1 opacity-60">
+            <div className="text-[9px] text-muted-foreground uppercase font-bold tracking-wide mb-1 opacity-60">
               Roster
             </div>
-            <div className="text-xl font-bold text-cream font-mono leading-none tracking-tighter flex items-baseline gap-1">
+            <div className="text-xl font-bold text-foreground font-mono leading-none tracking-tighter flex items-baseline gap-1">
               {activeHorses.length}{" "}
-              <span className="text-[10px] text-cream-muted font-normal uppercase">Active</span>
+              <span className="text-[10px] text-muted-foreground font-normal uppercase">
+                Active
+              </span>
             </div>
           </div>
         </div>
 
         <div className="space-y-3">
-          <div className="flex justify-between text-[10px] uppercase font-black tracking-wide text-gold-muted/40 px-1">
+          <div className="flex justify-between text-[10px] uppercase font-black tracking-wide text-primary/10 px-1">
             <span>Stable Capacity</span>
             <span>Usage</span>
           </div>
           <div className="space-y-3">
             <div className="space-y-1.5">
               <div className="flex justify-between text-[11px] font-mono">
-                <span className="text-cream/80 flex items-center gap-2">
+                <span className="text-foreground/80 flex items-center gap-2">
                   <Heart className="h-3 w-3 text-pink-500/70" />
                   Mating
                 </span>
-                <span className="text-cream font-bold tabular-nums">
+                <span className="text-foreground font-bold tabular-nums">
                   {pregnancies?.length ?? 0} <span className="opacity-40 font-normal">/ 10</span>
                 </span>
               </div>
@@ -74,11 +76,11 @@ export function OperationsTicker() {
             </div>
             <div className="space-y-1.5">
               <div className="flex justify-between text-[11px] font-mono">
-                <span className="text-cream/80 flex items-center gap-2">
+                <span className="text-foreground/80 flex items-center gap-2">
                   <Briefcase className="h-3 w-3 text-blue-400/70" />
                   Staffing
                 </span>
-                <span className="text-cream font-bold tabular-nums">
+                <span className="text-foreground font-bold tabular-nums">
                   {hiredStaff?.length ?? 0} <span className="opacity-40 font-normal">/ 12</span>
                 </span>
               </div>
@@ -91,11 +93,13 @@ export function OperationsTicker() {
             </div>
             <div className="space-y-1.5">
               <div className="flex justify-between text-[11px] font-mono">
-                <span className="text-cream/80 flex items-center gap-2">
+                <span className="text-foreground/80 flex items-center gap-2">
                   <Zap className="h-3 w-3 text-success/70" />
                   Syndicates
                 </span>
-                <span className="text-cream font-bold tabular-nums">{playerSyndicates.length}</span>
+                <span className="text-foreground font-bold tabular-nums">
+                  {playerSyndicates.length}
+                </span>
               </div>
               <div className="h-1 bg-white/5 rounded-full overflow-hidden">
                 <div

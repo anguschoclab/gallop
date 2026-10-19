@@ -43,7 +43,7 @@ export function RaceHistoryGroup({ entries, countryFor, yearFor }: RaceHistoryGr
               )}
               <div className="min-w-0">
                 <div className="truncate">{r.raceName}</div>
-                <div className="text-xs text-cream-muted flex items-center gap-1.5">
+                <div className="text-xs text-muted-foreground flex items-center gap-1.5">
                   {flag && (
                     <Hint content={country ?? "Unknown country"}>
                       <span className="text-sm leading-none">{flag}</span>
@@ -61,7 +61,7 @@ export function RaceHistoryGroup({ entries, countryFor, yearFor }: RaceHistoryGr
             <div className="flex items-center gap-3 shrink-0">
               {typeof r.beyer === "number" && (
                 <span className="text-xs">
-                  <span className="text-cream-muted">
+                  <span className="text-muted-foreground">
                     <JargonTooltip term="Beyer">Beyer</JargonTooltip>{" "}
                   </span>
                   <span className="font-semibold">{r.beyer}</span>

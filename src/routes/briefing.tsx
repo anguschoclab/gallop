@@ -20,10 +20,10 @@ function BriefingPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)]">
           Briefing
         </h1>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">
+        <p className="text-muted-foreground font-[family-name:var(--font-body)]">
           The Gazette, race recaps, and the latest from around the circuit.
         </p>
       </div>

@@ -91,13 +91,13 @@ export const VELOCITY_BADGE_FAST_RATIO = 1.06;
 export const VELOCITY_BADGE_OK_RATIO = 0.97;
 
 /** CSS colour for the fast velocity badge. */
-export const VELOCITY_BADGE_FAST_COLOR = "var(--color-success, #22c55e)";
+export const VELOCITY_BADGE_FAST_COLOR = "var(--success)";
 
 /** CSS colour for the mid-pack velocity badge. */
-export const VELOCITY_BADGE_OK_COLOR = "var(--color-warning, #f59e0b)";
+export const VELOCITY_BADGE_OK_COLOR = "var(--warning)";
 
 /** CSS colour for the slow velocity badge. */
-export const VELOCITY_BADGE_SLOW_COLOR = "oklch(0.65 0.2 25)";
+export const VELOCITY_BADGE_SLOW_COLOR = "var(--destructive)";
 
 // --- Fading / kicking indicator thresholds ---
 

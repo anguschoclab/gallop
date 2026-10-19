@@ -38,8 +38,8 @@ export function RecruitmentPool({
   return (
     <section className="space-y-6">
       <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
-        <UserPlus className="h-4 w-4 text-gold" />
-        <h3 className="text-xs font-black uppercase tracking-wide text-cream/60">
+        <UserPlus className="h-4 w-4 text-primary" />
+        <h3 className="text-xs font-black uppercase tracking-wide text-foreground/60">
           Available to Hire
         </h3>
       </div>
@@ -48,31 +48,31 @@ export function RecruitmentPool({
         {filtered.map((staff) => (
           <Card
             key={staff.id}
-            className="bg-slate-900/40 border-white/5 rounded-none group hover:border-gold/30 transition-all duration-300 relative overflow-hidden shadow-xl"
+            className="bg-slate-900/40 border-white/5 rounded-none group hover:border-primary/30 transition-all duration-300 relative overflow-hidden shadow-xl"
           >
-            <div className="absolute top-0 left-0 w-1 h-full bg-gold/10 group-hover:bg-gold transition-colors" />
+            <div className="absolute top-0 left-0 w-1 h-full bg-primary/10 group-hover:bg-primary transition-colors" />
             <CardContent className="p-5">
               <div className="flex items-start justify-between gap-6 mb-4">
                 <div className="space-y-1">
                   <Link to="/staff/$staffId" params={{ staffId: staff.id }}>
-                    <h3 className="text-lg font-bold text-cream uppercase tracking-tight group-hover:text-gold transition-colors leading-none hover:underline">
+                    <h3 className="text-lg font-bold text-foreground uppercase tracking-tight group-hover:text-primary transition-colors leading-none hover:underline">
                       {getStaffName(staff)}
                     </h3>
                   </Link>
                   <div className="flex items-center gap-2 pt-1">
                     <Badge
                       variant="secondary"
-                      className="text-[8px] h-4 font-black uppercase tracking-tighter bg-gold/10 text-gold border-gold/20 rounded-none px-2"
+                      className="text-[8px] h-4 font-black uppercase tracking-tighter bg-primary/10 text-primary border-primary/20 rounded-none px-2"
                     >
                       {(STAFF_TIER_LABELS as Record<string, string>)[staff.tier].toUpperCase()}
                     </Badge>
-                    <span className="text-[9px] font-mono text-cream/40 font-bold uppercase tracking-wide">
+                    <span className="text-[9px] font-mono text-foreground/40 font-bold uppercase tracking-wide">
                       {(STAFF_ROLE_LABELS as Record<string, string>)[staff.role].toUpperCase()}
                     </span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide mb-1">
+                  <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide mb-1">
                     Weekly Cost
                   </div>
                   <div className="text-lg font-black font-mono text-success tabular-nums tracking-tighter">
@@ -84,18 +84,18 @@ export function RecruitmentPool({
 
               <div className="grid grid-cols-2 gap-4 mb-5 bg-black/20 p-3 border border-white/5">
                 <div className="space-y-1">
-                  <div className="text-[8px] font-black uppercase text-gold/40 tracking-wide flex items-center gap-1.5">
+                  <div className="text-[8px] font-black uppercase text-primary/40 tracking-wide flex items-center gap-1.5">
                     <Zap className="h-2.5 w-2.5" /> Speciality
                   </div>
-                  <div className="text-sm font-black font-mono text-gold-bright">
+                  <div className="text-sm font-black font-mono text-accent-bright">
                     +{Math.round(staff.bonusValue * 100)}%
                   </div>
                 </div>
                 <div className="space-y-1 border-l border-white/5 pl-4">
-                  <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide flex items-center gap-1.5">
+                  <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide flex items-center gap-1.5">
                     <Activity className="h-2.5 w-2.5" /> Status
                   </div>
-                  <div className="text-[10px] font-mono text-cream/60 uppercase">Active</div>
+                  <div className="text-[10px] font-mono text-foreground/60 uppercase">Active</div>
                 </div>
               </div>
 
@@ -131,7 +131,7 @@ export function RecruitmentPool({
               ) : (
                 <Button
                   size="sm"
-                  className="w-full h-10 bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-wide rounded-none text-[10px] shadow-lg"
+                  className="w-full h-10 bg-primary hover:bg-accent-bright text-slate-950 font-black uppercase tracking-wide rounded-none text-[10px] shadow-lg"
                   onClick={() => onNegotiate(staff.id)}
                 >
                   Negotiate
@@ -143,21 +143,21 @@ export function RecruitmentPool({
 
         {filtered.length === 0 && (
           <div className="p-12 text-center border border-dashed border-white/10 bg-black/10">
-            <p className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+            <p className="text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
               Recruitment cycle currently saturated. Check next frequency.
             </p>
           </div>
         )}
       </div>
 
-      <div className="bg-gold/5 border-2 border-double border-gold/10 p-5 space-y-3">
+      <div className="bg-primary/5 border-2 border-double border-primary/10 p-5 space-y-3">
         <div className="flex items-center gap-2">
-          <Info className="h-3 w-3 text-gold/60" />
-          <span className="text-[9px] font-black uppercase text-gold tracking-wide">
+          <Info className="h-3 w-3 text-primary/60" />
+          <span className="text-[9px] font-black uppercase text-primary tracking-wide">
             Recruitment
           </span>
         </div>
-        <p className="text-[9px] font-mono text-cream/40 uppercase leading-relaxed">
+        <p className="text-[9px] font-mono text-foreground/40 uppercase leading-relaxed">
           Staff salary is deducted daily from liquid assets. Ensure stable revenue before fire
           lower-tier staff before hiring elite personnel.
         </p>

@@ -60,7 +60,7 @@ function BasicTrainingButton({
         variant="outline"
       >
         <span className="capitalize">{label} work</span>
-        <span className="text-cream-muted">
+        <span className="text-muted-foreground">
           {currentValue} → {nextValue}
         </span>
       </Button>
@@ -97,7 +97,7 @@ function AdvancedWorkoutButton({
           {!isEnabled ? <Lock className="h-3 w-3" /> : null}
           <span>{label}</span>
         </div>
-        <span className="text-cream-muted">${cost}</span>
+        <span className="text-muted-foreground">${cost}</span>
       </Button>
     </DisabledTooltipWrapper>
   );
@@ -243,8 +243,8 @@ export function TrainingPanelComponent({
         />
       ))}
 
-      <div className="pt-2 border-t border-gold-muted/30">
-        <p className="text-xs text-cream-muted mb-2">{ADVANCED_WORKOUTS_LABEL}</p>
+      <div className="pt-2 border-t border-border/30">
+        <p className="text-xs text-muted-foreground mb-2">{ADVANCED_WORKOUTS_LABEL}</p>
         <div className="grid grid-cols-2 gap-2">
           {advancedWorkoutButtons.map((btn) => (
             <AdvancedWorkoutButton

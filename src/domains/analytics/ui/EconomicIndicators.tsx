@@ -35,12 +35,12 @@ export function EconomicIndicators() {
     return (
       <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
         <CardHeader>
-          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
             Industry Metrics
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-[10px] text-cream/40 italic">
+          <p className="text-[10px] text-foreground/40 italic">
             Industry economic data will be available once NPC operations begin.
           </p>
         </CardContent>
@@ -58,7 +58,7 @@ export function EconomicIndicators() {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
             Economic Indicators
           </CardTitle>
           <Badge
@@ -77,40 +77,40 @@ export function EconomicIndicators() {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex items-center justify-between text-xs">
-          <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+          <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
             Stud Fee Trend
           </span>
-          <span className="font-mono text-cream/80 text-[10px] flex items-center gap-1">
+          <span className="font-mono text-foreground/80 text-[10px] flex items-center gap-1">
             {isStudUp ? (
               <TrendingUp className="h-3 w-3 text-green-400" />
             ) : isStudDown ? (
               <TrendingDown className="h-3 w-3 text-red-400" />
             ) : (
-              <Minus className="h-3 w-3 text-cream-muted" />
+              <Minus className="h-3 w-3 text-muted-foreground" />
             )}
             {studFeePct}%
           </span>
         </div>
         <div className="flex items-center justify-between text-xs">
-          <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+          <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
             Yearling Price Index
           </span>
-          <span className="font-mono text-cream/80 text-[10px]">
+          <span className="font-mono text-foreground/80 text-[10px]">
             {economicState.yearlingPriceIndex.toFixed(0)}
           </span>
         </div>
         <div className="flex items-center justify-between text-xs">
-          <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+          <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
             Claiming Market Activity
           </span>
-          <span className="font-mono text-cream/80 text-[10px]">
+          <span className="font-mono text-foreground/80 text-[10px]">
             {economicState.claimingMarketActivity.toFixed(0)}
           </span>
         </div>
 
         <div className="pt-2 border-t border-white/5 space-y-1">
           <div className="flex items-center justify-between">
-            <span className="text-cream/40 uppercase tracking-wide text-[9px] font-black">
+            <span className="text-foreground/40 uppercase tracking-wide text-[9px] font-black">
               Market Phase
             </span>
             <Badge
@@ -128,13 +128,13 @@ export function EconomicIndicators() {
           </div>
         </div>
 
-        <div className="text-[9px] text-cream/40 italic leading-relaxed pt-1">
+        <div className="text-[9px] text-foreground/40 italic leading-relaxed pt-1">
           {getSignalExplanation(signal)}
         </div>
 
         {economicHistory && economicHistory.length > 1 && (
           <div className="pt-2 border-t border-white/5">
-            <div className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wide text-cream/30 mb-1">
+            <div className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wide text-foreground/30 mb-1">
               <Activity className="h-3 w-3" /> Yearling Index History
             </div>
             <div className="flex items-end gap-px h-8">

@@ -1,6 +1,6 @@
 ---
 name: Primitives
-description: Index of the shadcn/Radix primitives in src/components/ui/ — what to use when
+description: Index of the shadcn/Radix primitives in src/shared/ui/ — what to use when
 type: components
 status: Stable
 owns: design:design-system
@@ -8,7 +8,7 @@ owns: design:design-system
 
 # Primitives
 
-Gallop uses [shadcn/ui](https://ui.shadcn.com) "new-york" style ([components.json](../../../components.json)) — Radix primitives wrapped with Tailwind classes, copied into [src/components/ui/](../../../src/components/ui/) and owned by us. There are 46 of them. They consume the design tokens directly; never inline-style their internals.
+Gallop uses [shadcn/ui](https://ui.shadcn.com) "new-york" style ([components.json](../../../components.json)) — Radix primitives wrapped with Tailwind classes, copied into [src/shared/ui/](../../../src/shared/ui/) and owned by us. There are 46 of them. They consume the design tokens directly; never inline-style their internals.
 
 This file is the **index**: when you reach for a UI part, here's the right one to use.
 
@@ -97,7 +97,7 @@ This file is the **index**: when you reach for a UI part, here's the right one t
 ## When to compose vs. when to extend
 
 - **Compose** — most of the time. Wrap primitives in a domain component (e.g. `HorseCard` is a `Card` with specific content).
-- **Extend** — when the primitive itself has the wrong defaults. Edit it in `src/components/ui/`. Document the change.
+- **Extend** — when the primitive itself has the wrong defaults. Edit it in `src/shared/ui/`. Document the change.
 - **Replace** — never. If you need a different primitive, check shadcn for an alternative; only build new if neither covers the case.
 
 The decision tree is in [08-extending/02-how-to-add-a-component.md](../08-extending/02-how-to-add-a-component.md).

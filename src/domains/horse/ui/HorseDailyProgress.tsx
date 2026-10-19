@@ -48,7 +48,7 @@ function Spark({ values }: { values: number[] }) {
         fill="none"
         stroke="currentColor"
         strokeWidth="1.5"
-        className="text-gold"
+        className="text-primary"
       />
     </svg>
   );
@@ -73,7 +73,7 @@ export function HorseDailyProgress({ horseId }: { horseId: string }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-sm uppercase tracking-wide">
-          <CalendarClock className="h-4 w-4 text-gold" /> Daily Progress
+          <CalendarClock className="h-4 w-4 text-primary" /> Daily Progress
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -86,11 +86,21 @@ export function HorseDailyProgress({ horseId }: { horseId: string }) {
             <table className="w-full text-xs font-mono">
               <thead className="text-muted-foreground uppercase">
                 <tr>
-                  <th className="text-left py-1">Metric</th>
-                  <th className="text-right">Today</th>
-                  <th className="text-right">vs yesterday</th>
-                  <th className="text-right">Since day {first.day}</th>
-                  <th className="text-right pl-3">Trend</th>
+                  <th scope="col" className="text-left py-1">
+                    Metric
+                  </th>
+                  <th scope="col" className="text-right">
+                    Today
+                  </th>
+                  <th scope="col" className="text-right">
+                    vs yesterday
+                  </th>
+                  <th scope="col" className="text-right">
+                    Since day {first.day}
+                  </th>
+                  <th scope="col" className="text-right pl-3">
+                    Trend
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -134,13 +144,27 @@ export function HorseDailyProgress({ horseId }: { horseId: string }) {
               <table className="w-full text-xs font-mono">
                 <thead className="text-muted-foreground">
                   <tr>
-                    <th className="text-left">Day</th>
-                    <th className="text-right">OVR</th>
-                    <th className="text-right">Form</th>
-                    <th className="text-right">Energy</th>
-                    <th className="text-right">Price</th>
-                    <th className="text-right">Prize</th>
-                    <th className="text-right">Net worth</th>
+                    <th scope="col" className="text-left">
+                      Day
+                    </th>
+                    <th scope="col" className="text-right">
+                      OVR
+                    </th>
+                    <th scope="col" className="text-right">
+                      Form
+                    </th>
+                    <th scope="col" className="text-right">
+                      Energy
+                    </th>
+                    <th scope="col" className="text-right">
+                      Price
+                    </th>
+                    <th scope="col" className="text-right">
+                      Prize
+                    </th>
+                    <th scope="col" className="text-right">
+                      Net worth
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

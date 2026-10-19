@@ -79,6 +79,6 @@ describe("TacticalAnalysisPanel", () => {
     const runners = [createMockRunner({ ownership: makePlayerOwned(), horseId: "h-owned" })];
     render(<TacticalAnalysisPanel runners={runners} />);
     const breakdown = screen.getByTestId("strategy-breakdown");
-    expect(breakdown.className).toContain("border-l-gold");
+    expect(breakdown.className).toContain("border-l-primary");
   });
 });

@@ -46,13 +46,13 @@ export function PlanSummaryBar({
   const canConfirm = assignedCount > 0 && seasonOpen && canAffordAll;
 
   return (
-    <div className="sticky bottom-0 z-20 border-t border-gold-muted bg-t950/95 backdrop-blur-sm px-4 py-3">
+    <div className="sticky bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur-sm px-4 py-3">
       <div className="flex items-center gap-4 flex-wrap">
         <div className="flex items-center gap-2">
-          <Badge className="bg-t700 text-cream font-[family-name:var(--font-mono)] tabular-nums">
+          <Badge className="bg-muted text-foreground font-[family-name:var(--font-mono)] tabular-nums">
             {assignedCount} mares
           </Badge>
-          <span className="text-xs text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">
+          <span className="text-xs text-muted-foreground font-[family-name:var(--font-mono)] tabular-nums">
             Cost: {formatCurrency(totalCost)} · After: {formatCurrency(cashRemaining)}
           </span>
         </div>
@@ -79,7 +79,7 @@ export function PlanSummaryBar({
                 onChange={(e) => setPlanName(e.target.value)}
                 placeholder="Plan name…"
                 aria-label="Plan name"
-                className="h-8 w-32 rounded border border-t700 bg-t900 px-2 text-xs text-cream"
+                className="h-8 w-32 rounded border border-muted bg-surface px-2 text-xs text-foreground"
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && planName.trim()) {
                     onSavePlan(planName.trim());

@@ -53,11 +53,11 @@ export function PersonProfileHero({
         className="border border-white/10 shadow-xl"
       />
       <div className="min-w-0 space-y-1.5 flex-1">
-        <h2 className="text-2xl md:text-3xl font-black tracking-tight text-cream truncate font-[family-name:var(--font-display)]">
+        <h2 className="text-2xl md:text-3xl font-black tracking-tight text-foreground truncate font-[family-name:var(--font-display)]">
           {bio.displayName}
         </h2>
-        {subtitle && <div className="text-sm text-cream-muted truncate">{subtitle}</div>}
-        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-cream/60 font-mono">
+        {subtitle && <div className="text-sm text-muted-foreground truncate">{subtitle}</div>}
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-foreground/60 font-mono">
           <span className="uppercase tracking-wide">{personRoleLabel(role)}</span>
           {age !== undefined && <span>Age {age}</span>}
           {bio.nationality && <span>{bio.nationality}</span>}

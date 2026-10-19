@@ -11,7 +11,7 @@ export function AttachmentBreakdown({ attachment }: AttachmentBreakdownProps) {
   return (
     <div className="space-y-1">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-medium text-cream">
+        <span className="text-xs font-medium text-foreground">
           {attachment.label} · score {attachment.score}
         </span>
         <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
@@ -19,7 +19,7 @@ export function AttachmentBreakdown({ attachment }: AttachmentBreakdownProps) {
             <TooltipTrigger asChild>
               <button
                 type="button"
-                className="text-cream-muted hover:text-cream"
+                className="text-muted-foreground hover:text-foreground"
                 aria-label="View score details"
               >
                 <Info className="h-3.5 w-3.5" />
@@ -36,7 +36,7 @@ export function AttachmentBreakdown({ attachment }: AttachmentBreakdownProps) {
         </TooltipProvider>
       </div>
       {attachment.signals.length > 0 && (
-        <ul className="text-xs text-cream-muted space-y-0.5">
+        <ul className="text-xs text-muted-foreground space-y-0.5">
           {attachment.signals.map((s) => (
             <li key={s.label} className="flex justify-between gap-3">
               <span>{s.label}</span>

@@ -24,7 +24,7 @@ export const INBOX_CONTAINER_MAX_WIDTH = "max-w-4xl";
 export const PRIORITY_COLOR_CLASSES: Record<string, string> = {
   critical: "bg-red-600/15 border-red-600 text-red-600",
   urgent: "bg-red-500/10 border-red-500 text-red-500",
-  action: "bg-gold/10 border-gold text-gold",
+  action: "bg-primary/10 border-primary text-primary",
   low: "bg-blue-300/10 border-blue-300 text-blue-300",
   info: "bg-blue-500/10 border-blue-500 text-blue-500",
 };
@@ -34,24 +34,24 @@ export const DEFAULT_PRIORITY_COLOR_CLASS = "bg-blue-500/10 border-blue-500 text
 export const PRIORITY_BORDER_CLASSES: Record<string, string> = {
   critical: "border-l-4 border-l-red-600",
   urgent: "border-l-4 border-l-red-500",
-  action: "border-l-4 border-l-gold",
+  action: "border-l-4 border-l-primary",
   low: "border-l-4 border-l-blue-300",
 };
 
 export const STRIP_PRIORITY_BG_CLASSES: Record<string, string> = {
   critical: "bg-red-600/15 text-red-600",
   urgent: "bg-red-500/10 text-red-500",
-  action: "bg-gold/10 text-gold",
+  action: "bg-primary/10 text-primary",
   low: "bg-blue-300/10 text-blue-300",
 };
 
-export const STRIP_DEFAULT_BG_CLASS = "bg-gold/10 text-gold";
+export const STRIP_DEFAULT_BG_CLASS = "bg-primary/10 text-primary";
 
 export const STRIP_BORDER_CLASSES: Record<string, string> = {
   critical: "border-l-red-600",
   urgent: "border-l-red-500",
-  action: "border-l-gold",
+  action: "border-l-primary",
   low: "border-l-blue-300",
 };
 
-export const STRIP_DEFAULT_BORDER_CLASS = "border-l-gold";
+export const STRIP_DEFAULT_BORDER_CLASS = "border-l-primary";

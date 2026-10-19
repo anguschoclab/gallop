@@ -51,7 +51,9 @@ export function StaffSupportPanel({ stableId }: StaffSupportPanelProps) {
 
   if (bonuses.length === 0) {
     return (
-      <p className="text-[10px] text-cream-muted italic">No specialized staff support active.</p>
+      <p className="text-[10px] text-muted-foreground italic">
+        No specialized staff support active.
+      </p>
     );
   }
 
@@ -59,7 +61,7 @@ export function StaffSupportPanel({ stableId }: StaffSupportPanelProps) {
     <div className="space-y-1">
       {bonuses.map((b) => (
         <div key={b.label} className="flex justify-between text-[10px]">
-          <span className="text-cream-muted">{b.label}</span>
+          <span className="text-muted-foreground">{b.label}</span>
           <span className="text-success font-medium">{b.value}</span>
         </div>
       ))}

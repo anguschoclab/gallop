@@ -28,9 +28,9 @@ import {
 } from "@/domains/awards/application/awardsFacade";
 
 const STATUS_CLASSES: Record<CeremonyRsvpStatus, string> = {
-  pending: "border-gold-muted text-cream-muted",
-  attending: "border-gold text-gold",
-  declined: "border-cream-muted/40 text-cream-muted",
+  pending: "border-border text-muted-foreground",
+  attending: "border-primary text-primary",
+  declined: "border-muted-foreground/40 text-muted-foreground",
 };
 
 /** Read-only RSVP status badge. */
@@ -111,7 +111,7 @@ export function CeremonyRsvpControls({
         )}
       </div>
       {!held && (
-        <p className={`text-xs ${overdue ? "text-destructive" : "text-cream-muted"}`}>
+        <p className={`text-xs ${overdue ? "text-destructive" : "text-muted-foreground"}`}>
           {overdue
             ? `RSVP deadline passed (day ${deadlineDay}).`
             : `RSVP due by day ${deadlineDay} — ${daysLeft === 0 ? "today" : `${daysLeft} day${daysLeft === 1 ? "" : "s"} left`}.`}

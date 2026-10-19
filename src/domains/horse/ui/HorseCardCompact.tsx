@@ -39,14 +39,14 @@ export function HorseCardCompact({
         }
       }}
       className={cn(
-        "bg-slate-900/40 border-white/5 rounded-none hover:border-gold/40 transition-all duration-300 relative overflow-hidden group shadow-xl",
+        "bg-slate-900/40 border-white/5 rounded-none hover:border-primary/40 transition-all duration-300 relative overflow-hidden group shadow-xl",
         onClick &&
-          "cursor-pointer focus-visible:ring-2 focus-visible:ring-gold focus-visible:outline-none",
+          "cursor-pointer focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none",
         className,
       )}
       onClick={onClick}
     >
-      <div className="absolute top-0 left-0 w-1 h-full bg-gold/10 group-hover:bg-gold transition-colors z-10" />
+      <div className="absolute top-0 left-0 w-1 h-full bg-primary/10 group-hover:bg-primary transition-colors z-10" />
       <CardContent className="p-3 pl-4 flex items-center justify-between">
         <div className="flex items-center gap-3 min-w-0">
           <HorsePortraitBadge
@@ -62,7 +62,7 @@ export function HorseCardCompact({
             <div className="flex items-center gap-2">
               <span
                 className={cn(
-                  "text-xs font-bold uppercase tracking-tight text-cream group-hover:text-gold transition-colors truncate",
+                  "text-xs font-bold uppercase tracking-tight text-foreground group-hover:text-primary transition-colors truncate",
                 )}
               >
                 {horse.name}
@@ -71,7 +71,7 @@ export function HorseCardCompact({
                 <AlertCircle className="h-3 w-3 text-destructive animate-pulse shrink-0" />
               )}
             </div>
-            <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-wide text-cream/40">
+            <div className="flex items-center gap-2 font-mono text-[9px] uppercase tracking-wide text-foreground/40">
               <span className={genderColor}>{genderSymbol(horse.gender)}</span>
               <span>Age: {Math.floor(horse.age)}</span>
               <span className="w-1 h-1 bg-white/20 rounded-full" />

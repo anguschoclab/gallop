@@ -25,7 +25,7 @@ export function HorseLineageSection({
     <section id="lineage" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
         <GitBranch className="h-4 w-4 text-blue-400" />
-        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
           Heritage &amp; Ancestry
         </h2>
       </div>
@@ -34,7 +34,9 @@ export function HorseLineageSection({
           {horse.sireId || horse.damId ? (
             <PedigreeTree horseId={horseId} />
           ) : (
-            <p className="text-xs text-cream/30 italic font-mono">No pedigree data available.</p>
+            <p className="text-xs text-foreground/30 italic font-mono">
+              No pedigree data available.
+            </p>
           )}
 
           {progenyPregnancies.length > 0 && (
@@ -51,7 +53,7 @@ export function HorseLineageSection({
                       key={p.id}
                       className="flex items-center justify-between p-2 bg-black/20 border border-white/5 text-xs font-mono"
                     >
-                      <div className="text-cream/60">
+                      <div className="text-foreground/60">
                         {sire ? (
                           <Link
                             to="/stable/$horseId"
@@ -78,7 +80,7 @@ export function HorseLineageSection({
                       </div>
                       <Badge
                         variant="outline"
-                        className="border-white/10 text-cream/40 text-[9px] rounded-none"
+                        className="border-white/10 text-foreground/40 text-[9px] rounded-none"
                       >
                         {p.resolved ? "BORN" : "IN UTERO"}
                       </Badge>
@@ -100,10 +102,12 @@ export function HorseLineageSection({
                     key={p.id}
                     className="flex items-center justify-between p-2 bg-black/20 border border-white/5 text-xs font-mono"
                   >
-                    <span className="text-cream/60">Attempts: {p.reBreedingAttempts ?? 0}</span>
+                    <span className="text-foreground/60">
+                      Attempts: {p.reBreedingAttempts ?? 0}
+                    </span>
                     <Badge
                       variant="outline"
-                      className="border-white/10 text-cream/40 text-[9px] rounded-none"
+                      className="border-white/10 text-foreground/40 text-[9px] rounded-none"
                     >
                       {p.liveFoalGuarantee ? "LFG" : "STANDARD"}
                     </Badge>

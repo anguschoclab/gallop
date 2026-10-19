@@ -129,21 +129,21 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
   return (
     <section className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2 px-1">
-        <ReceiptText className="h-3.5 w-3.5 text-gold-muted/60" />
-        <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+        <ReceiptText className="h-3.5 w-3.5 text-primary/20" />
+        <h2 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
           Transaction Ledger
         </h2>
       </div>
       <Card className="bg-slate-900/20 border-white/5 rounded-none shadow-2xl overflow-hidden">
         <CardHeader className="bg-black/40 py-3 border-b border-white/10 flex flex-row items-center justify-between">
-          <div className="text-[10px] font-black uppercase tracking-wide text-gold-muted/60 px-4">
+          <div className="text-[10px] font-black uppercase tracking-wide text-primary/20 px-4">
             Cash Movement Log
           </div>
           <div className="flex items-center gap-4 px-4">
-            <span className="text-[10px] font-mono text-cream/20 uppercase">Sample 50</span>
+            <span className="text-[10px] font-mono text-foreground/20 uppercase">Sample 50</span>
             <Badge
               variant="outline"
-              className="border-white/10 text-cream/40 font-mono text-[9px] h-5 rounded-none"
+              className="border-white/10 text-foreground/40 font-mono text-[9px] h-5 rounded-none"
             >
               {filteredTransactions.length} RECS
             </Badge>
@@ -181,8 +181,8 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                   className={cn(
                     "px-2 h-7 text-[9px] font-black uppercase tracking-wide border transition-colors",
                     datePreset === p
-                      ? "bg-gold text-slate-950 border-gold"
-                      : "bg-black/40 text-cream/40 border-white/10 hover:border-gold/30",
+                      ? "bg-primary text-slate-950 border-primary"
+                      : "bg-black/40 text-foreground/40 border-white/10 hover:border-primary/30",
                   )}
                 >
                   {p === "7d" ? "Last 7d" : p === "30d" ? "Last 30d" : "All Time"}
@@ -190,34 +190,44 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
               ))}
             </div>
 
-            <div className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-wide text-cream/40">
+            <div className="flex items-center gap-1.5 text-[9px] font-mono uppercase tracking-wide text-foreground/40">
               <span>Day:</span>
               <input
                 type="number"
                 data-testid="day-range-start"
                 value={dayRange.start}
                 onChange={(e) => handleDayRangeChange("start", Number(e.target.value))}
-                className="w-12 h-7 px-1 text-center font-mono text-[10px] bg-black/40 border border-white/10 text-cream/60 focus:outline-none focus:border-gold/30"
+                className="w-12 h-7 px-1 text-center font-mono text-[10px] bg-black/40 border border-white/10 text-foreground/60 focus:outline-none focus:border-primary/30"
               />
-              <span className="text-cream/20">→</span>
+              <span className="text-foreground/20">→</span>
               <input
                 type="number"
                 data-testid="day-range-end"
                 value={dayRange.end}
                 onChange={(e) => handleDayRangeChange("end", Number(e.target.value))}
-                className="w-12 h-7 px-1 text-center font-mono text-[10px] bg-black/40 border border-white/10 text-cream/60 focus:outline-none focus:border-gold/30"
+                className="w-12 h-7 px-1 text-center font-mono text-[10px] bg-black/40 border border-white/10 text-foreground/60 focus:outline-none focus:border-primary/30"
               />
             </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead className="bg-black/20 border-b border-white/5">
-                <tr className="font-mono text-[9px] uppercase tracking-wide text-cream/30">
-                  <th className="px-8 py-3 font-black w-1">Day</th>
-                  <th className="px-4 py-3 font-black w-1">Date</th>
-                  <th className="px-4 py-3 font-black">Category</th>
-                  <th className="px-4 py-3 font-black text-right">Amount</th>
-                  <th className="px-8 py-3 font-black">Transaction Detail</th>
+                <tr className="font-mono text-[9px] uppercase tracking-wide text-foreground/30">
+                  <th scope="col" className="px-8 py-3 font-black w-1">
+                    Day
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-black w-1">
+                    Date
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-black">
+                    Category
+                  </th>
+                  <th scope="col" className="px-4 py-3 font-black text-right">
+                    Amount
+                  </th>
+                  <th scope="col" className="px-8 py-3 font-black">
+                    Transaction Detail
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-white/5">
@@ -229,7 +239,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                         key={row.key}
                         className="group hover:bg-white/[0.02] transition-colors relative"
                       >
-                        <td className="px-8 py-3 font-mono text-[10px] text-cream/20 group-hover:text-gold/40 transition-colors tabular-nums">
+                        <td className="px-8 py-3 font-mono text-[10px] text-foreground/20 group-hover:text-primary/40 transition-colors tabular-nums">
                           D{String(t.day).padStart(3, "0")}
                         </td>
                         <td className="px-4 py-3">
@@ -240,7 +250,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                           )}
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-[9px] font-black uppercase text-cream/40 tracking-wide px-1.5 py-0.5 border border-white/5 bg-black/40 rounded-sm">
+                          <span className="text-[9px] font-black uppercase text-foreground/40 tracking-wide px-1.5 py-0.5 border border-white/5 bg-black/40 rounded-sm">
                             {formatTransactionSubcategory(t.subcategory).toUpperCase()}
                           </span>
                         </td>
@@ -252,7 +262,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                         >
                           {formatProfitLoss(t.amount)}
                         </td>
-                        <td className="px-8 py-3 text-[11px] font-mono text-cream/40 group-hover:text-cream/60 transition-colors uppercase truncate max-w-xs">
+                        <td className="px-8 py-3 text-[11px] font-mono text-foreground/40 group-hover:text-foreground/60 transition-colors uppercase truncate max-w-xs">
                           {t.description}
                         </td>
                       </tr>
@@ -266,21 +276,21 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                         className="group hover:bg-white/[0.02] transition-colors relative cursor-pointer"
                         onClick={() => setExpanded((prev) => ({ ...prev, [row.key]: !isOpen }))}
                       >
-                        <td className="px-8 py-3 font-mono text-[10px] text-cream/20 group-hover:text-gold/40 transition-colors tabular-nums">
+                        <td className="px-8 py-3 font-mono text-[10px] text-foreground/20 group-hover:text-primary/40 transition-colors tabular-nums">
                           D{String(row.day).padStart(3, "0")}
                         </td>
                         <td className="px-4 py-3">
                           <ArrowDownLeft className="w-3.5 h-3.5 text-destructive/60" />
                         </td>
                         <td className="px-4 py-3">
-                          <span className="text-[9px] font-black uppercase text-cream/40 tracking-wide px-1.5 py-0.5 border border-white/5 bg-black/40 rounded-sm">
+                          <span className="text-[9px] font-black uppercase text-foreground/40 tracking-wide px-1.5 py-0.5 border border-white/5 bg-black/40 rounded-sm">
                             ENTRY FEES
                           </span>
                         </td>
                         <td className="px-4 py-3 font-black font-mono text-xs text-right tabular-nums tracking-tighter text-destructive">
                           {formatProfitLoss(row.amount)}
                         </td>
-                        <td className="px-8 py-3 text-[11px] font-mono text-cream/40 group-hover:text-cream/60 transition-colors uppercase">
+                        <td className="px-8 py-3 text-[11px] font-mono text-foreground/40 group-hover:text-foreground/60 transition-colors uppercase">
                           <span className="inline-flex items-center gap-1.5">
                             {isOpen ? (
                               <ChevronDown className="w-3 h-3" />
@@ -309,18 +319,18 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                           <tr key={t.id || `${row.key}-${i}`} className="bg-black/20">
                             <td className="px-8 py-2" />
                             <td className="px-4 py-2" />
-                            <td className="px-4 py-2 text-[9px] font-mono uppercase text-cream/20">
+                            <td className="px-4 py-2 text-[9px] font-mono uppercase text-foreground/20">
                               {formatTransactionSubcategory(t.subcategory).toUpperCase()}
                             </td>
                             <td className="px-4 py-2 font-mono text-[11px] text-right tabular-nums text-destructive/80">
                               {formatProfitLoss(t.amount)}
                             </td>
-                            <td className="px-8 py-2 text-[10px] font-mono text-cream/30 uppercase truncate max-w-xs">
+                            <td className="px-8 py-2 text-[10px] font-mono text-foreground/30 uppercase truncate max-w-xs">
                               {t.raceId ? (
                                 <Link
                                   to="/race/$raceId"
                                   params={{ raceId: t.raceId }}
-                                  className="text-cream/30 hover:text-gold hover:underline"
+                                  className="text-foreground/30 hover:text-primary hover:underline"
                                 >
                                   {t.description}
                                 </Link>
@@ -341,7 +351,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
               <p className="font-mono text-xs uppercase tracking-wide">No transactions</p>
             </div>
           )}
-          <div className="p-4 bg-black/40 border-t border-white/5 flex items-center justify-between text-[9px] font-mono text-cream/20 uppercase tracking-wide">
+          <div className="p-4 bg-black/40 border-t border-white/5 flex items-center justify-between text-[9px] font-mono text-foreground/20 uppercase tracking-wide">
             <span>Transaction History</span>
             <span>End of list</span>
           </div>

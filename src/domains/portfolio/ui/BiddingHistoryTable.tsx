@@ -25,7 +25,7 @@ type OutcomeFilter = (typeof OUTCOMES)[number];
 const OUTCOME_STYLES: Record<PlayerBiddingRecord["outcome"], string> = {
   won: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
   outbid: "bg-amber-500/15 text-amber-300 border-amber-500/30",
-  passed: "bg-slate-500/15 text-cream-muted border-white/10",
+  passed: "bg-slate-500/15 text-muted-foreground border-white/10",
   open: "bg-sky-500/15 text-sky-300 border-sky-500/30",
 };
 
@@ -40,7 +40,7 @@ export function BiddingHistoryTable({ history }: { history: PlayerBiddingRecord[
 
   if (history.length === 0) {
     return (
-      <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-cream-muted">
+      <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-muted-foreground">
         You haven&apos;t bid at auction yet. Bids placed in the sale ring or in the book will show
         up here with the hammer price.
       </div>
@@ -97,10 +97,10 @@ export function BiddingHistoryTable({ history }: { history: PlayerBiddingRecord[
               const house = r.houseId ? getAuctionHouse(r.houseId) : undefined;
               return (
                 <TableRow key={r.id} className="border-white/5">
-                  <TableCell className="text-cream-muted">{r.day}</TableCell>
+                  <TableCell className="text-muted-foreground">{r.day}</TableCell>
                   <TableCell>
-                    <div className="text-cream">{r.saleName}</div>
-                    <div className="text-xs text-cream-muted">
+                    <div className="text-foreground">{r.saleName}</div>
+                    <div className="text-xs text-muted-foreground">
                       {house ? house.name : r.saleKind.replace(/_/g, " ")}
                     </div>
                   </TableCell>
@@ -108,22 +108,22 @@ export function BiddingHistoryTable({ history }: { history: PlayerBiddingRecord[
                     <Link
                       to="/stable/$horseId"
                       params={{ horseId: r.horseId }}
-                      className="text-cream hover:text-primary underline-offset-2 hover:underline"
+                      className="text-foreground hover:text-primary underline-offset-2 hover:underline"
                     >
                       {r.horseName}
                     </Link>
                   </TableCell>
-                  <TableCell className="text-right text-xs text-cream-muted">
+                  <TableCell className="text-right text-xs text-muted-foreground">
                     <Hint content={r.bids.map((b) => formatCurrency(b)).join(" → ")}>
                       <span>
                         {r.bids.length} bid{r.bids.length === 1 ? "" : "s"}
                       </span>
                     </Hint>
                   </TableCell>
-                  <TableCell className="text-right tabular-nums text-cream">
+                  <TableCell className="text-right tabular-nums text-foreground">
                     {formatCurrency(r.topBid)}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums text-cream">
+                  <TableCell className="text-right tabular-nums text-foreground">
                     {r.hammerPrice !== undefined ? formatCurrency(r.hammerPrice) : "—"}
                   </TableCell>
                   <TableCell className="text-right">

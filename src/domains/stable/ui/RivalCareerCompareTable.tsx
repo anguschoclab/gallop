@@ -27,8 +27,8 @@ interface RivalCareerCompareTableProps {
   };
 }
 
-const ROW_LABEL_CLASS = "text-xs text-cream-muted font-medium py-2 pr-3 text-right align-top";
-const CELL_CLASS = "text-xs text-cream py-2 px-3 text-center min-w-[190px] align-top";
+const ROW_LABEL_CLASS = "text-xs text-muted-foreground font-medium py-2 pr-3 text-right align-top";
+const CELL_CLASS = "text-xs text-foreground py-2 px-3 text-center min-w-[190px] align-top";
 
 function bestIndex(values: number[]): number {
   let best = 0;
@@ -56,7 +56,7 @@ export function RivalCareerCompareTable({
 }: RivalCareerCompareTableProps) {
   if (profiles.length === 0) {
     return (
-      <div className="py-8 text-center text-sm text-cream-muted">
+      <div className="py-8 text-center text-sm text-muted-foreground">
         No rivals selected. Pick two or more rival horses to compare their careers.
       </div>
     );
@@ -110,15 +110,17 @@ export function RivalCareerCompareTable({
       <table className="w-full border-collapse">
         <thead>
           <tr className="border-b border-border">
-            <th className={`${ROW_LABEL_CLASS} text-left`}>Rival</th>
+            <th scope="col" className={`${ROW_LABEL_CLASS} text-left`}>
+              Rival
+            </th>
             {profiles.map((p) => (
               <th
                 key={p.id}
-                className={`${CELL_CLASS} font-[family-name:var(--font-display)] text-sm text-cream`}
+                className={`${CELL_CLASS} font-[family-name:var(--font-display)] text-sm text-foreground`}
               >
                 <div>{p.name}</div>
                 {p.stableId && stableNames?.[p.stableId] && (
-                  <div className="text-[10px] font-normal text-cream-muted mt-0.5">
+                  <div className="text-[10px] font-normal text-muted-foreground mt-0.5">
                     {stableNames[p.stableId]}
                   </div>
                 )}
@@ -138,7 +140,7 @@ export function RivalCareerCompareTable({
                   <td
                     key={profiles[i].id}
                     className={`${CELL_CLASS} font-mono tabular-nums ${
-                      winner === i ? "text-gold font-bold" : ""
+                      winner === i ? "text-primary font-bold" : ""
                     }`}
                   >
                     {row.render(v)}
@@ -153,7 +155,7 @@ export function RivalCareerCompareTable({
               <tr className="border-b border-border/50">
                 <td
                   colSpan={profiles.length + 1}
-                  className="pt-3 pb-1 text-[10px] font-black uppercase tracking-wide text-gold"
+                  className="pt-3 pb-1 text-[10px] font-black uppercase tracking-wide text-primary"
                 >
                   Daily rankings — Day {rankings.day} · vs {rankings.baselineLabel}
                 </td>
@@ -188,11 +190,11 @@ export function RivalCareerCompareTable({
                     return (
                       <td key={p.id} className={CELL_CLASS}>
                         {value === null ? (
-                          <span className="text-cream-muted">No record</span>
+                          <span className="text-muted-foreground">No record</span>
                         ) : (
                           <>
                             <div className="font-mono tabular-nums">{value}</div>
-                            <div className="text-[10px] text-cream-muted">
+                            <div className="text-[10px] text-muted-foreground">
                               {col ? row.gap(col) : "—"}
                             </div>
                           </>

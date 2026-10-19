@@ -1,4 +1,5 @@
 import { Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { THEME_STORAGE_KEY } from "@/domains/shell/application/hooks/useTheme";
 import { Toaster } from "@/shared/ui/sonner";
 import { TooltipProvider } from "@/shared/ui/tooltip";
 import { RootComponent } from "@/domains/shell/ui/pages/RootComponent";
@@ -9,19 +10,19 @@ function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-bold text-cream font-[family-name:var(--font-display)]">
+        <h1 className="text-7xl font-bold text-foreground font-[family-name:var(--font-display)]">
           404
         </h1>
-        <h2 className="mt-4 text-xl font-semibold text-cream font-[family-name:var(--font-display)]">
+        <h2 className="mt-4 text-xl font-semibold text-foreground font-[family-name:var(--font-display)]">
           Page not found
         </h2>
-        <p className="mt-2 text-sm text-cream-muted font-[family-name:var(--font-body)]">
+        <p className="mt-2 text-sm text-muted-foreground font-[family-name:var(--font-body)]">
           The page you're looking for doesn't exist or has been moved.
         </p>
         <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md bg-t700 px-4 py-2 text-sm font-medium text-cream transition-colors hover:bg-t600"
+            className="inline-flex items-center justify-center rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/80"
           >
             Go home
           </Link>
@@ -48,6 +49,11 @@ export const Route = createRootRoute({
       { property: "og:description", content: "A horse racing stable management simulation" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
+    ],
+    scripts: [
+      {
+        children: `(function(){try{var t=localStorage.getItem(${JSON.stringify(THEME_STORAGE_KEY)})||"dark";document.documentElement.classList.add(t);}catch(e){document.documentElement.classList.add("dark");}})();`,
+      },
     ],
     links: [
       {
@@ -76,7 +82,7 @@ export const Route = createRootRoute({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <HeadContent />
       </head>

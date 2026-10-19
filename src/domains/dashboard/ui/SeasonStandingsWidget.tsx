@@ -55,7 +55,7 @@ function Sparkline({ data, positive = true }: { data: number[]; positive?: boole
       return `${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(" ");
-  const cls = positive ? "stroke-success" : "stroke-cream/40";
+  const cls = positive ? "stroke-success" : "stroke-foreground/40";
   return (
     <svg viewBox={`0 0 ${w} ${h}`} width={w} height={h} className="overflow-visible">
       <polyline
@@ -98,19 +98,19 @@ export function SeasonStandingsWidget() {
   const wealthPlayerEntry = wealthStandings.standings.find((s) => s.isPlayer) ?? null;
 
   return (
-    <Card className="border-gold-muted bg-slate-900/20 group hover:border-gold/40 transition-all duration-300 lg:col-span-6">
+    <Card className="border-border bg-slate-900/20 group hover:border-primary/40 transition-all duration-300 lg:col-span-6">
       <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-white/5 bg-white/[0.02]">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded bg-gold/10 flex items-center justify-center border border-gold/20 group-hover:bg-gold/20 transition-colors">
-            <Trophy className="h-4 w-4 text-gold" />
+          <div className="h-8 w-8 rounded bg-primary/10 flex items-center justify-center border border-primary/20 group-hover:bg-primary/20 transition-colors">
+            <Trophy className="h-4 w-4 text-primary" />
           </div>
-          <CardTitle className="text-xl font-bold font-[family-name:var(--font-display)] text-cream tracking-tight">
+          <CardTitle className="text-xl font-bold font-[family-name:var(--font-display)] text-foreground tracking-tight">
             Season Standings
           </CardTitle>
           {standingsMessages.length > 0 && (
             <div data-testid="standings-badge" className="relative">
-              <Bell className="h-4 w-4 text-gold" />
-              <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-gold text-[8px] flex items-center justify-center text-slate-950 font-bold">
+              <Bell className="h-4 w-4 text-primary" />
+              <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-primary text-[8px] flex items-center justify-center text-slate-950 font-bold">
                 {standingsMessages.length}
               </span>
             </div>
@@ -118,7 +118,7 @@ export function SeasonStandingsWidget() {
         </div>
         <Badge
           variant="outline"
-          className="border-gold/30 text-gold-muted bg-gold/5 font-mono tracking-wide text-[10px] uppercase h-5"
+          className="border-primary/30 text-primary/30 bg-primary/5 font-mono tracking-wide text-[10px] uppercase h-5"
         >
           You: #{displayRank || "—"}
         </Badge>
@@ -147,8 +147,8 @@ export function SeasonStandingsWidget() {
                   className={cn(
                     "h-6 px-2 text-[10px] font-mono uppercase tracking-wider",
                     rangeDays === r.days
-                      ? "bg-gold/20 text-gold border border-gold/30"
-                      : "text-cream/40 border border-white/5",
+                      ? "bg-primary/20 text-primary border border-primary/30"
+                      : "text-foreground/40 border border-white/5",
                   )}
                   onClick={() => setRangeDays(r.days)}
                 >
@@ -169,7 +169,7 @@ export function SeasonStandingsWidget() {
                 ))}
               </div>
             ) : standings.length === 1 && standings[0].rangePrizeMoney === 0 ? (
-              <p className="text-xs text-cream/30 italic text-center py-6">
+              <p className="text-xs text-foreground/30 italic text-center py-6">
                 No prize money earned yet this season.
               </p>
             ) : (
@@ -177,13 +177,19 @@ export function SeasonStandingsWidget() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
-                      <tr className="font-mono text-[9px] uppercase tracking-wide text-cream/40 border-b border-white/5">
-                        <th className="py-2 px-2 w-8 text-right">#</th>
-                        <th className="py-2 px-2 text-left">Stable</th>
-                        <th className="py-2 px-2 text-right">
+                      <tr className="font-mono text-[9px] uppercase tracking-wide text-foreground/40 border-b border-white/5">
+                        <th scope="col" className="py-2 px-2 w-8 text-right">
+                          #
+                        </th>
+                        <th scope="col" className="py-2 px-2 text-left">
+                          Stable
+                        </th>
+                        <th scope="col" className="py-2 px-2 text-right">
                           {RANGES.find((r) => r.days === rangeDays)?.label} Earnings
                         </th>
-                        <th className="py-2 px-2 text-right hidden sm:table-cell">Trend</th>
+                        <th scope="col" className="py-2 px-2 text-right hidden sm:table-cell">
+                          Trend
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-white/5">
@@ -196,16 +202,18 @@ export function SeasonStandingsWidget() {
                             key={s.stableId}
                             className={cn(
                               "transition-colors cursor-pointer min-h-[44px]",
-                              s.isPlayer ? "bg-gold/10 hover:bg-gold/15" : "hover:bg-white/[0.02]",
+                              s.isPlayer
+                                ? "bg-primary/10 hover:bg-primary/15"
+                                : "hover:bg-white/[0.02]",
                               showDivider && "border-t-2 border-dashed border-white/10",
-                              selectedStableId === s.stableId && "ring-1 ring-gold/30",
+                              selectedStableId === s.stableId && "ring-1 ring-primary/30",
                             )}
                             onClick={() => setSelectedStableId(s.stableId)}
                           >
                             <td
                               className={cn(
                                 "py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs",
-                                rank === 1 ? "text-fame font-black" : "text-cream/50",
+                                rank === 1 ? "text-fame font-black" : "text-foreground/50",
                               )}
                             >
                               {rank}
@@ -217,8 +225,8 @@ export function SeasonStandingsWidget() {
                                   className={cn(
                                     "text-xs truncate max-w-[120px] sm:max-w-[180px]",
                                     s.isPlayer
-                                      ? "font-black text-gold"
-                                      : "font-medium text-cream/80",
+                                      ? "font-black text-primary"
+                                      : "font-medium text-foreground/80",
                                   )}
                                 >
                                   {s.isPlayer ? (
@@ -243,7 +251,7 @@ export function SeasonStandingsWidget() {
                                 )}
                               </div>
                             </td>
-                            <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                            <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-foreground/80">
                               {formatCurrency(s.rangePrizeMoney)}
                             </td>
                             <td className="py-2.5 sm:py-2 px-2 hidden sm:table-cell">
@@ -268,12 +276,22 @@ export function SeasonStandingsWidget() {
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="font-mono text-[9px] uppercase tracking-wide text-cream/40 border-b border-white/5">
-                      <th className="py-2 px-2 w-8 text-right">#</th>
-                      <th className="py-2 px-2 text-left">Stable</th>
-                      <th className="py-2 px-2 text-right">Cash</th>
-                      <th className="py-2 px-2 text-right">Horse Assets</th>
-                      <th className="py-2 px-2 text-right">Total Wealth</th>
+                    <tr className="font-mono text-[9px] uppercase tracking-wide text-foreground/40 border-b border-white/5">
+                      <th scope="col" className="py-2 px-2 w-8 text-right">
+                        #
+                      </th>
+                      <th scope="col" className="py-2 px-2 text-left">
+                        Stable
+                      </th>
+                      <th scope="col" className="py-2 px-2 text-right">
+                        Cash
+                      </th>
+                      <th scope="col" className="py-2 px-2 text-right">
+                        Horse Assets
+                      </th>
+                      <th scope="col" className="py-2 px-2 text-right">
+                        Total Wealth
+                      </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-white/5">
@@ -286,16 +304,18 @@ export function SeasonStandingsWidget() {
                           key={s.stableId}
                           className={cn(
                             "transition-colors cursor-pointer min-h-[44px]",
-                            s.isPlayer ? "bg-gold/10 hover:bg-gold/15" : "hover:bg-white/[0.02]",
+                            s.isPlayer
+                              ? "bg-primary/10 hover:bg-primary/15"
+                              : "hover:bg-white/[0.02]",
                             showDivider && "border-t-2 border-dashed border-white/10",
-                            selectedWealthStableId === s.stableId && "ring-1 ring-gold/30",
+                            selectedWealthStableId === s.stableId && "ring-1 ring-primary/30",
                           )}
                           onClick={() => setSelectedWealthStableId(s.stableId)}
                         >
                           <td
                             className={cn(
                               "py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs",
-                              rank === 1 ? "text-fame font-black" : "text-cream/50",
+                              rank === 1 ? "text-fame font-black" : "text-foreground/50",
                             )}
                           >
                             {rank}
@@ -306,7 +326,9 @@ export function SeasonStandingsWidget() {
                               <span
                                 className={cn(
                                   "text-xs truncate max-w-[120px] sm:max-w-[180px]",
-                                  s.isPlayer ? "font-black text-gold" : "font-medium text-cream/80",
+                                  s.isPlayer
+                                    ? "font-black text-primary"
+                                    : "font-medium text-foreground/80",
                                 )}
                               >
                                 {s.isPlayer ? (
@@ -322,13 +344,13 @@ export function SeasonStandingsWidget() {
                               </span>
                             </div>
                           </td>
-                          <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                          <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-foreground/80">
                             {formatCurrency(s.cash)}
                           </td>
-                          <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                          <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-foreground/80">
                             {formatCurrency(s.horseAssets)}
                           </td>
-                          <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream font-bold">
+                          <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-foreground font-bold">
                             {formatCurrency(s.totalWealth)}
                           </td>
                         </tr>
@@ -338,13 +360,13 @@ export function SeasonStandingsWidget() {
                       <tr
                         key={wealthPlayerEntry.stableId}
                         className={cn(
-                          "transition-colors cursor-pointer min-h-[44px] bg-gold/10 hover:bg-gold/15 border-t-2 border-dashed border-white/10",
+                          "transition-colors cursor-pointer min-h-[44px] bg-primary/10 hover:bg-primary/15 border-t-2 border-dashed border-white/10",
                           selectedWealthStableId === wealthPlayerEntry.stableId &&
-                            "ring-1 ring-gold/30",
+                            "ring-1 ring-primary/30",
                         )}
                         onClick={() => setSelectedWealthStableId(wealthPlayerEntry.stableId)}
                       >
-                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/50">
+                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-foreground/50">
                           {wealthStandings.playerRank}
                         </td>
                         <td className="py-2.5 sm:py-2 px-2">
@@ -352,18 +374,18 @@ export function SeasonStandingsWidget() {
                             {wealthPlayerEntry.silkColor && (
                               <SilkDot color={wealthPlayerEntry.silkColor} size="sm" />
                             )}
-                            <span className="text-xs truncate max-w-[120px] sm:max-w-[180px] font-black text-gold">
+                            <span className="text-xs truncate max-w-[120px] sm:max-w-[180px] font-black text-primary">
                               {wealthPlayerEntry.name}
                             </span>
                           </div>
                         </td>
-                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-foreground/80">
                           {formatCurrency(wealthPlayerEntry.cash)}
                         </td>
-                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream/80">
+                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-foreground/80">
                           {formatCurrency(wealthPlayerEntry.horseAssets)}
                         </td>
-                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-cream font-bold">
+                        <td className="py-2.5 sm:py-2 px-2 text-right font-mono tabular-nums text-xs text-foreground font-bold">
                           {formatCurrency(wealthPlayerEntry.totalWealth)}
                         </td>
                       </tr>
@@ -389,8 +411,8 @@ export function SeasonStandingsWidget() {
           return (
             <div className="mt-3 pt-3 border-t border-white/5">
               <div className="flex items-center gap-2 mb-2">
-                <Award className="h-3 w-3 text-gold" />
-                <span className="text-[9px] font-mono uppercase tracking-wide text-cream/40">
+                <Award className="h-3 w-3 text-primary" />
+                <span className="text-[9px] font-mono uppercase tracking-wide text-foreground/40">
                   Recent Awards
                 </span>
               </div>
@@ -401,11 +423,11 @@ export function SeasonStandingsWidget() {
                     to="/awards/$category"
                     params={{ category: a.category }}
                     title={CATEGORY_DESCRIPTIONS[a.category]}
-                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md border border-gold/20 bg-gold/5 hover:bg-gold/10 hover:border-gold/40 transition-all text-xs text-cream"
+                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md border border-primary/20 bg-primary/5 hover:bg-primary/10 hover:border-primary/40 transition-all text-xs text-foreground"
                   >
-                    <Trophy className="h-3 w-3 text-gold" />
+                    <Trophy className="h-3 w-3 text-primary" />
                     <span className="font-medium">{CATEGORY_DISPLAY_NAMES[a.category]}</span>
-                    <span className="text-[10px] text-cream-muted">Y{a.year}</span>
+                    <span className="text-[10px] text-muted-foreground">Y{a.year}</span>
                   </Link>
                 ))}
               </div>

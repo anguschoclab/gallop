@@ -65,7 +65,9 @@ export function NpcStableCharts({ horses, headToHead }: NpcStableChartsProps) {
           {derived.topEarners.length ? (
             <MiniBar rows={derived.topEarners} format={formatCurrencyCompact} />
           ) : (
-            <div className="py-5 text-center font-mono text-xs text-cream/50">No earnings yet</div>
+            <div className="py-5 text-center font-mono text-xs text-foreground/50">
+              No earnings yet
+            </div>
           )}
         </div>
       </ChartCard>

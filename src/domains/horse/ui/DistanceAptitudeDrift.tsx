@@ -65,7 +65,7 @@ export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
   if (driftData.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-6 bg-black/20 border border-white/5">
-        <p className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+        <p className="text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
           No aptitude drift data
         </p>
       </div>
@@ -84,24 +84,24 @@ export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
   return (
     <div className="space-y-3">
       <div className="h-40 w-full bg-black/40 border border-white/5 p-3 relative">
-        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-gold/40" />
-        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-gold/40" />
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-gold/40" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-gold/40" />
+        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/40" />
+        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary/40" />
+        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary/40" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/40" />
 
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 6, right: 10, left: -18, bottom: 2 }}>
-            <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,0.05)" vertical={false} />
+            <CartesianGrid strokeDasharray="2 2" stroke="var(--chart-grid)" vertical={false} />
             <XAxis
               dataKey="day"
-              tick={{ fontSize: 8, fontFamily: "monospace", fill: "rgba(245,245,220,0.4)" }}
+              tick={{ fontSize: 8, fontFamily: "monospace", fill: "var(--chart-axis)" }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `D${v}`}
             />
             <YAxis
               domain={[Math.max(700, minApt), Math.min(3300, maxApt)]}
-              tick={{ fontSize: 8, fontFamily: "monospace", fill: "rgba(245,245,220,0.4)" }}
+              tick={{ fontSize: 8, fontFamily: "monospace", fill: "var(--chart-axis)" }}
               axisLine={false}
               tickLine={false}
               width={42}
@@ -109,20 +109,20 @@ export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
             <Tooltip
               contentStyle={{
                 background: "var(--background)",
-                border: "1px solid rgba(212,175,55,0.3)",
+                border: "1px solid var(--border)",
                 borderRadius: 0,
                 padding: "6px 10px",
-                boxShadow: "0 0 20px rgba(0,0,0,0.5)",
+                boxShadow: "0 0 20px color-mix(in oklab, black 50%, transparent)",
               }}
               itemStyle={{ fontFamily: "monospace", fontSize: 11, fontWeight: "bold" }}
               labelStyle={{
                 fontFamily: "monospace",
                 fontSize: 9,
-                color: "rgba(245,245,220,0.6)",
+                color: "var(--muted-foreground)",
                 textTransform: "uppercase",
                 marginBottom: 2,
               }}
-              formatter={(v: number) => [<span className="text-gold">{v}m</span>, "Aptitude"]}
+              formatter={(v: number) => [<span className="text-primary">{v}m</span>, "Aptitude"]}
               labelFormatter={(_, p) => {
                 const d = p?.[0]?.payload as (typeof chartData)[0] | undefined;
                 return d ? `${d.raceName} | Day ${d.day}` : "No data";
@@ -131,10 +131,15 @@ export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
             <Line
               type="step"
               dataKey="aptitude"
-              stroke="var(--gold)"
+              stroke="var(--primary)"
               strokeWidth={2}
-              dot={{ r: 2.5, fill: "var(--background)", stroke: "var(--gold)", strokeWidth: 2 }}
-              activeDot={{ r: 4, fill: "var(--gold)", stroke: "var(--foreground)", strokeWidth: 1 }}
+              dot={{ r: 2.5, fill: "var(--background)", stroke: "var(--primary)", strokeWidth: 2 }}
+              activeDot={{
+                r: 4,
+                fill: "var(--primary)",
+                stroke: "var(--foreground)",
+                strokeWidth: 1,
+              }}
               animationDuration={600}
             />
           </LineChart>
@@ -147,19 +152,25 @@ export function DistanceAptitudeDrift({ horse }: DistanceAptitudeDriftProps) {
           .reverse()
           .map((d, i) => (
             <div key={i} className="flex items-center gap-3 py-1.5 px-1 text-[9px] font-mono">
-              <span className="text-cream/20 tabular-nums w-10">D{d.day}</span>
-              <span className="text-cream/50 truncate flex-1">{d.raceName}</span>
-              <span className="text-cream/30 tabular-nums w-12 text-right">{d.distance}m</span>
+              <span className="text-foreground/20 tabular-nums w-10">D{d.day}</span>
+              <span className="text-foreground/50 truncate flex-1">{d.raceName}</span>
+              <span className="text-foreground/30 tabular-nums w-12 text-right">{d.distance}m</span>
               <span
                 className={cn(
                   "tabular-nums font-bold w-10 text-right",
-                  d.delta > 0 ? "text-gold" : d.delta < 0 ? "text-cream/40" : "text-cream/20",
+                  d.delta > 0
+                    ? "text-primary"
+                    : d.delta < 0
+                      ? "text-foreground/40"
+                      : "text-foreground/20",
                 )}
               >
                 {d.delta > 0 ? "+" : ""}
                 {d.delta}
               </span>
-              <span className="text-cream/50 tabular-nums w-14 text-right">{d.aptitudeAfter}m</span>
+              <span className="text-foreground/50 tabular-nums w-14 text-right">
+                {d.aptitudeAfter}m
+              </span>
             </div>
           ))}
       </div>

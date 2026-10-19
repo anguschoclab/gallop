@@ -29,10 +29,10 @@ export function StackedRatioBar({ segments, className }: StackedRatioBarProps) {
       </div>
       <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] font-mono">
         {segments.map((s) => (
-          <li key={s.key} className="flex items-center gap-1.5 text-cream/70">
+          <li key={s.key} className="flex items-center gap-1.5 text-foreground/70">
             <span className="h-2 w-2 rounded-sm" style={{ background: s.color }} />
             <span className="uppercase tracking-wider">{s.label}</span>
-            <span className="tabular-nums text-cream/50">{s.value}</span>
+            <span className="tabular-nums text-foreground/50">{s.value}</span>
           </li>
         ))}
       </ul>

@@ -118,45 +118,45 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
   return (
     <div className="fixed inset-0 bg-slate-950/90 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-300">
-      <div className="bg-slate-900 border-2 border-gold/20 shadow-[0_0_50px_rgba(0,0,0,0.8)] max-w-3xl w-full overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="bg-slate-900 border-2 border-primary/20 shadow-[0_0_50px_color-mix(in oklab, black 80%, transparent)] max-w-3xl w-full overflow-hidden flex flex-col max-h-[90vh]">
         <div className="p-6 bg-black/40 border-b border-white/5 flex items-center justify-between">
           <div className="space-y-1">
-            <div className="text-[10px] font-black uppercase text-gold/40 tracking-wide">
+            <div className="text-[10px] font-black uppercase text-primary/40 tracking-wide">
               Official Resolution
             </div>
-            <h2 className="text-2xl font-black text-cream uppercase tracking-tight font-[family-name:var(--font-display)]">
+            <h2 className="text-2xl font-black text-foreground uppercase tracking-tight font-[family-name:var(--font-display)]">
               {race.name}
             </h2>
             {venueUpliftPct !== 0 && (
               <Hint
                 content={"Payouts are scaled by the prestige of the racecourse staging this race."}
               >
-                <div className="font-mono text-[10px] uppercase tracking-wide text-cream/40">
+                <div className="font-mono text-[10px] uppercase tracking-wide text-foreground/40">
                   Course prestige {venueUpliftPct > 0 ? "+" : ""}
                   {venueUpliftPct}% on earnings
                 </div>
               </Hint>
             )}
           </div>
-          <Trophy className="h-8 w-8 text-gold opacity-20" />
+          <Trophy className="h-8 w-8 text-primary opacity-20" />
         </div>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-4">
           {showWaiting ? (
             <div className="flex flex-col items-center justify-center py-12 gap-4 text-center">
-              <div className="font-mono text-[10px] uppercase tracking-wide text-gold/40">
+              <div className="font-mono text-[10px] uppercase tracking-wide text-primary/40">
                 Awaiting Runners
               </div>
-              <div className="text-4xl font-black text-cream tabular-nums">
+              <div className="text-4xl font-black text-foreground tabular-nums">
                 {finishedCount} / {runners.length}
               </div>
-              <div className="text-xs text-cream/40 font-mono uppercase tracking-wide">
+              <div className="text-xs text-foreground/40 font-mono uppercase tracking-wide">
                 horses finished
               </div>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-12 px-4 py-2 border-b border-white/5 font-mono text-[9px] uppercase font-black text-cream/20 tracking-wide">
+              <div className="grid grid-cols-12 px-4 py-2 border-b border-white/5 font-mono text-[9px] uppercase font-black text-foreground/20 tracking-wide">
                 <div className="col-span-1">P</div>
                 <div className="col-span-1">Gate</div>
                 <div className="col-span-5">Horse / Jockey</div>
@@ -185,8 +185,8 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                             className={cn(
                               "h-6 w-6 rounded-full flex items-center justify-center font-mono font-black text-[10px] tabular-nums",
                               i === 0
-                                ? "bg-fame text-slate-950 shadow-[0_0_10px_rgba(212,175,55,0.4)]"
-                                : "bg-black/40 text-cream/40",
+                                ? "bg-fame text-slate-950 shadow-[0_0_10px_var(--gold-muted)]"
+                                : "bg-black/40 text-foreground/40",
                             )}
                           >
                             {i + 1}
@@ -194,7 +194,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                         </div>
 
                         <div className="col-span-1">
-                          <span className="font-mono text-[10px] text-cream/30 tabular-nums">
+                          <span className="font-mono text-[10px] text-foreground/30 tabular-nums">
                             {typeof r.gate === "number" ? `G${r.gate}` : "—"}
                           </span>
                         </div>
@@ -213,8 +213,8 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                               to="/stable/$horseId"
                               params={{ horseId: r.horseId }}
                               className={cn(
-                                "block font-bold uppercase tracking-tight truncate hover:text-gold transition-colors",
-                                r.isPlayer ? "text-success" : "text-cream/80",
+                                "block font-bold uppercase tracking-tight truncate hover:text-primary transition-colors",
+                                r.isPlayer ? "text-success" : "text-foreground/80",
                               )}
                             >
                               {r.name}
@@ -223,7 +223,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                           <Link
                             to="/jockey/$jockeyId"
                             params={{ jockeyId: r.jockey?.id || "" }}
-                            className="text-[9px] font-mono text-cream/40 uppercase tracking-tighter hover:text-blue-400 transition-colors flex items-center gap-1"
+                            className="text-[9px] font-mono text-foreground/40 uppercase tracking-tighter hover:text-blue-400 transition-colors flex items-center gap-1"
                           >
                             Rider: {r.jockeyName} <ChevronRight className="h-2 w-2" />
                           </Link>
@@ -233,7 +233,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                           <RaceTimeDisplay
                             seconds={r.finishTime}
                             distance={race.distance}
-                            className="font-mono text-xs text-cream/60"
+                            className="font-mono text-xs text-foreground/60"
                           />
                         </div>
 
@@ -243,8 +243,8 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
                               className={cn(
                                 "font-mono font-black text-sm tabular-nums tracking-tighter",
                                 r.isPlayer
-                                  ? "text-success shadow-[0_0_8px_rgba(34,197,94,0.2)]"
-                                  : "text-cream/20",
+                                  ? "text-success shadow-[0_0_8px_color-mix(in oklab, var(--success) 20%, transparent)]"
+                                  : "text-foreground/20",
                               )}
                             >
                               {formatCurrency(prize)}
@@ -257,53 +257,55 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
                       {r.distanceMod !== undefined && r.distanceStaminaMul !== undefined && (
                         <Collapsible className="mt-2 ml-10">
-                          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-wide text-gold/40 hover:text-gold transition-colors">
+                          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-wide text-primary/40 hover:text-primary transition-colors">
                             <ChevronDown className="h-2.5 w-2.5" />
                             Distance Scaling
                           </CollapsibleTrigger>
                           <CollapsibleContent>
                             <div className="mt-2 p-3 bg-black/30 border border-white/5 grid grid-cols-3 gap-x-4 gap-y-2 text-[9px] font-mono">
                               <div>
-                                <span className="text-cream/20 uppercase">Pref:</span>{" "}
-                                <span className="text-cream/60 tabular-nums">
+                                <span className="text-foreground/20 uppercase">Pref:</span>{" "}
+                                <span className="text-foreground/60 tabular-nums">
                                   {r.preferredDistance}m
                                 </span>
                               </div>
                               <div>
-                                <span className="text-cream/20 uppercase">Race:</span>{" "}
-                                <span className="text-cream/60 tabular-nums">{race.distance}m</span>
+                                <span className="text-foreground/20 uppercase">Race:</span>{" "}
+                                <span className="text-foreground/60 tabular-nums">
+                                  {race.distance}m
+                                </span>
                               </div>
                               <div>
-                                <span className="text-cream/20 uppercase">Ratio:</span>{" "}
-                                <span className="text-cream/60 tabular-nums">
+                                <span className="text-foreground/20 uppercase">Ratio:</span>{" "}
+                                <span className="text-foreground/60 tabular-nums">
                                   {r.distanceRatio?.toFixed(2)}
                                 </span>
                               </div>
                               <div>
-                                <span className="text-cream/20 uppercase">Dev:</span>{" "}
-                                <span className="text-cream/60 tabular-nums">
+                                <span className="text-foreground/20 uppercase">Dev:</span>{" "}
+                                <span className="text-foreground/60 tabular-nums">
                                   {r.distanceDeviation?.toFixed(2)}
                                 </span>
                               </div>
                               <div>
-                                <span className="text-cream/20 uppercase">Spd Mod:</span>{" "}
+                                <span className="text-foreground/20 uppercase">Spd Mod:</span>{" "}
                                 <span
                                   className={cn(
                                     "tabular-nums font-bold",
-                                    r.distanceMod < 1 ? "text-red-400/70" : "text-cream/60",
+                                    r.distanceMod < 1 ? "text-red-400/70" : "text-foreground/60",
                                   )}
                                 >
                                   ×{r.distanceMod.toFixed(3)}
                                 </span>
                               </div>
                               <div>
-                                <span className="text-cream/20 uppercase">Sta Mul:</span>{" "}
+                                <span className="text-foreground/20 uppercase">Sta Mul:</span>{" "}
                                 <span
                                   className={cn(
                                     "tabular-nums font-bold",
                                     r.distanceStaminaMul > 1
                                       ? "text-amber-400/70"
-                                      : "text-cream/60",
+                                      : "text-foreground/60",
                                   )}
                                 >
                                   ×{r.distanceStaminaMul.toFixed(3)}
@@ -316,20 +318,20 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
                       {r.finalMood && (
                         <Collapsible className="mt-2 ml-10">
-                          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-wide text-gold/40 hover:text-gold transition-colors">
+                          <CollapsibleTrigger className="flex items-center gap-1 text-[9px] font-mono uppercase tracking-wide text-primary/40 hover:text-primary transition-colors">
                             <ChevronDown className="h-2.5 w-2.5" />
                             Mood Breakdown
                           </CollapsibleTrigger>
                           <CollapsibleContent>
                             <div className="mt-2 p-3 bg-black/30 border border-white/5 space-y-2">
-                              <div className="text-[10px] font-black uppercase tracking-wide text-cream/60">
+                              <div className="text-[10px] font-black uppercase tracking-wide text-foreground/60">
                                 {r.finalMood.label} · {r.finalMood.score}/100
                               </div>
                               <ul className="space-y-1">
                                 {r.finalMood.signals.map((s) => (
                                   <li
                                     key={s.label}
-                                    className="text-[10px] text-cream/50 leading-relaxed"
+                                    className="text-[10px] text-foreground/50 leading-relaxed"
                                   >
                                     {s.label}
                                   </li>
@@ -346,7 +348,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
 
               {race.sectionalSplits && race.sectionalSplits.length > 0 && (
                 <div className="pt-4 border-t border-white/5 space-y-3">
-                  <div className="text-[10px] font-black uppercase text-gold/40 tracking-wide">
+                  <div className="text-[10px] font-black uppercase text-primary/40 tracking-wide">
                     Pace / Position Graph
                   </div>
                   <PaceGraph
@@ -445,7 +447,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
         <div className="p-6 bg-black/40 border-t border-white/5">
           <Button
             onClick={onClose}
-            className="w-full h-12 bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-wide text-xs rounded-none shadow-lg"
+            className="w-full h-12 bg-primary hover:bg-accent-bright text-slate-950 font-black uppercase tracking-wide text-xs rounded-none shadow-lg"
           >
             Dismiss Records
           </Button>

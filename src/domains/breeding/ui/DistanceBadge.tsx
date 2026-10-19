@@ -14,7 +14,7 @@ export function DistanceBadge({ distance }: DistanceBadgeProps) {
         ? "bg-blue-800 text-blue-200"
         : distance < 0.6
           ? "bg-amber-800 text-amber-200"
-          : "bg-t700 text-cream-muted";
+          : "bg-muted text-muted-foreground";
   return (
     <Badge className={cn("font-[family-name:var(--font-mono)] tabular-nums text-xs", cls)}>
       {pct}% match

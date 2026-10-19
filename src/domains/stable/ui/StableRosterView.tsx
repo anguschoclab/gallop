@@ -1,14 +1,12 @@
 import { MAX_COMPARE_HORSES } from "@/shared/constants/uiConstants";
 import { useState, useMemo } from "react";
-import { Link } from "@tanstack/react-router";
 import { TrophyCase } from "@/domains/awards/ui";
 import { HorseCompare } from "@/domains/horse/ui/HorseCompare";
-import { buttonVariants } from "@/shared/ui/button";
 import { RosterFilterBar } from "@/domains/stable/ui/RosterFilterBar";
 import { StableRosterLedger } from "@/domains/stable/ui/StableRosterLedger";
 import { StableRosterGallery } from "@/domains/stable/ui/StableRosterGallery";
 import { StableRosterCompareBar } from "@/domains/stable/ui/StableRosterCompareBar";
-import { cn } from "@/shared/lib/cn";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 import type { Horse } from "@/platform/game/types";
 import type { RegionalAward } from "@/domains/awards/application/awardsFacade";
 import { Search } from "lucide-react";
@@ -89,59 +87,22 @@ export function StableRosterView({
       />
 
       {horses.length === 0 ? (
-        <div className="p-20 text-center space-y-4 bg-black/10 border border-white/5 shadow-2xl">
-          {counts.all === 0 ? (
-            <>
-              <div className="h-16 w-16 bg-white/5 rounded-full flex items-center justify-center mx-auto border border-white/5">
-                <Search className="h-6 w-6 text-cream/10" />
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <p className="text-sm font-bold text-cream/60 uppercase tracking-widest font-[family-name:var(--font-display)]">
-                    Stable is Empty
-                  </p>
-                  <p className="text-[10px] font-mono text-cream/20 uppercase tracking-tighter mt-1">
-                    You have no horses. Visit the market or auction to acquire stock.
-                  </p>
-                </div>
-                <div className="flex items-center justify-center gap-3">
-                  <Link
-                    to="/market"
-                    className={cn(
-                      buttonVariants({ variant: "outline", size: "sm" }),
-                      "font-mono text-xs uppercase font-bold tracking-tighter",
-                    )}
-                  >
-                    Go to Market
-                  </Link>
-                  <Link
-                    to="/auction"
-                    className={cn(
-                      buttonVariants({ variant: "outline", size: "sm" }),
-                      "font-mono text-xs uppercase font-bold tracking-tighter",
-                    )}
-                  >
-                    View Auctions
-                  </Link>
-                </div>
-              </div>
-            </>
-          ) : (
-            <>
-              <div className="h-16 w-16 bg-white/5 rounded-full flex items-center justify-center mx-auto border border-white/5">
-                <Search className="h-6 w-6 text-cream/10" />
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-bold text-cream/60 uppercase tracking-widest font-[family-name:var(--font-display)]">
-                  No Records Located
-                </p>
-                <p className="text-[10px] font-mono text-cream/20 uppercase tracking-tighter">
-                  Current filter parameters yielded zero matches in the registry.
-                </p>
-              </div>
-            </>
-          )}
-        </div>
+        counts.all === 0 ? (
+          <EmptyState
+            icon={Search}
+            title="Stable is Empty"
+            description="You have no horses. Visit the auction to acquire stock."
+            action={{ label: "Browse auction", to: "/auction" }}
+            className="shadow-2xl"
+          />
+        ) : (
+          <EmptyState
+            icon={Search}
+            title="No Records Located"
+            description="Current filter parameters yielded zero matches in the registry."
+            className="shadow-2xl"
+          />
+        )
       ) : view === "ledger" ? (
         <StableRosterLedger horses={horses} selectedIds={selectedIds} toggleSelect={toggleSelect} />
       ) : (

@@ -152,7 +152,7 @@ export function ExchangePanel() {
 
       <Card className="border-white/5 bg-slate-900/40">
         <CardContent className="p-4 space-y-3">
-          <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
+          <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-muted-foreground">
             <BarChart3 className="h-3.5 w-3.5 text-primary" />
             Market Depth by Price Band
           </h3>
@@ -166,7 +166,7 @@ export function ExchangePanel() {
             />
           </div>
           <div className="space-y-1 border-t border-white/5 pt-3">
-            <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
+            <h4 className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
               Daily traded volume (30d)
             </h4>
             <div className="flex h-12 items-end gap-0.5">
@@ -189,7 +189,7 @@ export function ExchangePanel() {
 
       <Card className="border-white/5 bg-slate-900/40">
         <CardContent className="p-4 space-y-3">
-          <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
+          <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-muted-foreground">
             <Tag className="h-3.5 w-3.5 text-primary" />
             List a Horse
           </h3>
@@ -202,7 +202,7 @@ export function ExchangePanel() {
                 setListPrice(h ? String(suggestAskPrice(h, horseList).suggested) : "");
               }}
               aria-label="Horse to list"
-              className="min-w-[200px] rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-cream"
+              className="min-w-[200px] rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-foreground"
             >
               <option value="">Select a horse…</option>
               {sellable.map((h) => (
@@ -233,7 +233,7 @@ export function ExchangePanel() {
               Post Ask
             </Button>
             {suggestion && (
-              <span className="text-[11px] text-cream-muted">
+              <span className="text-[11px] text-muted-foreground">
                 Fair {formatCurrency(suggestion.fairValue)} · band {formatCurrency(suggestion.low)}–
                 {formatCurrency(suggestion.high)}
               </span>
@@ -242,7 +242,7 @@ export function ExchangePanel() {
 
           {myBids.length > 0 && (
             <div className="space-y-1.5 border-t border-white/5 pt-3">
-              <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
+              <h4 className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
                 Your bids
               </h4>
               {myBids.map((b) => (
@@ -250,13 +250,16 @@ export function ExchangePanel() {
                   key={b.id}
                   className="flex flex-wrap items-center justify-between gap-2 rounded border border-white/5 bg-slate-950/50 px-3 py-2 text-xs"
                 >
-                  <span className="text-cream">
+                  <span className="text-foreground">
                     {(horses[b.horseId] as Horse | undefined)?.name ?? b.horseId}
                   </span>
-                  <span className="flex items-center gap-3 text-cream-muted">
+                  <span className="flex items-center gap-3 text-muted-foreground">
                     <span>
-                      Bid <span className="tabular-nums text-cream">{formatCurrency(b.price)}</span>
-                      <span className="text-cream-muted/70"> (escrowed)</span>
+                      Bid{" "}
+                      <span className="tabular-nums text-foreground">
+                        {formatCurrency(b.price)}
+                      </span>
+                      <span className="text-muted-foreground/70"> (escrowed)</span>
                     </span>
                     <Button size="sm" variant="ghost" onClick={() => setSelected(b.horseId)}>
                       Book
@@ -278,7 +281,7 @@ export function ExchangePanel() {
 
           {myListings.length > 0 && (
             <div className="space-y-1.5 border-t border-white/5 pt-3">
-              <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
+              <h4 className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
                 Your listings
               </h4>
               {myListings.map((a) => {
@@ -288,17 +291,19 @@ export function ExchangePanel() {
                     key={a.id}
                     className="flex flex-wrap items-center justify-between gap-2 rounded border border-white/5 bg-slate-950/50 px-3 py-2 text-xs"
                   >
-                    <span className="text-cream">
+                    <span className="text-foreground">
                       {(horses[a.horseId] as Horse | undefined)?.name ?? a.horseId}
                     </span>
-                    <span className="flex items-center gap-3 text-cream-muted">
+                    <span className="flex items-center gap-3 text-muted-foreground">
                       <span>
                         Ask{" "}
-                        <span className="tabular-nums text-cream">{formatCurrency(a.price)}</span>
+                        <span className="tabular-nums text-foreground">
+                          {formatCurrency(a.price)}
+                        </span>
                       </span>
                       <span>
                         Best bid{" "}
-                        <span className="tabular-nums text-cream">
+                        <span className="tabular-nums text-foreground">
                           {book?.bestBid !== undefined ? formatCurrency(book.bestBid) : "—"}
                         </span>
                       </span>
@@ -324,12 +329,14 @@ export function ExchangePanel() {
       <div className="grid gap-4 lg:grid-cols-2">
         <Card className="border-white/5 bg-slate-900/40">
           <CardContent className="p-4 space-y-2">
-            <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-cream-muted">
+            <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-wide text-muted-foreground">
               <ArrowLeftRight className="h-3.5 w-3.5 text-primary" />
               Listings
             </h3>
             {npcListings.length === 0 ? (
-              <p className="text-xs text-cream-muted">No stables are offering horses right now.</p>
+              <p className="text-xs text-muted-foreground">
+                No stables are offering horses right now.
+              </p>
             ) : (
               npcListings.slice(0, 15).map((a) => {
                 const horse = horses[a.horseId] as Horse | undefined;
@@ -340,8 +347,10 @@ export function ExchangePanel() {
                     className="flex flex-wrap items-center justify-between gap-2 rounded border border-white/5 bg-slate-950/50 px-3 py-2 text-xs"
                   >
                     <span className="min-w-0">
-                      <span className="block truncate text-cream">{horse?.name ?? a.horseId}</span>
-                      <span className="text-[10px] text-cream-muted">
+                      <span className="block truncate text-foreground">
+                        {horse?.name ?? a.horseId}
+                      </span>
+                      <span className="text-[10px] text-muted-foreground">
                         {a.sellerName}
                         {a.intent ? ` · ${a.intent}` : ""}
                         {a.pressureMeter !== undefined ? ` · cash pressure ${a.pressureMeter}` : ""}
@@ -356,7 +365,7 @@ export function ExchangePanel() {
                         if (!info) return null;
                         return (
                           <Hint content={`${info.boxes} boxes · ${info.count} horses owned`}>
-                            <span className="block truncate text-[10px] text-cream-muted/70">
+                            <span className="block truncate text-[10px] text-muted-foreground/70">
                               {info.yard} · {info.roster}
                             </span>
                           </Hint>
@@ -453,14 +462,14 @@ export function ExchangePanel() {
         <Card className="border-white/5 bg-slate-900/40">
           <CardContent className="p-4 space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="text-sm font-semibold text-cream">
+              <h3 className="text-sm font-semibold text-foreground">
                 Order Book — {selectedBook.horseName}
               </h3>
               <select
                 value={selectedBook.horseId}
                 onChange={(e) => setSelected(e.target.value)}
                 aria-label="Select horse order book"
-                className="rounded-md border border-white/10 bg-slate-950/60 px-2 py-1 text-xs text-cream"
+                className="rounded-md border border-white/10 bg-slate-950/60 px-2 py-1 text-xs text-foreground"
               >
                 {books.map((b) => (
                   <option key={b.horseId} value={b.horseId}>
@@ -497,13 +506,15 @@ function DepthColumn({
 }) {
   return (
     <div className="space-y-1">
-      <h4 className="text-[10px] font-black uppercase tracking-wide text-cream-muted">{title}</h4>
+      <h4 className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
+        {title}
+      </h4>
       {levels.length === 0 ? (
-        <p className="text-xs text-cream-muted">No orders.</p>
+        <p className="text-xs text-muted-foreground">No orders.</p>
       ) : (
         levels.map((l) => (
           <div key={l.price} className="flex items-center gap-2 text-[11px]">
-            <span className="w-20 shrink-0 tabular-nums text-cream-muted">
+            <span className="w-20 shrink-0 tabular-nums text-muted-foreground">
               ≤{formatCurrency(l.price)}
             </span>
             <span className="h-2 flex-1 rounded bg-white/5">
@@ -512,7 +523,7 @@ function DepthColumn({
                 style={{ width: `${(l.count / max) * 100}%` }}
               />
             </span>
-            <span className="w-6 shrink-0 tabular-nums text-cream">{l.count}</span>
+            <span className="w-6 shrink-0 tabular-nums text-foreground">{l.count}</span>
           </div>
         ))
       )}

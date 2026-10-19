@@ -10,7 +10,7 @@ import {
   BarChart3,
   ClipboardList,
 } from "lucide-react";
-import { Card, CardContent } from "@/shared/ui/card";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { Button } from "@/shared/ui/button";
@@ -60,17 +60,17 @@ function NpcStablesPage() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold flex items-center gap-2 font-[family-name:var(--font-display)]">
-            <Building2 className="w-8 h-8 text-gold" />
+            <Building2 className="w-8 h-8 text-primary" />
             Rival Stables
           </h1>
-          <p className="text-cream-muted mt-2 font-[family-name:var(--font-body)]">
+          <p className="text-muted-foreground mt-2 font-[family-name:var(--font-body)]">
             Browse {npcStables.length} NPC stables worldwide — from elite international operations
             to regional breeders.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
           <div className="relative w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-cream-muted" />
+            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search stables..."
               className="pl-8 h-9 text-sm"
@@ -121,7 +121,7 @@ function NpcStablesPage() {
               variant="ghost"
               size="sm"
               onClick={clearFilters}
-              className="h-9 gap-1 text-cream-muted hover:text-cream"
+              className="h-9 gap-1 text-muted-foreground hover:text-foreground"
             >
               <X className="w-4 h-4" />
               Clear
@@ -130,7 +130,7 @@ function NpcStablesPage() {
         </div>
       </div>
 
-      <div className="flex gap-4 mt-3 text-sm text-cream-muted">
+      <div className="flex gap-4 mt-3 text-sm text-muted-foreground">
         <span className="flex items-center gap-1">
           <Trophy className="w-4 h-4" />
           {eliteStables.length} Elite
@@ -167,30 +167,27 @@ function NpcStablesPage() {
 
         <TabsContent value="directory" className="space-y-8 mt-0 focus-visible:outline-none">
           {filteredStables.length === 0 ? (
-            <Card className="border-dashed border-gold-muted">
-              <CardContent className="p-12 text-center text-cream-muted font-[family-name:var(--font-body)]">
-                <Building2 className="h-12 w-12 mx-auto mb-4 opacity-20" />
-                <p>No stables match your current filters.</p>
-                <Button variant="link" className="text-gold mt-2" onClick={clearFilters}>
-                  Clear all filters
-                </Button>
-              </CardContent>
-            </Card>
+            <EmptyState
+              icon={Building2}
+              title="No stables found"
+              description="No stables match your current filters."
+              action={{ label: "Clear all filters", onClick: clearFilters }}
+            />
           ) : (
             <>
               <StableList
                 title="Elite Stables"
-                icon={<Trophy className="w-5 h-5 text-gold" />}
+                icon={<Trophy className="w-5 h-5 text-primary" />}
                 stables={eliteStables}
               />
               <StableList
                 title="Mid-Tier Stables"
-                icon={<TrendingUp className="w-5 h-5 text-gold" />}
+                icon={<TrendingUp className="w-5 h-5 text-primary" />}
                 stables={midStables}
               />
               <StableList
                 title="Budget Stables"
-                icon={<Users className="w-5 h-5 text-gold" />}
+                icon={<Users className="w-5 h-5 text-primary" />}
                 stables={budgetStables}
               />
             </>
@@ -199,11 +196,11 @@ function NpcStablesPage() {
           {/* Regional Operations (Filler) - Collapsible */}
           {fillerCount > 0 && (
             <div className="mt-8 pt-6 border-t">
-              <h2 className="text-lg font-semibold text-cream-muted flex items-center gap-2">
+              <h2 className="text-lg font-semibold text-muted-foreground flex items-center gap-2">
                 <Building2 className="w-5 h-5" />
                 {fillerCount} Regional Operations
               </h2>
-              <p className="text-sm text-cream-muted mt-1">
+              <p className="text-sm text-muted-foreground mt-1">
                 Smaller regional stables with limited strings. These operations may not appear in
                 major races but provide depth to the racing ecosystem.
               </p>

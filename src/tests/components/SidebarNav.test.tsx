@@ -2,8 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createElement, type ReactNode } from "react";
 import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { readFileSync } from "fs";
-import { join } from "path";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -14,6 +12,10 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 import { SidebarNav } from "@/domains/shell/ui/SidebarNav";
+import { navSections, moreNavGroup } from "@/domains/shell/ui/navModel";
+
+const navTargets = (section: { items: { to: string }[] }) => section.items.map((item) => item.to);
+const allTargets = [...navSections.flatMap(navTargets), ...navTargets(moreNavGroup)];
 
 const defaultProps = {
   day: 1,
@@ -84,52 +86,26 @@ describe("SidebarNav", () => {
     expect(texts).toContain("Advance 1 day");
   });
 
-  it("navSections includes /calendar in The World section", () => {
-    const content = readFileSync(
-      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
-      "utf-8",
-    );
-    expect(content).toMatch(/to:\s*"\/calendar"/);
+  it("nav model includes /calendar in the primary Racing section", () => {
+    const racing = navSections.find((s) => s.label === "Racing");
+    expect(racing).toBeDefined();
+    expect(navTargets(racing!)).toContain("/calendar");
   });
 
-  it("navSections includes /gazette in Headquarters section", () => {
-    const content = readFileSync(
-      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
-      "utf-8",
-    );
-    expect(content).toMatch(/to:\s*"\/gazette"/);
+  it("folded narrative routes are reachable via /briefing and /racing hubs", () => {
+    // /gazette and /recap redirect to /briefing?tab=*; /races and /race-browser
+    // redirect to /racing?tab=* — the nav only links the hub routes.
+    expect(allTargets).toContain("/briefing");
+    expect(allTargets).toContain("/racing");
+    expect(allTargets).not.toContain("/gazette");
+    expect(allTargets).not.toContain("/recap");
   });
 
-  it("navSections includes /recap in Headquarters section", () => {
-    const content = readFileSync(
-      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
-      "utf-8",
-    );
-    expect(content).toMatch(/to:\s*"\/recap"/);
-  });
-
-  it("navSections includes /records in The World section", () => {
-    const content = readFileSync(
-      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
-      "utf-8",
-    );
-    expect(content).toMatch(/to:\s*"\/records"/);
-  });
-
-  it("navSections includes /hall-of-fame in My Stable section", () => {
-    const content = readFileSync(
-      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
-      "utf-8",
-    );
-    expect(content).toMatch(/to:\s*"\/hall-of-fame"/);
-  });
-
-  it("navSections includes /awards in My Stable section", () => {
-    const content = readFileSync(
-      join(__dirname, "..", "..", "domains", "shell", "ui", "SidebarNav.tsx"),
-      "utf-8",
-    );
-    expect(content).toMatch(/to:\s*"\/awards"/);
+  it("nav model keeps /records, /hall-of-fame, and /awards in the More group", () => {
+    const more = navTargets(moreNavGroup);
+    expect(more).toContain("/records");
+    expect(more).toContain("/hall-of-fame");
+    expect(more).toContain("/awards");
   });
 
   it("renders an unread-message peek next to the Inbox item on hover", async () => {

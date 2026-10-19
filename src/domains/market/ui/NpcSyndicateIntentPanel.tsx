@@ -104,19 +104,19 @@ export function NpcSyndicateIntentPanel({
         <TooltipProvider key={r.stableId} delayDuration={TOOLTIP_DELAY_MS}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <div className="w-full text-left rounded-md border border-cream/10 bg-broadcast-panel px-3 py-2">
+              <div className="w-full text-left rounded-md border border-foreground/10 bg-broadcast-panel px-3 py-2">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm text-cream truncate">{r.name}</span>
+                  <span className="text-sm text-foreground truncate">{r.name}</span>
                   <Badge variant="outline" className={`text-xs ${r.meta.tone}`}>
                     {r.meta.label}
                   </Badge>
                 </div>
-                <div className="mt-1 flex items-center justify-between text-xs text-cream-muted">
+                <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
                   <span>
                     Target stake up to {r.targetPct}% (
                     {Math.floor((syndicate.totalShares * r.targetPct) / 100)} shares)
                   </span>
-                  <span className={r.expectedShares > 0 ? "text-gold" : ""}>
+                  <span className={r.expectedShares > 0 ? "text-primary" : ""}>
                     {r.expectedShares > 0 ? `Wants ${r.expectedShares} now` : "Holding off"}
                   </span>
                 </div>
@@ -131,7 +131,7 @@ export function NpcSyndicateIntentPanel({
                   </div>
                 )}
                 {!r.counteroffer && r.note && (
-                  <div className="mt-1 text-[11px] text-cream-muted/80">{r.note}</div>
+                  <div className="mt-1 text-[11px] text-muted-foreground/80">{r.note}</div>
                 )}
               </div>
             </TooltipTrigger>
@@ -143,7 +143,7 @@ export function NpcSyndicateIntentPanel({
                   {Math.round(r.trace.appetite.cashFraction * 100)}% of cash per buy · buys{" "}
                   {Math.round(r.trace.appetite.buyFraction * 100)}% of what it can afford
                 </div>
-                <div className="text-cream-muted">{formatSyndicatePurchaseTrace(r.trace)}</div>
+                <div className="text-muted-foreground">{formatSyndicatePurchaseTrace(r.trace)}</div>
               </div>
             </TooltipContent>
           </Tooltip>
@@ -155,7 +155,7 @@ export function NpcSyndicateIntentPanel({
   if (compact) {
     return (
       <div className="space-y-2">
-        <div className="text-xs uppercase tracking-wide text-cream-muted">Rival interest</div>
+        <div className="text-xs uppercase tracking-wide text-muted-foreground">Rival interest</div>
         {body}
       </div>
     );
@@ -165,11 +165,11 @@ export function NpcSyndicateIntentPanel({
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Users className="h-5 w-5 text-gold" /> Rival Syndicate Intent
+          <Users className="h-5 w-5 text-primary" /> Rival Syndicate Intent
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        <p className="text-xs text-cream-muted">
+        <p className="text-xs text-muted-foreground">
           How rival stables approach this syndicate — their intent style sets the stake they chase
           and the terms you&apos;ll be offered.
         </p>

@@ -54,7 +54,7 @@ export function TutorialNextActionBanner({ fallbackAction }: TutorialNextActionB
     <section
       role="region"
       aria-label="Tutorial next action"
-      className="group relative flex items-center gap-4 rounded-lg border border-blue-400/30 bg-gradient-to-r from-blue-400/10 via-blue-400/5 to-transparent px-5 py-4 shadow-[0_0_24px_rgba(96,165,250,0.08)] transition hover:border-blue-400/60"
+      className="group relative flex items-center gap-4 rounded-lg border border-blue-400/30 bg-gradient-to-r from-blue-400/10 via-blue-400/5 to-transparent px-5 py-4 shadow-[0_0_24px_color-mix(in oklab, var(--color-blue-400) 8%, transparent)] transition hover:border-blue-400/60"
     >
       <Link
         to={action.to as FileRouteTypes["to"]}
@@ -70,10 +70,10 @@ export function TutorialNextActionBanner({ fallbackAction }: TutorialNextActionB
           <p className="text-[10px] font-black uppercase tracking-wide text-blue-400/80 font-[family-name=var(--font-mono)]">
             Tutorial · Step {step.beat + 1} of 5
           </p>
-          <p className="text-lg font-bold text-cream font-[family-name=var(--font-display)] truncate">
+          <p className="text-lg font-bold text-foreground font-[family-name=var(--font-display)] truncate">
             {action.label}
           </p>
-          <p className="text-xs text-cream-muted font-[family-name=var(--font-body)] truncate">
+          <p className="text-xs text-muted-foreground font-[family-name=var(--font-body)] truncate">
             {action.detail}
           </p>
         </div>
@@ -84,7 +84,7 @@ export function TutorialNextActionBanner({ fallbackAction }: TutorialNextActionB
         type="button"
         aria-label="Skip tutorial"
         onClick={handleSkip}
-        className="absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-md text-cream-muted transition hover:text-cream hover:bg-blue-400/10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
+        className="absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground hover:bg-blue-400/10 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-400"
       >
         <X className="h-4 w-4" />
       </button>

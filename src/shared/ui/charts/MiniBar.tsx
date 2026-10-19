@@ -28,8 +28,8 @@ export function MiniBar({ rows, format, max, className }: MiniBarProps) {
         return (
           <li key={`${r.label}-${i}`} className="text-[11px]">
             <div className="flex items-baseline justify-between gap-2">
-              <span className="truncate text-cream/80">{r.label}</span>
-              <span className="font-mono tabular-nums text-cream/70 shrink-0">
+              <span className="truncate text-foreground/80">{r.label}</span>
+              <span className="font-mono tabular-nums text-foreground/70 shrink-0">
                 {format ? format(r.value) : r.value.toLocaleString()}
               </span>
             </div>
@@ -40,7 +40,7 @@ export function MiniBar({ rows, format, max, className }: MiniBarProps) {
               />
             </div>
             {r.hint ? (
-              <div className="mt-0.5 text-[9px] font-mono uppercase tracking-wider text-cream/35">
+              <div className="mt-0.5 text-[9px] font-mono uppercase tracking-wider text-foreground/35">
                 {r.hint}
               </div>
             ) : null}

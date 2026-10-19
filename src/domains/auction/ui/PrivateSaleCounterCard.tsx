@@ -123,7 +123,7 @@ export function PrivateSaleCounterCard({
               Counter offer from {stable.name}:{" "}
               <span className="tabular-nums font-bold">{formatCurrency(counterAmt)}</span>
             </p>
-            <p className="text-xs text-cream-muted">Expires day {offer.expiresDay}</p>
+            <p className="text-xs text-muted-foreground">Expires day {offer.expiresDay}</p>
           </div>
           <CashPressureBadge stable={stable} />
         </div>

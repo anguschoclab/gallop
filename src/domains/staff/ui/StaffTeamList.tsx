@@ -42,14 +42,16 @@ export function StaffTeamList({
       <section className="space-y-6">
         <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
           <ShieldCheck className="h-4 w-4 text-blue-400" />
-          <h3 className="text-xs font-black uppercase tracking-wide text-cream/60">Our Team</h3>
+          <h3 className="text-xs font-black uppercase tracking-wide text-foreground/60">
+            Our Team
+          </h3>
         </div>
         <div className="p-20 text-center border-2 border-dashed border-white/5 bg-black/10">
-          <Briefcase className="h-16 w-16 mx-auto mb-6 text-cream/5" />
-          <p className="font-bold text-cream/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
+          <Briefcase className="h-16 w-16 mx-auto mb-6 text-foreground/5" />
+          <p className="font-bold text-foreground/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
             No Retained Staff
           </p>
-          <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">
+          <p className="text-[10px] font-mono text-foreground/10 uppercase mt-2">
             Team roster is currently vacant. Hire staff from the pool.
           </p>
         </div>
@@ -61,7 +63,7 @@ export function StaffTeamList({
     <section className="space-y-6">
       <div className="flex items-center gap-3 px-1 border-b border-white/5 pb-2">
         <ShieldCheck className="h-4 w-4 text-blue-400" />
-        <h3 className="text-xs font-black uppercase tracking-wide text-cream/60">Our Team</h3>
+        <h3 className="text-xs font-black uppercase tracking-wide text-foreground/60">Our Team</h3>
       </div>
 
       <div className="grid grid-cols-1 gap-4">
@@ -79,7 +81,7 @@ export function StaffTeamList({
                     member.tier === "elite"
                       ? "bg-fame/10"
                       : member.tier === "mid"
-                        ? "bg-gold/10"
+                        ? "bg-primary/10"
                         : "bg-black/40",
                   )}
                 >
@@ -89,8 +91,8 @@ export function StaffTeamList({
                       member.tier === "elite"
                         ? "text-fame"
                         : member.tier === "mid"
-                          ? "text-gold"
-                          : "text-cream/20",
+                          ? "text-primary"
+                          : "text-foreground/20",
                     )}
                   />
                   <div className="text-[8px] font-black uppercase mt-2 opacity-40 tabular-nums">
@@ -102,24 +104,24 @@ export function StaffTeamList({
                   <div className="flex items-start justify-between gap-4">
                     <div className="space-y-0.5">
                       <Link to="/staff/$staffId" params={{ staffId: member.id }}>
-                        <h3 className="text-lg font-bold text-cream uppercase tracking-tight group-hover:text-blue-400 transition-colors leading-none hover:underline">
+                        <h3 className="text-lg font-bold text-foreground uppercase tracking-tight group-hover:text-blue-400 transition-colors leading-none hover:underline">
                           {getStaffName(member)}
                         </h3>
                       </Link>
                       <div className="flex items-center gap-2 pt-1">
                         <Badge
                           variant="outline"
-                          className="text-[8px] h-4 font-black uppercase tracking-tighter border-white/10 text-cream/40 rounded-none"
+                          className="text-[8px] h-4 font-black uppercase tracking-tighter border-white/10 text-foreground/40 rounded-none"
                         >
                           {(STAFF_TIER_LABELS as Record<string, string>)[member.tier].toUpperCase()}
                         </Badge>
-                        <span className="text-[9px] font-mono text-gold-muted font-bold uppercase tracking-wide">
+                        <span className="text-[9px] font-mono text-primary/30 font-bold uppercase tracking-wide">
                           {(STAFF_ROLE_LABELS as Record<string, string>)[member.role].toUpperCase()}
                         </span>
                       </div>
                     </div>
                     <div className="text-right space-y-1">
-                      <div className="text-[8px] font-black uppercase text-cream/20 tracking-wide leading-none">
+                      <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide leading-none">
                         Day Rate
                       </div>
                       <div className="text-sm font-black font-mono text-destructive tracking-tighter">
@@ -143,8 +145,8 @@ export function StaffTeamList({
 
                   {showHonors && (
                     <div className="flex items-center gap-2 pt-2 border-t border-white/5">
-                      <Trophy className="h-3 w-3 text-gold" />
-                      <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
+                      <Trophy className="h-3 w-3 text-primary" />
+                      <span className="text-[9px] font-black uppercase tracking-wide text-foreground/40">
                         Honors
                       </span>
                       <div className="flex items-center gap-1.5 font-mono text-[9px] tabular-nums">
@@ -155,11 +157,11 @@ export function StaffTeamList({
                               "px-1.5 py-0.5 border rounded-sm",
                               honorCounts[g] > 0
                                 ? g === "G1"
-                                  ? "bg-gold/15 text-gold border-gold/30"
+                                  ? "bg-primary/15 text-primary border-primary/30"
                                   : g === "G2"
                                     ? "bg-purple-500/15 text-purple-300 border-purple-500/30"
                                     : "bg-blue-500/15 text-blue-300 border-blue-500/30"
-                                : "border-white/5 text-cream/20",
+                                : "border-white/5 text-foreground/20",
                             )}
                           >
                             {g} ×{honorCounts[g]}

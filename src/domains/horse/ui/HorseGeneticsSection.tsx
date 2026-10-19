@@ -7,7 +7,7 @@ import type { Horse } from "@/domains/horse/application/horseFacade";
 import { cn } from "@/shared/lib/cn";
 
 const RISK_STYLES: Record<string, string> = {
-  low: "border-white/10 text-cream/50",
+  low: "border-white/10 text-foreground/50",
   moderate: "border-amber-500/40 text-amber-300",
   elevated: "border-red-500/50 text-red-300",
 };
@@ -15,10 +15,10 @@ const RISK_STYLES: Record<string, string> = {
 function StatLine({ label, value, term }: { label: string; value: string; term?: string }) {
   return (
     <div className="flex items-center justify-between text-sm">
-      <span className="text-cream/60">
+      <span className="text-foreground/60">
         {term ? <JargonTooltip term={term}>{label}</JargonTooltip> : label}
       </span>
-      <span className="font-mono tabular-nums text-cream">{value}</span>
+      <span className="font-mono tabular-nums text-foreground">{value}</span>
     </div>
   );
 }
@@ -30,12 +30,12 @@ export function HorseGeneticsSection({ horse }: { horse: Horse }) {
   return (
     <section id="genetics" className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
-        <Dna className="h-4 w-4 text-gold" />
-        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">Genetics</h2>
+        <Dna className="h-4 w-4 text-primary" />
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-foreground">Genetics</h2>
       </div>
-      <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
+      <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-primary">
         <CardHeader className="pb-2 border-b border-white/5">
-          <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+          <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
             Inherited Profile
           </CardTitle>
         </CardHeader>
@@ -47,7 +47,7 @@ export function HorseGeneticsSection({ horse }: { horse: Horse }) {
               term="Dosage Index"
               value={g.dosage.index === Infinity ? "∞" : g.dosage.index.toFixed(2)}
             />
-            <p className="text-xs text-cream/40 italic">{g.dosage.interpretation}</p>
+            <p className="text-xs text-foreground/40 italic">{g.dosage.interpretation}</p>
             <StatLine label="Inbreeding" term="Inbreeding" value={g.inbreeding.description} />
             {g.inbreeding.warning && (
               <p className="text-xs text-red-300/80">{g.inbreeding.warning}</p>
@@ -101,7 +101,7 @@ export function HorseGeneticsSection({ horse }: { horse: Horse }) {
 
           {/* Health risks */}
           <div className="pt-2 border-t border-white/5">
-            <div className="text-[10px] font-black uppercase text-gold/40 tracking-wide mb-2">
+            <div className="text-[10px] font-black uppercase text-primary/40 tracking-wide mb-2">
               Health Risk
             </div>
             <div className="flex flex-wrap gap-2">

@@ -72,7 +72,7 @@ export function NextActionBanner({ action, onDismiss }: NextActionBannerProps) {
       aria-label="Next action"
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      className="group relative flex items-center gap-4 rounded-lg border border-gold/30 bg-gradient-to-r from-gold/10 via-gold/5 to-transparent px-5 py-4 shadow-[0_0_24px_rgba(212,175,55,0.08)] transition hover:border-gold/60 hover:from-gold/15 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold"
+      className="group relative flex items-center gap-4 rounded-lg border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent px-5 py-4 shadow-[0_0_24px_var(--accent)] transition hover:border-primary/60 hover:from-primary/15 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
     >
       <Link
         to={action.to as FileRouteTypes["to"]}
@@ -82,21 +82,21 @@ export function NextActionBanner({ action, onDismiss }: NextActionBannerProps) {
         onClick={handleClick}
         className="flex flex-1 items-center gap-4 min-w-0"
       >
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-gold/15 text-gold">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-primary/15 text-primary">
           <Icon className="h-5 w-5" />
         </div>
         <div className="flex-1 min-w-0" aria-live="polite">
-          <p className="text-[10px] font-black uppercase tracking-wide text-gold/80 font-[family-name:var(--font-mono)]">
+          <p className="text-[10px] font-black uppercase tracking-wide text-primary/80 font-[family-name:var(--font-mono)]">
             Next up
           </p>
-          <p className="text-lg font-bold text-cream font-[family-name:var(--font-display)] truncate">
+          <p className="text-lg font-bold text-foreground font-[family-name:var(--font-display)] truncate">
             {action.label}
           </p>
-          <p className="text-xs text-cream-muted font-[family-name:var(--font-body)] truncate">
+          <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)] truncate">
             {action.detail}
           </p>
         </div>
-        <ChevronRight className="h-5 w-5 text-gold/60 transition group-hover:translate-x-0.5 group-hover:text-gold" />
+        <ChevronRight className="h-5 w-5 text-primary/60 transition group-hover:translate-x-0.5 group-hover:text-primary" />
       </Link>
 
       {onDismiss && (
@@ -104,7 +104,7 @@ export function NextActionBanner({ action, onDismiss }: NextActionBannerProps) {
           type="button"
           aria-label="Dismiss next action banner"
           onClick={handleDismiss}
-          className="absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-md text-cream-muted transition hover:text-cream hover:bg-gold-subtle focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gold"
+          className="absolute top-2 right-2 inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground transition hover:text-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary"
         >
           <X className="h-4 w-4" />
         </button>

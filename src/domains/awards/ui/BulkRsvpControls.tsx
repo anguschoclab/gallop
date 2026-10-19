@@ -50,10 +50,10 @@ export function BulkRsvpControls() {
   return (
     <div
       data-testid="bulk-rsvp-controls"
-      className="rounded-md border border-gold-muted/50 p-3 space-y-3"
+      className="rounded-md border border-border/50 p-3 space-y-3"
     >
       <div className="flex items-center justify-between">
-        <span className="text-sm font-medium text-cream">Bulk RSVP</span>
+        <span className="text-sm font-medium text-foreground">Bulk RSVP</span>
         <div className="flex gap-2">
           <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={selectAll}>
             Select All
@@ -67,12 +67,12 @@ export function BulkRsvpControls() {
         {pending.map((inv) => (
           <label
             key={inv.id}
-            className="flex items-center gap-2 rounded-md border border-gold-muted/30 p-2 cursor-pointer hover:bg-gold/5"
+            className="flex items-center gap-2 rounded-md border border-border/30 p-2 cursor-pointer hover:bg-primary/5"
           >
             <Checkbox checked={selected.has(inv.id)} onCheckedChange={() => toggle(inv.id)} />
             <div className="flex-1 text-sm">
-              <span className="text-cream">{inv.ceremonyName}</span>
-              <span className="text-cream-muted text-xs ml-2">
+              <span className="text-foreground">{inv.ceremonyName}</span>
+              <span className="text-muted-foreground text-xs ml-2">
                 {REGION_AWARD_NAMES[inv.region]} · RSVP by day {getRsvpDeadlineDay(inv)}
               </span>
             </div>

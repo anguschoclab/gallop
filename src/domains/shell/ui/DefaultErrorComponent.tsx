@@ -26,7 +26,7 @@ export function DefaultErrorComponent({ error, reset }: ErrorComponentProps) {
             />
           </svg>
         </div>
-        <h1 className="text-2xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+        <h1 className="text-2xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)]">
           Something went wrong
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
@@ -43,13 +43,13 @@ export function DefaultErrorComponent({ error, reset }: ErrorComponentProps) {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-md bg-t700 px-4 py-2 text-sm font-medium text-cream transition-colors hover:bg-t600"
+            className="inline-flex items-center justify-center rounded-md bg-muted px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-surface-hover"
           >
             Try again
           </button>
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-md border border-gold-muted bg-background px-4 py-2 text-sm font-medium text-cream transition-colors hover:bg-t700"
+            className="inline-flex items-center justify-center rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
           >
             Go home
           </Link>

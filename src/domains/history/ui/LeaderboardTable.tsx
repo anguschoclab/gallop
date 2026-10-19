@@ -72,7 +72,7 @@ export function LeaderboardTable({
             <Link
               to="/stable/$horseId"
               params={{ horseId: entry.horseId }}
-              className="font-bold uppercase tracking-tight hover:text-gold transition-colors"
+              className="font-bold uppercase tracking-tight hover:text-primary transition-colors"
             >
               {entry.horseName}
             </Link>

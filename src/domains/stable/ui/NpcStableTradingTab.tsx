@@ -16,8 +16,8 @@ import { asOwnerKey } from "@/shared/types/branded";
 import { createDefaultExchangeState } from "@/domains/market/application/marketFacade";
 
 const CARD = "bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4";
-const HEAD = "text-[10px] font-black uppercase tracking-wide text-cream/40";
-const EMPTY = "p-8 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide";
+const HEAD = "text-[10px] font-black uppercase tracking-wide text-foreground/40";
+const EMPTY = "p-8 text-center text-[10px] font-mono text-foreground/20 uppercase tracking-wide";
 
 export function NpcStableTradingTab({ stableId }: { stableId: string }) {
   const syndicates = useGameWithShallow((s: GameState) => s.syndicates ?? {});
@@ -70,7 +70,7 @@ export function NpcStableTradingTab({ stableId }: { stableId: string }) {
       <Card className={`${CARD} border-l-amber-400`}>
         <CardHeader className="bg-black/20 border-b border-white/5 flex-row items-center justify-between">
           <CardTitle className={HEAD}>Syndication Stakes</CardTitle>
-          <span className="font-mono text-[10px] text-cream/40">
+          <span className="font-mono text-[10px] text-foreground/40">
             {formatCurrency(stakeValue)} held
           </span>
         </CardHeader>
@@ -84,15 +84,15 @@ export function NpcStableTradingTab({ stableId }: { stableId: string }) {
                   <Link
                     to="/syndicate/$syndicateId"
                     params={{ syndicateId: s.id }}
-                    className="text-xs font-bold uppercase text-cream hover:text-blue-400"
+                    className="text-xs font-bold uppercase text-foreground hover:text-blue-400"
                   >
                     {s.stallionName}
                   </Link>
-                  <div className="flex items-center gap-4 font-mono text-[10px] text-cream/50">
+                  <div className="flex items-center gap-4 font-mono text-[10px] text-foreground/50">
                     <span>
                       {s.shares} shares ({Math.round(s.pct)}%)
                     </span>
-                    <span className="text-cream">{formatCurrency(s.value)}</span>
+                    <span className="text-foreground">{formatCurrency(s.value)}</span>
                     <span>Fee {formatCurrency(s.studFee)}</span>
                   </div>
                 </div>
@@ -118,17 +118,17 @@ export function NpcStableTradingTab({ stableId }: { stableId: string }) {
                       <Link
                         to="/stable/$horseId"
                         params={{ horseId: a.horseId }}
-                        className="text-xs font-bold uppercase text-cream hover:text-blue-400"
+                        className="text-xs font-bold uppercase text-foreground hover:text-blue-400"
                       >
                         {horses[a.horseId]?.name ?? "Unknown"}
                       </Link>
-                      <span className="font-mono text-xs text-cream tabular-nums">
+                      <span className="font-mono text-xs text-foreground tabular-nums">
                         {formatCurrency(a.price)}
                       </span>
                     </div>
-                    <div className="flex flex-wrap items-center gap-2 font-mono text-[9px] uppercase text-cream/40">
+                    <div className="flex flex-wrap items-center gap-2 font-mono text-[9px] uppercase text-foreground/40">
                       {a.intent && (
-                        <Badge variant="outline" className="border-white/10 text-cream/60">
+                        <Badge variant="outline" className="border-white/10 text-foreground/60">
                           {a.intent}
                         </Badge>
                       )}
@@ -157,15 +157,15 @@ export function NpcStableTradingTab({ stableId }: { stableId: string }) {
                       <Link
                         to="/stable/$horseId"
                         params={{ horseId: b.horseId }}
-                        className="text-xs font-bold uppercase text-cream hover:text-blue-400"
+                        className="text-xs font-bold uppercase text-foreground hover:text-blue-400"
                       >
                         {horses[b.horseId]?.name ?? "Unknown"}
                       </Link>
-                      <span className="font-mono text-xs text-cream tabular-nums">
+                      <span className="font-mono text-xs text-foreground tabular-nums">
                         {formatCurrency(b.price)}
                       </span>
                     </div>
-                    <div className="font-mono text-[9px] uppercase text-cream/40">
+                    <div className="font-mono text-[9px] uppercase text-foreground/40">
                       {b.rationale}
                     </div>
                   </div>
@@ -179,7 +179,7 @@ export function NpcStableTradingTab({ stableId }: { stableId: string }) {
       <Card className={`${CARD} border-l-blue-400`}>
         <CardHeader className="bg-black/20 border-b border-white/5 flex-row items-center justify-between">
           <CardTitle className={HEAD}>Exchange Trade History</CardTitle>
-          <span className="font-mono text-[10px] text-cream/40">Day {day}</span>
+          <span className="font-mono text-[10px] text-foreground/40">Day {day}</span>
         </CardHeader>
         <CardContent className="p-0">
           {trades.length === 0 ? (
@@ -191,21 +191,21 @@ export function NpcStableTradingTab({ stableId }: { stableId: string }) {
                 return (
                   <div key={t.id} className="flex items-center justify-between gap-3 p-4">
                     <div className="min-w-0">
-                      <div className="text-xs font-bold uppercase text-cream truncate">
+                      <div className="text-xs font-bold uppercase text-foreground truncate">
                         {t.horseName}
                       </div>
-                      <div className="font-mono text-[9px] uppercase text-cream/40">
+                      <div className="font-mono text-[9px] uppercase text-foreground/40">
                         Day {t.day} · {sold ? `to ${t.buyerName}` : `from ${t.sellerName}`}
                       </div>
                     </div>
                     <div className="text-right">
                       <div
-                        className={`font-mono text-xs tabular-nums ${sold ? "text-success" : "text-cream"}`}
+                        className={`font-mono text-xs tabular-nums ${sold ? "text-success" : "text-foreground"}`}
                       >
                         {sold ? "+" : "−"}
                         {formatCurrency(t.price)}
                       </div>
-                      <div className="font-mono text-[9px] uppercase text-cream/30">
+                      <div className="font-mono text-[9px] uppercase text-foreground/30">
                         {sold ? "sold" : "bought"}
                       </div>
                     </div>

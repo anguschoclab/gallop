@@ -41,15 +41,15 @@ export function MarePlannerRow({
     assignment && topSuggestion && assignment.sireId === topSuggestion.stallion.id;
 
   return (
-    <div className="flex items-center gap-3 py-3 px-4 border-b border-t800/50 hover:bg-t900/30 transition-colors">
+    <div className="flex items-center gap-3 py-3 px-4 border-b border-card/50 hover:bg-surface/30 transition-colors">
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <span className="font-[family-name:var(--font-display)] text-cream truncate">
+          <span className="font-[family-name:var(--font-display)] text-foreground truncate">
             {mare.name}
           </span>
-          {isSuggested && <Star className="h-3.5 w-3.5 text-gold fill-gold" />}
+          {isSuggested && <Star className="h-3.5 w-3.5 text-primary fill-primary" />}
         </div>
-        <div className="text-xs text-cream-muted font-[family-name:var(--font-mono)] tabular-nums">
+        <div className="text-xs text-muted-foreground font-[family-name:var(--font-mono)] tabular-nums">
           Age {mare.age} · {mare.hemisphere} · {Math.round(mare.distanceAptitude)}m
           {mare.bruceLoweFamily ? ` · BL${mare.bruceLoweFamily}` : ""}
         </div>
@@ -95,10 +95,10 @@ export function MarePlannerRow({
           disabled={!assignment}
           onCheckedChange={(v) => onLFGChange(mare.id, v === true)}
         />
-        <span className="text-xs text-cream-muted">LFG</span>
+        <span className="text-xs text-muted-foreground">LFG</span>
       </div>
 
-      <div className="w-[90px] text-right text-xs font-[family-name:var(--font-mono)] tabular-nums text-cream-muted">
+      <div className="w-[90px] text-right text-xs font-[family-name:var(--font-mono)] tabular-nums text-muted-foreground">
         {assignment ? formatCurrency(fee) : "—"}
       </div>
 
@@ -124,10 +124,10 @@ export function MarePlannerRow({
       </div>
 
       {expanded && (
-        <div className="col-span-full w-full mt-2 pt-2 border-t border-t800/50 text-xs text-cream-muted space-y-1">
+        <div className="col-span-full w-full mt-2 pt-2 border-t border-card/50 text-xs text-muted-foreground space-y-1">
           {assignedSire && (
             <div>
-              <span className="text-cream">Assigned:</span> {assignedSire.name} —{" "}
+              <span className="text-foreground">Assigned:</span> {assignedSire.name} —{" "}
               {assignedSire.stud
                 ? `${formatCurrency(assignedSire.stud.standingFee)} standing fee`
                 : "No stud career"}
@@ -135,8 +135,8 @@ export function MarePlannerRow({
           )}
           {suggestions.slice(0, 3).map((s, i) => (
             <div key={s.stallion.id} className="flex items-center gap-2">
-              <span className="text-gold">{i === 0 ? "★" : `#${i + 1}`}</span>
-              <span className="text-cream">{s.stallion.name}</span>
+              <span className="text-primary">{i === 0 ? "★" : `#${i + 1}`}</span>
+              <span className="text-foreground">{s.stallion.name}</span>
               <span>{s.reason}</span>
               <span className="font-[family-name:var(--font-mono)] tabular-nums">
                 {(s.compatibilityScore * 100).toFixed(0)}% · {formatCurrency(s.fee)}

@@ -21,7 +21,7 @@ export function PillToggleGroup<T extends string>({
   return (
     <div className="flex items-center gap-1.5">
       {label && (
-        <span className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
+        <span className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
           {label}
         </span>
       )}
@@ -35,7 +35,7 @@ export function PillToggleGroup<T extends string>({
             className={`rounded px-2.5 py-1 text-[10px] font-black uppercase tracking-wide transition-colors ${
               value === o.value
                 ? "bg-primary text-primary-foreground"
-                : "bg-muted/50 text-cream-muted hover:text-cream"
+                : "bg-muted/50 text-muted-foreground hover:text-foreground"
             }`}
           >
             {o.label}

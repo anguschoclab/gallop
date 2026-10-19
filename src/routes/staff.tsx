@@ -63,10 +63,10 @@ function StaffManagement() {
             <Users className="h-3.5 w-3.5" />
             Stable Staff
           </div>
-          <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
+          <h1 className="text-4xl font-bold tracking-tighter text-foreground font-[family-name:var(--font-display)]">
             Our Staff
           </h1>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
             <span>
               Active Team: <NumericValue value={myStaff.length} />
             </span>
@@ -82,7 +82,7 @@ function StaffManagement() {
         </div>
         <div className="flex gap-2">
           <div className="relative">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-cream-muted" />
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search name or trait..."
               value={search}

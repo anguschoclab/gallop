@@ -54,10 +54,10 @@ export function JockeyRoster() {
             <Briefcase className="h-3.5 w-3.5" />
             Jockey Market
           </div>
-          <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
+          <h1 className="text-4xl font-bold tracking-tighter text-foreground font-[family-name:var(--font-display)]">
             Jockeys
           </h1>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
             <span>
               Signed: <NumericValue value={myJockeys.length} />
             </span>

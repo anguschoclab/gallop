@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
 import { Baby, FileText } from "lucide-react";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 import { PregnancyTimeline } from "@/domains/breeding/ui/PregnancyTimeline";
 import type { useBreedingPage } from "@/domains/breeding/application/hooks/useBreedingPage";
 import type { Pregnancy } from "@/domains/breeding/application/breedingFacade";
@@ -16,15 +17,12 @@ export function BroodmaresTab({ pageData }: BroodmaresTabProps) {
 
   if (activePregnanciesCount === 0) {
     return (
-      <Card className="border-gold-muted">
-        <CardContent className="p-12 text-center">
-          <Baby className="h-12 w-12 mx-auto text-cream-muted mb-4 opacity-20" />
-          <h3 className="text-lg font-semibold mb-2">No active pregnancies</h3>
-          <p className="text-sm text-cream-muted">
-            Mate your horses in the Breeding Shed to begin bloodstock development.
-          </p>
-        </CardContent>
-      </Card>
+      <EmptyState
+        icon={Baby}
+        title="No active pregnancies"
+        description="Mate your horses in the Breeding Shed to begin bloodstock development."
+        action={{ label: "Open the Breeding Shed", to: "/breeding" }}
+      />
     );
   }
 
@@ -33,14 +31,14 @@ export function BroodmaresTab({ pageData }: BroodmaresTabProps) {
       {activePregnancies.map((p: Pregnancy) => {
         const daysRemaining = p.dueDay - day - 1;
         return (
-          <Card key={p.id} className="border-l-4 border-l-gold border-gold-muted">
+          <Card key={p.id} className="border-l-4 border-l-primary border-border">
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div>
                   <CardTitle className="text-lg font-[family-name:var(--font-display)]">
                     {p.damName} × {p.sireName}
                   </CardTitle>
-                  <p className="text-xs text-cream-muted mt-1 tabular-nums">
+                  <p className="text-xs text-muted-foreground mt-1 tabular-nums">
                     Conceived Day {p.conceivedDay} · Due Day {p.dueDay}
                   </p>
                 </div>
@@ -92,7 +90,7 @@ export function BroodmaresTab({ pageData }: BroodmaresTabProps) {
                       <Button
                         size="sm"
                         variant="ghost"
-                        className="h-7 text-[10px] text-cream-muted hover:text-cream"
+                        className="h-7 text-[10px] text-muted-foreground hover:text-foreground"
                       >
                         <FileText className="h-3 w-3 mr-1" />
                         Log ({maternityLog.length})

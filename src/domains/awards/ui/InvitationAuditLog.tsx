@@ -18,18 +18,18 @@ import {
 } from "@/domains/awards/application/awardsFacade";
 
 const KIND_CLASSES: Record<InvitationAuditKind, string> = {
-  invited: "border-gold-muted text-cream-muted",
-  rsvp_change: "border-gold text-gold",
-  reminder_sent: "border-gold-muted text-cream",
+  invited: "border-border text-muted-foreground",
+  rsvp_change: "border-primary text-primary",
+  reminder_sent: "border-border text-foreground",
   deadline_lapsed: "border-destructive/60 text-destructive",
-  ceremony_held: "border-gold-muted text-cream-muted",
+  ceremony_held: "border-border text-muted-foreground",
 };
 
 /** Compact list of audit entries. */
 export function InvitationAuditList({ invitation }: { invitation: AwardCeremonyInvitation }) {
   const entries = invitation.auditLog ?? [];
   if (entries.length === 0) {
-    return <p className="text-xs text-cream-muted">No status changes recorded yet.</p>;
+    return <p className="text-xs text-muted-foreground">No status changes recorded yet.</p>;
   }
   return (
     <ol className="space-y-2">
@@ -37,11 +37,13 @@ export function InvitationAuditList({ invitation }: { invitation: AwardCeremonyI
         .sort((a, b) => a.day - b.day)
         .map((entry, i) => (
           <li key={`${entry.day}-${entry.kind}-${i}`} className="flex items-start gap-2 text-xs">
-            <span className="text-cream-muted tabular-nums w-16 shrink-0">Day {entry.day}</span>
+            <span className="text-muted-foreground tabular-nums w-16 shrink-0">
+              Day {entry.day}
+            </span>
             <Badge variant="outline" className={`${KIND_CLASSES[entry.kind]} shrink-0`}>
               {AUDIT_KIND_LABELS[entry.kind]}
             </Badge>
-            <span className="text-cream-muted">{entry.note}</span>
+            <span className="text-muted-foreground">{entry.note}</span>
           </li>
         ))}
     </ol>
@@ -51,10 +53,10 @@ export function InvitationAuditList({ invitation }: { invitation: AwardCeremonyI
 /** Card wrapper around the audit list for the ceremony detail page. */
 export function InvitationAuditLog({ invitation }: { invitation: AwardCeremonyInvitation }) {
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardHeader>
-        <CardTitle className="text-base text-cream font-[family-name:var(--font-display)] flex items-center gap-2">
-          <ScrollText className="w-4 h-4 text-gold" />
+        <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)] flex items-center gap-2">
+          <ScrollText className="w-4 h-4 text-primary" />
           RSVP Audit Log
         </CardTitle>
       </CardHeader>

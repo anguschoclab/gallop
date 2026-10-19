@@ -16,7 +16,7 @@ const PHASE_LABELS: Record<Phase, string> = {
 };
 
 const PHASE_CLASSES: Record<Phase, string> = {
-  pending: "border-gold-muted text-gold-muted",
+  pending: "border-border text-primary/30",
   locked: "border-destructive/60 text-destructive",
   counted: "border-green-600 text-green-500",
 };

@@ -37,8 +37,8 @@ function MetricRow({ label, value, tooltip }: MetricRowProps) {
     <Tooltip>
       <TooltipTrigger asChild>
         <div className="flex items-center justify-between gap-2 cursor-help">
-          <span className="text-cream-muted text-xs">{label}</span>
-          <span className="font-mono text-xs font-bold text-cream tabular-nums">{value}</span>
+          <span className="text-muted-foreground text-xs">{label}</span>
+          <span className="font-mono text-xs font-bold text-foreground tabular-nums">{value}</span>
         </div>
       </TooltipTrigger>
       <TooltipContent className="max-w-xs text-xs leading-relaxed">{tooltip}</TooltipContent>
@@ -87,11 +87,11 @@ export function SalePrestigeBreakdown({
 
   return (
     <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
-      <Card className={cn("bg-t700 border-gold-muted/40", className)}>
+      <Card className={cn("bg-muted border-border/40", className)}>
         <CardContent className="p-4 space-y-3">
           <div className="flex items-center gap-2">
             <PrestigeBadge score={house.prestige} />
-            <span className="text-xs text-cream-muted">{house.name}</span>
+            <span className="text-xs text-muted-foreground">{house.name}</span>
           </div>
           <div className="space-y-2">
             <MetricRow
@@ -111,10 +111,10 @@ export function SalePrestigeBreakdown({
             />
           </div>
           <div className="border-t border-white/5 pt-2 space-y-1">
-            <div className="text-[10px] font-mono uppercase tracking-wide text-cream/30">
+            <div className="text-[10px] font-mono uppercase tracking-wide text-foreground/30">
               Worked Example
             </div>
-            <div className="text-xs text-cream-muted font-mono space-y-0.5">
+            <div className="text-xs text-muted-foreground font-mono space-y-0.5">
               <div>
                 Reserve: {formatCurrency(sampleBase)} → {formatCurrency(sampleReserve)}
               </div>
@@ -165,11 +165,11 @@ export function RacePrestigeBreakdown({
 
   return (
     <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
-      <Card className={cn("bg-t700 border-gold-muted/40", className)}>
+      <Card className={cn("bg-muted border-border/40", className)}>
         <CardContent className="p-4 space-y-3">
           <div className="flex items-center gap-2">
             <PrestigeBadge score={score} />
-            <span className="text-xs text-cream-muted">{trackName ?? "Course Prestige"}</span>
+            <span className="text-xs text-muted-foreground">{trackName ?? "Course Prestige"}</span>
           </div>
           <div className="space-y-2">
             <MetricRow
@@ -184,10 +184,10 @@ export function RacePrestigeBreakdown({
             />
           </div>
           <div className="border-t border-white/5 pt-2 space-y-1">
-            <div className="text-[10px] font-mono uppercase tracking-wide text-cream/30">
+            <div className="text-[10px] font-mono uppercase tracking-wide text-foreground/30">
               Worked Example
             </div>
-            <div className="text-xs text-cream-muted font-mono">
+            <div className="text-xs text-muted-foreground font-mono">
               G1 Win: {sampleBaseFame} base fame → {sampleAdjustedFame} at this venue
             </div>
           </div>

@@ -52,16 +52,16 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 px-1">
-        <div className="text-[10px] font-black uppercase tracking-wide text-gold-muted/60">
+        <div className="text-[10px] font-black uppercase tracking-wide text-primary/20">
           Income & Expenses
         </div>
       </div>
 
       <div className="h-[300px] w-full bg-black/40 border border-white/5 p-4 relative">
-        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-gold/40" />
-        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-gold/40" />
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-gold/40" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-gold/40" />
+        <div className="absolute top-0 left-0 w-2 h-2 border-t border-l border-primary/40" />
+        <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-primary/40" />
+        <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-primary/40" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b border-r border-primary/40" />
 
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
@@ -75,16 +75,16 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
                 <stop offset="95%" stopColor="var(--destructive)" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="2 2" stroke="rgba(255,255,255,0.05)" vertical={false} />
+            <CartesianGrid strokeDasharray="2 2" stroke="var(--chart-grid)" vertical={false} />
             <XAxis
               dataKey="day"
-              tick={{ fontSize: 9, fontFamily: "monospace", fill: "rgba(245,245,220,0.4)" }}
+              tick={{ fontSize: 9, fontFamily: "monospace", fill: "var(--chart-axis)" }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `D${v}`}
             />
             <YAxis
-              tick={{ fontSize: 9, fontFamily: "monospace", fill: "rgba(245,245,220,0.4)" }}
+              tick={{ fontSize: 9, fontFamily: "monospace", fill: "var(--chart-axis)" }}
               axisLine={false}
               tickLine={false}
               width={50}
@@ -93,10 +93,10 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
             <Tooltip
               contentStyle={{
                 background: "var(--background)",
-                border: "1px solid rgba(212,175,55,0.3)",
+                border: "1px solid var(--border)",
                 borderRadius: 0,
                 padding: "8px 12px",
-                boxShadow: "0 0 20px rgba(0,0,0,0.5)",
+                boxShadow: "0 0 20px color-mix(in oklab, black 50%, transparent)",
               }}
               itemStyle={{
                 fontFamily: "monospace",
@@ -107,10 +107,10 @@ export function FinancialChart({ transactions, day, period }: FinancialChartProp
               labelStyle={{
                 fontFamily: "monospace",
                 fontSize: 9,
-                color: "rgba(245,245,220,0.6)",
+                color: "var(--muted-foreground)",
                 textTransform: "uppercase",
                 marginBottom: 6,
-                borderBottom: "1px solid rgba(255,255,255,0.1)",
+                borderBottom: "1px solid color-mix(in oklab, white 10%, transparent)",
                 paddingBottom: 4,
               }}
               formatter={(v: number) => [formatCurrency(v), ""]}

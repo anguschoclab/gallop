@@ -16,7 +16,7 @@ interface G1TrophyListProps {
 }
 
 const gradeBg: Record<string, string> = {
-  G1: "bg-gold/15 text-gold border-gold/30",
+  G1: "bg-primary/15 text-primary border-primary/30",
   G2: "bg-purple-500/15 text-purple-300 border-purple-500/30",
   G3: "bg-blue-500/15 text-blue-300 border-blue-500/30",
 };
@@ -35,11 +35,11 @@ export function G1TrophyList({
   const extra = wins.length - visible.length;
 
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardHeader className={cn(compact && "pb-2")}>
         <div className="flex items-center justify-between gap-3">
           <CardTitle className="font-[family-name:var(--font-display)] flex items-center gap-2 text-sm">
-            <Trophy className="h-4 w-4 text-gold" />
+            <Trophy className="h-4 w-4 text-primary" />
             {title}
           </CardTitle>
           <div className="flex items-center gap-1.5 font-mono text-[10px] tabular-nums">
@@ -48,7 +48,7 @@ export function G1TrophyList({
                 key={g}
                 className={cn(
                   "px-1.5 py-0.5 border rounded-sm",
-                  counts[g] > 0 ? gradeBg[g] : "border-white/5 text-cream/20",
+                  counts[g] > 0 ? gradeBg[g] : "border-white/5 text-foreground/20",
                 )}
               >
                 {g} ×{counts[g]}
@@ -59,7 +59,7 @@ export function G1TrophyList({
       </CardHeader>
       <CardContent className={cn("space-y-1", compact && "pt-0")}>
         {wins.length === 0 ? (
-          <p className="text-xs text-cream-muted italic">{emptyHint}</p>
+          <p className="text-xs text-muted-foreground italic">{emptyHint}</p>
         ) : (
           <>
             <ul className="divide-y divide-white/5">
@@ -78,13 +78,13 @@ export function G1TrophyList({
                     >
                       {w.grade}
                     </Badge>
-                    <span className="text-cream truncate font-medium">{w.raceName}</span>
+                    <span className="text-foreground truncate font-medium">{w.raceName}</span>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0 font-mono text-[10px] text-cream/50">
+                  <div className="flex items-center gap-2 shrink-0 font-mono text-[10px] text-foreground/50">
                     <Link
                       to="/stable/$horseId"
                       params={{ horseId: w.horseId }}
-                      className="text-cream/70 hover:text-gold truncate max-w-[120px]"
+                      className="text-foreground/70 hover:text-primary truncate max-w-[120px]"
                     >
                       {w.horseName}
                     </Link>
@@ -94,7 +94,7 @@ export function G1TrophyList({
               ))}
             </ul>
             {extra > 0 && (
-              <p className="text-[10px] font-mono text-cream/40 pt-1">+{extra} more…</p>
+              <p className="text-[10px] font-mono text-foreground/40 pt-1">+{extra} more…</p>
             )}
           </>
         )}

@@ -45,14 +45,14 @@ describe("grading", () => {
   describe("gradeColorClass", () => {
     it("returns correct color classes", () => {
       expect(gradeColorClass("S")).toBe("text-fame font-black animate-pulse");
-      expect(gradeColorClass("A+")).toBe("text-gold font-bold");
-      expect(gradeColorClass("A")).toBe("text-gold font-bold");
+      expect(gradeColorClass("A+")).toBe("text-primary font-bold");
+      expect(gradeColorClass("A")).toBe("text-primary font-bold");
       expect(gradeColorClass("B+")).toBe("text-success font-medium");
       expect(gradeColorClass("B")).toBe("text-success font-medium");
       expect(gradeColorClass("C+")).toBe("text-warning");
       expect(gradeColorClass("C")).toBe("text-warning");
       expect(gradeColorClass("D")).toBe("text-destructive/80");
-      expect(gradeColorClass("F")).toBe("text-cream/20 italic");
+      expect(gradeColorClass("F")).toBe("text-foreground/20 italic");
     });
   });
 });

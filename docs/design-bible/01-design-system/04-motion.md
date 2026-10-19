@@ -91,7 +91,7 @@ We respect the OS-level reduced-motion preference everywhere:
 
 ## Skeletons (loading)
 
-Use `<Skeleton />` from [src/components/ui/skeleton.tsx](../../../src/components/ui/skeleton.tsx). It carries a quiet pulse (the standard library's `animate-pulse`) — that's our entire loading-state vocabulary. No spinners, no progress bars, no shimmer effects.
+Use `<Skeleton />` from [src/shared/ui/skeleton.tsx](../../../src/shared/ui/skeleton.tsx). It carries a quiet pulse (the standard library's `animate-pulse`) — that's our entire loading-state vocabulary. No spinners, no progress bars, no shimmer effects.
 
 ---
 

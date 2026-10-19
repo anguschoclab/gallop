@@ -32,7 +32,7 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
     <section id="beyer" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
         <Activity className="h-4 w-4 text-fame" />
-        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
           Beyer Performance Analysis
         </h2>
       </div>
@@ -40,24 +40,26 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
         <CardContent className="p-6 space-y-6">
           <div className="flex items-center gap-4 mb-2">
             <div className="bg-black/40 px-3 py-1.5 border border-white/5">
-              <div className="text-[9px] font-black uppercase text-cream/20 tracking-wide mb-0.5">
+              <div className="text-[9px] font-black uppercase text-foreground/20 tracking-wide mb-0.5">
                 Form Multiplier
               </div>
-              <div className="font-mono text-sm font-bold text-gold">
+              <div className="font-mono text-sm font-bold text-primary">
                 ×{peakingMultiplier.toFixed(2)}
               </div>
             </div>
           </div>
 
           {insight && (
-            <div className="bg-gold/10 border border-gold/20 p-3 flex gap-3 items-start rounded-sm mb-4">
-              <Lightbulb className="h-4 w-4 text-gold mt-0.5 shrink-0" />
+            <div className="bg-primary/10 border border-primary/20 p-3 flex gap-3 items-start rounded-sm mb-4">
+              <Lightbulb className="h-4 w-4 text-primary mt-0.5 shrink-0" />
               <div>
-                <div className="text-[10px] font-black uppercase tracking-wide text-gold/80 mb-0.5">
+                <div className="text-[10px] font-black uppercase tracking-wide text-primary/80 mb-0.5">
                   Tipster Insight: {insight.label}
                 </div>
-                <div className="text-sm font-bold text-cream">{displayValue}</div>
-                <div className="text-[10px] font-mono text-cream/60 mt-1">{displayContext}</div>
+                <div className="text-sm font-bold text-foreground">{displayValue}</div>
+                <div className="text-[10px] font-mono text-foreground/60 mt-1">
+                  {displayContext}
+                </div>
               </div>
             </div>
           )}

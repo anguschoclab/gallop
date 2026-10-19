@@ -1,5 +1,6 @@
-import { Card, CardContent } from "@/shared/ui/card";
 import { useGame } from "@/platform/game/store";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
+import { Flag } from "lucide-react";
 import { useRaceBrowserFilters } from "@/domains/race/application/hooks/useRaceBrowserFilters";
 import { RaceBrowserFilterBar } from "@/domains/race/ui/RaceBrowserFilterBar";
 import { RaceBrowserCard } from "@/domains/race/ui/RaceBrowserCard";
@@ -25,10 +26,10 @@ export function BrowserTab() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)]">
           Race Browser
         </h2>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">
+        <p className="text-muted-foreground font-[family-name:var(--font-body)]">
           Browse all graded stakes races worldwide
         </p>
       </div>
@@ -48,18 +49,19 @@ export function BrowserTab() {
         onReset={reset}
       />
 
-      <div className="text-sm text-cream-muted">
+      <div className="text-sm text-muted-foreground">
         Showing {filteredRaces.length} of {Object.values(races).filter((r) => r.graded).length}{" "}
         graded stakes races
       </div>
 
       <div className="space-y-3">
         {filteredRaces.length === 0 ? (
-          <Card className="border-gold-muted">
-            <CardContent className="p-8 text-center text-cream-muted">
-              No races match your filters
-            </CardContent>
-          </Card>
+          <EmptyState
+            icon={Flag}
+            title="No races found"
+            description="No races match your filters."
+            action={{ label: "Reset filters", onClick: reset }}
+          />
         ) : (
           filteredRaces.map((race) => <RaceBrowserCard key={race.id} race={race} />)
         )}

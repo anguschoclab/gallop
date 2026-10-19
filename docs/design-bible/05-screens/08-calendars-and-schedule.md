@@ -11,12 +11,12 @@ owns: engineering:documentation
 ## At a glance
 
 - **Routes:**
-  - `/canadian-calendar` ([canadian-calendar.tsx](../../../src/routes/canadian-calendar.tsx))
-  - `/german-calendar` ([german-calendar.tsx](../../../src/routes/german-calendar.tsx))
-  - `/scandinavian-calendar` ([scandinavian-calendar.tsx](../../../src/routes/scandinavian-calendar.tsx))
-  - `/south-american-calendar` ([south-american-calendar.tsx](../../../src/routes/south-american-calendar.tsx))
-  - `/uae-calendar` ([uae-calendar.tsx](../../../src/routes/uae-calendar.tsx))
-  - `/track-schedule` ([track-schedule.tsx](../../../src/routes/track-schedule.tsx))
+  - `/canadian-calendar` ([canadian-calendar.tsx](../../../src/routes/calendar.$regionId.tsx))
+  - `/german-calendar` ([german-calendar.tsx](../../../src/routes/calendar.$regionId.tsx))
+  - `/scandinavian-calendar` ([scandinavian-calendar.tsx](../../../src/routes/calendar.$regionId.tsx))
+  - `/south-american-calendar` ([south-american-calendar.tsx](../../../src/routes/calendar.$regionId.tsx))
+  - `/uae-calendar` ([uae-calendar.tsx](../../../src/routes/calendar.$regionId.tsx))
+  - `/track-schedule` ([track-schedule.tsx](../../../src/routes/scheduler.tsx))
 - **Persona:** Tomás (planning a campaign), Maya (data view).
 - **Primary verb:** Plan.
 - **Layout:** AppShell.

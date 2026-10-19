@@ -26,13 +26,15 @@ export function CareerValuationBreakdown({ valuation, className }: CareerValuati
             highlight && "border-t border-white/10 pt-1 mt-1",
           )}
         >
-          <span className={cn("text-muted-foreground", highlight && "font-semibold text-cream")}>
+          <span
+            className={cn("text-muted-foreground", highlight && "font-semibold text-foreground")}
+          >
             {label}
           </span>
           <span
             className={cn(
               "tabular-nums",
-              highlight ? "font-bold text-gold" : "font-medium text-cream/80",
+              highlight ? "font-bold text-primary" : "font-medium text-foreground/80",
             )}
           >
             {formatCurrency(valuation[key])}

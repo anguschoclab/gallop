@@ -50,7 +50,7 @@ export function getInjuryLabel(proneness?: number): string {
  * @returns Tailwind CSS color class
  */
 export function getInjuryColor(proneness?: number): string {
-  if (!proneness) return "text-cream-muted";
+  if (!proneness) return "text-muted-foreground";
   if (proneness < 0.06) return "text-success font-medium";
   if (proneness < 0.09) return "text-warning font-medium";
   return "text-destructive font-bold";

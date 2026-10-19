@@ -19,7 +19,7 @@ export function LoadTab({
 }: LoadTabProps) {
   return (
     <div className="space-y-4">
-      <div className="text-[10px] uppercase font-mono text-gold/40 border-b border-gold/10 pb-1 flex justify-between">
+      <div className="text-[10px] uppercase font-mono text-primary/40 border-b border-primary/10 pb-1 flex justify-between">
         <span>Archived Ledgers</span>
         <span>Sorted by Recency</span>
       </div>
@@ -37,7 +37,7 @@ export function LoadTab({
       {saves.length === 0 && (
         <div className="text-center py-12 border-2 border-dashed border-slate-800">
           <Archive className="h-12 w-12 text-slate-800 mx-auto mb-4" />
-          <p className="text-cream-muted font-mono uppercase text-xs tracking-wide">
+          <p className="text-muted-foreground font-mono uppercase text-xs tracking-wide">
             No entries detected in archive
           </p>
         </div>

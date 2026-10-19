@@ -30,8 +30,8 @@ export function StableCompareBar() {
   return (
     <>
       <div className="fixed bottom-4 left-1/2 z-40 -translate-x-1/2">
-        <div className="flex items-center gap-2 rounded-full border border-gold-muted bg-card px-4 py-2 shadow-lg">
-          <GitCompare className="h-4 w-4 text-gold" />
+        <div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 shadow-lg">
+          <GitCompare className="h-4 w-4 text-primary" />
           <Button
             variant="ghost"
             size="sm"

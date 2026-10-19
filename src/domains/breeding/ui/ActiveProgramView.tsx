@@ -93,7 +93,7 @@ export function ActiveProgramView() {
                 <CardTitle className="font-[family-name:var(--font-display)] text-base">
                   {archetype?.name ?? program.archetypeId}
                 </CardTitle>
-                <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+                <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
                   Generation {program.generationCount} · {enrolledMares.length} mare
                   {enrolledMares.length !== 1 ? "s" : ""} enrolled
                 </p>
@@ -106,7 +106,7 @@ export function ActiveProgramView() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="h-7 w-7 p-0 text-cream-muted hover:text-red-400"
+                    className="h-7 w-7 p-0 text-muted-foreground hover:text-red-400"
                     onClick={openCancelDialog}
                     aria-label={CANCEL_BUTTON_ARIA_LABEL}
                     disabled={isOpen}
@@ -119,7 +119,7 @@ export function ActiveProgramView() {
                     <AlertDialogTitle className="text-destructive uppercase font-black tracking-wide">
                       {CANCEL_DIALOG_TITLE}
                     </AlertDialogTitle>
-                    <AlertDialogDescription className="text-cream/60 font-mono text-xs uppercase tracking-tighter">
+                    <AlertDialogDescription className="text-foreground/60 font-mono text-xs uppercase tracking-tighter">
                       {CANCEL_DIALOG_DESCRIPTION(archetype?.name ?? program.archetypeId)}
                     </AlertDialogDescription>
                   </AlertDialogHeader>
@@ -144,22 +144,22 @@ export function ActiveProgramView() {
         </CardHeader>
         <CardContent className="space-y-2">
           <div className="space-y-1">
-            <div className="flex justify-between text-xs text-cream-muted font-[family-name:var(--font-mono)]">
+            <div className="flex justify-between text-xs text-muted-foreground font-[family-name:var(--font-mono)]">
               <span>Archetype Match</span>
               <span>{progressPct}%</span>
             </div>
             <Progress value={progressPct} className="h-2" />
           </div>
-          <p className="text-xs text-cream-muted font-[family-name:var(--font-body)] line-clamp-2">
+          <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)] line-clamp-2">
             {archetype?.description}
           </p>
         </CardContent>
       </Card>
 
-      <Card className="border-gold-muted">
+      <Card className="border-border">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-[family-name:var(--font-display)] flex items-center gap-2">
-            <Award className="h-4 w-4 text-gold" />
+            <Award className="h-4 w-4 text-primary" />
             Milestones
           </CardTitle>
         </CardHeader>
@@ -169,18 +169,18 @@ export function ActiveProgramView() {
               {m.achieved ? (
                 <CheckCircle2 className="h-4 w-4 text-emerald-400 shrink-0" />
               ) : (
-                <Circle className="h-4 w-4 text-cream-muted shrink-0" />
+                <Circle className="h-4 w-4 text-muted-foreground shrink-0" />
               )}
               <span
                 className={cn(
                   "font-[family-name:var(--font-body)]",
-                  m.achieved ? "text-cream" : "text-cream-muted",
+                  m.achieved ? "text-foreground" : "text-muted-foreground",
                 )}
               >
                 {m.description}
               </span>
               {m.achieved && m.achievedDay !== undefined && (
-                <span className="ml-auto text-xs text-cream-muted font-[family-name:var(--font-mono)]">
+                <span className="ml-auto text-xs text-muted-foreground font-[family-name:var(--font-mono)]">
                   Day {m.achievedDay}
                 </span>
               )}
@@ -189,16 +189,16 @@ export function ActiveProgramView() {
         </CardContent>
       </Card>
 
-      <Card className="border-gold-muted">
+      <Card className="border-border">
         <CardHeader className="pb-2">
           <CardTitle className="text-sm font-[family-name:var(--font-display)] flex items-center gap-2">
-            <Dna className="h-4 w-4 text-gold" />
+            <Dna className="h-4 w-4 text-primary" />
             Enrolled Mares
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           {enrolledMares.length === 0 && (
-            <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+            <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
               No mares enrolled yet. Add eligible mares below.
             </p>
           )}
@@ -209,13 +209,13 @@ export function ActiveProgramView() {
             return (
               <div
                 key={mare.id}
-                className="flex items-center justify-between gap-2 py-1 border-b border-gold-muted/30 last:border-0"
+                className="flex items-center justify-between gap-2 py-1 border-b border-border/30 last:border-0"
               >
                 <div>
-                  <p className="text-sm font-[family-name:var(--font-display)] text-cream">
+                  <p className="text-sm font-[family-name:var(--font-display)] text-foreground">
                     {mare.name}
                   </p>
-                  <p className="text-xs text-cream-muted font-[family-name:var(--font-body)]">
+                  <p className="text-xs text-muted-foreground font-[family-name:var(--font-body)]">
                     Age {mare.age} · {Math.round(mare.distanceAptitude)}m · {getBestSurface(mare)}
                   </p>
                 </div>
@@ -224,7 +224,7 @@ export function ActiveProgramView() {
                   <Button
                     size="sm"
                     variant="ghost"
-                    className="h-6 w-6 p-0 text-cream-muted hover:text-red-400"
+                    className="h-6 w-6 p-0 text-muted-foreground hover:text-red-400"
                     onClick={() => unenrollDamFromProgram(mare.id)}
                     aria-label={`Remove ${mare.name} from program`}
                   >
@@ -237,7 +237,7 @@ export function ActiveProgramView() {
 
           {eligibleMares.length > 0 && (
             <div className="pt-1">
-              <p className="text-xs text-cream-muted mb-1.5 font-[family-name:var(--font-body)]">
+              <p className="text-xs text-muted-foreground mb-1.5 font-[family-name:var(--font-body)]">
                 Add mare to program:
               </p>
               <div className="space-y-1">
@@ -247,19 +247,19 @@ export function ActiveProgramView() {
                     <button
                       key={mare.id}
                       onClick={() => handleEnroll(mare.id)}
-                      className="w-full flex items-center justify-between gap-2 px-2 py-1 rounded hover:bg-t700 text-left transition-colors"
+                      className="w-full flex items-center justify-between gap-2 px-2 py-1 rounded hover:bg-muted text-left transition-colors"
                     >
                       <div>
-                        <span className="text-sm text-cream font-[family-name:var(--font-display)]">
+                        <span className="text-sm text-foreground font-[family-name:var(--font-display)]">
                           {mare.name}
                         </span>
-                        <p className="text-[10px] text-cream-muted font-[family-name:var(--font-body)]">
+                        <p className="text-[10px] text-muted-foreground font-[family-name:var(--font-body)]">
                           {Math.round(mare.distanceAptitude)}m · {getBestSurface(mare)}
                         </p>
                       </div>
                       <div className="flex items-center gap-2">
                         <DistanceBadge distance={dist} />
-                        <Plus className="h-3.5 w-3.5 text-cream-muted" />
+                        <Plus className="h-3.5 w-3.5 text-muted-foreground" />
                       </div>
                     </button>
                   );
@@ -271,10 +271,10 @@ export function ActiveProgramView() {
       </Card>
 
       {program.history.length > 0 && (
-        <Card className="border-gold-muted">
+        <Card className="border-border">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-[family-name:var(--font-display)] flex items-center gap-2">
-              <TrendingDown className="h-4 w-4 text-gold" />
+              <TrendingDown className="h-4 w-4 text-primary" />
               Progress History
             </CardTitle>
           </CardHeader>
@@ -290,7 +290,7 @@ export function ActiveProgramView() {
                       key={i}
                       className="flex items-center justify-between text-xs font-[family-name:var(--font-mono)]"
                     >
-                      <span className="text-cream-muted">
+                      <span className="text-muted-foreground">
                         Day {entry.day} · {horse?.name ?? entry.horseId}
                       </span>
                       <DistanceBadge distance={entry.distance} />

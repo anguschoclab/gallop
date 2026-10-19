@@ -32,7 +32,7 @@ describe("FacilityCategory — human-readable facility names", () => {
       <FacilityCategory
         category="Physical Optimization"
         icon={Dumbbell}
-        color="text-gold"
+        color="text-primary"
         types={["main_track", "starting_gates", "treadmill", "exercise_pool"]}
         facilities={makeFacilities()}
         cash={100000}
@@ -49,7 +49,7 @@ describe("FacilityCategory — human-readable facility names", () => {
       <FacilityCategory
         category="Medical & Wellness"
         icon={Dumbbell}
-        color="text-gold"
+        color="text-primary"
         types={["veterinary_clinic", "rehab_center", "spa", "nutrition_lab"]}
         facilities={makeFacilities()}
         cash={100000}
@@ -65,7 +65,7 @@ describe("FacilityCategory — human-readable facility names", () => {
       <FacilityCategory
         category="All"
         icon={Dumbbell}
-        color="text-gold"
+        color="text-primary"
         types={[
           "main_track",
           "barn",

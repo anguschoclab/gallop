@@ -38,12 +38,13 @@ export function CalendarRaceItem({ race, region }: CalendarRaceItemProps) {
           )}
           {hasOwnedEntry && <Badge className="bg-success text-success-foreground">Entered</Badge>}
         </div>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-cream-muted">
+        <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
           <span>{race.graded?.track}</span>
           <span>{race.distance}m</span>
           <span>{race.graded?.surface}</span>
           <span>
-            Purse <span className="font-medium text-cream">${race.purse.toLocaleString()}</span>
+            Purse{" "}
+            <span className="font-medium text-foreground">${race.purse.toLocaleString()}</span>
           </span>
           {race.restrictions?.minAge !== undefined && (
             <span>

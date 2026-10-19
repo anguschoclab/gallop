@@ -25,12 +25,12 @@ export function FinancialReport() {
   return (
     <div className="space-y-6 pb-10 animate-fade-in">
       {/* Fiscal Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gold/20 pb-6">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-primary/20 pb-6">
         <div>
-          <h1 className="text-4xl font-bold tracking-tighter text-cream font-[family-name:var(--font-display)]">
+          <h1 className="text-4xl font-bold tracking-tighter text-foreground font-[family-name:var(--font-display)]">
             Financial Audit
           </h1>
-          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-cream/40">
+          <div className="flex items-center gap-3 mt-2 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
             <span>
               Audit Day: <NumericValue value={day} />
             </span>
@@ -45,25 +45,25 @@ export function FinancialReport() {
             <TabsList className="bg-transparent h-9">
               <TabsTrigger
                 value="week"
-                className="uppercase text-[9px] font-black tracking-wide data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-4"
+                className="uppercase text-[9px] font-black tracking-wide data-[state=active]:bg-primary data-[state=active]:text-slate-950 h-full px-4"
               >
                 WEEK
               </TabsTrigger>
               <TabsTrigger
                 value="month"
-                className="uppercase text-[9px] font-black tracking-wide data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-4"
+                className="uppercase text-[9px] font-black tracking-wide data-[state=active]:bg-primary data-[state=active]:text-slate-950 h-full px-4"
               >
                 MONTH
               </TabsTrigger>
               <TabsTrigger
                 value="year"
-                className="uppercase text-[9px] font-black tracking-wide data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-4"
+                className="uppercase text-[9px] font-black tracking-wide data-[state=active]:bg-primary data-[state=active]:text-slate-950 h-full px-4"
               >
                 YEAR
               </TabsTrigger>
               <TabsTrigger
                 value="allTime"
-                className="uppercase text-[9px] font-black tracking-wide data-[state=active]:bg-gold data-[state=active]:text-slate-950 h-full px-4"
+                className="uppercase text-[9px] font-black tracking-wide data-[state=active]:bg-primary data-[state=active]:text-slate-950 h-full px-4"
               >
                 All Time
               </TabsTrigger>

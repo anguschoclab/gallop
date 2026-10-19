@@ -180,10 +180,18 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
           <table className="w-full text-sm font-mono">
             <thead className="text-xs text-muted-foreground uppercase">
               <tr>
-                <th className="text-left py-1">Metric</th>
-                <th className="text-right">Period A</th>
-                <th className="text-right">Period B</th>
-                <th className="text-right">Change</th>
+                <th scope="col" className="text-left py-1">
+                  Metric
+                </th>
+                <th scope="col" className="text-right">
+                  Period A
+                </th>
+                <th scope="col" className="text-right">
+                  Period B
+                </th>
+                <th scope="col" className="text-right">
+                  Change
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -216,11 +224,21 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
             <table className="w-full text-sm font-mono">
               <thead className="text-xs text-muted-foreground uppercase">
                 <tr>
-                  <th className="text-left py-1">Class</th>
-                  <th className="text-right">A starts / wins</th>
-                  <th className="text-right">B starts / wins</th>
-                  <th className="text-right">Wins change</th>
-                  <th className="text-right">Prestige A → B</th>
+                  <th scope="col" className="text-left py-1">
+                    Class
+                  </th>
+                  <th scope="col" className="text-right">
+                    A starts / wins
+                  </th>
+                  <th scope="col" className="text-right">
+                    B starts / wins
+                  </th>
+                  <th scope="col" className="text-right">
+                    Wins change
+                  </th>
+                  <th scope="col" className="text-right">
+                    Prestige A → B
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -277,11 +295,21 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
                   <table className="w-full text-sm font-mono">
                     <thead className="text-xs text-muted-foreground uppercase">
                       <tr>
-                        <th className="text-left py-1">Day</th>
-                        <th className="text-left">Horse</th>
-                        <th className="text-left">Race</th>
-                        <th className="text-right">Fin</th>
-                        <th className="text-right">Prize</th>
+                        <th scope="col" className="text-left py-1">
+                          Day
+                        </th>
+                        <th scope="col" className="text-left">
+                          Horse
+                        </th>
+                        <th scope="col" className="text-left">
+                          Race
+                        </th>
+                        <th scope="col" className="text-right">
+                          Fin
+                        </th>
+                        <th scope="col" className="text-right">
+                          Prize
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -298,7 +326,7 @@ export function PeriodComparison({ wins }: { wins: PlayerRaceWinRecord[] }) {
                               {r.raceName}
                             </Link>
                             {r.grade && (
-                              <span className="ml-1 text-[10px] text-gold">{r.grade}</span>
+                              <span className="ml-1 text-[10px] text-primary">{r.grade}</span>
                             )}
                           </td>
                           <td className="text-right">{r.position}</td>

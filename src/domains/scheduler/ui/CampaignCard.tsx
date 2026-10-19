@@ -47,7 +47,7 @@ export function CampaignCard({
     .slice(0, 5);
 
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -56,17 +56,17 @@ export function CampaignCard({
                 <Link
                   to="/stable/$horseId"
                   params={{ horseId: horse.id }}
-                  className="hover:underline text-cream"
+                  className="hover:underline text-foreground"
                 >
                   {horse.name}
                 </Link>
               </CardTitle>
               <div className="flex items-center gap-2 mt-1">
-                <Badge variant="outline" className="text-xs border-gold-muted text-cream">
+                <Badge variant="outline" className="text-xs border-border text-foreground">
                   {GOAL_LABELS[campaign.goalType as CampaignGoalType]}
                 </Badge>
                 {campaign.autoManaged && (
-                  <span className="text-xs text-cream-muted">Auto-managed</span>
+                  <span className="text-xs text-muted-foreground">Auto-managed</span>
                 )}
               </div>
             </div>
@@ -75,7 +75,7 @@ export function CampaignCard({
             <Link
               to="/strategy/$horseId"
               params={{ horseId: campaign.horseId }}
-              className="text-[11px] px-2.5 py-1 rounded border border-gold/30 hover:border-gold text-cream hover:text-gold transition-colors font-mono uppercase tracking-wider"
+              className="text-[11px] px-2.5 py-1 rounded border border-primary/30 hover:border-primary text-foreground hover:text-primary transition-colors font-mono uppercase tracking-wider"
             >
               Strategy Page
             </Link>
@@ -91,7 +91,7 @@ export function CampaignCard({
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="h-7 w-7 text-cream-muted"
+                    className="h-7 w-7 text-muted-foreground"
                     onClick={() => onDelete(campaign.horseId)}
                     aria-label={`Delete campaign for ${horse.name}`}
                   >
@@ -115,7 +115,7 @@ export function CampaignCard({
               >
                 <div className="flex items-start gap-2">
                   <Flag className="h-3.5 w-3.5 text-warning mt-0.5 shrink-0" />
-                  <p className="text-xs text-cream">{flag.message}</p>
+                  <p className="text-xs text-foreground">{flag.message}</p>
                 </div>
                 <TooltipProvider>
                   <Tooltip delayDuration={TOOLTIP_DELAY_MS}>
@@ -123,7 +123,7 @@ export function CampaignCard({
                       <Button
                         size="icon"
                         variant="ghost"
-                        className="h-5 w-5 shrink-0 text-warning hover:text-cream"
+                        className="h-5 w-5 shrink-0 text-warning hover:text-foreground"
                         onClick={() => onDismissFlag(campaign.horseId, fi)}
                         aria-label={`Dismiss flag: ${flag.message}`}
                       >
@@ -142,15 +142,15 @@ export function CampaignCard({
 
         {(campaign.confirmedAptitudes.surfaceConfirmed ||
           campaign.confirmedAptitudes.distanceBandConfirmed) && (
-          <div className="flex items-center gap-3 pt-1 border-t border-gold-muted">
-            <span className="text-xs text-cream-muted">Confirmed:</span>
+          <div className="flex items-center gap-3 pt-1 border-t border-border">
+            <span className="text-xs text-muted-foreground">Confirmed:</span>
             {campaign.confirmedAptitudes.surfaceConfirmed && (
-              <Badge className="text-xs bg-t700 text-cream">
+              <Badge className="text-xs bg-muted text-foreground">
                 {campaign.confirmedAptitudes.surfaceConfirmed}
               </Badge>
             )}
             {campaign.confirmedAptitudes.distanceBandConfirmed && (
-              <Badge className="text-xs capitalize bg-t700 text-cream">
+              <Badge className="text-xs capitalize bg-muted text-foreground">
                 {campaign.confirmedAptitudes.distanceBandConfirmed}
               </Badge>
             )}

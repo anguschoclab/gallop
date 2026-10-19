@@ -25,13 +25,13 @@ function StableName({ id }: { id: string }) {
   const npcStables = useGame((s) => s.npcStables);
   const name = getStableName(id, npcStables);
   if (id === "player" || id === "treasury" || id === "market") {
-    return <span className="text-cream-muted">{name}</span>;
+    return <span className="text-muted-foreground">{name}</span>;
   }
   return (
     <Link
       to="/npc-stables/$stableId"
       params={{ stableId: id }}
-      className="text-cream-muted hover:text-gold hover:underline"
+      className="text-muted-foreground hover:text-primary hover:underline"
     >
       {name}
     </Link>
@@ -41,12 +41,12 @@ function StableName({ id }: { id: string }) {
 function StallionName({ syndicateId, name }: { syndicateId: string; name: string }) {
   const syndicates = useGame((s) => s.syndicates);
   const stallionId = syndicates[syndicateId]?.stallionId;
-  if (!stallionId) return <span className="text-cream">{name}</span>;
+  if (!stallionId) return <span className="text-foreground">{name}</span>;
   return (
     <Link
       to="/sire-watch/$stallionId"
       params={{ stallionId }}
-      className="text-cream hover:text-gold hover:underline"
+      className="text-foreground hover:text-primary hover:underline"
     >
       {name}
     </Link>
@@ -61,7 +61,7 @@ function FeedItemRow({ item }: { item: ShareActivityFeedItem }) {
       case "share_sale":
         return <TrendingDown className="h-4 w-4 text-amber-400" />;
       case "devolution":
-        return <Crown className="h-4 w-4 text-gold" />;
+        return <Crown className="h-4 w-4 text-primary" />;
       case "investor_solicit":
         return <HandCoins className="h-4 w-4 text-blue-400" />;
       case "investor_buyout":
@@ -73,22 +73,22 @@ function FeedItemRow({ item }: { item: ShareActivityFeedItem }) {
 
   if (item.type === "devolution") {
     return (
-      <div className="flex items-center gap-3 rounded-md border border-gold/20 bg-gold/5 px-3 py-2">
+      <div className="flex items-center gap-3 rounded-md border border-primary/20 bg-primary/5 px-3 py-2">
         {icon}
         <div className="flex-1 text-sm">
-          <span className="text-cream">
+          <span className="text-foreground">
             <StallionName
               syndicateId={item.syndicateId}
               name={item.stallionName ?? item.syndicateName}
             />{" "}
             ownership transferred
           </span>
-          <span className="text-cream-muted mx-2">·</span>
-          <span className="text-cream-muted">
+          <span className="text-muted-foreground mx-2">·</span>
+          <span className="text-muted-foreground">
             <StableName id={item.previousOwner ?? "?"} /> → <StableName id={item.newOwner ?? "?"} />
           </span>
         </div>
-        <Badge variant="outline" className="text-gold border-gold/40 text-xs">
+        <Badge variant="outline" className="text-primary border-primary/40 text-xs">
           Day {item.day}
         </Badge>
       </div>
@@ -96,22 +96,22 @@ function FeedItemRow({ item }: { item: ShareActivityFeedItem }) {
   }
 
   return (
-    <div className="flex items-center gap-3 rounded-md border border-cream/10 bg-broadcast-panel px-3 py-2">
+    <div className="flex items-center gap-3 rounded-md border border-foreground/10 bg-broadcast-panel px-3 py-2">
       {icon}
       <div className="flex-1 text-sm">
-        <span className="text-cream-muted">
+        <span className="text-muted-foreground">
           <StableName id={item.buyerStableId ?? "?"} />
         </span>
-        <ArrowRight className="h-3 w-3 inline mx-1 text-cream-muted" />
-        <span className="text-cream-muted">
+        <ArrowRight className="h-3 w-3 inline mx-1 text-muted-foreground" />
+        <span className="text-muted-foreground">
           <StableName id={item.sellerStableId ?? "?"} />
         </span>
-        <span className="text-cream mx-2">·</span>
-        <span className="text-cream">{item.shares} shares</span>
-        <span className="text-cream-muted mx-2">·</span>
-        <span className="text-gold font-medium">{formatCurrency(item.cashMoved)}</span>
+        <span className="text-foreground mx-2">·</span>
+        <span className="text-foreground">{item.shares} shares</span>
+        <span className="text-muted-foreground mx-2">·</span>
+        <span className="text-primary font-medium">{formatCurrency(item.cashMoved)}</span>
       </div>
-      <Badge variant="outline" className="text-cream-muted border-cream/20 text-xs">
+      <Badge variant="outline" className="text-muted-foreground border-foreground/20 text-xs">
         Day {item.day}
       </Badge>
     </div>
@@ -132,12 +132,14 @@ export function ShareActivityFeed({ syndicateId }: ShareActivityFeedProps) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-gold" /> Share Activity
+          <TrendingUp className="h-5 w-5 text-primary" /> Share Activity
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
         {filtered.length === 0 ? (
-          <div className="text-cream-muted text-sm py-4 text-center">No share activity yet.</div>
+          <div className="text-muted-foreground text-sm py-4 text-center">
+            No share activity yet.
+          </div>
         ) : (
           filtered.map((item) => <FeedItemRow key={item.id} item={item} />)
         )}

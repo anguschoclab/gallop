@@ -21,10 +21,10 @@ Sometimes, build artifacts (`.js` files) can accidentally be generated in the `s
 To safely delete stray artifacts and re-run the build:
 
 1. **Delete stray JS files:**
-   Run this command from the project root to remove all `.js` files in `src/` except for those in `src/assets/` (which are intentional).
+   Run this command from the project root to remove all `.js` files in `src/` except for those in `src/shared/assets/` (which are intentional).
 
    ```bash
-   find src -name "*.js" -not -path "src/assets/*" -delete
+   find src -name "*.js" -not -path "src/shared/assets/*" -delete
    ```
 
 2. **Verify cleanup:**

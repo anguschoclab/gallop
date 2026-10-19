@@ -122,7 +122,7 @@ export function PrivateSaleOfferDialog({
               <Badge variant={attachment.tier === "available" ? "secondary" : "outline"}>
                 {attachment.label}
               </Badge>
-              <span className="text-xs text-cream-muted tabular-nums">
+              <span className="text-xs text-muted-foreground tabular-nums">
                 asking ×{attachment.askMultiplier.toFixed(2)} of market
               </span>
             </div>
@@ -131,7 +131,7 @@ export function PrivateSaleOfferDialog({
               ask={ask}
               offerAmount={Number(offerAmount.replace(/,/g, "").replace(/\$/g, "")) || undefined}
             />
-            <p className="text-xs text-cream-muted">{attachment.blurb}</p>
+            <p className="text-xs text-muted-foreground">{attachment.blurb}</p>
             {premiumOverMarket > 0.08 && (
               <p className="rounded border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-xs text-amber-300">
                 They want ~{Math.round(premiumOverMarket * 100)}% above market value (+
@@ -149,17 +149,17 @@ export function PrivateSaleOfferDialog({
             )}
             <AttachmentBreakdown attachment={attachment} />
           </div>
-          <p className="text-sm text-cream-muted">
+          <p className="text-sm text-muted-foreground">
             Estimated market value:{" "}
-            <span className="tabular-nums font-medium text-cream">
+            <span className="tabular-nums font-medium text-foreground">
               ~{formatCurrency(fogLow)} – {formatCurrency(fogHigh)}
             </span>
             <br />
             Their likely ask:{" "}
-            <span className="tabular-nums font-medium text-cream">{formatCurrency(ask)}</span>
+            <span className="tabular-nums font-medium text-foreground">{formatCurrency(ask)}</span>
           </p>
           <div className="space-y-1">
-            <p className="text-xs font-medium text-cream-muted">Quick offers</p>
+            <p className="text-xs font-medium text-muted-foreground">Quick offers</p>
             <div className="flex flex-wrap gap-2">
               {(
                 [

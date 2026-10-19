@@ -12,7 +12,7 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
 
   if (racesWithPace.length === 0) {
     return (
-      <div className="text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+      <div className="text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
         No pace data available
       </div>
     );
@@ -45,10 +45,10 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <div className="text-[10px] font-black uppercase text-cream/20 tracking-wide">
+            <div className="text-[10px] font-black uppercase text-foreground/20 tracking-wide">
               Analytical Running Style
             </div>
-            <div className="text-xs font-black text-gold uppercase tracking-tight">
+            <div className="text-xs font-black text-primary uppercase tracking-tight">
               {runningStyle}
             </div>
           </div>
@@ -59,7 +59,7 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
               return (
                 <div
                   key={i}
-                  className="flex-1 bg-gold/20 hover:bg-gold/40 transition-colors rounded-t relative group"
+                  className="flex-1 bg-primary/20 hover:bg-primary/40 transition-colors rounded-t relative group"
                   style={{ height: `${height}%` }}
                 >
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-1.5 py-0.5 bg-slate-900 border border-white/10 rounded text-[8px] opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
@@ -70,7 +70,7 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
             })}
           </div>
 
-          <div className="flex justify-between text-[8px] font-mono text-cream/40 px-1 uppercase tracking-tighter">
+          <div className="flex justify-between text-[8px] font-mono text-foreground/40 px-1 uppercase tracking-tighter">
             <span>Early</span>
             <span>Middle</span>
             <span>Late Phase</span>
@@ -78,7 +78,7 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
         </div>
 
         <div className="space-y-4">
-          <div className="text-[10px] font-black uppercase text-cream/20 tracking-wide">
+          <div className="text-[10px] font-black uppercase text-foreground/20 tracking-wide">
             Familiarity Analytics
           </div>
           <div className="space-y-2">
@@ -88,14 +88,14 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
                   key={trackId}
                   className="flex items-center justify-between p-2 bg-black/20 border border-white/5 rounded"
                 >
-                  <span className="text-[10px] font-bold text-cream/60 truncate mr-2">
+                  <span className="text-[10px] font-bold text-foreground/60 truncate mr-2">
                     {trackId}
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-mono text-gold-bright">{visits} runs</span>
+                    <span className="text-[10px] font-mono text-accent-bright">{visits} runs</span>
                     <div className="h-1 w-12 bg-white/5 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-gold-bright"
+                        className="h-full bg-accent-bright"
                         style={{ width: `${Math.min(100, (visits / 5) * 100)}%` }}
                       />
                     </div>
@@ -103,7 +103,7 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
                 </div>
               ))
             ) : (
-              <div className="text-[9px] font-mono text-cream/20 uppercase">
+              <div className="text-[9px] font-mono text-foreground/20 uppercase">
                 No track familiarity recorded
               </div>
             )}
@@ -112,10 +112,10 @@ export function PaceProfileSummary({ horse }: PaceProfileSummaryProps) {
       </div>
 
       <div className="pt-4 border-t border-white/5 flex justify-between items-center">
-        <div className="text-[9px] font-mono text-cream/20 uppercase">
+        <div className="text-[9px] font-mono text-foreground/20 uppercase">
           Dataset: {racesWithPace.length} analyzed events
         </div>
-        <div className="text-[9px] font-mono text-gold/40 uppercase">
+        <div className="text-[9px] font-mono text-primary/40 uppercase">
           Precision: Linear Interpolation (0.1s)
         </div>
       </div>

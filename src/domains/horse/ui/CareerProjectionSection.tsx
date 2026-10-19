@@ -49,26 +49,28 @@ export function CareerProjectionSection({ horse, horses }: CareerProjectionSecti
   return (
     <section id="projection" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
-        <TrendingUp className="h-4 w-4 text-gold" />
-        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+        <TrendingUp className="h-4 w-4 text-primary" />
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
           Career Projection
         </h2>
       </div>
-      <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
+      <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-primary">
         <CardContent className="p-6 space-y-6">
           {/* Valuation breakdown */}
           <CareerValuationBreakdown valuation={valuation} />
 
           {/* Input factors */}
           <div className="pt-4 border-t border-white/5 space-y-3">
-            <div className="text-[10px] font-black uppercase text-gold/40 tracking-wide">
+            <div className="text-[10px] font-black uppercase text-primary/40 tracking-wide">
               Key Input Factors
             </div>
             <div className="grid grid-cols-2 gap-x-4 gap-y-2">
               {factors.map((f) => (
                 <div key={f.label} className="flex items-center justify-between text-xs">
                   <span className="text-muted-foreground">{f.label}</span>
-                  <span className="font-mono font-bold text-cream/80 tabular-nums">{f.value}</span>
+                  <span className="font-mono font-bold text-foreground/80 tabular-nums">
+                    {f.value}
+                  </span>
                 </div>
               ))}
             </div>
@@ -76,28 +78,28 @@ export function CareerProjectionSection({ horse, horses }: CareerProjectionSecti
 
           {/* Explanatory text */}
           <div className="pt-4 border-t border-white/5 space-y-2">
-            <div className="text-[10px] font-black uppercase text-gold/40 tracking-wide">
+            <div className="text-[10px] font-black uppercase text-primary/40 tracking-wide">
               How the Model Works
             </div>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <span className="text-cream/70 font-semibold">Pre-career</span> projects the horse's
-              value as a yearling, before any race record — driven by pedigree multiplier,
+              <span className="text-foreground/70 font-semibold">Pre-career</span> projects the
+              horse's value as a yearling, before any race record — driven by pedigree multiplier,
               potential, and a slice of breeding upside.
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <span className="text-cream/70 font-semibold">Current</span> blends racing form with
-              breeding optionality. The weight shifts from racing-heavy (young, active) to
+              <span className="text-foreground/70 font-semibold">Current</span> blends racing form
+              with breeding optionality. The weight shifts from racing-heavy (young, active) to
               breeding-heavy (older, retired).
             </p>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              <span className="text-cream/70 font-semibold">Post-career</span> estimates the
+              <span className="text-foreground/70 font-semibold">Post-career</span> estimates the
               breeding residual at prime reproductive age (stallion prime 4–18, mare prime 3–16),
               factoring stud fee capitalization, blue-hen production, fertility, and foaling ease.
             </p>
             {isGelding && (
               <p className="text-xs text-muted-foreground leading-relaxed">
-                <span className="text-cream/70 font-semibold">Geldings</span> return zero breeding
-                value — post-career is salvage value only (10% of racing).
+                <span className="text-foreground/70 font-semibold">Geldings</span> return zero
+                breeding value — post-career is salvage value only (10% of racing).
               </p>
             )}
           </div>

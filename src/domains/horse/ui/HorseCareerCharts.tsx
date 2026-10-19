@@ -79,7 +79,7 @@ export function HorseCareerCharts({ horse }: HorseCareerChartsProps) {
         <div className="flex justify-end">
           <TimeWindowSelect />
         </div>
-        <div className="text-[11px] font-mono uppercase tracking-wider text-cream/40">
+        <div className="text-[11px] font-mono uppercase tracking-wider text-foreground/40">
           No starts in the last {timeWindowLabel(weeks)} — widen the window to see more.
         </div>
       </div>
@@ -89,7 +89,7 @@ export function HorseCareerCharts({ horse }: HorseCareerChartsProps) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-cream/40">
+        <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-foreground/40">
           Last {timeWindowLabel(weeks)} · {history.length} starts
         </span>
         <TimeWindowSelect />
@@ -105,7 +105,7 @@ export function HorseCareerCharts({ horse }: HorseCareerChartsProps) {
           className="md:col-span-2"
         >
           {derived.earningsCurve.length === 1 ? (
-            <div className="px-2 py-6 text-center font-mono text-sm text-cream/70">
+            <div className="px-2 py-6 text-center font-mono text-sm text-foreground/70">
               {formatCurrencyCompact(derived.total)} from first start (Day{" "}
               {derived.earningsCurve[0].x})
             </div>

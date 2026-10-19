@@ -50,10 +50,12 @@ export function SpeedBreakdownTable({ splits, runners, className }: SpeedBreakdo
       <div className="border border-white/5 bg-black/20 overflow-x-auto">
         <table className="w-full text-[11px] font-mono">
           <thead>
-            <tr className="border-b border-white/5 text-cream/40 uppercase tracking-widest">
-              <th className="text-left px-3 py-2 sticky left-0 bg-black/30">Runner</th>
+            <tr className="border-b border-white/5 text-foreground/40 uppercase tracking-widest">
+              <th scope="col" className="text-left px-3 py-2 sticky left-0 bg-black/30">
+                Runner
+              </th>
               {splits.map((s) => (
-                <th key={s.label} className="text-center px-3 py-2">
+                <th scope="col" key={s.label} className="text-center px-3 py-2">
                   {s.label}
                 </th>
               ))}
@@ -65,7 +67,7 @@ export function SpeedBreakdownTable({ splits, runners, className }: SpeedBreakdo
                 <td
                   className={cn(
                     "px-3 py-2 text-left sticky left-0 bg-black/30",
-                    r.owned ? "font-bold text-success" : "text-cream/80",
+                    r.owned ? "font-bold text-success" : "text-foreground/80",
                   )}
                 >
                   <div className="flex items-center gap-2">
@@ -81,8 +83,8 @@ export function SpeedBreakdownTable({ splits, runners, className }: SpeedBreakdo
                     <td key={split.label} className="px-3 py-2 text-center align-top">
                       <div className="flex flex-col items-center gap-0.5">
                         {seekStr && <span className="text-blue-400 tabular-nums">{seekStr}</span>}
-                        {spurtStr && <span className="text-gold tabular-nums">{spurtStr}</span>}
-                        {!seekStr && !spurtStr && <span className="text-cream/20">—</span>}
+                        {spurtStr && <span className="text-primary tabular-nums">{spurtStr}</span>}
+                        {!seekStr && !spurtStr && <span className="text-foreground/20">—</span>}
                       </div>
                     </td>
                   );
@@ -92,13 +94,13 @@ export function SpeedBreakdownTable({ splits, runners, className }: SpeedBreakdo
           </tbody>
         </table>
       </div>
-      <div className="flex items-center gap-4 text-[10px] font-mono text-cream/40">
+      <div className="flex items-center gap-4 text-[10px] font-mono text-foreground/40">
         <span className="flex items-center gap-1">
           <span className="inline-block w-2 h-2 rounded-full bg-blue-400" />
           Seek (positioning)
         </span>
         <span className="flex items-center gap-1">
-          <span className="inline-block w-2 h-2 rounded-full bg-gold" />
+          <span className="inline-block w-2 h-2 rounded-full bg-primary" />
           Spurt (buildup)
         </span>
       </div>

@@ -32,7 +32,7 @@ export function gradeColorClass(grade: LetterGrade): string {
       return "text-fame font-black animate-pulse";
     case "A+":
     case "A":
-      return "text-gold font-bold";
+      return "text-primary font-bold";
     case "B+":
     case "B":
       return "text-success font-medium";
@@ -42,6 +42,6 @@ export function gradeColorClass(grade: LetterGrade): string {
     case "D":
       return "text-destructive/80";
     default:
-      return "text-cream/20 italic";
+      return "text-foreground/20 italic";
   }
 }

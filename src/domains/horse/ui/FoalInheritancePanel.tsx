@@ -24,20 +24,28 @@ export function FoalInheritancePanel({
   if (rows.length === 0) return null;
 
   return (
-    <Card className="bg-slate-900/40 border-white/5 rounded-none border-l-4 border-l-gold">
+    <Card className="bg-slate-900/40 border-white/5 rounded-none border-l-4 border-l-primary">
       <CardHeader className="pb-2 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
-          <Baby className="h-3.5 w-3.5 text-gold" />
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40 flex items-center gap-2">
+          <Baby className="h-3.5 w-3.5 text-primary" />
           What {foal.name} Inherited
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4">
         <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-x-4 gap-y-2 text-sm items-center">
-          <span className="text-[10px] uppercase tracking-wide text-cream/30">Stat</span>
-          <span className="text-[10px] uppercase tracking-wide text-cream/30 text-right">Sire</span>
-          <span className="text-[10px] uppercase tracking-wide text-cream/30 text-right">Foal</span>
-          <span className="text-[10px] uppercase tracking-wide text-cream/30 text-right">Dam</span>
-          <span className="text-[10px] uppercase tracking-wide text-cream/30 text-right">Lean</span>
+          <span className="text-[10px] uppercase tracking-wide text-foreground/30">Stat</span>
+          <span className="text-[10px] uppercase tracking-wide text-foreground/30 text-right">
+            Sire
+          </span>
+          <span className="text-[10px] uppercase tracking-wide text-foreground/30 text-right">
+            Foal
+          </span>
+          <span className="text-[10px] uppercase tracking-wide text-foreground/30 text-right">
+            Dam
+          </span>
+          <span className="text-[10px] uppercase tracking-wide text-foreground/30 text-right">
+            Lean
+          </span>
           {rows.map((r) => (
             <FoalRow {...r} key={r.key} />
           ))}
@@ -50,14 +58,14 @@ export function FoalInheritancePanel({
 function FoalRow(r: ReturnType<typeof deriveFoalInheritance>[number]) {
   return (
     <>
-      <span className="text-cream/70">{r.label}</span>
-      <span className="font-mono tabular-nums text-right text-cream/50">{r.sire}</span>
-      <span className="font-mono tabular-nums text-right text-cream font-bold">{r.foal}</span>
-      <span className="font-mono tabular-nums text-right text-cream/50">{r.dam}</span>
+      <span className="text-foreground/70">{r.label}</span>
+      <span className="font-mono tabular-nums text-right text-foreground/50">{r.sire}</span>
+      <span className="font-mono tabular-nums text-right text-foreground font-bold">{r.foal}</span>
+      <span className="font-mono tabular-nums text-right text-foreground/50">{r.dam}</span>
       <span
         className={cn(
           "text-[10px] uppercase tracking-wide text-right flex items-center justify-end gap-1",
-          r.leansToward === "transgressive" ? "text-gold" : "text-cream/40",
+          r.leansToward === "transgressive" ? "text-primary" : "text-foreground/40",
         )}
       >
         {r.leansToward === "transgressive" && <ArrowUp className="h-3 w-3" />}

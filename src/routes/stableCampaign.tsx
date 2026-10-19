@@ -83,12 +83,12 @@ function StableCampaignPage() {
   return (
     <div className="space-y-6 p-6">
       <div>
-        <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-cream">
+        <h1 className="text-3xl font-black font-[family-name:var(--font-display)] text-foreground">
           Stable Campaign
         </h1>
         <p className="text-sm text-muted-foreground">
           Set what your stable is chasing. The{" "}
-          <Link to="/race-advisor" className="text-gold hover:underline">
+          <Link to="/race-advisor" className="text-primary hover:underline">
             Race Advisor
           </Link>{" "}
           lists goal races first, and Auto-Register and Daily Auto-Entry favour them when choosing
@@ -423,17 +423,39 @@ function CampaignHistoryCard({
               <table className="w-full text-sm">
                 <thead className="text-left text-xs uppercase text-muted-foreground">
                   <tr>
-                    <th className="py-1 pr-3">Day</th>
-                    <th className="pr-3">Horse</th>
-                    <th className="pr-3">Race</th>
-                    <th className="pr-3">Class</th>
-                    <th className="pr-3">Finish</th>
-                    <th className="pr-3 text-right">Prize money</th>
-                    <th className="pr-3 text-right">Worth</th>
-                    <th className="pr-3 text-right">Net Δ</th>
-                    <th className="pr-3">Plan</th>
-                    <th className="pr-3 text-right">Prestige</th>
-                    <th className="pr-3">Class wins</th>
+                    <th scope="col" className="py-1 pr-3">
+                      Day
+                    </th>
+                    <th scope="col" className="pr-3">
+                      Horse
+                    </th>
+                    <th scope="col" className="pr-3">
+                      Race
+                    </th>
+                    <th scope="col" className="pr-3">
+                      Class
+                    </th>
+                    <th scope="col" className="pr-3">
+                      Finish
+                    </th>
+                    <th scope="col" className="pr-3 text-right">
+                      Prize money
+                    </th>
+                    <th scope="col" className="pr-3 text-right">
+                      Worth
+                    </th>
+                    <th scope="col" className="pr-3 text-right">
+                      Net Δ
+                    </th>
+                    <th scope="col" className="pr-3">
+                      Plan
+                    </th>
+                    <th scope="col" className="pr-3 text-right">
+                      Prestige
+                    </th>
+                    <th scope="col" className="pr-3">
+                      Class wins
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -444,7 +466,7 @@ function CampaignHistoryCard({
                         <Link
                           to="/stable/$horseId"
                           params={{ horseId: r.horseId }}
-                          className="hover:text-gold hover:underline"
+                          className="hover:text-primary hover:underline"
                         >
                           {r.horseName}
                         </Link>
@@ -503,7 +525,9 @@ function CampaignHistoryCard({
                       <td className="pr-3 text-xs max-w-[12rem]">
                         {r.plan ? (
                           <span title={r.plan.text}>
-                            <span className="block truncate text-cream-muted">{r.plan.text}</span>
+                            <span className="block truncate text-muted-foreground">
+                              {r.plan.text}
+                            </span>
                             {r.plan.outcome.status === "run" && (
                               <span
                                 className={
@@ -528,7 +552,7 @@ function CampaignHistoryCard({
                           <Link
                             to="/strategyJournal"
                             search={{ horse: r.horseId }}
-                            className="text-cream-muted/60 hover:text-gold hover:underline"
+                            className="text-muted-foreground/60 hover:text-primary hover:underline"
                           >
                             Log plan
                           </Link>
@@ -547,7 +571,7 @@ function CampaignHistoryCard({
                       </td>
                       <td className="pr-3 text-xs">
                         {r.goalClass && r.position === 1 ? (
-                          <span className={r.countedForGoal ? "text-gold" : ""}>
+                          <span className={r.countedForGoal ? "text-primary" : ""}>
                             {r.goalClass} win #{r.classWinsAfter}
                             {r.countedForGoal ? " ★ goal" : ""}
                           </span>

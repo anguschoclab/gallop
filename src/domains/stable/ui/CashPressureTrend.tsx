@@ -39,7 +39,7 @@ export function CashPressureTrend({ stableId, variant, className }: CashPressure
   if (history.length < 2) {
     if (variant === "card") return null;
     return (
-      <div className={cn("text-xs text-cream-muted", className)}>
+      <div className={cn("text-xs text-muted-foreground", className)}>
         Not enough history yet — check back after a few more days.
       </div>
     );
@@ -61,18 +61,18 @@ export function CashPressureTrend({ stableId, variant, className }: CashPressure
   return (
     <div className={cn("space-y-3", className)}>
       <div>
-        <div className="flex items-center justify-between text-xs text-cream-muted mb-1">
+        <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
           <span>Pressure</span>
-          <span className="tabular-nums text-cream">
+          <span className="tabular-nums text-foreground">
             {latest.meter}/100 ({latest.label})
           </span>
         </div>
         <Sparkline data={meterData} color={color} height={48} variant="area" />
       </div>
       <div>
-        <div className="flex items-center justify-between text-xs text-cream-muted mb-1">
+        <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
           <span>Runway</span>
-          <span className="tabular-nums text-cream">{Math.round(latest.runwayDays)} days</span>
+          <span className="tabular-nums text-foreground">{Math.round(latest.runwayDays)} days</span>
         </div>
         <Sparkline data={runwayData} color="var(--info)" height={48} variant="area" />
       </div>

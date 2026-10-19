@@ -14,12 +14,12 @@ export function HorseConditionSection({ horse }: HorseConditionSectionProps) {
     <section id="health" className="space-y-4 pt-4">
       <div className="flex items-center gap-2 mb-2">
         <Activity className="h-4 w-4 text-blue-400" />
-        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
           Condition Report
         </h2>
         <Link
           to="/vet"
-          className="ml-auto text-[10px] font-mono uppercase tracking-wide text-cream-muted hover:text-cream underline"
+          className="ml-auto text-[10px] font-mono uppercase tracking-wide text-muted-foreground hover:text-foreground underline"
         >
           View All in Vet Report
         </Link>
@@ -38,10 +38,10 @@ export function HorseConditionSection({ horse }: HorseConditionSectionProps) {
                   {formatRecoveryDays(horse.activeInjury.recoveryDays, horse.activeInjury.severity)}
                 </span>
               </div>
-              <div className="text-sm font-bold text-cream uppercase tracking-tight">
+              <div className="text-sm font-bold text-foreground uppercase tracking-tight">
                 {horse.activeInjury.type}
               </div>
-              <p className="text-[10px] text-cream/40 italic mt-1 uppercase">
+              <p className="text-[10px] text-foreground/40 italic mt-1 uppercase">
                 {horse.activeInjury.severity === "career-ending"
                   ? "Career-ending injury. Racing prohibited."
                   : "Immediate medical intervention required. Performance locked."}
@@ -55,10 +55,12 @@ export function HorseConditionSection({ horse }: HorseConditionSectionProps) {
                 Fitness (Chronic)
               </div>
               <div className="flex items-end gap-2">
-                <span className="text-xl font-bold font-mono text-cream tabular-nums leading-none">
+                <span className="text-xl font-bold font-mono text-foreground tabular-nums leading-none">
                   {Math.round(horse.fitness ?? 0)}
                 </span>
-                <span className="text-[9px] text-cream/20 font-mono uppercase pb-0.5">/100</span>
+                <span className="text-[9px] text-foreground/20 font-mono uppercase pb-0.5">
+                  /100
+                </span>
               </div>
             </div>
             <div className="bg-black/40 p-3 border border-white/5">
@@ -69,7 +71,9 @@ export function HorseConditionSection({ horse }: HorseConditionSectionProps) {
                 <span className="text-xl font-bold font-mono text-warning tabular-nums leading-none">
                   {Math.round(horse.fatigue ?? 0)}
                 </span>
-                <span className="text-[9px] text-cream/20 font-mono uppercase pb-0.5">/100</span>
+                <span className="text-[9px] text-foreground/20 font-mono uppercase pb-0.5">
+                  /100
+                </span>
               </div>
             </div>
           </div>
@@ -86,7 +90,7 @@ export function HorseConditionSection({ horse }: HorseConditionSectionProps) {
                     key={risk}
                     className="flex items-center justify-between text-[11px] font-mono p-2 bg-black/20 rounded"
                   >
-                    <span className="text-cream/60 uppercase tracking-tighter">
+                    <span className="text-foreground/60 uppercase tracking-tighter">
                       {risk.replace("Risk", "")}_SENSITIVITY
                     </span>
                     <span

@@ -37,33 +37,35 @@ export const JockeyStrategyBreakdown = memo(function JockeyStrategyBreakdown({
     <div
       className={cn(
         "bg-black/30 border border-white/5 p-3 space-y-2",
-        isPlayerOwned(runner) && "border-l-2 border-l-gold",
+        isPlayerOwned(runner) && "border-l-2 border-l-primary",
       )}
       data-testid="strategy-breakdown"
     >
       <div className="flex items-center justify-between">
-        <span className="text-xs font-bold text-cream">{runner.name}</span>
-        <span className="text-[9px] font-mono text-cream/30">{runner.jockeyName}</span>
+        <span className="text-xs font-bold text-foreground">{runner.name}</span>
+        <span className="text-[9px] font-mono text-foreground/30">{runner.jockeyName}</span>
       </div>
 
       <div className="grid grid-cols-2 gap-2">
         <div className="flex items-center justify-between">
-          <span className="text-[9px] font-black uppercase tracking-wide text-cream/30">
+          <span className="text-[9px] font-black uppercase tracking-wide text-foreground/30">
             Running Style
           </span>
           <Badge
             variant="outline"
-            className="text-[8px] font-mono uppercase border-white/10 text-cream/60 rounded-none"
+            className="text-[8px] font-mono uppercase border-white/10 text-foreground/60 rounded-none"
           >
             {runner.runningStyle ?? "—"}
           </Badge>
         </div>
         {instructions?.ridingStyle && (
           <div className="flex items-center justify-between">
-            <span className="text-[9px] font-black uppercase tracking-wide text-cream/30">
+            <span className="text-[9px] font-black uppercase tracking-wide text-foreground/30">
               Riding Style
             </span>
-            <span className="text-[9px] font-mono text-cream/60">{instructions.ridingStyle}</span>
+            <span className="text-[9px] font-mono text-foreground/60">
+              {instructions.ridingStyle}
+            </span>
           </div>
         )}
       </div>
@@ -72,10 +74,10 @@ export const JockeyStrategyBreakdown = memo(function JockeyStrategyBreakdown({
         <>
           <div className="space-y-1">
             <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wide text-cream/30">
+              <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wide text-foreground/30">
                 <Gauge className="h-3 w-3" /> Aggressiveness
               </span>
-              <span className="font-mono text-[9px] text-cream/60">
+              <span className="font-mono text-[9px] text-foreground/60">
                 {Math.round(aggressiveness * 100)}%
               </span>
             </div>
@@ -86,19 +88,19 @@ export const JockeyStrategyBreakdown = memo(function JockeyStrategyBreakdown({
                   aggressiveness > 0.7
                     ? "bg-red-400/60"
                     : aggressiveness > 0.4
-                      ? "bg-gold/60"
+                      ? "bg-primary/60"
                       : "bg-blue-400/60",
                 )}
                 style={{ width: `${aggressiveness * 100}%` }}
               />
             </div>
           </div>
-          <p className="text-[10px] text-cream/40 italic leading-relaxed">
+          <p className="text-[10px] text-foreground/40 italic leading-relaxed">
             {getStrategyExplanation(runner.runningStyle, instructions)}
           </p>
         </>
       ) : (
-        <p className="text-[10px] text-cream/20 italic">No tactical instructions available.</p>
+        <p className="text-[10px] text-foreground/20 italic">No tactical instructions available.</p>
       )}
     </div>
   );

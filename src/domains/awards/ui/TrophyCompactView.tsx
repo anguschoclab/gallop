@@ -83,7 +83,7 @@ export function TrophyCompactView({ awards, totalAwards, className }: TrophyComp
                       key={item.category}
                       to="/awards/$category"
                       params={{ category: item.sample.category }}
-                      className="flex-shrink-0 flex items-center gap-1 px-2 h-8 rounded-full border border-gold/30 bg-gold/5"
+                      className="flex-shrink-0 flex items-center gap-1 px-2 h-8 rounded-full border border-primary/30 bg-primary/5"
                       title={`${CATEGORY_DISPLAY_NAMES[item.sample.category]} · ${item.count} years · ${CATEGORY_DESCRIPTIONS[item.sample.category]}`}
                     >
                       <AwardIconWithYear

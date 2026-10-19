@@ -57,7 +57,7 @@ describe("SeasonStandingsWidget", () => {
     seedStore({ ...createDefaultGameState() });
     render(<SeasonStandingsWidget />);
     const btn30 = screen.getByText("30D");
-    expect(btn30.className).toContain("bg-gold");
+    expect(btn30.className).toContain("bg-primary");
   });
 
   it("clicking 7D changes the selected range", () => {
@@ -65,7 +65,7 @@ describe("SeasonStandingsWidget", () => {
     render(<SeasonStandingsWidget />);
     fireEvent.click(screen.getByText("7D"));
     const btn7 = screen.getByText("7D");
-    expect(btn7.className).toContain("bg-gold");
+    expect(btn7.className).toContain("bg-primary");
   });
 
   it("shows empty state when no prize money earned", () => {

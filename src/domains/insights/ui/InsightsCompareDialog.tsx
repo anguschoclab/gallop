@@ -72,7 +72,7 @@ export function InsightsCompareDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-6xl w-[95vw] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-[family-name:var(--font-display)] uppercase tracking-widest text-sm text-gold">
+          <DialogTitle className="font-[family-name:var(--font-display)] uppercase tracking-widest text-sm text-primary">
             Compare Horses · {rows.length}
           </DialogTitle>
         </DialogHeader>
@@ -84,7 +84,7 @@ export function InsightsCompareDialog({
         ) : (
           <div className="space-y-4">
             <div className="flex items-center justify-between gap-3 flex-wrap">
-              <p className="text-[11px] font-mono uppercase tracking-wide text-cream/40">
+              <p className="text-[11px] font-mono uppercase tracking-wide text-foreground/40">
                 Leader in each metric is highlighted · group average in the last column
               </p>
               <Button
@@ -100,14 +100,16 @@ export function InsightsCompareDialog({
             <div className="overflow-x-auto border border-white/5">
               <table className="w-full text-xs">
                 <thead className="bg-slate-950/60 sticky top-0 z-10">
-                  <tr className="text-left font-mono text-[9px] uppercase tracking-wide text-cream/40">
-                    <th className="p-2 min-w-28">Metric</th>
+                  <tr className="text-left font-mono text-[9px] uppercase tracking-wide text-foreground/40">
+                    <th scope="col" className="p-2 min-w-28">
+                      Metric
+                    </th>
                     {rows.map((r) => (
-                      <th key={r.id} className="p-2 min-w-32">
+                      <th scope="col" key={r.id} className="p-2 min-w-32">
                         <div className="space-y-1">
                           <button
                             type="button"
-                            className="text-cream text-[11px] font-bold normal-case tracking-normal hover:text-gold text-left"
+                            className="text-foreground text-[11px] font-bold normal-case tracking-normal hover:text-primary text-left"
                             onClick={() =>
                               navigate({ to: "/stable/$horseId", params: { horseId: r.id } })
                             }
@@ -119,7 +121,7 @@ export function InsightsCompareDialog({
                               {r.gender}
                             </Badge>
                             {!r.scouted && (
-                              <Badge variant="outline" className="text-[9px] text-cream/40">
+                              <Badge variant="outline" className="text-[9px] text-foreground/40">
                                 Unscouted
                               </Badge>
                             )}
@@ -127,24 +129,28 @@ export function InsightsCompareDialog({
                               <button
                                 type="button"
                                 aria-label={`Remove ${r.name} from comparison`}
-                                className="text-cream/30 hover:text-destructive text-[10px]"
+                                className="text-foreground/30 hover:text-destructive text-[10px]"
                                 onClick={() => onRemove(r.id)}
                               >
                                 ✕
                               </button>
                             )}
                           </div>
-                          <div className="text-[9px] text-cream/40 normal-case">{r.ownerLabel}</div>
+                          <div className="text-[9px] text-foreground/40 normal-case">
+                            {r.ownerLabel}
+                          </div>
                         </div>
                       </th>
                     ))}
-                    <th className="p-2 text-right min-w-24">Avg</th>
+                    <th scope="col" className="p-2 text-right min-w-24">
+                      Avg
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {visibleMetricRows.map(({ metric, values, avg, leader }) => (
                     <tr key={metric.key} className="border-t border-white/5 hover:bg-white/[0.03]">
-                      <td className="p-2 font-mono text-[10px] uppercase tracking-wide text-cream/50">
+                      <td className="p-2 font-mono text-[10px] uppercase tracking-wide text-foreground/50">
                         {metric.label}
                       </td>
                       {values.map((v, i) => (
@@ -152,13 +158,15 @@ export function InsightsCompareDialog({
                           key={rows[i]?.id ?? i}
                           className={cn(
                             "p-2 font-mono tabular-nums",
-                            leader === i ? "bg-gold/10 text-gold font-bold" : "text-cream/80",
+                            leader === i
+                              ? "bg-primary/10 text-primary font-bold"
+                              : "text-foreground/80",
                           )}
                         >
                           {metric.format(v)}
                         </td>
                       ))}
-                      <td className="p-2 text-right font-mono tabular-nums text-cream/40">
+                      <td className="p-2 text-right font-mono tabular-nums text-foreground/40">
                         {metric.format(avg)}
                       </td>
                     </tr>

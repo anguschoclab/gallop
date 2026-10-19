@@ -54,14 +54,14 @@ function CeremonyPage() {
   if (!invitation) {
     return (
       <div className="container mx-auto p-6 max-w-3xl space-y-4">
-        <h1 className="text-2xl font-bold text-cream font-[family-name:var(--font-display)]">
+        <h1 className="text-2xl font-bold text-foreground font-[family-name:var(--font-display)]">
           Ceremony not found
         </h1>
-        <p className="text-cream-muted">This invitation is no longer available.</p>
+        <p className="text-muted-foreground">This invitation is no longer available.</p>
         <Link
           to="/honors"
           search={{ tab: "awards" as const }}
-          className="text-sm text-gold hover:underline"
+          className="text-sm text-primary hover:underline"
         >
           Back to Honors
         </Link>
@@ -79,38 +79,38 @@ function CeremonyPage() {
         to="/honors"
         label="Back to Awards"
         search={{ tab: "awards" }}
-        className="text-sm text-cream-muted hover:text-gold gap-2"
+        className="text-sm text-muted-foreground hover:text-primary gap-2"
       />
 
       <div className="space-y-2">
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+        <h1 className="text-3xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)]">
           {invitation.ceremonyName}
         </h1>
-        <div className="flex flex-wrap items-center gap-2 text-sm text-cream-muted">
+        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
           <span className="flex items-center gap-1">
-            <MapPin className="h-4 w-4 text-gold" />
+            <MapPin className="h-4 w-4 text-primary" />
             {REGION_AWARD_NAMES[invitation.region]}
           </span>
           <span className="flex items-center gap-1">
-            <CalendarClock className="h-4 w-4 text-gold" />
+            <CalendarClock className="h-4 w-4 text-primary" />
             {formatDate(dayOfYear(invitation.ceremonyDay))} · Year {invitation.year} (Day{" "}
             {invitation.ceremonyDay})
           </span>
-          <Badge variant="outline" className="border-gold-muted text-cream">
+          <Badge variant="outline" className="border-border text-foreground">
             {held ? "Held" : daysAway === 0 ? "Today" : `In ${daysAway} days`}
           </Badge>
         </div>
       </div>
 
-      <Card className="border-gold-muted">
+      <Card className="border-border">
         <CardHeader>
-          <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">
+          <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)]">
             Your Attendance
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           <CeremonyRsvpControls invitation={invitation} day={day} />
-          <p className="text-xs text-cream-muted">
+          <p className="text-xs text-muted-foreground">
             {held
               ? "The ceremony has concluded."
               : "Confirm attendance to represent your stable on the night. Your status also appears in the inbox."}
@@ -120,9 +120,9 @@ function CeremonyPage() {
 
       <InvitationAuditLog invitation={invitation} />
 
-      <Card className="border-gold-muted">
+      <Card className="border-border">
         <CardHeader>
-          <CardTitle className="text-base text-cream font-[family-name:var(--font-display)]">
+          <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)]">
             Invited Horses
           </CardTitle>
         </CardHeader>
@@ -130,16 +130,16 @@ function CeremonyPage() {
           {invitation.qualifiers.map((q) => (
             <div
               key={`${q.horseId}-${q.raceId}`}
-              className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-gold-muted/50 p-3"
+              className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/50 p-3"
             >
               <Link
                 to="/stable/$horseId"
                 params={{ horseId: q.horseId }}
-                className="font-semibold text-cream hover:text-gold"
+                className="font-semibold text-foreground hover:text-primary"
               >
                 {q.horseName}
               </Link>
-              <div className="text-sm text-cream-muted">
+              <div className="text-sm text-muted-foreground">
                 {ORDINAL[q.position] ?? `${q.position}th`} in the G1 {q.raceName} · Day {q.day}
               </div>
             </div>
@@ -147,45 +147,45 @@ function CeremonyPage() {
         </CardContent>
       </Card>
 
-      <Card className="border-gold-muted">
+      <Card className="border-border">
         <CardHeader>
-          <CardTitle className="text-base text-cream font-[family-name:var(--font-display)] flex items-center gap-2">
-            <Award className="h-4 w-4 text-gold" />
+          <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)] flex items-center gap-2">
+            <Award className="h-4 w-4 text-primary" />
             Ceremony Results
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-2">
           {!held ? (
-            <p className="text-sm text-cream-muted">
+            <p className="text-sm text-muted-foreground">
               Results will be published after the ceremony takes place.
             </p>
           ) : won.length === 0 ? (
-            <p className="text-sm text-cream-muted">
+            <p className="text-sm text-muted-foreground">
               Your stable did not take home an award at this ceremony.
             </p>
           ) : (
             won.map((a) => (
               <div
                 key={a.id}
-                className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-gold/50 p-3"
+                className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-primary/50 p-3"
               >
                 <Link
                   to="/awards/$category"
                   params={{ category: a.category }}
-                  className="flex items-center gap-2 font-semibold text-cream hover:text-gold transition-colors"
+                  className="flex items-center gap-2 font-semibold text-foreground hover:text-primary transition-colors"
                   title={CATEGORY_DESCRIPTIONS[a.category]}
                 >
-                  <Trophy className="h-4 w-4 text-gold" />
+                  <Trophy className="h-4 w-4 text-primary" />
                   {CATEGORY_DISPLAY_NAMES[a.category]}
                 </Link>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-cream-muted max-w-xs line-clamp-1">
+                  <span className="text-xs text-muted-foreground max-w-xs line-clamp-1">
                     {CATEGORY_DESCRIPTIONS[a.category]}
                   </span>
                   <Link
                     to="/stable/$horseId"
                     params={{ horseId: a.horseId }}
-                    className="text-sm text-gold hover:underline"
+                    className="text-sm text-primary hover:underline"
                   >
                     {a.horseName}
                   </Link>

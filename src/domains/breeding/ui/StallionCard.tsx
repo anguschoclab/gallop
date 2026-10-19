@@ -28,52 +28,52 @@ export function StallionCard({ stallion, stableName, day, mare, cash, onBook }: 
 
   return (
     <Card
-      className="border-gold-muted cursor-pointer hover:border-gold transition-colors"
+      className="border-border cursor-pointer hover:border-primary transition-colors"
       onClick={() => navigate({ to: "/stable/$horseId", params: { horseId: stallion.id } })}
     >
       <CardHeader>
         <div className="flex items-start justify-between">
-          <CardTitle className="text-lg text-cream font-[family-name:var(--font-display)]">
+          <CardTitle className="text-lg text-foreground font-[family-name:var(--font-display)]">
             {stallion.name}
           </CardTitle>
-          <Badge className="bg-t700 text-cream">{stallion.hemisphere}</Badge>
+          <Badge className="bg-muted text-foreground">{stallion.hemisphere}</Badge>
         </div>
-        <p className="text-xs text-cream-muted">{stableName}</p>
+        <p className="text-xs text-muted-foreground">{stableName}</p>
       </CardHeader>
       <CardContent className="space-y-2 text-sm">
         <div className="flex justify-between">
-          <span className="text-cream-muted">Standing fee</span>
-          <span className="font-mono font-semibold tabular-nums text-cream">
+          <span className="text-muted-foreground">Standing fee</span>
+          <span className="font-mono font-semibold tabular-nums text-foreground">
             ${stud.standingFee.toLocaleString()}
           </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-cream-muted">Book</span>
-          <span className="text-cream">
+          <span className="text-muted-foreground">Book</span>
+          <span className="text-foreground">
             {stud.seasonBookings} / {stud.bookSize}
           </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-cream-muted">Stakes foals</span>
-          <span className="text-cream">{stud.lifetimeStakesFoals}</span>
+          <span className="text-muted-foreground">Stakes foals</span>
+          <span className="text-foreground">{stud.lifetimeStakesFoals}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-cream-muted">G1 foals</span>
-          <span className="text-cream">{stud.lifetimeG1Foals}</span>
+          <span className="text-muted-foreground">G1 foals</span>
+          <span className="text-foreground">{stud.lifetimeG1Foals}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-cream-muted">Age · Fame</span>
-          <span className="text-cream">
+          <span className="text-muted-foreground">Age · Fame</span>
+          <span className="text-foreground">
             {stallion.age} · {Math.round(stallion.fame)}
           </span>
         </div>
         <div className="flex justify-between">
-          <span className="text-cream-muted">Pref. Distance</span>
-          <span className="text-cream">{Math.round(stallion.distanceAptitude)}m</span>
+          <span className="text-muted-foreground">Pref. Distance</span>
+          <span className="text-foreground">{Math.round(stallion.distanceAptitude)}m</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-cream-muted">Best Surface</span>
-          <span className="text-cream">
+          <span className="text-muted-foreground">Best Surface</span>
+          <span className="text-foreground">
             {(() => {
               const best = Object.entries(stallion.surfaceAptitude || {}).sort(
                 (a, b) => b[1] - a[1],

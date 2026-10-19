@@ -48,7 +48,7 @@ export function BreedingShedTab({ pageData }: BreedingShedTabProps) {
   };
 
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardHeader>
         <CardTitle className="font-[family-name:var(--font-display)]">New Mating</CardTitle>
       </CardHeader>
@@ -83,7 +83,7 @@ export function BreedingShedTab({ pageData }: BreedingShedTabProps) {
             Live Foal Guarantee (<span className="tabular-nums">+$1,000</span>)
           </label>
         </div>
-        <p className="text-xs text-cream-muted mt-1">
+        <p className="text-xs text-muted-foreground mt-1">
           If foal is stillborn or unable to stand/nurse, you get a free re-breeding (up to 3
           attempts).
         </p>

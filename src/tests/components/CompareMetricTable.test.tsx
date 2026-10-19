@@ -76,7 +76,7 @@ describe("CompareMetricTable", () => {
     const h1 = mkHorse({ id: "h1", name: "Strong" });
     const h2 = mkHorse({ id: "h2", name: "Weak" });
     render(<CompareMetricTable horses={[h1, h2]} rows={sampleRows} />);
-    const goldCells = document.body.querySelectorAll("td[class*='bg-gold']");
+    const goldCells = document.body.querySelectorAll("td[class*='bg-primary']");
     expect(goldCells.length).toBeGreaterThan(0);
   });
 
@@ -93,7 +93,7 @@ describe("CompareMetricTable", () => {
       },
     ];
     render(<CompareMetricTable horses={[h1, h2]} rows={tiedRows} />);
-    const goldCells = document.body.querySelectorAll("td[class*='bg-gold']");
+    const goldCells = document.body.querySelectorAll("td[class*='bg-primary']");
     expect(goldCells.length).toBe(0);
   });
 

@@ -131,16 +131,16 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
         </Button>
       </div>
 
-      <Card className="bg-slate-900/40 border-white/5 rounded-none border-l-4 border-l-gold">
+      <Card className="bg-slate-900/40 border-white/5 rounded-none border-l-4 border-l-primary">
         <CardHeader className="pb-2">
-          <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.15em] text-cream">
-            <History className="h-4 w-4 text-gold" />
+          <CardTitle className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.15em] text-foreground">
+            <History className="h-4 w-4 text-primary" />
             Race History
           </CardTitle>
         </CardHeader>
         <CardContent className="p-0">
           {filteredRows.length === 0 ? (
-            <div className="p-12 text-center text-[10px] font-mono text-cream/30 uppercase tracking-wide">
+            <div className="p-12 text-center text-[10px] font-mono text-foreground/30 uppercase tracking-wide">
               No race records on file.
             </div>
           ) : (
@@ -155,18 +155,18 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
                     className={cn(
                       "font-black font-mono w-6 text-center",
                       entry.position === 1
-                        ? "text-gold"
+                        ? "text-primary"
                         : entry.position <= 3
-                          ? "text-cream/70"
-                          : "text-cream/30",
+                          ? "text-foreground/70"
+                          : "text-foreground/30",
                     )}
                   >
                     {entry.position}
                     <span className="text-[9px]">{getOrdinalSuffix(entry.position)}</span>
                   </span>
                   <div className="min-w-0">
-                    <div className="font-bold text-cream truncate">{entry.raceName}</div>
-                    <div className="text-[10px] font-mono text-cream/40 flex gap-2">
+                    <div className="font-bold text-foreground truncate">{entry.raceName}</div>
+                    <div className="text-[10px] font-mono text-foreground/40 flex gap-2">
                       <span>Day {entry.day}</span>
                       {entry.distance && <span>· {entry.distance}m</span>}
                       {entry.surface && <span>· {entry.surface}</span>}
@@ -176,7 +176,7 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
                   <Link
                     to="/stable/$horseId"
                     params={{ horseId: horse.id }}
-                    className="text-[11px] text-gold hover:underline truncate max-w-[140px]"
+                    className="text-[11px] text-primary hover:underline truncate max-w-[140px]"
                   >
                     {horse.name}
                   </Link>
@@ -194,7 +194,7 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
                     <span />
                   )}
                   {typeof entry.beyer === "number" ? (
-                    <span className="font-mono text-[10px] text-gold-bright">{entry.beyer}</span>
+                    <span className="font-mono text-[10px] text-accent-bright">{entry.beyer}</span>
                   ) : (
                     <span />
                   )}
@@ -211,8 +211,8 @@ export function PersonRaceHistoryTab({ personId, roles }: PersonRaceHistoryTabPr
 function StatBox({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="border border-white/5 bg-slate-900/40 p-3 text-center">
-      <div className="text-[9px] font-mono uppercase tracking-wide text-cream/40">{label}</div>
-      <div className="text-lg font-black text-cream mt-1">{value}</div>
+      <div className="text-[9px] font-mono uppercase tracking-wide text-foreground/40">{label}</div>
+      <div className="text-lg font-black text-foreground mt-1">{value}</div>
     </div>
   );
 }

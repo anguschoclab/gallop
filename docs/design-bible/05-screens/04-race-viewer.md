@@ -241,9 +241,9 @@ Throttle to one announcement per 3 seconds to avoid flooding.
 
 - `useGame((s) => s.races.find(r => r.id === raceId))`.
 - `useGame((s) => s.horses)`.
-- `buildRaceField`, `rngForRace` from [src/services/raceSimulationService.ts](../../../src/services/raceSimulationService.ts).
-- `stepRunner`, `computePaceContext` from [src/game/raceSim.ts](../../../src/game/raceSim.ts).
-- Beyer projection: `beyerFigure` from [src/game/beyer.ts](../../../src/game/beyer.ts).
+- `buildRaceField`, `rngForRace` from [src/domains/race/simulation/raceSimulationService.ts](../../../src/domains/race/simulation/raceSimulationService.ts).
+- `stepRunner`, `computePaceContext` from [src/domains/race/simulation/raceSimulationService.ts](../../../src/domains/race/simulation/raceSimulationService.ts).
+- Beyer projection: `beyerFigure` from [src/domains/race/simulation/beyer.ts](../../../src/domains/race/simulation/beyer.ts).
 
 ---
 

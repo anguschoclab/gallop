@@ -10,8 +10,8 @@ import type { ReactNode } from "react";
 function Row({ label, value }: { label: string; value: ReactNode }) {
   return (
     <div className="flex justify-between gap-2">
-      <span className="text-cream/40">{label}</span>
-      <span className="text-cream tabular-nums text-right">{value}</span>
+      <span className="text-foreground/40">{label}</span>
+      <span className="text-foreground tabular-nums text-right">{value}</span>
     </div>
   );
 }
@@ -42,7 +42,7 @@ export function ParentStatsPanel({ sire, dam }: ParentStatsPanelProps) {
         )[0];
         return (
           <div key={role} className="bg-black/20 border border-white/5 p-3 space-y-1">
-            <div className="text-[9px] font-black uppercase tracking-wide text-cream/30 mb-2">
+            <div className="text-[9px] font-black uppercase tracking-wide text-foreground/30 mb-2">
               {h.name} · {role}
             </div>
             <div className="text-[10px] font-mono space-y-0.5">

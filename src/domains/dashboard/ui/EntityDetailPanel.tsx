@@ -70,7 +70,7 @@ export function EntityDetailPanel({
 
   if (entityRunsA.length === 0 && entityRunsB.length === 0) {
     return (
-      <p className="py-3 text-center text-[11px] font-mono uppercase tracking-wider text-cream/40">
+      <p className="py-3 text-center text-[11px] font-mono uppercase tracking-wider text-foreground/40">
         No runs for this entity in the selected window.
       </p>
     );
@@ -78,7 +78,7 @@ export function EntityDetailPanel({
 
   return (
     <div className="mt-1 space-y-2 border-t border-white/5 pt-2">
-      <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-cream/60">
+      <div className="flex flex-wrap items-center gap-3 text-[11px] font-mono text-foreground/60">
         <span>
           {summary.starts} starts · {summary.wins} wins · {summary.top3} top-3 ·{" "}
           {formatCurrencyCompact(summary.earnings)}
@@ -97,11 +97,11 @@ export function EntityDetailPanel({
             key={`a-${r.entry.raceId}-${r.horseId}-${i}`}
             className="flex items-center justify-between gap-2 rounded bg-white/[0.02] px-1.5 py-1 text-[10px]"
           >
-            <span className="truncate text-cream/70">
+            <span className="truncate text-foreground/70">
               {r.entry.raceName}
-              <span className="ml-1.5 font-mono text-cream/35">D{r.entry.day}</span>
+              <span className="ml-1.5 font-mono text-foreground/35">D{r.entry.day}</span>
             </span>
-            <span className="shrink-0 font-mono tabular-nums text-cream/50">
+            <span className="shrink-0 font-mono tabular-nums text-foreground/50">
               {r.horseName} · {r.entry.position}
               {typeof r.entry.gate === "number" ? ` · G${r.entry.gate}` : ""}
               {r.isG1 ? " · G1" : ""}
@@ -113,14 +113,14 @@ export function EntityDetailPanel({
             key={`b-${r.entry.raceId}-${r.horseId}-${i}`}
             className="flex items-center justify-between gap-2 rounded bg-white/[0.02] px-1.5 py-1 text-[10px]"
           >
-            <span className="truncate text-cream/70">
+            <span className="truncate text-foreground/70">
               <span className="mr-1 rounded bg-[var(--chart-2)]/20 px-1 text-[var(--chart-2)]">
                 B
               </span>
               {r.entry.raceName}
-              <span className="ml-1.5 font-mono text-cream/35">D{r.entry.day}</span>
+              <span className="ml-1.5 font-mono text-foreground/35">D{r.entry.day}</span>
             </span>
-            <span className="shrink-0 font-mono tabular-nums text-cream/50">
+            <span className="shrink-0 font-mono tabular-nums text-foreground/50">
               {r.horseName} · {r.entry.position}
               {typeof r.entry.gate === "number" ? ` · G${r.entry.gate}` : ""}
               {r.isG1 ? " · G1" : ""}

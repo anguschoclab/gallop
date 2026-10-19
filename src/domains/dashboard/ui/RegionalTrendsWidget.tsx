@@ -97,14 +97,16 @@ export function RegionalTrendsWidget({ routeMode = false }: WidgetProps) {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Globe2 className="h-4 w-4 text-fame" />
-          <h2 className="text-sm font-black uppercase tracking-wide text-cream">Regional Trends</h2>
+          <h2 className="text-sm font-black uppercase tracking-wide text-foreground">
+            Regional Trends
+          </h2>
         </div>
         <div className="flex items-center gap-2">
           <TimeWindowSelect />
           {!routeMode && (
             <Link
               to="/regional-comparison"
-              className="rounded-md border border-white/10 px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-cream/60 transition-colors hover:text-cream"
+              className="rounded-md border border-white/10 px-2 py-1 text-[10px] font-mono uppercase tracking-wider text-foreground/60 transition-colors hover:text-foreground"
             >
               Full comparison
             </Link>
@@ -113,7 +115,7 @@ export function RegionalTrendsWidget({ routeMode = false }: WidgetProps) {
       </div>
 
       {totals.starts === 0 ? (
-        <div className="rounded-xl border border-white/5 bg-card/40 p-6 text-center text-[11px] font-mono uppercase tracking-wider text-cream/40">
+        <div className="rounded-xl border border-white/5 bg-card/40 p-6 text-center text-[11px] font-mono uppercase tracking-wider text-foreground/40">
           No starts in the last {timeWindowLabel(weeks)} — regional trends appear after you race.
         </div>
       ) : (

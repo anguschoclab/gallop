@@ -5,6 +5,7 @@ import { useMemo, useState, type KeyboardEvent } from "react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { cn } from "@/shared/lib/cn";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 import {
   useBookmarks,
   type Bookmark,
@@ -122,12 +123,12 @@ function BookmarksPage() {
     <div className="max-w-6xl mx-auto p-6 space-y-6 animate-fade-in">
       <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
         <div>
-          <p className="text-[10px] uppercase font-black tracking-wide text-cream/30">Saved</p>
-          <h1 className="text-4xl font-black font-[family-name=var(--font-display)] text-cream uppercase tracking-tight flex items-center gap-3">
-            <BookmarkIcon className="h-7 w-7 text-gold" />
+          <p className="text-[10px] uppercase font-black tracking-wide text-foreground/30">Saved</p>
+          <h1 className="text-4xl font-black font-[family-name=var(--font-display)] text-foreground uppercase tracking-tight flex items-center gap-3">
+            <BookmarkIcon className="h-7 w-7 text-primary" />
             Bookmarks
           </h1>
-          <p className="text-xs text-cream-muted mt-1 font-mono">{resultsLabel} shown</p>
+          <p className="text-xs text-muted-foreground mt-1 font-mono">{resultsLabel} shown</p>
         </div>
         {bookmarks.length > 0 && (
           <Button
@@ -142,20 +143,17 @@ function BookmarksPage() {
       </header>
 
       {bookmarks.length === 0 ? (
-        <div className="border border-dashed border-white/10 p-16 text-center">
-          <BookmarkIcon className="h-10 w-10 mx-auto text-cream/20 mb-4" />
-          <h2 className="text-lg font-bold text-cream">No bookmarks yet</h2>
-          <p className="text-sm text-cream-muted mt-2 max-w-md mx-auto">
-            Save horses, jockeys, stables, sires, and races to quickly come back to them. Look for
-            the bookmark icon on profile pages and roster lists.
-          </p>
-        </div>
+        <EmptyState
+          icon={BookmarkIcon}
+          title="No bookmarks yet"
+          description="Save horses, jockeys, stables, sires, and races to quickly come back to them. Look for the bookmark icon on profile pages and roster lists."
+        />
       ) : (
         <>
           {/* Controls */}
           <div className="grid gap-3 md:grid-cols-[1fr_auto_auto]">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-cream/30" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground/30" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -166,7 +164,7 @@ function BookmarksPage() {
             <select
               value={typeFilter}
               onChange={(e) => setTypeFilter(e.target.value as BookmarkEntityType | "all")}
-              className="h-9 bg-slate-950/40 border border-white/10 text-cream text-xs font-mono uppercase tracking-wide px-3"
+              className="h-9 bg-slate-950/40 border border-white/10 text-foreground text-xs font-mono uppercase tracking-wide px-3"
               aria-label="Filter by type"
             >
               {TYPE_FILTERS.map((t) => (
@@ -178,7 +176,7 @@ function BookmarksPage() {
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value as SortKey)}
-              className="h-9 bg-slate-950/40 border border-white/10 text-cream text-xs font-mono uppercase tracking-wide px-3"
+              className="h-9 bg-slate-950/40 border border-white/10 text-foreground text-xs font-mono uppercase tracking-wide px-3"
               aria-label="Sort by"
             >
               {SORTS.map((s) => (
@@ -192,7 +190,7 @@ function BookmarksPage() {
           {/* Tag filter row */}
           {allTags.length > 0 && (
             <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] uppercase font-black tracking-wide text-cream/30 flex items-center gap-1">
+              <span className="text-[10px] uppercase font-black tracking-wide text-foreground/30 flex items-center gap-1">
                 <TagIcon className="h-3 w-3" /> Tags
               </span>
               {allTags.map((tag) => {
@@ -205,8 +203,8 @@ function BookmarksPage() {
                     className={cn(
                       "h-6 px-2 text-[10px] font-mono uppercase tracking-wide border transition-colors",
                       active
-                        ? "border-gold/60 bg-gold/10 text-gold"
-                        : "border-white/10 text-cream/50 hover:border-gold/30 hover:text-cream",
+                        ? "border-primary/60 bg-primary/10 text-primary"
+                        : "border-white/10 text-foreground/50 hover:border-primary/30 hover:text-foreground",
                     )}
                   >
                     {tag}
@@ -217,7 +215,7 @@ function BookmarksPage() {
                 <button
                   type="button"
                   onClick={() => setActiveTags([])}
-                  className="text-[10px] uppercase font-black tracking-wide text-cream/40 hover:text-destructive flex items-center gap-1"
+                  className="text-[10px] uppercase font-black tracking-wide text-foreground/40 hover:text-destructive flex items-center gap-1"
                 >
                   <X className="h-3 w-3" /> Clear
                 </button>
@@ -227,9 +225,11 @@ function BookmarksPage() {
 
           {/* List */}
           {filtered.length === 0 ? (
-            <div className="border border-dashed border-white/10 p-12 text-center text-sm text-cream-muted">
-              No bookmarks match your filters.
-            </div>
+            <EmptyState
+              icon={Search}
+              title="No matches"
+              description="No bookmarks match your filters."
+            />
           ) : (
             <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {filtered.map((b) => (
@@ -292,7 +292,7 @@ function BookmarkCard({
   const availableSuggestions = suggestions.filter((s) => !bookmarkTagsLower.has(s.toLowerCase()));
 
   return (
-    <li className="group relative border border-white/10 bg-slate-950/40 hover:border-gold/40 transition-colors p-3 space-y-3">
+    <li className="group relative border border-white/10 bg-slate-950/40 hover:border-primary/40 transition-colors p-3 space-y-3">
       <div className="flex items-start gap-2">
         <Link
           to={href.to as FileRouteTypes["to"]}
@@ -300,16 +300,16 @@ function BookmarkCard({
           search={href.search as Record<string, unknown>}
           className="block flex-1 min-w-0"
         >
-          <div className="text-[9px] uppercase font-black tracking-wide text-gold/70">
+          <div className="text-[9px] uppercase font-black tracking-wide text-primary/70">
             {TYPE_LABELS[bookmark.type]}
           </div>
-          <div className="text-sm font-bold text-cream truncate">{bookmark.label}</div>
+          <div className="text-sm font-bold text-foreground truncate">{bookmark.label}</div>
           {bookmark.subtitle && (
-            <div className="text-[11px] text-cream-muted font-mono truncate">
+            <div className="text-[11px] text-muted-foreground font-mono truncate">
               {bookmark.subtitle}
             </div>
           )}
-          <div className="text-[9px] text-cream/20 font-mono mt-1">
+          <div className="text-[9px] text-foreground/20 font-mono mt-1">
             ID {bookmark.id.substring(0, 8).toUpperCase()}
           </div>
         </Link>
@@ -317,7 +317,7 @@ function BookmarkCard({
           type="button"
           onClick={onRemove}
           aria-label="Remove bookmark"
-          className="h-6 w-6 inline-flex items-center justify-center text-cream/30 hover:text-destructive shrink-0"
+          className="h-6 w-6 inline-flex items-center justify-center text-foreground/30 hover:text-destructive shrink-0"
         >
           <X className="h-3.5 w-3.5" />
         </button>
@@ -328,7 +328,7 @@ function BookmarkCard({
           {(bookmark.tags ?? []).map((tag) => (
             <span
               key={tag}
-              className="inline-flex items-center gap-1 h-5 px-1.5 text-[10px] font-mono uppercase tracking-wide border border-gold/40 text-gold bg-gold/5"
+              className="inline-flex items-center gap-1 h-5 px-1.5 text-[10px] font-mono uppercase tracking-wide border border-primary/40 text-primary bg-primary/5"
             >
               {tag}
               <button
@@ -342,7 +342,7 @@ function BookmarkCard({
             </span>
           ))}
           {(bookmark.tags ?? []).length === 0 && (
-            <span className="text-[10px] uppercase font-mono tracking-wide text-cream/20">
+            <span className="text-[10px] uppercase font-mono tracking-wide text-foreground/20">
               No tags
             </span>
           )}
@@ -366,7 +366,7 @@ function BookmarkCard({
             type="button"
             onClick={submitTag}
             aria-label="Add tag"
-            className="h-7 w-7 inline-flex items-center justify-center border border-white/10 text-cream/60 hover:text-gold hover:border-gold/40"
+            className="h-7 w-7 inline-flex items-center justify-center border border-white/10 text-foreground/60 hover:text-primary hover:border-primary/40"
           >
             <Plus className="h-3.5 w-3.5" />
           </button>

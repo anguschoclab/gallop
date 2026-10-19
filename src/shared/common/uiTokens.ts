@@ -37,14 +37,14 @@ export function gradeColor(grade: string): string {
 export function statGradeColor(grade: LetterGrade): string {
   const gradeMap: Record<LetterGrade, string> = {
     S: "text-fame font-black animate-pulse",
-    "A+": "text-gold font-bold",
-    A: "text-gold font-bold",
+    "A+": "text-primary font-bold",
+    A: "text-primary font-bold",
     "B+": "text-success font-medium",
     B: "text-success font-medium",
     "C+": "text-warning",
     C: "text-warning",
     D: "text-destructive/80",
-    F: "text-cream/20 italic",
+    F: "text-foreground/20 italic",
   };
   return gradeMap[grade] || "text-gray-400";
 }

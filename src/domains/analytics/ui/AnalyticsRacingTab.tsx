@@ -34,27 +34,29 @@ export function AnalyticsRacingTab() {
   return (
     <div className="space-y-6">
       <header>
-        <h2 className="font-display text-2xl text-cream">Racing analytics</h2>
-        <p className="text-cream-muted mt-1 text-sm">
+        <h2 className="font-display text-2xl text-foreground">Racing analytics</h2>
+        <p className="text-muted-foreground mt-1 text-sm">
           Beyer distribution, surface splits, and overall finishing pattern.
         </p>
       </header>
 
       {d.stableTrends && (d.stableTrends.bestSurface || d.stableTrends.bestDistance) && (
-        <div className="mb-6 bg-gold/10 border border-gold/20 p-4 flex gap-4 items-start rounded-sm">
-          <Lightbulb className="h-5 w-5 text-gold mt-0.5 shrink-0" />
+        <div className="mb-6 bg-primary/10 border border-primary/20 p-4 flex gap-4 items-start rounded-sm">
+          <Lightbulb className="h-5 w-5 text-primary mt-0.5 shrink-0" />
           <div className="space-y-3">
             <div>
-              <div className="text-[10px] font-black uppercase tracking-wide text-gold/80 mb-0.5">
+              <div className="text-[10px] font-black uppercase tracking-wide text-primary/80 mb-0.5">
                 Tipster Insight: Stable Performance
               </div>
-              <div className="text-sm text-cream-muted leading-relaxed">
+              <div className="text-sm text-muted-foreground leading-relaxed">
                 {d.stableTrends.bestSurface && (
                   <p>
                     Your stable excels on{" "}
-                    <strong className="text-cream">{d.stableTrends.bestSurface.surface}</strong>,
-                    boasting a{" "}
-                    <strong className="text-cream">
+                    <strong className="text-foreground">
+                      {d.stableTrends.bestSurface.surface}
+                    </strong>
+                    , boasting a{" "}
+                    <strong className="text-foreground">
                       {(d.stableTrends.bestSurface.winRate * 100).toFixed(1)}%
                     </strong>{" "}
                     win rate over {d.stableTrends.bestSurface.starts} starts.
@@ -63,11 +65,11 @@ export function AnalyticsRacingTab() {
                 {d.stableTrends.bestDistance && (
                   <p>
                     You are most dominant in{" "}
-                    <strong className="text-cream">
+                    <strong className="text-foreground">
                       {d.stableTrends.bestDistance.distanceCategory}
                     </strong>{" "}
                     races, with a{" "}
-                    <strong className="text-cream">
+                    <strong className="text-foreground">
                       {(d.stableTrends.bestDistance.winRate * 100).toFixed(1)}%
                     </strong>{" "}
                     win rate across {d.stableTrends.bestDistance.starts} starts.

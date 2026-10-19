@@ -18,13 +18,13 @@ export function AIActivityStrip({ news }: AIActivityStripProps) {
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-emerald-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40 flex items-center gap-2">
           <Activity className="h-3 w-3 text-emerald-400" /> Recent Activity
         </CardTitle>
       </CardHeader>
       <CardContent className="p-3">
         {display.length === 0 ? (
-          <div className="py-6 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+          <div className="py-6 text-center text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
             No recent AI activity to report.
           </div>
         ) : (
@@ -41,20 +41,20 @@ export function AIActivityStrip({ news }: AIActivityStripProps) {
                     item.importance === "high"
                       ? "bg-red-400"
                       : item.importance === "medium"
-                        ? "bg-gold"
-                        : "bg-cream/20",
+                        ? "bg-primary"
+                        : "bg-foreground/20",
                   )}
                 />
                 <Badge
                   variant="outline"
-                  className="text-[7px] font-black uppercase tracking-widest border-white/10 text-cream/40 rounded-none flex-shrink-0"
+                  className="text-[7px] font-black uppercase tracking-widest border-white/10 text-foreground/40 rounded-none flex-shrink-0"
                 >
                   {item.category}
                 </Badge>
-                <span className="text-[10px] font-bold text-cream/70 leading-tight flex-1 truncate">
+                <span className="text-[10px] font-bold text-foreground/70 leading-tight flex-1 truncate">
                   {item.headline}
                 </span>
-                <span className="text-[8px] font-mono text-cream/20 flex-shrink-0">
+                <span className="text-[8px] font-mono text-foreground/20 flex-shrink-0">
                   Day {item.day}
                 </span>
               </div>

@@ -11,9 +11,9 @@ const STAGE_CONFIG: Record<
   CareerArcState["stage"],
   { label: string; icon: typeof Sparkles; color: string }
 > = {
-  none: { label: "None", icon: Sparkles, color: "text-cream/40" },
-  rising_star: { label: "Rising Star", icon: TrendingUp, color: "text-gold-bright" },
-  contender: { label: "Contender", icon: Flame, color: "text-gold" },
+  none: { label: "None", icon: Sparkles, color: "text-foreground/40" },
+  rising_star: { label: "Rising Star", icon: TrendingUp, color: "text-accent-bright" },
+  contender: { label: "Contender", icon: Flame, color: "text-primary" },
   champion_or_bust: { label: "Champion or Bust", icon: Trophy, color: "text-fame" },
   complete: { label: "Complete", icon: CheckCircle2, color: "text-emerald-400" },
 };
@@ -27,9 +27,9 @@ export function CareerArcPanel({ horseId }: CareerArcPanelProps) {
   const StageIcon = config.icon;
 
   return (
-    <Card className="border-gold/30 bg-slate-900/40 overflow-hidden">
-      <CardHeader className="bg-gold/5 border-b border-gold/10">
-        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
+    <Card className="border-primary/30 bg-slate-900/40 overflow-hidden">
+      <CardHeader className="bg-primary/5 border-b border-primary/10">
+        <CardTitle className="text-sm font-black uppercase tracking-[0.15em] flex items-center gap-2 text-primary">
           <Sparkles size={16} />
           Career Arc
         </CardTitle>
@@ -37,39 +37,39 @@ export function CareerArcPanel({ horseId }: CareerArcPanelProps) {
       <CardContent className="p-6 space-y-4">
         <div className="flex items-center gap-3">
           <div
-            className={`w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center ${config.color}`}
+            className={`w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center ${config.color}`}
           >
             <StageIcon size={20} />
           </div>
           <div>
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
+            <p className="text-[10px] text-primary/60 uppercase font-black tracking-wide">
               Current Stage
             </p>
             <p className={`text-lg font-black italic ${config.color}`}>{config.label}</p>
           </div>
         </div>
 
-        <div className="h-px bg-gold/10" />
+        <div className="h-px bg-primary/10" />
 
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
+            <p className="text-[10px] text-primary/60 uppercase font-black tracking-wide">
               Rising Star Day
             </p>
-            <div className="text-xl font-black italic text-gold-bright tabular-nums">
+            <div className="text-xl font-black italic text-accent-bright tabular-nums">
               {arcState.stage1Day ?? "—"}
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
+            <p className="text-[10px] text-primary/60 uppercase font-black tracking-wide">
               Contender Day
             </p>
-            <div className="text-xl font-black italic text-gold tabular-nums">
+            <div className="text-xl font-black italic text-primary tabular-nums">
               {arcState.stage2Day ?? "—"}
             </div>
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] text-gold/60 uppercase font-black tracking-wide">
+            <p className="text-[10px] text-primary/60 uppercase font-black tracking-wide">
               Champion Day
             </p>
             <div className="text-xl font-black italic text-fame tabular-nums">
@@ -78,11 +78,13 @@ export function CareerArcPanel({ horseId }: CareerArcPanelProps) {
           </div>
         </div>
 
-        <div className="flex justify-between text-sm border-b border-gold/10 pb-2">
-          <span className="text-gold/60 uppercase text-[10px] font-black tracking-wide">
+        <div className="flex justify-between text-sm border-b border-primary/10 pb-2">
+          <span className="text-primary/60 uppercase text-[10px] font-black tracking-wide">
             Consecutive Losses
           </span>
-          <span className="font-bold tabular-nums text-cream">{arcState.consecutiveLosses}</span>
+          <span className="font-bold tabular-nums text-foreground">
+            {arcState.consecutiveLosses}
+          </span>
         </div>
       </CardContent>
     </Card>

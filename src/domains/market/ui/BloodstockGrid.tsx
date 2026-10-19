@@ -54,10 +54,10 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                 <div className="flex items-start gap-3 flex-1">
                   <SilkDot color={h.silk} size="md" />
                   <div className="space-y-0.5 min-w-0">
-                    <h3 className="text-xl font-black text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-success transition-colors truncate">
+                    <h3 className="text-xl font-black text-foreground font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-success transition-colors truncate">
                       {h.name}
                     </h3>
-                    <div className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-wide text-cream/30">
+                    <div className="flex items-center gap-3 font-mono text-[9px] uppercase tracking-wide text-foreground/30">
                       <span>Age: {Math.floor(h.age)}</span>
                       <span className="w-1 h-1 rounded-full bg-white/10" />
                       <span>OVR: {ovr}</span>
@@ -89,7 +89,7 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                   e.stopPropagation();
                   setExpandedId(expandedId === h.id ? null : h.id);
                 }}
-                className="flex items-center justify-between w-full text-[10px] font-black uppercase tracking-wide text-cream/40 hover:text-cream/70 transition-colors"
+                className="flex items-center justify-between w-full text-[10px] font-black uppercase tracking-wide text-foreground/40 hover:text-foreground/70 transition-colors"
               >
                 <span>Valuation</span>
                 {expandedId === h.id ? (
@@ -118,7 +118,7 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                         disabled
                         className={cn(
                           "w-full h-10 uppercase text-[10px] font-black tracking-wide rounded-none transition-all pointer-events-none",
-                          "border-white/5 text-cream/20 bg-transparent",
+                          "border-white/5 text-foreground/20 bg-transparent",
                         )}
                       >
                         Can't afford
@@ -148,11 +148,11 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
 
       {market.length === 0 && (
         <div className="col-span-full p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
-          <HardDrive className="h-16 w-16 mx-auto mb-6 text-cream/5" />
-          <p className="font-bold text-cream/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
+          <HardDrive className="h-16 w-16 mx-auto mb-6 text-foreground/5" />
+          <p className="font-bold text-foreground/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
             Market Transmission Offline
           </p>
-          <p className="text-[10px] font-mono text-cream/10 uppercase mt-2">
+          <p className="text-[10px] font-mono text-foreground/10 uppercase mt-2">
             Zero units detected in bloodstock exchange. Check next cycle.
           </p>
         </div>

@@ -109,14 +109,14 @@ export function PersonFormCharts({ entries }: PersonFormChartsProps) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-cream/40">
+        <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-foreground/40">
           {windowText}
         </span>
         <TimeWindowSelect />
       </div>
 
       {derived.starts === 0 ? (
-        <div className="rounded-xl border border-white/5 bg-card/40 p-6 text-center text-[11px] font-mono uppercase tracking-wider text-cream/40">
+        <div className="rounded-xl border border-white/5 bg-card/40 p-6 text-center text-[11px] font-mono uppercase tracking-wider text-foreground/40">
           No starts inside the selected window.
         </div>
       ) : (
@@ -130,7 +130,7 @@ export function PersonFormCharts({ entries }: PersonFormChartsProps) {
             legend={[{ label: "Win % (10-start)", color: chartColors.primary, variant: "line" }]}
           >
             {derived.rolling.length < 2 ? (
-              <div className="px-2 py-5 text-center font-mono text-xs text-cream/60">
+              <div className="px-2 py-5 text-center font-mono text-xs text-foreground/60">
                 Single start in window
               </div>
             ) : (
@@ -149,7 +149,7 @@ export function PersonFormCharts({ entries }: PersonFormChartsProps) {
             legend={[{ label: "Return per run", color: chartColors.secondary, variant: "line" }]}
           >
             {derived.profitability.length < 2 ? (
-              <div className="px-2 py-5 text-center font-mono text-xs text-cream/60">
+              <div className="px-2 py-5 text-center font-mono text-xs text-foreground/60">
                 Needs two starts in window
               </div>
             ) : (

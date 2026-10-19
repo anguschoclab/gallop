@@ -8,7 +8,7 @@
     "impacts": 80,
     "phases": 57,
     "routes": 75,
-    "components": 473,
+    "components": 479,
     "unhandledIntents": 0,
     "unproducedIntents": 0,
     "unhandledImpacts": 0,
@@ -451,7 +451,7 @@
     }
   ],
   "persistence": {
-    "storeVersion": 10,
+    "storeVersion": 11,
     "policy": "hard_reset_incompatible_saves",
     "transientFields": [
       "engineGeneration",

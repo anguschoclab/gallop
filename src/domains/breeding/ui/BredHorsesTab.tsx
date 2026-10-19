@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Input } from "@/shared/ui/input";
 import { Baby } from "lucide-react";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 import { useGameWithShallow } from "@/platform/game/store";
 import { isPlayerOwned, getStableId } from "@/domains/breeding/application/breedingFacade";
 import type { GameState, Horse, Stable } from "@/platform/game/types";
@@ -69,18 +70,18 @@ export function BredHorsesTab() {
   const placed = rows.filter((r) => r.ownerTone === "npc").length;
 
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardHeader className="flex flex-row items-start justify-between gap-4 space-y-0">
         <div>
           <CardTitle className="font-[family-name:var(--font-display)] flex items-center gap-2">
-            <Baby className="h-4 w-4 text-gold/70" />
+            <Baby className="h-4 w-4 text-primary/70" />
             Bred by Your Stable
           </CardTitle>
-          <p className="text-xs text-cream-muted mt-1 font-[family-name:var(--font-body)]">
+          <p className="text-xs text-muted-foreground mt-1 font-[family-name:var(--font-body)]">
             Every horse your stable has foaled — including those now racing under other colours.
           </p>
         </div>
-        <div className="flex items-center gap-2 text-[11px] tabular-nums font-[family-name:var(--font-mono)] text-cream-muted">
+        <div className="flex items-center gap-2 text-[11px] tabular-nums font-[family-name:var(--font-mono)] text-muted-foreground">
           <span>
             <NumericValue value={rows.length} /> total
           </span>
@@ -96,51 +97,64 @@ export function BredHorsesTab() {
       </CardHeader>
       <CardContent>
         {rows.length === 0 ? (
-          <p className="text-sm text-cream-muted">
-            No foals on your stable's books yet. Once your mares foal, they will appear here for
-            life.
-          </p>
+          <EmptyState
+            icon={Baby}
+            title="No foals yet"
+            description="No foals on your stable's books yet. Once your mares foal, they will appear here for life."
+          />
         ) : (
           <div className="space-y-3">
             <Input
               placeholder="Search by foal, sire, dam, or owner…"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="h-9 max-w-sm bg-t900/40 border-gold-muted/60"
+              className="h-9 max-w-sm bg-surface/40 border-border/60"
             />
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="text-left text-[11px] uppercase tracking-wide text-cream-muted border-b border-gold-muted">
-                    <th className="py-2 pr-3 font-medium">Foal</th>
-                    <th className="py-2 pr-3 font-medium">Sire × Dam</th>
-                    <th className="py-2 pr-3 font-medium">Age</th>
-                    <th className="py-2 pr-3 font-medium">Sex</th>
-                    <th className="py-2 pr-3 font-medium">Born</th>
-                    <th className="py-2 pr-3 font-medium">Current Owner</th>
+                  <tr className="text-left text-[11px] uppercase tracking-wide text-muted-foreground border-b border-border">
+                    <th scope="col" className="py-2 pr-3 font-medium">
+                      Foal
+                    </th>
+                    <th scope="col" className="py-2 pr-3 font-medium">
+                      Sire × Dam
+                    </th>
+                    <th scope="col" className="py-2 pr-3 font-medium">
+                      Age
+                    </th>
+                    <th scope="col" className="py-2 pr-3 font-medium">
+                      Sex
+                    </th>
+                    <th scope="col" className="py-2 pr-3 font-medium">
+                      Born
+                    </th>
+                    <th scope="col" className="py-2 pr-3 font-medium">
+                      Current Owner
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {filtered.map(({ horse, ownerLabel, ownerTone }) => (
                     <tr
                       key={horse.id}
-                      className="border-b border-gold-muted/40 last:border-0 hover:bg-gold/5 transition-colors"
+                      className="border-b border-border/40 last:border-0 hover:bg-primary/5 transition-colors"
                     >
                       <td className="py-2 pr-3">
                         <HorseNameLink
                           horseId={horse.id}
                           name={horse.name}
-                          className="text-cream font-medium"
+                          className="text-foreground font-medium"
                         />
                       </td>
-                      <td className="py-2 pr-3 text-cream-muted">
+                      <td className="py-2 pr-3 text-muted-foreground">
                         {horse.pedigree?.sireName ?? "—"} × {horse.pedigree?.damName ?? "—"}
                       </td>
                       <td className="py-2 pr-3 tabular-nums font-[family-name:var(--font-mono)]">
                         {Math.floor(horse.age)}
                       </td>
-                      <td className="py-2 pr-3 capitalize text-cream-muted">{horse.gender}</td>
-                      <td className="py-2 pr-3 tabular-nums font-[family-name:var(--font-mono)] text-cream-muted">
+                      <td className="py-2 pr-3 capitalize text-muted-foreground">{horse.gender}</td>
+                      <td className="py-2 pr-3 tabular-nums font-[family-name:var(--font-mono)] text-muted-foreground">
                         D{horse.createdAtDay ?? "—"}
                       </td>
                       <td className="py-2 pr-3">
@@ -148,9 +162,10 @@ export function BredHorsesTab() {
                           variant="outline"
                           className={cn(
                             "text-[10px] font-[family-name:var(--font-mono)]",
-                            ownerTone === "player" && "border-gold/60 text-gold bg-gold/5",
-                            ownerTone === "npc" && "border-cream-muted/40 text-cream-muted",
-                            ownerTone === "retired" && "border-t700 text-cream-muted/70",
+                            ownerTone === "player" && "border-primary/60 text-primary bg-primary/5",
+                            ownerTone === "npc" &&
+                              "border-muted-foreground/40 text-muted-foreground",
+                            ownerTone === "retired" && "border-muted text-muted-foreground/70",
                           )}
                         >
                           {ownerLabel}
@@ -160,7 +175,7 @@ export function BredHorsesTab() {
                   ))}
                   {filtered.length === 0 && (
                     <tr>
-                      <td colSpan={6} className="py-6 text-center text-cream-muted">
+                      <td colSpan={6} className="py-6 text-center text-muted-foreground">
                         No matches.
                       </td>
                     </tr>

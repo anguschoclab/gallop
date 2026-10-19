@@ -74,7 +74,7 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-orange-400">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream flex items-center gap-2">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground flex items-center gap-2">
             <AlertTriangle className="h-4 w-4 text-orange-400" /> Stewards Inquiries
           </CardTitle>
           <Badge className="bg-orange-400/10 text-orange-400 border-orange-400/30">
@@ -83,7 +83,7 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
         </div>
         <Link
           to="/stewards"
-          className="text-[10px] font-mono uppercase tracking-wide text-cream-muted hover:text-cream underline"
+          className="text-[10px] font-mono uppercase tracking-wide text-muted-foreground hover:text-foreground underline"
         >
           View All in Stewards Log
         </Link>
@@ -94,7 +94,7 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {getStatusIcon(inquiry.status)}
-                <span className="text-[10px] font-mono text-cream/40 uppercase">
+                <span className="text-[10px] font-mono text-foreground/40 uppercase">
                   Day {inquiry.day}
                 </span>
               </div>
@@ -113,14 +113,16 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
             </div>
 
             <div className="space-y-1">
-              <div className="text-xs font-bold text-cream">{formatInquiryType(inquiry.type)}</div>
-              <div className="text-[10px] text-cream/60 italic">{inquiry.description}</div>
+              <div className="text-xs font-bold text-foreground">
+                {formatInquiryType(inquiry.type)}
+              </div>
+              <div className="text-[10px] text-foreground/60 italic">{inquiry.description}</div>
             </div>
 
             {inquiry.outcome && (
               <div className="pt-2 border-t border-white/5 space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-[9px] text-cream/40 uppercase tracking-wide font-black">
+                  <span className="text-[9px] text-foreground/40 uppercase tracking-wide font-black">
                     Outcome
                   </span>
                   <span
@@ -134,20 +136,20 @@ export function StewardsPanel({ horseId }: StewardsPanelProps) {
                 </div>
                 {inquiry.fineAmount && (
                   <div className="flex items-center justify-between">
-                    <span className="text-[9px] text-cream/40 uppercase tracking-wide font-black flex items-center gap-1">
+                    <span className="text-[9px] text-foreground/40 uppercase tracking-wide font-black flex items-center gap-1">
                       <DollarSign className="h-2.5 w-2.5" /> Fine
                     </span>
-                    <span className="text-[10px] font-mono text-gold">
+                    <span className="text-[10px] font-mono text-primary">
                       ${inquiry.fineAmount.toLocaleString()}
                     </span>
                   </div>
                 )}
                 {inquiry.suspensionDays && (
                   <div className="flex items-center justify-between">
-                    <span className="text-[9px] text-cream/40 uppercase tracking-wide font-black">
+                    <span className="text-[9px] text-foreground/40 uppercase tracking-wide font-black">
                       Suspension
                     </span>
-                    <span className="text-[10px] font-mono text-cream">
+                    <span className="text-[10px] font-mono text-foreground">
                       {inquiry.suspensionDays} days
                     </span>
                   </div>

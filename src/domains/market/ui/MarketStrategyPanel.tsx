@@ -64,7 +64,7 @@ export function MarketStrategyPanel() {
       {/* Strategy form */}
       <Card className="bg-slate-900/40 border-white/5">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-cream text-lg">
+          <CardTitle className="flex items-center gap-2 text-foreground text-lg">
             <Target className="h-4 w-4 text-primary" />
             Buying strategy
           </CardTitle>
@@ -72,7 +72,7 @@ export function MarketStrategyPanel() {
         <CardContent className="grid gap-4 md:grid-cols-4">
           {/* Target grades */}
           <div className="space-y-2">
-            <Label className="text-[10px] uppercase text-cream/50">Target grades</Label>
+            <Label className="text-[10px] uppercase text-foreground/50">Target grades</Label>
             <div className="flex flex-wrap gap-1.5">
               {GRADE_SEGMENTS.map((g) => {
                 const active = strategy.targetGrades.includes(g);
@@ -84,7 +84,7 @@ export function MarketStrategyPanel() {
                     className={`px-2 py-1 text-[10px] font-mono uppercase border transition-colors ${
                       active
                         ? "bg-primary text-slate-950 border-primary"
-                        : "bg-slate-950/40 text-cream/50 border-white/10 hover:border-white/20"
+                        : "bg-slate-950/40 text-foreground/50 border-white/10 hover:border-white/20"
                     }`}
                   >
                     {g}
@@ -92,14 +92,14 @@ export function MarketStrategyPanel() {
                 );
               })}
               {strategy.targetGrades.length === 0 && (
-                <span className="text-[10px] font-mono text-cream/40">any grade</span>
+                <span className="text-[10px] font-mono text-foreground/40">any grade</span>
               )}
             </div>
           </div>
 
           {/* Min track prestige */}
           <div className="space-y-1">
-            <Label className="text-[10px] uppercase text-cream/50" htmlFor="strat-prestige">
+            <Label className="text-[10px] uppercase text-foreground/50" htmlFor="strat-prestige">
               Min track prestige
             </Label>
             <Input
@@ -114,7 +114,7 @@ export function MarketStrategyPanel() {
 
           {/* Max price */}
           <div className="space-y-1">
-            <Label className="text-[10px] uppercase text-cream/50" htmlFor="strat-price">
+            <Label className="text-[10px] uppercase text-foreground/50" htmlFor="strat-price">
               Price ceiling
             </Label>
             <Input
@@ -128,7 +128,7 @@ export function MarketStrategyPanel() {
 
           {/* Target syndication stake */}
           <div className="space-y-1">
-            <Label className="text-[10px] uppercase text-cream/50" htmlFor="strat-stake">
+            <Label className="text-[10px] uppercase text-foreground/50" htmlFor="strat-stake">
               Syndication stake %
             </Label>
             <Input
@@ -148,20 +148,22 @@ export function MarketStrategyPanel() {
       {/* Summary stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div className="bg-slate-900/40 border border-white/5 p-3">
-          <div className="text-[10px] font-mono uppercase text-cream/40">Scanned</div>
-          <div className="text-xl font-bold text-cream font-mono">{run.scanned}</div>
+          <div className="text-[10px] font-mono uppercase text-foreground/40">Scanned</div>
+          <div className="text-xl font-bold text-foreground font-mono">{run.scanned}</div>
         </div>
         <div className="bg-slate-900/40 border border-white/5 p-3">
-          <div className="text-[10px] font-mono uppercase text-cream/40">Qualified</div>
+          <div className="text-[10px] font-mono uppercase text-foreground/40">Qualified</div>
           <div className="text-xl font-bold text-success font-mono">{run.qualified}</div>
         </div>
         <div className="bg-slate-900/40 border border-white/5 p-3">
-          <div className="text-[10px] font-mono uppercase text-cream/40">Avg score</div>
-          <div className="text-xl font-bold text-cream font-mono">{run.averageScore}</div>
+          <div className="text-[10px] font-mono uppercase text-foreground/40">Avg score</div>
+          <div className="text-xl font-bold text-foreground font-mono">{run.averageScore}</div>
         </div>
         <div className="bg-slate-900/40 border border-white/5 p-3">
-          <div className="text-[10px] font-mono uppercase text-cream/40">Total stake cost</div>
-          <div className="text-xl font-bold text-cream font-mono">{money(run.totalStakeCost)}</div>
+          <div className="text-[10px] font-mono uppercase text-foreground/40">Total stake cost</div>
+          <div className="text-xl font-bold text-foreground font-mono">
+            {money(run.totalStakeCost)}
+          </div>
         </div>
       </div>
 
@@ -169,9 +171,9 @@ export function MarketStrategyPanel() {
       {run.candidates.length === 0 ? (
         <Card className="bg-slate-900/40 border-white/5">
           <CardContent className="py-8 text-center">
-            <Target className="h-8 w-8 text-cream/20 mx-auto mb-2" />
-            <p className="text-sm text-cream/50">No candidates found right now.</p>
-            <p className="text-[10px] font-mono text-cream/30 mt-1">
+            <Target className="h-8 w-8 text-foreground/20 mx-auto mb-2" />
+            <p className="text-sm text-foreground/50">No candidates found right now.</p>
+            <p className="text-[10px] font-mono text-foreground/30 mt-1">
               Listings appear when horses are on the Exchange or in auction houses.
             </p>
           </CardContent>
@@ -190,7 +192,7 @@ export function MarketStrategyPanel() {
       {/* Recent fills — the same tape the Exchange tab shows */}
       <Card className="bg-slate-900/40 border-white/5">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-cream text-lg">
+          <CardTitle className="flex items-center gap-2 text-foreground text-lg">
             <TrendingUp className="h-4 w-4 text-primary" />
             Recent fills
           </CardTitle>
@@ -240,43 +242,43 @@ function CandidateCard({ candidate: c }: { candidate: StrategyCandidate }) {
         {/* Header row */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-cream">{c.horseName}</span>
+            <span className="font-bold text-foreground">{c.horseName}</span>
             {c.age !== undefined && (
-              <span className="text-[10px] font-mono text-cream/40">{c.age}yo</span>
+              <span className="text-[10px] font-mono text-foreground/40">{c.age}yo</span>
             )}
             <Badge variant="outline" className="text-[10px]">
               {c.grade}
             </Badge>
             {c.trackName && (
-              <span className="text-[10px] font-mono text-cream/40">
+              <span className="text-[10px] font-mono text-foreground/40">
                 {c.trackName} ({Math.round(c.trackPrestige)})
               </span>
             )}
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-[10px] font-mono text-cream/40">{c.sourceLabel}</span>
+            <span className="text-[10px] font-mono text-foreground/40">{c.sourceLabel}</span>
             <div className="flex items-center gap-1">
               <Target className="h-3 w-3 text-primary" />
-              <span className="font-bold text-cream font-mono">{c.score}</span>
+              <span className="font-bold text-foreground font-mono">{c.score}</span>
             </div>
           </div>
         </div>
 
         {/* Price row */}
-        <div className="flex flex-wrap items-center gap-4 font-mono text-[11px] text-cream/60">
+        <div className="flex flex-wrap items-center gap-4 font-mono text-[11px] text-foreground/60">
           <span>
-            <span className="text-cream/40">Price:</span> {money(c.price)}
+            <span className="text-foreground/40">Price:</span> {money(c.price)}
           </span>
           <span>
-            <span className="text-cream/40">Fair value:</span> {money(c.fairValue)}
+            <span className="text-foreground/40">Fair value:</span> {money(c.fairValue)}
           </span>
           <span className={c.valueEdgePct >= 0 ? "text-success" : "text-destructive"}>
             {pct(c.valueEdgePct)}
           </span>
           {c.stakeCost !== undefined && (
             <span>
-              <span className="text-cream/40">Stake:</span> {money(c.stakeCost)} for {c.sharesToBuy}{" "}
-              shares
+              <span className="text-foreground/40">Stake:</span> {money(c.stakeCost)} for{" "}
+              {c.sharesToBuy} shares
             </span>
           )}
           {c.syndicateId !== undefined && c.sharesToBuy === 0 && (
@@ -284,7 +286,7 @@ function CandidateCard({ candidate: c }: { candidate: StrategyCandidate }) {
           )}
           {c.lastTrade && (
             <span>
-              <span className="text-cream/40">Last fill:</span> {money(c.lastTrade.price)} (D
+              <span className="text-foreground/40">Last fill:</span> {money(c.lastTrade.price)} (D
               {c.lastTrade.day})
             </span>
           )}
@@ -306,7 +308,7 @@ function CandidateCard({ candidate: c }: { candidate: StrategyCandidate }) {
             </span>
           )}
           {!buyable && affordable && (
-            <span className="text-[10px] font-mono text-cream/40">
+            <span className="text-[10px] font-mono text-foreground/40">
               Listing no longer actionable
             </span>
           )}

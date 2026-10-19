@@ -58,12 +58,12 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
   const yearFor = (day: number) => Math.floor((day - 1) / 365) + 1;
 
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardHeader>
         <CardTitle>
           <JargonTooltip term="Graded race">Graded race</JargonTooltip> history
         </CardTitle>
-        <p className="text-xs text-cream-muted">
+        <p className="text-xs text-muted-foreground">
           G1/G2/G3 finishes with <JargonTooltip term="Beyer">Beyer</JargonTooltip> figures earned
         </p>
       </CardHeader>
@@ -99,7 +99,7 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
           if (g1Wins.length === 0) return null;
           return (
             <div className="space-y-1.5">
-              <div className="text-xs font-semibold uppercase tracking-wide text-cream-muted">
+              <div className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 G1 Trophy Shelf · {g1Wins.length}
               </div>
               <TrophyShelf count={g1Wins.length}>
@@ -129,26 +129,26 @@ export function GradedHistoryPanel({ history }: GradedHistoryPanelProps) {
                 <Badge variant="outline" className={gradeColor(g)}>
                   {g}
                 </Badge>
-                <span className="text-xs text-cream-muted">
+                <span className="text-xs text-muted-foreground">
                   {byGrade[g].length} run{byGrade[g].length !== 1 ? "s" : ""}
                 </span>
               </div>
               <div className="text-sm">
                 <span className="font-semibold">{wins(byGrade[g])}</span>
-                <span className="text-cream-muted"> wins · </span>
+                <span className="text-muted-foreground"> wins · </span>
                 <span className="font-semibold">{places(byGrade[g])}</span>
-                <span className="text-cream-muted"> placed</span>
+                <span className="text-muted-foreground"> placed</span>
               </div>
-              <div className="text-xs text-cream-muted mt-1">
+              <div className="text-xs text-muted-foreground mt-1">
                 <JargonTooltip term="Beyer">Best Beyer</JargonTooltip>:{" "}
-                <span className="font-medium text-cream">{bestBeyer(byGrade[g]) || "—"}</span>
+                <span className="font-medium text-foreground">{bestBeyer(byGrade[g]) || "—"}</span>
               </div>
             </div>
           ))}
         </div>
 
         {graded.length === 0 ? (
-          <p className="text-sm text-cream-muted">No graded stakes appearances yet.</p>
+          <p className="text-sm text-muted-foreground">No graded stakes appearances yet.</p>
         ) : (
           <RaceHistoryGroup entries={graded} countryFor={countryFor} yearFor={yearFor} />
         )}

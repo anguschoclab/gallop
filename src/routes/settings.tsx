@@ -40,11 +40,11 @@ function SettingsPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
+          <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2 text-foreground font-[family-name:var(--font-display)]">
             <Settings className="h-8 w-8" />
             Settings
           </h1>
-          <p className="text-cream-muted mt-1 font-[family-name:var(--font-body)]">
+          <p className="text-muted-foreground mt-1 font-[family-name:var(--font-body)]">
             Configure your stable manager preferences
           </p>
         </div>

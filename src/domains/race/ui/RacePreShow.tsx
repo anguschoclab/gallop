@@ -54,10 +54,10 @@ export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowP
             <Flag className="h-3 w-3" />
             {gradeLabel}
           </Badge>
-          <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-cream">
+          <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight text-foreground">
             {race.name}
           </h1>
-          <p className="text-sm text-cream-muted">
+          <p className="text-sm text-muted-foreground">
             {race.distance}m{race.surface ? ` · ${race.surface}` : ""}
             {race.graded?.track ? ` · ${race.graded.track}` : ""}
           </p>
@@ -81,7 +81,7 @@ export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowP
             >
               <SilkDot color={r.silk} size="md" />
               <div className="flex items-center gap-2 min-w-0">
-                <span className="truncate text-cream font-semibold">{r.name}</span>
+                <span className="truncate text-foreground font-semibold">{r.name}</span>
                 {r.isFavourite && (
                   <Badge variant="g1" className="text-[9px] px-1.5 py-0">
                     FAV
@@ -103,13 +103,15 @@ export function RacePreShow({ race, runners, runnerOdds, onStart }: RacePreShowP
                         : "No recorded times yet"
                     }
                   >
-                    <span className="text-right font-mono tabular-nums text-cream-muted text-xs">
+                    <span className="text-right font-mono tabular-nums text-muted-foreground text-xs">
                       {best ? formatClockTime(best.perMile, 2, true) : "—"}
                     </span>
                   </Hint>
                 );
               })()}
-              <span className="text-right font-mono text-cream tabular-nums">{r.oddsLabel}</span>
+              <span className="text-right font-mono text-foreground tabular-nums">
+                {r.oddsLabel}
+              </span>
             </div>
           ))}
         </div>

@@ -38,13 +38,13 @@ function NeighbourRow({
   const Icon = entry.kind === "auction_house" ? Landmark : Flag;
   return (
     <div className="flex items-center justify-between gap-2 text-[10px] font-mono uppercase tracking-wider">
-      <span className="flex items-center gap-2 text-cream/60">
+      <span className="flex items-center gap-2 text-foreground/60">
         <Icon className="h-3 w-3 shrink-0" aria-hidden="true" />
         <span className="truncate">{entry.name}</span>
       </span>
       <span className="flex items-center gap-2 shrink-0">
-        <span className="text-cream/40">#{entry.rank}</span>
-        <span className={cn(direction === "above" ? "text-warning" : "text-cream/50")}>
+        <span className="text-foreground/40">#{entry.rank}</span>
+        <span className={cn(direction === "above" ? "text-warning" : "text-foreground/50")}>
           {entry.prestige}
         </span>
       </span>
@@ -65,7 +65,7 @@ export function PlayerPrestigePanel() {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-warning">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream flex items-center gap-2">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground flex items-center gap-2">
             <Crown className="h-4 w-4 text-warning" aria-hidden="true" /> Prestige
           </CardTitle>
           <Badge variant="outline" className="border-warning/40 text-warning text-[9px]">
@@ -78,12 +78,12 @@ export function PlayerPrestigePanel() {
         {/* Meter */}
         <div className="bg-black/40 border border-white/5 p-4 space-y-3">
           <div className="flex items-end justify-between">
-            <span className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+            <span className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
               Prestige score
             </span>
             <span className="text-2xl font-mono font-black text-warning">
               {standing.prestige}
-              <span className="text-xs text-cream/30">/100</span>
+              <span className="text-xs text-foreground/30">/100</span>
             </span>
           </div>
 
@@ -103,14 +103,14 @@ export function PlayerPrestigePanel() {
               <Hint key={mark.label} content={`${mark.label} tier from ${mark.at}`}>
                 <span
                   key={mark.label}
-                  className="absolute inset-y-0 w-px bg-cream/25"
+                  className="absolute inset-y-0 w-px bg-foreground/25"
                   style={{ left: `${mark.at}%` }}
                 />
               </Hint>
             ))}
           </div>
 
-          <div className="flex justify-between text-[9px] font-mono uppercase tracking-wide text-cream/30">
+          <div className="flex justify-between text-[9px] font-mono uppercase tracking-wide text-foreground/30">
             <span>Provincial</span>
             <span>World class</span>
           </div>
@@ -119,36 +119,36 @@ export function PlayerPrestigePanel() {
         {/* Ranks */}
         <div className="grid grid-cols-3 gap-2">
           <div className="border border-white/5 bg-black/30 p-2">
-            <div className="text-[9px] font-mono uppercase tracking-wide text-cream/40">
+            <div className="text-[9px] font-mono uppercase tracking-wide text-foreground/40">
               Overall
             </div>
-            <div className="font-mono text-sm text-cream">
+            <div className="font-mono text-sm text-foreground">
               #{standing.rank}
-              <span className="text-cream/30"> / {standing.total}</span>
+              <span className="text-foreground/30"> / {standing.total}</span>
             </div>
-            <div className="text-[9px] font-mono text-cream/40">
+            <div className="text-[9px] font-mono text-foreground/40">
               Top {Math.max(1, 100 - standing.percentile)}%
             </div>
           </div>
           <div className="border border-white/5 bg-black/30 p-2">
-            <div className="text-[9px] font-mono uppercase tracking-wide text-cream/40">
+            <div className="text-[9px] font-mono uppercase tracking-wide text-foreground/40">
               vs Houses
             </div>
-            <div className="font-mono text-sm text-cream">
+            <div className="font-mono text-sm text-foreground">
               #{standing.houseRank}
-              <span className="text-cream/30"> / {standing.houseTotal + 1}</span>
+              <span className="text-foreground/30"> / {standing.houseTotal + 1}</span>
             </div>
-            <div className="text-[9px] font-mono text-cream/40">Auction rings</div>
+            <div className="text-[9px] font-mono text-foreground/40">Auction rings</div>
           </div>
           <div className="border border-white/5 bg-black/30 p-2">
-            <div className="text-[9px] font-mono uppercase tracking-wide text-cream/40">
+            <div className="text-[9px] font-mono uppercase tracking-wide text-foreground/40">
               vs Courses
             </div>
-            <div className="font-mono text-sm text-cream">
+            <div className="font-mono text-sm text-foreground">
               #{standing.courseRank}
-              <span className="text-cream/30"> / {standing.courseTotal + 1}</span>
+              <span className="text-foreground/30"> / {standing.courseTotal + 1}</span>
             </div>
-            <div className="text-[9px] font-mono text-cream/40">Racecourses</div>
+            <div className="text-[9px] font-mono text-foreground/40">Racecourses</div>
           </div>
         </div>
 
@@ -161,14 +161,14 @@ export function PlayerPrestigePanel() {
               <span className="truncate">{stableName || "Your stable"}</span>
             </span>
             <span className="flex items-center gap-2 shrink-0">
-              <span className="text-cream/40">#{standing.rank}</span>
+              <span className="text-foreground/40">#{standing.rank}</span>
               <span>{standing.prestige}</span>
             </span>
           </div>
           <NeighbourRow entry={standing.below} direction="below" />
         </div>
 
-        <p className="text-[9px] font-mono uppercase tracking-wider text-cream/30">
+        <p className="text-[9px] font-mono uppercase tracking-wider text-foreground/30">
           Prestige tracks your reputation on the venue scale — win graded races, trade well and
           underwrite syndicates to climb.
         </p>

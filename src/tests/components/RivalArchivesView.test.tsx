@@ -55,7 +55,7 @@ describe("RivalArchivesView", () => {
         navigate={noopNavigate}
       />,
     );
-    expect(screen.getByText("No Rivals Found")).toBeInTheDocument();
+    expect(screen.getByText("No rivals found")).toBeInTheDocument();
   });
 
   it("renders stable cards for each stable", () => {

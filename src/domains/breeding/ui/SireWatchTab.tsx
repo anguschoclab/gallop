@@ -79,17 +79,17 @@ export function SireWatchTab() {
   const getClassificationColor = (classification: SireClassification) => {
     switch (classification) {
       case "elite":
-        return "bg-fame text-t950";
+        return "bg-fame text-background";
       case "premium":
-        return "bg-info text-t950";
+        return "bg-info text-background";
       case "solid":
-        return "bg-success text-t950";
+        return "bg-success text-background";
       case "developing":
-        return "bg-warning text-t950";
+        return "bg-warning text-background";
       case "unproven":
-        return "bg-t600 text-cream";
+        return "bg-surface-hover text-foreground";
       default:
-        return "bg-t600 text-cream";
+        return "bg-surface-hover text-foreground";
     }
   };
 
@@ -128,13 +128,13 @@ export function SireWatchTab() {
             {processed.map((analytics) => (
               <Card
                 key={analytics.stallionId}
-                className="hover:shadow-md transition-shadow border-gold-muted"
+                className="hover:shadow-md transition-shadow border-border"
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
-                        <CardTitle className="text-base sm:text-lg text-cream font-[family-name:var(--font-display)] truncate">
+                        <CardTitle className="text-base sm:text-lg text-foreground font-[family-name:var(--font-display)] truncate">
                           {analytics.stallionName}
                         </CardTitle>
                         <Badge className={getClassificationColor(analytics.classification)}>
@@ -142,49 +142,51 @@ export function SireWatchTab() {
                             analytics.classification.slice(1)}
                         </Badge>
                       </div>
-                      <p className="text-xs sm:text-sm text-cream-muted">
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         Standing Fee: ${analytics.standingFee.toLocaleString()} ·{" "}
                         {analytics.lifetimeFoals} Foals
                       </p>
                     </div>
                     <div className="text-right shrink-0">
                       <div className="flex items-center gap-2 mb-1">
-                        <TrendingUp className="h-4 w-4 text-cream-muted" />
-                        <span className="text-xl sm:text-2xl font-bold tabular-nums text-cream">
+                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-xl sm:text-2xl font-bold tabular-nums text-foreground">
                           {analytics.aei.toFixed(1)}
                         </span>
                       </div>
-                      <p className="text-xs text-cream-muted">AEI</p>
+                      <p className="text-xs text-muted-foreground">AEI</p>
                     </div>
                   </div>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 text-sm">
                     <div>
-                      <p className="text-cream-muted">CI</p>
-                      <p className="font-semibold text-cream">{analytics.ci.toFixed(1)}</p>
+                      <p className="text-muted-foreground">CI</p>
+                      <p className="font-semibold text-foreground">{analytics.ci.toFixed(1)}</p>
                     </div>
                     <div>
-                      <p className="text-cream-muted">Win %</p>
-                      <p className="font-semibold text-cream">
+                      <p className="text-muted-foreground">Win %</p>
+                      <p className="font-semibold text-foreground">
                         {analytics.progenyWinPercentage.toFixed(1)}%
                       </p>
                     </div>
                     <div>
-                      <p className="text-cream-muted">Stakes Winners</p>
-                      <p className="font-semibold text-cream">{analytics.lifetimeStakesFoals}</p>
+                      <p className="text-muted-foreground">Stakes Winners</p>
+                      <p className="font-semibold text-foreground">
+                        {analytics.lifetimeStakesFoals}
+                      </p>
                     </div>
                     <div>
-                      <p className="text-cream-muted">G1 Winners</p>
-                      <p className="font-semibold text-cream">{analytics.lifetimeG1Foals}</p>
+                      <p className="text-muted-foreground">G1 Winners</p>
+                      <p className="font-semibold text-foreground">{analytics.lifetimeG1Foals}</p>
                     </div>
                   </div>
-                  <div className="mt-3 pt-3 border-t border-gold-muted flex flex-wrap gap-2 justify-between items-center">
+                  <div className="mt-3 pt-3 border-t border-border flex flex-wrap gap-2 justify-between items-center">
                     <div className="flex gap-2 flex-wrap">
-                      <Badge variant="outline" className="border-gold-muted text-cream">
+                      <Badge variant="outline" className="border-border text-foreground">
                         {analytics.surfaceBias}
                       </Badge>
-                      <Badge variant="outline" className="border-gold-muted text-cream">
+                      <Badge variant="outline" className="border-border text-foreground">
                         {analytics.distancePreference}
                       </Badge>
                     </div>

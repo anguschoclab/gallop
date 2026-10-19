@@ -89,7 +89,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-purple-400">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-cream flex items-center gap-2">
+          <CardTitle className="text-sm font-black uppercase tracking-[0.15em] text-foreground flex items-center gap-2">
             <Truck className="h-4 w-4 text-purple-400" /> Transportation
           </CardTitle>
           <Badge className="bg-purple-400/10 text-purple-400 border-purple-400/30">
@@ -108,7 +108,7 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   {getTransportIcon(transport.mode)}
-                  <span className="text-xs font-bold text-cream">
+                  <span className="text-xs font-bold text-foreground">
                     {horse?.name || "Unknown Horse"}
                   </span>
                 </div>
@@ -125,45 +125,45 @@ export function TransportPlanner({ horseId }: TransportPlannerProps) {
 
               <div className="space-y-1">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                  <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                     Route
                   </span>
-                  <span className="font-mono text-cream/80 text-[10px]">
+                  <span className="font-mono text-foreground/80 text-[10px]">
                     {transport.fromLocation} → {transport.toLocation}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                  <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                     Mode
                   </span>
-                  <span className="font-mono text-cream/80 text-[10px]">
+                  <span className="font-mono text-foreground/80 text-[10px]">
                     {formatTransportMode(transport.mode)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                  <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                     Cost
                   </span>
-                  <span className="font-mono text-gold text-[10px]">
+                  <span className="font-mono text-primary text-[10px]">
                     {formatCurrency(transport.cost)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                  <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                     Duration
                   </span>
-                  <span className="font-mono text-cream/80 text-[10px]">
+                  <span className="font-mono text-foreground/80 text-[10px]">
                     {transport.duration} days
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-cream/40 uppercase tracking-wide text-[10px] font-black">
+                  <span className="text-foreground/40 uppercase tracking-wide text-[10px] font-black">
                     Arrival
                   </span>
                   <span
                     className={cn(
                       "font-mono text-[10px]",
-                      isPastDue ? "text-red-400" : "text-cream/80",
+                      isPastDue ? "text-red-400" : "text-foreground/80",
                     )}
                   >
                     Day {transport.arrivalDay}

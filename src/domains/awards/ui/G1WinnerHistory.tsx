@@ -53,28 +53,28 @@ export function G1WinnerHistory() {
 
   if (seasonRecords.length === 0) {
     return (
-      <Card className="border-gold-muted">
+      <Card className="border-border">
         <CardHeader>
-          <CardTitle className="text-base text-cream font-[family-name:var(--font-display)] flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-gold" />
+          <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)] flex items-center gap-2">
+            <Trophy className="w-4 h-4 text-primary" />
             {G1_HISTORY_TITLE}
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-cream-muted italic">{G1_HISTORY_EMPTY_MESSAGE}</p>
+          <p className="text-sm text-muted-foreground italic">{G1_HISTORY_EMPTY_MESSAGE}</p>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardHeader>
-        <CardTitle className="text-base text-cream font-[family-name:var(--font-display)] flex items-center gap-2">
-          <Trophy className="w-4 h-4 text-gold" />
+        <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)] flex items-center gap-2">
+          <Trophy className="w-4 h-4 text-primary" />
           {G1_HISTORY_TITLE}
         </CardTitle>
-        <p className="text-xs text-cream-muted">
+        <p className="text-xs text-muted-foreground">
           {seasonRecords.length} Grade 1{" "}
           {seasonRecords.length === 1 ? RACE_LABEL_SINGULAR : RACE_LABEL_PLURAL}{" "}
           {G1_HISTORY_SUBTITLE_SUFFIX}
@@ -93,13 +93,13 @@ export function G1WinnerHistory() {
                 <AccordionItem key={raceName} value={raceName}>
                   <AccordionTrigger>
                     <div className="flex items-center justify-between w-full pr-2">
-                      <span className="font-medium text-cream">{raceName}</span>
+                      <span className="font-medium text-foreground">{raceName}</span>
                       <div className="flex items-center gap-2">
                         <Badge variant="secondary" className="font-mono tabular-nums">
                           {winners.length}{" "}
                           {winners.length === 1 ? WINNER_LABEL_SINGULAR : WINNER_LABEL_PLURAL}
                         </Badge>
-                        <span className="text-xs text-cream-muted">
+                        <span className="text-xs text-muted-foreground">
                           {LATEST_WINNER_PREFIX} {winners[0].winnerName} ({YEAR_LABEL_PREFIX}
                           {winners[0].year})
                         </span>
@@ -110,12 +110,22 @@ export function G1WinnerHistory() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-left border-collapse">
                         <thead>
-                          <tr className="border-b border-white/10 text-cream-muted text-xs uppercase tracking-wider">
-                            <th className="py-2 px-3">Year</th>
-                            <th className="py-2 px-3">Winner</th>
-                            <th className="py-2 px-3">Jockey</th>
-                            <th className="py-2 px-3">Gate</th>
-                            <th className="py-2 px-3">Time</th>
+                          <tr className="border-b border-white/10 text-muted-foreground text-xs uppercase tracking-wider">
+                            <th scope="col" className="py-2 px-3">
+                              Year
+                            </th>
+                            <th scope="col" className="py-2 px-3">
+                              Winner
+                            </th>
+                            <th scope="col" className="py-2 px-3">
+                              Jockey
+                            </th>
+                            <th scope="col" className="py-2 px-3">
+                              Gate
+                            </th>
+                            <th scope="col" className="py-2 px-3">
+                              Time
+                            </th>
                           </tr>
                         </thead>
                         <tbody className="text-sm">
@@ -124,7 +134,7 @@ export function G1WinnerHistory() {
                               key={record.id}
                               className="border-b border-white/5 hover:bg-white/5 transition-colors"
                             >
-                              <td className="py-2 px-3 font-bold text-gold">
+                              <td className="py-2 px-3 font-bold text-primary">
                                 {YEAR_LABEL_PREFIX}
                                 {record.year}
                               </td>
@@ -135,16 +145,20 @@ export function G1WinnerHistory() {
                                     to={HORSE_PAGE_ROUTE}
                                     params={{ horseId: record.winnerId }}
                                     className={cn(
-                                      "hover:text-gold transition-colors",
-                                      record.isPlayerOwned ? "text-gold font-bold" : "text-cream",
+                                      "hover:text-primary transition-colors",
+                                      record.isPlayerOwned
+                                        ? "text-primary font-bold"
+                                        : "text-foreground",
                                     )}
                                   >
                                     {record.winnerName}
                                   </Link>
                                 </div>
                               </td>
-                              <td className="py-2 px-3 text-cream-muted">{record.jockeyName}</td>
-                              <td className="py-2 px-3 font-mono text-cream/50">
+                              <td className="py-2 px-3 text-muted-foreground">
+                                {record.jockeyName}
+                              </td>
+                              <td className="py-2 px-3 font-mono text-foreground/50">
                                 {typeof record.gate === "number" ? `G${record.gate}` : "—"}
                               </td>
                               <td className="py-2 px-3 font-mono">
@@ -165,13 +179,25 @@ export function G1WinnerHistory() {
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-white/10 text-cream-muted text-xs uppercase tracking-wider">
-                    <th className="py-2 px-3">Year</th>
-                    <th className="py-2 px-3">Race</th>
-                    <th className="py-2 px-3">Winner</th>
-                    <th className="py-2 px-3">Jockey</th>
-                    <th className="py-2 px-3">Gate</th>
-                    <th className="py-2 px-3">Time</th>
+                  <tr className="border-b border-white/10 text-muted-foreground text-xs uppercase tracking-wider">
+                    <th scope="col" className="py-2 px-3">
+                      Year
+                    </th>
+                    <th scope="col" className="py-2 px-3">
+                      Race
+                    </th>
+                    <th scope="col" className="py-2 px-3">
+                      Winner
+                    </th>
+                    <th scope="col" className="py-2 px-3">
+                      Jockey
+                    </th>
+                    <th scope="col" className="py-2 px-3">
+                      Gate
+                    </th>
+                    <th scope="col" className="py-2 px-3">
+                      Time
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="text-sm">
@@ -180,11 +206,11 @@ export function G1WinnerHistory() {
                       key={record.id}
                       className="border-b border-white/5 hover:bg-white/5 transition-colors"
                     >
-                      <td className="py-2 px-3 font-bold text-gold">
+                      <td className="py-2 px-3 font-bold text-primary">
                         {YEAR_LABEL_PREFIX}
                         {record.year}
                       </td>
-                      <td className="py-2 px-3 font-medium text-cream">{record.raceName}</td>
+                      <td className="py-2 px-3 font-medium text-foreground">{record.raceName}</td>
                       <td className="py-2 px-3">
                         <div className="flex items-center gap-2">
                           <SilkDot color={record.winnerSilk} size="sm" />
@@ -192,16 +218,16 @@ export function G1WinnerHistory() {
                             to={HORSE_PAGE_ROUTE}
                             params={{ horseId: record.winnerId }}
                             className={cn(
-                              "hover:text-gold transition-colors",
-                              record.isPlayerOwned ? "text-gold font-bold" : "text-cream",
+                              "hover:text-primary transition-colors",
+                              record.isPlayerOwned ? "text-primary font-bold" : "text-foreground",
                             )}
                           >
                             {record.winnerName}
                           </Link>
                         </div>
                       </td>
-                      <td className="py-2 px-3 text-cream-muted">{record.jockeyName}</td>
-                      <td className="py-2 px-3 font-mono text-cream/50">
+                      <td className="py-2 px-3 text-muted-foreground">{record.jockeyName}</td>
+                      <td className="py-2 px-3 font-mono text-foreground/50">
                         {typeof record.gate === "number" ? `G${record.gate}` : "—"}
                       </td>
                       <td className="py-2 px-3 font-mono">

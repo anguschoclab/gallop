@@ -27,7 +27,7 @@ export function useHorseCard(rawHorse: Horse, showScoutInfo = false) {
 
   const genderColor =
     horse.gender === "gelding"
-      ? "text-cream/40"
+      ? "text-foreground/40"
       : isMaleHorse(horse.gender)
         ? "text-blue-400"
         : "text-pink-400";

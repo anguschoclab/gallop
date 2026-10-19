@@ -5,6 +5,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Play, Trophy, Film } from "lucide-react";
 import { useReplaysLibrary } from "@/domains/replays/application/hooks/useReplaysLibrary";
 import { cn } from "@/shared/lib/cn";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 
 export function ReplaysLibrary() {
   const [horseFilter, setHorseFilter] = useState("");
@@ -18,8 +19,8 @@ export function ReplaysLibrary() {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2">
-        <Film className="h-5 w-5 text-cream" />
-        <h1 className="text-3xl font-bold tracking-tight text-cream font-[family-name=var(--font-display)]">
+        <Film className="h-5 w-5 text-foreground" />
+        <h1 className="text-3xl font-bold tracking-tight text-foreground font-[family-name=var(--font-display)]">
           Replays
         </h1>
       </div>
@@ -28,8 +29,8 @@ export function ReplaysLibrary() {
       {highlights.length > 0 && (
         <div className="space-y-3">
           <div className="flex items-center gap-2">
-            <Trophy className="h-4 w-4 text-gold" />
-            <h2 className="text-sm font-black uppercase tracking-[0.15em] text-gold">
+            <Trophy className="h-4 w-4 text-primary" />
+            <h2 className="text-sm font-black uppercase tracking-[0.15em] text-primary">
               Highlight Reel
             </h2>
           </div>
@@ -49,7 +50,7 @@ export function ReplaysLibrary() {
           aria-label="Filter by horse ID"
           value={horseFilter}
           onChange={(e) => setHorseFilter(e.target.value)}
-          className="px-3 py-1 text-sm bg-slate-900/40 border border-white/5 text-cream placeholder:text-cream-muted"
+          className="px-3 py-1 text-sm bg-slate-900/40 border border-white/5 text-foreground placeholder:text-muted-foreground"
         />
         <div className="flex gap-1">
           {(["all", "win", "place", "show"] as const).map((rf) => (
@@ -62,8 +63,8 @@ export function ReplaysLibrary() {
               className={cn(
                 "px-3 py-1 text-xs font-bold uppercase tracking-wide border transition-colors",
                 resultFilter === rf
-                  ? "bg-cream/10 border-cream/30 text-cream"
-                  : "bg-transparent border-white/5 text-cream-muted hover:text-cream",
+                  ? "bg-foreground/10 border-foreground/30 text-foreground"
+                  : "bg-transparent border-white/5 text-muted-foreground hover:text-foreground",
               )}
             >
               {rf === "all" ? "All" : rf === "win" ? "Wins" : rf === "place" ? "Places" : "Shows"}
@@ -74,11 +75,11 @@ export function ReplaysLibrary() {
 
       {/* All replays */}
       {replays.length === 0 ? (
-        <Card className="bg-slate-900/40 border-white/5">
-          <CardContent className="p-8 text-center text-cream-muted">
-            No replays available. Replays are generated when races are resolved.
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Film}
+          title="No replays yet"
+          description="Replays are generated when races are resolved."
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {replays.map((replay) => (
@@ -109,27 +110,31 @@ function ReplayCard({
     <Link to="/race/$raceId" params={{ raceId: replay.raceId }}>
       <Card
         className={cn(
-          "bg-slate-900/40 border-white/5 hover:border-cream/20 transition-colors",
-          highlight && "border-gold/20",
+          "bg-slate-900/40 border-white/5 hover:border-foreground/20 transition-colors",
+          highlight && "border-primary/20",
         )}
       >
         <CardContent className="p-4 space-y-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Play className="h-3 w-3 text-cream-muted" />
-              <span className="text-sm font-bold text-cream">{replay.raceName}</span>
+              <Play className="h-3 w-3 text-muted-foreground" />
+              <span className="text-sm font-bold text-foreground">{replay.raceName}</span>
             </div>
             {replay.grade && (
-              <Badge className="text-[9px] uppercase bg-gold/10 text-gold">{replay.grade}</Badge>
+              <Badge className="text-[9px] uppercase bg-primary/10 text-primary">
+                {replay.grade}
+              </Badge>
             )}
           </div>
-          <div className="flex items-center justify-between text-[10px] text-cream-muted tabular-nums">
+          <div className="flex items-center justify-between text-[10px] text-muted-foreground tabular-nums">
             <span>Day {replay.day}</span>
             <span>{replay.distance.toLocaleString()}m</span>
             {replay.surface && <span className="uppercase">{replay.surface}</span>}
           </div>
           {replay.playerPosition !== undefined && (
-            <div className="text-[10px] text-cream-muted">Finish: #{replay.playerPosition}</div>
+            <div className="text-[10px] text-muted-foreground">
+              Finish: #{replay.playerPosition}
+            </div>
           )}
         </CardContent>
       </Card>

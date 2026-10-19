@@ -221,10 +221,10 @@ export function NpcStablesRivalCareers() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-[family-name:var(--font-display)] text-cream">
+        <h1 className="text-2xl font-[family-name:var(--font-display)] text-foreground">
           Compare Rival Careers
         </h1>
-        <p className="text-sm text-cream-muted mt-1">
+        <p className="text-sm text-muted-foreground mt-1">
           Select up to {MAX_RIVAL_COMPARE} notable rival horses to compare age, record, earnings,
           fame, career stage and milestone history.
         </p>
@@ -300,7 +300,7 @@ export function NpcStablesRivalCareers() {
               onChange={(minFame) => patch({ minFame })}
             />
           </div>
-          <p className="text-xs text-cream-muted mb-2">
+          <p className="text-xs text-muted-foreground mb-2">
             Showing {shown.length} of {candidates.length} notable rivals.
           </p>
           <div className="space-y-2">
@@ -320,8 +320,8 @@ export function NpcStablesRivalCareers() {
                     aria-label={c.name}
                     className="h-4 w-4 rounded border-border"
                   />
-                  <span className="text-sm text-cream">{c.name}</span>
-                  <span className="text-xs text-cream-muted">
+                  <span className="text-sm text-foreground">{c.name}</span>
+                  <span className="text-xs text-muted-foreground">
                     {c.age}Y · {(c.stableId && stableNames[c.stableId]) || "Unattached"} ·{" "}
                     {careerStageLabel(c.stage as NpcCareerStage)} · {c.wins}W/{c.starts}S ·{" "}
                     {formatCurrency(c.earnings)} · Fame {c.fame}
@@ -330,7 +330,7 @@ export function NpcStablesRivalCareers() {
               );
             })}
             {shown.length === 0 && (
-              <p className="text-sm text-cream-muted py-4 text-center">
+              <p className="text-sm text-muted-foreground py-4 text-center">
                 No notable rivals match the current filters.
               </p>
             )}

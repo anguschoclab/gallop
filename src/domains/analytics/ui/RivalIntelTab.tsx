@@ -33,8 +33,10 @@ export function RivalIntelTab() {
     return (
       <div className="space-y-6">
         <header>
-          <h2 className="font-display text-2xl text-cream">Rival Intelligence</h2>
-          <p className="text-cream-muted mt-1 text-sm">No AI intelligence data available yet.</p>
+          <h2 className="font-display text-2xl text-foreground">Rival Intelligence</h2>
+          <p className="text-muted-foreground mt-1 text-sm">
+            No AI intelligence data available yet.
+          </p>
         </header>
       </div>
     );
@@ -47,8 +49,8 @@ export function RivalIntelTab() {
   return (
     <div className="space-y-6">
       <header>
-        <h2 className="font-display text-2xl text-cream">Rival Intelligence</h2>
-        <p className="text-cream-muted mt-1 text-sm">
+        <h2 className="font-display text-2xl text-foreground">Rival Intelligence</h2>
+        <p className="text-muted-foreground mt-1 text-sm">
           AI subsystem telemetry — difficulty, economy, diplomacy, narratives, and strategic
           directives.
         </p>
@@ -69,7 +71,7 @@ export function RivalIntelTab() {
       </div>
 
       <div className="space-y-4">
-        <h3 className="text-sm font-black uppercase tracking-[0.15em] text-gold/60">
+        <h3 className="text-sm font-black uppercase tracking-[0.15em] text-primary/60">
           Active Storylines
         </h3>
         <StorylinesTab />
@@ -93,15 +95,15 @@ function DifficultyPanel({
     ) : current < prev - 0.01 ? (
       <TrendingDown className="h-3 w-3 text-green-400" />
     ) : (
-      <Minus className="h-3 w-3 text-cream-muted" />
+      <Minus className="h-3 w-3 text-muted-foreground" />
     );
   const trendLabel =
     current > prev + 0.01 ? "rising" : current < prev - 0.01 ? "falling" : "stable";
 
   return (
-    <Card className="border-gold/20 bg-slate-900/40">
-      <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
+    <Card className="border-primary/20 bg-slate-900/40">
+      <CardHeader className="border-b border-primary/10 pb-3">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-primary">
           <TrendingUp size={14} />
           Difficulty Modulator
         </CardTitle>
@@ -109,33 +111,33 @@ function DifficultyPanel({
       <CardContent className="p-4 space-y-3">
         <div className="grid grid-cols-2 gap-3 text-xs">
           <div>
-            <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+            <span className="text-foreground/40 uppercase text-[10px] font-black tracking-widest">
               Player Win Rate
             </span>
-            <p className="text-cream font-mono">{(dm.playerWinRate * 100).toFixed(1)}%</p>
+            <p className="text-foreground font-mono">{(dm.playerWinRate * 100).toFixed(1)}%</p>
           </div>
           <div>
-            <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+            <span className="text-foreground/40 uppercase text-[10px] font-black tracking-widest">
               NPC Competence
             </span>
-            <p className="text-cream font-mono flex items-center gap-1">
+            <p className="text-foreground font-mono flex items-center gap-1">
               {(current * 100).toFixed(0)}%{trendIcon}
             </p>
           </div>
           <div>
-            <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+            <span className="text-foreground/40 uppercase text-[10px] font-black tracking-widest">
               Player Wins
             </span>
-            <p className="text-cream font-mono">{dm.playerWins}</p>
+            <p className="text-foreground font-mono">{dm.playerWins}</p>
           </div>
           <div>
-            <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+            <span className="text-foreground/40 uppercase text-[10px] font-black tracking-widest">
               Player Entries
             </span>
-            <p className="text-cream font-mono">{dm.playerEntries}</p>
+            <p className="text-foreground font-mono">{dm.playerEntries}</p>
           </div>
         </div>
-        <div className="text-[10px] font-mono text-cream/30 uppercase">
+        <div className="text-[10px] font-mono text-foreground/30 uppercase">
           Last adjusted: Day {dm.lastAdjustmentDay} · Trend: {trendLabel}
         </div>
       </CardContent>
@@ -151,22 +153,22 @@ function CartelsPanel({
   stableMap: Map<string, Stable>;
 }) {
   return (
-    <Card className="border-gold/20 bg-slate-900/40">
-      <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
+    <Card className="border-primary/20 bg-slate-900/40">
+      <CardHeader className="border-b border-primary/10 pb-3">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-primary">
           <Swords size={14} />
           Active Cartels
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-2">
         {cartels.length === 0 ? (
-          <p className="text-[11px] text-cream/40 font-mono">No active cartels</p>
+          <p className="text-[11px] text-foreground/40 font-mono">No active cartels</p>
         ) : (
           cartels.map((c) => (
             <div key={c.id} className="space-y-1 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-cream font-mono">{c.id}</span>
-                <Badge variant="outline" className="text-[9px] border-white/10 text-cream/40">
+                <span className="text-foreground font-mono">{c.id}</span>
+                <Badge variant="outline" className="text-[9px] border-white/10 text-foreground/40">
                   {c.type}
                 </Badge>
               </div>
@@ -211,16 +213,18 @@ function NpcDistressMonitorPanel({
   };
 
   return (
-    <Card className="border-gold/20 bg-slate-900/40">
-      <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
+    <Card className="border-primary/20 bg-slate-900/40">
+      <CardHeader className="border-b border-primary/10 pb-3">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-primary">
           <AlertTriangle size={14} />
           NPC Distress Monitor
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-2">
         {distressed.length === 0 ? (
-          <p className="text-[11px] text-cream/40 font-mono">All stables financially healthy</p>
+          <p className="text-[11px] text-foreground/40 font-mono">
+            All stables financially healthy
+          </p>
         ) : (
           distressed.map((d) => (
             <div key={d.id} className="space-y-1 text-xs">
@@ -228,7 +232,7 @@ function NpcDistressMonitorPanel({
                 <Link
                   to="/npc-stables/$stableId"
                   params={{ stableId: d.id }}
-                  className="text-cream font-bold hover:text-gold"
+                  className="text-foreground font-bold hover:text-primary"
                 >
                   {stableMap.get(d.id)?.name ?? d.id}
                 </Link>
@@ -241,11 +245,11 @@ function NpcDistressMonitorPanel({
                   {d.level}
                 </Badge>
               </div>
-              <div className="text-[10px] text-cream/30 font-mono">
+              <div className="text-[10px] text-foreground/30 font-mono">
                 Days of cash: {d.daysOfCash?.toFixed(0) ?? "—"}
               </div>
               {d.recommendedActions && d.recommendedActions.length > 0 && (
-                <div className="text-[10px] text-cream/30 font-mono">
+                <div className="text-[10px] text-foreground/30 font-mono">
                   Actions: {d.recommendedActions.join(", ")}
                 </div>
               )}
@@ -263,24 +267,24 @@ function WorldAssessmentPanel({ stableStates }: { stableStates: Record<string, S
     .map(([id, s]) => ({ id, ...s.worldAssessment }));
 
   return (
-    <Card className="border-gold/20 bg-slate-900/40">
-      <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
+    <Card className="border-primary/20 bg-slate-900/40">
+      <CardHeader className="border-b border-primary/10 pb-3">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-primary">
           <Globe size={14} />
           World Assessment
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-3">
         {assessments.length === 0 ? (
-          <p className="text-[11px] text-cream/40 font-mono">No assessments</p>
+          <p className="text-[11px] text-foreground/40 font-mono">No assessments</p>
         ) : (
           assessments.map((a) => (
             <div key={a.id} className="space-y-1 text-xs">
               <div className="flex justify-between">
-                <span className="text-cream/40 uppercase text-[10px] font-black tracking-widest">
+                <span className="text-foreground/40 uppercase text-[10px] font-black tracking-widest">
                   player dominance
                 </span>
-                <span className="text-cream font-mono">
+                <span className="text-foreground font-mono">
                   {((a.playerDominance ?? 0) * 100).toFixed(0)}%
                 </span>
               </div>
@@ -302,23 +306,23 @@ function StrategicDirectivesPanel({
     .flatMap(([id, s]) => s.strategicDirectives!.map((d) => ({ stableId: id, ...d })));
 
   return (
-    <Card className="border-gold/20 bg-slate-900/40">
-      <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
+    <Card className="border-primary/20 bg-slate-900/40">
+      <CardHeader className="border-b border-primary/10 pb-3">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-primary">
           <Target size={14} />
           Strategic Directives
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-2">
         {directives.length === 0 ? (
-          <p className="text-[11px] text-cream/40 font-mono">No directives</p>
+          <p className="text-[11px] text-foreground/40 font-mono">No directives</p>
         ) : (
           directives.map((d, i) => (
             <div key={i} className="flex items-center justify-between text-xs">
-              <span className="text-cream font-mono">{d.type}</span>
+              <span className="text-foreground font-mono">{d.type}</span>
               <div className="flex items-center gap-2">
-                <span className="text-[10px] text-cream/30 font-mono">{d.stableId}</span>
-                <Badge variant="outline" className="text-[9px] border-white/10 text-cream/40">
+                <span className="text-[10px] text-foreground/30 font-mono">{d.stableId}</span>
+                <Badge variant="outline" className="text-[9px] border-white/10 text-foreground/40">
                   {d.priority}
                 </Badge>
               </div>
@@ -341,16 +345,16 @@ function NpcActionDecisionsPanel({
   const actionLabel = (actionId: string) => actionId.replace(/_/g, " ");
 
   return (
-    <Card className="border-gold/20 bg-slate-900/40">
-      <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
+    <Card className="border-primary/20 bg-slate-900/40">
+      <CardHeader className="border-b border-primary/10 pb-3">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-primary">
           <Activity size={14} />
           NPC Action Decisions
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-2">
         {decisions.length === 0 ? (
-          <p className="text-[11px] text-cream/40 font-mono">No action decisions recorded</p>
+          <p className="text-[11px] text-foreground/40 font-mono">No action decisions recorded</p>
         ) : (
           decisions.map((decision) => (
             <div
@@ -361,15 +365,15 @@ function NpcActionDecisionsPanel({
                 <Link
                   to="/npc-stables/$stableId"
                   params={{ stableId: decision.stableId }}
-                  className="text-cream font-bold hover:text-gold"
+                  className="text-foreground font-bold hover:text-primary"
                 >
                   {stableMap.get(decision.stableId)?.name ?? decision.stableId}
                 </Link>
-                <Badge variant="outline" className="text-[9px] border-white/10 text-cream/40">
+                <Badge variant="outline" className="text-[9px] border-white/10 text-foreground/40">
                   {decision.status}
                 </Badge>
               </div>
-              <div className="flex items-center justify-between text-[10px] font-mono text-cream/40">
+              <div className="flex items-center justify-between text-[10px] font-mono text-foreground/40">
                 <span>{actionLabel(decision.actionId)}</span>
                 <span>
                   Day {decision.day} · {decision.intentCount} intent
@@ -418,16 +422,16 @@ function NpcRelationshipsPanel({
   }
 
   return (
-    <Card className="border-gold/20 bg-slate-900/40">
-      <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
+    <Card className="border-primary/20 bg-slate-900/40">
+      <CardHeader className="border-b border-primary/10 pb-3">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-primary">
           <Users size={14} />
           NPC Relationships
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-3">
         {relationships.length === 0 ? (
-          <p className="text-[11px] text-cream/40 font-mono">No relationships</p>
+          <p className="text-[11px] text-foreground/40 font-mono">No relationships</p>
         ) : (
           <>
             {stableIds.length > 1 && (
@@ -435,9 +439,13 @@ function NpcRelationshipsPanel({
                 <table className="text-[9px] font-mono">
                   <thead>
                     <tr>
-                      <th className="p-1 text-left text-cream/30 uppercase"></th>
+                      <th scope="col" className="p-1 text-left text-foreground/30 uppercase"></th>
                       {stableIds.map((sid) => (
-                        <th key={sid} className="p-1 text-center text-cream/30 uppercase">
+                        <th
+                          scope="col"
+                          key={sid}
+                          className="p-1 text-center text-foreground/30 uppercase"
+                        >
                           {stableMap.get(sid)?.name?.slice(0, 4) ?? sid.slice(0, 4)}
                         </th>
                       ))}
@@ -446,7 +454,7 @@ function NpcRelationshipsPanel({
                   <tbody>
                     {stableIds.map((fromId) => (
                       <tr key={fromId}>
-                        <td className="p-1 text-left text-cream/30 uppercase">
+                        <td className="p-1 text-left text-foreground/30 uppercase">
                           {stableMap.get(fromId)?.name?.slice(0, 4) ?? fromId.slice(0, 4)}
                         </td>
                         {stableIds.map((toId) => {
@@ -463,7 +471,7 @@ function NpcRelationshipsPanel({
                                   {trust}
                                 </span>
                               ) : (
-                                <span className="text-cream/10">—</span>
+                                <span className="text-foreground/10">—</span>
                               )}
                             </td>
                           );
@@ -478,16 +486,19 @@ function NpcRelationshipsPanel({
               {relationships.map((r, i) => (
                 <div key={i} className="space-y-1 text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-cream font-mono">
+                    <span className="text-foreground font-mono">
                       {stableMap.get(r.from)?.name ?? r.from} → {stableMap.get(r.to)?.name ?? r.to}
                     </span>
                     {r.allianceType && (
-                      <Badge variant="outline" className="text-[9px] border-white/10 text-cream/40">
+                      <Badge
+                        variant="outline"
+                        className="text-[9px] border-white/10 text-foreground/40"
+                      >
                         {r.allianceType}
                       </Badge>
                     )}
                   </div>
-                  <div className="text-[10px] text-cream/30 font-mono">Trust: {r.trust}</div>
+                  <div className="text-[10px] text-foreground/30 font-mono">Trust: {r.trust}</div>
                 </div>
               ))}
             </div>
@@ -508,34 +519,34 @@ function NpcStableIntelPanel({
   const entries = Object.entries(stableStates);
 
   return (
-    <Card className="border-gold/20 bg-slate-900/40">
-      <CardHeader className="border-b border-gold/10 pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-gold">
+    <Card className="border-primary/20 bg-slate-900/40">
+      <CardHeader className="border-b border-primary/10 pb-3">
+        <CardTitle className="text-xs font-black uppercase tracking-[0.15em] flex items-center gap-2 text-primary">
           <Activity size={14} />
           NPC Stable Intelligence
         </CardTitle>
       </CardHeader>
       <CardContent className="p-4 space-y-3">
         {entries.length === 0 ? (
-          <p className="text-[11px] text-cream/40 font-mono">No stable data</p>
+          <p className="text-[11px] text-foreground/40 font-mono">No stable data</p>
         ) : (
           entries.map(([id, s]) => (
             <div key={id} className="space-y-1 text-xs">
               <div className="flex items-center justify-between">
-                <span className="text-cream font-bold">{stableMap.get(id)?.name ?? id}</span>
+                <span className="text-foreground font-bold">{stableMap.get(id)?.name ?? id}</span>
               </div>
-              <div className="grid grid-cols-3 gap-2 text-[10px] font-mono text-cream/40">
+              <div className="grid grid-cols-3 gap-2 text-[10px] font-mono text-foreground/40">
                 <div>
                   <span className="uppercase">Friction</span>
-                  <p className="text-cream">{s.friction}</p>
+                  <p className="text-foreground">{s.friction}</p>
                 </div>
                 <div>
                   <span className="uppercase">Wins vs Player</span>
-                  <p className="text-cream">{s.winsAgainstPlayer}</p>
+                  <p className="text-foreground">{s.winsAgainstPlayer}</p>
                 </div>
                 <div>
                   <span className="uppercase">Prestige</span>
-                  <p className="text-cream">
+                  <p className="text-foreground">
                     {Object.entries(s.regionalPrestige ?? {})
                       .map(([r, v]) => `${r}:${v}`)
                       .join(", ") || "—"}

@@ -94,24 +94,24 @@ export function ObjectionModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md bg-slate-900 border-white/10 text-cream">
+      <DialogContent className="sm:max-w-md bg-slate-900 border-white/10 text-foreground">
         <DialogHeader>
           <DialogTitle className="text-base font-black uppercase tracking-wider text-amber-400">
             Lodge Stewards Inquiry
           </DialogTitle>
-          <DialogDescription className="text-xs text-cream/60">
+          <DialogDescription className="text-xs text-foreground/60">
             Submit a formal objection to race officials regarding an infraction during{" "}
-            <span className="font-semibold text-cream">{race.name}</span>.
+            <span className="font-semibold text-foreground">{race.name}</span>.
           </DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 pt-2">
           {/* Reporting Horse */}
           <div className="space-y-1">
-            <label className="text-[10px] font-black uppercase tracking-widest text-cream/50">
+            <label className="text-[10px] font-black uppercase tracking-widest text-foreground/50">
               Lodging On Behalf Of
             </label>
-            <div className="p-2.5 rounded bg-slate-950/60 border border-white/5 text-sm font-semibold text-cream">
+            <div className="p-2.5 rounded bg-slate-950/60 border border-white/5 text-sm font-semibold text-foreground">
               {reportingHorse?.name ?? reportingHorseId}
             </div>
           </div>
@@ -120,7 +120,7 @@ export function ObjectionModal({
           <div className="space-y-1">
             <label
               htmlFor="accused-horse-select"
-              className="text-[10px] font-black uppercase tracking-widest text-cream/50"
+              className="text-[10px] font-black uppercase tracking-widest text-foreground/50"
             >
               Infringing Horse (Accused)
             </label>
@@ -128,7 +128,7 @@ export function ObjectionModal({
               id="accused-horse-select"
               value={accusedHorseId}
               onChange={(e) => setAccusedHorseId(e.target.value)}
-              className="w-full h-10 px-3 rounded bg-slate-950/80 border border-white/10 text-sm font-medium text-cream focus:outline-none focus:border-amber-400 font-mono"
+              className="w-full h-10 px-3 rounded bg-slate-950/80 border border-white/10 text-sm font-medium text-foreground focus:outline-none focus:border-amber-400 font-mono"
             >
               {candidateIds.map((id) => (
                 <option key={id} value={id}>
@@ -142,7 +142,7 @@ export function ObjectionModal({
           <div className="space-y-1">
             <label
               htmlFor="inquiry-type-select"
-              className="text-[10px] font-black uppercase tracking-widest text-cream/50"
+              className="text-[10px] font-black uppercase tracking-widest text-foreground/50"
             >
               Infraction Category
             </label>
@@ -150,7 +150,7 @@ export function ObjectionModal({
               id="inquiry-type-select"
               value={inquiryType}
               onChange={(e) => setInquiryType(e.target.value as InquiryType)}
-              className="w-full h-10 px-3 rounded bg-slate-950/80 border border-white/10 text-sm font-medium text-cream focus:outline-none focus:border-amber-400"
+              className="w-full h-10 px-3 rounded bg-slate-950/80 border border-white/10 text-sm font-medium text-foreground focus:outline-none focus:border-amber-400"
             >
               {INQUIRY_TYPES.map((t) => (
                 <option key={t.value} value={t.value}>
@@ -158,7 +158,7 @@ export function ObjectionModal({
                 </option>
               ))}
             </select>
-            <p className="text-[11px] text-cream/40 italic">
+            <p className="text-[11px] text-foreground/40 italic">
               {INQUIRY_TYPES.find((t) => t.value === inquiryType)?.description}
             </p>
           </div>
@@ -167,7 +167,7 @@ export function ObjectionModal({
           <div className="space-y-1">
             <label
               htmlFor="objection-notes"
-              className="text-[10px] font-black uppercase tracking-widest text-cream/50"
+              className="text-[10px] font-black uppercase tracking-widest text-foreground/50"
             >
               Notes & Evidence (Optional)
             </label>
@@ -177,7 +177,7 @@ export function ObjectionModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="e.g. Swerved inward into running line at the 200m pole..."
-              className="w-full p-2.5 rounded bg-slate-950/80 border border-white/10 text-xs text-cream placeholder-cream/20 focus:outline-none focus:border-amber-400 resize-none"
+              className="w-full p-2.5 rounded bg-slate-950/80 border border-white/10 text-xs text-foreground placeholder-foreground/20 focus:outline-none focus:border-amber-400 resize-none"
             />
           </div>
 
@@ -188,7 +188,7 @@ export function ObjectionModal({
               variant="outline"
               size="sm"
               onClick={onClose}
-              className="text-xs uppercase border-white/10 hover:bg-white/5 text-cream/70"
+              className="text-xs uppercase border-white/10 hover:bg-white/5 text-foreground/70"
             >
               Cancel
             </Button>

@@ -122,7 +122,7 @@ export function HorseBenchmarkDialog({
       case "slate":
         return "bg-slate-700/40 text-slate-300 border-slate-600/40";
       default:
-        return "bg-white/5 text-cream-muted border-white/10";
+        return "bg-white/5 text-muted-foreground border-white/10";
     }
   }, [standing.tier.variant]);
 
@@ -130,7 +130,7 @@ export function HorseBenchmarkDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto w-[95vw]">
         <DialogHeader>
-          <DialogTitle className="font-[family-name:var(--font-display)] uppercase tracking-widest text-sm text-gold">
+          <DialogTitle className="font-[family-name:var(--font-display)] uppercase tracking-widest text-sm text-primary">
             {horseName} vs reference times
           </DialogTitle>
         </DialogHeader>
@@ -144,12 +144,12 @@ export function HorseBenchmarkDialog({
             {/* At-a-glance KPI Cards */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               <div className="border border-white/5 bg-slate-900/60 p-2.5 rounded flex flex-col justify-between">
-                <div className="text-[10px] font-mono uppercase tracking-wide text-cream/50">
+                <div className="text-[10px] font-mono uppercase tracking-wide text-foreground/50">
                   Field Rank
                 </div>
-                <div className="font-mono text-lg font-bold text-cream my-0.5">
+                <div className="font-mono text-lg font-bold text-foreground my-0.5">
                   #{standing.rank}
-                  <span className="text-xs text-cream/30"> / {standing.fieldSize}</span>
+                  <span className="text-xs text-foreground/30"> / {standing.fieldSize}</span>
                 </div>
                 <Badge
                   variant="outline"
@@ -160,12 +160,12 @@ export function HorseBenchmarkDialog({
               </div>
 
               <div className="border border-white/5 bg-slate-900/60 p-2.5 rounded flex flex-col justify-between">
-                <div className="text-[10px] font-mono uppercase tracking-wide text-cream/50">
+                <div className="text-[10px] font-mono uppercase tracking-wide text-foreground/50">
                   Field Percentile
                 </div>
-                <div className="font-mono text-lg font-bold text-cream my-0.5">
+                <div className="font-mono text-lg font-bold text-foreground my-0.5">
                   {standing.percentile}%
-                  <span className="text-xs text-cream/40 font-normal">
+                  <span className="text-xs text-foreground/40 font-normal">
                     {" "}
                     · Top {standing.topPercentile}%
                   </span>
@@ -186,14 +186,14 @@ export function HorseBenchmarkDialog({
               </div>
 
               <div className="border border-white/5 bg-slate-900/60 p-2.5 rounded flex flex-col justify-between">
-                <div className="text-[10px] font-mono uppercase tracking-wide text-cream/50">
+                <div className="text-[10px] font-mono uppercase tracking-wide text-foreground/50">
                   Outpaced
                 </div>
-                <div className="font-mono text-lg font-bold text-cream my-0.5">
+                <div className="font-mono text-lg font-bold text-foreground my-0.5">
                   {standing.outpacedCount}
-                  <span className="text-xs text-cream/30"> / {standing.totalBenchmarks}</span>
+                  <span className="text-xs text-foreground/30"> / {standing.totalBenchmarks}</span>
                 </div>
-                <div className="text-[10px] font-mono text-cream/50">
+                <div className="text-[10px] font-mono text-foreground/50">
                   {standing.surfaceBreakdown.Turf.outpaced}/{standing.surfaceBreakdown.Turf.total}{" "}
                   Turf · {standing.surfaceBreakdown.Dirt.outpaced}/
                   {standing.surfaceBreakdown.Dirt.total} Dirt
@@ -201,7 +201,7 @@ export function HorseBenchmarkDialog({
               </div>
 
               <div className="border border-white/5 bg-slate-900/60 p-2.5 rounded flex flex-col justify-between">
-                <div className="text-[10px] font-mono uppercase tracking-wide text-cream/50">
+                <div className="text-[10px] font-mono uppercase tracking-wide text-foreground/50">
                   Avg Pace Delta
                 </div>
                 <div
@@ -213,7 +213,7 @@ export function HorseBenchmarkDialog({
                   {standing.averageDeltaPct >= 0 ? "+" : ""}
                   {standing.averageDeltaPct.toFixed(2)}%
                 </div>
-                <div className="text-[10px] font-mono text-cream/40">
+                <div className="text-[10px] font-mono text-foreground/40">
                   {standing.averageDeltaPct >= 0 ? "Pace advantage" : "Pace deficit"}
                 </div>
               </div>
@@ -221,9 +221,9 @@ export function HorseBenchmarkDialog({
 
             {/* Career Best Pace Summary */}
             <div className="flex items-center justify-between gap-2 rounded border border-white/10 bg-slate-900/40 px-3 py-2 text-xs">
-              <span className="text-cream-muted">
+              <span className="text-muted-foreground">
                 Career best pace ·{" "}
-                <span className="text-cream">
+                <span className="text-foreground">
                   {best.raceName} ({best.distance}m)
                 </span>
               </span>
@@ -239,7 +239,7 @@ export function HorseBenchmarkDialog({
             <div className="flex flex-wrap items-center gap-2 rounded border border-white/10 bg-slate-900/40 px-3 py-2 text-xs">
               <label
                 htmlFor="benchmark-compare-select"
-                className="text-cream-muted font-mono uppercase text-[10px] tracking-wide"
+                className="text-muted-foreground font-mono uppercase text-[10px] tracking-wide"
               >
                 Compare with
               </label>
@@ -247,7 +247,7 @@ export function HorseBenchmarkDialog({
                 id="benchmark-compare-select"
                 value={compareId}
                 onChange={(e) => setCompareId(e.target.value)}
-                className="rounded border border-white/10 bg-slate-900 px-2 py-1 text-xs text-cream"
+                className="rounded border border-white/10 bg-slate-900 px-2 py-1 text-xs text-foreground"
               >
                 <option value="">— None —</option>
                 {compareOptions.map((h) => (
@@ -257,12 +257,12 @@ export function HorseBenchmarkDialog({
                 ))}
               </select>
               {compareId && compareRuns.length === 0 && (
-                <span className="text-cream-muted italic">
+                <span className="text-muted-foreground italic">
                   {compareName} has no recorded times yet.
                 </span>
               )}
               {compareStanding && (
-                <span className="ml-auto font-mono text-[10px] text-cream/60">
+                <span className="ml-auto font-mono text-[10px] text-foreground/60">
                   Avg pace delta · {horseName}:{" "}
                   <span
                     className={standing.averageDeltaPct >= 0 ? "text-emerald-400" : "text-rose-400"}
@@ -290,7 +290,7 @@ export function HorseBenchmarkDialog({
             {/* Filters & Sorting Controls */}
             <div className="flex flex-wrap items-center justify-between gap-2 text-xs pt-1">
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-[10px] font-mono text-cream-muted">Surface:</span>
+                <span className="text-[10px] font-mono text-muted-foreground">Surface:</span>
                 {(["all", "Turf", "Dirt"] as const).map((s) => (
                   <button
                     key={s}
@@ -300,7 +300,7 @@ export function HorseBenchmarkDialog({
                       "px-2 py-0.5 rounded text-[10px] font-mono uppercase transition-colors",
                       surfaceFilter === s
                         ? "bg-primary text-primary-foreground font-bold"
-                        : "bg-white/5 text-cream-muted hover:text-cream",
+                        : "bg-white/5 text-muted-foreground hover:text-foreground",
                     )}
                   >
                     {s === "all" ? `All (${standing.totalBenchmarks})` : s}
@@ -309,7 +309,7 @@ export function HorseBenchmarkDialog({
               </div>
 
               <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-[10px] font-mono text-cream-muted">Trip:</span>
+                <span className="text-[10px] font-mono text-muted-foreground">Trip:</span>
                 {(
                   [
                     { id: "all", label: "All" },
@@ -327,7 +327,7 @@ export function HorseBenchmarkDialog({
                       "px-2 py-0.5 rounded text-[10px] font-mono uppercase transition-colors",
                       tripFilter === t.id
                         ? "bg-primary text-primary-foreground font-bold"
-                        : "bg-white/5 text-cream-muted hover:text-cream",
+                        : "bg-white/5 text-muted-foreground hover:text-foreground",
                     )}
                   >
                     {t.label}
@@ -335,7 +335,7 @@ export function HorseBenchmarkDialog({
                 ))}
               </div>
 
-              <div className="flex items-center gap-1.5 text-[10px] font-mono text-cream-muted">
+              <div className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground">
                 <span>Sort:</span>
                 {(
                   [
@@ -351,8 +351,8 @@ export function HorseBenchmarkDialog({
                     className={cn(
                       "px-2 py-0.5 rounded uppercase transition-colors",
                       sortBy === opt.id
-                        ? "bg-white/15 text-cream font-bold"
-                        : "hover:text-cream bg-white/5",
+                        ? "bg-white/15 text-foreground font-bold"
+                        : "hover:text-foreground bg-white/5",
                     )}
                   >
                     {opt.label}
@@ -365,17 +365,35 @@ export function HorseBenchmarkDialog({
             <div className="rounded border border-white/5 overflow-x-auto">
               <table className="w-full text-xs">
                 <thead>
-                  <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide font-mono text-cream/50">
-                    <th className="px-2 py-2 text-center w-8">#</th>
-                    <th className="px-3 py-2 text-left">Benchmark</th>
-                    <th className="px-3 py-2 text-right">Their / mi</th>
-                    <th className="px-3 py-2 text-right">{horseName} / mi</th>
+                  <tr className="border-b border-white/10 text-[10px] uppercase tracking-wide font-mono text-foreground/50">
+                    <th scope="col" className="px-2 py-2 text-center w-8">
+                      #
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-left">
+                      Benchmark
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-right">
+                      Their / mi
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-right">
+                      {horseName} / mi
+                    </th>
                     {compareStanding && (
-                      <th className="px-3 py-2 text-right">{compareName} / mi</th>
+                      <th scope="col" className="px-3 py-2 text-right">
+                        {compareName} / mi
+                      </th>
                     )}
-                    <th className="px-2 py-2 text-center">Standing</th>
-                    <th className="px-3 py-2 text-right">Delta</th>
-                    {compareStanding && <th className="px-3 py-2 text-right">Head-to-head</th>}
+                    <th scope="col" className="px-2 py-2 text-center">
+                      Standing
+                    </th>
+                    <th scope="col" className="px-3 py-2 text-right">
+                      Delta
+                    </th>
+                    {compareStanding && (
+                      <th scope="col" className="px-3 py-2 text-right">
+                        Head-to-head
+                      </th>
+                    )}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-white/5">
@@ -388,12 +406,12 @@ export function HorseBenchmarkDialog({
                           : undefined;
                       return (
                         <tr key={benchmark.id} className="hover:bg-white/[0.02]">
-                          <td className="px-2 py-2 text-center font-mono text-[10px] text-cream/40">
+                          <td className="px-2 py-2 text-center font-mono text-[10px] text-foreground/40">
                             #{rank}
                           </td>
                           <td className="px-3 py-2">
-                            <div className="text-cream">{benchmark.horse}</div>
-                            <div className="text-[10px] text-cream-muted">
+                            <div className="text-foreground">{benchmark.horse}</div>
+                            <div className="text-[10px] text-muted-foreground">
                               {benchmark.race} · {benchmark.distanceMeters}m {benchmark.surface}
                             </div>
                           </td>
@@ -414,12 +432,12 @@ export function HorseBenchmarkDialog({
                                   primary="perMile"
                                   className="text-xs"
                                 />
-                                <div className="text-[10px] text-cream-muted">
+                                <div className="text-[10px] text-muted-foreground">
                                   {exact ? `${match.distance}m` : `best run · ${match.distance}m`}
                                 </div>
                               </div>
                             ) : (
-                              <span className="text-cream-muted">—</span>
+                              <span className="text-muted-foreground">—</span>
                             )}
                           </td>
                           {compareStanding && (
@@ -432,20 +450,20 @@ export function HorseBenchmarkDialog({
                                     primary="perMile"
                                     className="text-xs"
                                   />
-                                  <div className="text-[10px] text-cream-muted">
+                                  <div className="text-[10px] text-muted-foreground">
                                     {cmp.exact
                                       ? `${cmp.match.distance}m`
                                       : `best run · ${cmp.match.distance}m`}
                                   </div>
                                 </div>
                               ) : (
-                                <span className="text-cream-muted">—</span>
+                                <span className="text-muted-foreground">—</span>
                               )}
                             </td>
                           )}
                           <td className="px-2 py-2 text-center">
                             {deltaPct === undefined ? (
-                              <span className="text-cream-muted">—</span>
+                              <span className="text-muted-foreground">—</span>
                             ) : deltaPct > 0 ? (
                               <Badge
                                 variant="outline"
@@ -471,7 +489,7 @@ export function HorseBenchmarkDialog({
                           </td>
                           <td className="px-3 py-2 text-right">
                             {deltaPct === undefined ? (
-                              <span className="text-cream-muted">—</span>
+                              <span className="text-muted-foreground">—</span>
                             ) : (
                               <Badge
                                 variant={deltaPct >= 0 ? "default" : "secondary"}
@@ -479,7 +497,7 @@ export function HorseBenchmarkDialog({
                                   "text-[10px] font-mono",
                                   deltaPct >= 0
                                     ? "bg-emerald-600 text-white"
-                                    : "bg-slate-800 text-cream-muted",
+                                    : "bg-slate-800 text-muted-foreground",
                                 )}
                               >
                                 {deltaPct >= 0 ? "+" : ""}
@@ -490,7 +508,7 @@ export function HorseBenchmarkDialog({
                           {compareStanding && (
                             <td className="px-3 py-2 text-right">
                               {h2hPct === undefined ? (
-                                <span className="text-cream-muted">—</span>
+                                <span className="text-muted-foreground">—</span>
                               ) : (
                                 <Badge
                                   variant="outline"
@@ -524,7 +542,7 @@ export function HorseBenchmarkDialog({
               </table>
             </div>
 
-            <p className="text-[11px] italic text-cream-muted">
+            <p className="text-[11px] italic text-muted-foreground">
               Positive delta means {horseName} ran faster per mile than the benchmark. Field rank
               reflects standing in a {benchmarks.length + 1}-runner field ({benchmarks.length}{" "}
               benchmarks + {horseName}). Where no comparable trip and surface exists, the

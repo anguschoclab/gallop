@@ -51,38 +51,38 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="max-w-md bg-slate-900 border-white/10 rounded-none">
         <DialogHeader>
-          <DialogTitle className="text-cream font-[family-name:var(--font-display)] uppercase tracking-tight">
+          <DialogTitle className="text-foreground font-[family-name:var(--font-display)] uppercase tracking-tight">
             Negotiate with {getStaffName(staff)}
           </DialogTitle>
         </DialogHeader>
 
         <div className="space-y-5 pt-1">
-          <div className="flex items-center gap-3 text-[10px] font-mono uppercase text-cream/40 tracking-wide">
+          <div className="flex items-center gap-3 text-[10px] font-mono uppercase text-foreground/40 tracking-wide">
             <span className="px-2 py-0.5 border border-white/10 bg-white/5">{tierLabel}</span>
             <span>{roleLabel}</span>
-            <span className="text-gold">Fame {staff.fame}</span>
+            <span className="text-primary">Fame {staff.fame}</span>
           </div>
 
-          <div className="bg-black/30 border border-white/5 p-4 italic text-sm text-cream/70 font-mono">
+          <div className="bg-black/30 border border-white/5 p-4 italic text-sm text-foreground/70 font-mono">
             "{quote}"
           </div>
 
           <div className="space-y-2">
-            <div className="flex justify-between text-[10px] font-mono uppercase text-cream/40 tracking-wide">
+            <div className="flex justify-between text-[10px] font-mono uppercase text-foreground/40 tracking-wide">
               <span>
                 Asking:{" "}
-                <span className="text-cream font-bold tabular-nums">
+                <span className="text-foreground font-bold tabular-nums">
                   {formatCurrency(askingSalary)}/day
                 </span>
               </span>
               <span>
                 Floor:{" "}
-                <span className="text-cream/60 tabular-nums">{formatCurrency(minOffer)}</span>
+                <span className="text-foreground/60 tabular-nums">{formatCurrency(minOffer)}</span>
               </span>
             </div>
 
             {patience > 0 && (
-              <div className="text-[9px] font-mono uppercase text-cream/30 tracking-wide">
+              <div className="text-[9px] font-mono uppercase text-foreground/30 tracking-wide">
                 Patience:{" "}
                 {roundsLeft === 0 ? (
                   <span className="text-destructive">Final warning</span>
@@ -97,7 +97,7 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
             <div className="space-y-1">
               <label
                 htmlFor={offerInputId}
-                className="text-[10px] font-black uppercase text-cream/50 tracking-wide"
+                className="text-[10px] font-black uppercase text-foreground/50 tracking-wide"
               >
                 Your offer (per day)
               </label>
@@ -114,7 +114,7 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
                   const n = Number(offerAmount.replace(/,/g, "").replace(/\$/g, ""));
                   if (n > 0) setOfferAmount(String(n));
                 }}
-                className="bg-black/40 border-white/10 text-cream font-mono tabular-nums rounded-none"
+                className="bg-black/40 border-white/10 text-foreground font-mono tabular-nums rounded-none"
               />
               {offerError && <p className="text-xs text-destructive font-mono">{offerError}</p>}
             </div>
@@ -124,13 +124,13 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
         <DialogFooter className="gap-2">
           <Button
             variant="ghost"
-            className="rounded-none border border-white/10 text-cream/50 hover:text-cream text-[10px] uppercase tracking-wide"
+            className="rounded-none border border-white/10 text-foreground/50 hover:text-foreground text-[10px] uppercase tracking-wide"
             onClick={handleClose}
           >
             Walk Away
           </Button>
           <Button
-            className="rounded-none bg-gold hover:bg-gold-bright text-slate-950 font-black uppercase tracking-wide text-[10px]"
+            className="rounded-none bg-primary hover:bg-accent-bright text-slate-950 font-black uppercase tracking-wide text-[10px]"
             onClick={handleSubmit}
           >
             Make Offer

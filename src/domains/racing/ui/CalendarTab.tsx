@@ -8,10 +8,10 @@ export function CalendarTab() {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-cream font-[family-name:var(--font-display)]">
+        <h2 className="text-2xl font-bold tracking-tight text-foreground font-[family-name:var(--font-display)]">
           Regional Racing Calendars
         </h2>
-        <p className="text-cream-muted font-[family-name:var(--font-body)]">
+        <p className="text-muted-foreground font-[family-name:var(--font-body)]">
           Browse graded stakes races by region
         </p>
       </div>
@@ -19,21 +19,21 @@ export function CalendarTab() {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {REGION_LIST.map((region) => (
           <Link key={region.id} to="/calendar/$regionId" params={{ regionId: region.id }}>
-            <Card className="hover:border-gold transition-colors cursor-pointer h-full border-gold-muted">
+            <Card className="hover:border-primary transition-colors cursor-pointer h-full border-border">
               <CardHeader>
-                <CardTitle className="flex items-center justify-between text-cream font-[family-name:var(--font-display)]">
+                <CardTitle className="flex items-center justify-between text-foreground font-[family-name:var(--font-display)]">
                   {region.name}
-                  <ChevronRight className="h-5 w-5 text-cream-muted" />
+                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-cream-muted mb-3">{region.subtitle}</p>
+                <p className="text-sm text-muted-foreground mb-3">{region.subtitle}</p>
                 <div className="flex flex-wrap gap-2">
-                  <Badge variant="outline" className="border-gold-muted text-cream">
+                  <Badge variant="outline" className="border-border text-foreground">
                     {region.tracks.length} tracks
                   </Badge>
                   {region.specialFilterName && (
-                    <Badge className="bg-t700 text-cream">{region.specialFilterName}</Badge>
+                    <Badge className="bg-muted text-foreground">{region.specialFilterName}</Badge>
                   )}
                 </div>
               </CardContent>

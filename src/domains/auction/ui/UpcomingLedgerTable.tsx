@@ -34,20 +34,30 @@ export function UpcomingLedgerTable({
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-2 mb-2 px-1">
-        <CalendarIcon className="h-3.5 w-3.5 text-cream/40" />
-        <h2 className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+        <CalendarIcon className="h-3.5 w-3.5 text-foreground/40" />
+        <h2 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
           Upcoming Exchange Windows
         </h2>
       </div>
       <div className="border border-white/5 bg-slate-900/20 shadow-2xl overflow-hidden">
         <table className="w-full text-left border-collapse">
           <thead className="bg-black/40 border-b border-white/10">
-            <tr className="font-mono text-[9px] uppercase tracking-wide text-gold-muted/60">
-              <th className="px-6 py-4 font-black">Window Designation</th>
-              <th className="px-4 py-4 font-black">Category</th>
-              <th className="px-4 py-4 font-black text-center">Status</th>
-              <th className="px-4 py-4 font-black text-right">Enter</th>
-              <th className="px-6 py-4 font-black text-right">Operations</th>
+            <tr className="font-mono text-[9px] uppercase tracking-wide text-primary/20">
+              <th scope="col" className="px-6 py-4 font-black">
+                Window Designation
+              </th>
+              <th scope="col" className="px-4 py-4 font-black">
+                Category
+              </th>
+              <th scope="col" className="px-4 py-4 font-black text-center">
+                Status
+              </th>
+              <th scope="col" className="px-4 py-4 font-black text-right">
+                Enter
+              </th>
+              <th scope="col" className="px-6 py-4 font-black text-right">
+                Operations
+              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
@@ -74,10 +84,10 @@ export function UpcomingLedgerTable({
                 >
                   <td className="px-6 py-5">
                     <div className="space-y-1">
-                      <div className="text-sm font-bold text-cream uppercase tracking-tight group-hover:text-gold transition-colors">
+                      <div className="text-sm font-bold text-foreground uppercase tracking-tight group-hover:text-primary transition-colors">
                         {sale.name}
                       </div>
-                      <div className="text-[9px] font-mono text-cream/20 uppercase tracking-tighter">
+                      <div className="text-[9px] font-mono text-foreground/20 uppercase tracking-tighter">
                         D{String(sale.day).padStart(3, "0")} · {gameCalendarDate(sale.day)}
                         {house && <> · {house.shortName}</>}
                       </div>
@@ -87,7 +97,7 @@ export function UpcomingLedgerTable({
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge
                         variant="outline"
-                        className="text-[8px] h-4 font-black uppercase tracking-tighter border-white/10 text-cream/40 rounded-none"
+                        className="text-[8px] h-4 font-black uppercase tracking-tighter border-white/10 text-foreground/40 rounded-none"
                       >
                         {KIND_LABELS[sale.kind as keyof typeof KIND_LABELS] ?? sale.kind}
                       </Badge>
@@ -100,7 +110,7 @@ export function UpcomingLedgerTable({
                         Locked
                       </span>
                     ) : isScheduled ? (
-                      <span className="text-[9px] font-black uppercase text-cream/20 tracking-wide">
+                      <span className="text-[9px] font-black uppercase text-foreground/20 tracking-wide">
                         SCHEDULED
                       </span>
                     ) : daysAway === 0 ? (
@@ -108,17 +118,17 @@ export function UpcomingLedgerTable({
                         Live Now
                       </span>
                     ) : (
-                      <span className="text-[9px] font-black uppercase text-gold/40 tracking-wide text-center">
+                      <span className="text-[9px] font-black uppercase text-primary/40 tracking-wide text-center">
                         Accepting lots
                       </span>
                     )}
                   </td>
                   <td className="px-4 py-5 text-right font-mono text-xs tabular-nums">
                     {isScheduled ? (
-                      <span className="text-cream/20 italic uppercase text-[9px]">TBD</span>
+                      <span className="text-foreground/20 italic uppercase text-[9px]">TBD</span>
                     ) : (
                       <div className="flex flex-col items-end">
-                        <span className="text-cream/60">
+                        <span className="text-foreground/60">
                           {sale.lots.reduce((n, l) => (l.withdrawn ? n : n + 1), 0)} LOTS
                         </span>
                         {playerLots.length > 0 && (
@@ -159,10 +169,10 @@ export function UpcomingLedgerTable({
                           size="sm"
                           variant="ghost"
                           className={cn(
-                            "h-8 px-4 text-[9px] font-black uppercase border border-white/10 hover:border-gold/40 hover:text-gold transition-all rounded-none",
+                            "h-8 px-4 text-[9px] font-black uppercase border border-white/10 hover:border-primary/40 hover:text-primary transition-all rounded-none",
                             daysAway === 0
                               ? "border-success text-success bg-success/5"
-                              : "text-cream/40",
+                              : "text-foreground/40",
                           )}
                         >
                           {daysAway === 0 ? "Enter Sale" : "View Lots"}

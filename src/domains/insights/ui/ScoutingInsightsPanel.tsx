@@ -242,11 +242,11 @@ export function ScoutingInsightsPanel() {
         <CardContent className="p-5 space-y-4">
           <div className="flex flex-wrap items-end gap-3 justify-between">
             <div>
-              <div className="flex items-center gap-2 text-gold uppercase tracking-wide font-mono text-[10px] font-bold">
+              <div className="flex items-center gap-2 text-primary uppercase tracking-wide font-mono text-[10px] font-bold">
                 <BarChart3 className="h-3.5 w-3.5" />
                 Bloodstock Insights
               </div>
-              <p className="text-[11px] text-cream-muted mt-1 font-mono">
+              <p className="text-[11px] text-muted-foreground mt-1 font-mono">
                 Drag a box over the plot to select horses, then right-click for bulk actions.
               </p>
             </div>
@@ -311,8 +311,8 @@ export function ScoutingInsightsPanel() {
                 variant="outline"
                 className={
                   thresholdsOn
-                    ? "border-gold/50 text-gold cursor-pointer"
-                    : "border-white/10 text-cream/40 cursor-pointer"
+                    ? "border-primary/50 text-primary cursor-pointer"
+                    : "border-white/10 text-foreground/40 cursor-pointer"
                 }
                 onClick={() => setThresholdsOn((v) => !v)}
               >
@@ -344,7 +344,7 @@ export function ScoutingInsightsPanel() {
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-8 text-xs text-cream/50"
+                className="h-8 text-xs text-foreground/50"
                 onClick={() =>
                   setThresholds({ ...createDefaultScoutingThresholds(), freshness: "any" })
                 }
@@ -366,17 +366,17 @@ export function ScoutingInsightsPanel() {
             )}
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-wide text-cream/40">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
             <span>Plotted: {visibleRows.length}</span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
-            <span className="text-gold">Selected: {selectedRows.length}</span>
+            <span className="text-primary">Selected: {selectedRows.length}</span>
             <span className="w-1 h-1 rounded-full bg-white/20" />
             <span className="text-success">Scouted</span>
-            <span className="text-cream/30">Unscouted</span>
+            <span className="text-foreground/30">Unscouted</span>
             {onlySelected && (
               <Badge
                 variant="outline"
-                className="border-gold/40 text-gold cursor-pointer"
+                className="border-primary/40 text-primary cursor-pointer"
                 onClick={() => setOnlySelected(false)}
               >
                 Filtered to selection · clear
@@ -399,7 +399,7 @@ export function ScoutingInsightsPanel() {
         <Card className="bg-slate-900/40 border-white/5 rounded-none">
           <CardContent className="p-5 space-y-3">
             <div className="flex items-center justify-between">
-              <h3 className="text-sm font-bold uppercase tracking-widest text-cream">
+              <h3 className="text-sm font-bold uppercase tracking-widest text-foreground">
                 Selection · {selectedRows.length} horses
               </h3>
               <div className="flex gap-2">
@@ -430,7 +430,7 @@ export function ScoutingInsightsPanel() {
                 </Button>
               </div>
             </div>
-            <div className="flex gap-6 font-mono text-[10px] uppercase tracking-wide text-cream/50">
+            <div className="flex gap-6 font-mono text-[10px] uppercase tracking-wide text-foreground/50">
               <span>
                 Avg {xMetric.short}: {xMetric.format(average(xKey, selectedRows))}
               </span>
@@ -441,19 +441,27 @@ export function ScoutingInsightsPanel() {
             <div className="max-h-72 overflow-auto border border-white/5">
               <table className="w-full text-xs">
                 <thead className="bg-slate-950/60 sticky top-0">
-                  <tr className="text-left font-mono text-[9px] uppercase tracking-wide text-cream/40">
-                    <th className="p-2">Horse</th>
-                    <th className="p-2">Owner</th>
-                    <th className="p-2 text-right">{xMetric.short}</th>
-                    <th className="p-2 text-right">{yMetric.short}</th>
-                    <th className="p-2" />
+                  <tr className="text-left font-mono text-[9px] uppercase tracking-wide text-foreground/40">
+                    <th scope="col" className="p-2">
+                      Horse
+                    </th>
+                    <th scope="col" className="p-2">
+                      Owner
+                    </th>
+                    <th scope="col" className="p-2 text-right">
+                      {xMetric.short}
+                    </th>
+                    <th scope="col" className="p-2 text-right">
+                      {yMetric.short}
+                    </th>
+                    <th scope="col" className="p-2" />
                   </tr>
                 </thead>
                 <tbody>
                   {selectedRows.map((r) => (
                     <tr key={r.id} className="border-t border-white/5 hover:bg-white/5">
-                      <td className="p-2 text-cream">{r.name}</td>
-                      <td className="p-2 text-cream/50">{r.ownerLabel}</td>
+                      <td className="p-2 text-foreground">{r.name}</td>
+                      <td className="p-2 text-foreground/50">{r.ownerLabel}</td>
                       <td className="p-2 text-right font-mono tabular-nums">
                         {xMetric.format(r.metrics[xKey])}
                       </td>

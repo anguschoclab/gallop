@@ -22,15 +22,15 @@ interface Props {
 export function CeremonyInvitations({ invitations, day }: Props) {
   if (invitations.length === 0) {
     return (
-      <Card className="border-gold-muted">
+      <Card className="border-border">
         <CardHeader>
-          <CardTitle className="text-base text-cream font-[family-name:var(--font-display)] flex items-center gap-2">
-            <MailOpen className="w-4 h-4 text-gold" />
+          <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)] flex items-center gap-2">
+            <MailOpen className="w-4 h-4 text-primary" />
             Ceremony Invitations
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-cream-muted">
+          <p className="text-sm text-muted-foreground">
             No invitations yet. Finish in the top 3 of a Grade 1 race to be invited to that
             region&apos;s award ceremony.
           </p>
@@ -45,15 +45,15 @@ export function CeremonyInvitations({ invitations, day }: Props) {
 
   if (sorted.length === 0) {
     return (
-      <Card className="border-gold-muted">
+      <Card className="border-border">
         <CardHeader>
-          <CardTitle className="text-base text-cream font-[family-name:var(--font-display)] flex items-center gap-2">
-            <MailOpen className="w-4 h-4 text-gold" />
+          <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)] flex items-center gap-2">
+            <MailOpen className="w-4 h-4 text-primary" />
             Ceremony Invitations
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-cream-muted">
+          <p className="text-sm text-muted-foreground">
             No upcoming invitations. Past invites are listed in the invitation history below.
           </p>
         </CardContent>
@@ -62,10 +62,10 @@ export function CeremonyInvitations({ invitations, day }: Props) {
   }
 
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardHeader>
-        <CardTitle className="text-base text-cream font-[family-name:var(--font-display)] flex items-center gap-2">
-          <MailOpen className="w-4 h-4 text-gold" />
+        <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)] flex items-center gap-2">
+          <MailOpen className="w-4 h-4 text-primary" />
           Ceremony Invitations
         </CardTitle>
       </CardHeader>
@@ -74,17 +74,17 @@ export function CeremonyInvitations({ invitations, day }: Props) {
         {sorted.map((inv) => {
           const daysAway = inv.ceremonyDay - day;
           return (
-            <div key={inv.id} className="rounded-md border border-gold-muted/50 p-3 space-y-2">
+            <div key={inv.id} className="rounded-md border border-border/50 p-3 space-y-2">
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <Link
                     to="/ceremony/$invitationId"
                     params={{ invitationId: inv.id }}
-                    className="font-semibold text-cream hover:text-gold"
+                    className="font-semibold text-foreground hover:text-primary"
                   >
                     {inv.ceremonyName}
                   </Link>
-                  <div className="text-xs text-cream-muted">
+                  <div className="text-xs text-muted-foreground">
                     {REGION_AWARD_NAMES[inv.region]} · Year {inv.year}
                   </div>
                 </div>
@@ -92,14 +92,14 @@ export function CeremonyInvitations({ invitations, day }: Props) {
                   <CeremonyRsvpStatusIndicator invitation={inv} day={day} />
                   <Badge
                     variant="outline"
-                    className="border-gold-muted text-cream flex items-center gap-1 whitespace-nowrap"
+                    className="border-border text-foreground flex items-center gap-1 whitespace-nowrap"
                   >
                     <CalendarClock className="w-3 h-3" />
                     {daysAway > 0 ? `In ${daysAway} days` : "Held"}
                   </Badge>
                 </div>
               </div>
-              <ul className="text-sm text-cream-muted space-y-1">
+              <ul className="text-sm text-muted-foreground space-y-1">
                 {inv.qualifiers.slice(0, 4).map((q) => (
                   <li key={`${q.horseId}-${q.raceId}`}>
                     • {q.horseName} — {ORDINAL[q.position] ?? `${q.position}th`} in the G1{" "}
@@ -107,7 +107,7 @@ export function CeremonyInvitations({ invitations, day }: Props) {
                   </li>
                 ))}
                 {inv.qualifiers.length > 4 && (
-                  <li className="text-cream-muted/70">
+                  <li className="text-muted-foreground/70">
                     + {inv.qualifiers.length - 4} more qualifying placings
                   </li>
                 )}

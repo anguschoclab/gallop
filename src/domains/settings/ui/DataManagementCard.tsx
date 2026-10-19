@@ -19,9 +19,9 @@ export function DataManagementCard({
   onLoad,
 }: DataManagementCardProps) {
   return (
-    <Card className="md:col-span-2 border-gold-muted bg-slate-900/50">
+    <Card className="md:col-span-2 border-border bg-slate-900/50">
       <CardHeader>
-        <CardTitle className="text-base flex items-center gap-2 text-cream font-[family-name:var(--font-display)]">
+        <CardTitle className="text-base flex items-center gap-2 text-foreground font-[family-name:var(--font-display)]">
           <Database className="h-4 w-4" />
           Data Management
         </CardTitle>
@@ -30,7 +30,7 @@ export function DataManagementCard({
         <div className="flex flex-col sm:flex-row gap-4">
           <Button
             variant="outline"
-            className="flex-1 gap-2 border-gold-muted text-gold hover:bg-gold/10 font-bold"
+            className="flex-1 gap-2 border-border text-primary hover:bg-primary/10 font-bold"
             onClick={onSave}
           >
             <Save className="h-4 w-4" />
@@ -51,7 +51,7 @@ export function DataManagementCard({
         <div className="flex items-center justify-between">
           <div className="space-y-0.5">
             <Label>Continuous Persistence</Label>
-            <p className="text-xs text-cream-muted">
+            <p className="text-xs text-muted-foreground">
               Your live progress is automatically saved to browser storage after every action.
             </p>
           </div>
@@ -60,7 +60,7 @@ export function DataManagementCard({
           </Badge>
         </div>
 
-        <div className="text-xs text-cream-muted bg-slate-800/30 p-3 rounded border border-slate-700/50">
+        <div className="text-xs text-muted-foreground bg-slate-800/30 p-3 rounded border border-slate-700/50">
           <p>Settings last modified: Day {lastModifiedDay ?? 1}</p>
           <p className="mt-1">Settings version: {version ?? 1}</p>
         </div>

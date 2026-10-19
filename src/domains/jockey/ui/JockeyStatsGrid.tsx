@@ -30,7 +30,7 @@ export function JockeyStatsGrid({ jockey }: JockeyStatsGridProps) {
           <div className="bg-black/20 p-2 border border-white/5">
             <div className="flex justify-between text-[9px] font-black uppercase tracking-wide text-blue-400/40 mb-1">
               <span>Strike Rate</span>
-              <span className="font-mono text-cream/80">{winRate.toFixed(1)}%</span>
+              <span className="font-mono text-foreground/80">{winRate.toFixed(1)}%</span>
             </div>
             <div className="h-1 bg-white/5 rounded-full overflow-hidden">
               <div className="h-full bg-blue-400/60" style={{ width: `${winRate}%` }} />
@@ -39,7 +39,7 @@ export function JockeyStatsGrid({ jockey }: JockeyStatsGridProps) {
           <div className="bg-black/20 p-2 border border-white/5">
             <div className="flex justify-between text-[9px] font-black uppercase tracking-wide text-blue-400/40 mb-1">
               <span>Experience</span>
-              <span className="font-mono text-cream/80">{jockey.careerStarts} RUNS</span>
+              <span className="font-mono text-foreground/80">{jockey.careerStarts} RUNS</span>
             </div>
             <div className="h-1 bg-white/5 rounded-full overflow-hidden">
               <div
@@ -54,11 +54,14 @@ export function JockeyStatsGrid({ jockey }: JockeyStatsGridProps) {
       <div className="h-[120px] w-[120px] relative shrink-0">
         <ResponsiveContainer width="100%" height="100%">
           <RadarChart cx="50%" cy="50%" outerRadius="70%" data={statsData}>
-            <PolarGrid stroke="rgba(96,165,250,0.1)" gridType="polygon" />
+            <PolarGrid
+              stroke="color-mix(in oklab, var(--color-blue-400) 10%, transparent)"
+              gridType="polygon"
+            />
             <PolarAngleAxis
               dataKey="stat"
               tick={{
-                fill: "rgba(245,245,220,0.4)",
+                fill: "var(--chart-axis)",
                 fontSize: 7,
                 fontFamily: "monospace",
                 fontWeight: "bold",

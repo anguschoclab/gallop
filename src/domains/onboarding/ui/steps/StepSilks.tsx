@@ -81,7 +81,7 @@ export function StepSilks({ silk, setSilk }: StepSilksProps) {
           onChange={(v) => setColor("cap", v)}
         />
         <div className="space-y-2">
-          <label htmlFor={patternId} className="text-sm font-medium text-cream cursor-help">
+          <label htmlFor={patternId} className="text-sm font-medium text-foreground cursor-help">
             Pattern
           </label>
           <Select
@@ -122,7 +122,7 @@ function ColorSwatchPicker({ label, tooltip, value, onChange }: ColorSwatchPicke
     <div className="space-y-2">
       <Tooltip>
         <TooltipTrigger asChild>
-          <label className="text-sm font-medium text-cream cursor-help">{label}</label>
+          <label className="text-sm font-medium text-foreground cursor-help">{label}</label>
         </TooltipTrigger>
         <TooltipContent>{tooltip}</TooltipContent>
       </Tooltip>
@@ -137,8 +137,8 @@ function ColorSwatchPicker({ label, tooltip, value, onChange }: ColorSwatchPicke
                 onClick={() => onChange(hex)}
                 className={`h-8 w-8 rounded-full border-2 transition-all ${
                   selected
-                    ? "border-gold scale-110 ring-2 ring-gold/40"
-                    : "border-t700 hover:border-cream-muted"
+                    ? "border-primary scale-110 ring-2 ring-primary/40"
+                    : "border-muted hover:border-muted-foreground"
                 }`}
                 style={{ backgroundColor: hex }}
                 aria-label={`${label} ${hex}`}

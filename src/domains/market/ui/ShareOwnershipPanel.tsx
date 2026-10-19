@@ -64,47 +64,55 @@ export function ShareOwnershipPanel({ syndicate, stallion, npcStables }: ShareOw
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Crown className="h-5 w-5 text-gold" /> Share Ownership
+          <Crown className="h-5 w-5 text-primary" /> Share Ownership
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="text-cream-muted text-xs uppercase tracking-wide">
-                <th className="text-left pb-2">Shareholder</th>
-                <th className="text-right pb-2">Shares</th>
-                <th className="text-right pb-2">%</th>
+              <tr className="text-muted-foreground text-xs uppercase tracking-wide">
+                <th scope="col" className="text-left pb-2">
+                  Shareholder
+                </th>
+                <th scope="col" className="text-right pb-2">
+                  Shares
+                </th>
+                <th scope="col" className="text-right pb-2">
+                  %
+                </th>
               </tr>
             </thead>
             <tbody>
               {holders.map((h) => (
-                <tr key={h.id} className="border-t border-cream/10">
+                <tr key={h.id} className="border-t border-foreground/10">
                   <td className="py-2 flex items-center gap-2">
-                    {h.isOwner && <Crown className="h-3 w-3 text-gold" />}
-                    <span className={h.isOwner ? "text-gold font-medium" : "text-cream"}>
+                    {h.isOwner && <Crown className="h-3 w-3 text-primary" />}
+                    <span className={h.isOwner ? "text-primary font-medium" : "text-foreground"}>
                       {h.name}
                     </span>
                     {h.isOwner && (
-                      <Badge variant="outline" className="text-gold border-gold/40 text-xs">
+                      <Badge variant="outline" className="text-primary border-primary/40 text-xs">
                         Owner
                       </Badge>
                     )}
                   </td>
-                  <td className="text-right py-2 text-cream">{h.shares}</td>
-                  <td className="text-right py-2 text-cream-muted">{h.percentage.toFixed(1)}%</td>
+                  <td className="text-right py-2 text-foreground">{h.shares}</td>
+                  <td className="text-right py-2 text-muted-foreground">
+                    {h.percentage.toFixed(1)}%
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        <div className="text-xs text-cream-muted border-t border-cream/10 pt-3">
+        <div className="text-xs text-muted-foreground border-t border-foreground/10 pt-3">
           Majority threshold: {Math.ceil(threshold)} shares ({(50).toFixed(0)}%)
         </div>
 
         <div className="space-y-2">
-          <div className="text-sm font-medium text-cream flex items-center gap-2">
+          <div className="text-sm font-medium text-foreground flex items-center gap-2">
             <TrendingDown className="h-4 w-4 text-amber-400" />
             Projected Devolution (if 1 share sold)
           </div>
@@ -112,15 +120,15 @@ export function ShareOwnershipPanel({ syndicate, stallion, npcStables }: ShareOw
             {projections.map((p) => (
               <div
                 key={p.holderId}
-                className="flex items-center justify-between text-xs rounded-md border border-cream/10 bg-broadcast-panel px-3 py-2"
+                className="flex items-center justify-between text-xs rounded-md border border-foreground/10 bg-broadcast-panel px-3 py-2"
               >
-                <span className="text-cream-muted">{p.holderName} sells 1 →</span>
+                <span className="text-muted-foreground">{p.holderName} sells 1 →</span>
                 {p.wouldDevolve && p.newOwner ? (
                   <Badge variant="outline" className="text-amber-300 border-amber-400/40">
                     Ownership → {p.newOwner}
                   </Badge>
                 ) : (
-                  <Badge variant="outline" className="text-cream-muted border-cream/20">
+                  <Badge variant="outline" className="text-muted-foreground border-foreground/20">
                     No change
                   </Badge>
                 )}

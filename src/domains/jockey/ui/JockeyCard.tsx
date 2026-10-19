@@ -104,7 +104,7 @@ export function JockeyCard({
                       e.stopPropagation();
                       rerollJockeySilk(jockey.id);
                     }}
-                    className="absolute -top-1 -right-1 bg-slate-950 border border-white/10 text-cream rounded-full p-1 shadow-xl hover:text-gold transition-colors z-20"
+                    className="absolute -top-1 -right-1 bg-slate-950 border border-white/10 text-foreground rounded-full p-1 shadow-xl hover:text-primary transition-colors z-20"
                     aria-label={`Reroll Silks for ${getJockeyName(jockey)}`}
                   >
                     <RefreshCw size={10} />
@@ -113,7 +113,7 @@ export function JockeyCard({
               )}
             </div>
             <div className="space-y-0.5 min-w-0">
-              <h3 className="text-xl font-bold text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-blue-400 transition-colors truncate">
+              <h3 className="text-xl font-bold text-foreground font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-blue-400 transition-colors truncate">
                 {getJockeyName(jockey)}
               </h3>
               <div className="flex items-center gap-2">
@@ -127,7 +127,7 @@ export function JockeyCard({
                   {jockey.archetype.replace("_", " ")}
                 </Badge>
                 {jockey.isApprentice && (
-                  <Badge className="bg-amber-600 text-cream text-[9px] font-black uppercase tracking-wide h-4 px-1.5 rounded-none border-none">
+                  <Badge className="bg-amber-600 text-foreground text-[9px] font-black uppercase tracking-wide h-4 px-1.5 rounded-none border-none">
                     Apprentice {claim > 0 ? `(-${claim} lbs)` : ""}
                   </Badge>
                 )}
@@ -143,7 +143,7 @@ export function JockeyCard({
             <div className="text-[8px] font-black uppercase text-blue-400/40 tracking-wide leading-none mb-1">
               Mount Fee
             </div>
-            <div className="text-lg font-black font-mono text-gold tabular-nums tracking-tighter">
+            <div className="text-lg font-black font-mono text-primary tabular-nums tracking-tighter">
               {formatCurrency(jockey.ridingFee)}
             </div>
           </div>
@@ -152,7 +152,7 @@ export function JockeyCard({
 
       <CardContent className="p-0 flex-1 flex flex-col">
         {/* Personnel Bio Strip */}
-        <div className="flex items-center justify-between px-5 py-2 bg-white/[0.02] border-b border-white/5 text-[9px] font-mono uppercase tracking-wide text-cream/40">
+        <div className="flex items-center justify-between px-5 py-2 bg-white/[0.02] border-b border-white/5 text-[9px] font-mono uppercase tracking-wide text-foreground/40">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
               <Calendar className="h-3 w-3 opacity-40" /> Age: {getJockeyAge(1, jockey)}
@@ -171,22 +171,24 @@ export function JockeyCard({
           <JockeyStatsGrid jockey={jockey} />
 
           {insight && (
-            <div className="bg-gold/10 border border-gold/20 p-3 flex gap-3 items-start rounded-sm">
-              <Lightbulb className="h-4 w-4 text-gold mt-0.5 shrink-0" />
+            <div className="bg-primary/10 border border-primary/20 p-3 flex gap-3 items-start rounded-sm">
+              <Lightbulb className="h-4 w-4 text-primary mt-0.5 shrink-0" />
               <div>
-                <div className="text-[10px] font-black uppercase tracking-wide text-gold/80 mb-0.5">
+                <div className="text-[10px] font-black uppercase tracking-wide text-primary/80 mb-0.5">
                   Tipster Insight: {insight.label}
                 </div>
-                <div className="text-sm font-bold text-cream">{insight.value}</div>
-                <div className="text-[10px] font-mono text-cream/60 mt-1">{insight.context}</div>
+                <div className="text-sm font-bold text-foreground">{insight.value}</div>
+                <div className="text-[10px] font-mono text-foreground/60 mt-1">
+                  {insight.context}
+                </div>
               </div>
             </div>
           )}
 
           {(jockey.traits?.length ?? 0) > 0 && (
             <div className="space-y-2">
-              <div className="flex items-center gap-1.5 text-[8px] font-black uppercase text-cream/20 tracking-wide">
-                <Sparkles className="h-3 w-3 text-gold/40" />
+              <div className="flex items-center gap-1.5 text-[8px] font-black uppercase text-foreground/20 tracking-wide">
+                <Sparkles className="h-3 w-3 text-primary/40" />
                 Traits
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -194,7 +196,7 @@ export function JockeyCard({
                   <Badge
                     key={trait}
                     variant="outline"
-                    className="text-[9px] font-bold uppercase tracking-wider h-5 px-2 rounded-none border-gold/30 text-gold/80 bg-gold/5"
+                    className="text-[9px] font-bold uppercase tracking-wider h-5 px-2 rounded-none border-primary/30 text-primary/80 bg-primary/5"
                   >
                     {formatJockeyTrait(trait)}
                   </Badge>
@@ -205,7 +207,7 @@ export function JockeyCard({
 
           <div className="flex items-center justify-between bg-black/40 p-2 rounded-sm border border-white/5">
             <div className="flex items-center gap-2">
-              <span className="text-[8px] font-black uppercase text-cream/20 tracking-wide">
+              <span className="text-[8px] font-black uppercase text-foreground/20 tracking-wide">
                 Licensed
               </span>
               <span

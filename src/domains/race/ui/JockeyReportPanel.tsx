@@ -92,16 +92,16 @@ export function JockeyReportPanel({
   const active = reportMap.get(selectedId ?? "") ?? reports[0];
 
   return (
-    <section className={cn("border border-gold/20 bg-black/30 p-5 space-y-4", className)}>
+    <section className={cn("border border-primary/20 bg-black/30 p-5 space-y-4", className)}>
       <header className="flex flex-wrap items-end justify-between gap-3 border-b border-white/5 pb-3">
         <div>
-          <div className="text-[10px] uppercase font-black tracking-wide text-gold/50">
+          <div className="text-[10px] uppercase font-black tracking-wide text-primary/50">
             Stable Intelligence
           </div>
-          <h3 className="text-lg font-black text-cream uppercase tracking-tight font-[family-name:var(--font-display)]">
+          <h3 className="text-lg font-black text-foreground uppercase tracking-tight font-[family-name:var(--font-display)]">
             Jockey Report
           </h3>
-          <p className="text-[11px] font-mono text-cream/40 mt-0.5">
+          <p className="text-[11px] font-mono text-foreground/40 mt-0.5">
             10-point ride evaluation for your runners
           </p>
         </div>
@@ -112,9 +112,11 @@ export function JockeyReportPanel({
               jockeyGradeColorClass(active.averageGrade),
             )}
           >
-            <span className="text-cream/40">Overall</span>
+            <span className="text-foreground/40">Overall</span>
             <span className="text-base font-black tabular-nums">{active.averageGrade}</span>
-            <span className="text-cream/40 tabular-nums">{active.averageScore.toFixed(0)}/100</span>
+            <span className="text-foreground/40 tabular-nums">
+              {active.averageScore.toFixed(0)}/100
+            </span>
           </div>
         </div>
       </header>
@@ -133,13 +135,13 @@ export function JockeyReportPanel({
                 className={cn(
                   "flex items-center gap-2 px-3 h-8 border text-[10px] uppercase tracking-wide font-mono transition-colors",
                   isActive
-                    ? "border-gold/60 bg-gold/10 text-gold"
-                    : "border-white/10 text-cream/50 hover:border-gold/30 hover:text-cream",
+                    ? "border-primary/60 bg-primary/10 text-primary"
+                    : "border-white/10 text-foreground/50 hover:border-primary/30 hover:text-foreground",
                 )}
               >
                 {runner && <SilkDot color={runner.silk} size="sm" />}
                 <span className="font-bold">{r.horseName}</span>
-                <span className="text-cream/30">· {r.averageGrade}</span>
+                <span className="text-foreground/30">· {r.averageGrade}</span>
               </button>
             );
           })}
@@ -156,7 +158,7 @@ export function JockeyReportPanel({
               <Link
                 to="/jockey/$jockeyId"
                 params={{ jockeyId: active.jockeyId }}
-                className="text-cream hover:text-gold flex items-center gap-1"
+                className="text-foreground hover:text-primary flex items-center gap-1"
               >
                 {active.jockeyName} <ChevronRight className="h-2.5 w-2.5" />
               </Link>
@@ -180,12 +182,12 @@ export function JockeyReportPanel({
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-2 min-w-0">
-                  <Icon className="h-3.5 w-3.5 text-cream/40 shrink-0" />
+                  <Icon className="h-3.5 w-3.5 text-foreground/40 shrink-0" />
                   <div className="min-w-0">
-                    <div className="text-[11px] font-black uppercase tracking-wide text-cream truncate">
+                    <div className="text-[11px] font-black uppercase tracking-wide text-foreground truncate">
                       {facet.label}
                     </div>
-                    <div className="text-[9px] font-mono uppercase tracking-wide text-cream/30 truncate">
+                    <div className="text-[9px] font-mono uppercase tracking-wide text-foreground/30 truncate">
                       {facet.description}
                     </div>
                   </div>
@@ -212,7 +214,7 @@ export function JockeyReportPanel({
                       : facet.grade === "B"
                         ? "bg-broadcast-accent"
                         : facet.grade === "C"
-                          ? "bg-cream/40"
+                          ? "bg-foreground/40"
                           : facet.grade === "D"
                             ? "bg-warning"
                             : "bg-destructive",
@@ -221,7 +223,7 @@ export function JockeyReportPanel({
                 />
               </div>
 
-              <p className="text-[11px] text-cream/70 leading-relaxed">{facet.note}</p>
+              <p className="text-[11px] text-foreground/70 leading-relaxed">{facet.note}</p>
             </li>
           );
         })}
@@ -233,8 +235,8 @@ export function JockeyReportPanel({
 function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <div className="border border-white/5 bg-slate-950/40 px-3 py-2">
-      <div className="text-[9px] uppercase tracking-wide text-cream/30 font-mono">{label}</div>
-      <div className="text-xs font-bold text-cream truncate">{value}</div>
+      <div className="text-[9px] uppercase tracking-wide text-foreground/30 font-mono">{label}</div>
+      <div className="text-xs font-bold text-foreground truncate">{value}</div>
     </div>
   );
 }

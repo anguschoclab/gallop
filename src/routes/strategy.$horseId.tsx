@@ -56,7 +56,7 @@ function StrategyPage() {
   if (!horse) {
     return (
       <div className="p-12 text-center space-y-4">
-        <h1 className="text-3xl font-black text-cream">Horse Not Found</h1>
+        <h1 className="text-3xl font-black text-foreground">Horse Not Found</h1>
         <p className="text-muted-foreground text-sm">No horse found with ID: {horseId}</p>
         <Link
           to="/stable"

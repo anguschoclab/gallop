@@ -27,7 +27,7 @@ export function DeltaPill({ value, asPercent, inverse, className }: DeltaPillPro
         "inline-flex items-center gap-0.5 rounded-md px-1.5 py-0.5 text-[10px] font-mono font-semibold tabular-nums",
         positive && "bg-emerald-500/10 text-emerald-300",
         negative && "bg-[color-mix(in_oklab,var(--chart-5)_20%,transparent)] text-[var(--chart-5)]",
-        !positive && !negative && "bg-white/5 text-cream/60",
+        !positive && !negative && "bg-white/5 text-foreground/60",
         className,
       )}
     >

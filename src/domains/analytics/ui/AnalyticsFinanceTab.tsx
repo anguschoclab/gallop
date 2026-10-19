@@ -18,8 +18,10 @@ export function AnalyticsFinanceTab() {
   return (
     <div className="space-y-6">
       <header>
-        <h2 className="font-display text-2xl text-cream">Finance analytics</h2>
-        <p className="text-cream-muted mt-1 text-sm">Cash trajectory and where the money goes.</p>
+        <h2 className="font-display text-2xl text-foreground">Finance analytics</h2>
+        <p className="text-muted-foreground mt-1 text-sm">
+          Cash trajectory and where the money goes.
+        </p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -76,7 +78,7 @@ export function AnalyticsFinanceTab() {
             {d.expenseRows.length > 0 ? (
               <MiniBar rows={d.expenseRows} format={formatCurrencyCompact} />
             ) : (
-              <div className="text-[11px] text-cream/40 font-mono">No expenses recorded</div>
+              <div className="text-[11px] text-foreground/40 font-mono">No expenses recorded</div>
             )}
           </div>
         </ChartCard>

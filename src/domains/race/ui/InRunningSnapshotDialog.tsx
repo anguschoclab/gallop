@@ -72,7 +72,7 @@ export function InRunningSnapshotDialog({
         <DialogHeader className="border-b border-white/10 pb-3">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pr-6">
             <div>
-              <DialogTitle className="text-sm font-black uppercase tracking-widest text-cream flex items-center gap-2">
+              <DialogTitle className="text-sm font-black uppercase tracking-widest text-foreground flex items-center gap-2">
                 <Camera className="h-4 w-4 text-broadcast-accent" />
                 In-Running Condition Snapshot
               </DialogTitle>
@@ -150,7 +150,7 @@ export function InRunningSnapshotDialog({
               <span className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">
                 Wall-Clock Time
               </span>
-              <span className="font-mono text-cream font-medium">
+              <span className="font-mono text-foreground font-medium">
                 {new Date(activeSnapshot.capturedAt).toLocaleTimeString()}
               </span>
             </div>
@@ -158,7 +158,7 @@ export function InRunningSnapshotDialog({
               <span className="text-[9px] uppercase tracking-wider text-muted-foreground font-semibold">
                 Leader Distance
               </span>
-              <span className="font-mono text-cream font-medium">
+              <span className="font-mono text-foreground font-medium">
                 {Math.round(activeSnapshot.leaderPos)}m / {activeSnapshot.distance}m (
                 {Math.round((activeSnapshot.leaderPos / activeSnapshot.distance) * 100)}%)
               </span>
@@ -181,7 +181,7 @@ export function InRunningSnapshotDialog({
             {/* Field Table (Rankings & Badges at Snapshot) */}
             <div className="lg:col-span-7 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-wide text-cream-muted">
+                <span className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
                   Field at Snapshot ({sortedRunners.length} Runners)
                 </span>
                 <span className="text-[9px] text-muted-foreground">Click runner to inspect</span>
@@ -214,10 +214,10 @@ export function InRunningSnapshotDialog({
                         </span>
                         <div
                           className="h-3.5 w-3.5 rounded-full border border-white/40 shadow-sm shrink-0"
-                          style={{ backgroundColor: runner.silk || "#ffffff" }}
+                          style={{ backgroundColor: runner.silk || "var(--coat-white)" }}
                         />
                         <div className="truncate">
-                          <div className="font-bold text-cream truncate flex items-center gap-1.5">
+                          <div className="font-bold text-foreground truncate flex items-center gap-1.5">
                             {runner.name}
                             {runner.owned && (
                               <span className="text-[8px] px-1 py-0.2 bg-broadcast-accent text-slate-950 font-black uppercase rounded">
@@ -260,7 +260,7 @@ export function InRunningSnapshotDialog({
                 <div className="border border-white/10 rounded-lg p-3 bg-black/40 space-y-3">
                   <div className="border-b border-white/10 pb-2 flex items-center justify-between">
                     <div>
-                      <div className="text-xs font-black uppercase tracking-wider text-cream flex items-center gap-1.5">
+                      <div className="text-xs font-black uppercase tracking-wider text-foreground flex items-center gap-1.5">
                         {inspectedRunner.name}
                         {inspectedRunner.owned && (
                           <span className="text-[8px] px-1 bg-broadcast-accent text-slate-950 font-bold rounded">
@@ -281,7 +281,7 @@ export function InRunningSnapshotDialog({
                           horseName={inspectedRunner.name}
                           size={14}
                         />
-                        <span className="text-[9px] font-bold uppercase tracking-wider text-cream">
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-foreground">
                           {inspectedRunner.mood.label}
                         </span>
                       </div>
@@ -294,7 +294,7 @@ export function InRunningSnapshotDialog({
                       <span className="text-muted-foreground text-[9px] uppercase block">
                         Position
                       </span>
-                      <span className="font-bold text-cream">
+                      <span className="font-bold text-foreground">
                         {Math.round(inspectedRunner.position)}m / {activeSnapshot?.distance}m
                       </span>
                     </div>
@@ -310,7 +310,7 @@ export function InRunningSnapshotDialog({
                       <span className="text-muted-foreground text-[9px] uppercase block">
                         Coverage
                       </span>
-                      <span className="font-bold text-cream">
+                      <span className="font-bold text-foreground">
                         {inspectedRunner.distanceCoveredPct.toFixed(1)}%
                       </span>
                     </div>

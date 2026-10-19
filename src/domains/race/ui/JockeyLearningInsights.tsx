@@ -27,7 +27,7 @@ export const JockeyLearningInsights = memo(function JockeyLearningInsights({
         <div className="flex items-center gap-1 text-[9px] font-black uppercase tracking-wide text-cyan-400/40">
           <Brain className="h-3 w-3" /> Learning Insights · {jockeyName}
         </div>
-        <div className="text-[9px] font-mono text-cream/20">
+        <div className="text-[9px] font-mono text-foreground/20">
           No race history yet. {insights.totalRaces} recorded races.
         </div>
       </div>
@@ -48,25 +48,31 @@ export const JockeyLearningInsights = memo(function JockeyLearningInsights({
 
       <div className="grid grid-cols-3 gap-2 text-center">
         <div>
-          <div className="text-[8px] font-black uppercase tracking-wide text-cream/30">Races</div>
-          <div className="font-mono text-xs text-cream/60">{insights.totalRaces}</div>
+          <div className="text-[8px] font-black uppercase tracking-wide text-foreground/30">
+            Races
+          </div>
+          <div className="font-mono text-xs text-foreground/60">{insights.totalRaces}</div>
         </div>
         <div>
-          <div className="text-[8px] font-black uppercase tracking-wide text-cream/30">Avg Pos</div>
-          <div className="font-mono text-xs text-cream/60">{insights.avgPosition.toFixed(1)}</div>
+          <div className="text-[8px] font-black uppercase tracking-wide text-foreground/30">
+            Avg Pos
+          </div>
+          <div className="font-mono text-xs text-foreground/60">
+            {insights.avgPosition.toFixed(1)}
+          </div>
         </div>
         <div>
-          <div className="text-[8px] font-black uppercase tracking-wide text-cream/30">
+          <div className="text-[8px] font-black uppercase tracking-wide text-foreground/30">
             Aggression
           </div>
-          <div className="font-mono text-xs text-cream/60">
+          <div className="font-mono text-xs text-foreground/60">
             {Math.round(insights.avgAggressiveness * 100)}%
           </div>
         </div>
       </div>
 
       <div className="space-y-1">
-        <div className="text-[8px] font-black uppercase tracking-wide text-cream/30">
+        <div className="text-[8px] font-black uppercase tracking-wide text-foreground/30">
           Style Usage
         </div>
         <div className="flex items-end gap-1 h-6">
@@ -79,7 +85,7 @@ export const JockeyLearningInsights = memo(function JockeyLearningInsights({
                   className={cn("w-full min-h-[2px] bg-cyan-400/40", count === 0 && "bg-white/5")}
                   style={{ height: `${Math.max(height, 4)}%` }}
                 />
-                <span className="text-[7px] font-mono text-cream/30">{s}</span>
+                <span className="text-[7px] font-mono text-foreground/30">{s}</span>
               </div>
             );
           })}

@@ -81,7 +81,7 @@ const EntityLinkComponent: React.FC<{ link: EntityLink; className?: string }> = 
         <Link
           to="/stable/$horseId"
           params={{ horseId: link.id }}
-          className={cn(commonClasses, "text-gold hover:text-gold-bright")}
+          className={cn(commonClasses, "text-primary hover:text-accent-bright")}
         >
           {link.name}
         </Link>
@@ -111,7 +111,7 @@ const EntityLinkComponent: React.FC<{ link: EntityLink; className?: string }> = 
         <Link
           to="/race/$raceId"
           params={{ raceId: link.id }}
-          className={cn(commonClasses, "text-cream hover:text-white")}
+          className={cn(commonClasses, "text-foreground hover:text-white")}
         >
           {link.name}
         </Link>

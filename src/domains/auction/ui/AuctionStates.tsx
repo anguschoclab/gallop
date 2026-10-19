@@ -6,8 +6,8 @@ import { AlertTriangle, Loader2, X } from "lucide-react";
 export function AuctionLoadingState() {
   return (
     <div role="status" aria-live="polite" className="p-12 space-y-6 animate-fade-in">
-      <div className="flex items-center gap-3 text-cream/60">
-        <Loader2 className="h-5 w-5 animate-spin text-gold" aria-hidden />
+      <div className="flex items-center gap-3 text-foreground/60">
+        <Loader2 className="h-5 w-5 animate-spin text-primary" aria-hidden />
         <p className="font-mono text-xs uppercase tracking-wide">Loading sale catalog…</p>
       </div>
 
@@ -61,12 +61,12 @@ export function AuctionErrorState({
         <p className="font-mono text-[10px] uppercase tracking-wide text-red-300/80">
           Action Failed
         </p>
-        <p className="text-sm text-cream/90 mt-1 break-words">{message}</p>
+        <p className="text-sm text-foreground/90 mt-1 break-words">{message}</p>
         {onRetry && (
           <button
             type="button"
             onClick={onRetry}
-            className="mt-3 inline-flex items-center gap-1.5 border border-gold/40 bg-gold/10 px-3 py-1.5 rounded text-gold uppercase font-mono text-[10px] tracking-wide hover:bg-gold/20 transition-colors"
+            className="mt-3 inline-flex items-center gap-1.5 border border-primary/40 bg-primary/10 px-3 py-1.5 rounded text-primary uppercase font-mono text-[10px] tracking-wide hover:bg-primary/20 transition-colors"
           >
             {retryLabel}
           </button>
@@ -77,7 +77,7 @@ export function AuctionErrorState({
           type="button"
           onClick={onDismiss}
           aria-label="Dismiss error"
-          className="text-cream/40 hover:text-cream/80 flex-shrink-0"
+          className="text-foreground/40 hover:text-foreground/80 flex-shrink-0"
         >
           <X className="h-4 w-4" aria-hidden />
         </button>

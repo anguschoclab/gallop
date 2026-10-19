@@ -22,7 +22,7 @@ export function getRivalryBadgeColor(f: number) {
   if (f >= 60) return "bg-orange-500 text-slate-950";
   if (f >= 30) return "bg-yellow-500 text-slate-950";
   if (f < -50) return "bg-success text-slate-950";
-  return "bg-slate-700 text-cream";
+  return "bg-slate-700 text-foreground";
 }
 
 export function useNpcStableDetail(stableId: string) {

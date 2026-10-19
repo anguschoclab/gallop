@@ -67,27 +67,27 @@ export function FoalDevelopmentPanel({ horse }: Props) {
   return (
     <section id="foal-development" className="space-y-4">
       <div className="flex items-center gap-2 mb-2">
-        <Sprout className="h-4 w-4 text-gold" />
-        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-cream">
+        <Sprout className="h-4 w-4 text-primary" />
+        <h2 className="text-sm font-black uppercase tracking-[0.15em] text-foreground">
           Pre-Race Preparation
         </h2>
       </div>
-      <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-gold">
+      <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-primary">
         <CardHeader className="pb-2 border-b border-white/5">
-          <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40">
+          <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
             Development Arc
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6 space-y-4">
           {activeMilestone ? (
-            <div className="flex items-start gap-3 p-3 border border-gold/40 bg-gold/5 rounded">
-              <AlertCircle className="h-4 w-4 text-gold-bright mt-0.5 shrink-0" />
+            <div className="flex items-start gap-3 p-3 border border-primary/40 bg-primary/5 rounded">
+              <AlertCircle className="h-4 w-4 text-accent-bright mt-0.5 shrink-0" />
               <div className="flex-1 space-y-3">
                 <div>
-                  <p className="text-sm text-cream font-semibold">
+                  <p className="text-sm text-foreground font-semibold">
                     {activeMilestone.label} awaiting your decision.
                   </p>
-                  <p className="text-[11px] text-cream/50 font-mono">
+                  <p className="text-[11px] text-foreground/50 font-mono">
                     Triggered day {activeMilestone.triggerDay} · {openMilestones.length} open
                   </p>
                 </div>
@@ -97,7 +97,7 @@ export function FoalDevelopmentPanel({ horse }: Props) {
                       key={choice.key}
                       className="p-2 bg-slate-950/40 border border-white/5 rounded"
                     >
-                      <div className="text-[11px] font-black uppercase tracking-wide text-cream">
+                      <div className="text-[11px] font-black uppercase tracking-wide text-foreground">
                         {choice.label}
                       </div>
                       <StatDeltaList delta={choice.delta} />
@@ -107,7 +107,7 @@ export function FoalDevelopmentPanel({ horse }: Props) {
                 <Link
                   to="/foal-development/$horseId"
                   params={{ horseId: horse.id }}
-                  className="inline-block text-gold uppercase font-mono text-[10px] tracking-wide hover:underline"
+                  className="inline-block text-primary uppercase font-mono text-[10px] tracking-wide hover:underline"
                 >
                   Resolve Milestone →
                 </Link>
@@ -115,33 +115,33 @@ export function FoalDevelopmentPanel({ horse }: Props) {
             </div>
           ) : nextUpcoming ? (
             <div className="flex items-start gap-3 p-3 border border-white/10 bg-slate-950/40 rounded">
-              <Clock className="h-4 w-4 text-cream/60 mt-0.5 shrink-0" />
-              <div className="text-xs text-cream/70">
+              <Clock className="h-4 w-4 text-foreground/60 mt-0.5 shrink-0" />
+              <div className="text-xs text-foreground/70">
                 Next milestone:{" "}
-                <span className="text-cream font-semibold">{nextUpcoming.label}</span>
-                <span className="text-cream/40 font-mono ml-2">
+                <span className="text-foreground font-semibold">{nextUpcoming.label}</span>
+                <span className="text-foreground/40 font-mono ml-2">
                   Day {nextUpcoming.triggerDay} (in {nextUpcoming.triggerDay - currentDay}d)
                 </span>
               </div>
             </div>
           ) : (
-            <div className="flex items-center gap-2 text-cream/60 text-sm">
+            <div className="flex items-center gap-2 text-foreground/60 text-sm">
               <CheckCircle2 className="h-4 w-4 text-emerald-400" />
               All development milestones complete.
             </div>
           )}
 
           {resolvedMilestones.length > 0 && (
-            <ul className="space-y-1 text-xs text-cream/70 pt-2 border-t border-white/5">
+            <ul className="space-y-1 text-xs text-foreground/70 pt-2 border-t border-white/5">
               {resolvedMilestones.map((m) => {
                 const chosen = chosenByMilestoneKey.get(m.key);
                 return (
                   <li key={m.key} className="flex items-center gap-2">
                     <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-                    <span className="text-cream/40 uppercase tracking-widest font-mono">
+                    <span className="text-foreground/40 uppercase tracking-widest font-mono">
                       {m.label}:
                     </span>
-                    <span className="text-cream">{chosen?.label ?? m.resolvedChoiceKey}</span>
+                    <span className="text-foreground">{chosen?.label ?? m.resolvedChoiceKey}</span>
                   </li>
                 );
               })}

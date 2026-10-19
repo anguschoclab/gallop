@@ -124,9 +124,9 @@ const TYPE_CONFIG = {
 } as const;
 
 const SEVERITY_BADGE = {
-  info: "bg-white/5 text-cream/40 border-white/10",
+  info: "bg-white/5 text-foreground/40 border-white/10",
   notable: "bg-amber-400/10 text-amber-400 border-amber-400/30",
-  key: "bg-gold/10 text-gold border-gold/30",
+  key: "bg-primary/10 text-primary border-primary/30",
 } as const;
 
 export const RaceDecisionLog = memo(function RaceDecisionLog({
@@ -147,13 +147,13 @@ export const RaceDecisionLog = memo(function RaceDecisionLog({
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-purple-400">
       <CardHeader className="bg-black/20 border-b border-white/5">
-        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+        <CardTitle className="text-[10px] font-black uppercase tracking-wide text-foreground/40 flex items-center gap-2">
           <GitBranch className="h-3 w-3 text-purple-400" /> Race Decisions
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         {displayEvents.length === 0 ? (
-          <div className="p-6 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
+          <div className="p-6 text-center text-[10px] font-mono text-foreground/20 uppercase tracking-wide">
             No significant tactical decisions detected in this race.
           </div>
         ) : (
@@ -167,13 +167,13 @@ export const RaceDecisionLog = memo(function RaceDecisionLog({
                   key={idx}
                   className={cn(
                     "flex items-start gap-2 p-2",
-                    runner?.owned && "border-l-2 border-l-gold bg-gold/5",
+                    runner?.owned && "border-l-2 border-l-primary bg-primary/5",
                   )}
                 >
                   <Icon className={cn("h-3 w-3 mt-0.5 shrink-0", config.color)} />
                   <div className="flex-1 min-w-0 space-y-0.5">
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-[10px] font-bold text-cream truncate">
+                      <span className="text-[10px] font-bold text-foreground truncate">
                         {runner?.name ?? event.horseId}
                       </span>
                       <Badge
@@ -185,8 +185,8 @@ export const RaceDecisionLog = memo(function RaceDecisionLog({
                         {config.label}
                       </Badge>
                     </div>
-                    <div className="text-[9px] font-mono text-cream/40">
-                      <span className="text-cream/30">t={event.time.toFixed(1)}s</span>{" "}
+                    <div className="text-[9px] font-mono text-foreground/40">
+                      <span className="text-foreground/30">t={event.time.toFixed(1)}s</span>{" "}
                       {event.description}
                     </div>
                   </div>

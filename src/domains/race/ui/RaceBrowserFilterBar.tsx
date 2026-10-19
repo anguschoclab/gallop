@@ -37,11 +37,11 @@ export function RaceBrowserFilterBar({
   onReset,
 }: Props) {
   return (
-    <Card className="border-gold-muted">
+    <Card className="border-border">
       <CardContent className="p-4">
         <div className="flex flex-wrap gap-4 items-end">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-cream">Grade</label>
+            <label className="text-sm font-medium text-foreground">Grade</label>
             <Select value={gradeFilter} onValueChange={(v) => setGradeFilter(v as GradeFilter)}>
               <SelectTrigger className="w-[150px]">
                 <SelectValue />
@@ -57,7 +57,7 @@ export function RaceBrowserFilterBar({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-cream">Country</label>
+            <label className="text-sm font-medium text-foreground">Country</label>
             <Select value={countryFilter} onValueChange={setCountryFilter}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="All countries" />
@@ -74,7 +74,7 @@ export function RaceBrowserFilterBar({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-cream">Track</label>
+            <label className="text-sm font-medium text-foreground">Track</label>
             <Select value={trackFilter} onValueChange={setTrackFilter}>
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="All tracks" />
@@ -91,7 +91,7 @@ export function RaceBrowserFilterBar({
           </div>
 
           <div className="space-y-2">
-            <label className="text-sm font-medium text-cream">Distance</label>
+            <label className="text-sm font-medium text-foreground">Distance</label>
             <Select
               value={distanceFilter}
               onValueChange={(v) => setDistanceFilter(v as DistanceFilter)}
@@ -111,7 +111,7 @@ export function RaceBrowserFilterBar({
 
           <button
             onClick={onReset}
-            className="px-4 py-2 text-sm font-medium text-cream-muted hover:text-cream transition-colors"
+            className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
           >
             Reset filters
           </button>

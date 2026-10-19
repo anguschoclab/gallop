@@ -17,11 +17,11 @@ interface SireSelectorProps {
 export function SireSelector({ sireId, onChange, availableStallions }: SireSelectorProps) {
   return (
     <div>
-      <label className="text-xs text-cream-muted">
+      <label className="text-xs text-muted-foreground">
         <JargonTooltip term="Sire">Sire</JargonTooltip>
       </label>
       <select
-        className="w-full border border-gold-muted rounded-md px-3 py-2 bg-t800 text-cream text-sm"
+        className="w-full border border-border rounded-md px-3 py-2 bg-card text-foreground text-sm"
         value={sireId}
         onChange={(e) => onChange(e.target.value)}
       >
