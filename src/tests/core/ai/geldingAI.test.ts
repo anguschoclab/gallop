@@ -3,6 +3,7 @@ import { createGeldingAIState, shouldGeldHorse } from "@/domains/agents/simulati
 import type { Stable } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { hashStr } from "@/shared/common/rng";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function mkStable(personality: Stable["personality"]): Stable {
   return {
@@ -17,7 +18,12 @@ function mkStable(personality: Stable["personality"]): Stable {
     colors: { primary: "#000", secondary: "#fff" },
     country: "USA",
     personality,
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     staff: { veterinarian: null, farrier: null, nutritionist: null, groom: null, trainer: null },
     outposts: [],
   };

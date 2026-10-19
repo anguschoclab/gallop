@@ -6,8 +6,8 @@ import {
 import { fillRaceWithFillerHorses } from "@/domains/race/simulation/fieldManager";
 import { createRng } from "@/shared/common/rng";
 import type { Horse, Race, Stable } from "@/platform/game/types";
-import type { StaffRole } from "@/domains/staff/model/staffTypes";
 import { createTestHorse, createTestJockey } from "@/tests/helpers";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import { asNpcStableId } from "@/shared/types/branded";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
@@ -32,16 +32,15 @@ function mkHorse(overrides: Partial<Horse> = {}): Horse {
 }
 
 function mkStable(overrides: Partial<Stable> = {}): Stable {
-  const staffRoles: StaffRole[] = ["veterinarian", "farrier", "nutritionist", "groom", "trainer"];
-  const staff: Record<StaffRole, string | null> = staffRoles.reduce(
-    (acc, role) => ({ ...acc, [role]: null }),
-    {} as Record<StaffRole, string | null>,
-  );
-
   return {
     id: "s1",
     name: "Test Stable",
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 70,
     founded: 1,
@@ -51,7 +50,6 @@ function mkStable(overrides: Partial<Stable> = {}): Stable {
     colors: { primary: "#000", secondary: "#fff" },
     country: "USA",
     personality: "conservative",
-    staff,
     outposts: [],
     ...overrides,
   };

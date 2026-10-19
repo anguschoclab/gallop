@@ -5,6 +5,7 @@ import type { GameState } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { asNpcStableId } from "@/shared/types/branded";
 import { makeNpcOwned, makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function mkState(overrides: Partial<GameState> = {}): GameState {
   return { ...createDefaultGameState(), ...overrides };
@@ -103,7 +104,12 @@ describe("computeWealthStandings", () => {
     const s = mkState({
       playerProfile: {
         stableName: "Thunder Ranch",
-        ownerName: "John",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "John",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#0000ff" },
         backstoryId: "inheritor",
         founded: 1,
@@ -118,7 +124,12 @@ describe("computeWealthStandings", () => {
     const s = mkState({
       playerProfile: {
         stableName: "My Stable",
-        ownerName: "John",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "John",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#0000ff" },
         backstoryId: "inheritor",
         founded: 1,

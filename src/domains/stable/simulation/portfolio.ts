@@ -20,6 +20,7 @@ import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { getPrestigeTier, type PrestigeTier } from "@/domains/prestige/model/prestigeTypes";
 import { resolveStableYard, type StableYard } from "@/domains/stable/simulation/stableYard";
 import { toRosterEntry, type RosterEntry } from "@/domains/stable/simulation/stableRoster";
+import { getStableOwnerName } from "@/domains/stable/simulation/stablePersonHelpers";
 
 /** Keys that historically identified the player inside syndicate shareholder maps. */
 const PLAYER_SYNDICATE_KEYS = ["player", "__player__"];
@@ -253,7 +254,7 @@ export function buildStablePortfolios(args: BuildArgs): StablePortfolio[] {
       makeRow(
         s.id,
         s.name,
-        s.owner,
+        getStableOwnerName(s),
         s.cash,
         s.reputation ?? 0,
         false,

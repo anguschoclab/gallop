@@ -420,7 +420,8 @@ export function generateJockeyReport(
   return {
     horseId: runner.horseId,
     horseName: runner.name,
-    jockeyName: runner.jockeyName ?? runner.jockey?.name ?? "Unknown Jockey",
+    jockeyName:
+      runner.jockeyName ?? runner.jockey?.person.biography.displayName ?? "Unknown Jockey",
     jockeyId: runner.jockey?.id,
     finishPosition,
     fieldSize,

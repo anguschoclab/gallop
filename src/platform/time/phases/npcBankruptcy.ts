@@ -33,6 +33,7 @@ import { PHASE_ORDER_NPC_BANKRUPTCY } from "@/platform/time/pipelineConstants";
 import { DEFAULT_WORLD_SIZE } from "@/domains/stable/simulation/worldSizeConfig";
 import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";
+import { getStableOwnerName } from "@/domains/stable/simulation/stablePersonHelpers";
 
 const LIQUIDATION_SALE_DELAY = 3;
 const LIQUIDATION_RESERVE_FACTOR = 0.5;
@@ -255,7 +256,7 @@ export const npcBankruptcyPhase = {
           category: "stable",
           importance: "high",
           headline: `${stable.name} declares bankruptcy`,
-          body: `${stable.owner}'s ${stable.name} has ceased operations. Horses will be sold at a liquidation sale in ${LIQUIDATION_SALE_DELAY} days.`,
+          body: `${getStableOwnerName(stable)}'s ${stable.name} has ceased operations. Horses will be sold at a liquidation sale in ${LIQUIDATION_SALE_DELAY} days.`,
           entityLinks: [{ type: "stable", id: stable.id, name: stable.name }],
         },
       } as NewsImpact);

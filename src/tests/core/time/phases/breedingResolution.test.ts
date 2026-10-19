@@ -12,6 +12,7 @@ import type { BreedingIntent } from "@/platform/resolver/intents";
 import { createMockPipelineContext } from "@/tests/helpers/testTypes";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 describe("breedingResolutionPhase", () => {
   const createTestState = (): GameState =>
@@ -50,7 +51,12 @@ describe("breedingResolutionPhase", () => {
         createTestStable({
           id: "npc-stable-1",
           name: "Test Stable",
-          owner: "Test Owner",
+          owner: generatePersonIdentity({
+            id: "test-owner",
+            displayName: "Test Owner",
+            role: "owner",
+            ageBand: "adult",
+          }),
           tier: "mid",
           reputation: 50,
           founded: 1,
@@ -106,7 +112,12 @@ describe("breedingResolutionPhase", () => {
         createTestStable({
           id: "npc-stable-1",
           name: "Test Stable",
-          owner: "Test Owner",
+          owner: generatePersonIdentity({
+            id: "test-owner",
+            displayName: "Test Owner",
+            role: "owner",
+            ageBand: "adult",
+          }),
           tier: "mid",
           reputation: 50,
           founded: 1,
@@ -189,7 +200,12 @@ describe("breedingResolutionPhase", () => {
         createTestStable({
           id: "npc-stable-1",
           name: "Test Stable",
-          owner: "Test Owner",
+          owner: generatePersonIdentity({
+            id: "test-owner",
+            displayName: "Test Owner",
+            role: "owner",
+            ageBand: "adult",
+          }),
           tier: "mid",
           reputation: 50,
           founded: 1,
@@ -260,7 +276,12 @@ describe("breedingResolutionPhase", () => {
         createTestStable({
           id: "npc-stable-1",
           name: "Test Stable",
-          owner: "Test Owner",
+          owner: generatePersonIdentity({
+            id: "test-owner",
+            displayName: "Test Owner",
+            role: "owner",
+            ageBand: "adult",
+          }),
           tier: "mid",
           reputation: 50,
           founded: 1,
@@ -270,7 +291,12 @@ describe("breedingResolutionPhase", () => {
         createTestStable({
           id: "npc-stable-2",
           name: "Test Stable 2",
-          owner: "Test Owner",
+          owner: generatePersonIdentity({
+            id: "test-owner",
+            displayName: "Test Owner",
+            role: "owner",
+            ageBand: "adult",
+          }),
           tier: "mid",
           reputation: 50,
           founded: 1,

@@ -3,12 +3,18 @@ import { resolveStableYard, formatYard } from "@/domains/stable/simulation/stabl
 import { rosterSummary, type RosterEntry } from "@/domains/stable/simulation/stableRoster";
 import type { Stable } from "@/domains/stable/simulation/types";
 import { asStableId } from "@/shared/types/branded";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function stable(overrides: Partial<Stable> = {}): Stable {
   return {
     id: asStableId("npc-1"),
     name: "Ballydoyle Bloodstock",
-    owner: "M. Carrick",
+    owner: generatePersonIdentity({
+      id: "m.-carrick",
+      displayName: "M. Carrick",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "elite",
     reputation: 80,
     founded: 1,
@@ -18,13 +24,6 @@ function stable(overrides: Partial<Stable> = {}): Stable {
     colors: { primary: "#fff", secondary: "#000" },
     country: "Ireland",
     personality: "prestige",
-    staff: {
-      trainer: null,
-      groom: null,
-      nutritionist: null,
-      farrier: null,
-      veterinarian: null,
-    },
     outposts: [],
     ...overrides,
   } as Stable;

@@ -8,6 +8,7 @@ import { NumericValue } from "@/domains/horse/ui/HorseBits";
 import { Briefcase } from "lucide-react";
 import type { Jockey } from "@/domains/jockey/application/jockeyFacade";
 import type { JockeyTrait } from "@/domains/jockey/application/jockeyFacade";
+import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 
 export function JockeyRoster() {
   const jockeys = useGameWithShallow((s) => s.jockeys);
@@ -33,7 +34,8 @@ export function JockeyRoster() {
     return list.filter((j: Jockey) => {
       const q = search.toLowerCase();
       const matchesSearch =
-        j.name.toLowerCase().includes(q) || j.traits.some((t) => t.toLowerCase().includes(q));
+        getJockeyName(j).toLowerCase().includes(q) ||
+        j.traits.some((t) => t.toLowerCase().includes(q));
       const matchesArchetype = archetypeFilter === "all" || j.archetype === archetypeFilter;
       const matchesPattern = patternFilter === "all" || j.silk.pattern === patternFilter;
       const matchesColor =

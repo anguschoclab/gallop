@@ -38,12 +38,18 @@ vi.mock("@/domains/horse/simulation/attachment", () => ({
 }));
 
 import { StableCard } from "@/domains/stable/ui/StableCard";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({
     id: "s1",
     name: "Test Stable",
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "elite",
     reputation: 50,
     founded: 2020,
@@ -87,7 +93,15 @@ describe("StableCard", () => {
   });
 
   it("renders fallback description when no description", () => {
-    const stable = mkStable({ owner: "John Doe", horses: ["h1", "h2"] });
+    const stable = mkStable({
+      owner: generatePersonIdentity({
+        id: "john-doe",
+        displayName: "John Doe",
+        role: "owner",
+        ageBand: "adult",
+      }),
+      horses: ["h1", "h2"],
+    });
     delete (stable as any).description;
     render(<StableCard stable={stable} />);
     expect(screen.getByText("John Doe's racing operation with 2 horses.")).toBeInTheDocument();

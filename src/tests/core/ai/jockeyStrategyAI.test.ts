@@ -26,11 +26,18 @@ import {
 import type { Jockey, Horse, Race, Stable } from "@/platform/game/types";
 import type { JockeyInstructions } from "@/domains/tactics/model/tacticsTypes";
 import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 // Mock data setup
 function createMockJockey(overrides: Partial<Jockey> = {}): Jockey {
   return {
     id: "jockey-1",
+    person: generatePersonIdentity({
+      id: "jockey-1",
+      displayName: "Test Jockey",
+      role: "jockey",
+      ageBand: "adult",
+    }),
     name: "Test Jockey",
     age: 30,
     archetype: "front_runner",
@@ -57,7 +64,12 @@ function createMockStable(overrides: Partial<Stable> = {}): Stable {
     name: "Test Stable",
     cash: 100000,
     personality: "aggressive",
-    owner: "Test Owner",
+    owner: generatePersonIdentity({
+      id: "test-owner",
+      displayName: "Test Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 70,
     founded: 1,

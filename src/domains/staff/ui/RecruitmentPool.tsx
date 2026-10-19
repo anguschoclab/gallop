@@ -8,21 +8,10 @@ import { isOffended, offendedDaysRemaining } from "@/domains/staff/application/s
 import { UserPlus, Zap, Activity, Info } from "lucide-react";
 import { formatStaffTrait } from "@/domains/genetics/application/traitLabels";
 import { Hint } from "@/shared/ui/Hint";
-
-interface PoolMember {
-  id: string;
-  name: string;
-  role: string;
-  tier: string;
-  salary: number;
-  bonusValue: number;
-  traits?: string[];
-  offended?: boolean;
-  offendedUntil?: number;
-}
+import { getStaffName } from "@/domains/staff/model/staffPerson";
 
 interface RecruitmentPoolProps {
-  staffPool: PoolMember[];
+  staffPool: import("@/domains/staff/model/staffTypes").StaffMember[];
   day: number;
   onNegotiate: (staffId: string) => void;
   search?: string;
@@ -40,7 +29,7 @@ export function RecruitmentPool({
     const q = search.toLowerCase();
     const matchesSearch =
       !q ||
-      staff.name.toLowerCase().includes(q) ||
+      getStaffName(staff).toLowerCase().includes(q) ||
       (staff.traits ?? []).some((t) => t.toLowerCase().includes(q));
     const matchesTrait = traitFilter === "all" || (staff.traits ?? []).includes(traitFilter);
     return matchesSearch && matchesTrait;
@@ -67,7 +56,7 @@ export function RecruitmentPool({
                 <div className="space-y-1">
                   <Link to="/staff/$staffId" params={{ staffId: staff.id }}>
                     <h3 className="text-lg font-bold text-cream uppercase tracking-tight group-hover:text-gold transition-colors leading-none hover:underline">
-                      {staff.name}
+                      {getStaffName(staff)}
                     </h3>
                   </Link>
                   <div className="flex items-center gap-2 pt-1">

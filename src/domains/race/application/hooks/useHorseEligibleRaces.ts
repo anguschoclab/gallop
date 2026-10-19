@@ -4,11 +4,17 @@ import { isHorseEligibleForRace } from "@/domains/race/simulation/eligibility";
 import { calculateRaceSuitability } from "@/domains/race/simulation/entryScoring";
 import { getTransportCostForRace } from "@/domains/race/simulation/transportCost";
 import { selectBestFreeAgentJockey } from "@/domains/jockey/simulation/selectFreeAgent";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const PLAYER_STABLE_CONFIG: Stable = {
   id: "player",
   name: "Player Stable",
-  owner: "Player",
+  owner: generatePersonIdentity({
+    id: "player",
+    displayName: "Player",
+    role: "owner",
+    ageBand: "adult",
+  }),
   personality: "win-now",
   tier: "elite",
   cash: 0,
@@ -17,7 +23,6 @@ const PLAYER_STABLE_CONFIG: Stable = {
   founded: 1,
   isMajor: true,
   colors: { primary: "#D4AF37", secondary: "#C0C0C0" },
-  staff: { trainer: null, veterinarian: null, farrier: null, nutritionist: null, groom: null },
   outposts: [],
 };
 

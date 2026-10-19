@@ -86,7 +86,7 @@ export function ReviewStep({
             rel="noopener noreferrer"
             className="font-black uppercase tracking-tighter text-center leading-none hover:underline hover:text-gold"
           >
-            {selectedJockey.name}
+            {selectedJockey.person.biography.displayName}
           </Link>
         </div>
       </div>

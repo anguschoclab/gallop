@@ -12,6 +12,7 @@ import type { CashImpact, TransactionImpact } from "@/platform/resolver/impacts/
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { asNpcStableId } from "@/shared/types/branded";
 import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 describe("upkeepPhase", () => {
   it("should emit cash_change and transaction impacts for player upkeep", () => {
@@ -80,7 +81,12 @@ describe("upkeepPhase", () => {
           personality: "breeder",
           reputation: 70,
           tier: "elite",
-          owner: "Owner 1",
+          owner: generatePersonIdentity({
+            id: "owner-1",
+            displayName: "Owner 1",
+            role: "owner",
+            ageBand: "adult",
+          }),
           founded: 1,
         }),
       ],
@@ -126,7 +132,12 @@ describe("upkeepPhase", () => {
           personality: "breeder",
           reputation: 70,
           tier: "elite",
-          owner: "Owner 1",
+          owner: generatePersonIdentity({
+            id: "owner-1",
+            displayName: "Owner 1",
+            role: "owner",
+            ageBand: "adult",
+          }),
           founded: 1,
         }),
         createTestStable({
@@ -136,7 +147,12 @@ describe("upkeepPhase", () => {
           personality: "trader",
           reputation: 60,
           tier: "mid",
-          owner: "Owner 2",
+          owner: generatePersonIdentity({
+            id: "owner-2",
+            displayName: "Owner 2",
+            role: "owner",
+            ageBand: "adult",
+          }),
           founded: 1,
         }),
       ],
@@ -170,7 +186,12 @@ describe("upkeepPhase", () => {
           personality: "breeder",
           reputation: 70,
           tier: "elite",
-          owner: "Owner 1",
+          owner: generatePersonIdentity({
+            id: "owner-1",
+            displayName: "Owner 1",
+            role: "owner",
+            ageBand: "adult",
+          }),
           founded: 1,
         }),
       ],

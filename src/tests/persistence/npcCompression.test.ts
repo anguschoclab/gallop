@@ -16,6 +16,7 @@ import { asNpcStableId, asStableId } from "@/shared/types/branded";
 import { generateNpcHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
 import { createRng, hashStr } from "@/shared/common/rng";
 import { detectRivalMilestones } from "@/domains/agents/simulation/npc/careerMilestones";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import {
   isDueForOffscreenStart,
   lastStartDay,
@@ -26,7 +27,12 @@ function makeTestStable(): Stable {
   return {
     id: asStableId("stable-test-1"),
     name: "Test Stables",
-    owner: "Test Owner",
+    owner: generatePersonIdentity({
+      id: "test-owner",
+      displayName: "Test Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 50,
     founded: 1,
@@ -35,13 +41,6 @@ function makeTestStable(): Stable {
     isMajor: true,
     colors: { primary: "#ff0000", secondary: "#00ff00" },
     personality: "conservative",
-    staff: {
-      trainer: null,
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-    },
     outposts: [],
   };
 }

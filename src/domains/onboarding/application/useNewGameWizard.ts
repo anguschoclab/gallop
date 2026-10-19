@@ -8,6 +8,7 @@ import { SILK_PATTERNS } from "@/shared/data/jockeys";
 import { randomStableName, randomOwnerName } from "@/domains/stable/simulation/stableGeneration";
 import { BACKSTORIES } from "@/shared/common/backstories";
 import type { JockeySilk, BackstoryId } from "@/platform/game/types";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import {
   loadWizardState,
   saveWizardState,
@@ -103,10 +104,16 @@ export function useNewGameWizard() {
 
     setSubmitting(true);
     setInitProgress({ stage: 0, total: 8, name: "Initializing…" });
+    const ownerNameTrimmed = ownerName.trim();
     const options: NewGameOptions = {
       profile: {
         stableName: stableName.trim(),
-        ownerName: ownerName.trim(),
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: ownerNameTrimmed || "Player",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk,
         backstoryId: selectedBackstory.id,
         founded: 1,

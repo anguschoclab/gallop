@@ -75,12 +75,12 @@ export function ApprenticeTracker() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-blue-300 flex items-center justify-center text-xs font-black text-slate-950">
-                    {apprentice.name.charAt(0)}
+                    {apprentice.person.biography.displayName.charAt(0)}
                   </div>
                   <div>
                     <div className="text-xs font-bold text-cream">
                       <Link to="/jockey/$jockeyId" params={{ jockeyId: apprentice.id }}>
-                        {apprentice.name}
+                        {apprentice.person.biography.displayName}
                       </Link>
                     </div>
                     <div className="text-[9px] text-cream/40 font-mono">

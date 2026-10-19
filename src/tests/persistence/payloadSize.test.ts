@@ -17,12 +17,18 @@ import type { Horse } from "@/domains/horse/simulation/types";
 import type { Stable } from "@/domains/stable/simulation/types";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import { asStableId } from "@/shared/types/branded";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function makeTestStable(id: string, tier: "elite" | "mid" | "budget" = "mid"): Stable {
   return {
     id: asStableId(id),
     name: `${id} Stables`,
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier,
     reputation: 50,
     founded: 1,
@@ -31,13 +37,6 @@ function makeTestStable(id: string, tier: "elite" | "mid" | "budget" = "mid"): S
     isMajor: true,
     colors: { primary: "#ff0000", secondary: "#00ff00" },
     personality: "conservative",
-    staff: {
-      trainer: null,
-      veterinarian: null,
-      farrier: null,
-      nutritionist: null,
-      groom: null,
-    },
     outposts: [],
   };
 }

@@ -8,9 +8,10 @@ import { Badge } from "@/shared/ui/badge";
 import { BookmarkButton } from "@/domains/bookmarks/ui/BookmarkButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { PersonRaceHistoryTab } from "@/domains/person/ui/PersonRaceHistoryTab";
-import { ChevronLeft, User, History, Sparkles } from "lucide-react";
+import { ChevronLeft, User, History, Sparkles, Shuffle } from "lucide-react";
 import { formatJockeyTrait } from "@/domains/genetics/application/traitLabels";
 import type { JockeyTrait } from "@/domains/jockey/application/jockeyFacade";
+import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 import {
   TRAIT_XP_UNLOCK_THRESHOLD,
   TRAIT_XP_MAINTENANCE_THRESHOLD,
@@ -34,6 +35,7 @@ function JockeyPage() {
   const hireJockey = useGame((s) => s.hireJockey);
   const hireApprentice = useGame((s) => s.hireApprentice);
   const releaseJockey = useGame((s) => s.releaseJockey);
+  const rerollJockeyAppearance = useGame((s) => s.rerollJockeyAppearance);
 
   const jockeyMap = useMemo(() => new Map((jockeys ?? []).map((j) => [j.id, j])), [jockeys]);
   const jockey = jockeyMap.get(jockeyId);
@@ -57,7 +59,7 @@ function JockeyPage() {
         <BookmarkButton
           type="jockey"
           id={jockey.id}
-          label={jockey.name}
+          label={getJockeyName(jockey)}
           subtitle={isApprentice ? "Apprentice" : "Jockey"}
           variant="full"
         />
@@ -96,6 +98,19 @@ function JockeyPage() {
                       : (j) => hireJockey(j.id, "retainer")
                 }
               />
+              {isRetained && (
+                <div className="mt-4 flex justify-center">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => rerollJockeyAppearance(jockey.id)}
+                    className="gap-2 rounded-none"
+                  >
+                    <Shuffle className="h-4 w-4" />
+                    Randomize Portrait
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </TabsContent>

@@ -9,6 +9,7 @@ import type { PipelineContext } from "@/platform/time/pipeline";
 import { createRng } from "@/shared/common/rng";
 import { privateSaleResolutionPhase } from "@/platform/time/phases/privateSaleResolution";
 import { privateSaleExpiryPhase } from "@/platform/time/phases/privateSaleExpiry";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   createTestNpcHorse({
@@ -28,7 +29,12 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({
     id: "stable-1",
     name: "Green Acres",
-    owner: "NPC",
+    owner: generatePersonIdentity({
+      id: "npc",
+      displayName: "NPC",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 50,
     founded: 1,

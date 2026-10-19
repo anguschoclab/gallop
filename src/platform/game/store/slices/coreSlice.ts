@@ -28,7 +28,8 @@ import type { StoreSet, StoreGet } from "@/platform/game/store/types";
 import { createRaceEntryActions } from "@/platform/game/store/slices/raceEntryActions";
 import { createAdvanceDayActions } from "@/platform/game/store/slices/advanceDayActions";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
-import { asHorseId } from "@/shared/types/branded";
+import { asHorseId, asJockeyId, asStaffId } from "@/shared/types/branded";
+import { rerollPersonAppearance } from "@/domains/person/simulation/generator";
 
 export type CoreSlice = CoreState & {
   enqueueIntent: (intent: AnyIntent) => void;
@@ -74,6 +75,9 @@ export type CoreSlice = CoreState & {
   resolveHorsePhenotype: (horseId: string) => void;
   payDownDebt: (amount: number) => ActionResult;
   quickSellHorse: (horseId: string) => ActionResult;
+  rerollPlayerOwnerAppearance: () => void;
+  rerollJockeyAppearance: (jockeyId: string) => void;
+  rerollStaffAppearance: (staffId: string) => void;
 };
 
 /**
@@ -219,6 +223,40 @@ export function createCoreSlice(
         solvencyTier: tier,
       });
       return { ok: true };
+    },
+
+    rerollPlayerOwnerAppearance: () => {
+      set((state) => {
+        if (!state.playerProfile) return state;
+        return {
+          playerProfile: {
+            ...state.playerProfile,
+            owner: rerollPersonAppearance(state.playerProfile.owner),
+          },
+        };
+      });
+    },
+
+    rerollJockeyAppearance: (jockeyId: string) => {
+      set((state) => {
+        const jockeys = state.jockeys ?? [];
+        const idx = jockeys.findIndex((j) => j.id === asJockeyId(jockeyId));
+        if (idx === -1) return state;
+        const next = [...jockeys];
+        next[idx] = { ...next[idx], person: rerollPersonAppearance(next[idx].person) };
+        return { jockeys: next };
+      });
+    },
+
+    rerollStaffAppearance: (staffId: string) => {
+      set((state) => {
+        const hired = state.hiredStaff ?? [];
+        const idx = hired.findIndex((s) => s.id === asStaffId(staffId));
+        if (idx === -1) return state;
+        const next = [...hired];
+        next[idx] = { ...next[idx], person: rerollPersonAppearance(next[idx].person) };
+        return { hiredStaff: next };
+      });
     },
   };
 }

@@ -2,6 +2,8 @@ import type { Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
 import type { StaffMember, StaffRole, StaffTier } from "@/domains/staff/model/staffTypes";
 import { STAFF_CONFIG } from "@/domains/staff/simulation/staffConfig";
+import { generatePersonIdentity, getPersonAgeBand } from "@/domains/person/simulation/generator";
+import type { PersonRole } from "@/domains/person/model/types";
 
 const STAFF_NAMES = [
   "Dr. Sarah Jenkins",
@@ -64,9 +66,19 @@ export function generateStaffMember(rng: Rng, role?: StaffRole, tier?: StaffTier
     if (!traits.includes(trait)) traits.push(trait);
   }
 
+  const id = generateUUID();
+  const age = 22 + rng.int(0, 38);
+  const personRole: PersonRole = chosenRole === "trainer" ? "trainer" : chosenRole;
+  const person = generatePersonIdentity({
+    id,
+    displayName: name,
+    role: personRole,
+    ageBand: getPersonAgeBand(age),
+  });
+
   return {
-    id: generateUUID(),
-    name,
+    id,
+    person,
     role: chosenRole,
     tier: chosenTier,
     salary: config.salary,

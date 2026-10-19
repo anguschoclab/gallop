@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { ShareOwnershipPanel } from "@/domains/market/ui/ShareOwnershipPanel";
 import type { Syndicate } from "@/domains/breeding/model/types";
 import type { Horse, Stable } from "@/platform/game/types";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 vi.mock("@/domains/breeding/simulation/devolutionUtils", () => ({
   simulateShareChange: (
@@ -46,7 +47,12 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({
     id: "npc1",
     name: "NPC Stable",
-    owner: "NPC",
+    owner: generatePersonIdentity({
+      id: "npc",
+      displayName: "NPC",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "elite",
     reputation: 50,
     founded: 2020,

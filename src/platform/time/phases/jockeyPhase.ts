@@ -24,6 +24,7 @@ import { generateUUID } from "@/shared/uuid/uuid";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import type { JockeyContractImpact } from "@/platform/resolver/impacts";
 import { asNpcStableId } from "@/shared/types/branded";
+import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 
 /**
  * Phase: Jockey Management
@@ -69,7 +70,7 @@ export const jockeyPhase = {
             // Player jockey contract expired
             logs.push({
               day: newDay,
-              text: `Jockey contract expired: ${j.name} is now a free agent.`,
+              text: `Jockey contract expired: ${getJockeyName(j)} is now a free agent.`,
             });
           } else if (npcAIManager) {
             // NPC jockey contract expired - use AI to determine if should retain
@@ -85,7 +86,7 @@ export const jockeyPhase = {
             if (!shouldRetainJockey(jockeyAI, j, stable, newDay)) {
               logs.push({
                 day: newDay,
-                text: `${stable.name} declined to renew contract for ${j.name}.`,
+                text: `${stable.name} declined to renew contract for ${getJockeyName(j)}.`,
               });
               npcAIManager.stableStates[stable.id] = stableAI;
               return { ...j, stableId: undefined, contractUntil: undefined, stableAffinity: 0 };
@@ -149,7 +150,7 @@ export const jockeyPhase = {
                 type: "cash_change",
                 entityId: asNpcStableId(stable.id),
                 amount: -signOnBonus,
-                reason: `Sign-on bonus for jockey ${chosen.name}`,
+                reason: `Sign-on bonus for jockey ${chosen.person.biography.displayName}`,
               });
               impacts.push({
                 id: generateUUID(dailyRng),
@@ -161,7 +162,7 @@ export const jockeyPhase = {
                 jockeyId: chosen.id,
                 stableId: stable.id,
                 contractUntil: newDay + JOCKEY_CONTRACT_DAYS,
-                reason: `NPC stable ${stable.name} hired jockey ${chosen.name}`,
+                reason: `NPC stable ${stable.name} hired jockey ${chosen.person.biography.displayName}`,
               } as JockeyContractImpact);
             }
           }
@@ -189,7 +190,7 @@ export const jockeyPhase = {
             // Poaching success!
             logs.push({
               day: newDay,
-              text: `POACHED: ${stable.name} has signed your star jockey ${target.name} to a life-changing contract!`,
+              text: `POACHED: ${stable.name} has signed your star jockey ${target.person.biography.displayName} to a life-changing contract!`,
             });
             jockeys = jockeys.map((j) =>
               j.id === target.id
@@ -213,13 +214,13 @@ export const jockeyPhase = {
               stableId: stable.id,
               contractUntil: newDay + JOCKEY_RETAINER_DAYS,
               loyalty: 100,
-              reason: `Elite stable ${stable.name} poached jockey ${target.name}`,
+              reason: `Elite stable ${stable.name} poached jockey ${target.person.biography.displayName}`,
             } as JockeyContractImpact);
           } else if (dailyRng.next() < 0.2) {
             // Poaching attempt failed but loyalty dropped
             logs.push({
               day: newDay,
-              text: `Rumors: ${stable.name} made a secret offer to ${target.name}. Your jockey remains for now, but seems unsettled.`,
+              text: `Rumors: ${stable.name} made a secret offer to ${target.person.biography.displayName}. Your jockey remains for now, but seems unsettled.`,
             });
             jockeys = jockeys.map((j) =>
               j.id === target.id ? { ...j, loyalty: Math.max(0, j.loyalty - 15) } : j,

@@ -6,10 +6,14 @@ import {
   type JockeyAvatarSize,
 } from "@/domains/jockey/ui/JockeyAvatar";
 import { asJockeyId } from "@/shared/types/branded";
+import { createStubPersonIdentity } from "@/domains/person/model/fixtures";
 
 const stubJockey = {
   id: asJockeyId("test-jockey-1"),
-  age: 28,
+  person: createStubPersonIdentity({
+    id: "test-jockey-1",
+    displayName: "Test Jockey",
+  }),
   archetype: "versatile" as const,
   silk: { pattern: "solid" as const, primary: "#ff0000", secondary: "#ffffff", cap: "#0000ff" },
 };

@@ -2,10 +2,16 @@ import { describe, it, expect } from "vitest";
 import { createInitialState } from "@/platform/game/store/initialization";
 import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import type { NewGameOptions } from "@/platform/game/store/state";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const mockProfile = {
   stableName: "Test Stable",
-  ownerName: "Test Owner",
+  owner: generatePersonIdentity({
+    id: "player",
+    displayName: "Test Owner",
+    role: "owner",
+    ageBand: "adult",
+  }),
   silk: { pattern: "solid" as const, primary: "#FF0000", secondary: "#0000FF", cap: "#00FF00" },
   backstoryId: "wealthy_dilettante" as const,
   founded: 1,

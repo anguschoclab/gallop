@@ -12,6 +12,7 @@ import type { Horse, Stable, ScoutReport } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import { makeUnowned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -43,7 +44,12 @@ function mkStable(reputation = 75): Stable {
   return createTestStable({
     id: "s1",
     name: "Test Stable",
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation,
     founded: 1,

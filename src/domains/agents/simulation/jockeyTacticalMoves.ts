@@ -2,6 +2,7 @@ import type { Horse, Race, Jockey, Stable } from "@/platform/game/types";
 import { getSuccessRate } from "./learningModule";
 import { calculateRaceRating } from "@/domains/horse/simulation/stats";
 import type { JockeyStrategyAIState } from "./jockeyStrategyAI";
+import { getJockeyAge } from "@/domains/jockey/model/jockeyPerson";
 
 export function calculateJockeyAggressiveness(
   aiState: JockeyStrategyAIState,
@@ -34,7 +35,7 @@ export function calculateJockeyAggressiveness(
     aggressiveness += 0.08;
   }
 
-  if (traits.includes("veteran_poise") && jockey.age >= 35) {
+  if (traits.includes("veteran_poise") && getJockeyAge(1, jockey) >= 35) {
     aggressiveness -= 0.05;
   }
 

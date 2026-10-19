@@ -25,13 +25,19 @@ import { calculateRaceSuitability } from "@/domains/race/simulation/entryScoring
 import { getTransportCostForRace } from "@/domains/race/simulation/transportCost";
 import { MAX_HORSES_PER_STABLE_PER_RACE } from "@/domains/race/model/raceEntryConstants";
 import { selectBestFreeAgentJockey } from "@/domains/jockey/simulation/selectFreeAgent";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 // Virtual player stable for scoring purposes
 // Uses win-now personality with elite tier for competitive AI evaluation
 const PLAYER_STABLE_CONFIG: Stable = {
   id: "player",
   name: "Player Stable",
-  owner: "Player",
+  owner: generatePersonIdentity({
+    id: "player",
+    displayName: "Player",
+    role: "owner",
+    ageBand: "adult",
+  }),
   personality: "win-now",
   tier: "elite",
   cash: 0,
@@ -40,7 +46,6 @@ const PLAYER_STABLE_CONFIG: Stable = {
   founded: 1,
   isMajor: true,
   colors: { primary: "#D4AF37", secondary: "#C0C0C0" },
-  staff: { trainer: null, veterinarian: null, farrier: null, nutritionist: null, groom: null },
   outposts: [],
 };
 
@@ -280,7 +285,7 @@ export function calculateAutoRegisterEntries(
       raceName: race.name,
       raceDay: race.day,
       jockeyId: jockey?.id ?? null,
-      jockeyName: jockey?.name ?? "Auto-assigned",
+      jockeyName: jockey?.person.biography.displayName ?? "Auto-assigned",
       entryFee: race.entryFee,
       jockeyFee: jockey?.ridingFee ?? 0,
       transportCost,

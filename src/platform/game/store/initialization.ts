@@ -43,6 +43,7 @@ import {
   DEFAULT_WORLD_SIZE,
 } from "@/domains/stable/simulation/worldSizeConfig";
 import { createDefaultTutorialState } from "@/domains/tutorial/model/tutorialTypes";
+import { getPlayerOwnerName } from "@/domains/stable/simulation/stablePersonHelpers";
 
 /**
  * Creates the initial game state for a new game.
@@ -181,7 +182,7 @@ export function createInitialState(
 
   const startingCash = options?.backstory.startingCash ?? STARTING_CASH;
   const welcomeText = options
-    ? `${options.profile.stableName} opens its doors. Welcome, ${options.profile.ownerName}.`
+    ? `${options.profile.stableName} opens its doors. Welcome, ${getPlayerOwnerName(options.profile)}.`
     : "Welcome to your stable. Train your horses and enter them in races.";
 
   progress(8, "Gazette & AI");

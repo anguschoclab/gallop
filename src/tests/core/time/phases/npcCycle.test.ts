@@ -9,6 +9,7 @@ import { makeGameState, makePipelineContext } from "@/tests/helpers/sampleGameSt
 import type { PipelineContext } from "@/platform/time/pipeline";
 import type { GameState, Race } from "@/platform/game/types";
 import { makeUnowned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 describe("npcCyclePhase", () => {
   it("should skip when no NPC stables", () => {
@@ -38,7 +39,12 @@ describe("npcCyclePhase", () => {
           personality: "breeder",
           reputation: 70,
           tier: "elite",
-          owner: "Owner 1",
+          owner: generatePersonIdentity({
+            id: "owner-1",
+            displayName: "Owner 1",
+            role: "owner",
+            ageBand: "adult",
+          }),
           founded: 1,
         }),
       ],

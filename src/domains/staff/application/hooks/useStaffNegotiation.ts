@@ -8,6 +8,7 @@ import {
   FLOOR_BY_TIER,
 } from "@/domains/staff/simulation/staffNegotiation";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import { getStaffName } from "@/domains/staff/model/staffPerson";
 
 export function useStaffNegotiation(staff: StaffMember, onClose: () => void) {
   const day = useGame((s) => s.day);
@@ -51,7 +52,7 @@ export function useStaffNegotiation(staff: StaffMember, onClose: () => void) {
         setOfferError(r.reason ?? "Hire failed.");
         return;
       }
-      toast.success(`${staff.name} joins your stable at ${formatCurrency(amount)}/day.`);
+      toast.success(`${getStaffName(staff)} joins your stable at ${formatCurrency(amount)}/day.`);
       handleClose();
     } else if (result.outcome === "counter") {
       const newRounds = roundsUsed + 1;
@@ -61,7 +62,7 @@ export function useStaffNegotiation(staff: StaffMember, onClose: () => void) {
       setOfferError("");
     } else {
       flagStaffOffended(staff.id, day + 30);
-      toast.error(`${staff.name} walks away. They won't negotiate for 30 days.`);
+      toast.error(`${getStaffName(staff)} walks away. They won't negotiate for 30 days.`);
       handleClose();
     }
   };

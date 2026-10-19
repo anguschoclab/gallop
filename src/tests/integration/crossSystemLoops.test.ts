@@ -41,6 +41,7 @@ import { asRaceId, asStaffId } from "@/shared/types/branded";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import type { GameState, Race } from "@/platform/game/types";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import type { TrainingIntent } from "@/platform/resolver/intents";
 
 describe("Cross-System: Economy → Auction Pricing", () => {
@@ -258,6 +259,12 @@ describe("Cross-System: Staff → Training Effectiveness", () => {
       hiredStaff: [
         {
           id: asStaffId("nutritionist-1"),
+          person: generatePersonIdentity({
+            id: "nutritionist-1",
+            displayName: "Nutritionist",
+            role: "nutritionist",
+            ageBand: "adult",
+          }),
           name: "Nutritionist",
           role: "nutritionist",
           tier: "elite",

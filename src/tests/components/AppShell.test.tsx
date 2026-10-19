@@ -66,6 +66,7 @@ vi.mock("@/domains/shell/ui/SidebarNav", () => ({
 import { useGame } from "@/platform/game/store";
 import { createDefaultGameState } from "@/platform/game/store/state";
 import { AppShell } from "@/domains/shell/ui/AppShell";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 describe("AppShell navigation", () => {
   beforeEach(() => {
@@ -74,7 +75,12 @@ describe("AppShell navigation", () => {
       ...createDefaultGameState(),
       playerProfile: {
         stableName: "Test Stable",
-        ownerName: "Test Owner",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "Test Owner",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#000", secondary: "#fff", cap: "#000", pattern: "solid" },
         backstoryId: "rags",
         founded: 1,

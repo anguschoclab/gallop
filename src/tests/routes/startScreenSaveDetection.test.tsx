@@ -27,6 +27,7 @@ vi.mock("@/shared/assets/hero-grandstand.jpg", () => ({ default: "hero4" }));
 import { StartScreen } from "@/domains/shell/ui/pages/StartScreen";
 import { useGame } from "@/platform/game/store";
 import { saveExists } from "@/platform/game/store/storage";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function setupStore(overrides: Record<string, unknown> = {}) {
   (useGame as any).mockImplementation((selector: any) =>
@@ -62,7 +63,15 @@ describe("StartScreen save detection", () => {
   it("shows Continue when saveExists is true", () => {
     saveExists.value = true;
     setupStore({
-      playerProfile: { stableName: "Test Stable", ownerName: "Test Owner" },
+      playerProfile: {
+        stableName: "Test Stable",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "Test Owner",
+          role: "owner",
+          ageBand: "adult",
+        }),
+      },
     });
 
     render(<StartScreen />);

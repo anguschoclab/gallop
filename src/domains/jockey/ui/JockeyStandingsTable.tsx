@@ -15,6 +15,7 @@ import {
 import { ARCHETYPES } from "@/shared/data/jockeys";
 import { Badge } from "@/shared/ui/badge";
 import { Users } from "lucide-react";
+import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 
 const SORT_OPTIONS = [
   { value: "wins", label: "Career Wins" },
@@ -53,7 +54,7 @@ const SORT_FNS: Record<string, (a: Jockey, b: Jockey) => number> = {
     return (JOCKEY_TIER_ORDER[bTier] ?? 0) - (JOCKEY_TIER_ORDER[aTier] ?? 0);
   },
   archetype: (a, b) => (ARCHETYPE_ORDER[a.archetype] ?? 0) - (ARCHETYPE_ORDER[b.archetype] ?? 0),
-  name: (a, b) => a.name.localeCompare(b.name),
+  name: (a, b) => a.person.biography.displayName.localeCompare(b.person.biography.displayName),
 };
 
 interface JockeyStandingsTableProps {
@@ -91,7 +92,7 @@ export function JockeyStandingsTable({ jockeys }: JockeyStandingsTableProps) {
           <LeaderboardRow
             key={jockey.id}
             rank={index + 1}
-            name={jockey.name}
+            name={getJockeyName(jockey)}
             meta={`${jockey.careerWins}W / ${jockey.careerStarts}S · ${winRate(jockey)}% · ${jockey.archetype.replaceAll("_", " ").toUpperCase()}`}
             badges={
               <Badge variant="outline" className={`text-xs ${tierBadgeClass(tier)}`}>

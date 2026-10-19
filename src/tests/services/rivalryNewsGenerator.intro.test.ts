@@ -2,17 +2,36 @@ import { describe, it, expect } from "vitest";
 import { generateStableIntroNews } from "@/domains/narrative/simulation/rivalryNewsGenerator";
 import { createTestStable, createTestRng } from "@/tests/helpers";
 import { isValidUUID } from "@/shared/uuid/uuid";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 describe("generateStableIntroNews", () => {
   it("13.1 — Headline contains stable name", () => {
-    const stable = createTestStable({ id: "s1", name: "Shadow Racing", owner: "John Smith" });
+    const stable = createTestStable({
+      id: "s1",
+      name: "Shadow Racing",
+      owner: generatePersonIdentity({
+        id: "john-smith",
+        displayName: "John Smith",
+        role: "owner",
+        ageBand: "adult",
+      }),
+    });
     const news = generateStableIntroNews(stable, 5, createTestRng());
     expect(news).not.toBeNull();
     expect(news!.headline).toContain("Shadow Racing");
   });
 
   it("13.2 — Body contains stable owner name", () => {
-    const stable = createTestStable({ id: "s1", name: "Shadow Racing", owner: "John Smith" });
+    const stable = createTestStable({
+      id: "s1",
+      name: "Shadow Racing",
+      owner: generatePersonIdentity({
+        id: "john-smith",
+        displayName: "John Smith",
+        role: "owner",
+        ageBand: "adult",
+      }),
+    });
     const news = generateStableIntroNews(stable, 5, createTestRng());
     expect(news).not.toBeNull();
     expect(news!.body).toContain("John Smith");
@@ -22,7 +41,12 @@ describe("generateStableIntroNews", () => {
     const stableWithCountry = createTestStable({
       id: "s1",
       name: "Stable A",
-      owner: "Owner A",
+      owner: generatePersonIdentity({
+        id: "owner-a",
+        displayName: "Owner A",
+        role: "owner",
+        ageBand: "adult",
+      }),
       country: "Ireland",
     });
     const newsWith = generateStableIntroNews(stableWithCountry, 5, createTestRng());
@@ -32,7 +56,12 @@ describe("generateStableIntroNews", () => {
     const stableNoCountry = createTestStable({
       id: "s2",
       name: "Stable B",
-      owner: "Owner B",
+      owner: generatePersonIdentity({
+        id: "owner-b",
+        displayName: "Owner B",
+        role: "owner",
+        ageBand: "adult",
+      }),
       country: undefined,
     });
     const newsWithout = generateStableIntroNews(stableNoCountry, 5, createTestRng());
@@ -44,7 +73,12 @@ describe("generateStableIntroNews", () => {
     const stableWithDesc = createTestStable({
       id: "s1",
       name: "Stable A",
-      owner: "Owner A",
+      owner: generatePersonIdentity({
+        id: "owner-a",
+        displayName: "Owner A",
+        role: "owner",
+        ageBand: "adult",
+      }),
       description: "A legendary operation with decades of history.",
     });
     const newsWith = generateStableIntroNews(stableWithDesc, 5, createTestRng());
@@ -54,7 +88,12 @@ describe("generateStableIntroNews", () => {
     const stableNoDesc = createTestStable({
       id: "s2",
       name: "Stable B",
-      owner: "Owner B",
+      owner: generatePersonIdentity({
+        id: "owner-b",
+        displayName: "Owner B",
+        role: "owner",
+        ageBand: "adult",
+      }),
       description: undefined,
     });
     const newsWithout = generateStableIntroNews(stableNoDesc, 5, createTestRng());
@@ -63,7 +102,16 @@ describe("generateStableIntroNews", () => {
   });
 
   it("13.5 — entityLinks contains { type: 'stable', id, name }", () => {
-    const stable = createTestStable({ id: "s1", name: "Shadow Racing", owner: "John Smith" });
+    const stable = createTestStable({
+      id: "s1",
+      name: "Shadow Racing",
+      owner: generatePersonIdentity({
+        id: "john-smith",
+        displayName: "John Smith",
+        role: "owner",
+        ageBand: "adult",
+      }),
+    });
     const news = generateStableIntroNews(stable, 5, createTestRng());
     expect(news).not.toBeNull();
     expect(news!.entityLinks).toBeDefined();
@@ -73,7 +121,16 @@ describe("generateStableIntroNews", () => {
   });
 
   it("13.6 — category === 'stable', importance === 'low'", () => {
-    const stable = createTestStable({ id: "s1", name: "Shadow Racing", owner: "John Smith" });
+    const stable = createTestStable({
+      id: "s1",
+      name: "Shadow Racing",
+      owner: generatePersonIdentity({
+        id: "john-smith",
+        displayName: "John Smith",
+        role: "owner",
+        ageBand: "adult",
+      }),
+    });
     const news = generateStableIntroNews(stable, 5, createTestRng());
     expect(news).not.toBeNull();
     expect(news!.category).toBe("stable");
@@ -84,7 +141,12 @@ describe("generateStableIntroNews", () => {
     const stable = createTestStable({
       id: "s1",
       name: "Shadow Racing",
-      owner: "John Smith",
+      owner: generatePersonIdentity({
+        id: "john-smith",
+        displayName: "John Smith",
+        role: "owner",
+        ageBand: "adult",
+      }),
       country: "USA",
       description: "A top stable.",
     });
@@ -94,7 +156,16 @@ describe("generateStableIntroNews", () => {
   });
 
   it("13.8 — id is valid UUID", () => {
-    const stable = createTestStable({ id: "s1", name: "Shadow Racing", owner: "John Smith" });
+    const stable = createTestStable({
+      id: "s1",
+      name: "Shadow Racing",
+      owner: generatePersonIdentity({
+        id: "john-smith",
+        displayName: "John Smith",
+        role: "owner",
+        ageBand: "adult",
+      }),
+    });
     const news = generateStableIntroNews(stable, 5, createTestRng());
     expect(news).not.toBeNull();
     expect(isValidUUID(news!.id)).toBe(true);

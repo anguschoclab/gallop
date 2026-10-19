@@ -5,10 +5,17 @@ import {
   PATIENCE_BY_TIER,
 } from "@/domains/staff/simulation/staffNegotiation";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function makeStaff(tier: "budget" | "mid" | "elite" = "mid"): StaffMember {
   return {
     id: "staff-1",
+    person: generatePersonIdentity({
+      id: "staff-1",
+      displayName: "Test Staff",
+      role: "trainer",
+      ageBand: "adult",
+    }),
     name: "Test Staff",
     role: "trainer",
     tier,

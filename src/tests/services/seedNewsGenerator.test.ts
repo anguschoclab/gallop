@@ -7,6 +7,7 @@ import type { Race, Stable, Horse } from "@/platform/game/types";
 import type { PlayerProfile } from "@/domains/stable/simulation/types";
 import { makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const VALID_CATEGORIES: NewsCategory[] = ["racing", "market", "stable", "flavor", "milestone"];
 const VALID_IMPORTANCE: NewsImportance[] = ["high", "medium", "low"];
@@ -22,7 +23,12 @@ function buildTestStables(n: number): Stable[] {
     createTestStable({
       id: `stable-${i + 1}`,
       name: `Elite Stable ${i + 1}`,
-      owner: `Owner ${i + 1}`,
+      owner: generatePersonIdentity({
+        id: `owner-${i + 1}`,
+        displayName: `Owner ${i + 1}`,
+        role: "owner",
+        ageBand: "adult",
+      }),
       tier: "elite",
       isMajor: true,
       reputation: 90 - i * 5,
@@ -84,6 +90,12 @@ function buildTestRaces(): Race[] {
 function buildTestProfile(): PlayerProfile {
   return {
     stableName: "Thunder Ranch",
+    owner: generatePersonIdentity({
+      id: "player",
+      displayName: "John Doe",
+      role: "owner",
+      ageBand: "adult",
+    }),
     ownerName: "John Doe",
     silk: { pattern: "solid", primary: "#FF0000", secondary: "#FFFFFF", cap: "#000000" },
     backstoryId: "inheritor",
@@ -416,7 +428,12 @@ describe("seedGazetteNews", () => {
         createTestStable({
           id: "s-nc",
           name: "No Country Stable",
-          owner: "NC Owner",
+          owner: generatePersonIdentity({
+            id: "nc-owner",
+            displayName: "NC Owner",
+            role: "owner",
+            ageBand: "adult",
+          }),
           tier: "elite",
           isMajor: true,
           reputation: 80,
@@ -441,7 +458,12 @@ describe("seedGazetteNews", () => {
         createTestStable({
           id: "s-nd",
           name: "No Desc Stable",
-          owner: "ND Owner",
+          owner: generatePersonIdentity({
+            id: "nd-owner",
+            displayName: "ND Owner",
+            role: "owner",
+            ageBand: "adult",
+          }),
           tier: "elite",
           isMajor: true,
           reputation: 80,

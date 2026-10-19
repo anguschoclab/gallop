@@ -9,6 +9,7 @@ import {
 import type { Horse, Stable } from "@/platform/game/types";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -24,7 +25,12 @@ function mkStable(overrides: Partial<Stable> = {}): Stable {
   return createTestStable({
     id: "s1",
     name: "Test Farm",
-    owner: "Test",
+    owner: generatePersonIdentity({
+      id: "test",
+      displayName: "Test",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 60,
     founded: 1,

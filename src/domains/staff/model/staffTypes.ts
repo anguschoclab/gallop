@@ -25,7 +25,9 @@ export type StaffTier = "budget" | "mid" | "elite";
  */
 export interface StaffMember {
   id: import("@/shared/types/branded").StaffId;
-  name: string;
+  person: import("@/domains/person/model/types").PersonIdentity;
+  /** @deprecated Legacy test-fixture field. Prefer `person.biography.displayName`. */
+  name?: string;
   role: StaffRole;
   tier: StaffTier;
   salary: number; // Weekly salary in currency

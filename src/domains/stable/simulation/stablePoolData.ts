@@ -12,8 +12,7 @@
 import type { Stable } from "@/platform/game/types";
 
 // Base stable info without generated fields.
-// `staff` and `outposts` are optional because generateStableFromTemplate
-// always overwrites them with fresh empty values.
+// `outposts` is optional because generateStableFromTemplate overwrites it.
 export type StablePoolEntry = Omit<
   Stable,
   | "id"
@@ -25,10 +24,10 @@ export type StablePoolEntry = Omit<
   | "personality"
   | "preferredDistance"
   | "preferredSurface"
-  | "staff"
   | "outposts"
+  | "owner"
 > & {
-  staff?: Stable["staff"];
+  ownerName: string;
   outposts?: Stable["outposts"];
 };
 

@@ -10,6 +10,7 @@ import { useGame } from "@/platform/game/store";
 import { createDefaultGameState } from "@/platform/game/store/state";
 import type { Horse, GameState } from "@/platform/game/types";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, to, params, ...props }: any) =>
@@ -78,6 +79,7 @@ function mkStaff(
 ): StaffMember {
   return {
     id,
+    person: generatePersonIdentity({ id, displayName: `Test ${role}`, role, ageBand: "adult" }),
     name: `Test ${role}`,
     role,
     tier: "mid",

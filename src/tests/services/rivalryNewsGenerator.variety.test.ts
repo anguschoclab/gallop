@@ -15,6 +15,7 @@ import {
 } from "@/domains/narrative/simulation/rivalryNewsGenerator";
 import { createTestRng, createTestStable, createTestHorse } from "@/tests/helpers";
 import type { Race } from "@/platform/game/types";
+import { getStableOwnerName } from "@/domains/stable/application/stablePersonHelpers";
 
 const DAY = 42;
 const stable = createTestStable({ id: "rival-1", name: "Bitter Creek Stables" });
@@ -251,7 +252,7 @@ describe("generateStableIntroNews — template variety", () => {
   it("all bodies contain the stable owner or country", () => {
     const bodies = sweepBodies((rng) => generateStableIntroNews(stable, DAY, rng)?.body ?? null);
     for (const b of bodies) {
-      expect(b).toContain(stable.owner);
+      expect(b).toContain(getStableOwnerName(stable));
     }
   });
 });

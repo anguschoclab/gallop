@@ -99,10 +99,16 @@ import {
 } from "@/platform/game/store/storage";
 import { clearDatabase } from "@/platform/persistence/storage/indexedDbService";
 import type { NewGameOptions } from "@/platform/game/store/state";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const mockProfile = {
   stableName: "Test Stable",
-  ownerName: "Test Owner",
+  owner: generatePersonIdentity({
+    id: "player",
+    displayName: "Test Owner",
+    role: "owner",
+    ageBand: "adult",
+  }),
   silk: { pattern: "solid", primary: "#FF0000", secondary: "#0000FF", cap: "#00FF00" },
   backstoryId: "wealthy_dilettante" as any,
   founded: 1,

@@ -6,6 +6,7 @@ import { StepReview } from "@/domains/onboarding/ui/steps/StepReview";
 import type { Backstory } from "@/shared/common/backstories";
 import type { PlayerProfile, BackstoryId } from "@/platform/game/types";
 import type { WorldSize } from "@/domains/stable/simulation/worldSizeConfig";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const mockBackstory: Backstory = {
   id: "legacy" as BackstoryId,
@@ -30,7 +31,12 @@ const mockWorldSize: WorldSize = "medium";
 
 const mockProfile: PlayerProfile = {
   stableName: "Test Stables",
-  ownerName: "Test Owner",
+  owner: generatePersonIdentity({
+    id: "player",
+    displayName: "Test Owner",
+    role: "owner",
+    ageBand: "adult",
+  }),
   silk: { pattern: "solid", primaryColor: "#ff0000" } as any,
 } as PlayerProfile;
 

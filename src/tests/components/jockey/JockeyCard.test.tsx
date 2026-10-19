@@ -4,6 +4,7 @@ import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { JockeyCard } from "@/domains/jockey/ui/JockeyCard";
 import type { Jockey, Horse } from "@/platform/game/types";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) =>
@@ -15,6 +16,13 @@ vi.mock("@tanstack/react-router", () => ({
 describe("JockeyCard - Tipster Insight", () => {
   const jockey: Jockey = {
     id: "j1",
+    person: generatePersonIdentity({
+      id: "j1",
+      displayName: "Test Jockey",
+      role: "jockey",
+      ageBand: "adult",
+      seed: 1,
+    }),
     name: "Test Jockey",
     age: 25,
     archetype: "versatile",

@@ -5,6 +5,7 @@ import type { Horse, Stable, PrivateSaleOffer } from "@/platform/game/types";
 import { createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId, asHorseId } from "@/shared/types/branded";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 vi.mock("sonner", () => ({
   toast: { success: vi.fn(), error: vi.fn(), info: vi.fn() },
@@ -32,7 +33,12 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({
     id: "stable-1",
     name: "Green Acres",
-    owner: "NPC",
+    owner: generatePersonIdentity({
+      id: "npc",
+      displayName: "NPC",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 50,
     founded: 1,

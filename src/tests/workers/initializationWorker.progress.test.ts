@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { createInitialState } from "@/platform/game/store/initialization";
 import type { NewGameOptions } from "@/platform/game/store/state";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 describe("createInitialState progress callback", () => {
   it("invokes progressCallback with stage numbers 1..N", () => {
@@ -8,7 +9,12 @@ describe("createInitialState progress callback", () => {
     const options: NewGameOptions = {
       profile: {
         stableName: "Test Stable",
-        ownerName: "Test Owner",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "Test Owner",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#00ff00", cap: "#0000ff", pattern: "solid" },
         backstoryId: "inheritor",
         founded: 1,
@@ -53,7 +59,12 @@ describe("createInitialState progress callback", () => {
     const options: NewGameOptions = {
       profile: {
         stableName: "Test",
-        ownerName: "Owner",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "Owner",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#00ff00", cap: "#0000ff", pattern: "solid" },
         backstoryId: "inheritor",
         founded: 1,
@@ -88,7 +99,12 @@ describe("createInitialState progress callback", () => {
     const options: NewGameOptions = {
       profile: {
         stableName: "Test",
-        ownerName: "Owner",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "Owner",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#00ff00", cap: "#0000ff", pattern: "solid" },
         backstoryId: "inheritor",
         founded: 1,

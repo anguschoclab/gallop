@@ -6,6 +6,7 @@ import type { PrivateSaleOffer, Horse, Race, Stable } from "@/platform/game/type
 import { makeNpcOwned, makePlayerOwned, getStableId } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";
 import { h2r } from "@/tests/helpers/sampleGameState";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const mkOffer = (overrides: Partial<PrivateSaleOffer> = {}): PrivateSaleOffer => ({
   id: "offer-1",
@@ -48,7 +49,12 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({
     id: "stable-1",
     name: "Green Acres",
-    owner: "NPC",
+    owner: generatePersonIdentity({
+      id: "npc",
+      displayName: "NPC",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 50,
     founded: 1,

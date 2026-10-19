@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useGame } from "@/platform/game/store";
 import type { EntityLink } from "@/domains/narrative/model/newsTypes";
 import type { Jockey } from "@/domains/jockey/model/types";
+import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 
 function escapeRegExp(string: string) {
   return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -31,9 +32,9 @@ export function useEntityLinks(text: string, explicitLinks?: EntityLink[], autoD
       });
 
       jockeys.forEach((j) => {
-        const regex = new RegExp(`\\b${escapeRegExp(j.name)}\\b`, "g");
-        if (regex.test(text) && !combined.some((l) => l.name === j.name)) {
-          combined.push({ type: "jockey", id: j.id, name: j.name });
+        const regex = new RegExp(`\\b${escapeRegExp(getJockeyName(j))}\\b`, "g");
+        if (regex.test(text) && !combined.some((l) => l.name === getJockeyName(j))) {
+          combined.push({ type: "jockey", id: j.id, name: getJockeyName(j) });
         }
       });
 

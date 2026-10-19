@@ -2,11 +2,17 @@ import { describe, it, expect } from "vitest";
 import { seedGazetteNews } from "@/domains/narrative/application/seedNewsGenerator";
 import { createTestRng } from "@/tests/helpers";
 import type { PlayerProfile } from "@/domains/stable/simulation/types";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function makeProfile(overrides: Partial<PlayerProfile> = {}): PlayerProfile {
   return {
     stableName: "Thunder Ranch",
-    ownerName: "John Doe",
+    owner: generatePersonIdentity({
+      id: "player",
+      displayName: "John Doe",
+      role: "owner",
+      ageBand: "adult",
+    }),
     silk: { pattern: "solid", primary: "#FF0000", secondary: "#FFFFFF", cap: "#000000" },
     backstoryId: "inheritor",
     founded: 1,
@@ -38,7 +44,15 @@ describe("seedGazetteNews — season opener empty-string fallback", () => {
   });
 
   it("uses actual stableName when non-empty", () => {
-    const profile = makeProfile({ stableName: "Thunder Ranch", ownerName: "John" });
+    const profile = makeProfile({
+      stableName: "Thunder Ranch",
+      owner: generatePersonIdentity({
+        id: "player",
+        displayName: "John",
+        role: "owner",
+        ageBand: "adult",
+      }),
+    });
     const result = seedGazetteNews([], [], [], profile, createTestRng());
     const seasonOpener = result.news.find(
       (n) => n.category === "flavor" && n.importance === "high",

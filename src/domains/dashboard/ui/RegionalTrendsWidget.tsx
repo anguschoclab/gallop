@@ -25,6 +25,7 @@ import {
 import { useRegionalComparisonParams } from "@/domains/analytics/application/hooks/useRegionalComparisonParams";
 import { RegionDrilldownDrawer } from "@/domains/dashboard/ui/RegionDrilldownDrawer";
 import { Globe2 } from "lucide-react";
+import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 
 interface WidgetProps {
   /** When true, region/metric/filters are backed by URL params. */
@@ -57,14 +58,14 @@ export function RegionalTrendsWidget({ routeMode = false }: WidgetProps) {
   );
 
   const lookups = useMemo(() => {
-    const jockeyNames = new Map((jockeys ?? []).map((j) => [j.id, j.name]));
+    const jockeyNames = new Map((jockeys ?? []).map((j) => [j.id, getJockeyName(j)]));
     const stableNames = new Map<string, string>(npcStables.map((s) => [s.id, s.name]));
     stableNames.set("player", stableName);
     const allStaff = [...hiredStaff, ...staffPool];
     const trainerByStable = new Map<string, { id: string; name: string }>();
     for (const m of allStaff) {
       if (m.role === "trainer" && m.stableId) {
-        trainerByStable.set(m.stableId, { id: m.id, name: m.name });
+        trainerByStable.set(m.stableId, { id: m.id, name: m.person.biography.displayName });
       }
     }
     return { jockeyNames, stableNames, trainerByStable };

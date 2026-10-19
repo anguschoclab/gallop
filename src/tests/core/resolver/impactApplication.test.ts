@@ -10,6 +10,7 @@ import { createDefaultGameState } from "@/platform/game/store/state";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { asHorseId, asStableId, asPlayerOwnerId, asOwnerKey } from "@/shared/types/branded";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import type {
   AnyImpact,
   CashImpact,
@@ -58,7 +59,12 @@ describe("applyImpacts", () => {
     const npcStable = createTestStable({
       id: asStableId("npc-1"),
       name: "Test Stable",
-      owner: "Test Owner",
+      owner: generatePersonIdentity({
+        id: "test-owner",
+        displayName: "Test Owner",
+        role: "owner",
+        ageBand: "adult",
+      }),
       tier: "mid",
       reputation: 50,
       founded: 1,

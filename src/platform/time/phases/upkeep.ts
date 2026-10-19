@@ -32,6 +32,7 @@ import { DAYS_PER_WEEK } from "@/domains/calendar/model/calendarConstants";
 import { NEWS_FLAVOR_DAILY_PROBABILITY } from "@/domains/inbox/model/newsConstants";
 import { UPKEEP_PER_HORSE } from "@/domains/market/model/economicConstants";
 import { PHASE_ORDER_UPKEEP } from "@/platform/time/pipelineConstants";
+import { getStaffName } from "@/domains/staff/model/staffPerson";
 
 /**
  * Phase: Upkeep
@@ -87,9 +88,15 @@ export const upkeepPhase = {
     // Record staff salary expenses
     playerStaff.forEach((staff) => {
       newExpenses.push(
-        createExpense("upkeep", staff.salary, `${staff.role} salary for ${staff.name}`, newDay, {
-          recurring: true,
-        }),
+        createExpense(
+          "upkeep",
+          staff.salary,
+          `${staff.role} salary for ${getStaffName(staff)}`,
+          newDay,
+          {
+            recurring: true,
+          },
+        ),
       );
     });
 

@@ -15,6 +15,7 @@ import { createRng } from "@/shared/common/rng";
 import { createAuctionRunner } from "@/domains/auction/simulation/runner";
 import type { Horse, Stable } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 describe("Auction Lifecycle Integration", () => {
   it("should generate auction lots", () => {
@@ -33,18 +34,16 @@ describe("Auction Lifecycle Integration", () => {
         personality: "breeder" as const,
         reputation: 70,
         tier: "elite" as const,
-        owner: "Owner 1",
+        owner: generatePersonIdentity({
+          id: "owner-1",
+          displayName: "Owner 1",
+          role: "owner",
+          ageBand: "adult",
+        }),
         founded: 1,
         horses: [],
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-        staff: {
-          trainer: null,
-          groom: null,
-          nutritionist: null,
-          farrier: null,
-          veterinarian: null,
-        },
         outposts: [],
       },
     ];
@@ -97,18 +96,16 @@ describe("Auction Lifecycle Integration", () => {
         personality: "breeder" as const,
         reputation: 70,
         tier: "elite" as const,
-        owner: "Owner 1",
+        owner: generatePersonIdentity({
+          id: "owner-1",
+          displayName: "Owner 1",
+          role: "owner",
+          ageBand: "adult",
+        }),
         founded: 1,
         horses: [],
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-        staff: {
-          trainer: null,
-          groom: null,
-          nutritionist: null,
-          farrier: null,
-          veterinarian: null,
-        },
         outposts: [],
       },
       {
@@ -118,18 +115,16 @@ describe("Auction Lifecycle Integration", () => {
         personality: "breeder" as const,
         reputation: 70,
         tier: "elite" as const,
-        owner: "Owner 2",
+        owner: generatePersonIdentity({
+          id: "owner-2",
+          displayName: "Owner 2",
+          role: "owner",
+          ageBand: "adult",
+        }),
         founded: 1,
         horses: [],
         isMajor: false,
         colors: { primary: "#0000FF", secondary: "#FFFFFF" },
-        staff: {
-          trainer: null,
-          groom: null,
-          nutritionist: null,
-          farrier: null,
-          veterinarian: null,
-        },
         outposts: [],
       },
     ];
@@ -209,19 +204,17 @@ describe("Auction Lifecycle Integration", () => {
         personality: "breeder" as const,
         reputation: 70,
         tier: "elite" as const,
-        owner: "Owner 1",
+        owner: generatePersonIdentity({
+          id: "owner-1",
+          displayName: "Owner 1",
+          role: "owner",
+          ageBand: "adult",
+        }),
         founded: 1,
         horses: [],
         isMajor: true,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
         country: "USA",
-        staff: {
-          trainer: null,
-          groom: null,
-          nutritionist: null,
-          farrier: null,
-          veterinarian: null,
-        },
         outposts: [],
       },
       {
@@ -231,19 +224,17 @@ describe("Auction Lifecycle Integration", () => {
         personality: "aggressive" as const,
         reputation: 70,
         tier: "elite" as const,
-        owner: "Owner 2",
+        owner: generatePersonIdentity({
+          id: "owner-2",
+          displayName: "Owner 2",
+          role: "owner",
+          ageBand: "adult",
+        }),
         founded: 1,
         horses: [],
         isMajor: true,
         colors: { primary: "#0000FF", secondary: "#FFFFFF" },
         country: "USA",
-        staff: {
-          trainer: null,
-          groom: null,
-          nutritionist: null,
-          farrier: null,
-          veterinarian: null,
-        },
         outposts: [],
       },
     ];
@@ -347,19 +338,17 @@ describe("Auction Lifecycle Integration", () => {
       personality: "aggressive",
       reputation: 75,
       tier: "mid",
-      owner: "Owner",
+      owner: generatePersonIdentity({
+        id: "owner",
+        displayName: "Owner",
+        role: "owner",
+        ageBand: "adult",
+      }),
       founded: 1,
       horses: [],
       isMajor: true,
       colors: { primary: "#000", secondary: "#fff" },
       country: "USA",
-      staff: {
-        trainer: null,
-        groom: null,
-        nutritionist: null,
-        farrier: null,
-        veterinarian: null,
-      },
       outposts: [],
     };
 

@@ -4,6 +4,7 @@ import { createRng } from "@/shared/common/rng";
 import type { Horse } from "@/platform/game/types";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("Health System - Injury Rolls", () => {
@@ -59,6 +60,12 @@ describe("Health System - Injury Rolls", () => {
 
     const vet: StaffMember = {
       id: "vet-1",
+      person: generatePersonIdentity({
+        id: "vet-1",
+        displayName: "Dr. Smith",
+        role: "veterinarian",
+        ageBand: "adult",
+      }),
       name: "Dr. Smith",
       role: "veterinarian",
       tier: "elite",

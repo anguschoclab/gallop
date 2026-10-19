@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { createAuctionRunner, nextBidAmount } from "@/domains/auction/simulation/runner";
 import type { AuctionSale, AuctionLot, Horse, Stable } from "@/platform/game/types";
 import { createTestHorse } from "@/tests/helpers";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 describe("auctionTheater integration", () => {
   function mkHorse(overrides: Partial<Horse> = {}): Horse {
@@ -27,14 +28,12 @@ describe("auctionTheater integration", () => {
       colors: { primary: "#000", secondary: "#fff" },
       country: "USA",
       personality: "aggressive",
-      owner: "Owner",
-      staff: {
-        trainer: null,
-        groom: null,
-        nutritionist: null,
-        farrier: null,
-        veterinarian: null,
-      },
+      owner: generatePersonIdentity({
+        id: "owner",
+        displayName: "Owner",
+        role: "owner",
+        ageBand: "adult",
+      }),
       outposts: [],
       ...overrides,
     };

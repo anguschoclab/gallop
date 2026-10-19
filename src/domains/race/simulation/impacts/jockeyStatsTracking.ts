@@ -13,6 +13,7 @@ import { generatePercentageJockeyFeeImpacts } from "@/domains/race/simulation/im
 import { GRADED_PRIZE_SPLIT, PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
 import { MAX_FAME } from "@/domains/prestige/model/fameConstants";
 import type { Race, Horse, Jockey, RaceResult, RaceEntry } from "@/platform/game/types";
+import { getJockeyAge } from "@/domains/jockey/model/jockeyPerson";
 
 export function generateJockeyStatsTrackingImpacts(
   horse: Horse,
@@ -61,7 +62,7 @@ export function generateJockeyStatsTrackingImpacts(
         if (fieldSize > 12)
           traitXpAwards["big_match_temperament"] =
             (traitXpAwards["big_match_temperament"] ?? 0) + 15;
-        if (jockey.age >= 35)
+        if (getJockeyAge(newDay, jockey) >= 35)
           traitXpAwards["veteran_poise"] = (traitXpAwards["veteran_poise"] ?? 0) + 15;
       }
 

@@ -810,7 +810,8 @@ export class NarrativeGenerator {
    */
   private substituteJockeyTemplate(template: string, runner: Runner): string {
     let text = template;
-    const jockeyName = runner.jockeyName || runner.jockey?.name || "the jockey";
+    const jockeyName =
+      runner.jockeyName || runner.jockey?.person.biography.displayName || "the jockey";
     text = text.split("{jockey}").join(jockeyName);
     text = text.split("{horse}").join(runner.name);
     text = text.split("{jockeyArchetype}").join(runner.jockey?.archetype || "versatile");

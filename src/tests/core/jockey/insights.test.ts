@@ -1,10 +1,17 @@
 import { describe, it, expect } from "vitest";
 import { getJockeyInsight } from "@/domains/jockey/simulation/insights";
 import type { Jockey, Horse } from "@/platform/game/types";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 describe("Tipster: Jockey Insights", () => {
   const createMockJockey = (id: string): Jockey => ({
     id,
+    person: generatePersonIdentity({
+      id,
+      displayName: "Test Jockey",
+      role: "jockey",
+      ageBand: "adult",
+    }),
     name: "Test Jockey",
     age: 25,
     archetype: "versatile",

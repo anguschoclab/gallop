@@ -20,6 +20,7 @@ import type {
 import { generateProceduralJockeyName } from "@/domains/jockey/simulation/proceduralNaming";
 import type { RegionalSystem } from "@/domains/race/simulation/types";
 import { createApprenticeProgression } from "@/domains/apprentice/model/apprenticeTypes";
+import { generatePersonIdentity, getPersonAgeBand } from "@/domains/person/simulation/generator";
 import {
   JOCKEY_SALARY_ELITE_MIN,
   JOCKEY_SALARY_ELITE_MAX,
@@ -202,10 +203,17 @@ export function generateJockey({
   const totalStats =
     (stats.pacing + stats.positioning + stats.vigor + stats.gateSkill + stats.temperament) / 5;
 
+  const id = generateUUID();
+  const person = generatePersonIdentity({
+    id,
+    displayName: name,
+    role: "jockey",
+    ageBand: getPersonAgeBand(age),
+  });
+
   return {
-    id: generateUUID(),
-    name,
-    age,
+    id,
+    person,
     archetype,
     tier,
     stats,
@@ -237,9 +245,15 @@ export function generateApprentice({
   usedNames,
 }: Omit<JockeyGenerationOptions, "tier">): Jockey {
   const jockey = generateJockey({ tier: "budget", rng, region, usedNames });
+  const apprenticeAge = rng.range(16, 18);
   return {
     ...jockey,
-    age: rng.range(16, 18),
+    person: generatePersonIdentity({
+      id: jockey.id,
+      displayName: jockey.person.biography.displayName,
+      role: "jockey",
+      ageBand: getPersonAgeBand(apprenticeAge),
+    }),
     careerStarts: 0,
     careerWins: 0,
     fame: 10,

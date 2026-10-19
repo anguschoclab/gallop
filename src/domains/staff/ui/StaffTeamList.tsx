@@ -7,15 +7,9 @@ import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/domains/staff/applicatio
 import { cn } from "@/shared/lib/cn";
 import { Briefcase, ShieldCheck, Trophy } from "lucide-react";
 import { formatStaffTrait } from "@/domains/genetics/application/traitLabels";
+import { getStaffName } from "@/domains/staff/model/staffPerson";
 
-interface StaffMember {
-  id: string;
-  name: string;
-  role: string;
-  tier: string;
-  salary: number;
-  traits: string[];
-}
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
 
 interface StaffTeamListProps {
   staff: StaffMember[];
@@ -38,7 +32,7 @@ export function StaffTeamList({
     const q = search.toLowerCase();
     const matchesSearch =
       !q ||
-      member.name.toLowerCase().includes(q) ||
+      getStaffName(member).toLowerCase().includes(q) ||
       member.traits.some((t) => t.toLowerCase().includes(q));
     const matchesTrait = traitFilter === "all" || member.traits.includes(traitFilter);
     return matchesSearch && matchesTrait;
@@ -109,7 +103,7 @@ export function StaffTeamList({
                     <div className="space-y-0.5">
                       <Link to="/staff/$staffId" params={{ staffId: member.id }}>
                         <h3 className="text-lg font-bold text-cream uppercase tracking-tight group-hover:text-blue-400 transition-colors leading-none hover:underline">
-                          {member.name}
+                          {getStaffName(member)}
                         </h3>
                       </Link>
                       <div className="flex items-center gap-2 pt-1">

@@ -205,23 +205,26 @@ function NpcStableDetailPage() {
                 </CardHeader>
                 <CardContent className="p-0">
                   <div className="divide-y divide-white/5">
-                    {Object.entries(stable.staff || {}).map(([role, name]) => (
-                      <div
-                        key={role}
-                        className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors"
-                      >
-                        <span className="text-[9px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
-                          <Briefcase className="h-3 w-3" /> {role.replace(/_/g, " ")}
-                        </span>
-                        <span className="text-xs font-bold text-cream uppercase text-right">
-                          {name || <span className="italic text-cream/20 font-mono">Vacant</span>}
-                        </span>
-                      </div>
-                    ))}
-                    {(!stable.staff || Object.keys(stable.staff).length === 0) && (
+                    {(hiredStaff ?? []).filter((m) => m.stableId === stableId).length === 0 ? (
                       <div className="p-12 text-center text-[10px] font-mono text-cream/20 uppercase tracking-wide">
                         No personnel records found.
                       </div>
+                    ) : (
+                      (hiredStaff ?? [])
+                        .filter((m) => m.stableId === stableId)
+                        .map((member) => (
+                          <div
+                            key={member.id}
+                            className="flex items-center justify-between p-4 hover:bg-white/[0.02] transition-colors"
+                          >
+                            <span className="text-[9px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
+                              <Briefcase className="h-3 w-3" /> {member.role.replace(/_/g, " ")}
+                            </span>
+                            <span className="text-xs font-bold text-cream uppercase text-right">
+                              {member.person.biography.displayName}
+                            </span>
+                          </div>
+                        ))
                     )}
                   </div>
                 </CardContent>

@@ -15,6 +15,7 @@ import { getPersonalityAIState } from "./personalitySystem";
 import { createLearningState, type LearningState } from "./learningModule";
 import { calculateOptimalRunningStyle } from "./jockeyStyleSelection";
 import { calculateJockeyAggressiveness } from "./jockeyTacticalMoves";
+import { getJockeyAge } from "@/domains/jockey/model/jockeyPerson";
 
 export interface JockeyStrategyAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -306,7 +307,7 @@ export function calculateOptimalTactics(
   }
 
   // veteran_poise: more measured, slightly reduce aggressiveness for older jockeys
-  if (traits.includes("veteran_poise") && jockey.age >= 35) {
+  if (traits.includes("veteran_poise") && getJockeyAge(1, jockey) >= 35) {
     traitAdjustedInstructions = {
       ...traitAdjustedInstructions,
       aggressiveness: Math.max(20, traitAdjustedInstructions.aggressiveness - 3),

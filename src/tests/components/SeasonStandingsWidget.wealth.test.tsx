@@ -7,6 +7,7 @@ import { createDefaultGameState } from "@/platform/game/store/state";
 import { SeasonStandingsWidget } from "@/domains/dashboard/ui/SeasonStandingsWidget";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 async function clickTab(name: string) {
   const tab = screen.getByRole("tab", { name: new RegExp(name, "i") });
@@ -51,7 +52,12 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
       horses: { h1 },
       playerProfile: {
         stableName: "My Stable",
-        ownerName: "John",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "John",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#0000ff" },
         backstoryId: "inheritor",
         founded: 1,
@@ -72,7 +78,12 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
       horses: { h1 },
       playerProfile: {
         stableName: "Thunder Ranch",
-        ownerName: "John",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "John",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#0000ff" },
         backstoryId: "inheritor",
         founded: 1,
@@ -104,7 +115,12 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
       horses: { h1 },
       playerProfile: {
         stableName: "My Stable",
-        ownerName: "John",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "John",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#0000ff" },
         backstoryId: "inheritor",
         founded: 1,
@@ -124,7 +140,12 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
       horses: { h1 },
       playerProfile: {
         stableName: "My Stable",
-        ownerName: "John",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "John",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#0000ff" },
         backstoryId: "inheritor",
         founded: 1,
@@ -183,7 +204,12 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
       horses: { h1 },
       playerProfile: {
         stableName: "My Stable",
-        ownerName: "John",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "John",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#0000ff" },
         backstoryId: "inheritor",
         founded: 1,
@@ -206,7 +232,12 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
       npcStables: [stable],
       playerProfile: {
         stableName: "My Stable",
-        ownerName: "John",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "John",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#0000ff" },
         backstoryId: "inheritor",
         founded: 1,
@@ -240,7 +271,12 @@ describe("SeasonStandingsWidget — Wealth tab", () => {
       npcStables,
       playerProfile: {
         stableName: "Poor Stable",
-        ownerName: "John",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "John",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#ff0000", secondary: "#0000ff" },
         backstoryId: "inheritor",
         founded: 1,

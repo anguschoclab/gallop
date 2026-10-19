@@ -86,10 +86,9 @@ describe("Phase 1.4 — Empty state rendering", () => {
 
 describe("Phase 1.4 — Design bible: hardcoded hex colors in components", () => {
   const APPROVED_HEX_FILES: Record<string, string> = {
-    "domains/jockey/ui/JockeyPortrait.tsx": "procedural silk rendering colors",
+    "domains/person/ui/PersonPortrait.tsx": "procedural portrait rendering",
     "domains/jockey/ui/JockeyAvatar.stories.tsx": "story fixture silk colors",
     "domains/jockey/ui/JockeyFilterPanel.tsx": "silk color filter options",
-    "domains/jockey/ui/FaceFeatures.tsx": "procedural portrait rendering",
     "domains/horse/ui/FullBodySvg.tsx": "procedural horse rendering",
     "domains/horse/ui/HeadSvg.tsx": "procedural horse rendering",
     "domains/race/ui/RaceVisualizer.tsx": "race canvas color encoding",

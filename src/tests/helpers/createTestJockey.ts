@@ -7,6 +7,7 @@ import type {
   JockeySilkPattern,
 } from "@/platform/game/types";
 import { asJockeyId } from "@/shared/types/branded";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 /**
  * Creates a valid test jockey stats object.
@@ -49,10 +50,19 @@ function createTestJockeySilk(overrides?: Partial<JockeySilk>): JockeySilk {
  */
 export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
   const silk = createTestJockeySilk();
+  const id = overrides?.id ?? asJockeyId("test-jockey-1");
+  const fallbackName = "Test Jockey";
+  const fallbackAge = 25;
+  const basePerson = generatePersonIdentity({
+    id,
+    displayName: overrides?.name ?? fallbackName,
+    role: "jockey",
+    ageBand: "adult",
+    seed: 12345,
+  });
+  const person = overrides?.person ?? basePerson;
   return {
-    id: asJockeyId("test-jockey-1"),
-    name: "Test Jockey",
-    age: 25,
+    id,
     archetype: "versatile" as JockeyArchetype,
     tier: "mid" as Jockey["tier"],
     stats: createTestJockeyStats(),
@@ -68,6 +78,9 @@ export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
     isApprentice: false,
     loyalty: 50,
     ...overrides,
+    name: overrides?.name ?? person.biography.displayName,
+    age: overrides?.age ?? fallbackAge,
+    person,
   };
 }
 
@@ -78,10 +91,19 @@ export function createTestJockey(overrides?: Partial<Jockey>): Jockey {
  * @returns Array of Jockey objects
  */
 export function createTestJockeys(count: number = 10): Jockey[] {
-  return Array.from({ length: count }, (_, i) =>
-    createTestJockey({
-      id: asJockeyId(`test-jockey-${i + 1}`),
-      name: `Test Jockey ${i + 1}`,
-    }),
-  );
+  return Array.from({ length: count }, (_, i) => {
+    const id = asJockeyId(`test-jockey-${i + 1}`);
+    const displayName = `Test Jockey ${i + 1}`;
+    return createTestJockey({
+      id,
+      name: displayName,
+      person: generatePersonIdentity({
+        id,
+        displayName,
+        role: "jockey",
+        ageBand: "adult",
+        seed: 12345 + i,
+      }),
+    });
+  });
 }

@@ -19,6 +19,7 @@ import type {
   StudRetirementIntent,
 } from "@/platform/resolver/intents";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import { h2r } from "@/tests/helpers/sampleGameState";
 
 describe("managementResolutionPhase — N+1 optimization coverage", () => {
@@ -348,6 +349,12 @@ describe("managementResolutionPhase — N+1 optimization coverage", () => {
     it("converts a hire intent into a staff impact carrying negotiated terms", () => {
       const staff: StaffMember = {
         id: "staff-1" as any,
+        person: generatePersonIdentity({
+          id: "staff-1",
+          displayName: "Casey Trainer",
+          role: "trainer",
+          ageBand: "adult",
+        }),
         name: "Casey Trainer",
         role: "trainer",
         tier: "elite",

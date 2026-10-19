@@ -8,6 +8,7 @@ import { createTestHorse } from "@/tests/helpers";
 import type { Horse, Race, Stable } from "@/platform/game/types";
 import type { StaffRole } from "@/domains/staff/model/staffTypes";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function mkStable(overrides: Partial<Stable> = {}): Stable {
   const staffRoles: StaffRole[] = ["veterinarian", "farrier", "nutritionist", "groom", "trainer"];
@@ -27,7 +28,12 @@ function mkStable(overrides: Partial<Stable> = {}): Stable {
     colors: { primary: "#000", secondary: "#fff" },
     country: "USA",
     personality: "aggressive",
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     staff,
     outposts: [],
     ...overrides,

@@ -25,6 +25,7 @@ import {
 } from "@/domains/stable/simulation/stablePoolData";
 export { FILLER_PREFIXES, FILLER_SUFFIXES, FILLER_OWNERS, FILLER_COUNTRIES };
 import { FIRST_NAMES, LAST_NAMES } from "@/domains/stable/simulation/personNames";
+import { generatePersonIdentity, getPersonAgeBand } from "@/domains/person/simulation/generator";
 
 /**
  * Generate a random stable name using filler prefixes and suffixes.
@@ -67,15 +68,23 @@ export function randomOwnerName(rng: Rng): string {
 export function generateFillerStable(day: number, rng: Rng): Stable {
   const prefix = rng.pick(FILLER_PREFIXES);
   const suffix = rng.pick(FILLER_SUFFIXES);
-  const owner = randomOwnerName(rng);
+  const ownerName = randomOwnerName(rng);
   const country = rng.pick(FILLER_COUNTRIES);
   const personality = selectPersonality("budget", rng);
   const isSpecialist = personality === "specialist";
 
+  const id = generateUUID(rng);
+  const ownerAge = 35 + rng.int(0, 40);
+
   return {
-    id: generateUUID(rng),
+    id,
     name: `${prefix} ${suffix}`,
-    owner: owner,
+    owner: generatePersonIdentity({
+      id,
+      displayName: ownerName,
+      role: "owner",
+      ageBand: getPersonAgeBand(ownerAge),
+    }),
     tier: "budget",
     reputation: rng.int(30, 55),
     founded: Math.max(1, day - rng.int(0, 365)),
@@ -86,13 +95,6 @@ export function generateFillerStable(day: number, rng: Rng): Stable {
     country,
     personality,
     ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
-    staff: {
-      trainer: null,
-      groom: null,
-      nutritionist: null,
-      farrier: null,
-      veterinarian: null,
-    },
     outposts: [],
   };
 }
@@ -139,9 +141,18 @@ export function generateStableFromTemplate(
       break;
   }
 
+  const id = generateUUID(rng);
+  const ownerAge = 35 + rng.int(0, 40);
+
   return {
     ...template,
-    id: generateUUID(rng),
+    id,
+    owner: generatePersonIdentity({
+      id,
+      displayName: template.ownerName,
+      role: "owner",
+      ageBand: getPersonAgeBand(ownerAge),
+    }),
     tier,
     reputation: rng.int(minRep, maxRep),
     founded: Math.max(1, day - foundedOffset),
@@ -149,13 +160,6 @@ export function generateStableFromTemplate(
     horses: [],
     personality,
     ...(isSpecialist ? getSpecialistPreferences(rng) : {}),
-    staff: {
-      trainer: null,
-      groom: null,
-      nutritionist: null,
-      farrier: null,
-      veterinarian: null,
-    },
     outposts: [],
   };
 }

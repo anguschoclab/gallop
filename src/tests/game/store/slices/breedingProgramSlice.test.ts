@@ -3,6 +3,7 @@ import { useGame } from "@/platform/game/store";
 import { createDefaultGameState } from "@/platform/game/store/state";
 import { makeBreedingProgram } from "@/tests/helpers/sampleGameState";
 import type { BreedingProgram } from "@/domains/breeding/simulation/programs";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import {
   PROGRAM_STATUS_ACTIVE,
   PROGRAM_STATUS_CANCELLED,
@@ -20,7 +21,12 @@ describe("breedingProgramSlice — cancellation", () => {
     seedStore({
       playerProfile: {
         stableName: "Test Stable",
-        ownerName: "Test Owner",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "Test Owner",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: {
           pattern: "solid",
           primary: "#000000",

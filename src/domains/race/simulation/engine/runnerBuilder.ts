@@ -48,6 +48,7 @@ import {
   DEFAULT_GATE,
 } from "@/domains/race/model/engine/runnerTypes";
 import { FactorLedgerCollector } from "@/domains/race/simulation/factorLedger";
+import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 
 // Re-export shared types and utilities for backward compatibility
 export type {
@@ -118,9 +119,9 @@ export function buildRunner(
     }
   }
 
-  let jockeyName = jockey?.name;
+  let jockeyName = jockey?.person.biography.displayName;
   if (jockey && jockey.isApprentice && claim > 0) {
-    jockeyName = `${jockey.name} (a${claim})`;
+    jockeyName = `${getJockeyName(jockey)} (a${claim})`;
   }
 
   let acclimatizationPenalty = 1.0;

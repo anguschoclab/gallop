@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { useNpcStables } from "@/platform/game/hooks/useSystemsState";
 import { getMajorStables, getStablesByTier } from "@/domains/stable/simulation/stableQueries";
 import { evaluateCashPressure } from "@/domains/stable/simulation/cashPressure";
+import { getStableOwnerName } from "@/domains/stable/application/stablePersonHelpers";
 
 /** Cash-pressure filter buckets, from flush to desperate. */
 export const CASH_PRESSURE_FILTERS = [
@@ -44,7 +45,7 @@ export function useNpcStablesFilters(search: NpcStablesSearch) {
     const matches = majorStables.filter((s) => {
       const matchesSearch =
         s.name.toLowerCase().includes(q.toLowerCase()) ||
-        s.owner.toLowerCase().includes(q.toLowerCase());
+        getStableOwnerName(s).toLowerCase().includes(q.toLowerCase());
       const matchesTier = tier === "all" || s.tier === tier;
       const label = evaluateCashPressure(s).label;
       const matchesPressure =

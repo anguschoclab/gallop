@@ -3,6 +3,7 @@ import {
   calculateStyleAwareDraftMultiplier,
   getEnhancedDraftingHorseId,
 } from "@/domains/race/simulation/engine/draftingAI";
+import { getJockeyAge } from "@/domains/jockey/model/jockeyPerson";
 import {
   GATE_SKILL_PROGRESS_THRESHOLD,
   GATE_SKILL_VELOCITY_BONUS,
@@ -61,7 +62,8 @@ export function applyJockeyEffects(
       r.velocity += gateBoost + traitBoost;
     }
 
-    const isVeteran = traits.includes("veteran_poise") && r.jockey.age >= VETERAN_AGE_THRESHOLD;
+    const isVeteran =
+      traits.includes("veteran_poise") && getJockeyAge(1, r.jockey) >= VETERAN_AGE_THRESHOLD;
     const positioningBonus = isVeteran
       ? (stats.positioning / 100) * POSITIONING_BONUS_TURN * (1 + VETERAN_POSITIONING_BONUS)
       : (stats.positioning / 100) * POSITIONING_BONUS_TURN;

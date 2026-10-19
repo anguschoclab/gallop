@@ -8,12 +8,18 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 import { RivalArchivesView } from "@/domains/stable/ui/RivalArchivesView";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({
     id: "s1",
     name: "Test Stable",
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "elite",
     reputation: 50,
     founded: 2020,

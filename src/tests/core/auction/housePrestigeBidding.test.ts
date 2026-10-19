@@ -5,6 +5,7 @@ import { AUCTION_HOUSE_BY_ID, housePrestigeMultiplier } from "@/domains/prestige
 import type { Horse, Stable } from "@/platform/game/types";
 import type { StaffRole } from "@/domains/staff/model/staffTypes";
 import { createTestHorse } from "@/tests/helpers";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({ id: "h1", name: "Prestige Test", age: 1, gender: "colt", ...overrides });
@@ -19,7 +20,12 @@ function mkStable(overrides: Partial<Stable> = {}): Stable {
   return {
     id: "s1",
     name: "Test Stable",
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 75,
     founded: 1,

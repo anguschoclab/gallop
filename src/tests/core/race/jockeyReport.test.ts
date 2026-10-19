@@ -8,6 +8,7 @@ import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 import type { SectionalSplit, SectionalEntry } from "@/domains/race/simulation/types";
 import type { Jockey, JockeyStats } from "@/domains/jockey/model/types";
 import type { Horse } from "@/platform/game/types";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function makeEntry(horseId: string, rank: number): SectionalEntry {
   return {
@@ -41,6 +42,12 @@ function makeJockeyStats(overrides?: Partial<JockeyStats>): JockeyStats {
 function makeJockey(overrides?: Partial<Jockey>): Jockey {
   return {
     id: "jockey-1",
+    person: generatePersonIdentity({
+      id: "jockey-1",
+      displayName: "Test Jockey",
+      role: "jockey",
+      ageBand: "adult",
+    }),
     name: "Test Jockey",
     age: 28,
     archetype: "versatile",

@@ -13,6 +13,7 @@ import {
 } from "@/domains/jockey/model/jockeyConstants";
 import type { Horse, Jockey } from "@/platform/game/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
+import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 
 export function generateJockeyFeeImpacts(
   horse: Horse,
@@ -39,7 +40,7 @@ export function generateJockeyFeeImpacts(
         ? horse.ownership.stableId
         : "") as string,
     amount: -ridingFee,
-    reason: `Jockey fee: ${jockey.name}`,
+    reason: `Jockey fee: ${getJockeyName(jockey)}`,
   };
 
   let transactionImpact: TransactionImpact | undefined;
@@ -54,7 +55,7 @@ export function generateJockeyFeeImpacts(
       type: "transaction",
       amount: -ridingFee,
       category: "jockey_fee",
-      description: `Jockey fee: ${jockey.name} for ${horse.name}`,
+      description: `Jockey fee: ${getJockeyName(jockey)} for ${horse.name}`,
       horseId,
       raceId,
     };
@@ -84,6 +85,6 @@ export function generatePercentageJockeyFeeImpacts(
     type: "cash_change",
     entityId: owned ? "" : stableId || "",
     amount: -jockeyFee,
-    reason: `Jockey fee for ${jockey.name}`,
+    reason: `Jockey fee for ${getJockeyName(jockey)}`,
   } as CashImpact;
 }

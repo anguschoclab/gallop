@@ -53,6 +53,7 @@ import {
   _resetSaveCoordinator,
 } from "@/platform/game/store/storage";
 import { PERSISTED_KEYS, DEDICATED_BUCKET_KEYS } from "@/platform/game/store/persistedKeys";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function makeMockHorse(id: string, owned: boolean, stableId?: string): any {
   return {
@@ -213,7 +214,12 @@ describe("storage META_KEYS — parity with PERSISTED_KEYS", () => {
     const npcStable = {
       id: "stable-1",
       name: "NPC Stable",
-      owner: "NPC",
+      owner: generatePersonIdentity({
+        id: "npc",
+        displayName: "NPC",
+        role: "owner",
+        ageBand: "adult",
+      }),
       tier: "mid",
       reputation: 50,
       founded: 1,

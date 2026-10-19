@@ -12,6 +12,7 @@ import type { JockeySilk } from "@/domains/jockey/model/types";
 import type { Archetype } from "@/domains/breeding/simulation/archetypes";
 import type { Outpost } from "@/domains/facilities/model/outpostTypes";
 import type { StableId } from "@/shared/types/branded";
+import type { PersonIdentity } from "@/domains/person/model/types";
 
 export type StableTier = "elite" | "mid" | "budget";
 
@@ -28,7 +29,7 @@ export type StablePersonality =
 export type Stable = {
   id: StableId;
   name: string;
-  owner: string;
+  owner: PersonIdentity;
   tier: StableTier;
   reputation: number;
   founded: number;
@@ -45,17 +46,21 @@ export type Stable = {
   preferredDistance?: number;
   preferredSurface?: "Turf" | "Dirt" | "Synthetic";
   breedingArchetype?: Archetype["id"];
-  staff: Record<import("@/domains/staff/model/staffTypes").StaffRole, string | null>;
 
   // Imperial Expansion: Outposts
   outposts: Outpost[];
+
+  /** @deprecated Legacy test-fixture field. Stables no longer persist a staff roster map. */
+  staff?: Partial<Record<import("@/domains/staff/model/staffTypes").StaffRole, string | null>>;
 };
 
 export type BackstoryId = "inheritor" | "bloodstock_heir" | "claiming_trainer" | "bootstrapper";
 
 export interface PlayerProfile {
   stableName: string;
-  ownerName: string;
+  owner: PersonIdentity;
+  /** @deprecated Legacy test-fixture field. Prefer `owner.biography.displayName`. */
+  ownerName?: string;
   silk: JockeySilk;
   backstoryId: BackstoryId;
   founded: number;

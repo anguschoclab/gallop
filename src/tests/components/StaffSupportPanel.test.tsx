@@ -5,10 +5,13 @@ import { StaffSupportPanel } from "@/domains/horse/ui/StaffSupportPanel";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import { createDefaultGameState } from "@/platform/game/store/state";
 import { useGame } from "@/platform/game/store";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function mkStaff(role: StaffMember["role"], stableId: string, bonusValue = 0.25): StaffMember {
+  const id = `staff-${role}-${stableId}`;
   return {
-    id: `staff-${role}-${stableId}`,
+    id,
+    person: generatePersonIdentity({ id, displayName: `Test ${role}`, role, ageBand: "adult" }),
     name: `Test ${role}`,
     role,
     tier: "mid",

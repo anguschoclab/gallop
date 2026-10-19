@@ -51,8 +51,11 @@ export type JockeySilk = {
 
 export type Jockey = {
   id: import("@/shared/types/branded").JockeyId;
-  name: string;
-  age: number;
+  person: import("@/domains/person/model/types").PersonIdentity;
+  /** @deprecated Legacy test-fixture field. Prefer `person.biography.displayName`. */
+  name?: string;
+  /** @deprecated Legacy test-fixture field. Prefer `getJockeyAge(day, jockey)`. */
+  age?: number;
   archetype: JockeyArchetype;
   tier?: JockeyTier;
   stats: JockeyStats;

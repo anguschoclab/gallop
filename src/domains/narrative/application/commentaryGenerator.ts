@@ -203,7 +203,10 @@ export function generateCommentaryLine(
     sub("{family}", horse?.bruceLoweFamily?.toString() || "Unknown");
 
     // Replace jockey placeholders
-    const jockeyName = context.runner.jockeyName || context.runner.jockey?.name || "the jockey";
+    const jockeyName =
+      context.runner.jockeyName ||
+      context.runner.jockey?.person.biography.displayName ||
+      "the jockey";
     sub("{jockey}", jockeyName);
     sub("{jockeyArchetype}", context.runner.jockey?.archetype || "versatile");
 

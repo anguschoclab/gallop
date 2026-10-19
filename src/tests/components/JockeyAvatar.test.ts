@@ -8,10 +8,11 @@ import {
   type JockeyAvatarSize,
 } from "@/domains/jockey/ui/JockeyAvatar";
 import type { Jockey } from "@/platform/game/types";
+import { createStubPersonIdentity } from "@/domains/person/model/fixtures";
 
-const stubJockey: Pick<Jockey, "id" | "silk" | "age" | "archetype"> = {
+const stubJockey: Pick<Jockey, "id" | "silk" | "person" | "archetype"> = {
   id: "test-jockey-1",
-  age: 28,
+  person: createStubPersonIdentity({ id: "test-jockey-1", displayName: "Test Jockey" }),
   archetype: "versatile",
   silk: { pattern: "solid", primary: "#ff0000", secondary: "#ffffff", cap: "#0000ff" },
 };
@@ -61,14 +62,28 @@ describe("JockeyAvatar", () => {
     expect(a).toBe(b);
   });
 
-  it("produces different portraits for different jockey ids", () => {
-    const a = renderToStaticMarkup(
-      createElement(JockeyAvatar, { jockey: { ...stubJockey, id: "alpha" }, size: "md" }),
+  it("produces different portraits for different jockey identities", () => {
+    const alpha = renderToStaticMarkup(
+      createElement(JockeyAvatar, {
+        jockey: {
+          ...stubJockey,
+          id: "alpha",
+          person: createStubPersonIdentity({ id: "alpha", displayName: "Alpha Jockey" }),
+        },
+        size: "md",
+      }),
     );
-    const b = renderToStaticMarkup(
-      createElement(JockeyAvatar, { jockey: { ...stubJockey, id: "omega-9999" }, size: "md" }),
+    const omega = renderToStaticMarkup(
+      createElement(JockeyAvatar, {
+        jockey: {
+          ...stubJockey,
+          id: "omega-9999",
+          person: createStubPersonIdentity({ id: "omega-9999", displayName: "Omega Jockey" }),
+        },
+        size: "md",
+      }),
     );
-    expect(a).not.toBe(b);
+    expect(alpha).not.toBe(omega);
   });
 
   it("applies rounded variants", () => {

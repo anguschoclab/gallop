@@ -12,6 +12,7 @@ import { DataManagementCard } from "@/domains/settings/ui/DataManagementCard";
 import { RealWorldDataCard } from "@/domains/settings/ui/RealWorldDataCard";
 import { GlossaryPanel } from "@/domains/settings/ui/GlossaryPanel";
 import { TutorialSettingsCard } from "@/domains/settings/ui/TutorialSettingsCard";
+import { StableIdentityCard } from "@/domains/settings/ui/StableIdentityCard";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
@@ -76,6 +77,7 @@ function SettingsPage() {
         />
         <GlossaryPanel />
         <TutorialSettingsCard />
+        <StableIdentityCard />
       </div>
 
       <SaveLoadDialog

@@ -4,6 +4,7 @@ import type { AuctionSale, AuctionLot, Horse, Stable } from "@/platform/game/typ
 import type { StaffRole } from "@/domains/staff/model/staffTypes";
 import { createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const PERSONALITIES: Stable["personality"][] = [
   "aggressive",
@@ -44,7 +45,12 @@ function mkStable(overrides: Partial<Stable> = {}): Stable {
     colors: { primary: "#000", secondary: "#fff" },
     country: "USA",
     personality: "aggressive",
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     staff,
     outposts: [],
     ...overrides,

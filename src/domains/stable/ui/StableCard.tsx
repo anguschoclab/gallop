@@ -20,6 +20,7 @@ import {
   stableTierColor,
 } from "@/domains/stable/application/stableCardService";
 import type { Stable, PrivateSaleOffer } from "@/platform/game/types";
+import { getStableOwnerName } from "@/domains/stable/application/stablePersonHelpers";
 
 const BOOKMARK_TOP_OFFSET = "top-2";
 const BOOKMARK_RIGHT_OFFSET = "right-2";
@@ -113,7 +114,7 @@ export function StableCard({ stable }: { stable: Stable }) {
           <CardContent>
             <p className="text-sm text-cream-muted mb-3 line-clamp-2">
               {stable.description ||
-                `${stable.owner}'s racing operation with ${stable.horses.length} horses.`}
+                `${getStableOwnerName(stable)}'s racing operation with ${stable.horses.length} horses.`}
             </p>
             <div className="mb-3">
               <CashPressureBadge stable={stable} />

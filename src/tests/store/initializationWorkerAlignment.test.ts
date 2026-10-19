@@ -38,7 +38,7 @@ describe("worker output matches main-thread output shape", () => {
   it("both produce playerProfile from options", () => {
     expect(mainState.playerProfile).toBeDefined();
     expect(mainState.playerProfile?.stableName).toBe("Alignment Test Stable");
-    expect(mainState.playerProfile?.ownerName).toBe("Alignment Test Owner");
+    expect(mainState.playerProfile?.owner.biography.displayName).toBe("Alignment Test Owner");
   });
 
   it("both produce usedHorseNames array (non-empty)", () => {

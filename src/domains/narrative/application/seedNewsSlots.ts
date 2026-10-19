@@ -10,6 +10,7 @@ import type { NewsItem } from "@/domains/narrative/model/newsTypes";
 import type { Race, Horse, Stable } from "@/platform/game/types";
 import type { PlayerProfile } from "@/domains/stable/simulation/types";
 import type { Rng } from "@/shared/common/rng";
+import { getStableOwnerName } from "@/domains/stable/application/stablePersonHelpers";
 import {
   getEliteMajorStables,
   getNpcHorsesByRating,
@@ -36,7 +37,7 @@ export function buildSeasonOpener(
   rng: Rng,
 ): NewsItem {
   const stableName = playerProfile?.stableName || "A New Racing Operation";
-  const ownerName = playerProfile?.ownerName || "A Daring Newcomer";
+  const ownerName = playerProfile?.owner.biography.displayName || "A Daring Newcomer";
 
   const headlines = [
     `A New Era Begins: ${stableName} Opens Its Doors`,
@@ -141,26 +142,26 @@ export function buildRivalIntros(
     ];
 
     const bodies = [
-      `Based in ${country}, ${stable.name} is operated by ${stable.owner}. ${capitalize(description)} With a reputation rating of ${stable.reputation}, this elite operation is one to watch.`,
-      `${stable.name}, led by ${stable.owner}, hails from ${country}. ${capitalize(description)} Their reputation of ${stable.reputation} speaks volumes about their standing in the racing world.`,
-      `From ${country} comes ${stable.name}, the brainchild of ${stable.owner}. ${capitalize(description)} A reputation of ${stable.reputation} places them firmly among the elite.`,
-      `${stable.owner}'s ${stable.name} is a name that commands respect in ${country}. ${capitalize(description)} With a ${stable.reputation} reputation, they are a formidable rival.`,
-      `Operating out of ${country}, ${stable.name} under ${stable.owner} has built a legacy. ${capitalize(description)} Their ${stable.reputation} reputation is a testament to their excellence.`,
-      `${stable.name} — ${stable.owner}'s pride and joy from ${country}. ${capitalize(description)} Boasting a reputation of ${stable.reputation}, they represent everything an elite stable should be.`,
-      `The story of ${stable.name} is one of ambition and success. Founded by ${stable.owner} in ${country}, ${description} Their ${stable.reputation} reputation marks them as a true powerhouse.`,
-      `In the competitive world of ${country} racing, ${stable.name} stands tall. ${stable.owner}'s operation is defined by ${capitalize(description)} A reputation of ${stable.reputation} cements their elite status.`,
-      `Based in ${country}, ${stable.name} comes with high expectations. ${stable.owner}'s operation, with a reputation of ${stable.reputation}, means they shouldn't be underestimated. ${capitalize(description)}`,
-      `A closer look at ${stable.name} reveals a meticulously run operation out of ${country}. ${stable.owner} sporting a reputation of ${stable.reputation}, they are primed for battle. ${capitalize(description)}`,
-      `The racing scene in ${country} has produced a formidable rival in ${stable.name}. ${stable.owner}, with a solid ${stable.reputation} reputation, commands attention. ${capitalize(description)}`,
-      `Operating with a reputation of ${stable.reputation}, ${stable.name} represents the best of ${country}. ${capitalize(description)} ${stable.owner} will be a tough nut to crack.`,
-      `The story of ${stable.name} continues to unfold in ${country}. ${stable.owner}'s impressive ${stable.reputation} reputation precedes them. ${capitalize(description)}`,
-      `Rival stable ${stable.name} from ${country} is a proven quantity with a reputation of ${stable.reputation}. ${capitalize(description)} ${stable.owner} expects them to be a constant thorn in the side.`,
-      `The ${country} racing scene is defined by ${stable.name}. With a stellar ${stable.reputation} reputation, ${stable.owner}'s yard is a major player. ${capitalize(description)}`,
-      `If you want to win, you have to go through ${stable.name}. This ${country} based stable, led by ${stable.owner}, boasts a ${stable.reputation} reputation. ${capitalize(description)}`,
-      `${stable.name} is a name synonymous with quality in ${country}. Their ${stable.reputation} reputation is well earned by ${stable.owner}. ${capitalize(description)}`,
-      `A true titan of the sport, ${stable.name} operates out of ${country}. ${stable.owner} has guided them to a ${stable.reputation} reputation. ${capitalize(description)}`,
-      `The ${country} operation of ${stable.name} is a machine. With ${stable.owner} at the helm, their ${stable.reputation} reputation is formidable. ${capitalize(description)}`,
-      `You cannot ignore ${stable.name}. This ${country} elite stable, boasting a ${stable.reputation} reputation under ${stable.owner}, demands respect. ${capitalize(description)}`,
+      `Based in ${country}, ${stable.name} is operated by ${getStableOwnerName(stable)}. ${capitalize(description)} With a reputation rating of ${stable.reputation}, this elite operation is one to watch.`,
+      `${stable.name}, led by ${getStableOwnerName(stable)}, hails from ${country}. ${capitalize(description)} Their reputation of ${stable.reputation} speaks volumes about their standing in the racing world.`,
+      `From ${country} comes ${stable.name}, the brainchild of ${getStableOwnerName(stable)}. ${capitalize(description)} A reputation of ${stable.reputation} places them firmly among the elite.`,
+      `${getStableOwnerName(stable)}'s ${stable.name} is a name that commands respect in ${country}. ${capitalize(description)} With a ${stable.reputation} reputation, they are a formidable rival.`,
+      `Operating out of ${country}, ${stable.name} under ${getStableOwnerName(stable)} has built a legacy. ${capitalize(description)} Their ${stable.reputation} reputation is a testament to their excellence.`,
+      `${stable.name} — ${getStableOwnerName(stable)}'s pride and joy from ${country}. ${capitalize(description)} Boasting a reputation of ${stable.reputation}, they represent everything an elite stable should be.`,
+      `The story of ${stable.name} is one of ambition and success. Founded by ${getStableOwnerName(stable)} in ${country}, ${description} Their ${stable.reputation} reputation marks them as a true powerhouse.`,
+      `In the competitive world of ${country} racing, ${stable.name} stands tall. ${getStableOwnerName(stable)}'s operation is defined by ${capitalize(description)} A reputation of ${stable.reputation} cements their elite status.`,
+      `Based in ${country}, ${stable.name} comes with high expectations. ${getStableOwnerName(stable)}'s operation, with a reputation of ${stable.reputation}, means they shouldn't be underestimated. ${capitalize(description)}`,
+      `A closer look at ${stable.name} reveals a meticulously run operation out of ${country}. ${getStableOwnerName(stable)} sporting a reputation of ${stable.reputation}, they are primed for battle. ${capitalize(description)}`,
+      `The racing scene in ${country} has produced a formidable rival in ${stable.name}. ${getStableOwnerName(stable)}, with a solid ${stable.reputation} reputation, commands attention. ${capitalize(description)}`,
+      `Operating with a reputation of ${stable.reputation}, ${stable.name} represents the best of ${country}. ${capitalize(description)} ${getStableOwnerName(stable)} will be a tough nut to crack.`,
+      `The story of ${stable.name} continues to unfold in ${country}. ${getStableOwnerName(stable)}'s impressive ${stable.reputation} reputation precedes them. ${capitalize(description)}`,
+      `Rival stable ${stable.name} from ${country} is a proven quantity with a reputation of ${stable.reputation}. ${capitalize(description)} ${getStableOwnerName(stable)} expects them to be a constant thorn in the side.`,
+      `The ${country} racing scene is defined by ${stable.name}. With a stellar ${stable.reputation} reputation, ${getStableOwnerName(stable)}'s yard is a major player. ${capitalize(description)}`,
+      `If you want to win, you have to go through ${stable.name}. This ${country} based stable, led by ${getStableOwnerName(stable)}, boasts a ${stable.reputation} reputation. ${capitalize(description)}`,
+      `${stable.name} is a name synonymous with quality in ${country}. Their ${stable.reputation} reputation is well earned by ${getStableOwnerName(stable)}. ${capitalize(description)}`,
+      `A true titan of the sport, ${stable.name} operates out of ${country}. ${getStableOwnerName(stable)} has guided them to a ${stable.reputation} reputation. ${capitalize(description)}`,
+      `The ${country} operation of ${stable.name} is a machine. With ${getStableOwnerName(stable)} at the helm, their ${stable.reputation} reputation is formidable. ${capitalize(description)}`,
+      `You cannot ignore ${stable.name}. This ${country} elite stable, boasting a ${stable.reputation} reputation under ${getStableOwnerName(stable)}, demands respect. ${capitalize(description)}`,
     ];
 
     const news = createNewsItem(

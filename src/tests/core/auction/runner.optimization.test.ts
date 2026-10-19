@@ -7,6 +7,7 @@ import type { AnyImpact } from "@/platform/resolver/impacts";
 import type { StaffRole } from "@/domains/staff/model/staffTypes";
 import { createTestHorse } from "@/tests/helpers";
 import { getStableId, makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -36,7 +37,12 @@ function mkStable(overrides: Partial<Stable> = {}): Stable {
     colors: { primary: "#000", secondary: "#fff" },
     country: "USA",
     personality: "aggressive",
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     staff,
     outposts: [],
     ...overrides,

@@ -1,5 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 import { STORE_STATE_VERSION } from "@/platform/game/store/stateVersion";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const FORECAST_PATTERNS = [
   "clear",
@@ -76,7 +77,12 @@ function seedWeatherState(
       cash: 100000,
       playerProfile: {
         stableName: "Test Stables",
-        ownerName: "Test Owner",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "Test Owner",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: {
           pattern: "solid",
           primary: "#ff0000",

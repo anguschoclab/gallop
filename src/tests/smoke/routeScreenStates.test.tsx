@@ -53,6 +53,7 @@ import type { Race } from "@/domains/race/simulation/types";
 import type { AuctionSale } from "@/domains/market/model/types";
 import type { Syndicate } from "@/domains/breeding/model/types";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import type { AwardCeremonyInvitation } from "@/domains/awards/simulation/invitations";
 
 // Lazy route targets: the router stub for lazyRouteComponent renders nothing,
@@ -87,6 +88,12 @@ const FAILED_EXECUTION: AdvanceExecution = {
 
 const PROFILE: NonNullable<GameState["playerProfile"]> = {
   stableName: "Matrix Farm",
+  owner: generatePersonIdentity({
+    id: "player",
+    displayName: "Matrix Owner",
+    role: "owner",
+    ageBand: "adult",
+  }),
   ownerName: "Matrix Owner",
   silk: { primary: "#c8a24a", secondary: "#1c1c22", cap: "#1c1c22", pattern: "solid" },
   backstoryId: "inheritor",
@@ -146,6 +153,12 @@ function successEntities(): Partial<GameState> {
   };
   const staff: StaffMember = {
     id: MOCK_PARAMS.staffId as never,
+    person: generatePersonIdentity({
+      id: MOCK_PARAMS.staffId,
+      displayName: "Matrix Trainer",
+      role: "trainer",
+      ageBand: "adult",
+    }),
     name: "Matrix Trainer",
     role: "trainer",
     tier: "elite",

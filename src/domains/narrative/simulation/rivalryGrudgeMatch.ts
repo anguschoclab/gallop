@@ -8,6 +8,7 @@ import type {
 import type { Horse, Race, Stable } from "@/platform/game/types";
 import type { Rng } from "@/shared/common/rng";
 import type { CareerArcState } from "@/domains/narrative/model/careerArcTypes";
+import { getStableOwnerName } from "@/domains/stable/simulation/stablePersonHelpers";
 
 /**
  * Build a rivalry news item from headline/body arrays with deterministic RNG selection.
@@ -406,35 +407,35 @@ export function generateStableIntroNews(stable: Stable, day: number, rng: Rng): 
   );
 
   const bodies = [
-    `The foundation laid by ${stable.owner} in ${country} is bearing fruit. ${stable.name} has proven they belong in the ${tier} tier conversation. ${description}`,
-    `It takes a lot to stand out in the ${tier} tier, but ${stable.name} is doing just that. Hailing from ${country}, ${stable.owner}'s strategy is paying off. ${description}`,
-    `More and more insiders are talking about ${stable.name}. From their base in ${country}, ${stable.owner} is putting together a very interesting ${tier} tier campaign. ${description}`,
-    `The ambitions of ${stable.name} are clear. The ${country}-based yard, steered by ${stable.owner}, is not here to make up numbers in the ${tier} tier. ${description}`,
-    `You can't ignore the momentum behind ${stable.name}. The ${country} operation, built by ${stable.owner}, is a ${tier} tier force on the rise. ${description}`,
-    `What ${stable.owner} has accomplished with ${stable.name} in ${country} is noteworthy. They're a ${tier} tier stable that commands attention. ${description}`,
-    `Based in ${country}, ${stable.name} is operated by ${stable.owner}. ${description} As a ${tier} tier operation, they're a name worth remembering.`,
-    `${stable.name}, led by ${stable.owner}, hails from ${country}. ${description} Their ${tier} tier status marks them as a serious player in the racing world.`,
-    `From ${country} comes ${stable.name}, the brainchild of ${stable.owner}. ${description} This ${tier} tier stable is one to watch.`,
-    `${stable.owner}'s ${stable.name} is a name that commands respect in ${country}. ${description} As a ${tier} tier operation, they mean business.`,
-    `Operating out of ${country}, ${stable.name} under ${stable.owner} has built a growing reputation. ${description} Their ${tier} tier standing speaks for itself.`,
-    `${stable.name} — ${stable.owner}'s pride and joy from ${country}. ${description} A ${tier} tier stable with ambitions to match.`,
-    `The story of ${stable.name} is one of ambition and grit. Founded by ${stable.owner} in ${country}, ${description} Their ${tier} tier status cements their place among the racing elite.`,
-    `In the competitive world of ${country} racing, ${stable.name} stands tall. ${stable.owner}'s operation is defined by ${description} A ${tier} tier stable through and through.`,
-    `Racing fans in ${country} are well acquainted with ${stable.name}. Guided by ${stable.owner}, ${description} This ${tier} tier yard is stepping up its campaign.`,
-    `A deeper dive into ${stable.name} reveals a meticulously run organization. ${stable.owner} has established a strong presence in ${country}. ${description} They compete at the ${tier} tier level.`,
-    `The paddock chatter often turns to ${stable.name}. Originating from ${country} and managed by ${stable.owner}, ${description} They are proving to be a formidable ${tier} tier outfit.`,
-    `Expectations are high for ${stable.name}. The ${country} based operation, overseen by ${stable.owner}, is gaining traction. ${description} As a ${tier} tier stable, they are not to be underestimated.`,
-    `Stepping into the spotlight is ${stable.name}. ${stable.owner} has assembled an impressive string of runners in ${country}. ${description} Their ${tier} tier classification is well-earned.`,
-    `The ${tier} tier ranks are heating up with the emergence of ${stable.name}. Representing ${country} under ${stable.owner}'s guidance, ${description} They are making their intentions clear.`,
+    `The foundation laid by ${getStableOwnerName(stable)} in ${country} is bearing fruit. ${stable.name} has proven they belong in the ${tier} tier conversation. ${description}`,
+    `It takes a lot to stand out in the ${tier} tier, but ${stable.name} is doing just that. Hailing from ${country}, ${getStableOwnerName(stable)}'s strategy is paying off. ${description}`,
+    `More and more insiders are talking about ${stable.name}. From their base in ${country}, ${getStableOwnerName(stable)} is putting together a very interesting ${tier} tier campaign. ${description}`,
+    `The ambitions of ${stable.name} are clear. The ${country}-based yard, steered by ${getStableOwnerName(stable)}, is not here to make up numbers in the ${tier} tier. ${description}`,
+    `You can't ignore the momentum behind ${stable.name}. The ${country} operation, built by ${getStableOwnerName(stable)}, is a ${tier} tier force on the rise. ${description}`,
+    `What ${getStableOwnerName(stable)} has accomplished with ${stable.name} in ${country} is noteworthy. They're a ${tier} tier stable that commands attention. ${description}`,
+    `Based in ${country}, ${stable.name} is operated by ${getStableOwnerName(stable)}. ${description} As a ${tier} tier operation, they're a name worth remembering.`,
+    `${stable.name}, led by ${getStableOwnerName(stable)}, hails from ${country}. ${description} Their ${tier} tier status marks them as a serious player in the racing world.`,
+    `From ${country} comes ${stable.name}, the brainchild of ${getStableOwnerName(stable)}. ${description} This ${tier} tier stable is one to watch.`,
+    `${getStableOwnerName(stable)}'s ${stable.name} is a name that commands respect in ${country}. ${description} As a ${tier} tier operation, they mean business.`,
+    `Operating out of ${country}, ${stable.name} under ${getStableOwnerName(stable)} has built a growing reputation. ${description} Their ${tier} tier standing speaks for itself.`,
+    `${stable.name} — ${getStableOwnerName(stable)}'s pride and joy from ${country}. ${description} A ${tier} tier stable with ambitions to match.`,
+    `The story of ${stable.name} is one of ambition and grit. Founded by ${getStableOwnerName(stable)} in ${country}, ${description} Their ${tier} tier status cements their place among the racing elite.`,
+    `In the competitive world of ${country} racing, ${stable.name} stands tall. ${getStableOwnerName(stable)}'s operation is defined by ${description} A ${tier} tier stable through and through.`,
+    `Racing fans in ${country} are well acquainted with ${stable.name}. Guided by ${getStableOwnerName(stable)}, ${description} This ${tier} tier yard is stepping up its campaign.`,
+    `A deeper dive into ${stable.name} reveals a meticulously run organization. ${getStableOwnerName(stable)} has established a strong presence in ${country}. ${description} They compete at the ${tier} tier level.`,
+    `The paddock chatter often turns to ${stable.name}. Originating from ${country} and managed by ${getStableOwnerName(stable)}, ${description} They are proving to be a formidable ${tier} tier outfit.`,
+    `Expectations are high for ${stable.name}. The ${country} based operation, overseen by ${getStableOwnerName(stable)}, is gaining traction. ${description} As a ${tier} tier stable, they are not to be underestimated.`,
+    `Stepping into the spotlight is ${stable.name}. ${getStableOwnerName(stable)} has assembled an impressive string of runners in ${country}. ${description} Their ${tier} tier classification is well-earned.`,
+    `The ${tier} tier ranks are heating up with the emergence of ${stable.name}. Representing ${country} under ${getStableOwnerName(stable)}'s guidance, ${description} They are making their intentions clear.`,
   ];
 
   bodies.push(
-    `With a strong base in ${country}, ${stable.name} continues to impress. Owner ${stable.owner} has ensured this ${tier} tier outfit is highly respected. ${description}`,
-    `Racing fans are keeping a close eye on ${stable.name}. Established in ${country} by ${stable.owner}, they have solidified their ${tier} tier status. ${description}`,
-    `If you have not heard of ${stable.name} yet, you will soon. ${stable.owner} has built a ${tier} tier contender out of ${country}. ${description}`,
-    `The buzz around ${country} continues to center on ${stable.name}. Guided by ${stable.owner}, this ${tier} tier operation is making waves. ${description}`,
-    `${stable.name} represents the best of ${country} racing culture. With ${stable.owner} at the helm, this ${tier} tier stable is turning heads. ${description}`,
-    `A closer look at ${stable.name} reveals a meticulously run ${tier} tier stable. Operating out of ${country}, ${stable.owner} has crafted an organization defined by ${description}`,
+    `With a strong base in ${country}, ${stable.name} continues to impress. Owner ${getStableOwnerName(stable)} has ensured this ${tier} tier outfit is highly respected. ${description}`,
+    `Racing fans are keeping a close eye on ${stable.name}. Established in ${country} by ${getStableOwnerName(stable)}, they have solidified their ${tier} tier status. ${description}`,
+    `If you have not heard of ${stable.name} yet, you will soon. ${getStableOwnerName(stable)} has built a ${tier} tier contender out of ${country}. ${description}`,
+    `The buzz around ${country} continues to center on ${stable.name}. Guided by ${getStableOwnerName(stable)}, this ${tier} tier operation is making waves. ${description}`,
+    `${stable.name} represents the best of ${country} racing culture. With ${getStableOwnerName(stable)} at the helm, this ${tier} tier stable is turning heads. ${description}`,
+    `A closer look at ${stable.name} reveals a meticulously run ${tier} tier stable. Operating out of ${country}, ${getStableOwnerName(stable)} has crafted an organization defined by ${description}`,
   );
 
   return buildRivalryNews(

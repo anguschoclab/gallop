@@ -7,8 +7,8 @@ import {
 } from "@/domains/auction/simulation/engine";
 import { createRng } from "@/shared/common/rng";
 import type { Horse, Stable, AuctionSale } from "@/platform/game/types";
-import type { StaffRole } from "@/domains/staff/model/staffTypes";
 import { createTestHorse } from "@/tests/helpers";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -25,15 +25,15 @@ function mkStable(
   tier: Stable["tier"] = "mid",
   overrides: Partial<Stable> = {},
 ): Stable {
-  const staffRoles: StaffRole[] = ["veterinarian", "farrier", "nutritionist", "groom", "trainer"];
-  const staff: Record<StaffRole, string | null> = staffRoles.reduce(
-    (acc, role) => ({ ...acc, [role]: null }),
-    {} as Record<StaffRole, string | null>,
-  );
   return {
     id: "s1",
     name: "Test Stable",
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier,
     reputation: 75,
     founded: 1,
@@ -43,7 +43,6 @@ function mkStable(
     colors: { primary: "#000", secondary: "#fff" },
     country: "USA",
     personality,
-    staff,
     outposts: [],
     ...overrides,
   };

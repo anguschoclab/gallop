@@ -7,6 +7,7 @@ import { HorseCareerCharts } from "@/domains/horse/ui/HorseCareerCharts";
 import { getHorseInsight } from "@/domains/horse/application/horseFacade";
 import type { Horse } from "@/platform/game/types";
 import { useGame } from "@/platform/game/store";
+import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 
 interface HorseAnalyticsSectionProps {
   horse: Horse;
@@ -22,7 +23,7 @@ export function HorseAnalyticsSection({ horse, peakingMultiplier }: HorseAnalyti
 
   if (insight?.jockeyId) {
     const jockey = jockeys?.find((j) => j.id === insight.jockeyId);
-    const jockeyName = jockey ? jockey.name : "Unknown Jockey";
+    const jockeyName = jockey ? getJockeyName(jockey) : "Unknown Jockey";
     displayValue = displayValue?.replace("{jockeyName}", jockeyName);
     displayContext = displayContext?.replace("{jockeyName}", jockeyName);
   }

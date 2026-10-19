@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { createDefaultSystemsState } from "@/platform/game/store/state/systemsState";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 describe("SystemsState types", () => {
   it("createDefaultSystemsState includes outposts: []", () => {
@@ -18,7 +19,12 @@ describe("SystemsState types", () => {
     const state = createDefaultSystemsState({
       profile: {
         stableName: "Test",
-        ownerName: "Owner",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "Owner",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { pattern: "solid", primary: "#000", secondary: "#fff", cap: "#000" },
         backstoryId: "inheritor",
         founded: 1,

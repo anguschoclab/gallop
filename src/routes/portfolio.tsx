@@ -123,7 +123,7 @@ function PortfolioPage() {
     () =>
       buildStablePortfolios({
         playerName: playerProfile?.stableName ?? "My Stable",
-        playerOwnerName: playerProfile?.ownerName ?? "You",
+        playerOwnerName: playerProfile?.owner.biography.displayName ?? "You",
         playerCash: cash,
         playerPrestige: reputationScore,
         playerCountry: playerProfile?.country,

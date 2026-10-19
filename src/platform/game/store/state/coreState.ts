@@ -25,6 +25,7 @@ import { createRng, hashStr } from "@/shared/common/rng";
 import { generateHorse } from "@/domains/horse/simulation/horseFactory";
 import type { NewGameOptions } from "@/platform/game/store/state/types";
 import type { HorseId, RaceId } from "@/shared/types/branded";
+import { getPlayerOwnerName } from "@/domains/stable/simulation/stablePersonHelpers";
 
 /**
  * Core game state that is always present and required for the game to function.
@@ -95,7 +96,7 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
       log: [
         {
           day: 1,
-          text: `${profile.stableName} opens its doors. Welcome, ${profile.ownerName}.`,
+          text: `${profile.stableName} opens its doors. Welcome, ${getPlayerOwnerName(profile)}.`,
         },
       ],
       news: [
@@ -105,7 +106,7 @@ export function createDefaultCoreState(options?: NewGameOptions): CoreState {
           category: "milestone",
           importance: "high",
           headline: `${profile.stableName} Opens for Business!`,
-          body: `The local racing community is abuzz as ${profile.ownerName} officially registers ${profile.stableName}. "We're here to make history," the new owner stated at the morning trials.`,
+          body: `The local racing community is abuzz as ${getPlayerOwnerName(profile)} officially registers ${profile.stableName}. "We're here to make history," the new owner stated at the morning trials.`,
         },
       ],
       inbox: [],

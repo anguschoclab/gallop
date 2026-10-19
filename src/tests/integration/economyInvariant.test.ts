@@ -14,6 +14,7 @@ import type { AuctionSale, Horse } from "@/platform/game/types";
 import type { NewGameOptions } from "@/platform/game/store/state";
 import type { CashImpact } from "@/platform/resolver/impacts";
 import type { InsurancePayoutImpact } from "@/platform/resolver/impacts/raceImpacts";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const ALLOWED_POSITIVE_SOURCES = [
   "auction_proceeds_player",
@@ -25,7 +26,12 @@ const ALLOWED_POSITIVE_SOURCES = [
 
 const mockProfile = {
   stableName: "Test Stable",
-  ownerName: "Test Owner",
+  owner: generatePersonIdentity({
+    id: "player",
+    displayName: "Test Owner",
+    role: "owner",
+    ageBand: "adult",
+  }),
   silk: { pattern: "solid" as const, primary: "#FF0000", secondary: "#0000FF", cap: "#00FF00" },
   backstoryId: "inheritor" as const,
   founded: 1,

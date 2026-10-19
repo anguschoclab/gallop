@@ -19,6 +19,7 @@ import { getPersonalityAIState, calculateUtilityAdjustment } from "./personality
 import { calculateRaceRating } from "@/domains/horse/simulation/stats";
 import { getCompatibility } from "@/domains/jockey/simulation/compatibility";
 import { createLearningState, getSuccessRate, type LearningState } from "./learningModule";
+import { getJockeyAge } from "@/domains/jockey/model/jockeyPerson";
 
 export interface JockeyAIState {
   personalityState: ReturnType<typeof getPersonalityAIState>;
@@ -179,7 +180,7 @@ export function calculateJockeySuitability(
     }
 
     // Veteran poise for experienced jockeys
-    if (traits.includes("veteran_poise") && jockey.age >= 35) {
+    if (traits.includes("veteran_poise") && getJockeyAge(1, jockey) >= 35) {
       score += 4;
     }
   }

@@ -89,7 +89,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
     silk: r.silk,
     ownership: r.isPlayer ? makePlayerOwned() : makeUnowned(),
     jockeyId: r.jockey?.id ?? "",
-    jockeyName: r.jockeyName ?? r.jockey?.name ?? "",
+    jockeyName: r.jockeyName ?? r.jockey?.person.biography.displayName ?? "",
     gate: r.gate,
     lane: r.lane,
     runningStyle: r.runningStyle,
@@ -111,7 +111,7 @@ export function ResultOverlay({ race, runners, onClose, hideResults }: ResultOve
     const insights = getStrategyInsights(aiState, stableId);
     jockeyInsights.push({
       jockeyId,
-      jockeyName: runner.jockeyName ?? runner.jockey?.name ?? "",
+      jockeyName: runner.jockeyName ?? runner.jockey?.person.biography.displayName ?? "",
       insights: insights.totalRaces > 0 ? insights : null,
     });
   }

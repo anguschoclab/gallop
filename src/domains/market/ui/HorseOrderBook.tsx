@@ -10,6 +10,7 @@ import { sellerStandingBidFactor } from "@/domains/market/application/marketFaca
 import { useGame, useGameWithShallow } from "@/platform/game/store";
 import { formatYard, resolveStableYard } from "@/domains/stable/application/stableFacade";
 import { Hint } from "@/shared/ui/Hint";
+import { getStableOwnerName } from "@/domains/stable/application/stablePersonHelpers";
 
 export function HorseOrderBook({
   book,
@@ -34,7 +35,7 @@ export function HorseOrderBook({
     const stable = stableById.get(sellerId);
     if (!stable) return undefined;
     const yard = resolveStableYard(stable);
-    return `${formatYard(yard)} · ${yard.boxes} boxes · ${stable.owner}`;
+    return `${formatYard(yard)} · ${yard.boxes} boxes · ${getStableOwnerName(stable)}`;
   };
   const standing = book.isPlayerOwned ? sellerStandingBidFactor(reputationScore) : undefined;
 

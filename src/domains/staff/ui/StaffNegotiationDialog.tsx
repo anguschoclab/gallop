@@ -6,6 +6,7 @@ import { formatCurrency } from "@/shared/common/formatting";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/domains/staff/application/staffFacade";
 import type { StaffMember } from "@/domains/staff/application/staffFacade";
 import { useStaffNegotiation } from "@/domains/staff/application/hooks/useStaffNegotiation";
+import { getStaffName } from "@/domains/staff/model/staffPerson";
 
 interface StaffNegotiationDialogProps {
   staff: StaffMember;
@@ -51,7 +52,7 @@ export function StaffNegotiationDialog({ staff, isOpen, onClose }: StaffNegotiat
       <DialogContent className="max-w-md bg-slate-900 border-white/10 rounded-none">
         <DialogHeader>
           <DialogTitle className="text-cream font-[family-name:var(--font-display)] uppercase tracking-tight">
-            Negotiate with {staff.name}
+            Negotiate with {getStaffName(staff)}
           </DialogTitle>
         </DialogHeader>
 

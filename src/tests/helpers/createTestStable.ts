@@ -1,5 +1,6 @@
 import type { Stable, StableTier, StablePersonality } from "@/platform/game/types";
 import { asStableId } from "@/shared/types/branded";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 /**
  * Create a complete Stable object for testing.
@@ -13,7 +14,12 @@ export function createTestStable(
   return {
     id: asStableId(id ?? "test-stable-id"),
     name: "Test Stable",
-    owner: "Test Owner",
+    owner: generatePersonIdentity({
+      id: "test-owner",
+      displayName: "Test Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid" as StableTier,
     reputation: 50,
     founded: 1,
@@ -22,13 +28,6 @@ export function createTestStable(
     isMajor: false,
     colors: { primary: "#000000", secondary: "#ffffff" },
     personality: "aggressive" as StablePersonality,
-    staff: {
-      trainer: null,
-      groom: null,
-      nutritionist: null,
-      farrier: null,
-      veterinarian: null,
-    },
     outposts: [],
     ...rest,
   };

@@ -14,7 +14,7 @@ import type { StablePoolEntry } from "@/domains/stable/simulation/stablePoolData
 export const SECONDARY_POOL: StablePoolEntry[] = [
   {
     name: "Ashbourne Park",
-    owner: "Miriam Ashbourne",
+    ownerName: "Miriam Ashbourne",
     isMajor: false,
     colors: { primary: "#1f4e79", secondary: "#f2c14e" },
     description: "Limestone-country yard with a knack for tough middle-distance sorts.",
@@ -22,7 +22,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Kellermann Gestüt",
-    owner: "Anton Kellermann",
+    ownerName: "Anton Kellermann",
     isMajor: false,
     colors: { primary: "#2e2e38", secondary: "#c0392b" },
     description: "Disciplined German operation breeding for stamina and soundness.",
@@ -30,7 +30,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Brackenhill Stud",
-    owner: "Rowan Brackley",
+    ownerName: "Rowan Brackley",
     isMajor: false,
     colors: { primary: "#37613c", secondary: "#e8e2d0" },
     description: "Yorkshire hill yard famed for hardy staying types.",
@@ -38,7 +38,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Marisol Racing",
-    owner: "Elena Marisol",
+    ownerName: "Elena Marisol",
     isMajor: false,
     colors: { primary: "#7b2d43", secondary: "#f7e7ce" },
     description: "Chantilly-based string with a fondness for soft-ground milers.",
@@ -46,7 +46,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Coolagh Bloodstock",
-    owner: "Declan Coolagh",
+    ownerName: "Declan Coolagh",
     isMajor: false,
     colors: { primary: "#0b6e4f", secondary: "#ffd166" },
     description: "Trading yard that pinhooks yearlings across two hemispheres.",
@@ -54,7 +54,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Ridgeway Farms",
-    owner: "Walter Ridge",
+    ownerName: "Walter Ridge",
     isMajor: false,
     colors: { primary: "#14213d", secondary: "#fca311" },
     description: "Kentucky family farm built on patient two-year-old education.",
@@ -62,7 +62,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Sable Creek Racing",
-    owner: "Jolene Hart",
+    ownerName: "Jolene Hart",
     isMajor: false,
     colors: { primary: "#3d348b", secondary: "#f7b801" },
     description: "Dirt-oriented barn chasing allowance-to-stakes progressions.",
@@ -70,7 +70,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Nakagawa Racing",
-    owner: "Sho Nakagawa",
+    ownerName: "Sho Nakagawa",
     isMajor: false,
     colors: { primary: "#8d0801", secondary: "#ffffff" },
     description: "Ritto operation with precise, data-led training regimes.",
@@ -78,7 +78,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Higashiyama Farm",
-    owner: "Rika Higashiyama",
+    ownerName: "Rika Higashiyama",
     isMajor: false,
     colors: { primary: "#1b3a4b", secondary: "#f2e9e4" },
     description: "Hokkaido nursery producing tough turf performers.",
@@ -86,7 +86,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Barrowfield Lodge",
-    owner: "Cormac Neale",
+    ownerName: "Cormac Neale",
     isMajor: false,
     colors: { primary: "#4a5859", secondary: "#f4d35e" },
     description: "Traditional lodge that never sells a horse cheaply.",
@@ -94,7 +94,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Whitmore & Sons",
-    owner: "Gerald Whitmore",
+    ownerName: "Gerald Whitmore",
     isMajor: false,
     colors: { primary: "#5c374c", secondary: "#dcd6f7" },
     description: "Old-school Newmarket family firm with deep owner ties.",
@@ -102,7 +102,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Silvergate Stables",
-    owner: "Priya Anand",
+    ownerName: "Priya Anand",
     isMajor: false,
     colors: { primary: "#2a4494", secondary: "#c7d3ff" },
     description: "Ambitious newcomer buying aggressively at the breeze-ups.",
@@ -110,7 +110,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Alto Pampas",
-    owner: "Mateo Ferreyra",
+    ownerName: "Mateo Ferreyra",
     isMajor: false,
     colors: { primary: "#0f5257", secondary: "#f6ae2d" },
     description: "Argentine yard exporting hardy dirt milers.",
@@ -118,7 +118,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Estancia del Sol",
-    owner: "Camila Reyes",
+    ownerName: "Camila Reyes",
     isMajor: false,
     colors: { primary: "#b23a48", secondary: "#fcb9b2" },
     description: "Sun-baked estancia with a strong broodmare band.",
@@ -126,7 +126,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Karoo Thoroughbreds",
-    owner: "Pieter van Zyl",
+    ownerName: "Pieter van Zyl",
     isMajor: false,
     colors: { primary: "#6a4c93", secondary: "#ffca3a" },
     description: "Cape operation known for sprinting speed.",
@@ -134,7 +134,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Yarra Bend Racing",
-    owner: "Neil Cartwright",
+    ownerName: "Neil Cartwright",
     isMajor: false,
     colors: { primary: "#1982c4", secondary: "#8ac926" },
     description: "Victorian yard aimed squarely at spring carnivals.",
@@ -142,7 +142,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Wattle Ridge Farm",
-    owner: "Bree Donnelly",
+    ownerName: "Bree Donnelly",
     isMajor: false,
     colors: { primary: "#43aa8b", secondary: "#f9c74f" },
     description: "Country property developing staying types on the cheap.",
@@ -150,7 +150,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Southern Star Lodge",
-    owner: "Hemi Walker",
+    ownerName: "Hemi Walker",
     isMajor: false,
     colors: { primary: "#264653", secondary: "#e9c46a" },
     description: "New Zealand lodge selling tried horses across the Tasman.",
@@ -158,7 +158,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Falconridge Stable",
-    owner: "Isabelle Faucher",
+    ownerName: "Isabelle Faucher",
     isMajor: false,
     colors: { primary: "#3a015c", secondary: "#ffd6ff" },
     description: "Provincial French yard punching above its prize-money weight.",
@@ -166,7 +166,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Montclair Racing",
-    owner: "Henri Montclair",
+    ownerName: "Henri Montclair",
     isMajor: false,
     colors: { primary: "#22223b", secondary: "#c9ada7" },
     description: "Deauville-based string with a taste for black type.",
@@ -174,7 +174,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Dunmore Bay Stud",
-    owner: "Aoife Dunmore",
+    ownerName: "Aoife Dunmore",
     isMajor: false,
     colors: { primary: "#006d77", secondary: "#ffddd2" },
     description: "Coastal stud combining nursery and racing arms.",
@@ -182,7 +182,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Cedarcroft Farm",
-    owner: "Marcus Bell",
+    ownerName: "Marcus Bell",
     isMajor: false,
     colors: { primary: "#432818", secondary: "#ffe6a7" },
     description: "Maryland farm running a steady claiming operation.",
@@ -190,7 +190,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Blue Ash Racing",
-    owner: "Dana Whitfield",
+    ownerName: "Dana Whitfield",
     isMajor: false,
     colors: { primary: "#264a99", secondary: "#a2d2ff" },
     description: "Midwestern barn that flips horses quickly for profit.",
@@ -198,7 +198,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Northgate Equine",
-    owner: "Ivan Sorokin",
+    ownerName: "Ivan Sorokin",
     isMajor: false,
     colors: { primary: "#1d3557", secondary: "#a8dadc" },
     description: "Northern yard specialising in all-weather handicappers.",
@@ -206,7 +206,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Verdant Hill Stables",
-    owner: "Grace Okonkwo",
+    ownerName: "Grace Okonkwo",
     isMajor: false,
     colors: { primary: "#386641", secondary: "#a7c957" },
     description: "Patient outfit that rarely runs a horse before it is ready.",
@@ -214,7 +214,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Rivermeade Racing",
-    owner: "Sean Traynor",
+    ownerName: "Sean Traynor",
     isMajor: false,
     colors: { primary: "#3c096c", secondary: "#e0aaff" },
     description: "Buys stores and sells on once they show ability.",
@@ -222,7 +222,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Steinbach Rennstall",
-    owner: "Lena Steinbach",
+    ownerName: "Lena Steinbach",
     isMajor: false,
     colors: { primary: "#354f52", secondary: "#cad2c5" },
     description: "Cologne stable with a strong classic-trial record.",
@@ -230,7 +230,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Villa Ferrante",
-    owner: "Giulio Ferrante",
+    ownerName: "Giulio Ferrante",
     isMajor: false,
     colors: { primary: "#780000", secondary: "#fdf0d5" },
     description: "Italian yard with a long Group-race tradition.",
@@ -238,7 +238,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Costa Bianca",
-    owner: "Paola Rinaldi",
+    ownerName: "Paola Rinaldi",
     isMajor: false,
     colors: { primary: "#457b9d", secondary: "#f1faee" },
     description: "Coastal Italian operation focused on sprint handicaps.",
@@ -246,7 +246,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Kalmar Stuteri",
-    owner: "Erik Lindqvist",
+    ownerName: "Erik Lindqvist",
     isMajor: false,
     colors: { primary: "#0353a4", secondary: "#ffd60a" },
     description: "Scandinavian stud thriving on winter dirt racing.",
@@ -254,7 +254,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Fjordlys Racing",
-    owner: "Ingrid Halvorsen",
+    ownerName: "Ingrid Halvorsen",
     isMajor: false,
     colors: { primary: "#1b4965", secondary: "#bee9e8" },
     description: "Small Nordic string with excellent horse welfare standards.",
@@ -262,7 +262,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Al Rukban Stables",
-    owner: "Faisal Al Rukban",
+    ownerName: "Faisal Al Rukban",
     isMajor: false,
     colors: { primary: "#5f0f40", secondary: "#fb8b24" },
     description: "Gulf operation with deep pockets and quick trigger fingers.",
@@ -270,7 +270,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Desert Wind Racing",
-    owner: "Nadia Haddad",
+    ownerName: "Nadia Haddad",
     isMajor: false,
     colors: { primary: "#0f4c5c", secondary: "#e36414" },
     description: "Dubai carnival specialists who buy proven form.",
@@ -278,7 +278,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Maple Ridge Farm",
-    owner: "Owen Leclair",
+    ownerName: "Owen Leclair",
     isMajor: false,
     colors: { primary: "#9a031e", secondary: "#fff1e6" },
     description: "Ontario farm producing durable synthetic-track types.",
@@ -286,7 +286,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Prairie Gold Racing",
-    owner: "Kate Sandison",
+    ownerName: "Kate Sandison",
     isMajor: false,
     colors: { primary: "#5f7470", secondary: "#f5cb5c" },
     description: "Modest western barn with a strong claiming eye.",
@@ -294,7 +294,7 @@ export const SECONDARY_POOL: StablePoolEntry[] = [
   },
   {
     name: "Hollowfield Yard",
-    owner: "Tomas Berger",
+    ownerName: "Tomas Berger",
     isMajor: false,
     colors: { primary: "#6b705c", secondary: "#ffe8d6" },
     description: "Rural yard that quietly turns out consistent winners.",

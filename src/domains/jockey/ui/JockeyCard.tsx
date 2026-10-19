@@ -24,6 +24,7 @@ import { formatJockeyTrait } from "@/domains/genetics/application/traitLabels";
 import { getJockeyInsight } from "@/domains/jockey/application/jockeyFacade";
 import { Lightbulb } from "lucide-react";
 import { Hint } from "@/shared/ui/Hint";
+import { getJockeyName, getJockeyAge } from "@/domains/jockey/model/jockeyPerson";
 
 interface JockeyCardProps {
   jockey: Jockey;
@@ -86,7 +87,7 @@ export function JockeyCard({
         <BookmarkButton
           type="jockey"
           id={jockey.id}
-          label={jockey.name}
+          label={getJockeyName(jockey)}
           subtitle={jockey.isApprentice ? "Apprentice" : "Jockey"}
         />
       </div>
@@ -104,7 +105,7 @@ export function JockeyCard({
                       rerollJockeySilk(jockey.id);
                     }}
                     className="absolute -top-1 -right-1 bg-slate-950 border border-white/10 text-cream rounded-full p-1 shadow-xl hover:text-gold transition-colors z-20"
-                    aria-label={`Reroll Silks for ${jockey.name}`}
+                    aria-label={`Reroll Silks for ${getJockeyName(jockey)}`}
                   >
                     <RefreshCw size={10} />
                   </button>
@@ -113,7 +114,7 @@ export function JockeyCard({
             </div>
             <div className="space-y-0.5 min-w-0">
               <h3 className="text-xl font-bold text-cream font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-blue-400 transition-colors truncate">
-                {jockey.name}
+                {getJockeyName(jockey)}
               </h3>
               <div className="flex items-center gap-2">
                 <Badge
@@ -154,7 +155,7 @@ export function JockeyCard({
         <div className="flex items-center justify-between px-5 py-2 bg-white/[0.02] border-b border-white/5 text-[9px] font-mono uppercase tracking-wide text-cream/40">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <Calendar className="h-3 w-3 opacity-40" /> Age: {jockey.age}
+              <Calendar className="h-3 w-3 opacity-40" /> Age: {getJockeyAge(1, jockey)}
             </span>
             <span className="flex items-center gap-1">
               <Trophy className="h-3 w-3 text-fame/60" /> {jockey.careerWins} WINS

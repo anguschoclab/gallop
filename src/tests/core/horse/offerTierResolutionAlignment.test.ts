@@ -15,6 +15,7 @@ import { calculateLotValuation } from "@/domains/auction/simulation/engine";
 import { attachmentAdjustedAsk, suggestedOfferTiers } from "@/domains/horse/simulation/attachment";
 import { privateSaleResolutionPhase } from "@/platform/time/phases/privateSaleResolution";
 import { ACCEPT_THRESHOLDS } from "@/domains/market/model/privateSaleConstants";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const ALL_PERSONALITIES: StablePersonality[] = [
   "aggressive",
@@ -45,7 +46,12 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({
     id: "stable-1",
     name: "Green Acres",
-    owner: "NPC",
+    owner: generatePersonIdentity({
+      id: "npc",
+      displayName: "NPC",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 50,
     founded: 1,

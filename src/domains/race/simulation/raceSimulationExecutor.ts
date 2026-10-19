@@ -9,6 +9,7 @@ import type { RaceSnapshot, PaceSnapshot } from "@/domains/race/model/engine/rac
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { DEFAULT_DT, defaultMaxTime } from "@/domains/race/model/engine/constants";
 import type { RunnerFactorLedger } from "@/domains/race/simulation/factorLedger";
+import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 
 export interface RaceSimulationResult {
   raceId: string;
@@ -29,6 +30,7 @@ export interface RaceSimulationResult {
  * @param r.isPlayer
  * @param r.jockey
  * @param r.jockey.id
+ * @param r.getJockeyName(jockey)
  * @param r.jockey.name
  * @param r.gate
  * @param r.lane

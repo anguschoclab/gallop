@@ -7,6 +7,7 @@ import { describe, it, expect } from "vitest";
 import { runNpcCycle } from "@/domains/agents/simulation/npc/npcCycle";
 import { createRng } from "@/shared/common/rng";
 import type { Horse, Stable, Race, Jockey } from "@/platform/game/types";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 describe("NPC Daily Cycle Integration", () => {
   it("should run complete NPC cycle", () => {
@@ -18,18 +19,16 @@ describe("NPC Daily Cycle Integration", () => {
         personality: "breeder" as const,
         reputation: 70,
         tier: "elite" as const,
-        owner: "Owner 1",
+        owner: generatePersonIdentity({
+          id: "owner-1",
+          displayName: "Owner 1",
+          role: "owner",
+          ageBand: "adult",
+        }),
         founded: 1,
         horses: [],
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-        staff: {
-          trainer: null,
-          groom: null,
-          nutritionist: null,
-          farrier: null,
-          veterinarian: null,
-        },
         outposts: [],
       },
     ];
@@ -56,18 +55,16 @@ describe("NPC Daily Cycle Integration", () => {
         personality: "breeder" as const,
         reputation: 70,
         tier: "elite" as const,
-        owner: "Owner 1",
+        owner: generatePersonIdentity({
+          id: "owner-1",
+          displayName: "Owner 1",
+          role: "owner",
+          ageBand: "adult",
+        }),
         founded: 1,
         horses: [],
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-        staff: {
-          trainer: null,
-          groom: null,
-          nutritionist: null,
-          farrier: null,
-          veterinarian: null,
-        },
         outposts: [],
       },
     ];
@@ -92,18 +89,16 @@ describe("NPC Daily Cycle Integration", () => {
         personality: "breeder" as const,
         reputation: 70,
         tier: "elite" as const,
-        owner: "Owner 1",
+        owner: generatePersonIdentity({
+          id: "owner-1",
+          displayName: "Owner 1",
+          role: "owner",
+          ageBand: "adult",
+        }),
         founded: 1,
         horses: [],
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-        staff: {
-          trainer: null,
-          groom: null,
-          nutritionist: null,
-          farrier: null,
-          veterinarian: null,
-        },
         outposts: [],
       },
     ];
@@ -128,18 +123,16 @@ describe("NPC Daily Cycle Integration", () => {
         personality: "breeder" as const,
         reputation: 70,
         tier: "elite" as const,
-        owner: "Owner 1",
+        owner: generatePersonIdentity({
+          id: "owner-1",
+          displayName: "Owner 1",
+          role: "owner",
+          ageBand: "adult",
+        }),
         founded: 1,
         horses: [],
         isMajor: false,
         colors: { primary: "#FF0000", secondary: "#FFFFFF" },
-        staff: {
-          trainer: null,
-          groom: null,
-          nutritionist: null,
-          farrier: null,
-          veterinarian: null,
-        },
         outposts: [],
       },
     ];

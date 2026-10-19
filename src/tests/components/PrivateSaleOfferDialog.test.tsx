@@ -16,6 +16,7 @@ vi.mock("sonner", () => ({
 import { toast } from "sonner";
 import { h2r } from "@/tests/helpers/sampleGameState";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const mkHorse = (overrides: Partial<Horse> = {}): Horse =>
   createTestNpcHorse({
@@ -29,7 +30,12 @@ const mkStable = (overrides: Partial<Stable> = {}): Stable =>
   ({
     id: "s1",
     name: "Green Acres",
-    owner: "NPC",
+    owner: generatePersonIdentity({
+      id: "npc",
+      displayName: "NPC",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 50,
     founded: 1,

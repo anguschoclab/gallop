@@ -11,6 +11,7 @@ import { createElement, type ReactNode } from "react";
 import { renderWithStore } from "@/test-utils/renderWithStore";
 import { StaffNegotiationDialog } from "@/domains/staff/ui/StaffNegotiationDialog";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -24,6 +25,12 @@ vi.mock("sonner", () => ({
 
 const mkStaff = (overrides: Partial<StaffMember> = {}): StaffMember => ({
   id: "staff-1",
+  person: generatePersonIdentity({
+    id: "staff-1",
+    displayName: "Test Trainer",
+    role: "trainer",
+    ageBand: "adult",
+  }),
   name: "Test Trainer",
   role: "trainer",
   tier: "mid",

@@ -7,6 +7,7 @@ import type { Horse } from "@/domains/horse/simulation/types";
 import type { Jockey } from "@/domains/jockey/model/types";
 import type { JockeyTrait } from "@/platform/game/types";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 vi.mock("@tanstack/react-router", () => ({
   Link: ({ children, ...props }: { children?: ReactNode }) => createElement("a", props, children),
@@ -97,6 +98,12 @@ describe("Trait Search Integration", () => {
     const staff: StaffMember[] = [
       {
         id: "s1",
+        person: generatePersonIdentity({
+          id: "s1",
+          displayName: "Alice",
+          role: "trainer",
+          ageBand: "adult",
+        }),
         name: "Alice",
         role: "trainer",
         tier: "mid",
@@ -107,6 +114,12 @@ describe("Trait Search Integration", () => {
       },
       {
         id: "s2",
+        person: generatePersonIdentity({
+          id: "s2",
+          displayName: "Bob",
+          role: "veterinarian",
+          ageBand: "adult",
+        }),
         name: "Bob",
         role: "veterinarian",
         tier: "mid",
@@ -117,6 +130,12 @@ describe("Trait Search Integration", () => {
       },
       {
         id: "s3",
+        person: generatePersonIdentity({
+          id: "s3",
+          displayName: "Carol",
+          role: "trainer",
+          ageBand: "adult",
+        }),
         name: "Carol",
         role: "trainer",
         tier: "elite",
@@ -144,6 +163,12 @@ describe("Trait Search Integration", () => {
     const staff: StaffMember[] = [
       {
         id: "s1",
+        person: generatePersonIdentity({
+          id: "s1",
+          displayName: "Alice",
+          role: "trainer",
+          ageBand: "adult",
+        }),
         name: "Alice",
         role: "trainer",
         tier: "mid",
@@ -154,6 +179,12 @@ describe("Trait Search Integration", () => {
       },
       {
         id: "s2",
+        person: generatePersonIdentity({
+          id: "s2",
+          displayName: "Bob",
+          role: "farrier",
+          ageBand: "adult",
+        }),
         name: "Bob",
         role: "farrier",
         tier: "mid",

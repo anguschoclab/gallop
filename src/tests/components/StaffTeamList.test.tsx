@@ -8,25 +8,31 @@ vi.mock("@tanstack/react-router", () => ({
 }));
 
 import { StaffTeamList } from "@/domains/staff/ui/StaffTeamList";
+import type { StaffMember, StaffRole, StaffTier } from "@/domains/staff/model/staffTypes";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
-interface TestStaff {
-  id: string;
-  name: string;
-  role: string;
-  tier: string;
-  salary: number;
-  traits: string[];
-}
-
-function mkStaff(id: string, overrides: Partial<TestStaff> = {}): TestStaff {
+function mkStaff(id: string, overrides: Partial<StaffMember> = {}): StaffMember {
+  const name = overrides.name ?? `Staff ${id}`;
+  const person =
+    overrides.person ??
+    generatePersonIdentity({
+      id,
+      displayName: name,
+      role: (overrides.role as StaffRole) ?? "trainer",
+      ageBand: "adult",
+    });
+  const { person: _, ...restOverrides } = overrides;
   return {
     id,
-    name: `Staff ${id}`,
-    role: "trainer",
-    tier: "mid",
+    name,
+    person,
+    role: "trainer" as StaffRole,
+    tier: "mid" as StaffTier,
     salary: 500,
+    bonusValue: 0.1,
     traits: [],
-    ...overrides,
+    fame: 50,
+    ...restOverrides,
   };
 }
 

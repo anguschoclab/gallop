@@ -6,6 +6,7 @@ import {
 } from "@/domains/staff/simulation/staffGenerator";
 import { STAFF_CONFIG } from "@/domains/staff/simulation/staffConfig";
 import type { Rng } from "@/shared/common/rng";
+import { getStaffName } from "@/domains/staff/model/staffPerson";
 
 vi.mock("@/shared/uuid/uuid", () => ({
   generateUUID: vi.fn(() => "mocked-uuid"),
@@ -29,7 +30,7 @@ describe("staffGenerator", () => {
       expect(staff.id).toBe("mocked-uuid");
       expect(staff.role).toBe("veterinarian");
       expect(staff.tier).toBe("elite");
-      expect(staff.name).toBeDefined();
+      expect(getStaffName(staff)).toBeDefined();
       expect(staff.salary).toBe(STAFF_CONFIG.veterinarian.elite.salary);
       expect(staff.bonusValue).toBe(STAFF_CONFIG.veterinarian.elite.bonus);
       // Elite should have up to 2 traits (mock pick returns first always, so duplicates might be filtered to 1 if we don't mock it to return different ones, but logic says 1 or 2)

@@ -11,6 +11,7 @@ import { createRng } from "@/shared/common/rng";
 import { createTestHorse, createTestStable } from "@/tests/helpers";
 import type { Horse, Stable } from "@/platform/game/types";
 import type { AuctionTickEvent } from "@/domains/auction/simulation/runner";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function mkHorse(overrides: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -30,7 +31,12 @@ function mkStable(name: string): Stable {
   return createTestStable({
     id: "s1",
     name,
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 50,
     founded: 0,

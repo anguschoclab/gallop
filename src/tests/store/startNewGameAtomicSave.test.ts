@@ -131,7 +131,7 @@ describe("startNewGame atomic save", () => {
     const profileCall = allCalls.find((s: any) => s.playerProfile);
     expect(profileCall).toBeDefined();
     expect(profileCall.playerProfile.stableName).toBe("Test Stable");
-    expect(profileCall.playerProfile.ownerName).toBe("Test Owner");
+    expect(profileCall.playerProfile.owner.biography.displayName).toBe("Test Owner");
   });
 
   it("calls saveGameStateToIDB with state including storeVersion", async () => {

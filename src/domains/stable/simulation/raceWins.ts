@@ -17,6 +17,7 @@ import type { Transaction } from "@/domains/transactions/model/transactionTypes"
 import type { Jockey } from "@/domains/jockey/model/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { PRIZE_SPLIT, GRADED_PRIZE_SPLIT } from "@/domains/market/model/economicConstants";
+import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 
 export interface PlayerRaceWinRecord {
   id: string;
@@ -135,7 +136,7 @@ export function derivePlayerRaceWins(args: DerivePlayerRaceWinsArgs): PlayerRace
   const jockeyMap = new Map<string, string>();
   if (jockeys) {
     for (const j of jockeys) {
-      if (j?.id) jockeyMap.set(j.id, j.name);
+      if (j?.id) jockeyMap.set(j.id, getJockeyName(j));
     }
   }
 

@@ -8,6 +8,7 @@ import { createTestHorse, createTestRng } from "@/tests/helpers";
 import { RACE_ENERGY_IMPACT } from "@/domains/race/model/raceSimulationConstants";
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import { asNpcStableId } from "@/shared/types/branded";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 
 describe("energyFormFame impacts", () => {
@@ -26,6 +27,12 @@ describe("energyFormFame impacts", () => {
   describe("generateFormImpact", () => {
     const groomStaff: StaffMember = {
       id: "groom1",
+      person: generatePersonIdentity({
+        id: "groom1",
+        displayName: "Test Groom",
+        role: "groom",
+        ageBand: "adult",
+      }),
       name: "Test Groom",
       role: "groom",
       stableId: "stable1",

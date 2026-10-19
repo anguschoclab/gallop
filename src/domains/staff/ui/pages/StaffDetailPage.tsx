@@ -9,18 +9,25 @@ import { PersonRaceHistoryTab } from "@/domains/person/ui/PersonRaceHistoryTab";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/domains/staff/application/staffFacade";
 import { formatCurrency } from "@/shared/common/formatting";
 import { cn } from "@/shared/lib/cn";
-import { ChevronLeft, User, History, Briefcase, Trophy } from "lucide-react";
+import { ChevronLeft, User, History, Briefcase, Trophy, Shuffle } from "lucide-react";
 import type { StaffMember } from "@/domains/staff/application/staffFacade";
+import { getStaffName } from "@/domains/staff/model/staffPerson";
 
 function StaffDetailPage() {
   const { staffId } = useParams({ from: "/staff/$staffId" });
   const hiredStaff = useGame((s) => s.hiredStaff);
   const staffPool = useGame((s) => s.staffPool);
+  const rerollStaffAppearance = useGame((s) => s.rerollStaffAppearance);
 
   const staff = useMemo<StaffMember | undefined>(() => {
     const all = [...(hiredStaff ?? []), ...(staffPool ?? [])];
     return all.find((m) => m.id === staffId);
   }, [hiredStaff, staffPool, staffId]);
+
+  const isHired = useMemo(
+    () => (hiredStaff ?? []).some((m) => m.id === staffId),
+    [hiredStaff, staffId],
+  );
 
   if (!staff) {
     throw notFound();
@@ -65,7 +72,9 @@ function StaffDetailPage() {
                   <span className="text-[9px] font-black uppercase tracking-wide text-cream/40 flex items-center gap-2">
                     <Briefcase className="h-3 w-3" /> Name
                   </span>
-                  <span className="text-xs font-bold text-cream uppercase">{staff.name}</span>
+                  <span className="text-xs font-bold text-cream uppercase">
+                    {getStaffName(staff)}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between p-4">
                   <span className="text-[9px] font-black uppercase tracking-wide text-cream/40">
@@ -143,6 +152,19 @@ function StaffDetailPage() {
                         </div>
                       ))}
                     </div>
+                  </div>
+                )}
+                {isHired && (
+                  <div className="p-4 border-t border-white/5">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => rerollStaffAppearance(staff.id)}
+                      className="w-full gap-2 rounded-none"
+                    >
+                      <Shuffle className="h-4 w-4" />
+                      Randomize Portrait
+                    </Button>
                   </div>
                 )}
                 {staff.raceRecord && (

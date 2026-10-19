@@ -11,6 +11,7 @@ import type { Horse, Stable } from "@/platform/game/types";
 import type { Syndicate } from "@/domains/breeding/model/types";
 import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 function makeStallion(overrides: Partial<Horse> = {}): Horse {
   return {
@@ -56,7 +57,12 @@ function makeStable(id: string, personality: string, cash: number): Stable {
   return {
     id,
     name: `Stable ${id}`,
-    owner: "Owner",
+    owner: generatePersonIdentity({
+      id: "owner",
+      displayName: "Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     tier: "mid",
     reputation: 50,
     founded: 0,
