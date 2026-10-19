@@ -52,30 +52,43 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const race = lookupMaps?.raceMap.get(raceId) || draft.races[raceId];
     const horse = lookupMaps?.horseMap.get(horseId) || draft.horses[horseId];
     if (race && horse) {
-      // Evict the bumped entry and refund its stable before adding the challenger
+      // Evict the bumped entry and refund its stable before adding the challenger.
+      // The entry phase may already have evicted it for a same-day race, so
+      // fall back to the bumped horse's ownership for the refund.
       if (bumpEntryHorseId) {
         const bumpIdx = race.entries.findIndex((e) => e.horseId === bumpEntryHorseId);
-        if (bumpIdx !== -1) {
-          const bumped = race.entries[bumpIdx];
-          if (bumped.ownership.type === "npc") {
-            const bumpedStableId = bumped.ownership.stableId;
-            const bumpedStable =
-              lookupMaps?.stableMap.get(bumpedStableId) ||
-              draft.npcStables.find((s) => s.id === bumpedStableId);
-            if (bumpedStable) {
-              bumpedStable.cash = bumpedStable.cash + race.entryFee;
-            }
+        const bumpedOwnership =
+          bumpIdx !== -1
+            ? race.entries[bumpIdx].ownership
+            : (lookupMaps?.horseMap.get(bumpEntryHorseId) || draft.horses[bumpEntryHorseId])
+                ?.ownership;
+        if (bumpedOwnership?.type === "npc") {
+          const bumpedStableId = bumpedOwnership.stableId;
+          const bumpedStable =
+            lookupMaps?.stableMap.get(bumpedStableId) ||
+            draft.npcStables.find((s) => s.id === bumpedStableId);
+          if (bumpedStable) {
+            bumpedStable.cash = bumpedStable.cash + race.entryFee;
           }
-          race.entries.splice(bumpIdx, 1);
         }
+        if (bumpIdx !== -1) race.entries.splice(bumpIdx, 1);
       }
-      race.entries.push({
-        horseId,
-        ownership: horse.ownership,
-        jockeyId,
-        weight,
-        jockeyInstructions,
-      });
+      // Idempotent: a same-day race already carries this entry (added by the
+      // entry phase so the race could run with it) — refresh, don't duplicate.
+      const existing = race.entries.find((e) => e.horseId === horseId);
+      if (existing) {
+        if (jockeyId) existing.jockeyId = jockeyId;
+        if (weight !== undefined) existing.weight = weight;
+        if (jockeyInstructions) existing.jockeyInstructions = jockeyInstructions;
+      } else {
+        race.entries.push({
+          horseId,
+          ownership: horse.ownership,
+          jockeyId,
+          weight,
+          jockeyInstructions,
+        });
+      }
 
       // Deduct entry fee from the appropriate owner
       if (entryFee > 0) {
