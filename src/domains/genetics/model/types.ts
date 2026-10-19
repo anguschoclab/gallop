@@ -118,6 +118,10 @@ export type Genotype = {
  * Controls visual variation parameters like head shape, leg length, and markings.
  */
 export interface AppearanceDNA {
+  /** Version of the appearance schema; bumped when fields change. */
+  schemaVersion: number;
+  /** Version of the shipped painterly asset/layer set. */
+  assetPackVersion: number;
   seed: number;
   headTilt: number;
   headLength: number;
@@ -135,6 +139,33 @@ export interface AppearanceDNA {
   flecks: { x: number; y: number; r: number }[];
   /** Optional face marking variant. */
   face?: string;
+
+  // Painterly head-portrait parameters (head view only; full body ignores).
+  /** Direction of the key light, degrees clockwise from top. */
+  lightAngle: number;
+  /** Strength of directional shading, 0..1. */
+  lightStrength: number;
+  /** Coat finish controlling highlight spread/texture overlay. */
+  coatTexture: "sleek" | "sheen" | "coarse";
+  /** Neutral racing backdrop selection; never performance-linked. */
+  backgroundId: "dawn" | "paddock" | "stable" | "dusk";
+  /** Cheek/jowl fullness multiplier. */
+  cheekFullness: number;
+  /** Jaw taper multiplier (lower = more refined throatlatch). */
+  jawTaper: number;
+  /** Muzzle width multiplier. */
+  muzzleWidth: number;
+  /** Nostril size multiplier. */
+  nostrilFlare: number;
+  /** Ear carriage. */
+  earPose: "alert" | "relaxed" | "back";
+  /** Eyelid openness multiplier (lower = sleepier). */
+  eyeAlertness: number;
+  /** Forelock treatment. */
+  forelockStyle: "tuft" | "sweep" | "none";
+  /** Mane treatment on the neck crest. */
+  maneStyle: "short" | "long" | "roached";
+
   // Forward-compat: allow extra fields without losing checking on the rest.
   [key: string]: unknown;
 }

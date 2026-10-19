@@ -10,6 +10,7 @@
  */
 
 import { createInitialState } from "@/platform/game/store/initialization";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import { STORE_STATE_VERSION } from "@/platform/game/store/stateVersion";
 import { splitHorsesForPersistence } from "@/platform/persistence/npcCompression";
 import { prunePedigree } from "@/platform/persistence/pedigreePrune";
@@ -113,7 +114,12 @@ function buildPayload(state: GameState) {
 const state = createInitialState({
   profile: {
     stableName: "E2E Test Stables",
-    ownerName: "Test Owner",
+    owner: generatePersonIdentity({
+      id: "player",
+      displayName: "Test Owner",
+      role: "owner",
+      ageBand: "adult",
+    }),
     silk: {
       pattern: "solid",
       primary: "#ff0000",

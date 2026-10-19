@@ -9,6 +9,7 @@
  */
 
 import { createInitialState } from "@/platform/game/store/initialization";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import { SimulationExecutor } from "@/platform/time/executor";
 import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
 import { withUuidStream } from "@/shared/uuid/uuid";
@@ -33,7 +34,12 @@ function main() {
     createInitialState({
       profile: {
         stableName: "tc-sim",
-        ownerName: "TC",
+        owner: generatePersonIdentity({
+          id: "player",
+          displayName: "TC",
+          role: "owner",
+          ageBand: "adult",
+        }),
         silk: { primary: "#c8a24a", secondary: "#1c1c22", cap: "#1c1c22", pattern: "solid" },
         backstoryId: "inheritor",
         founded: 1,

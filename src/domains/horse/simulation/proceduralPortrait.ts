@@ -75,6 +75,16 @@ function mulberry32(seed: number) {
 // Appearance DNA generator — call once at horse generation; persist on horse.
 // ---------------------------------------------------------------------------
 
+/** Bumped whenever AppearanceDNA fields or the head-renderer contract change. */
+export const HORSE_PORTRAIT_SCHEMA_VERSION = 2;
+export const HORSE_PORTRAIT_ASSET_VERSION = 1;
+
+const COAT_TEXTURES = ["sleek", "sheen", "coarse"] as const;
+const BACKGROUNDS = ["dawn", "paddock", "stable", "dusk"] as const;
+const EAR_POSES = ["alert", "relaxed", "back"] as const;
+const FORELOCK_STYLES = ["tuft", "sweep", "none"] as const;
+const MANE_STYLES = ["short", "long", "roached"] as const;
+
 const SOCK_LEVELS: SockHeight[] = ["none", "sock", "stocking"];
 function sockNeighbor(base: SockHeight, r: () => number): SockHeight {
   const idx = SOCK_LEVELS.indexOf(base);
@@ -129,6 +139,8 @@ export function generateAppearanceDNA(
   }
 
   return {
+    schemaVersion: HORSE_PORTRAIT_SCHEMA_VERSION,
+    assetPackVersion: HORSE_PORTRAIT_ASSET_VERSION,
     seed,
     headTilt: between(-5, 5),
     headLength: between(0.96, 1.06),
@@ -149,6 +161,18 @@ export function generateAppearanceDNA(
     ],
     dapples,
     flecks,
+    lightAngle: between(-55, 55),
+    lightStrength: between(0.35, 0.8),
+    coatTexture: COAT_TEXTURES[Math.floor(r() * COAT_TEXTURES.length)],
+    backgroundId: BACKGROUNDS[Math.floor(r() * BACKGROUNDS.length)],
+    cheekFullness: between(0.9, 1.15),
+    jawTaper: between(0.9, 1.1),
+    muzzleWidth: between(0.85, 1.15),
+    nostrilFlare: between(0.8, 1.4),
+    earPose: EAR_POSES[Math.floor(r() * EAR_POSES.length)],
+    eyeAlertness: between(0.75, 1.25),
+    forelockStyle: FORELOCK_STYLES[Math.floor(r() * FORELOCK_STYLES.length)],
+    maneStyle: MANE_STYLES[Math.floor(r() * MANE_STYLES.length)],
   };
 }
 
@@ -160,6 +184,14 @@ export function generateAppearanceDNA(
 
 const APPEARANCE_CACHE = new Map<string, AppearanceDNA>();
 const MAX_CACHE = 2000;
+
+/**
+ * Cache keys are version-qualified so a schema bump never serves stale DNA.
+ * @param id
+ */
+function cacheKey(id: string): string {
+  return `${id}@v${HORSE_PORTRAIT_SCHEMA_VERSION}.${HORSE_PORTRAIT_ASSET_VERSION}`;
+}
 
 /**
  * Get or derive appearance DNA for a horse.
@@ -184,16 +216,17 @@ export function getOrDeriveAppearance(
   persisted?: AppearanceDNA,
 ): AppearanceDNA {
   const palette = getPalette(coatColor);
-  if (persisted) {
-    // Trust persisted DNA — but cache it under id for cheap reuse.
-    if (id) APPEARANCE_CACHE.set(id, persisted);
+  if (persisted && persisted.schemaVersion === HORSE_PORTRAIT_SCHEMA_VERSION) {
+    // Trust current-schema persisted DNA — but cache it under id for cheap reuse.
+    if (id) APPEARANCE_CACHE.set(cacheKey(id), persisted);
     return persisted;
   }
-  const key = id ?? "anon";
+  const rawId = id ?? "anon";
+  const key = cacheKey(rawId);
   const cached = APPEARANCE_CACHE.get(key);
   if (cached) return cached;
 
-  const seed = hashSeed(key);
+  const seed = hashSeed(rawId);
   const dna = generateAppearanceDNA(seed, markings, palette);
   if (APPEARANCE_CACHE.size > MAX_CACHE) {
     // Crude LRU: drop oldest insertion.

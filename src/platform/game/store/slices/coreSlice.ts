@@ -242,6 +242,8 @@ export function createCoreSlice(
         const jockeys = state.jockeys ?? [];
         const idx = jockeys.findIndex((j) => j.id === asJockeyId(jockeyId));
         if (idx === -1) return state;
+        const target = jockeys[idx];
+        if (target.stableId !== "player" && target.stableId !== "player_academy") return state;
         const next = [...jockeys];
         next[idx] = { ...next[idx], person: rerollPersonAppearance(next[idx].person) };
         return { jockeys: next };
@@ -253,6 +255,9 @@ export function createCoreSlice(
         const hired = state.hiredStaff ?? [];
         const idx = hired.findIndex((s) => s.id === asStaffId(staffId));
         if (idx === -1) return state;
+        const target = hired[idx];
+        // Player hires record stableId "" (or "player"); NPC-owned staff are off-limits.
+        if (target.stableId && target.stableId !== "player") return state;
         const next = [...hired];
         next[idx] = { ...next[idx], person: rerollPersonAppearance(next[idx].person) };
         return { hiredStaff: next };

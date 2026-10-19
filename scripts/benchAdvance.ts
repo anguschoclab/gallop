@@ -18,6 +18,7 @@ import { buildAdvancePlan } from "@/platform/time/advancePlan";
 import { checksumState } from "@/platform/time/checksum";
 import { createTelemetry } from "@/platform/time/telemetry";
 import { createInitialState } from "@/platform/game/store/initialization";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import { SimulationEngine } from "@/platform/engine/engine";
 import { EngineClient } from "@/platform/engine/client";
 import { LocalTransport } from "@/platform/engine/transports";
@@ -42,7 +43,12 @@ function makeFixture(def: FixtureDef): GameState {
   return createInitialState({
     profile: {
       stableName: `bench-${def.name}`,
-      ownerName: "Bench",
+      owner: generatePersonIdentity({
+        id: "player",
+        displayName: "Bench",
+        role: "owner",
+        ageBand: "adult",
+      }),
       silk: { primary: "#c8a24a", secondary: "#1c1c22", cap: "#1c1c22", pattern: "solid" },
       backstoryId: "inheritor",
       founded: 1,

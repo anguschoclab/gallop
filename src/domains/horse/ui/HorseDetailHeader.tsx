@@ -1,5 +1,6 @@
 import { Badge } from "@/shared/ui/badge";
 import { SilkDot } from "@/domains/shell/ui/SilkDot";
+import { HorsePortrait } from "@/domains/horse/ui/HorsePortrait";
 import { BookmarkButton } from "@/domains/bookmarks/ui/BookmarkButton";
 import { ShieldCheck, Users } from "lucide-react";
 import { formatFanCount } from "@/domains/horse/ui/fanFormat";
@@ -19,8 +20,21 @@ export function HorseDetailHeader({ horse, ovr }: HorseDetailHeaderProps) {
       </div>
 
       <div className="relative flex flex-col md:flex-row gap-8 items-start">
-        <div className="relative">
-          <SilkDot color={horse.silk} size="lg" />
+        <div className="relative shrink-0">
+          <HorsePortrait
+            id={horse.id}
+            coatColor={horse.coatColor}
+            markings={horse.markings}
+            gender={horse.gender}
+            appearance={horse.appearance}
+            view="head"
+            size="lg"
+            className="w-36 h-36 md:w-44 md:h-44 border border-white/10 shadow-xl"
+            alt={`${horse.name} portrait`}
+          />
+          <div className="absolute -bottom-2 -left-2">
+            <SilkDot color={horse.silk} size="sm" />
+          </div>
           <div className="absolute -bottom-2 -right-2 bg-slate-900 border border-gold/40 text-gold font-mono text-[10px] font-black px-1.5 py-0.5 rounded shadow-lg">
             {String(ovr).padStart(2, "0")}
           </div>

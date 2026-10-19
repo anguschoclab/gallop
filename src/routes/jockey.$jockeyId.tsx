@@ -8,7 +8,9 @@ import { Badge } from "@/shared/ui/badge";
 import { BookmarkButton } from "@/domains/bookmarks/ui/BookmarkButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { PersonRaceHistoryTab } from "@/domains/person/ui/PersonRaceHistoryTab";
-import { ChevronLeft, User, History, Sparkles, Shuffle } from "lucide-react";
+import { PersonProfileHero } from "@/domains/person/ui/PersonProfileHero";
+import { PortraitRandomizeButton } from "@/domains/person/ui/PortraitRandomizeButton";
+import { ChevronLeft, User, History, Sparkles } from "lucide-react";
 import { formatJockeyTrait } from "@/domains/genetics/application/traitLabels";
 import type { JockeyTrait } from "@/domains/jockey/application/jockeyFacade";
 import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
@@ -36,6 +38,7 @@ function JockeyPage() {
   const hireApprentice = useGame((s) => s.hireApprentice);
   const releaseJockey = useGame((s) => s.releaseJockey);
   const rerollJockeyAppearance = useGame((s) => s.rerollJockeyAppearance);
+  const day = useGame((s) => s.day);
 
   const jockeyMap = useMemo(() => new Map((jockeys ?? []).map((j) => [j.id, j])), [jockeys]);
   const jockey = jockeyMap.get(jockeyId);
@@ -46,6 +49,7 @@ function JockeyPage() {
 
   const isRetained = !!jockey.contractUntil;
   const isApprentice = jockey.isApprentice;
+  const canReroll = jockey.stableId === "player" || jockey.stableId === "player_academy";
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto p-4 md:p-6 animate-in fade-in duration-500">
@@ -64,6 +68,21 @@ function JockeyPage() {
           variant="full"
         />
       </div>
+
+      <PersonProfileHero
+        identity={jockey.person}
+        role="jockey"
+        context="jockey-racewear"
+        silk={jockey.silk}
+        day={day}
+        subtitle={isApprentice ? "Apprentice Jockey" : "Jockey"}
+      >
+        <PortraitRandomizeButton
+          onClick={() => rerollJockeyAppearance(jockey.id)}
+          allowed={canReroll}
+          deniedReason="Only jockeys retained by your stable can be rerolled."
+        />
+      </PersonProfileHero>
 
       <Tabs defaultValue="profile" className="space-y-4">
         <TabsList>
@@ -100,15 +119,11 @@ function JockeyPage() {
               />
               {isRetained && (
                 <div className="mt-4 flex justify-center">
-                  <Button
-                    variant="outline"
-                    size="sm"
+                  <PortraitRandomizeButton
                     onClick={() => rerollJockeyAppearance(jockey.id)}
-                    className="gap-2 rounded-none"
-                  >
-                    <Shuffle className="h-4 w-4" />
-                    Randomize Portrait
-                  </Button>
+                    allowed={canReroll}
+                    deniedReason="Only jockeys retained by your stable can be rerolled."
+                  />
                 </div>
               )}
             </div>

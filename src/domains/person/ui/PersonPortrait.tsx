@@ -6,6 +6,7 @@
  */
 
 import type { PersonIdentity, PortraitContext } from "@/domains/person/model/types";
+import { resolvePersonRenderPlan } from "@/domains/person/application/renderPlan";
 import {
   getFacePath,
   getSkinTone,
@@ -81,7 +82,15 @@ export function PersonPortrait({
   const eyewear = a.eyewearId;
   const facialHair = a.facialHairId;
 
-  const label = ariaLabel ?? `${identity.biography.displayName} portrait`;
+  const plan = resolvePersonRenderPlan({
+    identity,
+    context,
+    width: w,
+    height: h,
+    silk,
+    label: ariaLabel,
+  });
+  const label = plan.label;
 
   return (
     <svg

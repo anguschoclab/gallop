@@ -1,4 +1,5 @@
 import { createInitialState } from "@/platform/game/store/initialization";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import type { GameState } from "@/platform/game/types";
 import { createAuctionRunner } from "@/domains/auction/simulation/runner";
 import { SALE_TRIGGERS } from "@/domains/auction/simulation/data";
@@ -11,7 +12,12 @@ const state = withUuidStream(createRng(hashStr("fixture_medium")), () =>
   createInitialState({
     profile: {
       stableName: "golden",
-      ownerName: "G",
+      owner: generatePersonIdentity({
+        id: "player",
+        displayName: "G",
+        role: "owner",
+        ageBand: "adult",
+      }),
       silk: { primary: "#c8a24a", secondary: "#1c1c22", cap: "#1c1c22", pattern: "solid" },
       backstoryId: "inheritor",
       founded: 1,

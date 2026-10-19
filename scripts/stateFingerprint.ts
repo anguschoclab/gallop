@@ -1,4 +1,5 @@
 import { createInitialState } from "@/platform/game/store/initialization";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 import type { GameState } from "@/platform/game/types";
 import { SimulationExecutor } from "@/platform/time/executor";
 import { GAME_PHASE_DESCRIPTORS } from "@/platform/time/phases/descriptors";
@@ -15,7 +16,12 @@ const state = withUuidStream(createRng(hashStr(`fixture_${size}`)), () =>
   createInitialState({
     profile: {
       stableName: `fp-${size}`,
-      ownerName: "FP",
+      owner: generatePersonIdentity({
+        id: "player",
+        displayName: "FP",
+        role: "owner",
+        ageBand: "adult",
+      }),
       silk: { primary: "#c8a24a", secondary: "#1c1c22", cap: "#1c1c22", pattern: "solid" },
       backstoryId: "inheritor",
       founded: 1,

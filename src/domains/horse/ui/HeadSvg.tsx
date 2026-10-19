@@ -13,12 +13,36 @@ export interface SvgProps {
   className?: string;
 }
 
+/** Neutral backdrop tints keyed by dna.backgroundId — never performance-linked. */
+const BACKGROUNDS: Record<string, [string, string]> = {
+  dawn: ["#3b3f52", "#14161f"],
+  paddock: ["#2e4034", "#10170f"],
+  stable: ["#3a2f28", "#150f0a"],
+  dusk: ["#33263c", "#120e18"],
+};
+
+/** Painterly texture strength by coat finish. */
+const TEXTURE_OPACITY: Record<string, number> = {
+  sleek: 0.05,
+  sheen: 0.1,
+  coarse: 0.16,
+};
+
 export const HeadSvg = forwardRef<SVGSVGElement, SvgProps>(function HeadSvg(
   { uid, palette, dna, feminine, face, alt, className },
   ref,
 ) {
-  const muzzleScale = feminine ? 0.94 : 1.0;
+  const muzzleScale = (feminine ? 0.94 : 1.0) * dna.muzzleWidth;
   const headLen = dna.headLength;
+  const [bg1, bg2] = BACKGROUNDS[dna.backgroundId] ?? BACKGROUNDS.paddock;
+  const lightAngle = dna.lightAngle;
+  const lightStrength = dna.lightStrength;
+  const textureOpacity = TEXTURE_OPACITY[dna.coatTexture] ?? TEXTURE_OPACITY.sheen;
+
+  // Anatomy multipliers
+  const cheekR = 48 * headLen * dna.cheekFullness;
+  const jawInset = 10 * dna.jawTaper;
+  const nostrilR = 3.6 * dna.nostrilFlare;
 
   return (
     <svg
@@ -31,9 +55,9 @@ export const HeadSvg = forwardRef<SVGSVGElement, SvgProps>(function HeadSvg(
       preserveAspectRatio="xMidYMid meet"
     >
       <defs>
-        <radialGradient id={`${uid}-bg`} cx="50%" cy="40%" r="75%">
-          <stop offset="0%" stopColor={palette.bg1} />
-          <stop offset="100%" stopColor={palette.bg2} />
+        <radialGradient id={`${uid}-bg`} cx="50%" cy="38%" r="80%">
+          <stop offset="0%" stopColor={bg1} />
+          <stop offset="100%" stopColor={bg2} />
         </radialGradient>
         <linearGradient id={`${uid}-body`} x1="0%" y1="0%" x2="100%" y2="100%">
           <stop offset="0%" stopColor={palette.bodyHighlight} />
@@ -48,13 +72,34 @@ export const HeadSvg = forwardRef<SVGSVGElement, SvgProps>(function HeadSvg(
           <stop offset="0%" stopColor={palette.bodyHighlight} stopOpacity="0.6" />
           <stop offset="100%" stopColor={palette.bodyHighlight} stopOpacity="0" />
         </radialGradient>
+        <linearGradient
+          id={`${uid}-light`}
+          gradientTransform={`rotate(${lightAngle} 0.5 0.5)`}
+          x1="0%"
+          y1="0%"
+          x2="100%"
+          y2="0%"
+        >
+          <stop offset="0%" stopColor="#fff" stopOpacity={lightStrength * 0.35} />
+          <stop offset="55%" stopColor="#fff" stopOpacity="0" />
+          <stop offset="100%" stopColor="#000" stopOpacity={lightStrength * 0.3} />
+        </linearGradient>
+        <filter id={`${uid}-grain`} x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" result="n" />
+          <feColorMatrix
+            in="n"
+            type="matrix"
+            values="0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.6 0"
+          />
+          <feComposite operator="in" in2="SourceGraphic" />
+        </filter>
         <clipPath id={`${uid}-clip`}>
           <g transform={`rotate(${dna.headTilt} 110 110)`}>
             <path d="M 30 220 L 30 145 Q 50 100 95 95 L 150 95 L 175 220 Z" />
             <ellipse
               cx="135"
               cy={108 + dna.eyeY}
-              rx={48 * headLen}
+              rx={cheekR}
               ry={32}
               transform="rotate(-18 135 108)"
             />
@@ -69,32 +114,40 @@ export const HeadSvg = forwardRef<SVGSVGElement, SvgProps>(function HeadSvg(
         </clipPath>
       </defs>
 
+      {/* BACKDROP */}
       <rect width="220" height="220" fill={`url(#${uid}-bg)`} />
       <rect width="220" height="220" fill="black" opacity="0.08" />
 
       <g transform={`rotate(${dna.headTilt} 110 110)`}>
         {/* MANE */}
-        <path
-          d={`M 96 92
-              Q ${88 + dna.maneWaves[0]} 110 ${82 + dna.maneWaves[1]} 135
-              Q ${74 + dna.maneWaves[2]} 165 ${72 + dna.maneWaves[3]} 220
-              L 50 220
-              Q 56 165 70 130
-              Q 82 100 96 92 Z`}
-          fill={`url(#${uid}-mane)`}
-        />
+        {dna.maneStyle !== "roached" && (
+          <path
+            d={`M 96 92
+                Q ${88 + dna.maneWaves[0]} 110 ${82 + dna.maneWaves[1]} 135
+                Q ${74 + dna.maneWaves[2]} 165 ${72 + dna.maneWaves[3]} 220
+                L 50 220
+                Q 56 165 70 130
+                Q 82 100 96 92 Z`}
+            fill={`url(#${uid}-mane)`}
+            opacity={dna.maneStyle === "long" ? 1 : 0.85}
+          />
+        )}
+        {dna.maneStyle === "roached" && (
+          <path d="M 96 92 Q 80 130 74 165 L 66 165 Q 74 120 90 92 Z" fill={palette.maneShade} />
+        )}
         {/* NECK */}
         <path
           d="M 60 220 Q 70 160 95 130 Q 110 110 138 102 L 168 220 Z"
           fill={`url(#${uid}-body)`}
         />
-        {/* HEAD */}
+        {/* HEAD — shaped skull, tapered jaw, muzzle */}
         <g transform="rotate(-18 135 108)">
-          <ellipse
-            cx="135"
-            cy={108 + dna.eyeY}
-            rx={48 * headLen}
-            ry={32}
+          <path
+            d={`M ${135 - cheekR} ${108 + dna.eyeY}
+                Q ${135 - cheekR} ${84 + dna.eyeY} 135 ${80 + dna.eyeY}
+                Q ${135 + cheekR} ${84 + dna.eyeY} ${135 + cheekR} ${108 + dna.eyeY}
+                Q ${135 + cheekR - jawInset} ${130 + dna.eyeY} ${160 + jawInset} ${136 + dna.eyeY}
+                Q 140 ${140 + dna.eyeY} ${135 - cheekR + jawInset} ${124 + dna.eyeY} Z`}
             fill={`url(#${uid}-body)`}
           />
           <ellipse
@@ -111,6 +164,14 @@ export const HeadSvg = forwardRef<SVGSVGElement, SvgProps>(function HeadSvg(
             ry={9 * muzzleScale}
             fill={palette.muzzle}
             opacity="0.85"
+          />
+          {/* chin groove */}
+          <path
+            d={`M ${168 * headLen} ${152 + dna.eyeY} Q ${178 * headLen} ${156 + dna.eyeY} ${186 * headLen} ${150 + dna.eyeY}`}
+            stroke={palette.bodyShade}
+            strokeWidth="1.2"
+            fill="none"
+            opacity="0.5"
           />
         </g>
 
@@ -164,27 +225,74 @@ export const HeadSvg = forwardRef<SVGSVGElement, SvgProps>(function HeadSvg(
 
         {/* EARS */}
         <g transform="rotate(-18 135 108)">
-          <path
-            d={`M ${110 - 6 * dna.earSpread} 78 L ${118 - 2 * dna.earSpread} 56 L ${126 + 2 * dna.earSpread} 80 Z`}
-            fill={palette.bodyShade}
-          />
-          <path
-            d={`M ${130 + 4 * dna.earSpread} 76 L ${140 + 8 * dna.earSpread} 54 L ${148 + 12 * dna.earSpread} 78 Z`}
-            fill={palette.body}
-          />
+          {dna.earPose !== "back" && (
+            <>
+              <path
+                d={`M ${110 - 6 * dna.earSpread} 78 L ${118 - 2 * dna.earSpread} ${dna.earPose === "relaxed" ? 62 : 56} L ${126 + 2 * dna.earSpread} 80 Z`}
+                fill={palette.bodyShade}
+              />
+              <path
+                d={`M ${130 + 4 * dna.earSpread} 76 L ${140 + 8 * dna.earSpread} ${dna.earPose === "relaxed" ? 60 : 54} L ${148 + 12 * dna.earSpread} 78 Z`}
+                fill={palette.body}
+              />
+            </>
+          )}
+          {dna.earPose === "back" && (
+            <>
+              <path
+                d={`M ${108 - 6 * dna.earSpread} 80 L ${100 - 4 * dna.earSpread} 62 L ${118 - 2 * dna.earSpread} 78 Z`}
+                fill={palette.bodyShade}
+              />
+              <path
+                d={`M ${128 + 4 * dna.earSpread} 78 L ${122 + 6 * dna.earSpread} 58 L ${140 + 8 * dna.earSpread} 74 Z`}
+                fill={palette.body}
+              />
+            </>
+          )}
         </g>
 
         {/* FORELOCK */}
-        <path
-          d={`M 120 70 Q ${128 + dna.forelockSweep} 80 ${124 + dna.forelockSweep} 100 Q ${116 + dna.forelockSweep} 92 114 78 Z`}
-          fill={`url(#${uid}-mane)`}
-        />
+        {dna.forelockStyle === "sweep" && (
+          <path
+            d={`M 120 70 Q ${128 + dna.forelockSweep} 80 ${124 + dna.forelockSweep} 100 Q ${116 + dna.forelockSweep} 92 114 78 Z`}
+            fill={`url(#${uid}-mane)`}
+          />
+        )}
+        {dna.forelockStyle === "tuft" && (
+          <ellipse
+            cx={120 + dna.forelockSweep * 0.5}
+            cy={76}
+            rx="8"
+            ry="5"
+            fill={`url(#${uid}-mane)`}
+          />
+        )}
 
-        {/* EYE */}
+        {/* EYE — eyelid openness from eyeAlertness */}
         <g transform="rotate(-18 135 108)">
-          <ellipse cx="138" cy={104 + dna.eyeY} rx="5.2" ry="3.6" fill={palette.skin} />
-          <ellipse cx="138" cy={104 + dna.eyeY} rx="3.8" ry="2.6" fill={palette.eye} />
+          <ellipse
+            cx="138"
+            cy={104 + dna.eyeY}
+            rx="5.2"
+            ry={3.6 * Math.min(1.3, Math.max(0.4, dna.eyeAlertness))}
+            fill={palette.skin}
+          />
+          <ellipse
+            cx="138"
+            cy={104 + dna.eyeY}
+            rx="3.8"
+            ry={2.6 * Math.min(1.3, Math.max(0.4, dna.eyeAlertness))}
+            fill={palette.eye}
+          />
           <circle cx="139.2" cy={103 + dna.eyeY} r="0.9" fill="#ffffff" opacity="0.85" />
+          {/* upper lid line */}
+          <path
+            d={`M 132 ${102 + dna.eyeY} Q 138 ${99 + dna.eyeY} 144 ${102 + dna.eyeY}`}
+            stroke={palette.bodyShade}
+            strokeWidth="0.9"
+            fill="none"
+            opacity="0.6"
+          />
         </g>
 
         {/* NOSTRIL */}
@@ -192,8 +300,8 @@ export const HeadSvg = forwardRef<SVGSVGElement, SvgProps>(function HeadSvg(
           <ellipse
             cx={180 * headLen}
             cy={142 + dna.eyeY}
-            rx="2.6"
-            ry="3.6"
+            rx={nostrilR * 0.75}
+            ry={nostrilR}
             fill={palette.eye}
             opacity="0.85"
           />
@@ -201,9 +309,25 @@ export const HeadSvg = forwardRef<SVGSVGElement, SvgProps>(function HeadSvg(
 
         {/* JAW SHADOW */}
         <path
-          d="M 96 138 Q 118 160 150 158 Q 130 170 100 162 Z"
+          d={`M 96 138 Q 118 160 ${150 * dna.jawTaper} 158 Q 130 170 100 162 Z`}
           fill={palette.bodyShade}
           opacity="0.35"
+        />
+
+        {/* DIRECTIONAL LIGHT */}
+        <rect
+          width="220"
+          height="220"
+          fill={`url(#${uid}-light)`}
+          style={{ mixBlendMode: "soft-light" }}
+        />
+        {/* PAINTERLY GRAIN */}
+        <rect
+          width="220"
+          height="220"
+          fill={palette.body}
+          filter={`url(#${uid}-grain)`}
+          opacity={textureOpacity}
         />
       </g>
 

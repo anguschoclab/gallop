@@ -1,9 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
-import { Button } from "@/shared/ui/button";
 import { useGame } from "@/platform/game/store";
 import { PersonPortrait } from "@/domains/person/ui/PersonPortrait";
+import { PortraitRandomizeButton } from "@/domains/person/ui/PortraitRandomizeButton";
 import { getPlayerOwnerName } from "@/domains/stable/application/stablePersonHelpers";
-import { User, Shuffle } from "lucide-react";
+import { User } from "lucide-react";
 
 export function StableIdentityCard() {
   const playerProfile = useGame((s) => s.playerProfile);
@@ -43,10 +43,7 @@ export function StableIdentityCard() {
             )}
           </div>
         </div>
-        <Button variant="outline" size="sm" onClick={reroll} className="w-full gap-2 rounded-none">
-          <Shuffle className="h-4 w-4" />
-          Randomize Portrait
-        </Button>
+        <PortraitRandomizeButton onClick={reroll} className="w-full" />
       </CardContent>
     </Card>
   );

@@ -6,10 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { PersonRaceHistoryTab } from "@/domains/person/ui/PersonRaceHistoryTab";
+import { PersonProfileHero } from "@/domains/person/ui/PersonProfileHero";
+import { PortraitRandomizeButton } from "@/domains/person/ui/PortraitRandomizeButton";
 import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/domains/staff/application/staffFacade";
 import { formatCurrency } from "@/shared/common/formatting";
 import { cn } from "@/shared/lib/cn";
-import { ChevronLeft, User, History, Briefcase, Trophy, Shuffle } from "lucide-react";
+import { ChevronLeft, User, History, Briefcase, Trophy } from "lucide-react";
 import type { StaffMember } from "@/domains/staff/application/staffFacade";
 import { getStaffName } from "@/domains/staff/model/staffPerson";
 
@@ -17,6 +19,7 @@ function StaffDetailPage() {
   const { staffId } = useParams({ from: "/staff/$staffId" });
   const hiredStaff = useGame((s) => s.hiredStaff);
   const staffPool = useGame((s) => s.staffPool);
+  const day = useGame((s) => s.day);
   const rerollStaffAppearance = useGame((s) => s.rerollStaffAppearance);
 
   const staff = useMemo<StaffMember | undefined>(() => {
@@ -46,6 +49,16 @@ function StaffDetailPage() {
           </Button>
         </Link>
       </div>
+
+      <PersonProfileHero
+        identity={staff.person}
+        role={staff.role}
+        context="staff"
+        day={day}
+        subtitle={`${roleLabel} · ${tierLabel}`}
+      >
+        {isHired && <PortraitRandomizeButton onClick={() => rerollStaffAppearance(staff.id)} />}
+      </PersonProfileHero>
 
       <Tabs defaultValue="profile" className="space-y-4">
         <TabsList>
@@ -156,15 +169,10 @@ function StaffDetailPage() {
                 )}
                 {isHired && (
                   <div className="p-4 border-t border-white/5">
-                    <Button
-                      variant="outline"
-                      size="sm"
+                    <PortraitRandomizeButton
                       onClick={() => rerollStaffAppearance(staff.id)}
-                      className="w-full gap-2 rounded-none"
-                    >
-                      <Shuffle className="h-4 w-4" />
-                      Randomize Portrait
-                    </Button>
+                      className="w-full"
+                    />
                   </div>
                 )}
                 {staff.raceRecord && (
