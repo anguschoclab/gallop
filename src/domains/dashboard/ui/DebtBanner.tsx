@@ -152,6 +152,7 @@ export function DebtBanner() {
                 value={payAmount}
                 onChange={(e) => setPayAmount(e.target.value)}
                 placeholder="Amount"
+                aria-label="Pay down debt amount"
                 className="w-28 px-2 py-1 text-xs bg-black/30 border border-white/20 rounded font-mono tabular-nums"
               />
             </div>
