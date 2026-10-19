@@ -1,0 +1,3 @@
+## 2024-10-19 - Avoid Array.sort()[0] for finding min/max values
+**Learning:** Using `Array.filter().sort()[0]` to find the minimum or maximum value in an array evaluates in O(N log N) time and introduces an unnecessary sort of the entire array. When done inside an outer loop like `Array.map`, this compound time complexity increases to O(M * N log N), potentially resulting in large performance bottlenecks for components rendering lists of data over many objects, like Auction archives.
+**Action:** Next time when the minimum or maximum property needs to be extracted from an array, use a single O(N) `reduce` instead, skipping the sort completely.

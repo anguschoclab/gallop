@@ -20,9 +20,18 @@ export function TransactionArchive({ pastSales }: TransactionArchiveProps) {
       </div>
       <div className="space-y-2">
         {pastSales.slice(0, 5).map((sale) => {
-          const topLot = sale.lots
-            .filter((l) => l.hammerPrice)
-            .sort((a, b) => (b.hammerPrice ?? 0) - (a.hammerPrice ?? 0))[0];
+          // ⚡ Bolt Optimization:
+          // Replaced O(N log N) .filter().sort()[0] with an O(N) single-pass .reduce()
+          // Impact: Reduces rendering complexity inside this .map() loop from O(M * N log N) to O(M * N)
+          // improving the component mount time significantly for historical archives.
+          const topLot = sale.lots.reduce(
+            (max, lot) => {
+              if (!lot.hammerPrice) return max;
+              if (!max || lot.hammerPrice > (max.hammerPrice ?? 0)) return lot;
+              return max;
+            },
+            undefined as (typeof sale.lots)[0] | undefined,
+          );
           return (
             <Link
               key={sale.id}
