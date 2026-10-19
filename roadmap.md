@@ -14,3 +14,4 @@
 - [ ] Fix race-record gap: watched (live) races must write to the horse's race history so journal, Plan Effectiveness and daily comparisons fill in
 - [ ] Rankings History: show each horse's current market value in its row next to price trends
 - [ ] Stable Campaign: include horse values in the net-worth total, not just prize money
+- [ ] Auto-Register and Daily Auto-Entry: once a day, enter each horse in its next campaign goal race outright (not just weighted)
