@@ -36,18 +36,33 @@ export interface StrategyJournalEntry {
   };
 }
 
+/** Minimal race shape needed to read the plan a horse actually ran with. */
+export interface JournalRaceLike {
+  entries: Array<{
+    horseId: string;
+    jockeyInstructions?: {
+      ridingStyle: string;
+      earlyPosition: string;
+      moveTiming: string;
+      aggressiveness: number;
+    };
+  }>;
+}
+
 /**
  * Record actual results for any journal plans whose race has now been run.
  * @param list - Journal entries to fill outcomes for
  * @param horses - Horses keyed by id, used to look up race results
  * @param cash - Current player cash balance
  * @param day - Current game day
+ * @param races - Optional races, used to copy the jockey plan onto auto-tracked entries
  */
 export function fillJournalOutcomes(
   list: StrategyJournalEntry[] | undefined,
   horses: Record<string, { raceHistory?: HorseRaceHistoryEntry[] } | undefined>,
   cash: number,
   day: number,
+  races?: Record<string, JournalRaceLike | undefined>,
 ): StrategyJournalEntry[] | undefined {
   if (!list?.length) return list;
   let changed = false;
@@ -56,8 +71,19 @@ export function fillJournalOutcomes(
     const run = horses[e.horseId]?.raceHistory?.find((h) => h.raceId === e.raceId);
     if (!run) return e;
     changed = true;
+    // Auto-tracked entries carry no plan of their own: record the jockey plan
+    // the horse actually ran with, so Plan Effectiveness ranks the real plan.
+    const ran = e.ridingStyle
+      ? undefined
+      : races?.[e.raceId]?.entries.find((x) => x.horseId === e.horseId)?.jockeyInstructions;
     return {
       ...e,
+      ...(ran && {
+        ridingStyle: ran.ridingStyle,
+        earlyPosition: ran.earlyPosition,
+        moveTiming: ran.moveTiming,
+        aggressiveness: ran.aggressiveness,
+      }),
       result: {
         position: run.position,
         fieldSize: run.fieldSize,

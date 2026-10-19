@@ -43,6 +43,7 @@ export const dailySnapshotPhase: PipelinePhase = {
       state.horses,
       state.cash,
       newDay,
+      state.races,
     );
     const rankingsHistory = recordRankingsHistory(state.rankingsHistory, allHorses, newDay);
     const stableRankingsHistory = recordStableRankingsHistory(state.stableRankingsHistory, {
