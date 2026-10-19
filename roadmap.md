@@ -11,3 +11,4 @@
 - [ ] In-game check: auto-adjusted Stable Campaign goals rise and log after several races (logic tests pass; live play unverified)
 - [ ] Jockey plan on race entries: show each entered horse's riding plan wherever the stable sees its entries, not only in Race Advisor
 - [ ] Compare page: 7-day timeline of each compared horse's rating, form and price
+- [ ] Fix race-record gap: watched (live) races must write to the horse's race history so journal, Plan Effectiveness and daily comparisons fill in
