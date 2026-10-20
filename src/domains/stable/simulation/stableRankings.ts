@@ -68,7 +68,7 @@ const round1 = (n: number) => Math.round(n * 10) / 10;
  */
 export function computeStableRankings(input: StableRankingsInput): StableRankingRow[] {
   const { horses, npcStables, playerReputationScore, playerProfile, day } = input;
-  const byId = new Map(horses.map((h) => [h.id as string, h]));
+  const byId = new Map(horses.map((h) => [h.id, h]));
 
   // Roster ranking points: sum of each owner's ranked horses (uncapped list).
   const pointsByOwner = new Map<string, number>();
@@ -127,13 +127,13 @@ export function computeStableRankings(input: StableRankingsInput): StableRanking
       ...metricsFor(PLAYER_OWNER_ID),
     },
     ...npcStables.map((s) => ({
-      stableId: s.id as string,
+      stableId: s.id,
       name: s.name,
       isPlayer: false,
       silkColor: s.colors?.primary,
       reputation: Math.round(s.reputation),
       rank: null as number | null,
-      ...metricsFor(s.id as string),
+      ...metricsFor(s.id),
     })),
   ];
 
