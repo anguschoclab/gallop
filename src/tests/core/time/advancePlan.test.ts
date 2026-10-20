@@ -111,4 +111,23 @@ describe("interruptionForDay", () => {
     const plan = buildAdvancePlan(state, 7, false);
     expect(interruptionForDay(plan, state, 3)).toBeUndefined();
   });
+
+  it("stops for a race entered just before advancing", () => {
+    const race = { ...raceOnDay(3), entries: [] };
+    const base = stateWithRace(race);
+    const plan = buildAdvancePlan(base, 7, false);
+    const state = {
+      ...base,
+      horses: { h1: { id: "h1", ownership: makePlayerOwned() } },
+      pendingIntents: [{ id: "e1", type: "race_entry", raceId: "race-3", horseId: "h1", day: 1 }],
+    } as unknown as GameState;
+    expect(interruptionForDay(plan, state, 3)?.raceId).toBe("race-3");
+  });
+
+  it("stops for an entry applied earlier in the same advance", () => {
+    const base = stateWithRace({ ...raceOnDay(3), entries: [] });
+    const plan = buildAdvancePlan(base, 7, false);
+    const later = stateWithRace(raceOnDay(3));
+    expect(interruptionForDay(plan, later, 3)?.raceId).toBe("race-3");
+  });
 });

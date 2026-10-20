@@ -1,6 +1,8 @@
 import {
   goalProgress,
   goalRaceBonus,
+  raceGoalClass,
+  type GoalClass,
   type StableGoals,
 } from "@/domains/stable/simulation/stableGoals";
 /**
@@ -62,6 +64,8 @@ export type AutoRegisterEntry = {
   transportCost: number;
   totalCost: number;
   suitabilityScore: number;
+  /** Set when this is the horse's next campaign goal race (an open class goal). */
+  goalClass?: GoalClass;
 };
 
 export type AutoRegisterResult = {
@@ -216,11 +220,21 @@ export function calculateAutoRegisterEntries(
   });
 
   // For each horse, find the best race
-  const candidates: { horse: Horse; race: Race; score: number }[] = [];
+  const candidates: { horse: Horse; race: Race; score: number; goalClass?: GoalClass }[] = [];
+  // Open campaign class goals: the horse is sent to its next race serving one
+  // (soonest suitable race), instead of only nudging the score.
+  const openGoal = (race: Race): GoalClass | null => {
+    if (!goals || !progress || goals.weight <= 0) return null;
+    const c = raceGoalClass(race);
+    return c && (progress.classRemaining[c] ?? 0) > 0 ? c : null;
+  };
 
   for (const horse of eligibleHorses) {
     let bestRace: Race | null = null;
     let bestScore = -Infinity;
+    let goalRace: Race | null = null;
+    let goalScore = -Infinity;
+    let goalClass: GoalClass | null = null;
 
     for (const race of upcomingRaces) {
       // Check eligibility (age, gender, energy, pregnancy, win conditions, etc.)
@@ -243,9 +257,21 @@ export function calculateAutoRegisterEntries(
         bestScore = score;
         bestRace = race;
       }
+
+      const gc = base > 0 ? openGoal(race) : null;
+      if (
+        gc &&
+        (!goalRace || race.day < goalRace.day || (race.day === goalRace.day && score > goalScore))
+      ) {
+        goalRace = race;
+        goalScore = score;
+        goalClass = gc;
+      }
     }
 
-    if (bestRace) {
+    if (goalRace && goalClass) {
+      candidates.push({ horse, race: goalRace, score: goalScore, goalClass });
+    } else if (bestRace) {
       candidates.push({ horse, race: bestRace, score: bestScore });
     } else {
       // No suitable race found for this horse
@@ -257,13 +283,13 @@ export function calculateAutoRegisterEntries(
     }
   }
 
-  // Sort by suitability score (best first)
-  candidates.sort((a, b) => b.score - a.score);
+  // Goal races claim the budget first, then by suitability score (best first)
+  candidates.sort((a, b) => Number(!!b.goalClass) - Number(!!a.goalClass) || b.score - a.score);
 
   // Calculate entries within budget
   let runningCost = 0;
 
-  for (const { horse, race, score } of candidates) {
+  for (const { horse, race, score, goalClass } of candidates) {
     const jockey = selectBestJockey(horse, jockeys);
     const transportCost = calculateTransportCostForRace(race);
     const entryCost = race.entryFee + (jockey?.ridingFee ?? 0) + transportCost;
@@ -285,12 +311,13 @@ export function calculateAutoRegisterEntries(
       raceName: race.name,
       raceDay: race.day,
       jockeyId: jockey?.id ?? null,
-      jockeyName: jockey?.person.biography.displayName ?? "Auto-assigned",
+      jockeyName: jockey?.person?.biography?.displayName ?? jockey?.name ?? "Auto-assigned",
       entryFee: race.entryFee,
       jockeyFee: jockey?.ridingFee ?? 0,
       transportCost,
       totalCost: entryCost,
       suitabilityScore: score,
+      ...(goalClass && { goalClass }),
     });
 
     runningCost += entryCost;

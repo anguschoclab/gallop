@@ -81,19 +81,34 @@ export function interruptionForDay(
   state: GameState,
   day: number,
 ): Interruption | undefined {
-  if (plan.headless || !plan.playerRaceDays.has(day)) return undefined;
+  if (plan.headless) return undefined;
   // A race already watched live carries a queued race_resolution intent — the
   // day's pipeline finishes it, so don't stop and prompt for it a second time.
+  // Entries still queued (made just before advancing) count as player entries:
+  // the plan's precomputed race days can't see them yet.
   const alreadyRun = new Set<string>();
+  const queuedEntryRaces = new Set<string>();
   for (const i of state.pendingIntents ?? []) {
     if (i.type === "race_resolution") alreadyRun.add((i as { raceId: string }).raceId);
+    else if (i.type === "race_entry") {
+      const e = i as { raceId: string; horseId: string };
+      if (state.horses?.[e.horseId]?.ownership?.type === "player") queuedEntryRaces.add(e.raceId);
+    }
+  }
+  if (!plan.playerRaceDays.has(day) && queuedEntryRaces.size === 0) {
+    // Entries applied earlier in this range aren't in the precomputed days either.
+    const any = Object.values(state.races).some(
+      (r: Race) =>
+        !r.resolved && r.day === day && r.entries.some((e) => e.ownership?.type === "player"),
+    );
+    if (!any) return undefined;
   }
   const race = Object.values(state.races).find(
     (r: Race) =>
       !r.resolved &&
       r.day === day &&
       !alreadyRun.has(r.id) &&
-      r.entries.some((e) => e.ownership?.type === "player"),
+      (queuedEntryRaces.has(r.id) || r.entries.some((e) => e.ownership?.type === "player")),
   );
   return race ? { day, raceId: race.id, reason: "player_race" } : undefined;
 }

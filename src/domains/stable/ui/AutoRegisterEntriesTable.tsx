@@ -28,6 +28,11 @@ export function AutoRegisterEntriesTable({ entries }: Props) {
               <TableCell className="text-muted-foreground">
                 <div className="flex flex-col">
                   <span className="truncate max-w-[150px]">{entry.raceName}</span>
+                  {entry.goalClass ? (
+                    <span className="text-[10px] text-primary">
+                      ★ Next {entry.goalClass} goal race
+                    </span>
+                  ) : null}
                 </div>
               </TableCell>
               <TableCell className="text-center font-mono text-xs">{entry.raceDay}</TableCell>
