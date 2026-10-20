@@ -10,7 +10,7 @@ Verdict summary: `Brand<T,_B>=T` structural (documented; Anvil PRs are style-onl
 ## src/platform
 
 | Area | Status |
-|---|---|
+| --- | --- |
 | engine/{client,engine,protocol,transports,workerPool}.ts | clean (APPROVED — exemplary) |
 | game/store/{engineSync,engineClient,postCommit,stateVersion,persistedKeys}.ts | clean w/ notes |
 | time/{checksum,executor,advancePlan,scheduler,pipeline,advance,calendar}.ts | clean |
@@ -20,7 +20,7 @@ Verdict summary: `Brand<T,_B>=T` structural (documented; Anvil PRs are style-onl
 ## src/domains — see review-notes.md rollup
 
 | Port | Status |
-|---|---|
+| --- | --- |
 | resolver handlers (Diplomacy/Inbox dict routing) | ported (PR #568) |
 | rankings branded-ID cast removal | ported (PR #563) |
 | getDynamicProfile spread removal | ported (PR #557) |
@@ -34,7 +34,7 @@ Verdict summary: `Brand<T,_B>=T` structural (documented; Anvil PRs are style-onl
 ## src/routes, src/tests, scripts/, configs — see review-notes.md rollup
 
 | Area | Status |
-|---|---|
+| --- | --- |
 | routes/ | clean (generated routeTree gitignored) |
 | tests/ architecture + layering | clean, zero violations |
 | scripts/ (fingerprint, bench, typecheck) | clean |

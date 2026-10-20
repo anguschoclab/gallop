@@ -7,7 +7,7 @@ fixes, and branch/PR cleanup.
 ## Baseline vs final metrics
 
 | Metric | Baseline | Final |
-|---|---|---|
+| --- | --- | --- |
 | TypeScript | 0 errors, 0 warnings | 0 errors, 0 warnings |
 | ESLint | clean (0 problems) | clean (0 problems) |
 | `crossPhaseDataFlow` | green (post-relocation repair) | green |
@@ -24,7 +24,7 @@ outside this window, by design.
 ## Bugs fixed (approve/disprove verdicts)
 
 | ID | Finding | Verdict | Fix |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | BUG-1 | `generateUUIDWithValidation` — dead code, CJS `require()` in ESM/browser path | **CONFIRMED** | Function deleted; `uuidRegistry` infra + tests retained |
 | BUG-2 | `npcCompression` drops energy/fitness/fatigue/form/peakingIndex/recoveryPoints on save→load | **CONFIRMED** | `NpcHorseSummary` extended; fields persisted and restored on regeneration |
 | BUG-3 | `hallOfFame` `inductionYear` off-by-one on year boundaries (`floor(d/365)+1` vs canonical `floor((d-1)/365)+1`) | **CONFIRMED** | Canonical formula applied |
@@ -49,7 +49,7 @@ outside this window, by design.
 ## Open-PR verdicts (#551–#572 excl. #562)
 
 | PR | Title | Verdict | Outcome |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | #551 | Distance Change Specialist | **APPROVED** | Ported — `detectDistanceChange`, Stretch-Out/Cutback |
 | #552 | Foal milestone tests | **APPROVED (coverage)** | Ported to `tests/core/race/foalMilestoneActions.test.ts` |
 | #553 | Enriched race context commentary | **APPROVED** | Template expansion ported |
@@ -98,7 +98,7 @@ Clustered by bot-role/intent. Verdicts:
 ## RED/COVERAGE ledger
 
 | Item | Status |
-|---|---|
+| --- | --- |
 | AuctionHouseDesk confirmation | RED→GREEN (dialog missing pre-impl) |
 | hallOfFame off-by-one | RED→GREEN |
 | npcCompression condition round-trip | RED→GREEN |
