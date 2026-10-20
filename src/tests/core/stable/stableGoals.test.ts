@@ -3,11 +3,14 @@ import {
   autoAdjustGoals,
   goalProgress,
   goalRaceBonus,
+  playerNetWorthBreakdown,
   raceGoalClass,
   type StableGoals,
   type GoalProgress,
 } from "@/domains/stable/simulation/stableGoals";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
+import { horseMarketValue } from "@/domains/horse/simulation/pricing";
+import { makeUnowned } from "@/domains/horse/simulation/ownership";
 
 const goals: StableGoals = {
   classGoals: { G1: 2 },
@@ -204,5 +207,18 @@ describe("autoAdjustGoals", () => {
     const res = autoAdjustGoals(g, p, 10);
     expect(res.goals.targetCash).toBe(50_000);
     expect(res.goals.targetEarnings).toBe(90_000);
+  });
+});
+
+describe("campaign net worth includes horse values", () => {
+  it("adds each owned horse's market value to cash, ignoring horses you don't own", () => {
+    const mine = createTestHorse({ name: "Mine" });
+    const other = createTestHorse({ name: "Other", ownership: makeUnowned() });
+    const b = playerNetWorthBreakdown([mine, other], 50_000);
+    expect(b.horses.map((h) => h.name)).toEqual(["Mine"]);
+    expect(b.horseValue).toBe(horseMarketValue(mine));
+    expect(b.horseValue).toBeGreaterThan(0);
+    expect(b.total).toBe(Math.round(50_000 + horseMarketValue(mine)));
+    expect(goalProgress({ classGoals: {}, startDay: 0, weight: 1 }, [mine, other], 50_000).netWorth).toBe(b.total);
   });
 });

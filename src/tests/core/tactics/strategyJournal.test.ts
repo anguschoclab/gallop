@@ -107,6 +107,29 @@ describe("fillJournalOutcomes", () => {
     });
   });
 
+  it("records the jockey plan the horse ran with on an auto-tracked entry", () => {
+    const journal = autoCreateJournalEntry(undefined, params);
+    const races = {
+      [params.raceId]: {
+        entries: [
+          {
+            horseId: params.horseId,
+            jockeyInstructions: {
+              ridingStyle: "closer",
+              earlyPosition: "drop_back",
+              moveTiming: "late",
+              aggressiveness: 75,
+            },
+          },
+        ],
+      },
+    };
+    const filled = fillJournalOutcomes(journal, horses, 123_000, 21, races)!;
+    expect(filled[0].ridingStyle).toBe("closer");
+    expect(filled[0].moveTiming).toBe("late");
+    expect(filled[0].aggressiveness).toBe(75);
+  });
+
   it("leaves entries without a recorded run unchanged", () => {
     const journal = autoCreateJournalEntry(undefined, params);
     const filled = fillJournalOutcomes(journal, { h1: { raceHistory: [] } }, 0, 21);

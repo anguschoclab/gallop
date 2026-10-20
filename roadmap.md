@@ -5,7 +5,13 @@
 - [x] Track history filters for game-day range, race type, and stable
 - [x] NPC horse career timelines with off-screen starts, finishes, payouts, ages, and stage transitions
 - [x] Daily rankings comparison: player horses versus daily leaders, with rank, points, reputation and price gaps (six tests pass; populated live-game check remains unverified)
-- [ ] Verify Race Advisor save → completed race → Plan Effectiveness win rate and position in the running game (saved-plan UI verified; test race has results but no horse history/journal outcome, so populated scores remain unverified)
+- [x] Verify completed race → Plan Effectiveness in the running game (watched race recorded 4th of 12, $1,800, ranked under its 'closer' plan)
 - [x] Add Campaign history filtering and contributing races to Compare Periods (filter and saved campaign verified in-game; calculation tests pass; populated race table remains unverified)
 - [x] Campaign history: per-race horse auction price/value changes so net worth reflects wins and market shifts
 - [ ] In-game check: auto-adjusted Stable Campaign goals rise and log after several races (logic tests pass; live play unverified)
+- [x] Jockey plan on race entries: Race Center 'Jockey Plans' panel + entry review show each entered horse's plan
+- [x] Compare page: 7-day timeline of each compared horse's rating, form and price
+- [x] Fix race-record gap: watched races write race history; multi-day advance pauses for just-entered races; prompt no longer reappears after watching
+- [x] Rankings History: current market value in each row, value since first snapshot, daily price change column
+- [x] Stable Campaign: net worth shown as cash + each horse's market value
+- [x] Auto-Register and Daily Auto-Entry: enter each horse in its next open-goal race outright

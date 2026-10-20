@@ -16,6 +16,7 @@ import {
   DEFAULT_STABLE_GOALS,
   GOAL_CLASSES,
   goalProgress,
+  playerNetWorthBreakdown,
   type StableGoals,
 } from "@/domains/stable/simulation/stableGoals";
 
@@ -76,6 +77,11 @@ function StableCampaignPage() {
     toast.success("Campaign goals cleared.");
   };
 
+  const worth = useMemo(
+    () => playerNetWorthBreakdown(Object.values(horses), cash),
+    [horses, cash],
+  );
+
   const nwPct = draft.targetNetWorth
     ? Math.min(100, (progress.netWorth / draft.targetNetWorth) * 100)
     : 0;
@@ -91,8 +97,8 @@ function StableCampaignPage() {
           <Link to="/race-advisor" className="text-primary hover:underline">
             Race Advisor
           </Link>{" "}
-          lists goal races first, and Auto-Register and Daily Auto-Entry favour them when choosing
-          races.
+          lists goal races first. While a class goal is open, Auto-Register and Daily Auto-Entry
+          enter each horse in its next suitable goal race.
           {!autoEnter && " (Daily Auto-Entry is off — turn it on in Settings → Gameplay.)"}
         </p>
       </div>
@@ -144,6 +150,31 @@ function StableCampaignPage() {
             ) : null}
           </div>
           {draft.targetNetWorth ? <Progress value={nwPct} aria-label="Net worth progress" /> : null}
+          <div className="space-y-1.5 text-xs text-muted-foreground">
+            <div>
+              Cash <span className="font-mono text-foreground/80">{money(worth.cash)}</span> + horses{" "}
+              <span className="font-mono text-foreground/80">{money(worth.horseValue)}</span> (
+              {worth.horses.length} horse{worth.horses.length === 1 ? "" : "s"} at today&apos;s
+              market value)
+            </div>
+            {worth.horses.length > 0 ? (
+              <ul className="flex flex-wrap gap-x-4 gap-y-1">
+                {worth.horses.slice(0, 12).map((h) => (
+                  <li key={h.id}>
+                    <Link
+                      to="/stable/$horseId"
+                      params={{ horseId: h.id }}
+                      className="hover:text-primary"
+                    >
+                      {h.name}
+                    </Link>{" "}
+                    <span className="font-mono text-foreground/80">{money(h.value)}</span>
+                  </li>
+                ))}
+                {worth.horses.length > 12 ? <li>+{worth.horses.length - 12} more</li> : null}
+              </ul>
+            ) : null}
+          </div>
         </CardContent>
       </Card>
 

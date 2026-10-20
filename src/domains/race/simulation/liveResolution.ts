@@ -134,6 +134,7 @@ export function applyLiveRaceResolution(
         newState.horses,
         newState.cash,
         newState.day,
+        newState.races,
       ),
     };
   });

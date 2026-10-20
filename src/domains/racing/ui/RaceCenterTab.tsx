@@ -9,6 +9,7 @@ import {
 import { HorsePickerPanel } from "@/domains/racing/ui/HorsePickerPanel";
 import { EligibleRaceList } from "@/domains/racing/ui/EligibleRaceList";
 import { Flag } from "lucide-react";
+import { JockeyPlanPanel } from "@/domains/tactics/ui/JockeyPlanPanel";
 
 export function RaceCenterTab() {
   const horses = useHorses();
@@ -82,6 +83,8 @@ export function RaceCenterTab() {
           Pick a horse, see their eligible races, enter with one click.
         </p>
       </div>
+
+      <JockeyPlanPanel />
 
       <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 items-start">
         <HorsePickerPanel

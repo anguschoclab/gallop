@@ -14,7 +14,15 @@
 import { PHASE_ORDER_RACE_ENTRY_RESOLUTION } from "@/platform/time/pipelineConstants";
 import { findBumpableEntryIndex } from "@/domains/race/simulation/entry/bumpResolver";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
-import type { RaceEntryIntent, RaceWithdrawalIntent } from "@/platform/resolver/intents";
+import type {
+  JockeyAssignmentIntent,
+  RaceEntryIntent,
+  RaceWithdrawalIntent,
+  TacticsIntent,
+} from "@/platform/resolver/intents";
+import type { JockeyInstructions } from "@/domains/tactics/model/tacticsTypes";
+import type { RaceEntry } from "@/domains/race/simulation/types";
+import type { JockeyId } from "@/shared/types/branded";
 import type {
   AnyImpact,
   RaceEntryImpact,
@@ -59,6 +67,23 @@ export const raceEntryResolutionPhase: PipelinePhase = {
     const raceWithdrawalIntents = intents.filter(
       (i): i is RaceWithdrawalIntent => i.type === "race_withdrawal",
     );
+
+    // Plans and jockey bookings queued the same day as the entry are resolved
+    // by earlier phases, before the entry exists — fold them into the entry
+    // itself so they are not silently dropped. Latest intent wins.
+    const sameDayTactics = new Map<string, JockeyInstructions>();
+    const sameDayJockeys = new Map<string, JockeyId>();
+    for (const i of intents) {
+      if (i.type === "tactics") {
+        const t = i as TacticsIntent;
+        sameDayTactics.set(`${t.raceId}:${t.horseId}`, t.jockeyInstructions);
+      } else if (i.type === "jockey_assignment") {
+        const a = i as JockeyAssignmentIntent;
+        sameDayJockeys.set(`${a.raceId}:${a.horseId}`, a.jockeyId);
+      }
+    }
+    const sameDayAdds: Array<{ raceId: string; bumpEntryHorseId?: string; entry: RaceEntry }> =
+      [];
 
     const { horseMap, stableMap } = context;
     // Clone raceMap locally: NPC bump eviction mutates entries to track ejections
@@ -175,7 +200,9 @@ export const raceEntryResolutionPhase: PipelinePhase = {
         }
       }
 
-      let jockeyId = intent.jockeyId;
+      const planKey = `${intent.raceId}:${intent.horseId}`;
+      let jockeyId = intent.jockeyId ?? sameDayJockeys.get(planKey);
+      const jockeyInstructions = intent.jockeyInstructions ?? sameDayTactics.get(planKey);
 
       // Automatically assign jockey for NPC entries if not specified
       if (!jockeyId && intent.source === "npc" && intent.sourceId) {
@@ -269,9 +296,22 @@ export const raceEntryResolutionPhase: PipelinePhase = {
         jockeyId,
         entryFee: race.entryFee,
         bumpEntryHorseId,
-        jockeyInstructions: intent.jockeyInstructions,
+        jockeyInstructions,
         reason: bumpEntryHorseId ? "Race entry (bump)" : "Race entry",
       } as RaceEntryImpact);
+
+      if (race.day <= newDay) {
+        sameDayAdds.push({
+          raceId: race.id,
+          bumpEntryHorseId,
+          entry: {
+            horseId: horse.id,
+            ownership: horse.ownership,
+            jockeyId: jockeyId as JockeyId | undefined,
+            jockeyInstructions,
+          },
+        });
+      }
 
       // Add transport cost for player-owned horses (simplified: fixed cost based on race grade)
       if (isPlayerOwned(horse)) {
@@ -325,11 +365,29 @@ export const raceEntryResolutionPhase: PipelinePhase = {
       }
     }
 
+    // Races run later in this same pass (raceResolution, order 70) must see
+    // entries made today, or a horse entered the day before its race is left
+    // out of the field and never gets a result or race record. The
+    // race_entry impact handler is idempotent for an entry already present.
+    let races = state.races;
+    if (sameDayAdds.length > 0) {
+      races = { ...state.races };
+      for (const add of sameDayAdds) {
+        const r = races[add.raceId];
+        if (!r) continue;
+        const kept = r.entries.filter(
+          (e) => e.horseId !== add.bumpEntryHorseId && e.horseId !== add.entry.horseId,
+        );
+        races[add.raceId] = { ...r, entries: [...kept, add.entry] };
+      }
+    }
+
     return {
       ...context,
       impacts: [...context.impacts, ...impacts],
       state: {
         ...state,
+        races,
         npcAIManager: npcAIManagerUpdated ? npcAIManager : state.npcAIManager,
         transactions: [...(state.transactions ?? []), ...newTransactions],
         transports: newTransports,
