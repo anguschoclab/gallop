@@ -33,5 +33,7 @@ jobs:
         run: bun run build
       - name: Install Playwright browsers
         run: bunx playwright install --with-deps chromium
+      - name: Generate E2E fixture
+        run: bun run scripts/generate-e2e-fixture.ts
       - name: E2E tests
         run: bun run test:e2e
