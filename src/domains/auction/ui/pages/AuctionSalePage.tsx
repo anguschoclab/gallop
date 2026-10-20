@@ -86,6 +86,7 @@ function AuctionSalePage() {
           retryLabel="Reload Sale"
         />
         <button
+          aria-label="Return to Exchange"
           onClick={() => navigate({ to: "/auction" })}
           className="text-primary uppercase font-mono text-xs tracking-wide hover:underline"
         >
