@@ -67,7 +67,7 @@ describe("HorseCompare styling improvements", () => {
     const h1 = mkHorse({ id: "h1", name: "Thunder" });
     const h2 = mkHorse({ id: "h2", name: "Lightning" });
     render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
-    const table = screen.getByRole("table");
+    const table = screen.getByTestId("compare-metric-table");
     expect(within(table).getByText("Thunder")).toBeTruthy();
     expect(within(table).getByText("Lightning")).toBeTruthy();
   });
@@ -77,7 +77,7 @@ describe("HorseCompare styling improvements", () => {
     const h2 = mkHorse({ id: "h2", name: "Beta" });
     const h3 = mkHorse({ id: "h3", name: "Gamma" });
     render(<HorseCompare horses={[h1, h2, h3]} {...baseProps} />);
-    const table = screen.getByRole("table");
+    const table = screen.getByTestId("compare-metric-table");
     expect(within(table).getByText("Alpha")).toBeTruthy();
     expect(within(table).getByText("Beta")).toBeTruthy();
     expect(within(table).getByText("Gamma")).toBeTruthy();
@@ -147,7 +147,7 @@ describe("HorseCompare styling improvements", () => {
     const h1 = mkHorse({ id: "h1" });
     const h2 = mkHorse({ id: "h2" });
     const { container } = render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
-    const table = screen.getByRole("table");
+    const table = screen.getByTestId("compare-metric-table");
     const progressBars = within(table).getAllByRole("progressbar");
     expect(progressBars.length).toBeGreaterThan(0);
   });
@@ -164,7 +164,7 @@ describe("HorseCompare styling improvements", () => {
     const hB = mkHorse({ id: "hB", name: "BBB" });
     const hC = mkHorse({ id: "hC", name: "CCC" });
     render(<HorseCompare horses={[hB, hA, hC]} {...baseProps} />);
-    const table = screen.getByRole("table");
+    const table = screen.getByTestId("compare-metric-table");
     const headers = within(table).getAllByRole("columnheader");
     const headerTexts = headers.map((h) => h.textContent || "");
     expect(headerTexts[1]).toContain("BBB");

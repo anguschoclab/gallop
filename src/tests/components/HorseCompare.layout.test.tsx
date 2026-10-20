@@ -139,7 +139,7 @@ describe("HorseCompare responsive layout", () => {
     const h1 = mkHorse({ id: "h1" });
     const h2 = mkHorse({ id: "h2" });
     render(<HorseCompare horses={[h1, h2]} {...baseProps} />);
-    const table = screen.getByRole("table");
+    const table = screen.getByTestId("compare-metric-table");
     const ths = table.querySelectorAll("th");
     const metricTh = ths[0];
     expect(metricTh.className).toContain("w-28");

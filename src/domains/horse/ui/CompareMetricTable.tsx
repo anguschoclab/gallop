@@ -12,7 +12,7 @@ interface CompareMetricTableProps {
 export function CompareMetricTable({ horses, rows }: CompareMetricTableProps) {
   return (
     <div className="rounded border border-white/5 overflow-x-auto">
-      <table className="w-full text-sm">
+      <table data-testid="compare-metric-table" className="w-full text-sm">
         <thead>
           <tr className="border-b border-white/10">
             <th
