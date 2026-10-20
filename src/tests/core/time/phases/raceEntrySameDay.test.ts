@@ -45,7 +45,14 @@ function setup(raceDay: number) {
   const base = { day: 1, entityId: "horse-1", priority: 100, source: "player" as const };
   const intents = [
     { ...base, id: "i1", type: "race_entry", raceId: "race-1", horseId: "horse-1" },
-    { ...base, id: "i2", type: "tactics", raceId: "race-1", horseId: "horse-1", jockeyInstructions: PLAN },
+    {
+      ...base,
+      id: "i2",
+      type: "tactics",
+      raceId: "race-1",
+      horseId: "horse-1",
+      jockeyInstructions: PLAN,
+    },
   ] as unknown as AnyIntent[];
   return createMockPipelineContext({ state, intents, newDay: 2 });
 }

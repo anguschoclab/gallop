@@ -91,16 +91,19 @@ export const INSTRUCTION_PRESETS: InstructionPreset[] = [
 
 export type PresetId = (typeof INSTRUCTION_PRESETS)[number]["id"];
 
-/** Look up a preset by id, falling back to the Default preset. */
+/**
+ * Look up a preset by id, falling back to the Default preset.
+ * @param id - Preset id to find
+ */
 export function getPreset(id: string): InstructionPreset {
   return INSTRUCTION_PRESETS.find((p) => p.id === id) ?? INSTRUCTION_PRESETS[0];
 }
 
 /**
  * Fill in horseId and raceId for a preset to create a complete JockeyInstructions.
- * @param preset
- * @param horseId
- * @param raceId
+ * @param preset - The preset whose instruction fields to copy
+ * @param horseId - Horse these instructions apply to
+ * @param raceId - Race these instructions apply to
  */
 export function buildInstructions(
   preset: InstructionPreset,

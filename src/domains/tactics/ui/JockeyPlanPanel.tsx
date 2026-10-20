@@ -116,7 +116,11 @@ export function JockeyPlanPanel({ horseId }: { horseId?: string }) {
                   onValueChange={(id) => {
                     const preset = INSTRUCTION_PRESETS.find((p) => p.id === id);
                     if (!preset) return;
-                    setRaceTactics(r.raceId, r.horseId, buildInstructions(preset, r.horseId, r.raceId));
+                    setRaceTactics(
+                      r.raceId,
+                      r.horseId,
+                      buildInstructions(preset, r.horseId, r.raceId),
+                    );
                     toast.success(`${horse?.name ?? "Horse"}: plan set to ${preset.name}.`);
                   }}
                 >

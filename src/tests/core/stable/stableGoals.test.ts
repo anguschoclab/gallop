@@ -219,6 +219,8 @@ describe("campaign net worth includes horse values", () => {
     expect(b.horseValue).toBe(horseMarketValue(mine));
     expect(b.horseValue).toBeGreaterThan(0);
     expect(b.total).toBe(Math.round(50_000 + horseMarketValue(mine)));
-    expect(goalProgress({ classGoals: {}, startDay: 0, weight: 1 }, [mine, other], 50_000).netWorth).toBe(b.total);
+    expect(
+      goalProgress({ classGoals: {}, startDay: 0, weight: 1 }, [mine, other], 50_000).netWorth,
+    ).toBe(b.total);
   });
 });

@@ -103,8 +103,8 @@ describe("STORE_STATE_VERSION constant", () => {
     expect(Number.isInteger(STORE_STATE_VERSION)).toBe(true);
   });
 
-  it("bumps once for the normalized campaign schema", () => {
-    expect(STORE_STATE_VERSION).toBe(10);
+  it("bumps for the PersonIdentity schema", () => {
+    expect(STORE_STATE_VERSION).toBe(11);
   });
 });
 

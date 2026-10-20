@@ -27,10 +27,22 @@ const race = (over: Partial<PlanRaceLike> = {}): PlanRaceLike => ({
 
 describe("resolveEntryPlan", () => {
   it("prefers the newest pending tactics intent over the plan on the entry", () => {
-    const r = race({ entries: [{ horseId: "h1", jockeyInstructions: plan({ ridingStyle: "stalker" }) }] });
+    const r = race({
+      entries: [{ horseId: "h1", jockeyInstructions: plan({ ridingStyle: "stalker" }) }],
+    });
     const res = resolveEntryPlan(r, "h1", [
-      { type: "tactics", raceId: "r1", horseId: "h1", jockeyInstructions: plan({ ridingStyle: "tactical" }) },
-      { type: "tactics", raceId: "r1", horseId: "h1", jockeyInstructions: plan({ ridingStyle: "front_runner" }) },
+      {
+        type: "tactics",
+        raceId: "r1",
+        horseId: "h1",
+        jockeyInstructions: plan({ ridingStyle: "tactical" }),
+      },
+      {
+        type: "tactics",
+        raceId: "r1",
+        horseId: "h1",
+        jockeyInstructions: plan({ ridingStyle: "front_runner" }),
+      },
     ]);
     expect(res.source).toBe("pending");
     expect(res.instructions?.ridingStyle).toBe("front_runner");

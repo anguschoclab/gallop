@@ -12,7 +12,6 @@ import {
   analyticsEventArraySchema,
 } from "@/platform/persistence/storage/schemas";
 import { createDefaultGameState } from "@/platform/game/store/state";
-import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -25,12 +24,7 @@ function makeValidWizardState() {
   return {
     step: 1,
     stableName: "Test Stable",
-    owner: generatePersonIdentity({
-      id: "player",
-      displayName: "Test Owner",
-      role: "owner",
-      ageBand: "adult",
-    }),
+    ownerName: "Test Owner",
     silk: { pattern: "solid", primary: "#FF0000", secondary: "#0000FF", cap: "#00FF00" },
     backstoryId: "backstory-1",
     worldSize: "medium",

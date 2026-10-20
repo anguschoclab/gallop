@@ -70,6 +70,6 @@ export function generateTrainerStatsImpact(
     },
     fameDelta,
     specialty,
-    reason: `${assignedTrainer.person.biography.displayName} trained ${horse.name} to ${position}${getOrdinalSuffix(position)} in ${race.name}`,
+    reason: `${assignedTrainer.person?.biography?.displayName ?? assignedTrainer.name ?? "The trainer"} trained ${horse.name} to ${position}${getOrdinalSuffix(position)} in ${race.name}`,
   } as TrainerStatsImpact;
 }

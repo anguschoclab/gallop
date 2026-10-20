@@ -2,10 +2,16 @@ import { describe, it, expect } from "vitest";
 import { createInitialState } from "@/platform/game/store/initialization";
 import type { NewGameOptions } from "@/platform/game/store/state";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
+import { generatePersonIdentity } from "@/domains/person/simulation/generator";
 
 const mockProfile = {
   stableName: "Alignment Test Stable",
-  ownerName: "Alignment Test Owner",
+  owner: generatePersonIdentity({
+    id: "player",
+    displayName: "Alignment Test Owner",
+    role: "owner",
+    ageBand: "adult",
+  }),
   silk: { pattern: "solid", primary: "#FF0000", secondary: "#0000FF", cap: "#00FF00" },
   backstoryId: "wealthy_dilettante" as any,
   founded: 1,

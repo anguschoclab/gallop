@@ -281,54 +281,54 @@ describe("NavSection", () => {
 
   // Group 5 — Reset sidebar layout
   describe("reset sidebar layout", () => {
-    it("T5.1: 'Reset sidebar layout' button exists in the Configuration section", () => {
+    it("T5.1: 'Reset sidebar layout' button exists in the More section", () => {
       render(<SidebarNav {...sidebarProps} />);
-      // Open Configuration section (collapsed by default)
-      fireEvent.click(screen.getByText("Configuration").closest("button")!);
+      // Open More section (collapsed by default)
+      fireEvent.click(screen.getByText("More").closest("button")!);
       const btn = screen.getByLabelText("Reset sidebar layout");
       expect(btn).toBeTruthy();
     });
 
     it("T5.2: clicking it clears all gallop_sidebar_section:* keys from localStorage", () => {
-      localStorage.setItem(STORAGE_PREFIX + "Headquarters", "0");
-      localStorage.setItem(STORAGE_PREFIX + "My Stable", "1");
+      localStorage.setItem(STORAGE_PREFIX + "Stable", "0");
+      localStorage.setItem(STORAGE_PREFIX + "Racing", "1");
       render(<SidebarNav {...sidebarProps} />);
-      fireEvent.click(screen.getByText("Configuration").closest("button")!);
+      fireEvent.click(screen.getByText("More").closest("button")!);
       const btn = screen.getByLabelText("Reset sidebar layout");
       fireEvent.click(btn);
-      // After reset, persist effect writes defaults: Headquarters open ("1"), My Stable collapsed ("0")
-      expect(localStorage.getItem(STORAGE_PREFIX + "Headquarters")).toBe("1");
-      expect(localStorage.getItem(STORAGE_PREFIX + "My Stable")).toBe("0");
+      // After reset, persist effect writes defaults: Stable open ("1"), Racing collapsed ("0")
+      expect(localStorage.getItem(STORAGE_PREFIX + "Stable")).toBe("1");
+      expect(localStorage.getItem(STORAGE_PREFIX + "Racing")).toBe("0");
     });
 
-    it("T5.3: after reset, first section (Headquarters) is open, rest are collapsed", () => {
+    it("T5.3: after reset, first section (Stable) is open, rest are collapsed", () => {
       render(<SidebarNav {...sidebarProps} />);
-      // Expand My Stable manually
-      const myStableBtn = screen.getByText("My Stable").closest("button")!;
-      fireEvent.click(myStableBtn);
-      expect(screen.getByText("Stables")).toBeTruthy();
-      // Open Configuration to access reset button
-      fireEvent.click(screen.getByText("Configuration").closest("button")!);
+      // Expand Racing manually
+      const racingBtn = screen.getByText("Racing").closest("button")!;
+      fireEvent.click(racingBtn);
+      expect(screen.getByText("Race Center")).toBeTruthy();
+      // Open More to access reset button
+      fireEvent.click(screen.getByText("More").closest("button")!);
       const resetBtn = screen.getByLabelText("Reset sidebar layout");
       fireEvent.click(resetBtn);
-      // Headquarters should be open (contains Dashboard at "/")
+      // Stable should be open (contains Dashboard at "/")
       expect(screen.getByText("Dashboard")).toBeTruthy();
-      // My Stable should be collapsed
-      expect(screen.queryByText("Stables")).toBeNull();
+      // Racing should be collapsed
+      expect(screen.queryByText("Race Center")).toBeNull();
     });
 
     it("T5.4: after reset, previously user-expanded sections are collapsed back to defaults", () => {
       render(<SidebarNav {...sidebarProps} />);
-      // Expand The World
-      const worldBtn = screen.getByText("The World").closest("button")!;
-      fireEvent.click(worldBtn);
-      expect(screen.getByText("Racing")).toBeTruthy();
-      // Open Configuration to access reset button
-      fireEvent.click(screen.getByText("Configuration").closest("button")!);
+      // Expand Market
+      const marketBtn = screen.getByText("Market").closest("button")!;
+      fireEvent.click(marketBtn);
+      expect(screen.getByText("Auction")).toBeTruthy();
+      // Open More to access reset button
+      fireEvent.click(screen.getByText("More").closest("button")!);
       const resetBtn = screen.getByLabelText("Reset sidebar layout");
       fireEvent.click(resetBtn);
-      // The World should be collapsed again
-      expect(screen.queryByText("Racing")).toBeNull();
+      // Market should be collapsed again
+      expect(screen.queryByText("Auction")).toBeNull();
     });
   });
 });

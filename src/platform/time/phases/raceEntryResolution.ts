@@ -82,8 +82,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
         sameDayJockeys.set(`${a.raceId}:${a.horseId}`, a.jockeyId);
       }
     }
-    const sameDayAdds: Array<{ raceId: string; bumpEntryHorseId?: string; entry: RaceEntry }> =
-      [];
+    const sameDayAdds: Array<{ raceId: string; bumpEntryHorseId?: string; entry: RaceEntry }> = [];
 
     const { horseMap, stableMap } = context;
     // Clone raceMap locally: NPC bump eviction mutates entries to track ejections

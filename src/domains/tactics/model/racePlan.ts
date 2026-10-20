@@ -44,7 +44,8 @@ export function resolveEntryPlan(
   let jockeyId = entry?.jockeyId;
   for (const intent of pendingIntents) {
     if (intent.raceId !== race.id || intent.horseId !== horseId) continue;
-    if (intent.type === "tactics" && intent.jockeyInstructions) pendingPlan = intent.jockeyInstructions;
+    if (intent.type === "tactics" && intent.jockeyInstructions)
+      pendingPlan = intent.jockeyInstructions;
     if (intent.type === "race_entry" && intent.jockeyInstructions && !pendingPlan)
       pendingPlan = intent.jockeyInstructions;
     if ((intent.type === "jockey_assignment" || intent.type === "race_entry") && intent.jockeyId)
@@ -68,6 +69,10 @@ export interface PlayerEntryPlan extends ResolvedEntryPlan {
 /**
  * Every upcoming player entry (confirmed or still pending) with its plan,
  * sorted by race day. Pending withdrawals are excluded.
+ * @param races - All races keyed by id
+ * @param pendingIntents - Unprocessed intents (tactics, entries, withdrawals)
+ * @param isPlayerHorse - Predicate identifying player-owned horses
+ * @param today - Current game day; races before it are excluded
  */
 export function collectPlayerEntryPlans(
   races: Record<string, PlanRaceLike>,
@@ -126,7 +131,10 @@ const TIMING_LABEL: Record<JockeyInstructions["moveTiming"], string> = {
   late: "late charge",
 };
 
-/** Short human summary, e.g. "Closer · drop back · late charge · 75% push". */
+/**
+ * Short human summary, e.g. "Closer · drop back · late charge · 75% push".
+ * @param plan - The jockey instructions to summarize
+ */
 export function summarizePlan(plan: JockeyInstructions): string {
   return [
     STYLE_LABEL[plan.ridingStyle] ?? plan.ridingStyle,

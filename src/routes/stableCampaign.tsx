@@ -77,10 +77,7 @@ function StableCampaignPage() {
     toast.success("Campaign goals cleared.");
   };
 
-  const worth = useMemo(
-    () => playerNetWorthBreakdown(Object.values(horses), cash),
-    [horses, cash],
-  );
+  const worth = useMemo(() => playerNetWorthBreakdown(Object.values(horses), cash), [horses, cash]);
 
   const nwPct = draft.targetNetWorth
     ? Math.min(100, (progress.netWorth / draft.targetNetWorth) * 100)
@@ -152,9 +149,9 @@ function StableCampaignPage() {
           {draft.targetNetWorth ? <Progress value={nwPct} aria-label="Net worth progress" /> : null}
           <div className="space-y-1.5 text-xs text-muted-foreground">
             <div>
-              Cash <span className="font-mono text-foreground/80">{money(worth.cash)}</span> + horses{" "}
-              <span className="font-mono text-foreground/80">{money(worth.horseValue)}</span> (
-              {worth.horses.length} horse{worth.horses.length === 1 ? "" : "s"} at today&apos;s
+              Cash <span className="font-mono text-foreground/80">{money(worth.cash)}</span> +
+              horses <span className="font-mono text-foreground/80">{money(worth.horseValue)}</span>{" "}
+              ({worth.horses.length} horse{worth.horses.length === 1 ? "" : "s"} at today&apos;s
               market value)
             </div>
             {worth.horses.length > 0 ? (

@@ -344,7 +344,7 @@ describe("seedGazetteNews", () => {
       for (const intro of intros) {
         const stable = stables.find((s) => intro.entityLinks?.some((el) => el.id === s.id));
         expect(stable).toBeDefined();
-        expect(intro.body).toContain(stable!.owner);
+        expect(intro.body).toContain(stable!.owner.biography.displayName);
       }
     });
 

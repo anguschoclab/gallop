@@ -83,11 +83,7 @@ export function PlayerRacePrompt() {
   function autoResolve() {
     // Set tactics before resolving
     if (enteredHorse) {
-      const instructions = buildInstructions(
-        getPreset(selectedPreset),
-        enteredHorse.id,
-        race!.id,
-      );
+      const instructions = buildInstructions(getPreset(selectedPreset), enteredHorse.id, race!.id);
       setRaceTactics(race!.id, enteredHorse.id, instructions);
     }
 

@@ -33,8 +33,15 @@ describe("seedGazetteNews — season opener empty-string fallback", () => {
     expect(text).toContain("A New Racing Operation");
   });
 
-  it("returns capitalized fallback when ownerName is empty string", () => {
-    const profile = makeProfile({ ownerName: "" });
+  it("returns capitalized fallback when owner displayName is empty string", () => {
+    const profile = makeProfile({
+      owner: generatePersonIdentity({
+        id: "player",
+        displayName: "",
+        role: "owner",
+        ageBand: "adult",
+      }),
+    });
     const result = seedGazetteNews([], [], [], profile, createTestRng());
     const seasonOpener = result.news.find(
       (n) => n.category === "flavor" && n.importance === "high",

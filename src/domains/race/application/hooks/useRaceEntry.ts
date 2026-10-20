@@ -83,11 +83,7 @@ export function useRaceEntry(race: Race) {
         // Tutorial beat 1: player entered their first race
         completeTutorialBeat(1);
         assignJockey(race.id, selectedHorseId, selectedJockeyId);
-        const instructions = buildInstructions(
-          getPreset(selectedPreset),
-          selectedHorseId,
-          race.id,
-        );
+        const instructions = buildInstructions(getPreset(selectedPreset), selectedHorseId, race.id);
         setRaceTactics(race.id, selectedHorseId, instructions);
 
         if (isNewClaimingRace) {

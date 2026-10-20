@@ -37,7 +37,7 @@ export function buildSeasonOpener(
   rng: Rng,
 ): NewsItem {
   const stableName = playerProfile?.stableName || "A New Racing Operation";
-  const ownerName = playerProfile?.owner.biography.displayName || "A Daring Newcomer";
+  const ownerName = playerProfile?.owner?.biography?.displayName || "A Daring Newcomer";
 
   const headlines = [
     `A New Era Begins: ${stableName} Opens Its Doors`,

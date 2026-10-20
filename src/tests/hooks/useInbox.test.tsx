@@ -361,9 +361,9 @@ describe("getPriorityColor", () => {
     expect(cls).toContain("red-500");
   });
 
-  it("returns gold classes for 'action'", () => {
+  it("returns primary (gold-accent) classes for 'action'", () => {
     const cls = getPriorityColor("action");
-    expect(cls).toContain("gold");
+    expect(cls).toContain("primary");
   });
 
   it("returns blue classes for 'info' (default)", () => {

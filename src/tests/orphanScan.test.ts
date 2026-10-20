@@ -420,29 +420,30 @@ describe("Orphan Scan: Hook Selectors", () => {
   const wiredHooks: string[] = [];
 
   for (const hookFile of hookFiles) {
-    it(`hook ${hookFile} is consumed by non-test source`, () => {
+    const hookFilePosix = hookFile.split(sep).join("/");
+    it(`hook ${hookFilePosix} is consumed by non-test source`, () => {
       const hookName =
-        hookFile
-          .split(sep)
+        hookFilePosix
+          .split("/")
           .pop()
           ?.replace(/\.[jt]sx?$/, "") ?? "";
       // Check if any non-test source file imports from this hook path
       // hookFile is relative to srcRoot (e.g., "hooks/analytics/useAnalyticsData.ts")
       // so the import path is "@/hooks/analytics/useAnalyticsData"
-      const importPathWithDir = `@/${hookFile.replace(/\.[jt]sx?$/, "")}`;
+      const importPathWithDir = `@/${hookFilePosix.replace(/\.[jt]sx?$/, "")}`;
       // Also check bare hook name for relative imports (./useXxx) within same directory
       const relativeImport = `./${hookName}`;
       const consumed = allSourceContents.some(
         (f) =>
-          !f.path.includes(hookFile) &&
+          !f.path.split(sep).join("/").includes(hookFilePosix) &&
           (f.text.includes(importPathWithDir) || f.text.includes(relativeImport)),
       );
 
-      const classified = consumed || quarantinedProductionPaths.has(hookFile);
+      const classified = consumed || quarantinedProductionPaths.has(hookFilePosix);
       if (consumed) {
-        wiredHooks.push(hookFile);
+        wiredHooks.push(hookFilePosix);
       } else if (!classified) {
-        orphanedHooks.push(hookFile);
+        orphanedHooks.push(hookFilePosix);
       }
       expect(classified).toBe(true);
     });

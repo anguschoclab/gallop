@@ -192,11 +192,11 @@ describe("exchangeSettlementPhase", () => {
 
   it("ticks the exchange on every day of a multi-day pipeline run", () => {
     const seller = desperateSeller();
-    const buyers = [richBuyer("buyer-1"), richBuyer("buyer-2"), richBuyer("buyer-3")];
+    // No buyers: nothing crosses, so the day's listings survive to assert on.
     const horses = sellerHorses(seller.id, 5);
     const state = makeGameState({
       day: 1,
-      npcStables: [seller, ...buyers],
+      npcStables: [seller],
       horses: h2r(horses),
       exchange: createDefaultExchangeState(),
     }) as GameState;
@@ -207,8 +207,10 @@ describe("exchangeSettlementPhase", () => {
     for (const dayResult of perDay) {
       expect(dayResult.state.exchange.lastRefreshDay).toBe(dayResult.day);
     }
-    // NPC asks are regenerated fresh every day — the final day's book is live
+    // NPC asks are regenerated fresh every day — every ask on the final book
+    // was listed on day 4, not carried over from earlier refreshes.
     expect(finalState.exchange.asks.length).toBeGreaterThan(0);
+    expect(finalState.exchange.asks.every((a) => a.createdDay === 4)).toBe(true);
     expect(finalState.exchange.lastRefreshDay).toBe(4);
   });
 
