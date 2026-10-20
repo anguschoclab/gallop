@@ -93,7 +93,7 @@ export const jockeyPhase = {
             } else {
               // Renew contract
               npcAIManager.stableStates[stable.id] = stableAI;
-              return { ...j, contractUntil: newDay + 90 };
+              return { ...j, contractUntil: newDay + JOCKEY_CONTRACT_DAYS };
             }
           }
         }

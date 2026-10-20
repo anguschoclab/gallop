@@ -1,0 +1,343 @@
+550	🧹 Mason: Deduplicate strings in handler canHandle methods
+549	⚡ Bolt: Optimize high-frequency simulation loops
+548	🎨 Palette: Add standard delay to NewGameWizard tooltips
+547	🧪 Probe: [Core behavior of daily progress snapshotting is now covered]
+546	📯 Herald: Expanded rivalry conditional template variety
+545	🔨 Anvil: Replaced React.FC<any> with precise prop contracts for LedgerEntryComponent
+544	⚡ Bolt: Optimize simulation loop allocations
+543	🧹 Mason: Deduplicate Impact Handler Event Registration
+542	🧪 Probe: track geometry modifiers in race engine
+541	📯 Herald: Expanded rivalry conditional narrative variants
+540	⚡ Bolt: Eliminate high-frequency GC allocations in race simulation loop
+539	🧹 Mason: Deduplicate hardcoded impact arrays in resolver handlers
+538	🧹 Mason: Simplify canHandle in resolver handlers
+537	⚡ Bolt: Pre-allocate arrays and maps in simulation tick loop
+536	🧪 Probe: Race resolution and prize money payout splits
+535	🔨 Anvil: Strengthened LedgerEntryComponent prop type
+532	🧹 Mason: Deduplicate impact handler type definitions
+531	🧪 Probe: dailyProgress snapshotting and tracking
+529	⚡ Bolt: Eliminate GC allocations in race simulation hot loop
+528	🧪 Probe: Core auction action validations
+526	🧹 Mason: deduplicate canHandle logic in impact handlers
+524	📈 Tipster: Surfaced "Undefeated" insight for perfect career records
+522	🧹 Mason: Deduplicate impact routing to use dictionary keys
+519	🎨 Palette: Add standard tooltip delay to NewGameWizard
+518	🧪 Probe: Add tests for auction validation actions
+517	⚡ Bolt: Avoid Map allocation and array spread in simulation loop
+516	🧹 Mason: deduplicate canHandle check in resolver handlers
+514	🧪 Probe: Jockey procedural naming edge cases
+513	📈 Tipster: Sire Value
+511	🧪 Probe: test coverage for trackGeometryModifiers
+509	🧪 Probe: Awards Scoring Edge Cases
+508	🧹 Mason: deduplicate ImpactHandlerFunction
+507	⚡ Bolt: Refactor buildFieldContext to use single loop
+506	📯 Herald: Directive News enrichment
+505	✨ Groom: Added destructive styling to irreversible AlertDialog actions
+504	⚡ Bolt: Optimize buildFieldContext array allocations
+503	🧪 Probe: Awards Scoring gender restrictions
+502	🧹 Mason: Deduplicate ImpactHandlerFunction across handlers
+501	📯 Herald: Expanded stable naming theme patterns (4 → 14)
+500	🎨 Palette: Icon-only button tooltip accessibility
+499	🔨 Anvil: [Removed unsafe 'as never' cast in auction phase]
+498	📯 Herald: Grudge match defeat news variety
+497	🧹 Mason: Deduplicate ImpactHandlerFunction in handlers
+496	⚡ Bolt: Optimize high-frequency loop in buildFieldContext
+495	🧹 Mason: Deduplicate ImpactHandlerFunction signature in resolver handlers
+494	🧪 Probe: environmental wind effects now covered
+493	🔨 Anvil: Strict payload types for buildCampaignIntent
+492	📯 Herald: Enriched directive change news variety
+491	⚡ Bolt: Optimize buildFieldContext with imperative loops
+490	🧪 Probe: [regional awards scoring engine]
+489	📈 Tipster: Jockey Chemistry Insight
+488	⚡ Bolt: Optimize buildFieldContext performance
+487	🎨 Palette: Add tooltips to icon-only buttons
+486	🧹 Mason: Deduplicate ImpactHandlerFunction across resolver handlers
+485	📯 Herald: Directive News Variety Gap
+484	⚡ Bolt: Optimize high-frequency buildFieldContext loop
+483	⚡ Bolt: Replace functional array chaining with imperative loop in `buildFieldContext`
+482	🧪 Probe: Test jockeyEffects during race simulation
+481	🧹 Mason: Deduplicate ImpactHandlerFunction across resolver handlers
+480	🧹 Mason: Deduplicate ImpactHandlerFunction in resolver handlers
+479	⚡ Bolt: [Optimize buildFieldContext performance]
+478	📯 Herald: directive news variety
+477	🧹 Mason: Deduplicate ImpactHandlerFunction across handlers
+476	📈 Tipster: Surfaced Perfect Partnership insight for jockeys
+475	🧪 Probe: test coverage for awards/scoring
+474	⚡ Bolt: Replace chained array methods with imperative loops in Beyer calculations
+473	✨ Groom: Add tooltips to icon-only buttons
+472	🧹 Mason: Centralize ImpactHandlerFunction
+471	📮 Herald: [Enriched Stable Directive News Variety]
+470	🎨 Palette: Add tooltips to icon-only buttons
+469	🧪 Probe: [raceAdvisor.ts deterministic logic]
+468	⚡ Bolt: Optimize high-frequency buildFieldContext loop
+467	🧪 Probe: Award Tiebreaker Behavior
+466	📯 Herald: Directive News Variety
+465	🧹 Mason: Deduplicate ImpactHandlerFunction
+464	⚡ Bolt: Optimize buildFieldContext by removing chained array methods
+463	⚡ Bolt: Optimize buildFieldContext performance
+462	🧪 Probe: Test coverage for Grinding condition in runnerConditionDerivation
+461	🧹 Mason: Centralize ImpactHandlerFunction and deduplicate handler types
+460	📯 Herald: Directive Change News Variety
+459	⚡ Bolt: Optimize track field context array allocations
+458	🎨 Palette: Add tooltip to clear comparison icon button
+457	🧪 Probe: test coverage for calculateCrossFamilyAffinity
+456	✨ Groom: Use DisabledTooltipWrapper in compare bar
+455	🎨 Palette: Add missing ARIA labels to icon buttons
+454	📯 Herald: Expanded flavor story variety
+453	🧹 Mason: Deduplicate `ImpactHandlerFunction` across handler modules
+452	🧪 Probe: NPC Private Sale Decision Math
+451	⚡ Bolt: optimize buildFieldContext to reduce iteration overhead
+449	🧹 Mason: Fix layering violation in NpcCareerTrackerPanel
+448	📯 Herald: Added variety to directive change news
+447	⚡ Bolt: Pre-compute liveRank to prevent O(N^2) complexity in runner mappings
+446	🧪 Probe: test auction impact application logic
+445	🔨 Anvil: Remove 'as any' in syndicate stake derivations
+444	⚡ Bolt: Replace O(N^2) findIndex with O(1) map lookup in runner condition derivation
+443	🧪 Probe: NPC Training Intents
+442	📯 Herald: Expanded race news reporting variety
+441	🔨 Anvil: Remove explicit any in syndicate stakes calculations
+440	🔨 Anvil: Remove `any` bypass for branded key record lookup in syndicateStakes.ts
+439	📈 Tipster: Earnings Milestone Watch
+438	⚡ Bolt: Pre-compute liveRank to prevent O(N²) lookups in deriveRunnerConditions
+437	🧪 Probe: Add tests for NPC career tracking and offscreen starts
+436	🎨 Palette: Improve accessibility of destructive start new game action
+435	📯 Herald: Expanded margin-based race news templates
+434	📯 Herald: Added jockey flavor stories
+433	⚡ Bolt: Replace O(n²) nested array lookup with O(1) map lookup in runner condition derivation
+432	🧪 Probe: Added tests for pure breeding compatibility logic
+431	🔨 Anvil: Replaced explicit "any" casts with branded keys for OwnerKey maps
+430	🎨 Palette: Replace Dialog with AlertDialog for destructive "Start new game" action
+429	📈 Tipster: Surfaced Stable-wide Racing Trends (Surface, Distance)
+428	📯 Herald: Added variety to flavor stories
+427	🎨 Palette: Convert new game confirmation to Alert Dialog
+426	🧪 Probe: track geometry scoring
+425	🔨 Anvil: Forged Player Syndicate Stakes Indexing
+424	✨ Groom: Use Tooltip component for AwardIcon instead of native title
+423	⚡ Bolt: Optimize race sectional analysis to remove hot loop allocations
+422	🧪 Probe: Uncovered untested logic in resolveBloodline recursion
+421	📯 Herald: track flavor story added
+420	🔨 Anvil: Strengthen OwnerKey indexing in syndicate stakes
+419	🧹 Mason: Deduplicate CONTINENT_TO_REGION constant
+418	🧪 Probe: order books and market depth generation
+417	🔨 Anvil: Remove explicit any casting in syndicate stakes
+416	🧪 Probe: tested claimingResolutionService orchestration
+415	⚡ Bolt: Optimize O(N²) Object.fromEntries allocation in sire analytics
+414	🔨 Anvil: Remove 'as any' casting for OwnerKey lookup
+413	📯 Herald: Directive Change News Variety
+412	🧪 Probe: Core breeding inbreedingCalculator coverage
+411	🔨 Anvil: Tightened tier typing in TrackPrestigeSection
+410	📯 Herald: Expanded breeding flavor stories
+409	📈 Tipster: Gate Affinity Insights
+408	⚡ Bolt: Precompute race conditions outside high-frequency render loop
+407	🧪 Probe: Awards scoring category eligibility
+406	📯 Herald: Expanded conditional race result flavor variants
+405	🧹 Mason: Remove deprecated race simulation services proxies
+404	⚡ Bolt: Prevent hidden duplicate buildFieldContext allocation in high-frequency Track render loop
+403	⚡ Bolt: prevent duplicate buildFieldContext allocations per frame
+402	📯 Herald: Flavor Stories Content Expansion
+400	⚡ Bolt: Hoist markerFractions array allocation in LiveSplitsTable
+399	🔨 Anvil: Remove unsafe any casts in insurance intents
+398	🧪 Probe: Core track condition rules and climate effects
+397	🧪 Probe: [resolveAuctionSale bidding war logic]
+396	🧪 Probe: Foaling resolution
+395	⚡ Bolt: optimize applyBlockingEffect hot loop
+394	🎨 Palette: Replace native title with custom Tooltip and aria-label for LiveAnnualTimeline remove button
+393	🔨 Anvil: Removed explicit any casts in insuranceIntents
+392	🎨 Palette: Replace native title with custom Tooltip for Remove Slot action
+391	⚡ Bolt: Optimize runner condition derivation hot loops
+390	📯 Herald: Expanded track and jockey flavor stories
+389	🧪 Probe: NPC auction consignment strategy logic
+388	🎨 Palette: Add accessibility attributes to replay filters
+387	⚡ Bolt: Optimize condition derivation loops
+386	🧪 Probe: Core financial expense logic and utilities
+385	✨ Groom: Replace native confirm dialog with AlertDialog for retiring horses
+384	📯 Herald: Expanded race commentary START/FINISH templates
+383	🧪 Probe: auction consignment policy coverage
+382	🔨 Anvil: Remove any cast in HQOpsWidget and fix revealed type error
+381	🧪 Probe: Test coverage for insightMetrics flattening and boundaries
+380	⚡ Bolt: Hoist buildFieldContext to fix O(N^2) re-render bottleneck
+379	📯 Herald: Expanded Flavor Stories
+378	🎨 Palette: Improve accessibility of attachment info button
+377	🧪 Probe: findInvitationQualifiers logic
+376	🎨 Palette: Add ARIA label to AttachmentBreakdown info button
+375	🔨 Anvil: Narrowed raceHistory entry type in raceContextBuilder
+374	📯 Herald: Expanded jockey trait commentary variety
+373	✨ Groom: Replace native title tooltips with Radix Tooltips in StableCard
+372	⚡ Bolt: Hoist buildFieldContext to fix O(N²) in Track render
+371	🧪 Probe: staff generator logic
+370	🎨 Palette: Replace native title with Tooltip on Compare button
+369	⚡ Bolt: Optimize O(N²) dictionary creation in auction logic
+368	🔨 Anvil: Type-safe race history lookup in raceContextBuilder
+367	📯 Herald: Flavor Stories System Enrichment
+366	🔨 Anvil: Tighten AI State types in RivalIntelTab
+365	📬 Herald: Flavor stories variety expanded
+364	⚡ Bolt: Replace Set allocation with Array.includes in tacticalAI
+363	🧪 Probe: track condition recovery logic
+362	⚡ Bolt: Remove O(N^2) complexity in Track visualizer
+361	🔨 Anvil: [Strengthened raceHistoryEntry in buildRaceContext]
+360	⚡ Bolt: Removed Set allocation in calculateTacticalAdjustment
+359	✨ Groom: Add clear filters button to empty horse gallery
+358	🎨 Palette: Added missing aria-label to info button in AttachmentBreakdown
+357	🔨 Anvil: Remove redundant 'as any' casts in Inbox and Store State
+356	📯 Herald: Expanded Flavor Stories
+355	⚡ Bolt: Remove Set allocation in tacticalAI loop
+354	📯 Herald: Expanded Flavor Stories Variety
+353	🧪 Probe: buildAuctionImpacts resolution
+352	🔨 Anvil: Strict typing for DosageMetrics cache
+351	🧪 Probe: Core transaction utilities
+350	⚡ Bolt: Remove Set allocation from tacticalAI hot loop
+349	📯 Herald: Expanded weather and jockey flavor stories
+348	🔨 Anvil: [Removed as any cast in useInbox priority filtering]
+347	🧪 Probe: Award ceremony invitation qualifiers
+346	⚡ Bolt: optimize hot path array lookups in tactical AI
+345	⚡ Bolt: Prevent Set Allocation in tactical AI hot loop
+344	🧪 Probe: transportCost behavior covered
+343	📯 Herald: Expanded Atmosphere and Midrace Commentary Templates
+342	⚡ Bolt: Optimize tactical AI hot loops to reduce GC pressure
+341	✨ Groom: Added tooltip explanation when compare limit is reached
+340	🎨 Palette: Add ARIA labels to icon-only buttons
+339	📯 Herald: Expanded track and jockey flavor stories
+338	🧪 Probe: Auction Valuation Modifiers
+337	🎨 Palette: Added accessible tooltips to breeding planner icon buttons
+336	⚡ Bolt: Optimize tactical AI calculations in race engine
+335	⚡ Bolt: Combine array allocations in tacticalAI hot loop
+334	🧪 Probe: added test coverage for resolveBloodline traversal and fallback
+333	⚡ Bolt: Memoize horse record building in valuation logic to prevent O(N^2) overhead
+332	📯 Herald: Enriched Flavor Stories for track, breeding, and community themes
+331	🔨 Anvil: Type staffByStable array correctly
+330	📯 Herald: Expert insight surface fit templates
+329	🧪 Probe: Stable rivalry friction constraints and thresholds
+328	🔨 Anvil: Strict typing for TanStack Router Link components
+327	📯 Herald: Flavor Stories Variety Expansion
+326	🧪 Probe: Race impacts coverage
+325	⚡ Bolt: Add React.memo to Live Leaderboard to prevent excessive re-renders
+324	🧪 Probe: Race Engine stamina fade calculation
+323	🔨 Anvil: Removed as any cast from TanStack Router Link
+322	📯 Herald: Flavor Stories Content Expansion
+321	🔨 Anvil: Type-safe EntityName router links without any
+320	🧪 Probe: wealth standings dead horses
+319	🎨 Palette: Add ARIA label to delete plan button
+318	📯 Herald: Expanded stable intro and region lost news variety
+317	📯 Herald: Industry news variety
+316	🧪 Probe: Add tests for Beyer figure calculations
+315	🧹 Mason: Remove unused generateFanCountImpact function
+299	📯 Herald: Enriched biographical race commentary
+298	🔨 Anvil: Forged explicit types for RaceFeed props
+297	🔨 Anvil: Remove explicit any from RaceFeed props
+296	🧪 Probe: added tests for horse grading
+295	🧪 Probe: Add tests for Claiming Race Mechanics
+294	⚡ Bolt: O(1) stable lookup in DiplomacyPanel
+293	🔨 Anvil: Tightened types in RacingHandler triple_crown_progress map
+292	📯 Herald: stable intro news templates
+291	🧹 Mason: Delete stray duplicate script file
+290	✨ Groom: Add tooltip explaining disabled state on Bid button
+289	🧪 Probe: computeIndustryMeanEarnings in breeding/industryMetrics
+288	⚡ Bolt: Optimize O(N) array lookups in DiplomacyPanel
+287	🧪 Probe: Tactical AI adjustments
+286	📯 Herald: Added contextual flavor to Race News
+285	📈 Tipster: Distance Versatility Insight
+284	🎨 Palette: Accessible tooltip for disabled Buy Now button
+283	⚡ Bolt: Memoize expensive computations in SchedulerTab
+282	📈 Tipster: Regression Risk (Bounce Candidate)
+281	🔨 Anvil: Type RaceFeed props and entry iterations
+280	✨ Groom: Tooltip for disabled Buy Now button
+279	🧹 Mason: Move transaction handling to FinanceHandler
+278	🧪 Probe: Add unit tests for horse grading logic
+277	🎨 Palette: Add tooltip for disabled bids
+276	📈 Tipster: Stakes Performance Insights
+275	⚡ Bolt: [O(1) diplomacy stable lookups]
+273	📈 Tipster: Surface Versatility Insight
+272	⚡ Bolt: Use hash map for stable alliances lookup
+268	📈 Tipster: Surfaced 'Closing Kick' insight for deep closers
+265	⚡ Bolt: Optimize O(N) lookup in ShareOwnershipPanel
+264	⚡ Bolt: Optimize O(N^2) lookups in RivalArchivesView
+259	📈 Tipster: Tactical Versatility & Late Charge Insights
+255	⚡ Bolt: Optimize RivalArchivesView with O(1) hash map lookup
+252	📈 Tipster: From the Clouds insight for deep closers
+250	📈 Tipster: Late Bloomer insight (Off-the-Pace wins)
+247	⚡ Bolt: O(1) Lookups in Rival Archives Alliances
+244	📈 Tipster: From the Clouds Insight
+242	⚡ Bolt: Optimize RivalArchivesView O(N^2) Lookup
+239	📈 Tipster: Surfaced "From the Clouds" late closer insight
+238	⚡ Bolt: Optimize jockey fee calculation
+228	⚡ Bolt: Optimize StableRosterView selection lookup
+211	⚡ Bolt: Optimize redundant array lookups across multiple component renders
+183	🎨 Palette: Add tooltip to disabled Next button in Identity step
+176	🧹 Mason: Consolidate entity mutations in specific handlers
+175	📯 Herald: Expanded mid-race commentary variety
+174	🎨 Palette: Add accessible tooltips to CampaignCard action buttons
+173	🧪 Probe: auto-entry behavior for managed campaigns is now covered
+172	⚡ Bolt: Remove O(N) local map recreation in useHorseDetail
+171	⚡ Bolt: [performance improvement] optimize O(N*M) lookup in auction index render
+170	🎨 Palette: Add tooltips to icon-only buttons in inbox
+169	📯 Herald: [narrative commentary variety]
+168	🧪 Probe: Horse and stud fee pricing logic
+167	⚡ Bolt: Optimize `computeFounderInfluence` to use O(1) Lookups
+166	🎨 Palette: Dynamic label association with useId in Wizard
+165	🧪 Probe: auction lot eligibility tests
+164	✨ Groom: Added informative tooltips to disabled training buttons
+163	📯 Herald: Expanded expert insight commentary variety
+162	🔨 Anvil: Strengthen TransportIntent type
+161	📯 Herald: Expanded race commentary templates
+160	🧪 Probe: horse pricing and valuation logic
+139	🎨 Palette: [UX improvement] Add Tooltip for insufficient funds disabled button
+136	🛡️ Sentinel: [security improvement] Replace window.location.href with useNavigate to prevent potential DOM XSS
+135	🎨 Palette: Add accessible tooltip to BookmarkButton
+134	🎨 Palette: Use standard Tooltip for BookmarkButton
+133	⚡ Bolt: [performance improvement] Optimize StaffSupportPanel lookups
+132	🎨 Palette: [UX improvement] Add tooltips to time advance buttons
+131	⚡ Bolt: [performance improvement] Optimize auction lot resolution
+130	Fix missing raceMap synchronization during day advancement
+127	🛡️ Sentinel: [security improvement] Replace insecure Math.random() with cryptographically seeded RNG
+126	⚡ Bolt: [performance improvement] Optimize SpeedBreakdownTable render loops
+125	🛡️ Sentinel: [security improvement] Upgrade nondeterministicRng to use crypto.getRandomValues
+124	🎨 Palette: Add aria-labels and titles to navigation buttons
+123	⚡ Bolt: [performance improvement] Pre-calculate entry map in SpeedBreakdownTable to avoid O(N^3) lookup
+122	🎨 Palette: [UX improvement] Replace native tooltips with accessible UI tooltips in sidebar
+121	⚡ Bolt: [performance improvement] Optimize nested O(N*M) lookup in SpeedBreakdownTable render loop
+120	🛡️ Sentinel: [MEDIUM] Fix weak random number generation entropy
+119	⚡ Bolt: [performance improvement] Add raceMap for O(1) global state lookups
+118	🎨 Palette: [UX improvement] Add aria-label to Calendar DayButton
+117	⚡ Bolt: [performance improvement] Pre-calculate map for O(1) runner lookups in JockeyReportPanel
+116	🛡️ Sentinel: [CRITICAL/HIGH] Fix Math.random() usage
+115	🛡️ Sentinel: [MEDIUM] Replace insecure Math.random() with secure crypto RNG for fallback paths
+114	🎨 Palette: Improve chart legend accessibility with dynamic ARIA labels
+113	⚡ Bolt: [performance improvement] Optimize O(N) render loops in Race Visualizer
+110	🎨 Palette: [UX improvement] Add ARIA pressed state and button type to roster filters
+109	⚡ Bolt: O(1) hash map lookup for horses in loops
+108	⚡ Bolt: Optimize TransportPlanner horse lookups to O(1)
+106	🎨 Palette: Accessible Custom Selection Buttons
+103	🎨 Palette: Improved accessibility for Breeding Program dialog controls
+102	🧪 Add tests for banister.decayValue
+101	🧪 Add test coverage for Banister logic module
+100	🧪 Add tests for breedingCalendar functions
+99	🧪 Add tests for breedingCalendar.isUniversalBirthday
+98	🧪 [testing improvement] Test breedingCalendar.isUniversalBirthday function
+97	🧪 Test SaveLoadDialog save error handling
+96	🧪 Improve intentGenerators error handling test coverage
+95	🧪 [testing improvement] Add tests for calculatePeakingIndex
+94	🧪 Add unit tests for getApprenticeStatus
+93	🧪 Add tests for npcCycle error handling
+92	🧪 Add tests for Banister fitness/fatigue health model
+91	🧪 Add tests for getClaimAllowance
+88	⚡ Bolt: Optimize stable lookups in auction theater processing
+79	⚡ Bolt: Replace O(N) race lookups with O(1) hash map in head-to-head calculations
+76	⚡ Bolt: optimize timeline with O(1) map lookups
+71	⚡ Bolt: O(1) optimization for race runner odds
+69	🎨 Palette: Improve accessibility of Delete Save button
+68	⚡ Bolt: [SectionalTimingTable] Optimize O(N) lookup in render loop
+66	🎨 Palette: Add ARIA label to icon-only Delete Save button
+50	🧪 test: improve testing of opfsService initialization
+21	🎨 Palette: Add comprehensive ARIA accessibility attributes to AppShell
+19	🧹 Improve code health: replace any type with PedigreeHorse in collectAncestors
+17	🧪 Add tests for Graded Races Utils
+15	🧪 Add tests for getRaceCountry and getCountry utils
+14	⚡ Optimize BeyerExpectations O(N^2) horse lookup
+13	⚡ Optimize resolveAuctionSale with O(1) horse lookup
+12	🧹 [code health improvement] Fix 'any' type in OPFS iteration
+11	⚡ Optimize npcRaceEntry arrays to Map lookups
+9	🧪 [Test] Add coverage for NPC stables generator
+8	🧪 Add tests for breedingCompatibility.calculateDosageCompatibility edge cases
+7	🧪 [testing improvement] Add tests for npcStable functions and fix getMajorStables
+6	🧪 [Add tests for getMajorStables]
+5	🧪 Add tests for track data helpers

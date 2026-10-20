@@ -41,3 +41,13 @@ Running findings ledger. Verdicts: BUG (fix in Phase 4), SMELL (note only), OVER
 - shared/assets/narrative/*.ts — clean template string tables; templates.ts barrel consistent; NOTED `EXPERT_INSIGHT: []` and `JOCKEY_TRAIT: []` empty entries — verify consumers handle empty (check commentaryGenerator).
 - shared/ui/* (33 primitives) — vendored shadcn/Radix, scanned for anomalies (none); clean.
 - shared/data/jargon.ts, jockeys.ts, personalityTraits.ts, accessors/* — clean.
+- `phases/*` — reviewed upkeep, solvency, market, npcCycle, raceEntryResolution, trainingResolution, claimResolution, claimRegistration, auctions, npcBankruptcy, races, pregnancy, jockeyPhase, archiving, stewards, npcClaiming (quarantined inert), weather, economy, worldAssessment, dailySnapshot, horseDeath, stallionRetirement, pastureRetirement, hallOfFame, energy, aging, scheduler. All deterministic (dailyRng or hashStr-seeded per-race), immutable state updates, impacts routed through resolver.
+- **BUG-3 (minor)**: `hallOfFamePhase` computes `inductionYear = Math.floor(newDay/365)+1` — day 365 yields year 2 while `getCurrentYear` (floor((d-1)/365)+1) yields year 1. Off-by-one on year-boundary days.
+- SMELL: `raceEntryResolution` transport cash_change uses `entityId: ""` (routes to player correctly) but escapes solvencyPhase's `entityId === "player"` projection filter — projected cash under-counts transport fees.
+- SMELL: `jockeyPhase` contract renewal hardcodes `newDay + 90` while hires use `JOCKEY_CONTRACT_DAYS` constant — drift risk.
+- SMELL: `races.ts` retains a "Bolt Optimization" bot-attribution comment.
+- SMELL: `npcBankruptcy` mutates `context.state` fields directly (state.syndicates/horses/auctions assignment) — works because buildContext shallow-copies, but inconsistent with the immutable convention.
+- APPROVED: `eventTriggersPhase` + `npcClaimingPhase` intentionally inert/unregistered — guarded by architecture tests.
+- SMELL: `stewardsPhase` picks inquiry outcome uniformly at random (1/5 each) — merit-blind.
+- `uuid/uuid.ts` — `generateUUIDWithValidation` uses CJS `require()` in ESM + zero production callers (dead code; uuidRegistry only self-tested). CANDIDATE-DELETE.
+- `headToHead.ts` — `Date.now()` seed default is fine (UI preview Monte Carlo, not sim path).

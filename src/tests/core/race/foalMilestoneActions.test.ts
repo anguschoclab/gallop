@@ -71,7 +71,9 @@ describe("foalMilestoneActions", () => {
 
     it("returns error if horse is not player owned", () => {
       const horse = mockHorse({ ownership: makeUnowned() });
-      expect(validateMilestoneResolution(horse, "breaking_in", "c1")).toBe("You do not own this horse.");
+      expect(validateMilestoneResolution(horse, "breaking_in", "c1")).toBe(
+        "You do not own this horse.",
+      );
     });
 
     it("returns error if horse has no development arc", () => {
@@ -88,12 +90,16 @@ describe("foalMilestoneActions", () => {
 
     it("returns error if milestone is already resolved", () => {
       const horse = mockHorse();
-      expect(validateMilestoneResolution(horse, "early_workouts", "c2")).toBe("Milestone already resolved.");
+      expect(validateMilestoneResolution(horse, "early_workouts", "c2")).toBe(
+        "Milestone already resolved.",
+      );
     });
 
     it("returns error if choice is not found", () => {
       const horse = mockHorse();
-      expect(validateMilestoneResolution(horse, "breaking_in", "invalid_c")).toBe("Choice not found.");
+      expect(validateMilestoneResolution(horse, "breaking_in", "invalid_c")).toBe(
+        "Choice not found.",
+      );
     });
   });
 

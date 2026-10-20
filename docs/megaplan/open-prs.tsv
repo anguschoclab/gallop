@@ -1,0 +1,25 @@
+# Open PR inventory (generated for megaplan). Columns: pr, branch, behind-main, ahead, files
+# behind = commits on main since merge-base; relocation commit ef6eba3e is ~30+ commits back.
+# pre-reloc = branch authored against pre-relocation tree (touches src/core/, src/assets/, src/components/, src/routes old names)
+pr	branch	behind	ahead	reloc	artifact-flags	files
+551	tipster-distance-change-17635855247357214224	62	1	pre	.jules	src/core/horse/insightDetectors.ts; src/tests/core/horse/insightDistanceChange.test.ts; src/tests/core/horse/insightRegistry.test.ts
+552	probe-foal-milestone-tests-17864665647464780430	62	1	pre	none	src/tests/core/race/foalMilestoneActions.test.ts
+553	herald-race-context-enrichment-7152520387631755217	62	2	pre	.jules;bun.lockb	src/assets/narrative/raceContextTemplates.ts; src/tests/components/HorseAnalyticsSection.test.tsx
+554	mason-handler-deduplication-15095170907995936122	33	3	pre	test-fixture-hunks	src/core/resolver/handlers/DiplomacyHandler.ts; src/core/resolver/handlers/InboxHandler.ts; src/core/stable/stableRankings.ts; src/routes/stableRankings.tsx; src/tests/components/HorseAnalyticsSection.test.tsx; src/tests/game/storeRaceMapSync.test.ts
+555	probe-test-jockey-g1-wins-13312926118823460726	33	3	pre	.jules;naming-baseline	src/tests/components/HorseAnalyticsSection.test.tsx; src/tests/core/awards/connectionTrophies.test.ts; src/tests/game/storeRaceMapSync.test.ts
+556	groom-auction-confirmation-9192513814473532238	33	3	pre	naming-baseline	src/components/market/AuctionHouseDesk.tsx; src/tests/components/HorseAnalyticsSection.test.tsx; src/tests/game/storeRaceMapSync.test.ts
+557	bolt-get-dynamic-profile-perf-3956264082494433414	33	4	pre	.jules;route-rename	src/core/race/engine/runningStyleProfiles.ts; src/routes/stableRankings.tsx; src/tests/components/HorseAnalyticsSection.test.tsx; src/tests/game/storeRaceMapSync.test.ts
+558	probe-regions-test-14040859383004531282	21	1	pre	none	src/tests/core/calendar/regions.test.ts
+559	groom/use-disabled-tooltip-wrapper-14192402298263965854	21	4	pre	.jules	src/components/horse/PrivateTrialDialog.tsx; src/tests/components/HorseAnalyticsSection.test.tsx; src/tests/game/storeRaceMapSync.test.ts
+560	herald-commentary-variety-8537033459808279531	21	3	pre	.jules	src/assets/narrative/templates.ts; src/tests/components/HorseAnalyticsSection.test.tsx; src/tests/game/storeRaceMapSync.test.ts
+561	mason-standardize-handlers-12418207356160813355	21	4	pre	.jules	src/core/resolver/handlers/DiplomacyHandler.ts; src/core/resolver/handlers/InboxHandler.ts; src/tests/components/HorseAnalyticsSection.test.tsx; src/tests/game/storeRaceMapSync.test.ts
+563	anvil-branded-type-assertions-5580059138535703311	9	2	post	none	src/domains/market/simulation/rankingsComparison.ts; src/domains/stable/simulation/stableRankings.ts; src/tests/core/time/phases/crossPhaseDataFlow.test.ts
+564	probe-house-quotes-11520687021809015898	9	1	post	none	src/tests/core/market/houseQuotes.test.ts
+565	herald/atmosphere-templates-expansion-7993694902427489736	9	1	post	none	src/shared/assets/narrative/atmosphereTemplates.ts
+566	tipster-earnings-per-start-9723342281987732227	9	4	post	linux-snapshots;ci-step	src/domains/horse/simulation/insightDetectors.ts; src/tests/core/horse/insightRegistry.test.ts; src/tests/core/horse/insights.test.ts; src/tests/core/time/phases/crossPhaseDataFlow.test.ts; .github/workflows/ci.yml; src/tests/e2e/visual.spec.ts-snapshots/*-linux.png x8
+567	jules-14110855560228655410-7576479c	9	3	post	.Jules;test-results	src/domains/auction/ui/pages/AuctionSalePage.tsx; .Jules/palette.md; test-results/* x8; src/tests/core/time/phases/crossPhaseDataFlow.test.ts
+568	mason-standardize-handler-routing-13149392013855612916	9	4	post	none	src/platform/resolver/handlers/DiplomacyHandler.ts; src/platform/resolver/handlers/InboxHandler.ts; src/tests/core/time/phases/crossPhaseDataFlow.test.ts
+569	tipster-earnings-yield-11609113802275858566	4	1	post	.jules;bun.lockb	src/domains/horse/simulation/insightDetectors.ts; src/tests/core/horse/insightRegistry.test.ts; src/tests/core/horse/insights.test.ts
+570	bolt-transaction-archive-reduce-optimization-3248583840123574588	4	1	post	.jules	src/domains/auction/ui/TransactionArchive.tsx
+571	probe/horse-attachment-tests-14716542878803385204	4	2	post	playwright-report;test-results;data-churn	AGENTS.md; playwright-report/index.html; src/shared/data/tracks.json; src/tests/core/horse/attachment.test.ts; src/tests/fixtures/campaignManifest.json; test-results/.last-run.json
+572	palette-aria-labels-7648527513729663053	2	1	post	none	src/domains/dashboard/ui/DebtBanner.tsx; src/domains/financial/ui/TransactionLedger.tsx
