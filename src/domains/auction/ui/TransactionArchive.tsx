@@ -20,9 +20,11 @@ export function TransactionArchive({ pastSales }: TransactionArchiveProps) {
       </div>
       <div className="space-y-2">
         {pastSales.slice(0, 5).map((sale) => {
-          const topLot = sale.lots
-            .filter((l) => l.hammerPrice)
-            .sort((a, b) => (b.hammerPrice ?? 0) - (a.hammerPrice ?? 0))[0];
+          const topLot = sale.lots.reduce<(typeof sale.lots)[0] | undefined>((max, lot) => {
+            if (!lot.hammerPrice) return max;
+            if (!max || lot.hammerPrice > (max.hammerPrice ?? 0)) return lot;
+            return max;
+          }, undefined);
           return (
             <Link
               key={sale.id}
