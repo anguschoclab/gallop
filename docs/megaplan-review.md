@@ -75,7 +75,7 @@ outside this window, by design.
 ## #566 vs #569 merge rationale
 
 Both add an earnings-per-start detector; a registry is first-match-wins so only
-one could live. #569 (Rainmaker ≥$100k, Prize Fighter ≥$25k, ≥5 starts) and
+one could live. PRs #569 (Rainmaker ≥$100k, Prize Fighter ≥$25k, ≥5 starts) and
 #566 (Lucrative Career ≥$50k, Money Pit <$1.5k with ≥10 starts) have compatible
 thresholds — merged into a single tiered detector:
 Rainmaker ≥$100k → Lucrative Career ≥$50k → Prize Fighter ≥$25k → Money Pit
