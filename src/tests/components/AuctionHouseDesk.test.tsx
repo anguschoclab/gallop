@@ -27,9 +27,9 @@ function seedWithSellableHorse() {
     day: 100,
     cash: 500_000,
     horses: h2r([horse]),
-    sellHorseToAuctionHouse: sellSpy as any,
-    buyHorseFromAuctionHouse: buySpy as any,
-  });
+    sellHorseToAuctionHouse: sellSpy,
+    buyHorseFromAuctionHouse: buySpy,
+  } as Parameters<typeof renderWithStore>[1]);
   return { horse, sellSpy, buySpy };
 }
 
