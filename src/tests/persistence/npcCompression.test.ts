@@ -336,6 +336,31 @@ describe("career continuity persistence", () => {
     expect(regen.lastRaceDay).toBe(200);
   });
 
+  it("round-trips dynamic condition state (energy/fitness/fatigue/form)", () => {
+    const stable = makeTestStable();
+    const npc = makeNpcHorses(stable, 1)[0];
+    npc.energy = 37;
+    npc.fitness = 72;
+    npc.fatigue = 18;
+    npc.peakingIndex = 54;
+    npc.form = 81;
+    npc.recoveryPoints = 42;
+    npc.lastFoaledDay = 300;
+    npc.healthStatusDay = 250;
+
+    const summaries = compressNpcHorses([stable], { [npc.id]: npc });
+    const [regen] = regenerateNpcHorses(summaries, [stable]);
+
+    expect(regen.energy).toBe(37);
+    expect(regen.fitness).toBe(72);
+    expect(regen.fatigue).toBe(18);
+    expect(regen.peakingIndex).toBe(54);
+    expect(regen.form).toBe(81);
+    expect(regen.recoveryPoints).toBe(42);
+    expect(regen.lastFoaledDay).toBe(300);
+    expect(regen.healthStatusDay).toBe(250);
+  });
+
   it("restores stud counters instead of zeroed defaults", () => {
     const stable = makeTestStable();
     const npc = makeNpcHorses(stable, 1)[0];

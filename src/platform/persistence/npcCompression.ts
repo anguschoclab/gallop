@@ -59,6 +59,15 @@ export interface NpcHorseSummary {
   activeInjury?: ActiveInjury;
   lastBeyer?: number;
   lastRaceDay?: number;
+  /** Dynamic condition state — regenerated defaults would wipe Banister load. */
+  energy?: number;
+  fitness?: number;
+  fatigue?: number;
+  peakingIndex?: number;
+  form?: number;
+  recoveryPoints?: number;
+  lastFoaledDay?: number;
+  healthStatusDay?: number;
   /** Stud counters (only set when `atStud`). */
   seasonBookings?: number;
   lifetimeFoals?: number;
@@ -122,6 +131,14 @@ export function compressNpcHorses(
       activeInjury: horse.activeInjury,
       lastBeyer: horse.lastBeyer,
       lastRaceDay: horse.lastRaceDay,
+      energy: horse.energy,
+      fitness: horse.fitness,
+      fatigue: horse.fatigue,
+      peakingIndex: horse.peakingIndex,
+      form: horse.form,
+      recoveryPoints: horse.recoveryPoints,
+      lastFoaledDay: horse.lastFoaledDay,
+      healthStatusDay: horse.healthStatusDay,
       seasonBookings: horse.stud?.seasonBookings,
       lifetimeFoals: horse.stud?.lifetimeFoals,
       lifetimeStakesFoals: horse.stud?.lifetimeStakesFoals,
@@ -194,6 +211,14 @@ export function regenerateNpcHorses(summaries: NpcHorseSummary[], stables: Stabl
     if (summary.activeInjury) horse.activeInjury = { ...summary.activeInjury };
     if (summary.lastBeyer !== undefined) horse.lastBeyer = summary.lastBeyer;
     if (summary.lastRaceDay !== undefined) horse.lastRaceDay = summary.lastRaceDay;
+    if (summary.energy !== undefined) horse.energy = summary.energy;
+    if (summary.fitness !== undefined) horse.fitness = summary.fitness;
+    if (summary.fatigue !== undefined) horse.fatigue = summary.fatigue;
+    if (summary.peakingIndex !== undefined) horse.peakingIndex = summary.peakingIndex;
+    if (summary.form !== undefined) horse.form = summary.form;
+    if (summary.recoveryPoints !== undefined) horse.recoveryPoints = summary.recoveryPoints;
+    if (summary.lastFoaledDay !== undefined) horse.lastFoaledDay = summary.lastFoaledDay;
+    if (summary.healthStatusDay !== undefined) horse.healthStatusDay = summary.healthStatusDay;
 
     // Restore stud career if applicable
     if (summary.atStud) {
