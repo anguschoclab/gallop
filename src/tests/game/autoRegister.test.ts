@@ -352,3 +352,58 @@ describe("calculateAutoRegisterEntries", () => {
     }
   });
 });
+
+describe("auto-entry picks the next campaign goal race", () => {
+  const goals = { classGoals: { G1: 1 }, startDay: 0, weight: 1 };
+  const strong = () =>
+    createMockHorse({
+      stats: {
+        speed: 95,
+        stamina: 95,
+        acceleration: 95,
+        temperament: 90,
+        conformation: 90,
+        consistency: 90,
+      },
+    });
+
+  it("enters the soonest race serving an open class goal", () => {
+    const horse = strong();
+    const plain = createMockRace({ day: 3, purse: 50_000, raceClass: "Allowance" as never });
+    const laterG1 = createMockRace({ day: 7, raceClass: "G1" as never, purse: 20_000 });
+    const soonG1 = createMockRace({ day: 5, raceClass: "G1" as never, purse: 20_000 });
+    const result = calculateAutoRegisterEntries(
+      [horse],
+      [plain, laterG1, soonG1],
+      [createMockJockey()],
+      1_000_000,
+      1,
+      7,
+      5000,
+      goals,
+    );
+    expect(result.entries).toHaveLength(1);
+    expect(result.entries[0].raceId).toBe(soonG1.id);
+    expect(result.entries[0].goalClass).toBe("G1");
+  });
+
+  it("goes back to the best-scoring race once the class goal is met", () => {
+    const horse = strong();
+    horse.raceHistory = [
+      { raceId: "old", raceName: "Old G1", position: 1, day: 0, raceClass: "G1" } as never,
+    ];
+    const g1 = createMockRace({ day: 5, raceClass: "G1" as never, purse: 20_000 });
+    const plain = createMockRace({ day: 3, purse: 50_000, raceClass: "Allowance" as never });
+    const result = calculateAutoRegisterEntries(
+      [horse],
+      [plain, g1],
+      [createMockJockey()],
+      1_000_000,
+      1,
+      7,
+      5000,
+      goals,
+    );
+    expect(result.entries[0]?.goalClass).toBeUndefined();
+  });
+});

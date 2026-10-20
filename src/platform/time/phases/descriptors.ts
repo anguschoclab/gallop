@@ -595,6 +595,7 @@ export const GAME_PHASE_DESCRIPTORS: PhaseDescriptor[] = [
       "cash",
       "syndicates",
       "strategyJournal",
+      "races",
       "rankingsHistory",
       "stableRankingsHistory",
       "npcStables",

@@ -111,7 +111,9 @@ function runDailyAutoEntry(context: PipelineContext): PipelineContext {
   );
   const logs = result.entries.map((e) => ({
     day: newDay,
-    text: `Auto-entered ${e.horseName} in ${e.raceName} (Day ${e.raceDay}).`,
+    text: e.goalClass
+      ? `Auto-entered ${e.horseName} in ${e.raceName} (Day ${e.raceDay}) — next ${e.goalClass} campaign goal race.`
+      : `Auto-entered ${e.horseName} in ${e.raceName} (Day ${e.raceDay}).`,
   }));
   let strategyJournal = state.strategyJournal;
   for (const e of result.entries) {

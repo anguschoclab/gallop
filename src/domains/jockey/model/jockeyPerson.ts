@@ -3,6 +3,8 @@ import { getPersonDisplayName } from "@/domains/person/model/displayName";
 
 export function getJockeyName(jockey?: Jockey | null): string {
   if (!jockey) return "Unknown Jockey";
+  // Older records may only carry the legacy `name` field.
+  if (!jockey.person?.biography?.displayName && jockey.name) return jockey.name;
   return getPersonDisplayName(jockey.person);
 }
 

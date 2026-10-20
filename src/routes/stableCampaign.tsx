@@ -97,8 +97,8 @@ function StableCampaignPage() {
           <Link to="/race-advisor" className="text-primary hover:underline">
             Race Advisor
           </Link>{" "}
-          lists goal races first, and Auto-Register and Daily Auto-Entry favour them when choosing
-          races.
+          lists goal races first. While a class goal is open, Auto-Register and Daily Auto-Entry
+          enter each horse in its next suitable goal race.
           {!autoEnter && " (Daily Auto-Entry is off — turn it on in Settings → Gameplay.)"}
         </p>
       </div>
