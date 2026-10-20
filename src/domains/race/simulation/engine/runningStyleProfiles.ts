@@ -149,9 +149,12 @@ export function getDynamicProfile(
   }
 
   return {
-    ...base,
+    label: base.label,
     preferredFieldFraction,
+    seekMaxDampen: base.seekMaxDampen,
     seekMaxBoost,
+    seekDampenSlope: base.seekDampenSlope,
+    seekBoostSlope: base.seekBoostSlope,
     spurtBuildupExtra,
   };
 }
