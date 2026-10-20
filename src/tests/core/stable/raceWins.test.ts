@@ -5,6 +5,7 @@ import {
   type PlayerRaceWinRecord,
 } from "@/domains/stable/simulation/raceWins";
 import { createTestHorse } from "@/tests/helpers";
+import { createTestJockey } from "@/tests/helpers/createTestJockey";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId, asHorseId } from "@/shared/types/branded";
 import { createTransaction } from "@/domains/transactions/model/transactionTypes";
@@ -231,10 +232,7 @@ describe("derivePlayerRaceWins", () => {
       ],
     });
 
-    const mockJockey = {
-      id: "j-1" as any,
-      name: "Elena Vance",
-    } as any;
+    const mockJockey = createTestJockey({ id: "j-1" as any, name: "Elena Vance" });
 
     const wins = derivePlayerRaceWins({
       horses: [horse],
