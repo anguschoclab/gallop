@@ -196,6 +196,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                 type="number"
                 data-testid="day-range-start"
                 value={dayRange.start}
+                aria-label="Start day"
                 onChange={(e) => handleDayRangeChange("start", Number(e.target.value))}
                 className="w-12 h-7 px-1 text-center font-mono text-[10px] bg-black/40 border border-white/10 text-foreground/60 focus:outline-none focus:border-primary/30"
               />
@@ -204,6 +205,7 @@ export function TransactionLedger({ transactions, day }: TransactionLedgerProps)
                 type="number"
                 data-testid="day-range-end"
                 value={dayRange.end}
+                aria-label="End day"
                 onChange={(e) => handleDayRangeChange("end", Number(e.target.value))}
                 className="w-12 h-7 px-1 text-center font-mono text-[10px] bg-black/40 border border-white/10 text-foreground/60 focus:outline-none focus:border-primary/30"
               />
