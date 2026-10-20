@@ -949,3 +949,107 @@ describe("Tipster: Sire Value insight", () => {
     expect(insight?.label).not.toBe("Value Sire");
   });
 });
+
+describe("Tipster: Earnings Per Start insight (merged Rainmaker/Lucrative/PrizeFighter/MoneyPit tiers)", () => {
+  it("returns null when horse has fewer than 5 starts", () => {
+    const horse = {
+      careerStarts: 4,
+      lifetimeEarnings: 400000,
+      raceHistory: [
+        { position: 1, day: 1 },
+        { position: 1, day: 2 },
+        { position: 1, day: 3 },
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight?.label).not.toBe("Rainmaker");
+    expect(insight?.label).not.toBe("Lucrative Career");
+    expect(insight?.label).not.toBe("Prize Fighter");
+    expect(insight?.label).not.toBe("Money Pit");
+  });
+
+  it("detects Rainmaker when earnings per start is >= 100k", () => {
+    const horse = {
+      careerStarts: 5,
+      lifetimeEarnings: 550000,
+      raceHistory: [{}, {}, {}, {}, {}],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Rainmaker");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("detects Lucrative Career when earnings per start is >= 50k but < 100k", () => {
+    const horse = {
+      careerStarts: 5,
+      lifetimeEarnings: 250000,
+      raceHistory: [
+        { position: 1, day: 1 },
+        { position: 5, day: 2 },
+        { position: 1, day: 3 },
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Lucrative Career");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("detects Prize Fighter when earnings per start is >= 25k but < 50k", () => {
+    const horse = {
+      careerStarts: 10,
+      lifetimeEarnings: 300000,
+      raceHistory: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Prize Fighter");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("detects Money Pit when earnings per start is < 1.5k with >= 10 starts", () => {
+    const horse = {
+      careerStarts: 10,
+      lifetimeEarnings: 14000,
+      raceHistory: [
+        { position: 5, day: 1 },
+        { position: 5, day: 2 },
+        { position: 5, day: 3 },
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Money Pit");
+    expect(insight!.type).toBe("negative");
+  });
+
+  it("returns null for moderate earnings per start", () => {
+    const horse = {
+      careerStarts: 10,
+      lifetimeEarnings: 50000,
+      raceHistory: [
+        { position: 5, day: 1 },
+        { position: 5, day: 2 },
+        { position: 5, day: 3 },
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight?.label).not.toBe("Rainmaker");
+    expect(insight?.label).not.toBe("Lucrative Career");
+    expect(insight?.label).not.toBe("Prize Fighter");
+    expect(insight?.label).not.toBe("Money Pit");
+  });
+});
