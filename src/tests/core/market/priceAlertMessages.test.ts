@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { priceAlertMessage, tradeNotificationMessage } from "@/domains/market/simulation/priceAlertMessages";
+import {
+  priceAlertMessage,
+  tradeNotificationMessage,
+} from "@/domains/market/simulation/priceAlertMessages";
 
 describe("priceAlertMessages", () => {
   describe("priceAlertMessage", () => {
@@ -13,7 +16,7 @@ describe("priceAlertMessages", () => {
         movePct: 10,
         simMovePct: 10,
         realWorldMovePct: 0,
-        sampleSize: 5
+        sampleSize: 5,
       } as any);
 
       expect(result.day).toBe(100);
@@ -33,7 +36,7 @@ describe("priceAlertMessages", () => {
         movePct: -10,
         simMovePct: -10,
         realWorldMovePct: 0,
-        sampleSize: 1
+        sampleSize: 1,
       } as any);
 
       expect(result.title).toBe("elite horses: prices down -10.0%");
@@ -52,7 +55,7 @@ describe("priceAlertMessages", () => {
         simMovePct: 8,
         realWorldLabel: "Keeneland Sep",
         realWorldMovePct: 12,
-        sampleSize: 10
+        sampleSize: 10,
       } as any);
 
       expect(result.body).toContain("Game trades moved +8.0% while the Keeneland Sep moved +12.0%");
@@ -68,7 +71,7 @@ describe("priceAlertMessages", () => {
         role: "buyer",
         horseName: "Fast Boy",
         price: 5000,
-        counterpartyName: "NPC Stable"
+        counterpartyName: "NPC Stable",
       } as any);
 
       expect(result.title).toBe("Bought Fast Boy for $5,000");
@@ -84,7 +87,7 @@ describe("priceAlertMessages", () => {
         role: "seller",
         horseName: "Slow Girl",
         price: 3000,
-        counterpartyName: "Rich Player"
+        counterpartyName: "Rich Player",
       } as any);
 
       expect(result.title).toBe("Sold Slow Girl for $3,000");
@@ -99,11 +102,13 @@ describe("priceAlertMessages", () => {
         horseName: "Star",
         askPrice: 10000,
         bidPrice: 10500,
-        bidderName: "Aggressive Buyer"
+        bidderName: "Aggressive Buyer",
       } as any);
 
       expect(result.title).toBe("Bid covers your ask on Star");
-      expect(result.body).toBe("Aggressive Buyer is bidding $10,500 against your $10,000 ask. You can take the bid now.");
+      expect(result.body).toBe(
+        "Aggressive Buyer is bidding $10,500 against your $10,000 ask. You can take the bid now.",
+      );
       expect(result.priority).toBe("action");
     });
   });
