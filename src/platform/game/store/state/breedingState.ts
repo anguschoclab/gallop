@@ -22,6 +22,7 @@ import type { Syndicate } from "@/domains/breeding/model/types";
 import type { SyndicateValueSnapshot } from "@/domains/breeding/simulation/syndicateLedger";
 import type { InvestorRecord } from "@/domains/breeding/model/investorTypes";
 import type { HorseId } from "@/shared/types/branded";
+import type { RivalStake } from "@/domains/syndicates/model/rivalStakes";
 
 export interface MatingPlanEntry {
   damId: HorseId;
@@ -58,6 +59,8 @@ export interface BreedingState {
   syndicateValueSnapshots: SyndicateValueSnapshot[];
   /** Saved mating plans for reuse across breeding seasons */
   savedMatingPlans: SavedMatingPlan[];
+  /** Player stakes in rival stables' racehorses, keyed by horse id */
+  rivalStakes: Record<string, RivalStake>;
 }
 
 /**
@@ -76,5 +79,6 @@ export function createDefaultBreedingState(): BreedingState {
     shareActivityFeed: [],
     syndicateValueSnapshots: [],
     savedMatingPlans: [],
+    rivalStakes: {},
   };
 }

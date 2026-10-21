@@ -28,7 +28,9 @@ import type {
   ShareTransactionImpact,
   SyndicateFeeDistributionImpact,
   SyndicateSatisfactionImpact,
+  RivalStakePayoutImpact,
 } from "@/platform/resolver/impacts/breedingImpacts";
+import { MAX_STAKE_PAYOUTS } from "@/domains/syndicates/model/rivalStakes";
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   syndicate_creation: (draft, impact, lookupMaps) => {
@@ -285,6 +287,28 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
     const newSatisfaction = Math.max(0, Math.min(100, currentSatisfaction + satisfactionDelta));
     syndicate.shareholderSatisfaction[stableId] = newSatisfaction;
     syndicate.lastSatisfactionUpdate = impact.day;
+  },
+
+  rival_stake_payout: (draft, impact) => {
+    const p = impact as RivalStakePayoutImpact;
+    const stake = draft.rivalStakes?.[p.horseId];
+    if (!stake) return;
+    // Idempotent: a race pays a stake once even if impacts are replayed.
+    if (stake.payouts.some((row) => row.raceId === p.raceId)) return;
+    stake.prizeEarned += p.share;
+    stake.reputationEarned += p.reputation;
+    stake.payouts.push({
+      day: p.day,
+      raceId: p.raceId,
+      raceName: p.raceName,
+      position: p.position,
+      prize: p.prize,
+      share: p.share,
+      reputation: p.reputation,
+    });
+    if (stake.payouts.length > MAX_STAKE_PAYOUTS) {
+      stake.payouts = stake.payouts.slice(-MAX_STAKE_PAYOUTS);
+    }
   },
 };
 

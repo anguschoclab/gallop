@@ -22,6 +22,7 @@ const LIVE_IMPACT_TYPES = new Set<string>([
   "cash_change",
   "reputation_change",
   "syndicate_satisfaction",
+  "rival_stake_payout",
   "race_history",
   "form_change",
   "fame_change",
@@ -37,7 +38,8 @@ const LIVE_IMPACT_TYPES = new Set<string>([
 
 export function isLivePlayerImpact(impact: AnyImpact): boolean {
   if (impact.type === "transaction") {
-    return (impact as TransactionImpact).category === "prize_money";
+    const category = (impact as TransactionImpact).category;
+    return category === "prize_money" || category === "stake_dividend";
   }
   return LIVE_IMPACT_TYPES.has(impact.type);
 }

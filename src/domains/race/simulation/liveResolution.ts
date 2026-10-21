@@ -100,6 +100,7 @@ export function applyLiveRaceResolution(
       calibratedPars: state.calibratedPars || {},
       raceWeatherState: undefined,
       syndicates: state.syndicates,
+      rivalStakes: state.rivalStakes,
       narrativeArcs: state.narrativeArcs,
     });
     const applied = applyImpacts({

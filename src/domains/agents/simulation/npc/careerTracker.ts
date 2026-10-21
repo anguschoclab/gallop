@@ -164,7 +164,7 @@ function ageAtDay(horse: Horse, day: number, currentDay: number): number {
   return Math.max(0, Math.floor(horse.age) - elapsedYears);
 }
 
-function careerStageAtDay(horse: Horse, day: number, currentDay: number): NpcCareerStage {
+export function careerStageAtDay(horse: Horse, day: number, currentDay: number): NpcCareerStage {
   if (horse.retiredOnDay !== undefined && day >= horse.retiredOnDay) return "retired";
   const age = ageAtDay(horse, day, currentDay);
   const peak = horse.peakAge && horse.peakAge > 2 ? horse.peakAge : 4;

@@ -5,6 +5,7 @@ import { BookmarkButton } from "@/domains/bookmarks/ui/BookmarkButton";
 import { NumericValue } from "@/domains/horse/ui/HorseBits";
 import { formatCurrency } from "@/shared/common/formatting";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
+import { RivalStakesPage } from "@/domains/syndicates/ui/RivalStakesPage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { PrivateSaleOfferDialog } from "@/domains/auction/ui/PrivateSaleOfferDialog";
 import { PersonRaceHistoryTab } from "@/domains/person/ui/PersonRaceHistoryTab";
@@ -190,6 +191,7 @@ function NpcStableDetailPage() {
 
             <TabsContent value="roster" className="mt-0 space-y-6 animate-in fade-in duration-300">
               <NpcStableRosterTab pageData={pageData} />
+              <RivalStakesPage stableId={stableId} />
             </TabsContent>
 
             <TabsContent value="trading" className="mt-0 animate-in fade-in duration-300">

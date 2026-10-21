@@ -32,6 +32,10 @@ import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/domains/breeding/model/
 import { asPlayerOwnerId, asHorseId } from "@/shared/types/branded";
 import { getStableId } from "@/domains/horse/simulation/ownership";
 import { requireOwned, requireHorse } from "@/platform/game/store/guards";
+import {
+  buyRivalStake,
+  sellRivalStake,
+} from "@/domains/syndicates/simulation/rivalStakeTrades";
 import type { StoreSet, StoreGet } from "@/platform/game/store/types";
 import {
   createSyndicateActions,
@@ -68,6 +72,16 @@ export type BreedingSlice = BreedingState & {
     sharesOffered: number,
   ) => { ok: true; investorId: string } | { ok: false; reason: string };
   buyoutInvestor: (investorId: string) => { ok: true } | { ok: false; reason: string };
+  /** Buy a percentage stake in a rival stable's racehorse. */
+  buyRivalStake: (
+    horseId: string,
+    percent: number,
+  ) => { ok: true; amount: number } | { ok: false; reason: string };
+  /** Sell part or all of a rival-horse stake back to its owner. */
+  sellRivalStake: (
+    horseId: string,
+    percent: number,
+  ) => { ok: true; amount: number } | { ok: false; reason: string };
   breedBatch: (entries: MatingPlanEntry[]) => {
     ok: boolean;
     results: BatchBreedResult[];
@@ -213,6 +227,20 @@ export function createBreedingSlice(
     },
 
     ...createSyndicateActions(set, get, enqueueIntent),
+
+    buyRivalStake: (horseId, percent) => {
+      const result = buyRivalStake(get(), horseId, percent);
+      if (!result.ok) return result;
+      set(result.patch);
+      return { ok: true, amount: result.amount };
+    },
+
+    sellRivalStake: (horseId, percent) => {
+      const result = sellRivalStake(get(), horseId, percent);
+      if (!result.ok) return result;
+      set(result.patch);
+      return { ok: true, amount: result.amount };
+    },
 
     ...createBreedingBatchActions(set, get, enqueueIntent),
   };

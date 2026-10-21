@@ -1,4 +1,5 @@
 import { useRouter, useParams } from "@tanstack/react-router";
+import { HorseValueBreakdownPanel } from "@/domains/market/ui/HorseValueBreakdownPanel";
 import { HardDrive } from "lucide-react";
 import { AuctionTheater } from "@/domains/auction/ui/AuctionTheater";
 import { SaleHeader } from "@/domains/auction/ui/SaleHeader";
@@ -183,6 +184,8 @@ function AuctionSalePage() {
                 {!isResolved && (
                   <LotBidsPanel bidHistory={currentLot.bidHistory} stables={stables} />
                 )}
+
+                <HorseValueBreakdownPanel horse={horse} house={saleHouse} />
 
                 {isPlayerConsigned && !isResolved && (
                   <ConsignmentWithdrawal

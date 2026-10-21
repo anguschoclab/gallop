@@ -18,6 +18,8 @@ export type TransactionSubcategory =
   | "private_sale"
   | "stud_fee"
   | "other_income"
+  | "stake_dividend"
+  | "stake_sale"
   // Expense subcategories
   | "upkeep"
   | "training"
@@ -29,6 +31,7 @@ export type TransactionSubcategory =
   | "jockey_fee"
   | "breeding_fee"
   | "horse_purchase"
+  | "stake_purchase"
   | "facility_maintenance"
   | "other_expense"
   // Transfer subcategories
@@ -225,6 +228,8 @@ export function formatTransactionSubcategory(subcategory: TransactionSubcategory
     private_sale: "Private Sale",
     stud_fee: "Stud Fee",
     other_income: "Other Income",
+    stake_dividend: "Stake Prize Share",
+    stake_sale: "Stake Sale",
     // Expense
     upkeep: "Daily Upkeep",
     training: "Training",
@@ -236,6 +241,7 @@ export function formatTransactionSubcategory(subcategory: TransactionSubcategory
     jockey_fee: "Jockey Fee",
     breeding_fee: "Breeding Fee",
     horse_purchase: "Horse Purchase",
+    stake_purchase: "Stake Purchase",
     facility_maintenance: "Facility Maintenance",
     other_expense: "Other Expense",
     // Transfer

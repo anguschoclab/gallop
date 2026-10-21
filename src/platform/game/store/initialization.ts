@@ -275,6 +275,7 @@ export function createInitialState(
     shareTransactions: [],
     shareActivityFeed: [],
     syndicateValueSnapshots: [],
+    rivalStakes: {},
     staffPool: [],
     hiredStaff: [],
     breedingPrograms: [],

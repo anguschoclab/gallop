@@ -14,6 +14,8 @@ import { generateJockeyFeeImpacts } from "@/domains/race/simulation/impacts/jock
 import { generateJockeyAffinityImpact } from "@/domains/race/simulation/impacts/jockeyAffinity";
 import type { Race, Horse, Jockey, RaceResult, RaceEntry } from "@/platform/game/types";
 import type { Syndicate } from "@/domains/breeding/model/types";
+import type { RivalStake } from "@/domains/syndicates/model/rivalStakes";
+import { generateRivalStakeImpacts } from "@/domains/race/simulation/impacts/rivalStakeImpacts";
 
 export function generateFinancialBreedingImpacts(
   horse: Horse,
@@ -27,6 +29,7 @@ export function generateFinancialBreedingImpacts(
   newDay: number,
   rng?: Rng,
   getId?: () => string,
+  rivalStakes?: Record<string, RivalStake>,
 ): AnyImpact[] {
   const impacts: AnyImpact[] = [];
 
@@ -37,6 +40,20 @@ export function generateFinancialBreedingImpacts(
     if (prizeImpacts.transactionImpact) impacts.push(prizeImpacts.transactionImpact);
     if (prizeImpacts.reputationImpact) impacts.push(prizeImpacts.reputationImpact);
   }
+
+  // Player stake in a rival horse: split the owner's prize and award prestige
+  impacts.push(
+    ...generateRivalStakeImpacts(
+      horse,
+      r.position,
+      race,
+      prizeImpacts?.cashImpact,
+      rivalStakes?.[horse.id],
+      newDay,
+      rng,
+      getId,
+    ),
+  );
 
   // Jockey riding fees
   if (entry?.jockeyId) {

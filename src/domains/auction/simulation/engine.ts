@@ -123,6 +123,44 @@ const BUDGET_CAPS: Record<Stable["personality"], number> = {
  * @param valuationCache - Optional per-sale cache for the bid-invariant valuation ceiling
  * @returns Bid amount or null if should not bid
  */
+export interface NpcWalkAwayPrice {
+  /** What this stable thinks the horse is worth (personality + house prestige). */
+  valuation: number;
+  /** Highest bid it will make. */
+  walkAway: number;
+  /** What caps the bid. */
+  limitedBy: "not_interested" | "valuation" | "personality" | "cash";
+}
+
+/**
+ * Highest price a rival stable will bid for a horse, using the same ceiling,
+ * budget cap and personality cut-offs as calculateNpcBid's standard path.
+ */
+export function npcWalkAwayPrice(
+  stable: Stable,
+  horse: Horse,
+  saleKind: AuctionSaleKind,
+  allHorses?: readonly Horse[],
+  horseMap?: Map<string, Horse>,
+  house?: AuctionHouse,
+): NpcWalkAwayPrice {
+  const valuation = Math.round(
+    calculateLotValuation(horse, stable, saleKind, allHorses, horseMap) * housePrestigeMultiplier(house),
+  );
+  if (valuation <= 0) return { valuation: 0, walkAway: 0, limitedBy: "not_interested" };
+  const budgetCap = stable.cash * BUDGET_CAPS[stable.personality];
+  const personalityCap =
+    stable.personality === "conservative"
+      ? valuation * 0.8
+      : stable.personality === "trader"
+        ? valuation * 0.7
+        : valuation;
+  const walkAway = Math.max(0, Math.floor(Math.min(personalityCap, budgetCap) / 100) * 100);
+  const limitedBy =
+    budgetCap < personalityCap ? "cash" : personalityCap < valuation ? "personality" : "valuation";
+  return { valuation, walkAway, limitedBy };
+}
+
 export function calculateNpcBid(
   stable: Stable,
   horse: Horse,

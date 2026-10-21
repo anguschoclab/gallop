@@ -103,6 +103,18 @@ export interface SyndicateSatisfactionImpact extends Impact {
   reason: string;
 }
 
+// Player's stake in a rival racehorse received a race payout
+export interface RivalStakePayoutImpact extends Impact {
+  type: "rival_stake_payout";
+  horseId: string;
+  raceId: string;
+  raceName: string;
+  position: number;
+  prize: number;
+  share: number;
+  reputation: number;
+}
+
 export type BreedingImpact =
   | PregnancyCreationImpact
   | PregnancyUpdateImpact
@@ -114,4 +126,5 @@ export type BreedingImpact =
   | SyndicateCreationImpact
   | ShareTransactionImpact
   | SyndicateFeeDistributionImpact
-  | SyndicateSatisfactionImpact;
+  | SyndicateSatisfactionImpact
+  | RivalStakePayoutImpact;

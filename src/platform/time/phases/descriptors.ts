@@ -456,6 +456,7 @@ export const GAME_PHASE_DESCRIPTORS: PhaseDescriptor[] = [
       "hiredStaff",
       "calibratedPars",
       "syndicates",
+      "rivalStakes",
       "narrativeArcs",
       "trackRecords",
       "weather",

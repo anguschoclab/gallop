@@ -25,6 +25,17 @@ function makeHorse(id: string, wins: number, day: number): Horse {
 }
 
 describe("recordRankingsHistory", () => {
+  it("prices a rival horse whose stats are still hidden from its real stats, not $0", () => {
+    const real = makeHorse("hidden", 2, 10);
+    const hidden = {
+      ...real,
+      phenotypeResolved: false,
+      stats: Object.fromEntries(Object.keys(real.stats).map((k) => [k, 0])),
+    } as unknown as Horse;
+    const out = recordRankingsHistory(undefined, [hidden], 10);
+    expect(out.hidden[0].price).toBeGreaterThan(0);
+  });
+
   it("records rank, points, reputation and price for ranked horses", () => {
     const horses = [makeHorse("a", 2, 10), makeHorse("b", 1, 10), makeHorse("c", 0, 10)];
     const out = recordRankingsHistory(undefined, horses, 10);

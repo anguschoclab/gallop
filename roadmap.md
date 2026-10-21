@@ -15,3 +15,16 @@
 - [x] Rankings History: current market value in each row, value since first snapshot, daily price change column
 - [x] Stable Campaign: net worth shown as cash + each horse's market value
 - [x] Auto-Register and Daily Auto-Entry: enter each horse in its next open-goal race outright
+- [x] Rival horse stakes page: buy/sell % stakes in NPC racehorses; receive share of prize money and prestige (verified in-game: 10% bought, 3 payouts, +1 prestige)
+- [x] Scout a few horses and show how stats, best times and reputation drive auction price and NPC bids (Price breakdown on horse pages + auction lots; verified in-game on 3 scouted rivals)
+  - Stakes page also shows my share of each horse's earnings and current price (folded into rival stakes task)
+- [ ] Shared syndicate with other real players (stakes + profit shares) — blocked: game is single-player on this device; needs online accounts, ask user
+- [x] Track history: saved filter presets (date range, race type, stable) (tests pass; not opened in-game)
+- [x] Rival career comparison timelines: filter by milestone type and career stage (tests pass; not opened in-game)
+- [x] Auction houses: price movement indicators explaining how recent wins, reputation changes and rankings affect each horse's value (30-day movement in Price breakdown)
+- [ ] Auto-syndicate share sales post an Exchange ask at the sale price so rival stables can buy and trade them
+- [ ] Auction house prices grounded in real-world horse sales (price chart + buy/sell prices) — needs a real sales data source from the user
+- [ ] Found bug: rival horses get booked into many races on the same day (no rest-day check), inflating their wins, prize money and stake payouts
+
+- [x] Fixed: rival horses' daily price was recorded as $0 in rankings history (hidden stats not revealed before pricing)
+- [ ] Found: rival stables bid far below the auction-house value of stallions standing at stud (their valuation ignores stud-fee income)

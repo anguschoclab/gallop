@@ -21,6 +21,11 @@ import {
   type RankingsBaseline,
 } from "@/domains/agents/application/npcFacade";
 import { RivalCareerCompareTable } from "@/domains/stable/ui/RivalCareerCompareTable";
+import { RivalMilestoneFilters } from "@/domains/stable/ui/RivalMilestoneFilters";
+import {
+  filterRivalMilestones,
+  type RivalMilestoneFilter,
+} from "@/domains/agents/application/npcFacade";
 import { PillToggleGroup } from "@/shared/ui/common/PillToggleGroup";
 import { FilterSelect } from "@/domains/jockey/ui/FilterSelect";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
@@ -113,6 +118,10 @@ export function NpcStablesRivalCareers() {
   const [baselineMode, setBaselineMode] = useState<"stable" | "horse">("stable");
   const [baselineHorseId, setBaselineHorseId] = useState<string | null>(null);
   const [rankingsDay, setRankingsDay] = useState<number | null>(null);
+  const [milestoneFilter, setMilestoneFilter] = useState<RivalMilestoneFilter>({
+    kinds: [],
+    stages: [],
+  });
 
   const stableNames = useMemo(() => {
     const map: Record<string, string> = {};
@@ -154,6 +163,11 @@ export function NpcStablesRivalCareers() {
     const picked = selected.map((id) => byId.get(id)).filter((h): h is Horse => h !== undefined);
     return buildRivalCareerProfiles(picked, day);
   }, [selected, rivals, day]);
+  const timelineProfiles = useMemo(
+    () =>
+      profiles.map((p) => ({ ...p, milestones: filterRivalMilestones(p.milestones, milestoneFilter) })),
+    [profiles, milestoneFilter],
+  );
 
   const playerHorses = useMemo(
     () =>
@@ -392,9 +406,10 @@ export function NpcStablesRivalCareers() {
             )}
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-4">
+          <RivalMilestoneFilters value={milestoneFilter} onChange={setMilestoneFilter} />
           <RivalCareerCompareTable
-            profiles={profiles}
+            profiles={timelineProfiles}
             stableNames={stableNames}
             rankings={rankingsColumns}
           />

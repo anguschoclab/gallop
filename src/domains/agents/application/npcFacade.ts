@@ -14,10 +14,12 @@ export type { NpcCareerTimelineEvent } from "@/domains/agents/simulation/npc/car
 export {
   buildRivalCareerProfile,
   buildRivalCareerProfiles,
+  filterRivalMilestones,
 } from "@/domains/agents/simulation/npc/rivalCareerCompare";
 export type {
   RivalCareerProfile,
   RivalMilestoneRecord,
+  RivalMilestoneFilter,
 } from "@/domains/agents/simulation/npc/rivalCareerCompare";
 export { isNotableRival } from "@/domains/agents/simulation/npc/careerMilestones";
 export { rankingsComparisonDays } from "@/domains/market/simulation/rankingsComparison";
