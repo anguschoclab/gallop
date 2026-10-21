@@ -88,10 +88,10 @@ export function HorseValueBreakdownPanel({
               </div>
               <ol className="space-y-1">
                 {breakdown.factors.map((f) => (
-                  <li key={f.key} className="grid grid-cols-[8.5rem_1fr_4rem_6rem] items-baseline gap-2">
-                    <span className="font-medium text-foreground">{f.label}</span>
-                    <span className="truncate text-xs text-muted-foreground" title={f.detail}>
-                      {f.detail}
+                  <li key={f.key} className="grid grid-cols-[1fr_4rem_6rem] items-baseline gap-2">
+                    <span className="min-w-0">
+                      <span className="block font-medium text-foreground">{f.label}</span>
+                      <span className="block text-xs text-muted-foreground">{f.detail}</span>
                     </span>
                     <span
                       className={cn(
@@ -192,9 +192,10 @@ export function HorseValueBreakdownPanel({
               ) : (
                 <div className="grid gap-1 text-xs">
                   {bidders.map((b) => (
-                    <div key={b.stableId} className="grid grid-cols-[1fr_6rem_6rem_6rem] items-baseline gap-2">
-                      <span className="truncate">
-                        {b.stableName} <span className="text-muted-foreground">· {b.personality}</span>
+                    <div key={b.stableId} className="grid grid-cols-[1fr_5.5rem_5.5rem_6rem] items-baseline gap-2">
+                      <span className="min-w-0">
+                        <span className="block truncate" title={b.stableName}>{b.stableName}</span>
+                        <span className="block text-muted-foreground">{b.personality} buyer</span>
                       </span>
                       <span className="text-right tabular-nums text-muted-foreground" title="What it thinks the horse is worth">
                         {formatCurrency(b.valuation)}
@@ -229,11 +230,11 @@ function MoveRow({
   hideValue?: boolean;
 }) {
   return (
-    <div className="grid grid-cols-[1rem_9rem_1fr_6rem] items-center gap-2">
+    <div className="grid grid-cols-[1rem_1fr_6rem] items-start gap-2">
       <Trend value={value} />
-      <span className="font-medium text-foreground">{label}</span>
-      <span className="truncate text-muted-foreground" title={detail}>
-        {detail}
+      <span className="min-w-0">
+        <span className="block font-medium text-foreground">{label}</span>
+        <span className="block text-muted-foreground">{detail}</span>
       </span>
       <span
         className={cn(
