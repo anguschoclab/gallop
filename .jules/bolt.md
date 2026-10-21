@@ -1,0 +1,3 @@
+## 2024-05-24 - Array Reduce vs For Loops Performance
+**Learning:** Array `.reduce()` is considerably slower than traditional `for` loops in this JS environment. Refactoring central utility array helpers (`sum`, `max`, `groupBy`, etc.) to use `for` loops yields measurable performance improvements that cascade throughout the application, especially since these utilities are heavily used in the simulation engine.
+**Action:** When creating high-frequency utility functions that process arrays, default to traditional `for` loops rather than array methods like `.reduce()` to avoid unnecessary closure allocation and function call overhead.
