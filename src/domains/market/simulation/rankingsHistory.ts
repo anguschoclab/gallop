@@ -7,6 +7,7 @@
  * Pure: no state mutation.
  */
 
+import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
 import type { Horse } from "@/domains/horse/simulation/types";
 import { horseMarketValue } from "@/domains/horse/simulation/pricing";
 import { worldRankings } from "@/domains/market/simulation/raceForm";
@@ -60,7 +61,7 @@ export function recordRankingsHistory(
       rank: i + 1,
       points: row.points,
       reputation: Math.round(horse.fame ?? 0),
-      price: horseMarketValue(horse, horses),
+      price: horseMarketValue(ensurePhenotypeResolved(horse), horses),
     };
     next[row.horseId] = [...prev, snapshot].slice(-RANKINGS_HISTORY_MAX_ENTRIES);
   });
@@ -81,7 +82,7 @@ export function recordRankingsHistory(
         rank: index < 0 ? null : index + 1,
         points: row?.points ?? 0,
         reputation: Math.round(horse.fame ?? 0),
-        price: horseMarketValue(horse, horses),
+        price: horseMarketValue(ensurePhenotypeResolved(horse), horses),
       },
     ].slice(-RANKINGS_HISTORY_MAX_ENTRIES);
   }

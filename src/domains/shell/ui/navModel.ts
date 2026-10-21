@@ -92,6 +92,7 @@ export const moreNavGroup: { label: string; items: NavItem[] } = {
     { to: "/sire-watch", label: "Sire Watch", icon: Eye, exact: false },
     { to: "/sire-leaderboards", label: "Sire Leaderboards", icon: Medal, exact: false },
     { to: "/syndicate-stakes", label: "Syndicate Stakes", icon: Sparkles, exact: false },
+    { to: "/rivalStakes", label: "Rival Horse Stakes", icon: Briefcase, exact: false },
     { to: "/staff", label: "Staff", icon: Users, exact: false },
     { to: "/jockeys", label: "Jockeys", icon: User, exact: false },
     { to: "/race-advisor", label: "Race Advisor", icon: Compass, exact: false },

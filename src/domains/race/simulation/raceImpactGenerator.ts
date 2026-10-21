@@ -60,6 +60,8 @@ export interface GenerateRaceImpactsProps {
   raceWeatherState?: import("@/domains/weather/model/weatherTypes").WeatherState;
   /** Active syndicates for shareholder satisfaction tracking (Phase 5) */
   syndicates?: Record<string, import("@/domains/breeding/model/types").Syndicate>;
+  /** Player stakes in rival horses, keyed by horse id (prize split + prestige) */
+  rivalStakes?: Record<string, import("@/domains/syndicates/model/rivalStakes").RivalStake>;
   /** Per-horse career arc states for narrative tracking */
   narrativeArcs?: Record<string, CareerArcState>;
   /** Optional UUID provider callback for deterministic bulk ID generation */
@@ -110,6 +112,7 @@ export function generateRaceImpacts({
   calibratedPars,
   raceWeatherState,
   syndicates,
+  rivalStakes,
   narrativeArcs,
   getId,
 }: GenerateRaceImpactsProps): AnyImpact[] {
@@ -208,6 +211,7 @@ export function generateRaceImpacts({
           newDay,
           rng,
           getId,
+          rivalStakes,
         ),
       );
 

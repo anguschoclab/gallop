@@ -15,7 +15,12 @@ import type {
   HorseRaceHistoryEntry,
   NpcCareerStage,
 } from "@/domains/horse/simulation/types";
-import { careerStage, careerStageLabel, summarizeNpcCareer } from "./careerTracker";
+import {
+  careerStage,
+  careerStageAtDay,
+  careerStageLabel,
+  summarizeNpcCareer,
+} from "./careerTracker";
 import { getStableId } from "@/domains/horse/simulation/ownership";
 import { detectRivalMilestones, type RivalMilestoneKind } from "./careerMilestones";
 
@@ -30,6 +35,27 @@ export interface RivalMilestoneRecord {
   /** Race this milestone happened in (debut, breakthrough, earnings mark, last start). */
   raceId?: string;
   raceName?: string;
+  /** Career stage the horse was in when the milestone happened (null when undated). */
+  stage: NpcCareerStage | null;
+}
+
+export interface RivalMilestoneFilter {
+  /** Milestone kinds to keep; empty keeps every kind. */
+  kinds: RivalMilestoneKind[];
+  /** Career stages to keep; empty keeps every stage. Undated milestones drop when set. */
+  stages: NpcCareerStage[];
+}
+
+/** Narrow a rival's milestone timeline to the chosen kinds and career stages. */
+export function filterRivalMilestones(
+  milestones: RivalMilestoneRecord[],
+  filter: RivalMilestoneFilter,
+): RivalMilestoneRecord[] {
+  return milestones.filter(
+    (m) =>
+      (filter.kinds.length === 0 || filter.kinds.includes(m.kind)) &&
+      (filter.stages.length === 0 || (m.stage !== null && filter.stages.includes(m.stage))),
+  );
 }
 
 export interface RivalCareerProfile {
@@ -168,11 +194,16 @@ export function buildRivalCareerProfile(horse: Horse, day: number): RivalCareerP
   const career = summarizeNpcCareer(horse, day);
   const announced = new Set(horse.careerMilestonesAnnounced ?? []);
   const milestones = detectRivalMilestones(horse, [])
-    .map((m) => ({
+    .map((m) => {
+      const mDay = milestoneDay(horse, m.key, day);
+      return { m, mDay };
+    })
+    .map(({ m, mDay }) => ({
       key: m.key,
       kind: m.kind,
       title: m.title,
-      day: milestoneDay(horse, m.key, day),
+      day: mDay,
+      stage: mDay === null ? null : careerStageAtDay(horse, mDay, day),
       announced: announced.has(m.key),
       raceId: milestoneRace(horse, m.key)?.raceId,
       raceName: milestoneRace(horse, m.key)?.raceName,

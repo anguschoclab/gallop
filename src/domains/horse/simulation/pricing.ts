@@ -81,7 +81,19 @@ export function getBroodmareFee(horse: Horse, stable: Pick<Stable, "tier">): num
  * Kept backward compatible – reflects racing form and biological quality only.
  * @param h
  */
-export function horsePrice(h: Horse): number {
+export interface HorsePriceFactors {
+  /** Overall rating from speed, stamina, acceleration and consistency. */
+  overall: number;
+  ageMod: number;
+  potMod: number;
+  /** Build, temperament and soundness adjustment. */
+  bioMod: number;
+  /** Fan-base (public reputation) adjustment. */
+  fanMod: number;
+}
+
+/** The multiplicative factors behind horsePrice(); exported for value breakdowns. */
+export function horsePriceFactors(h: Horse): HorsePriceFactors {
   const overall = calculateOverallRating(h);
   const ageMod = h.age <= AGE_YOUNG_THRESHOLD ? 1.2 : h.age >= AGE_RETIREMENT_THRESHOLD ? 0.7 : 1;
   const potMod = 0.5 + h.potential / 100;
@@ -99,7 +111,17 @@ export function horsePrice(h: Horse): number {
   if (proneness > INJURY_PRONENESS_HIGH_THRESHOLD) bioMod -= 0.2;
 
   const fanMod = 1 + (h.fanCount ?? 0) / FAN_VALUATION_DIVISOR;
+  return { overall, ageMod, potMod, bioMod, fanMod };
+}
+
+export function horsePrice(h: Horse): number {
+  const { overall, ageMod, potMod, bioMod, fanMod } = horsePriceFactors(h);
   return Math.round((overall * 80 * ageMod * potMod * bioMod * fanMod) / 50) * 50;
+}
+
+/** Pedigree multiplier applied by horsePriceWithPedigree(). */
+export function horsePedigreeMultiplier(h: Horse, allHorses: Horse[]): number {
+  return pedigreeMultiplier(h, { horses: getHorseRecord(allHorses) });
 }
 
 /**
@@ -229,27 +251,33 @@ export function estimateBreedingValue(h: Horse, allHorses: Horse[] = []): number
  * @param h
  * @param allHorses
  */
+export interface MarketValueBlend {
+  racingWeight: number;
+  breedingWeight: number;
+  /** Why the weights are what they are (career phase). */
+  phase: "gelding" | "retired" | "pre-career" | "racing prime" | "late career";
+}
+
+/** How racing and breeding value are weighted for this horse's career phase. */
+export function marketValueBlend(h: Horse): MarketValueBlend {
+  if (h.gender === "gelding" || h.gelded) return { racingWeight: 1, breedingWeight: 0, phase: "gelding" };
+  const retired = h.lifecycleStatus === "retired" || h.racingViable === false;
+  // Post-career: value is almost entirely reproductive.
+  if (retired) return { racingWeight: 0.15, breedingWeight: 0.9, phase: "retired" };
+  // Yearling / pre-career: pedigree + upside dominate.
+  if (h.age <= 1) return { racingWeight: 0.5, breedingWeight: 0.5, phase: "pre-career" };
+  // Racing prime: racing value leads, breeding is optionality.
+  if (h.age <= 6) return { racingWeight: 1, breedingWeight: 0.35, phase: "racing prime" };
+  // Older but still active: breeding takes over.
+  return { racingWeight: 0.4, breedingWeight: 0.8, phase: "late career" };
+}
+
 export function horseMarketValue(h: Horse, allHorses: Horse[] = []): number {
   const racing = Math.round(horsePriceWithPedigree(h, allHorses) * raceFormPremium(h));
   const breeding = estimateBreedingValue(h, allHorses);
-
-  if (h.gender === "gelding" || h.gelded) return racing;
-
-  const retired = h.lifecycleStatus === "retired" || h.racingViable === false;
-  if (retired) {
-    // Post-career: value is almost entirely reproductive.
-    return Math.round((racing * 0.15 + breeding * 0.9) / 50) * 50;
-  }
-  if (h.age <= 1) {
-    // Yearling / pre-career: pedigree + upside dominate.
-    return Math.round((racing * 0.5 + breeding * 0.5) / 50) * 50;
-  }
-  if (h.age <= 6) {
-    // Racing prime: racing value leads, breeding is optionality.
-    return Math.round((racing + breeding * 0.35) / 50) * 50;
-  }
-  // Older but still active: breeding takes over.
-  return Math.round((racing * 0.4 + breeding * 0.8) / 50) * 50;
+  const blend = marketValueBlend(h);
+  if (blend.phase === "gelding") return racing;
+  return Math.round((racing * blend.racingWeight + breeding * blend.breedingWeight) / 50) * 50;
 }
 
 export interface HorseCareerValuation {

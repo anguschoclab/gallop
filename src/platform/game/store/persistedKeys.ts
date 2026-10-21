@@ -117,6 +117,8 @@ export const PERSISTED_KEYS: PersistedStateKey[] = [
   "shareTransactions",
   "shareActivityFeed",
   "syndicateValueSnapshots",
+  // Player stakes in rival racehorses
+  "rivalStakes",
   // Imperial Expansion: player outposts
   "outposts",
   // Sire leaderboards and trend data

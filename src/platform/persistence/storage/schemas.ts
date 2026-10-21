@@ -59,6 +59,7 @@ export const gameStateSchema = z
     activeBreedingProgram: z.unknown().nullable(),
     syndicates: z.record(z.string(), z.unknown()),
     syndicateInvestors: z.record(z.string(), z.unknown()),
+    rivalStakes: z.record(z.string(), z.unknown()).optional(),
 
     // RacingState (required)
     trainingUsed: z.record(z.string(), z.number()),

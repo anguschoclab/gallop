@@ -1,4 +1,5 @@
 import { notFound, useParams, useRouter } from "@tanstack/react-router";
+import { HorseValueBreakdownPanel } from "@/domains/market/ui/HorseValueBreakdownPanel";
 import { type ComponentType, useEffect } from "react";
 import { Button, buttonVariants } from "@/shared/ui/button";
 import {
@@ -263,6 +264,8 @@ export function HorseDetail({ horseId: propHorseId }: HorseDetailProps = {}) {
             )}
 
             <CareerProjectionSection horse={horse} horses={horses} />
+
+            <HorseValueBreakdownPanel horse={horse} />
 
             <HorseRaceHistorySection
               horse={horse}

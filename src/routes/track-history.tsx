@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useGameWithShallow } from "@/platform/game/store";
 import { TrackLedgerRaces } from "@/domains/history/ui/TrackLedgerRaces";
 import { TrackLedgerPrestigeTable } from "@/domains/history/ui/TrackLedgerPrestigeTable";
+import { TrackFilterPresets } from "@/domains/history/ui/TrackFilterPresets";
 import { formatCurrency } from "@/shared/common/formatting";
 import {
   filterTrackLedger,
@@ -273,6 +274,17 @@ function TrackHistoryPage() {
                 <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
                   Showing {races.length} of {courseLedger.length} races
                 </p>
+                <TrackFilterPresets
+                  current={{ fromDay, toDay, raceType, stableId }}
+                  currentStableName={stableOptions.find((o) => o.stableId === stableId)?.stableName}
+                  canSave={filtersActive}
+                  onApply={(f) => {
+                    setFromDay(f.fromDay);
+                    setToDay(f.toDay);
+                    setRaceType(f.raceType);
+                    setStableId(f.stableId);
+                  }}
+                />
               </CardContent>
             </Card>
 

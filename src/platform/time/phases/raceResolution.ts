@@ -120,6 +120,7 @@ export const raceResolutionPhase: PipelinePhase = {
           calibratedPars: state.calibratedPars || {},
           raceWeatherState: undefined,
           syndicates: state.syndicates,
+          rivalStakes: state.rivalStakes,
           narrativeArcs: state.narrativeArcs,
         });
 
@@ -215,6 +216,7 @@ export const raceResolutionPhase: PipelinePhase = {
         calibratedPars: state.calibratedPars || {},
         raceWeatherState,
         syndicates: state.syndicates,
+        rivalStakes: state.rivalStakes,
         narrativeArcs: state.narrativeArcs,
       });
 
