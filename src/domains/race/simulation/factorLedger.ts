@@ -131,7 +131,12 @@ export class FactorLedgerCollector {
     this._recordOne(accumulators.noise, phase, progress, factors.noise);
   }
 
-  private _recordOne(acc: FactorAccumulator, phase: PhaseKey, progress: number, val: number | undefined): void {
+  private _recordOne(
+    acc: FactorAccumulator,
+    phase: PhaseKey,
+    progress: number,
+    val: number | undefined,
+  ): void {
     if (val === undefined) return;
 
     const p = acc.phases[phase];
