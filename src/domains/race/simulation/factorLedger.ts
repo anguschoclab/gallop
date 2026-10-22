@@ -114,28 +114,40 @@ export class FactorLedgerCollector {
   }
 
   recordTick(progress: number, factors: Record<FactorKey, number>): void {
-    for (const key of ALL_FACTOR_KEYS) {
-      const value = factors[key];
-      if (value === undefined) continue;
+    const phase = classifyPhase(progress);
+    const accumulators = this.accumulators;
 
-      const acc = this.accumulators[key];
-      const phase = classifyPhase(progress);
-      const phaseAcc = acc.phases[phase];
+    this._recordOne(accumulators.stamina, phase, progress, factors.stamina);
+    this._recordOne(accumulators.style, phase, progress, factors.style);
+    this._recordOne(accumulators.draft, phase, progress, factors.draft);
+    this._recordOne(accumulators.cover, phase, progress, factors.cover);
+    this._recordOne(accumulators.turnSpeed, phase, progress, factors.turnSpeed);
+    this._recordOne(accumulators.gradientSpeed, phase, progress, factors.gradientSpeed);
+    this._recordOne(accumulators.gradientStamina, phase, progress, factors.gradientStamina);
+    this._recordOne(accumulators.traitSurface, phase, progress, factors.traitSurface);
+    this._recordOne(accumulators.seek, phase, progress, factors.seek);
+    this._recordOne(accumulators.spurt, phase, progress, factors.spurt);
+    this._recordOne(accumulators.wind, phase, progress, factors.wind);
+    this._recordOne(accumulators.noise, phase, progress, factors.noise);
+  }
 
-      phaseAcc.sum += value;
-      phaseAcc.min = Math.min(phaseAcc.min, value);
-      phaseAcc.max = Math.max(phaseAcc.max, value);
-      phaseAcc.count += 1;
+  private _recordOne(acc: FactorAccumulator, phase: PhaseKey, progress: number, val: number | undefined): void {
+    if (val === undefined) return;
 
-      acc.totalSum += value;
-      acc.totalCount += 1;
+    const p = acc.phases[phase];
+    p.sum += val;
+    p.count += 1;
+    if (val < p.min) p.min = val;
+    if (val > p.max) p.max = val;
 
-      const deviation = Math.abs(value - 1);
-      if (deviation > acc.peakDeviation) {
-        acc.peakDeviation = deviation;
-        acc.peakValue = value;
-        acc.peakProgress = progress;
-      }
+    acc.totalSum += val;
+    acc.totalCount += 1;
+
+    const dev = val > 1 ? val - 1 : 1 - val;
+    if (dev > acc.peakDeviation) {
+      acc.peakDeviation = dev;
+      acc.peakValue = val;
+      acc.peakProgress = progress;
     }
   }
 
