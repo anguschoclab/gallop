@@ -94,6 +94,7 @@ export interface GenerateRaceImpactsProps {
  * @param props.calibratedPars - Speed pars for Beyer speed figure calculation, indexed by distance
  * @param props.raceWeatherState
  * @param props.syndicates
+ * @param props.rivalStakes
  * @param props.narrativeArcs
  * @param props.getId - Optional UUID provider callback for deterministic bulk ID generation
  * @returns Array of impacts to be applied to the game state by the resolver
