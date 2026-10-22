@@ -85,6 +85,9 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
 
               {/* Expandable career valuation */}
               <button
+                type="button"
+                aria-expanded={expandedId === h.id}
+                aria-controls={`valuation-content-${h.id}`}
                 onClick={(e) => {
                   e.stopPropagation();
                   setExpandedId(expandedId === h.id ? null : h.id);
@@ -99,7 +102,7 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                 )}
               </button>
               {expandedId === h.id && (
-                <div className="bg-black/40 p-3 rounded border border-white/5 space-y-2">
+                <div id={`valuation-content-${h.id}`} className="bg-black/40 p-3 rounded border border-white/5 space-y-2">
                   <CareerValuationBreakdown
                     valuation={horseCareerValuation(h, Object.values(allHorses))}
                   />
