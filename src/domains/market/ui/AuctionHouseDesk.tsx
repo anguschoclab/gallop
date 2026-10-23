@@ -13,6 +13,7 @@ import { Gavel, History, ShoppingCart, Tag } from "lucide-react";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
+import { DisabledTooltipWrapper } from "@/shared/ui/DisabledTooltipWrapper";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -195,13 +196,17 @@ export function AuctionHouseDesk() {
                     {formatCurrency(quote.buyPrice)}
                   </div>
                 </div>
-                <Button
-                  size="sm"
-                  disabled={cash < quote.buyPrice}
-                  onClick={() => handleBuy(horse.id, horse.name, quote.buyPrice)}
+                <DisabledTooltipWrapper
+                  reason={cash < quote.buyPrice ? "Insufficient funds" : false}
                 >
-                  Buy
-                </Button>
+                  <Button
+                    size="sm"
+                    disabled={cash < quote.buyPrice}
+                    onClick={() => handleBuy(horse.id, horse.name, quote.buyPrice)}
+                  >
+                    Buy
+                  </Button>
+                </DisabledTooltipWrapper>
               </div>
             ))}
           </div>
