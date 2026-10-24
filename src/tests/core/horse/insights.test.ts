@@ -842,6 +842,85 @@ describe("Tipster: Gate Affinity insights", () => {
   });
 });
 
+describe("Tipster: Field Size Affinity insights", () => {
+  it("detects Crowd Surfer when large field avg >= small field avg + 8", () => {
+    const horse = {
+      raceHistory: [
+        // Large fields (>= 10)
+        { position: 4, day: 1, fieldSize: 10, beyer: 90 },
+        { position: 5, day: 2, fieldSize: 12, beyer: 88 },
+        { position: 6, day: 3, fieldSize: 14, beyer: 92 }, // avg large = 90
+        // Small fields (<= 6)
+        { position: 4, day: 4, fieldSize: 6, beyer: 80 },
+        { position: 5, day: 5, fieldSize: 5, beyer: 78 },
+        { position: 6, day: 6, fieldSize: 4, beyer: 82 }, // avg small = 80
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Crowd Surfer");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("detects Needs Room when small field avg >= large field avg + 8", () => {
+    const horse = {
+      raceHistory: [
+        // Large fields (>= 10)
+        { position: 4, day: 1, fieldSize: 10, beyer: 80 },
+        { position: 5, day: 2, fieldSize: 12, beyer: 78 },
+        { position: 6, day: 3, fieldSize: 14, beyer: 82 }, // avg large = 80
+        // Small fields (<= 6)
+        { position: 4, day: 4, fieldSize: 6, beyer: 90 },
+        { position: 5, day: 5, fieldSize: 5, beyer: 88 },
+        { position: 6, day: 6, fieldSize: 4, beyer: 92 }, // avg small = 90
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight).not.toBeNull();
+    expect(insight!.label).toBe("Needs Room");
+    expect(insight!.type).toBe("positive");
+  });
+
+  it("does not detect Field Size Affinity when differences are small", () => {
+    const horse = {
+      raceHistory: [
+        { position: 4, day: 1, fieldSize: 10, beyer: 85 },
+        { position: 5, day: 2, fieldSize: 12, beyer: 84 },
+        { position: 6, day: 3, fieldSize: 14, beyer: 86 }, // avg large = 85
+        { position: 4, day: 4, fieldSize: 6, beyer: 82 },
+        { position: 5, day: 5, fieldSize: 5, beyer: 84 },
+        { position: 6, day: 6, fieldSize: 4, beyer: 83 }, // avg small = 83
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight?.label).not.toBe("Crowd Surfer");
+    expect(insight?.label).not.toBe("Needs Room");
+  });
+
+  it("does not detect Field Size Affinity without enough starts in both buckets", () => {
+    const horse = {
+      raceHistory: [
+        { position: 4, day: 1, fieldSize: 10, beyer: 90 },
+        { position: 5, day: 2, fieldSize: 12, beyer: 88 },
+        { position: 6, day: 3, fieldSize: 14, beyer: 92 }, // 3 large
+        { position: 4, day: 4, fieldSize: 6, beyer: 80 },
+        { position: 5, day: 5, fieldSize: 5, beyer: 78 }, // only 2 small
+      ],
+    };
+    const insight = getHorseInsight(
+      horse as unknown as import("@/domains/horse/simulation/types").Horse,
+    );
+    expect(insight?.label).not.toBe("Crowd Surfer");
+    expect(insight?.label).not.toBe("Needs Room");
+  });
+});
+
 describe("Tipster: Sire Value insight", () => {
   it("detects Value Sire when stakes rate >= 8% and fee <= 20k", () => {
     const horse = {
