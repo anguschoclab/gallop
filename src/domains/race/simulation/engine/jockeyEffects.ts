@@ -180,6 +180,7 @@ export function detectBlocking(r: Runner, sortedField?: Runner[]): void {
 
   if (blockerAhead) {
     r.blockedAhead = true;
+    r.blockingHorseVelocity = blockerAhead.velocity;
     // Boxed in if both adjacent lanes are blocked, OR if on the rail
     // (lane ~0, no inside lane) and outside is blocked.
     const onRail = r.lane < RAIL_LANE_THRESHOLD;
@@ -204,32 +205,12 @@ export function detectBlocking(r: Runner, sortedField?: Runner[]): void {
  * @param sortedField
  */
 export function applyBlockingEffect(r: Runner, sortedField?: Runner[]): void {
-  if (!sortedField) return;
-  if (!r.blockedAhead) return;
-
-  // Find the blocking horse ahead (same threshold as detectBlocking)
-  let blockingHorse: Runner | undefined;
-  for (let i = 0; i < sortedField.length; i++) {
-    const other = sortedField[i];
-    if (other.horseId === r.horseId) continue;
-    if (other.finishTime !== null) continue;
-
-    const gap = other.position - r.position;
-    // Match original threshold: only consider blockers at gap >= MIN_BLOCK_GAP.
-    if (gap < MIN_BLOCK_GAP) break;
-
-    if (gap < BLOCKING_RANGE_AHEAD && Math.abs(other.lane - r.lane) < BLOCKED_LANE_GAP) {
-      blockingHorse = other;
-      break;
-    }
-  }
-
-  if (!blockingHorse) return;
+  if (!r.blockedAhead || r.blockingHorseVelocity === undefined) return;
 
   if (r.boxedIn) {
     // Genuinely trapped — hard cap to blocker's pace
-    r.velocity = Math.min(r.velocity, blockingHorse.velocity * BOXED_IN_VELOCITY_CAP);
-  } else if (r.velocity > blockingHorse.velocity) {
+    r.velocity = Math.min(r.velocity, r.blockingHorseVelocity * BOXED_IN_VELOCITY_CAP);
+  } else if (r.velocity > r.blockingHorseVelocity) {
     // Only apply escape penalty when actually being held back (faster than blocker).
     // The penalty scales with the lateral distance sought (escaping wider costs more)
     // and is reduced by jockey positioning skill.
