@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { BookmarkButton } from "@/domains/bookmarks/ui/BookmarkButton";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/shared/ui/tooltip";
+import { DisabledTooltipWrapper } from "@/shared/ui/DisabledTooltipWrapper";
 import { HorseStats, overall } from "@/domains/horse/ui/HorseBits";
 import { CareerValuationBreakdown } from "@/domains/horse/ui/CareerValuationBreakdown";
 import { formatCurrency } from "@/shared/common/formatting";
@@ -111,22 +111,17 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
               )}
 
               {!canAfford ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <span tabIndex={0} className="w-full block cursor-not-allowed">
-                      <Button
-                        disabled
-                        className={cn(
-                          "w-full h-10 uppercase text-[10px] font-black tracking-wide rounded-none transition-all pointer-events-none",
-                          "border-white/5 text-foreground/20 bg-transparent",
-                        )}
-                      >
-                        Can't afford
-                      </Button>
-                    </span>
-                  </TooltipTrigger>
-                  <TooltipContent>Not enough cash</TooltipContent>
-                </Tooltip>
+                <DisabledTooltipWrapper reason="Not enough cash" wrapperClassName="w-full block">
+                  <Button
+                    disabled
+                    className={cn(
+                      "w-full h-10 uppercase text-[10px] font-black tracking-wide rounded-none transition-all pointer-events-none",
+                      "border-white/5 text-foreground/20 bg-transparent",
+                    )}
+                  >
+                    Can't afford
+                  </Button>
+                </DisabledTooltipWrapper>
               ) : (
                 <Button
                   onClick={(e) => {
