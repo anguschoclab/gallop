@@ -571,6 +571,52 @@ export const detectDistanceChange: InsightDetector = (horse) => {
   return null;
 };
 
+// 4.1 Check for Field Size Preference
+export const detectFieldSizeAffinity: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  let largeFieldStarts = 0;
+  let largeFieldBeyerTotal = 0;
+  let smallFieldStarts = 0;
+  let smallFieldBeyerTotal = 0;
+
+  for (const race of history) {
+    if (typeof race.beyer === "number" && typeof race.fieldSize === "number") {
+      if (race.fieldSize >= 10) {
+        largeFieldStarts++;
+        largeFieldBeyerTotal += race.beyer;
+      } else if (race.fieldSize <= 6) {
+        smallFieldStarts++;
+        smallFieldBeyerTotal += race.beyer;
+      }
+    }
+  }
+
+  if (largeFieldStarts >= 3 && smallFieldStarts >= 3) {
+    const largeAvg = largeFieldBeyerTotal / largeFieldStarts;
+    const smallAvg = smallFieldBeyerTotal / smallFieldStarts;
+
+    if (largeAvg >= smallAvg + 8) {
+      return {
+        label: "Crowd Surfer",
+        value: "Large Field Preference",
+        context: `Averages a ${Math.round(largeAvg)} Beyer in large fields (10+ runners) vs ${Math.round(smallAvg)} in small fields`,
+        type: "positive",
+      };
+    }
+
+    if (smallAvg >= largeAvg + 8) {
+      return {
+        label: "Needs Room",
+        value: "Small Field Preference",
+        context: `Averages a ${Math.round(smallAvg)} Beyer in small fields (≤6 runners) vs ${Math.round(largeAvg)} in large fields`,
+        type: "positive",
+      };
+    }
+  }
+
+  return null;
+};
+
 // 3.95 Check for Earnings Milestones
 export const detectEarningsMilestone: InsightDetector = (horse) => {
   const earnings = horse.lifetimeEarnings ?? 0;
@@ -764,6 +810,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceVersatility,
   detectDistanceChange,
   detectGateAffinity,
+  detectFieldSizeAffinity,
   detectEarningsMilestone,
   detectEarningsPerStart,
   detectSireValue,
