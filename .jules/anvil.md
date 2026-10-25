@@ -1,0 +1,3 @@
+## 2024-05-23 - Clean up inline type assertions in RecruitmentPool.tsx
+**Learning:** Found multiple instances of `staff as unknown as import("@/domains/staff/model/staffTypes").StaffMember` in `src/domains/staff/ui/RecruitmentPool.tsx`. This indicates that the initial component was probably copied or generated without correctly importing the necessary types. The type assertion is unnecessary as `staff` is correctly typed if we import `StaffMember` at the top of the file and use it in `RecruitmentPoolProps`.
+**Action:** Import `StaffMember` and use it in the component props. Remove inline type assertions for cleaner, safer code.
