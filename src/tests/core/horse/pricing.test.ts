@@ -302,6 +302,22 @@ describe("pricing and valuation", () => {
       expect(fanVal.breeding).toBeGreaterThan(baseVal.breeding);
     });
 
+    it("getBroodmareFee increases when fanCount > 0", () => {
+      const h = getBaseHorse();
+      h.gender = "mare";
+      h.age = 5;
+      h.fanCount = 0;
+      const baseVal = getBroodmareFee(h, { tier: "elite" });
+
+      const hFans = getBaseHorse();
+      hFans.gender = "mare";
+      hFans.age = 5;
+      hFans.fanCount = 200000;
+      const fanVal = getBroodmareFee(hFans, { tier: "elite" });
+
+      expect(fanVal).toBeGreaterThan(baseVal);
+    });
+
     it("existing fame scaling test still passes with fanCount 0", () => {
       const h = getBaseHorse();
       h.fanCount = 0;
