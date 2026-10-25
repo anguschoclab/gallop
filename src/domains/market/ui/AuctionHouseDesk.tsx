@@ -197,8 +197,7 @@ export function AuctionHouseDesk() {
                   </div>
                 </div>
                 <DisabledTooltipWrapper
-                  reason="Insufficient capital"
-                  disabled={cash < quote.buyPrice}
+                  reason={cash < quote.buyPrice ? "Insufficient capital" : false}
                 >
                   <Button
                     size="sm"
