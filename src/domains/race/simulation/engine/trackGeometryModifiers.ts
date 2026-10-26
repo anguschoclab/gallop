@@ -11,9 +11,8 @@ import {
 
 export function calculateTrackGeometryModifiers(
   r: Runner,
-  position: number,
-  distance: number,
-  course?: CourseSpecification,
+  section: import("@/shared/data/accessors/tracksAccessor").TrackSection | null,
+  surface?: string,
 ): {
   turnSpeedMul: number;
   gradientSpeedMul: number;
@@ -22,7 +21,6 @@ export function calculateTrackGeometryModifiers(
   radius: number;
   traitSurfaceMul: number;
 } {
-  const section = getTrackSection(position, distance, course);
   const radius = section?.type === "turn" ? (section.radius ?? Infinity) : Infinity;
   const gradient = section?.gradient ?? 0;
   const arcFactor = radius === Infinity ? 1 : 1 + r.lane / radius;
@@ -56,7 +54,6 @@ export function calculateTrackGeometryModifiers(
   }
 
   let traitSurfaceMul = 1.0;
-  const surface = course?.surface;
   if (surface === "Turf" && r.jockey?.traits.includes("turf_specialist")) {
     traitSurfaceMul = 1 + SURFACE_SPECIALIST_SPEED_BONUS;
   } else if (surface === "Dirt" && r.jockey?.traits.includes("dirt_specialist")) {
