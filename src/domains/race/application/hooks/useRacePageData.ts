@@ -17,7 +17,7 @@ import { calculateClassBonus } from "@/shared/common/classBonus";
 import { NarrativeGenerator } from "@/domains/narrative/application/narrativeService";
 import { buildRaceContext } from "@/domains/narrative/application/raceContextBuilder";
 import type { CommentaryLine } from "@/domains/narrative/application/commentaryGenerator";
-import { createRng, hashStr } from "@/shared/common/rng";
+import { createRng, hashStr, type Rng } from "@/shared/common/rng";
 import { asRaceId, asHorseId } from "@/shared/types/branded";
 import { NARRATIVE_RNG_XOR_MASK } from "@/domains/race/model/raceBroadcastConstants";
 
@@ -57,7 +57,7 @@ export function useRacePageData(raceId: string) {
     return { runners: built.runners, fillerHorses: built.fillerHorses ?? [] };
   }, [race, horses, jockeys, stables, hiredStaff, npcAIManager, currentDay, raceWeather]);
 
-  const rngRef = useRef<any>(null);
+  const rngRef = useRef<Rng | null>(null);
   const narrativeRef = useRef<NarrativeGenerator | null>(null);
   const messageQueue = useRef<CommentaryLine[]>([]);
   const lastRaceIdRef = useRef<string | null>(null);

@@ -10,6 +10,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { renderHook } from "@testing-library/react";
 import { useRef } from "react";
 import { useLiveRaceSimulation } from "@/domains/race/application/hooks/useLiveRaceSimulation";
+import type { Rng } from "@/shared/common/rng";
 
 const baseRace = {
   id: "race-1",
@@ -33,7 +34,7 @@ function setup(running: boolean) {
   return renderHook(() => {
     const narrativeRef = useRef(null) as any;
     const messageQueue = useRef([]) as any;
-    const rngRef = useRef({ next: () => 0.5 }) as any;
+    const rngRef = useRef({ next: () => 0.5 }) as React.MutableRefObject<Rng | null>;
     return useLiveRaceSimulation({
       race: baseRace as any,
       runners: makeRunners(),
@@ -74,7 +75,7 @@ describe("useLiveRaceSimulation — running gate", () => {
     renderHook(() => {
       const narrativeRef = useRef(null) as any;
       const messageQueue = useRef([]) as any;
-      const rngRef = useRef({ next: () => 0.5 }) as any;
+      const rngRef = useRef({ next: () => 0.5 }) as React.MutableRefObject<Rng | null>;
       return useLiveRaceSimulation({
         race: { ...baseRace, resolved: true } as any,
         runners: makeRunners(),
@@ -93,7 +94,7 @@ describe("useLiveRaceSimulation — running gate", () => {
       ({ running }: { running: boolean }) => {
         const narrativeRef = useRef(null) as any;
         const messageQueue = useRef([]) as any;
-        const rngRef = useRef({ next: () => 0.5 }) as any;
+        const rngRef = useRef({ next: () => 0.5 }) as React.MutableRefObject<Rng | null>;
         return useLiveRaceSimulation({
           race: baseRace as any,
           runners: makeRunners(),
@@ -148,7 +149,7 @@ describe("useLiveRaceSimulation — onTick callback", () => {
     renderHook(() => {
       const narrativeRef = useRef(null) as any;
       const messageQueue = useRef([]) as any;
-      const rngRef = useRef({ next: () => 0.5 }) as any;
+      const rngRef = useRef({ next: () => 0.5 }) as React.MutableRefObject<Rng | null>;
       return useLiveRaceSimulation({
         race: baseRace as any,
         runners,
@@ -173,7 +174,7 @@ describe("useLiveRaceSimulation — onTick callback", () => {
     renderHook(() => {
       const narrativeRef = useRef(null) as any;
       const messageQueue = useRef([]) as any;
-      const rngRef = useRef({ next: () => 0.5 }) as any;
+      const rngRef = useRef({ next: () => 0.5 }) as React.MutableRefObject<Rng | null>;
       return useLiveRaceSimulation({
         race: baseRace as any,
         runners: makeRunners(),
@@ -204,7 +205,7 @@ describe("useLiveRaceSimulation — onTick callback", () => {
 
     renderHook(() => {
       const narrativeRef = useRef(narrativeGen) as any;
-      const rngRef = useRef({ next: () => 0.5 }) as any;
+      const rngRef = useRef({ next: () => 0.5 }) as React.MutableRefObject<Rng | null>;
       return useLiveRaceSimulation({
         race: baseRace as any,
         runners: makeRunners(),
@@ -229,7 +230,7 @@ describe("useLiveRaceSimulation — onTick callback", () => {
 
     renderHook(() => {
       const narrativeRef = useRef(narrativeGen) as any;
-      const rngRef = useRef({ next: () => 0.5 }) as any;
+      const rngRef = useRef({ next: () => 0.5 }) as React.MutableRefObject<Rng | null>;
       return useLiveRaceSimulation({
         race: baseRace as any,
         runners: makeRunners(),
