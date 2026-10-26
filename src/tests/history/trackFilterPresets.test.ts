@@ -12,7 +12,13 @@ const f = { fromDay: "10", toDay: "90", raceType: "G1", stableId: "s1" };
 describe("track history filter presets", () => {
   it("saves a date range, race type and stable under a name", () => {
     const [p] = savePreset([], "Spring G1s", f, "Godolphin");
-    expect(p).toMatchObject({ name: "Spring G1s", fromDay: "10", toDay: "90", raceType: "G1", stableId: "s1" });
+    expect(p).toMatchObject({
+      name: "Spring G1s",
+      fromDay: "10",
+      toDay: "90",
+      raceType: "G1",
+      stableId: "s1",
+    });
     expect(describePreset(p)).toBe("Days 10–90 · G1 · Godolphin");
   });
 
