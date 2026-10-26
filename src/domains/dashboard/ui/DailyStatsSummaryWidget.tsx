@@ -35,11 +35,17 @@ function PriceTrend({ values }: { values: number[] }) {
   if (values.length < 2) return <span className="text-muted-foreground">—</span>;
   const min = Math.min(...values);
   const max = Math.max(...values);
+  const flat = max === min;
   const span = max - min || 1;
   const pts = values
-    .map((v, i) => `${(i / (values.length - 1)) * 100},${19 - ((v - min) / span) * 18}`)
+    .map((v, i) => `${(i / (values.length - 1)) * 100},${flat ? 10 : 19 - ((v - min) / span) * 18}`)
     .join(" ");
-  const up = values[values.length - 1] >= values[0];
+  const last = values[values.length - 1];
+  const tone = flat
+    ? "text-muted-foreground"
+    : last >= values[0]
+      ? "text-success"
+      : "text-destructive";
   return (
     <svg viewBox="0 0 100 20" className="h-4 w-16" preserveAspectRatio="none" aria-hidden>
       <polyline
