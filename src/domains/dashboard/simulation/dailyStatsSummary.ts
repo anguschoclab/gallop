@@ -9,8 +9,9 @@ import {
   type HorseDailyProgress,
   type HorseDailySnapshot,
 } from "@/domains/horse/simulation/dailyProgress";
+import type { DailySummaryWindow } from "@/domains/dashboard/model/dailySummaryTypes";
 
-export type DailySummaryWindow = "day" | "week";
+export type { DailySummaryWindow };
 
 /** Days of snapshots compared for each window (inclusive of today). */
 export const DAILY_SUMMARY_WINDOW_DAYS: Record<DailySummaryWindow, number> = {

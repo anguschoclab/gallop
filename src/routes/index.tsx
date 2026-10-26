@@ -21,6 +21,7 @@ import { PlayerPrestigePanel } from "@/domains/prestige/ui/PlayerPrestigePanel";
 import { ApprenticeTracker } from "@/domains/apprentice/ui/ApprenticeTracker";
 import { TutorialNextActionBanner } from "@/domains/tutorial/ui/TutorialNextActionBanner";
 import { DebtBanner } from "@/domains/dashboard/ui/DebtBanner";
+import { DailyStatsSummaryWidget } from "@/domains/dashboard/ui/DailyStatsSummaryWidget";
 import { deriveNextAction } from "@/domains/dashboard/simulation/nextAction";
 import { useNextActionBanner } from "@/domains/dashboard/application/hooks/useNextActionBanner";
 
@@ -132,6 +133,9 @@ function Dashboard() {
 
       {/* Urgent Messages */}
       <UrgentMessagesStrip messages={urgentMessages} />
+
+      {/* Daily stats summary */}
+      <DailyStatsSummaryWidget />
 
       {/* Top Row */}
       <div className="grid grid-cols-1 xl:grid-cols-12 gap-4">

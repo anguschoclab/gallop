@@ -53,11 +53,11 @@ function PriceTrend({ values }: { values: number[] }) {
   );
 }
 
-const WINDOW_OPTIONS = [
+const WINDOW_OPTIONS: { value: DailySummaryWindow; label: string }[] = [
   { value: "day", label: "Since yesterday" },
   { value: "week", label: "Last 7 days" },
 ];
-const SORT_OPTIONS = [
+const SORT_OPTIONS: { value: DailySummarySort; label: string }[] = [
   { value: "rating", label: "Rating" },
   { value: "change", label: "Price change" },
   { value: "name", label: "Name" },
@@ -94,13 +94,14 @@ export function DailyStatsSummaryWidget() {
             ariaLabel="Compare period"
             options={WINDOW_OPTIONS}
             value={window}
-            onChange={(v) => setWindow(v as DailySummaryWindow)}
+            onChange={setWindow}
           />
           <PillToggleGroup
+            label="Sort"
             ariaLabel="Sort horses by"
             options={SORT_OPTIONS}
             value={sort}
-            onChange={(v) => setSort(v as DailySummarySort)}
+            onChange={setSort}
           />
         </div>
       </CardHeader>
