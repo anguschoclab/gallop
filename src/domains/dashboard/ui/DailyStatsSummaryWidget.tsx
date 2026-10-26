@@ -53,7 +53,7 @@ function PriceTrend({ values }: { values: number[] }) {
         fill="none"
         stroke="currentColor"
         strokeWidth="2"
-        className={up ? "text-success" : "text-destructive"}
+        className={tone}
       />
     </svg>
   );
