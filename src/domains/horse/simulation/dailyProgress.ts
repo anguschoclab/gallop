@@ -101,7 +101,7 @@ export function recentSnapshots(
  */
 export function windowChange(
   snaps: HorseDailySnapshot[],
-  key: "ovr" | "form" | "price",
+  key: "ovr" | "form" | "energy" | "price",
 ): number | undefined {
   if (snaps.length < 2) return undefined;
   return snaps[snaps.length - 1][key] - snaps[0][key];
