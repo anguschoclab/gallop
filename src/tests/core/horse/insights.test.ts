@@ -89,6 +89,45 @@ describe("getHorseInsight", () => {
     expect(insight?.label).not.toBe("Milestone Watch");
   });
 
+  describe("Tipster: Earnings Milestone insight (boundary checks)", () => {
+    const testCases = [
+      { earnings: 90000, expected: "100k", target: 100000 },
+      { earnings: 99000, expected: "100k", target: 100000 },
+      { earnings: 475000, expected: "500k", target: 500000 },
+      { earnings: 1950000, expected: "2M", target: 2000000 },
+      { earnings: 4950000, expected: "5M", target: 5000000 },
+      { earnings: 9950000, expected: "10M", target: 10000000 },
+    ];
+
+    testCases.forEach(({ earnings, expected, target }) => {
+      it(`detects Milestone Watch for approaching $${expected} with earnings $${earnings}`, () => {
+        const horse = { raceHistory: [{}, {}, {}], lifetimeEarnings: earnings } as Horse;
+        const insight = getHorseInsight(horse);
+
+        expect(insight).not.toBeNull();
+        expect(insight?.label).toBe("Milestone Watch");
+        expect(insight?.value).toBe(`Approaching $${expected}`);
+        expect(insight?.context).toBe(`Just $${(target - earnings).toLocaleString()} away from reaching $${target.toLocaleString()} in career earnings`);
+        expect(insight?.type).toBe("neutral");
+      });
+    });
+
+    const negativeCases = [
+      { earnings: 89000, desc: "below threshold for 100k" },
+      { earnings: 100000, desc: "exactly on 100k target" },
+      { earnings: 450000, desc: "below threshold for 500k" },
+      { earnings: 2000000, desc: "exactly on 2M target" },
+    ];
+
+    negativeCases.forEach(({ earnings, desc }) => {
+      it(`does not detect Milestone Watch when ${desc} ($${earnings})`, () => {
+        const horse = { raceHistory: [{}, {}, {}], lifetimeEarnings: earnings } as Horse;
+        const insight = getHorseInsight(horse);
+        expect(insight?.label).not.toBe("Milestone Watch");
+      });
+    });
+  });
+
   it("detects win streaks", () => {
     const horse = {
       raceHistory: [
