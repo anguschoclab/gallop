@@ -698,6 +698,51 @@ export const detectGateAffinity: InsightDetector = (horse) => {
   return null;
 };
 
+// 4.1 Check for Field Size Affinity
+export const detectFieldSizeAffinity: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  let largeStarts = 0;
+  let largeBeyerTotal = 0;
+  let smallStarts = 0;
+  let smallBeyerTotal = 0;
+
+  for (const race of history) {
+    if (typeof race.beyer !== "number" || typeof race.fieldSize !== "number") continue;
+
+    if (race.fieldSize >= 10) {
+      largeStarts++;
+      largeBeyerTotal += race.beyer;
+    } else if (race.fieldSize <= 7) {
+      smallStarts++;
+      smallBeyerTotal += race.beyer;
+    }
+  }
+
+  if (largeStarts >= 3 && smallStarts >= 3) {
+    const largeAvg = largeBeyerTotal / largeStarts;
+    const smallAvg = smallBeyerTotal / smallStarts;
+
+    if (largeAvg >= smallAvg + 6) {
+      return {
+        label: "Traffic Weaver",
+        value: "Large Field Preference",
+        context: `Averages a ${Math.round(largeAvg)} Beyer in fields of 10+ vs ${Math.round(smallAvg)} in smaller fields`,
+        type: "positive",
+      };
+    }
+
+    if (smallAvg >= largeAvg + 6) {
+      return {
+        label: "Needs Room",
+        value: "Small Field Preference",
+        context: `Averages a ${Math.round(smallAvg)} Beyer in fields of 7 or fewer vs ${Math.round(largeAvg)} in large fields`,
+        type: "neutral",
+      };
+    }
+  }
+  return null;
+};
+
 // Check for Sire Value (Stallion outperforming his fee)
 export const detectSireValue: InsightDetector = (horse) => {
   if (!horse.stud || !horse.stud.atStud || horse.stud.lifetimeFoals < 15) return null;
@@ -764,6 +809,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceVersatility,
   detectDistanceChange,
   detectGateAffinity,
+  detectFieldSizeAffinity,
   detectEarningsMilestone,
   detectEarningsPerStart,
   detectSireValue,
