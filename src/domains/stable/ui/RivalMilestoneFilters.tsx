@@ -18,7 +18,14 @@ const KIND_OPTIONS: { value: Kind; label: string }[] = [
   { value: "retirement", label: "Retirement" },
 ];
 
-const STAGE_OPTIONS: NpcCareerStage[] = ["juvenile", "rising", "prime", "declining", "veteran", "retired"];
+const STAGE_OPTIONS: NpcCareerStage[] = [
+  "juvenile",
+  "rising",
+  "prime",
+  "declining",
+  "veteran",
+  "retired",
+];
 
 function toggle<T>(list: T[], value: T): T[] {
   return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
@@ -31,7 +38,9 @@ function Chip({ active, label, onClick }: { active: boolean; label: string; onCl
       onClick={onClick}
       aria-pressed={active}
       className={`rounded px-2.5 py-1 text-[10px] font-black uppercase tracking-wide transition-colors ${
-        active ? "bg-primary text-primary-foreground" : "bg-muted/50 text-muted-foreground hover:text-foreground"
+        active
+          ? "bg-primary text-primary-foreground"
+          : "bg-muted/50 text-muted-foreground hover:text-foreground"
       }`}
     >
       {label}
@@ -49,8 +58,14 @@ export function RivalMilestoneFilters({
   const active = value.kinds.length > 0 || value.stages.length > 0;
   return (
     <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
-      <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Milestone types">
-        <span className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">Milestones</span>
+      <div
+        className="flex flex-wrap items-center gap-1.5"
+        role="group"
+        aria-label="Milestone types"
+      >
+        <span className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
+          Milestones
+        </span>
         {KIND_OPTIONS.map((o) => (
           <Chip
             key={o.value}
@@ -61,7 +76,9 @@ export function RivalMilestoneFilters({
         ))}
       </div>
       <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Career stages">
-        <span className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">Stage</span>
+        <span className="text-[10px] font-black uppercase tracking-wide text-muted-foreground">
+          Stage
+        </span>
         {STAGE_OPTIONS.map((s) => (
           <Chip
             key={s}
@@ -72,7 +89,12 @@ export function RivalMilestoneFilters({
         ))}
       </div>
       {active && (
-        <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={() => onChange({ kinds: [], stages: [] })}>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-7 text-xs"
+          onClick={() => onChange({ kinds: [], stages: [] })}
+        >
           Show all milestones
         </Button>
       )}

@@ -45,9 +45,13 @@ export function TrackFilterPresets({ current, currentStableName, canSave, onAppl
   return (
     <div className="mt-4 space-y-2 border-t border-border pt-3">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-[11px] font-semibold uppercase text-muted-foreground">Saved filters</span>
+        <span className="text-[11px] font-semibold uppercase text-muted-foreground">
+          Saved filters
+        </span>
         {presets.length === 0 && (
-          <span className="text-xs text-muted-foreground">None yet — set filters and save them.</span>
+          <span className="text-xs text-muted-foreground">
+            None yet — set filters and save them.
+          </span>
         )}
         {presets.map((p) => (
           <span key={p.id} className="inline-flex items-center">
@@ -58,7 +62,12 @@ export function TrackFilterPresets({ current, currentStableName, canSave, onAppl
               className="h-7 rounded-r-none px-2.5 text-xs"
               title={describePreset(p)}
               onClick={() =>
-                onApply({ fromDay: p.fromDay, toDay: p.toDay, raceType: p.raceType, stableId: p.stableId })
+                onApply({
+                  fromDay: p.fromDay,
+                  toDay: p.toDay,
+                  raceType: p.raceType,
+                  stableId: p.stableId,
+                })
               }
             >
               {p.name}
