@@ -428,6 +428,45 @@ export const detectSurfaceVersatility: InsightDetector = (horse) => {
   };
 };
 
+// 1.96 Check for Field Size Preference (Big Field Specialist)
+export const detectBigFieldSpecialist: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  let bigFieldStarts = 0;
+  let bigFieldWins = 0;
+  let bigFieldBeyerTotal = 0;
+
+  let smallFieldStarts = 0;
+  let smallFieldBeyerTotal = 0;
+
+  for (const race of history) {
+    if (typeof race.fieldSize === "number" && typeof race.beyer === "number") {
+      if (race.fieldSize >= 12) {
+        bigFieldStarts++;
+        if (race.position === 1) bigFieldWins++;
+        bigFieldBeyerTotal += race.beyer;
+      } else if (race.fieldSize <= 8) {
+        smallFieldStarts++;
+        smallFieldBeyerTotal += race.beyer;
+      }
+    }
+  }
+
+  if (bigFieldStarts >= 3 && smallFieldStarts >= 3) {
+    const bigFieldAvg = bigFieldBeyerTotal / bigFieldStarts;
+    const smallFieldAvg = smallFieldBeyerTotal / smallFieldStarts;
+
+    if (bigFieldAvg >= smallFieldAvg + 5 && bigFieldWins >= 1) {
+      return {
+        label: "Crowd Surfer",
+        value: "Big Field Specialist",
+        context: `Thrives in traffic, averaging a ${Math.round(bigFieldAvg)} Beyer in fields of 12+ vs ${Math.round(smallFieldAvg)} in smaller fields`,
+        type: "positive",
+      };
+    }
+  }
+  return null;
+};
+
 // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
 export const detectDistanceSpecialist: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -759,6 +798,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectFromTheClouds,
   detectLateCharge,
   detectSurfaceVersatility,
+  detectBigFieldSpecialist,
   detectDistanceSpecialist,
   detectSurfaceAffinity,
   detectDistanceVersatility,
