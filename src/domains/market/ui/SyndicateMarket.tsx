@@ -2,6 +2,8 @@ import { TOOLTIP_DELAY_MS } from "@/shared/constants/uiConstants";
 import { useMemo } from "react";
 import { useGame, useGameWithShallow, type StoreType } from "@/platform/game/store";
 import type { Syndicate } from "@/domains/breeding/application/breedingFacade";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
+import { Trophy } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
 import { Badge } from "@/shared/ui/badge";
@@ -55,10 +57,11 @@ export function SyndicateMarket() {
 
   if (syndicateList.length === 0) {
     return (
-      <div className="text-center py-12 text-muted-foreground">
-        <p className="text-lg font-medium">No syndicates available</p>
-        <p className="text-sm mt-2">Syndicates are created for G1-winning stallions.</p>
-      </div>
+      <EmptyState
+        icon={Trophy}
+        title="No syndicates available"
+        description="Syndicates are created for G1-winning stallions."
+      />
     );
   }
 
