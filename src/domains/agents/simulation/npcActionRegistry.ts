@@ -440,46 +440,8 @@ function estimateIntentCost(intent: AnyIntent, state: GameState): number {
       return intent.action === "hire" ? intent.salary : 0;
     case "share_purchase":
       return intent.shares * intent.pricePerShare;
-    case "race_withdrawal":
-    case "stud_retirement":
-    case "jockey_contract":
-    case "jockey_release":
-    case "jockey_assignment":
-    case "scout":
-    case "consignment":
-    case "consignment_withdrawal":
-    case "gelding":
-    case "reroll_silk":
-    case "rename":
-    case "tactics":
-    case "campaign_slot":
-    case "campaign_flag_dismissal":
-    case "campaign_creation":
-    case "campaign_deletion":
-    case "auto_manage_toggle":
-    case "upkeep":
-    case "aging":
-    case "energy":
-    case "pregnancy_check":
-    case "pregnancy_resolution":
-    case "race_resolution":
-    case "withdraw_from_claiming":
-    case "pasture_retirement":
-    case "update_stud_fee":
-    case "syndicate_creation":
-    case "share_sale":
-    case "syndicate_fee_distribution":
-    case "insurance_purchase":
-    case "insurance_cancel":
-    case "insurance_claim":
-    case "stewards_inquiry":
-    case "diplomatic_action":
-    case "cartel_action":
+    default:
       return 0;
-    default: {
-      const _exhaustiveCheck: never = intent;
-      return _exhaustiveCheck;
-    }
   }
 }
 
