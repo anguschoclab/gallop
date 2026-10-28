@@ -82,7 +82,10 @@ export function dailyStatsSummary(
   });
 }
 
-/** A horse is "improving" when its rating rose, "declining" when it fell. */
+/**
+ * A horse is "improving" when its rating rose, "declining" when it fell.
+ * @param rows
+ */
 export function dailySummaryTotals(rows: DailySummaryRow[]): DailySummaryTotals {
   let valueChange = 0;
   let improving = 0;
