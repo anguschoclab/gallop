@@ -228,7 +228,8 @@ export function stepRunner(
   // Update velocity towards target (deceleration is slower than acceleration)
   const diff = targetSpeed - r.velocity;
   const rateLimit = diff < 0 ? r.accel * DECEL_FACTOR * dt : r.accel * dt;
-  r.velocity += Math.sign(diff) * Math.min(Math.abs(diff), rateLimit);
+  // Optimized velocity update: inline conditional avoids function call overhead of Math.sign, Math.min, Math.abs
+  r.velocity += diff > 0 ? (diff < rateLimit ? diff : rateLimit) : -diff < rateLimit ? diff : -rateLimit;
 
   // Apply jockey effects and get final distance step
   const { finalDs } = applyJockeyEffects(r, progress, radius, arcFactor, dt, fieldSize);
