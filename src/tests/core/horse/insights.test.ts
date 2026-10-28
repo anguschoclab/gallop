@@ -103,6 +103,40 @@ describe("getHorseInsight", () => {
     expect(insight?.value).toBe("3 Race Win Streak");
   });
 
+  it("detects Large Field Preference (Thrives in a Crowd)", () => {
+    const horse = {
+      raceHistory: [
+        { beyer: 82, fieldSize: 11 },
+        { beyer: 80, fieldSize: 12 },
+        { beyer: 85, fieldSize: 10 },
+        { beyer: 70, fieldSize: 7 },
+        { beyer: 72, fieldSize: 6 },
+        { beyer: 71, fieldSize: 4 },
+      ],
+    } as unknown as import("@/domains/horse/simulation/types").Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Thrives in a Crowd");
+    expect(insight?.value).toBe("Large Field Preference");
+    expect(insight?.type).toBe("positive");
+  });
+
+  it("detects Small Field Preference (Needs Running Room)", () => {
+    const horse = {
+      raceHistory: [
+        { beyer: 70, fieldSize: 11 },
+        { beyer: 72, fieldSize: 12 },
+        { beyer: 71, fieldSize: 10 },
+        { beyer: 82, fieldSize: 7 },
+        { beyer: 80, fieldSize: 6 },
+        { beyer: 85, fieldSize: 4 },
+      ],
+    } as unknown as import("@/domains/horse/simulation/types").Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Needs Running Room");
+    expect(insight?.value).toBe("Small Field Preference");
+    expect(insight?.type).toBe("positive");
+  });
+
   it("detects bridesmaid (2nd place) streaks", () => {
     const horse = {
       raceHistory: [

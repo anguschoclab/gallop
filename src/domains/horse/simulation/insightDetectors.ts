@@ -32,6 +32,52 @@ export const detectUndefeated: InsightDetector = (horse) => {
   return null;
 };
 
+// 4.5 Check for Field Size Preference
+export const detectFieldSizeAffinity: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  let largeFieldStarts = 0;
+  let largeFieldBeyerTotal = 0;
+  let smallFieldStarts = 0;
+  let smallFieldBeyerTotal = 0;
+
+  for (const race of history) {
+    if (typeof race.fieldSize === "number" && typeof race.beyer === "number") {
+      if (race.fieldSize >= 10) {
+        largeFieldStarts++;
+        largeFieldBeyerTotal += race.beyer;
+      } else if (race.fieldSize <= 7) {
+        smallFieldStarts++;
+        smallFieldBeyerTotal += race.beyer;
+      }
+    }
+  }
+
+  if (largeFieldStarts >= 3 && smallFieldStarts >= 3) {
+    const largeAvg = largeFieldBeyerTotal / largeFieldStarts;
+    const smallAvg = smallFieldBeyerTotal / smallFieldStarts;
+
+    if (largeAvg >= smallAvg + 6) {
+      return {
+        label: "Thrives in a Crowd",
+        value: "Large Field Preference",
+        context: `Averages a ${Math.round(largeAvg)} Beyer in fields of 10+ vs ${Math.round(smallAvg)} in small fields (≤7)`,
+        type: "positive",
+      };
+    }
+
+    if (smallAvg >= largeAvg + 6) {
+      return {
+        label: "Needs Running Room",
+        value: "Small Field Preference",
+        context: `Averages a ${Math.round(smallAvg)} Beyer in small fields (≤7) vs ${Math.round(largeAvg)} in fields of 10+`,
+        type: "positive",
+      };
+    }
+  }
+
+  return null;
+};
+
 // 1. Check for win streak (Red Hot)
 export const detectWinStreak: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -764,6 +810,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceVersatility,
   detectDistanceChange,
   detectGateAffinity,
+  detectFieldSizeAffinity,
   detectEarningsMilestone,
   detectEarningsPerStart,
   detectSireValue,
