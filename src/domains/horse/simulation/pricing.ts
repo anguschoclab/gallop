@@ -92,7 +92,10 @@ export interface HorsePriceFactors {
   fanMod: number;
 }
 
-/** The multiplicative factors behind horsePrice(); exported for value breakdowns. */
+/**
+ * The multiplicative factors behind horsePrice(); exported for value breakdowns.
+ * @param h
+ */
 export function horsePriceFactors(h: Horse): HorsePriceFactors {
   const overall = calculateOverallRating(h);
   const ageMod = h.age <= AGE_YOUNG_THRESHOLD ? 1.2 : h.age >= AGE_RETIREMENT_THRESHOLD ? 0.7 : 1;
@@ -119,7 +122,11 @@ export function horsePrice(h: Horse): number {
   return Math.round((overall * 80 * ageMod * potMod * bioMod * fanMod) / 50) * 50;
 }
 
-/** Pedigree multiplier applied by horsePriceWithPedigree(). */
+/**
+ * Pedigree multiplier applied by horsePriceWithPedigree().
+ * @param h
+ * @param allHorses
+ */
 export function horsePedigreeMultiplier(h: Horse, allHorses: Horse[]): number {
   return pedigreeMultiplier(h, { horses: getHorseRecord(allHorses) });
 }
@@ -258,9 +265,13 @@ export interface MarketValueBlend {
   phase: "gelding" | "retired" | "pre-career" | "racing prime" | "late career";
 }
 
-/** How racing and breeding value are weighted for this horse's career phase. */
+/**
+ * How racing and breeding value are weighted for this horse's career phase.
+ * @param h
+ */
 export function marketValueBlend(h: Horse): MarketValueBlend {
-  if (h.gender === "gelding" || h.gelded) return { racingWeight: 1, breedingWeight: 0, phase: "gelding" };
+  if (h.gender === "gelding" || h.gelded)
+    return { racingWeight: 1, breedingWeight: 0, phase: "gelding" };
   const retired = h.lifecycleStatus === "retired" || h.racingViable === false;
   // Post-career: value is almost entirely reproductive.
   if (retired) return { racingWeight: 0.15, breedingWeight: 0.9, phase: "retired" };
