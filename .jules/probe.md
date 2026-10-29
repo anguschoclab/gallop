@@ -1,0 +1,3 @@
+## 2023-10-29 - Syndicate Investor Actions Coverage
+**Learning:** Found an untested pure function `buildSolicitedInvestor` containing non-trivial business logic (investor creation, share transactions, PRNG seeding based on string concatenation). When testing PRNG-driven logic, it's crucial to test for expected determinism—meaning identical inputs result in identical PRNG seeds and output data (like personality and name).
+**Action:** When adding tests for PRNG-based generators, always write at least one test case calling the function multiple times with the same input to ensure the deterministic seed holds and wasn't accidentally coupled to external mutable state.
