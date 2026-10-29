@@ -13,7 +13,8 @@ import type { WritableDraft } from "immer";
 import type { GameState, Horse } from "@/platform/game/types";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import { isMaleHorse, geldHorse } from "@/domains/horse/simulation/gender";
-import type { ImpactHandler, LookupMaps } from "@/platform/resolver/handlers/types";
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
+import type { LookupMaps } from "@/platform/resolver/handlers/types";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { formatRecoveryDays } from "@/domains/health/model/injuryDisplay";
@@ -266,21 +267,23 @@ const IMPACT_HANDLERS: Record<string, HorseImpactHandlerFunction> = {
   },
 };
 
-export class HorseHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return Object.hasOwn(IMPACT_HANDLERS, type);
+export class HorseHandler extends BaseHandler {
+  protected get handlers() {
+    return IMPACT_HANDLERS;
   }
 
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
+  protected executeHandler(
+    handler: any,
+    draft: WritableDraft<GameState>,
+    impact: AnyImpact,
+    lookupMaps?: LookupMaps,
+  ): void {
     const horseId =
       (impact as { horseId?: string; entityId?: string }).horseId ||
       (impact as { entityId?: string }).entityId ||
       "";
     const horse = horseId ? lookupMaps?.horseMap.get(horseId) || draft.horses[horseId] : undefined;
 
-    const handler = IMPACT_HANDLERS[impact.type];
-    if (handler) {
-      handler(draft, impact, horse, lookupMaps);
-    }
+    handler(draft, impact, horse, lookupMaps);
   }
 }
