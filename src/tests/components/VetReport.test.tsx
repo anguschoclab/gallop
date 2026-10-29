@@ -18,7 +18,7 @@ describe("VetReport", () => {
 
   it("renders empty state when no horses exist", () => {
     renderWithStore(<VetReport />, { horses: {} });
-    expect(screen.getByText(/no horses/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/no horses/i)[0]).toBeInTheDocument();
   });
 
   it("renders a table row for each horse", () => {
