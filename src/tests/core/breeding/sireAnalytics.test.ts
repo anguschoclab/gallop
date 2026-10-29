@@ -3,6 +3,7 @@ import {
   calculateAei,
   calculateProgenyWinPercentage,
   classifyStallion,
+  generateSireNarrative,
 } from "@/domains/breeding/simulation/sireAnalytics";
 import { clearLineageCache } from "@/domains/breeding/simulation/lineage";
 import { createTestHorse } from "@/tests/helpers";
@@ -153,6 +154,58 @@ describe("sireAnalytics", () => {
       const stallion = mkStallion("s1", 1, 0);
       const foal = mkFoal("f1", "s1", 5, 0);
       expect(classifyStallion(stallion, [stallion, foal])).toBe("established");
+    });
+  });
+
+  describe("generateSireNarrative", () => {
+    it("returns hottest freshman sire narrative if tier is freshman and stakesFoals >= 2", () => {
+      const stallion = mkStallion("s1", 10, 2);
+      const f1 = mkFoal("f1", "s1", 3, 10000);
+      expect(generateSireNarrative(stallion, [stallion, f1], 1000)).toBe(
+        "Hottest freshman sire: 2 stakes winners from his first crop."
+      );
+    });
+
+    it("returns quiet freshman narrative if tier is freshman and stakesFoals < 2", () => {
+      const stallion = mkStallion("s2", 10, 1);
+      const f1 = mkFoal("f1", "s2", 3, 10000);
+      expect(generateSireNarrative(stallion, [stallion, f1], 1000)).toBe(
+        "Quietly intriguing freshman sire — first crop hitting the track now."
+      );
+    });
+
+    it("returns proven G1 producer narrative for 3+ G1 foals", () => {
+      const stallion = createTestHorse({
+        id: "s3",
+        gender: "Stallion",
+        stud: { atStud: true, standingFee: 20000, lifetimeFoals: 20, lifetimeStakesFoals: 5, lifetimeG1Foals: 3, bookSize: 100, seasonBookings: 0 }
+      } as any);
+      const f1 = mkFoal("f1", "s3", 5, 10000); // age 5 -> established
+      expect(generateSireNarrative(stallion, [stallion, f1], 1000)).toBe(
+        "Proven Group 1 producer — 3 elite winners and counting."
+      );
+    });
+
+    it("returns value narrative for fee <= 5000 and 2+ stakes winners", () => {
+      const stallion = createTestHorse({
+        id: "s4",
+        gender: "Stallion",
+        stud: { atStud: true, standingFee: 4000, lifetimeFoals: 20, lifetimeStakesFoals: 2, lifetimeG1Foals: 0, bookSize: 100, seasonBookings: 0 }
+      } as any);
+      const f1 = mkFoal("f1", "s4", 5, 10000); // age 5 -> established
+      expect(generateSireNarrative(stallion, [stallion, f1], 1000)).toBe(
+        "Best value under $5k — outperforming his fee 2× over."
+      );
+    });
+
+    it("returns default narrative for established sire", () => {
+      const stallion = mkStallion("s5", 20, 1); // fee 5000
+      const f1 = mkFoal("f1", "s5", 5, 10000);
+      // AEI is calculated based on industryMeanEarnings.
+      // f1 earnings = 10000. mean = 1000. avg progeny earnings = 10000. AEI = 1000.0 (multiplier in calculation)
+      expect(generateSireNarrative(stallion, [stallion, f1], 1000)).toBe(
+        "20 lifetime foals; 1 stakes winners; AEI 1000.0."
+      );
     });
   });
 });
