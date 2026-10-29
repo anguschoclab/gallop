@@ -20,7 +20,7 @@ import { INSTRUCTION_PRESETS, buildInstructions } from "@/domains/race/applicati
 const EMPTY: PlanIntentLike[] = [];
 
 /** Name of the preset a plan matches, or "custom" for advisor/hand-tuned plans. */
-export function matchPresetId(plan: JockeyInstructions | undefined): string {
+function matchPresetId(plan: JockeyInstructions | undefined): string {
   if (!plan) return "none";
   const hit = INSTRUCTION_PRESETS.find(
     (p) =>
