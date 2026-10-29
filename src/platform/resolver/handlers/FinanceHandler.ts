@@ -7,14 +7,8 @@
  * Related files: ../resolver.ts (uses handler), ../impacts/financialImpacts.ts (provides impact types)
  */
 
-import type { WritableDraft } from "immer";
-import type { GameState } from "@/platform/game/types";
-import type { AnyImpact } from "@/platform/resolver/impacts";
-import type {
-  ImpactHandler,
-  LookupMaps,
-  ImpactHandlerFunction,
-} from "@/platform/resolver/handlers/types";
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
+import type { ImpactHandlerFunction } from "@/platform/resolver/handlers/types";
 import type { CashImpact, TransactionImpact } from "@/platform/resolver/impacts/financialImpacts";
 import { createTransaction } from "@/domains/transactions/model/transactionTypes";
 import type { HorseTransferImpact } from "@/platform/resolver/impacts/horseImpacts";
@@ -66,15 +60,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 };
 
-export class FinanceHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return Object.hasOwn(IMPACT_HANDLERS, type);
-  }
-
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
-    const handler = IMPACT_HANDLERS[impact.type];
-    if (handler) {
-      handler(draft, impact, lookupMaps);
-    }
+export class FinanceHandler extends BaseHandler {
+  protected get handlers() {
+    return IMPACT_HANDLERS;
   }
 }

@@ -1,0 +1,3 @@
+## 2024-10-28 - Abstract BaseHandler for impact handlers
+**Learning:** The impact handlers (HorseHandler, FinanceHandler, etc.) all shared identical boilerplate for checking if they can handle an impact type (\`canHandle\`) and a very similar \`handle\` method. This duplication created cognitive noise and potential for inconsistent implementations.
+**Action:** Introduced an abstract \`BaseHandler\` class that provides the \`canHandle\` and \`handle\` implementations, requiring subclasses to simply provide a \`handlers\` getter. Use abstract base classes to dry up identical boilerplate in sibling classes.
