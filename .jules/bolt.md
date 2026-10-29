@@ -1,0 +1,3 @@
+## 2025-02-28 - [Track Geometry Hot Loop Optimization]
+**Learning:** In the race simulation engine hot path (`stepRunner`), calling `getTrackSection` inside `calculateTrackGeometryModifiers` when `getSectionAndProgress` was subsequently called for wind effects introduced redundant linear searches on course sections per runner per tick.
+**Action:** When a piece of state like a course segment or current progress section is required across multiple modifiers during a simulation tick, extract it to the shared orchestrator layer and inject it rather than re-calculating it in individual function calls.

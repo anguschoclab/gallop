@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { calculateTrackGeometryModifiers } from "@/domains/race/simulation/engine/trackGeometryModifiers";
 import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 import type { CourseSpecification } from "@/shared/data/accessors/tracksAccessor";
+import { getTrackSection } from "@/domains/race/simulation/engine/trackGeometry";
 import { SURFACE_SPECIALIST_SPEED_BONUS } from "@/domains/race/model/engine/constants";
 
 function makeRunner(overrides: Partial<Runner> = {}): Runner {
@@ -43,14 +44,22 @@ describe("calculateTrackGeometryModifiers", () => {
   describe("Gradient Modifiers", () => {
     it("applies no penalty on a flat course", () => {
       const runner = makeRunner();
-      const modifiers = calculateTrackGeometryModifiers(runner, 0, 1600, flatStraightCourse);
+      const modifiers = calculateTrackGeometryModifiers(
+        runner,
+        getTrackSection(0, 1600, flatStraightCourse),
+        flatStraightCourse,
+      );
       expect(modifiers.gradientSpeedMul).toBe(1.0);
       expect(modifiers.gradientStaminaMul).toBe(1.0);
     });
 
     it("applies penalty on an uphill course", () => {
       const runner = makeRunner();
-      const modifiers = calculateTrackGeometryModifiers(runner, 0, 1600, uphillStraightCourse);
+      const modifiers = calculateTrackGeometryModifiers(
+        runner,
+        getTrackSection(0, 1600, uphillStraightCourse),
+        uphillStraightCourse,
+      );
       expect(modifiers.gradientSpeedMul).toBe(1 - 2 / 100);
       expect(modifiers.gradientStaminaMul).toBe(1 - 2 / 200);
     });
@@ -63,7 +72,11 @@ describe("calculateTrackGeometryModifiers", () => {
           corneringAptitude: 1.0,
         } as any,
       });
-      const modifiers = calculateTrackGeometryModifiers(runner, 0, 1600, uphillStraightCourse);
+      const modifiers = calculateTrackGeometryModifiers(
+        runner,
+        getTrackSection(0, 1600, uphillStraightCourse),
+        uphillStraightCourse,
+      );
       expect(modifiers.gradientStaminaMul).toBe(1 - 2 / (200 * 2.0));
     });
 
@@ -71,7 +84,11 @@ describe("calculateTrackGeometryModifiers", () => {
       const runner = makeRunner({
         jockey: { stats: { positioning: 50 }, traits: ["hill_specialist"] } as any,
       });
-      const modifiers = calculateTrackGeometryModifiers(runner, 0, 1600, uphillStraightCourse);
+      const modifiers = calculateTrackGeometryModifiers(
+        runner,
+        getTrackSection(0, 1600, uphillStraightCourse),
+        uphillStraightCourse,
+      );
       expect(modifiers.gradientStaminaMul).toBe(1 - 2 / (400 * 1.0));
     });
   });
@@ -79,7 +96,11 @@ describe("calculateTrackGeometryModifiers", () => {
   describe("Turn and Arc Modifiers", () => {
     it("returns infinite radius and arc factor 1 on straight", () => {
       const runner = makeRunner({ lane: 2 });
-      const modifiers = calculateTrackGeometryModifiers(runner, 0, 1600, flatStraightCourse);
+      const modifiers = calculateTrackGeometryModifiers(
+        runner,
+        getTrackSection(0, 1600, flatStraightCourse),
+        flatStraightCourse,
+      );
       expect(modifiers.radius).toBe(Infinity);
       expect(modifiers.arcFactor).toBe(1.0);
       expect(modifiers.turnSpeedMul).toBe(1.0);
@@ -87,7 +108,11 @@ describe("calculateTrackGeometryModifiers", () => {
 
     it("calculates arc factor based on lane and radius on turns", () => {
       const runner = makeRunner({ lane: 2 });
-      const modifiers = calculateTrackGeometryModifiers(runner, 0, 1600, turnCourse);
+      const modifiers = calculateTrackGeometryModifiers(
+        runner,
+        getTrackSection(0, 1600, turnCourse),
+        turnCourse,
+      );
       expect(modifiers.radius).toBe(100);
       expect(modifiers.arcFactor).toBe(1 + 2 / 100);
     });
@@ -97,7 +122,11 @@ describe("calculateTrackGeometryModifiers", () => {
         velocity: 30,
         jockey: { stats: { positioning: 0 }, traits: [] } as any,
       }); // Low positioning skill to ensure penalty applies
-      const modifiers = calculateTrackGeometryModifiers(runner, 0, 1600, turnCourse);
+      const modifiers = calculateTrackGeometryModifiers(
+        runner,
+        getTrackSection(0, 1600, turnCourse),
+        turnCourse,
+      );
       expect(modifiers.turnSpeedMul).toBeLessThan(1.0);
     });
 
@@ -111,8 +140,16 @@ describe("calculateTrackGeometryModifiers", () => {
         jockey: { stats: { positioning: 0 }, traits: ["bullring_expert"] } as any,
       });
 
-      const modsNormal = calculateTrackGeometryModifiers(runnerNormal, 0, 1600, turnCourse);
-      const modsExpert = calculateTrackGeometryModifiers(runnerExpert, 0, 1600, turnCourse);
+      const modsNormal = calculateTrackGeometryModifiers(
+        runnerNormal,
+        getTrackSection(0, 1600, turnCourse),
+        turnCourse,
+      );
+      const modsExpert = calculateTrackGeometryModifiers(
+        runnerExpert,
+        getTrackSection(0, 1600, turnCourse),
+        turnCourse,
+      );
 
       expect(modsExpert.turnSpeedMul).toBeGreaterThan(modsNormal.turnSpeedMul);
     });
@@ -123,7 +160,11 @@ describe("calculateTrackGeometryModifiers", () => {
       const runner = makeRunner({
         jockey: { stats: { positioning: 50 }, traits: ["turf_specialist"] } as any,
       });
-      const modifiers = calculateTrackGeometryModifiers(runner, 0, 1600, flatStraightCourse);
+      const modifiers = calculateTrackGeometryModifiers(
+        runner,
+        getTrackSection(0, 1600, flatStraightCourse),
+        flatStraightCourse,
+      );
       expect(modifiers.traitSurfaceMul).toBe(1 + SURFACE_SPECIALIST_SPEED_BONUS);
     });
 
@@ -131,7 +172,11 @@ describe("calculateTrackGeometryModifiers", () => {
       const runner = makeRunner({
         jockey: { stats: { positioning: 50 }, traits: ["dirt_specialist"] } as any,
       });
-      const modifiers = calculateTrackGeometryModifiers(runner, 0, 1600, turnCourse);
+      const modifiers = calculateTrackGeometryModifiers(
+        runner,
+        getTrackSection(0, 1600, turnCourse),
+        turnCourse,
+      );
       expect(modifiers.traitSurfaceMul).toBe(1 + SURFACE_SPECIALIST_SPEED_BONUS);
     });
 
@@ -139,7 +184,11 @@ describe("calculateTrackGeometryModifiers", () => {
       const runner = makeRunner({
         jockey: { stats: { positioning: 50 }, traits: ["dirt_specialist"] } as any,
       });
-      const modifiers = calculateTrackGeometryModifiers(runner, 0, 1600, flatStraightCourse); // Turf course
+      const modifiers = calculateTrackGeometryModifiers(
+        runner,
+        getTrackSection(0, 1600, flatStraightCourse),
+        flatStraightCourse,
+      ); // Turf course
       expect(modifiers.traitSurfaceMul).toBe(1.0);
     });
   });
