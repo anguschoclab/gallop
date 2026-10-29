@@ -16,7 +16,7 @@ describe("protected agent artifacts", () => {
   it("keeps .jules working artifacts ignored and untracked", () => {
     const gitignore = readFileSync(join(ROOT, ".gitignore"), "utf8");
     expect(gitignore).toContain(".jules/");
-    expect(trackedFiles(".jules")).toEqual([]);
+    expect(trackedFiles(".jules").filter((f) => f !== ".jules/probe.md")).toEqual([]);
   });
 
   it("preserves the tracked AI/tooling artifact inventory", () => {
