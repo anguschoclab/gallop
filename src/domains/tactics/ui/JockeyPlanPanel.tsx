@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { Link } from "@tanstack/react-router";
 import { ClipboardList } from "lucide-react";
 import { toast } from "sonner";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 import { useGame, useGameWithShallow } from "@/platform/game/store";
 import { useHorses, useRaces, useDay } from "@/platform/game/hooks/useCoreState";
 import { useJockeys } from "@/platform/game/hooks/useSystemsState";
@@ -68,9 +69,11 @@ export function JockeyPlanPanel({ horseId }: { horseId?: string }) {
         </Link>
       </div>
       {rows.length === 0 ? (
-        <p className="text-sm text-muted-foreground">
-          No upcoming entries yet. Enter a race and its riding plan will show here.
-        </p>
+        <EmptyState
+          icon={ClipboardList}
+          title="No entries yet"
+          description="No upcoming entries yet. Enter a race and its riding plan will show here."
+        />
       ) : (
         <ul className="divide-y divide-border">
           {rows.map((r) => {
