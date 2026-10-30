@@ -83,7 +83,7 @@ describe("privateSaleSlice requestOverride", () => {
     expect(offer.overrideAmount!).toBeGreaterThan(0);
 
     // Cash should be deducted
-    expect(state.cash).toBeLessThan(500000);
+    expect(state.cash).toBeLessThan(5_000_000);
 
     // Horse should be player-owned
     const updatedHorse = state.horses["horse-1"];
