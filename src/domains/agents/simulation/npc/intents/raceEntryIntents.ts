@@ -14,7 +14,12 @@ import { applyAffinityBoost } from "@/domains/agents/simulation/jockeyStrategyAd
 import type { StableAIState, DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
 import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import { MEDIUM_PURSE_THRESHOLD } from "@/domains/prestige/model/fameConstants";
-import { addNpcBooking, canBookNpcStart } from "@/domains/agents/simulation/npc/raceBooking";
+import {
+  addNpcBooking,
+  canBookNpcStart,
+  prioritiseRacesForNpcEntry,
+} from "@/domains/agents/simulation/npc/raceBooking";
+import { MINIMUM_RACE_ENTRIES } from "@/domains/race/model/raceClassificationConstants";
 
 export function generateNpcRaceEntryIntents(
   state: GameState,
@@ -47,7 +52,9 @@ export function generateNpcRaceEntryIntents(
   // Entry fees committed by this batch; stop before the stable can't pay.
   let committedFees = 0;
 
-  for (const race of upcomingRaces) {
+  // With one start per rest window, the order races are considered decides
+  // which ones get runners — fill the player's races and thin fields first.
+  for (const race of prioritiseRacesForNpcEntry(upcomingRaces, MINIMUM_RACE_ENTRIES + 2)) {
     if (distressLevel === "critical" && race.purse < MEDIUM_PURSE_THRESHOLD) continue;
 
     const entrySet = raceEntrySets.get(race.id);

@@ -6,6 +6,7 @@ import { runPipelineForDays } from "@/tests/helpers/runPipeline";
 it("diag", () => {
   const backstory = BACKSTORIES.find((b) => b.id === "inheritor")!;
   const state = createInitialState({ profile: { stableName: "T", owner: generatePersonIdentity({ id: "player", displayName: "T", role: "owner", ageBand: "adult" }), silk: { pattern: "solid", primary: "#f00", secondary: "#00f", cap: "#0f0" }, backstoryId: "inheritor", founded: 1 } as any, backstory, worldSize: "small" } as any) as any;
+  state.userSettings = { ...(state.userSettings ?? {}), gameplay: { ...(state.userSettings?.gameplay ?? {}), autoEnterRaces: true } };
   const { perDay } = runPipelineForDays(state, 30) as any;
   const races = Object.values(perDay.at(-1).state.races) as any[];
   const done = races.filter((r) => r.day <= 30);

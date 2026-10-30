@@ -11,7 +11,7 @@
 import type { Horse, Race } from "@/platform/game/types";
 
 /** Minimum days between two starts for a rival horse. */
-export const NPC_MIN_DAYS_BETWEEN_STARTS = 3;
+export const NPC_MIN_DAYS_BETWEEN_STARTS = 7;
 
 /** horseId → race days the horse is already entered for. */
 export type NpcBookings = Map<string, number[]>;
@@ -65,3 +65,21 @@ export function canBookNpcStart(
   for (const d of days) if (Math.abs(d - day) < minGap) return false;
   return true;
 }
+
+/**
+ * Order races so rival stables fill the ones that matter first: races the
+ * player has entered (so they aren't cancelled for a thin field), then races
+ * short of runners, then the rest in their original order.
+ */
+export function prioritiseRacesForNpcEntry<T extends Pick<Race, "entries">>(
+  races: readonly T[],
+  minEntries: number,
+): T[] {
+  const rank = (r: T) =>
+    r.entries.some((e) => e.ownership?.type === "player") ? 0 : r.entries.length < minEntries ? 1 : 2;
+  return races
+    .map((r, i) => ({ r, i, k: rank(r) }))
+    .sort((a, b) => a.k - b.k || a.i - b.i)
+    .map((x) => x.r);
+}
+

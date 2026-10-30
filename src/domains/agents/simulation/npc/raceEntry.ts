@@ -16,8 +16,10 @@ import {
   addNpcBooking,
   buildNpcBookings,
   canBookNpcStart,
+  prioritiseRacesForNpcEntry,
   removeNpcBooking,
 } from "@/domains/agents/simulation/npc/raceBooking";
+import { MINIMUM_RACE_ENTRIES } from "@/domains/race/model/raceClassificationConstants";
 import type { Horse, Race, Stable, Jockey } from "@/platform/game/types";
 import type { Rng } from "@/shared/common/rng";
 import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
@@ -144,7 +146,7 @@ export function runNpcRaceEntry(
   // One start per horse per rest window, counting entries already made.
   const bookings = buildNpcBookings(updatedRaces);
 
-  for (const race of workingUpcoming) {
+  for (const race of prioritiseRacesForNpcEntry(workingUpcoming, MINIMUM_RACE_ENTRIES + 2)) {
     // Skip invitation-only races during initialization (invites haven't gone out yet)
     if (race.graded?.requiresInvitation) continue;
 
