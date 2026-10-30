@@ -14,7 +14,9 @@ it("diag", () => {
     const acc = pc.reduce((s: number, i: any) => s + i.amount, 0) + ins.reduce((s: number, i: any) => s + i.amount, 0);
     if (acc !== delta) {
       console.log("MISMATCH day", d.day, "delta", delta, "acc", acc);
-      console.log(JSON.stringify(d.impacts.filter((i: any) => typeof i.amount === "number" && !pc.includes(i)).map((i: any) => [i.type, i.entityId, i.amount, i.reason]).filter((x: any) => Math.abs(x[2]) < 5000).slice(0, 30)));
+      const pl = d.impacts.filter((i: any) => !pc.includes(i) && /player/.test(JSON.stringify(i).slice(0, 2000)));
+      console.log("TYPES", JSON.stringify(pl.map((i: any) => JSON.stringify({ ...i, horse: undefined, report: undefined }).slice(0, 300)).slice(0, 25)));
+      console.log("PC", JSON.stringify(pc.map((i: any) => [i.amount, i.reason])));
       console.log("logs", d.logs.map((l: any) => l.text).filter((t: string) => /\$|fee|cost/i.test(t)).slice(0, 15));
       break;
     }
