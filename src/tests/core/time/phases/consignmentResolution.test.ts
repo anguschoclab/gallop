@@ -4,7 +4,8 @@ import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleG
 import { createTestHorse } from "@/tests/helpers";
 import type { GameState } from "@/platform/game/types";
 import type { PipelineContext } from "@/platform/time/pipeline";
-import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
+import { asNpcStableId } from "@/shared/types/branded";
 
 describe("consignmentResolutionPhase", () => {
   it("should convert consignment intents to impacts", () => {
@@ -158,5 +159,46 @@ describe("consignmentResolutionPhase", () => {
 
     const result = consignmentResolutionPhase.execute(context);
     expect(result.impacts).toEqual([]);
+  });
+
+  describe("rival-stable consignments", () => {
+    const npcHorse = () =>
+      createTestHorse({ id: "npc-h", ownership: makeNpcOwned(asNpcStableId("rival-1")) });
+    const sale = (id: string) => ({ id, day: 10, resolved: false, lots: [], kind: "mixed" as const });
+    const npcIntent = (saleId: string, sourceId = "rival-1") => ({
+      id: `i-${saleId}-${sourceId}`,
+      entityId: "npc-h",
+      source: "npc" as const,
+      sourceId,
+      day: 1,
+      priority: 50,
+      type: "consignment" as const,
+      horseId: "npc-h",
+      saleId,
+      reservePrice: 1000,
+    });
+    const run = (intents: unknown[], sales = [sale("sale-1"), sale("sale-2")]) =>
+      consignmentResolutionPhase
+        .execute(
+          makePipelineContext({
+            state: makeGameState({ horses: h2r([npcHorse()]), auctions: sales as any }) as GameState,
+            newDay: 1,
+            intents: intents as any,
+          }) as PipelineContext,
+        )
+        .impacts.filter((i) => i.type === "consignment") as any[];
+
+    it("names the rival stable as consignor so sale money never goes to the player", () => {
+      const [impact] = run([npcIntent("sale-1")]);
+      expect(impact.consignorStableId).toBe("rival-1");
+    });
+
+    it("enters a horse into only one sale per day", () => {
+      expect(run([npcIntent("sale-1"), npcIntent("sale-2")])).toHaveLength(1);
+    });
+
+    it("ignores a rival consigning a horse it does not own", () => {
+      expect(run([npcIntent("sale-1", "someone-else")])).toHaveLength(0);
+    });
   });
 });
