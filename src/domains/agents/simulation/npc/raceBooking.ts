@@ -17,6 +17,9 @@ import type { Horse, Race } from "@/platform/game/types";
  */
 export const NPC_MIN_DAYS_BETWEEN_STARTS = 1;
 
+/** Cash a rival stable keeps back for upkeep instead of spending it on entry fees. */
+export const NPC_ENTRY_CASH_RESERVE = 25_000;
+
 /** horseId → race days the horse is already entered for. */
 export type NpcBookings = Map<string, number[]>;
 

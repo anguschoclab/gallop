@@ -16,6 +16,7 @@ import {
   addNpcBooking,
   buildNpcBookings,
   canBookNpcStart,
+  NPC_ENTRY_CASH_RESERVE,
   prioritiseRacesForNpcEntry,
   removeNpcBooking,
 } from "@/domains/agents/simulation/npc/raceBooking";
@@ -172,7 +173,7 @@ export function runNpcRaceEntry(
       for (const horse of horsesToEnter) {
         // Never enter a race the stable can't pay for.
         const expectedFee = race.entryFee + (stableJockeyMap.get(stable.id)?.ridingFee ?? 100);
-        if (stable.cash < expectedFee) break;
+        if (stable.cash - NPC_ENTRY_CASH_RESERVE < expectedFee) break;
         // If race is full, attempt to bump the lowest-rated NPC entry whose
         // horse is meaningfully weaker than this challenger. Player entries
         // are never bumped to preserve the player's planned campaign.

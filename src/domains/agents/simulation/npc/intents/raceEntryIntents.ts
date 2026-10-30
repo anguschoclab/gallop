@@ -17,6 +17,7 @@ import { MEDIUM_PURSE_THRESHOLD } from "@/domains/prestige/model/fameConstants";
 import {
   addNpcBooking,
   canBookNpcStart,
+  NPC_ENTRY_CASH_RESERVE,
   prioritiseRacesForNpcEntry,
 } from "@/domains/agents/simulation/npc/raceBooking";
 import { MINIMUM_RACE_ENTRIES } from "@/domains/race/model/raceClassificationConstants";
@@ -61,7 +62,7 @@ export function generateNpcRaceEntryIntents(
     for (const horse of ownedHorses) {
       if (entrySet && entrySet.has(horse.id)) continue;
       if (!canBookNpcStart(bookings, horse, race.day)) continue;
-      if (stable.cash - committedFees < race.entryFee) continue;
+      if (stable.cash - committedFees - NPC_ENTRY_CASH_RESERVE < race.entryFee) continue;
 
       if (race.graded?.requiresInvitation) {
         const invitedIds = race.invitedHorseIds ?? race.graded.invitedHorseIds ?? [];
