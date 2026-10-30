@@ -29,3 +29,5 @@
 - [x] Fixed: rival horses' daily price was recorded as $0 in rankings history (hidden stats not revealed before pricing)
 - [ ] Rival stables value stallions by stud fees and prize earnings (not just wins) so their bids match auction-house prices
 - [ ] In-game: set up a real stable with horses, syndicate stakes and a syndication price, then trade the shares on the Auction Houses tab
+- [ ] In-game: confirm Daily Auto-Entry enters goal races first when a day advances (not just the Race Advisor list)
+- [ ] In-game: advance a few days with races run, then confirm the rankings comparison fills in rank, points and price trends
