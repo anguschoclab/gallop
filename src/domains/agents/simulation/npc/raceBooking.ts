@@ -11,7 +11,7 @@
 import type { Horse, Race } from "@/platform/game/types";
 
 /** Minimum days between two starts for a rival horse. */
-export const NPC_MIN_DAYS_BETWEEN_STARTS = 3;
+export const NPC_MIN_DAYS_BETWEEN_STARTS = 0;
 
 /** horseId → race days the horse is already entered for. */
 export type NpcBookings = Map<string, number[]>;
