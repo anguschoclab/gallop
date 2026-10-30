@@ -223,9 +223,13 @@ export function calculateNpcBid(
 
       // Calculate max bid using AI with friction consideration
       const friction = aiState.friction ?? 0;
-      const maxBid =
+      // The AI's own budget is a planning figure; never bid past what the
+      // stable can actually spend on one lot.
+      const maxBid = Math.min(
         calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay, friction, valuation) *
-        housePrestigeMultiplier(house);
+          housePrestigeMultiplier(house),
+        stable.cash * BUDGET_CAPS[stable.personality],
+      );
 
       const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
       if (nextBid > maxBid) return null;
@@ -240,7 +244,7 @@ export function calculateNpcBid(
   if (ceiling <= 0) return null;
 
   const budgetCap = stable.cash * BUDGET_CAPS[stable.personality];
-  const maxBid = Math.min(ceiling, budgetCap);
+  const maxBid = Math.floor(Math.min(ceiling, budgetCap) / 100) * 100;
 
   const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
   if (nextBid > maxBid) return null;
