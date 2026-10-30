@@ -1,3 +1,0 @@
-## 2024-10-30 - Abstracting Duplicate Impact Handler Logic
-**Learning:** A recurring duplication pattern was discovered across all 10 impact handlers (`*Handler.ts`) in the resolver architecture, where `canHandle` and `handle` boilerplate logic was manually implemented identically in every class.
-**Action:** Created an abstract `BaseHandler` class that all impact handlers extend, providing unified implementation of these boilerplate methods to prevent prototype injection vulnerabilities and maintain codebase consistency. Next time, always check parallel domain handlers for abstractable base logic.
