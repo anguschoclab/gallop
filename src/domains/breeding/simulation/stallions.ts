@@ -15,6 +15,7 @@ import { inBreedingSeason } from "@/domains/calendar/simulation/breedingCalendar
 import { calculateBaseHorseValue } from "@/domains/horse/simulation/pricing";
 import { isMaleHorse } from "@/domains/horse/simulation/gender";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
+import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
 import {
   STUD_FEE_MID,
   STUD_BOOK_SIZE_MID,
@@ -130,7 +131,9 @@ export function calculateRecommendedStudFee(
   stableOrTier?: Stable | StableTier,
 ): number {
   const tier = typeof stableOrTier === "string" ? stableOrTier : stableOrTier?.tier || "mid";
-  const baseValue = calculateBaseHorseValue(horse, tier);
+  // Rival horses keep their stats hidden until needed; price the real stats,
+  // or every rival stallion would stand at a $0 fee.
+  const baseValue = calculateBaseHorseValue(ensurePhenotypeResolved(horse), tier);
 
   // Calculate win frequency and quality
   const cs = getCareerStats(horse);
