@@ -17,6 +17,8 @@ it("diag", () => {
       const pl = d.impacts.filter((i: any) => !pc.includes(i) && /player/.test(JSON.stringify(i).slice(0, 2000)));
       console.log("TYPES", JSON.stringify(pl.map((i: any) => JSON.stringify({ ...i, horse: undefined, report: undefined }).slice(0, 300)).slice(0, 25)));
       console.log("PC", JSON.stringify(pc.map((i: any) => [i.amount, i.reason])));
+      console.log("INS", JSON.stringify(ins));
+      console.log("ALLINS", JSON.stringify(d.impacts.filter((i: any) => /insurance/i.test(i.type)).slice(0, 5)));
       console.log("logs", d.logs.map((l: any) => l.text).filter((t: string) => /\$|fee|cost/i.test(t)).slice(0, 15));
       break;
     }
