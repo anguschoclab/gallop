@@ -139,9 +139,23 @@ export function generateFollowUpRaceNews(
     `${horse.name} Exits ${race.name} in Top Form, What's Next?`,
     `The Racing World Awaits ${horse.name}'s Next Move`,
     `Plotting the Course for ${horse.name} Post-${race.name}`,
+    `Future Targets Discussed for ${horse.name} Post-${race.name}`,
+    `${horse.name} Steps Up in ${race.name}, Future Looks Bright`,
+    `Connections of ${horse.name} Evaluate Next Steps After ${race.name}`,
+    `Where Will ${horse.name} Run Next Following the ${race.name}?`,
+    `Strategic Options Abound for ${horse.name} After ${race.name}`,
+    `The ${race.name} Performance Opens New Doors for ${horse.name}`,
   ];
 
   const bodies = [
+    `A powerful showing to earn a ${positionLabel} in the ${race.name} ensures ${horse.name} remains a major talking point. Pundits anticipate their next run will be highly anticipated.`,
+    `Securing a ${positionLabel} in a demanding test like the ${race.name} proves ${horse.name} is a force to be reckoned with. The stable must now decide where to deploy their star next.`,
+    `There was much to admire in ${horse.name}'s display at the ${race.name}, resulting in a well-deserved ${positionLabel}. Track insiders suggest a step up in distance could be on the horizon.`,
+    `Delivering a gutsy performance in the ${grade} ${race.name}, ${horse.name} secured a ${positionLabel} and has everyone guessing what their autumn target might be.`,
+    `The sheer class shown by ${horse.name} to grab a ${positionLabel} in the ${race.name} has opened up a wealth of options. Connections have the luxury of picking their next prestigious engagement.`,
+    `Fans were treated to a brilliant showing from ${horse.name} in the ${race.name}, walking away with a ${positionLabel}. The upcoming entry book will be heavily scrutinized by the racing press.`,
+    `It was a statement performance by ${horse.name} in the ${race.name}. The industry waits to see if they will be aimed at an even tougher test next time out following their ${positionLabel}.`,
+    `Following a determined ${positionLabel} in the ${race.name}, ${horse.name} has proven their resilience. The stable is expected to make an announcement regarding their next race soon.`,
     `Following a ${positionLabel} in the ${race.name} (${grade}), ${horse.name} has the racing world speculating about the next target. Connections are reportedly weighing several options for the horse's next start.`,
     `${horse.name}'s ${positionLabelShort} in the ${grade} ${race.name} has cemented their reputation as a top-class performer. The question now is whether to step up in distance, drop back, or tackle another grade-one contest.`,
     `The dust has barely settled on the ${race.name}, but ${horse.name}'s camp is already mapping out the next chapter. A ${positionLabel} in a ${grade} race opens plenty of doors for the rest of the season.`,
