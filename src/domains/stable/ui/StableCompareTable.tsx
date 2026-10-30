@@ -15,6 +15,8 @@ import { CashPressureMeter } from "@/domains/stable/ui/CashPressureMeter";
 import { CashPressureTrend } from "@/domains/stable/ui/CashPressureTrend";
 import { formatCurrency } from "@/shared/common/formatting";
 import type { Stable } from "@/platform/game/types";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
+import { Search } from "lucide-react";
 
 interface StableCompareTableProps {
   stables: Stable[];
@@ -29,10 +31,11 @@ const CELL_CLASS = "text-xs text-foreground py-2 px-3 text-center min-w-[120px]"
 export function StableCompareTable({ stables }: StableCompareTableProps) {
   if (stables.length === 0) {
     return (
-      <div className="py-8 text-center text-sm text-muted-foreground">
-        No stables selected for comparison. Use the compare toggle on stable cards or the checkboxes
-        on this page to add stables.
-      </div>
+      <EmptyState
+        icon={Search}
+        title="No stables selected"
+        description="No stables selected for comparison. Use the compare toggle on stable cards or the checkboxes on this page to add stables."
+      />
     );
   }
 
