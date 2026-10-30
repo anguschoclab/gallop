@@ -117,3 +117,11 @@ describe("rival bids start from the auction-house price", () => {
     expect(calculateMaxBid(ai, h, lot, stable, 1, 0, 500_000)).toBe(600_000);
   });
 });
+
+describe("which sale ring a stallion is priced for", () => {
+  it("a stallion at stud sells as breeding stock (mixed sale), not as a racehorse", async () => {
+    const { saleKindForHorse } = await import("@/domains/market/simulation/valuationBreakdown");
+    expect(saleKindForHorse(stallion({ stud: AT_STUD }))).toBe("mixed");
+    expect(saleKindForHorse(stallion())).toBe("racing_age");
+  });
+});

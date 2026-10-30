@@ -204,7 +204,11 @@ export function saleKindForHorse(horse: Horse): AuctionSaleKind {
   if (horse.age === 1) return "yearling";
   if (horse.age === 2) return "2yo_training";
   const female = horse.gender === "mare" || horse.gender === "filly";
-  if (female && (horse.lifecycleStatus === "retired" || horse.racingViable === false)) return "broodmare";
+  const retired = horse.lifecycleStatus === "retired" || horse.racingViable === false;
+  if (female && retired) return "broodmare";
+  // Stallions standing at stud (or retired) sell as breeding stock, not racehorses,
+  // so racing-age premiums don't apply.
+  if (!female && (retired || horse.stud?.atStud)) return "mixed";
   return "racing_age";
 }
 
