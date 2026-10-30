@@ -12,6 +12,7 @@
 // Handles death from old age, catastrophic injury, and illness complications
 
 import { PHASE_ORDER_HORSE_DEATH } from "@/platform/time/pipelineConstants";
+import type { Horse } from "@/platform/game/types";
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type {
   AnyImpact,
@@ -182,6 +183,7 @@ export const horseDeathPhase: PipelinePhase = {
                 logLevel: "always",
                 type: "insurance_payout",
                 horseId: horse.id,
+                entityId: insuranceBeneficiary(horse),
                 amount: payout,
                 reason: `Insurance payout for ${horse.name} (${illnessPolicy.type})`,
               } as InsurancePayoutImpact);
