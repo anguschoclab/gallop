@@ -1,8 +1,7 @@
 import { isFemaleHorse } from "@/domains/horse/simulation/gender";
 import type { Horse, Stable, AuctionSaleKind } from "@/platform/game/types";
-import { calculateNpcHorseValue } from "@/domains/horse/simulation/pricing";
+import { horseMarketValue } from "@/domains/horse/simulation/pricing";
 import { PERSONALITY_CONFIG } from "@/domains/stable/simulation/stableConfig";
-import { pedigreeMultiplier } from "@/domains/breeding/simulation/pedigreePricing";
 import {
   AUCTION_AGGRESSIVE_PREMIUM,
   AUCTION_2YO_TRAINING_PREMIUM,
@@ -70,7 +69,13 @@ function specialistValuation(ctx: ValuationContext): number {
   return distanceMatch ? 1.5 : 0.5;
 }
 
+function isStudStallion(horse: Horse): boolean {
+  return !isFemaleHorse(horse.gender) && !!horse.stud?.atStud && horse.stud.standingFee > 0;
+}
+
 function breederValuation(ctx: ValuationContext): number {
+  // A stallion already earning stud fees is exactly what a breeder wants.
+  if (isStudStallion(ctx.horse)) return 1.1;
   let mod = ctx.isFilly ? 1.0 + AUCTION_FILLY_PREMIUM : 0.7;
   if (ctx.horse.damName && ctx.horse.blueHenStatus?.isBlueHen) mod *= 1.2;
   if (ctx.isBroodmare) mod *= 1.0 + AUCTION_BROODMARE_PREMIUM;
@@ -103,9 +108,27 @@ const VALUATION_STRATEGIES: Record<Stable["personality"], (ctx: ValuationContext
   prestige: prestigeValuation,
 };
 
-// pedigreeMultiplier prefers horseMap and never reads state.horses when it is
-// provided — avoid materializing an O(N) horses record per call in that case.
-const EMPTY_HORSES_STATE: { horses: Record<string, Horse> } = { horses: {} };
+/** Richer stables pay a little over the auction-house price for the same horse. */
+export const NPC_TIER_PREMIUM: Record<Stable["tier"], number> = {
+  low: 1.0,
+  mid: 1.1,
+  elite: 1.25,
+};
+
+/**
+ * What any rival stable starts from before its personality: the auction-house
+ * market value (stats, pedigree, recent form, prize earnings and — for
+ * stallions at stud — capitalised stud fees), scaled by the stable's tier.
+ */
+export function npcBaseValuation(
+  horse: Horse,
+  stable: Pick<Stable, "tier">,
+  allHorses?: readonly Horse[],
+  horseMap?: Map<string, Horse>,
+): number {
+  const market = horseMarketValue(horse, allHorses ?? [], horseMap);
+  return Math.round(market * (NPC_TIER_PREMIUM[stable.tier] ?? 1));
+}
 
 export function calculateLotValuation(
   horse: Horse,
@@ -114,16 +137,7 @@ export function calculateLotValuation(
   allHorses?: readonly Horse[],
   horseMap?: Map<string, Horse>,
 ): number {
-  const pedigreeMul = allHorses
-    ? pedigreeMultiplier(
-        horse,
-        horseMap
-          ? EMPTY_HORSES_STATE
-          : { horses: Object.fromEntries(allHorses.map((h) => [h.id, h])) },
-        horseMap,
-      )
-    : 1;
-  const base = Math.round(calculateNpcHorseValue(horse, stable.tier) * pedigreeMul);
+  const base = npcBaseValuation(horse, stable, allHorses, horseMap);
 
   const p = stable.personality;
   const cfg = PERSONALITY_CONFIG[p];
