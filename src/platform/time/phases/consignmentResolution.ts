@@ -12,6 +12,7 @@ import { PHASE_ORDER_CONSIGNMENT_RESOLUTION } from "@/platform/time/pipelineCons
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import { generateUUID } from "@/shared/uuid/uuid";
+import { asStableId } from "@/shared/types/branded";
 import type { ConsignmentIntent, ConsignmentWithdrawalIntent } from "@/platform/resolver/intents";
 
 /**
@@ -53,11 +54,10 @@ export const consignmentResolutionPhase: PipelinePhase = {
       // with no consignor is the player's, so its sale money would go to the player.
       const npcConsignor =
         intent.source === "npc" && intent.sourceId ? asStableId(intent.sourceId) : undefined;
-      if (intent.source === "npc") {
-        if (horse.ownership?.type !== "npc" || String(horse.ownership.stableId) !== intent.sourceId) {
-          continue;
-        }
-      } else if (horse.ownership?.type !== "player") {
+      if (
+        npcConsignor &&
+        (horse.ownership?.type !== "npc" || String(horse.ownership.stableId) !== intent.sourceId)
+      ) {
         continue;
       }
       consignedThisPhase.add(intent.horseId);
