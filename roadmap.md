@@ -36,3 +36,4 @@
 - [ ] In-game: confirm Daily Auto-Entry enters goal races first when a day advances (not just the Race Advisor list)
 - [ ] In-game: advance a few days with races run, then confirm the rankings comparison fills in rank, points and price trends
 - [ ] In-game: run several races, then confirm Compare Periods has real data and Campaign history filter shows the races behind each period's wins and earnings
+- [ ] Found: scouting several rival horses on the same day keeps only the last report (earlier scout orders are lost before the day advances)
