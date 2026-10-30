@@ -110,7 +110,7 @@ const VALUATION_STRATEGIES: Record<Stable["personality"], (ctx: ValuationContext
 
 /** Richer stables pay a little over the auction-house price for the same horse. */
 export const NPC_TIER_PREMIUM: Record<Stable["tier"], number> = {
-  low: 1.0,
+  budget: 1.0,
   mid: 1.1,
   elite: 1.25,
 };
