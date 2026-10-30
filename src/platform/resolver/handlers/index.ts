@@ -33,3 +33,5 @@ export const ALL_HANDLERS: ImpactHandler[] = [
 ];
 
 export * from "@/platform/resolver/handlers/types";
+
+export * from "@/platform/resolver/handlers/BaseHandler";
