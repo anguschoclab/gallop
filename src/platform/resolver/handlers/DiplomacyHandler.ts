@@ -10,7 +10,6 @@
 import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
 
 import type { WritableDraft } from "immer";
-
 import type { GameState } from "@/platform/game/types";
 import type { ImpactHandlerFunction } from "@/platform/resolver/handlers/types";
 import type { DiplomaticImpact, CartelImpact } from "@/platform/resolver/impacts/miscImpacts";
