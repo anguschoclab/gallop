@@ -9,8 +9,11 @@ it("diag", () => {
     profile: { stableName: "T", owner: generatePersonIdentity({ id: "player", displayName: "T", role: "owner", ageBand: "adult" }), silk: { pattern: "solid", primary: "#f00", secondary: "#00f", cap: "#0f0" }, backstoryId: "inheritor", founded: 1 } as any,
     backstory, worldSize: "small",
   } as any);
-  const { state: fin, impacts } = runPipelineForDays(state, 90) as any;
-  console.log("cash", fin.cash, Object.keys(fin));
+  const { state: fin, perDay } = runPipelineForDays(state, 90) as any;
+  const impacts = perDay.flatMap((d: any) => d.impacts);
+  const jumps = perDay.filter((d: any) => d.cashAfter - d.cashBefore > 200000).map((d: any) => [d.day, d.cashAfter - d.cashBefore, d.logs.map((l: any) => l.text).filter((t: string) => /sold|sale|offer|auction|\$/i.test(t)).slice(0, 4)]);
+  console.log(JSON.stringify(jumps.slice(0, 8), null, 1));
+  console.log("cash", fin.cash);
   const tx = (fin.transactions ?? fin.ledger ?? []) as any[];
   const by: Record<string, number> = {};
   for (const t of tx) { if ((t.amount ?? 0) > 0) { const k = `${t.category}/${t.subcategory ?? ""}/${String(t.description ?? "").slice(0, 30)}`; by[k] = (by[k] ?? 0) + t.amount; } }
