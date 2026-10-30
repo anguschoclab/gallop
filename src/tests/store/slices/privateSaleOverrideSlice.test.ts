@@ -66,7 +66,7 @@ describe("privateSaleSlice requestOverride", () => {
     const horse = mkHorse();
     const stable = mkStable();
     seedStore({
-      cash: 500000,
+      cash: 5_000_000, // a $500k earner now prices in its prize money
       horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkPendingOffer()],
