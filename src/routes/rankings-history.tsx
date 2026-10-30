@@ -7,6 +7,7 @@ import { Sparkline } from "@/shared/ui/charts/Sparkline";
 import { useGameWithShallow } from "@/platform/game/store";
 import { formatCurrency } from "@/shared/common/formatting";
 import { horseMarketValue } from "@/domains/horse/simulation/pricing";
+import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
 import type {
   RankingsHistory,
   RankingsSnapshot,
@@ -83,7 +84,11 @@ function RankingsHistoryPage() {
         const horse = horses[horseId];
         // Live market value today; falls back to the last recorded price for
         // horses that have left the world.
-        const value = horse?.stats ? horseMarketValue(horse, all) : latest?.price;
+        // Rival horses keep their stats hidden until needed — reveal them
+        // first, or their live price reads $0.
+        const value = horse?.stats
+          ? horseMarketValue(ensurePhenotypeResolved(horse), all)
+          : latest?.price;
         const first = snaps[0];
         return {
           horseId,
