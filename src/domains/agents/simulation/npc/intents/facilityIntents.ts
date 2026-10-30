@@ -11,7 +11,6 @@ import { npcBaseValuation } from "@/domains/auction/simulation/auctionValuation"
 
 /** Rival stables set their reserve a little under the auction-house value. */
 const NPC_RESERVE_SHARE = 0.8;
-import { calculateOverallRating } from "@/domains/horse/simulation/stats";
 import { createAuctionAIState, shouldConsignHorse } from "@/domains/agents/simulation/auctionAI";
 import {
   FACILITY_UPGRADE_COSTS,
