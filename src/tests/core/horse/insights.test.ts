@@ -1016,6 +1016,36 @@ describe("Tipster: Earnings Per Start insight (merged Rainmaker/Lucrative/PrizeF
     expect(insight!.type).toBe("positive");
   });
 
+  it("detects Field Size Preference (Traffic Navigator) for large fields", () => {
+    const horse = {
+      raceHistory: [
+        { day: 1, position: 4, fieldSize: 10, beyer: 90 },
+        { day: 2, position: 5, fieldSize: 11, beyer: 92 },
+        { day: 3, position: 6, fieldSize: 12, beyer: 88 },
+        { day: 4, position: 4, fieldSize: 6, beyer: 70 },
+        { day: 5, position: 5, fieldSize: 5, beyer: 72 },
+        { day: 6, position: 6, fieldSize: 7, beyer: 68 },
+      ],
+    } as unknown as import("@/domains/horse/simulation/types").Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Traffic Navigator");
+  });
+
+  it("detects Field Size Preference (Clear Air Needed) for small fields", () => {
+    const horse = {
+      raceHistory: [
+        { day: 1, position: 4, fieldSize: 10, beyer: 70 },
+        { day: 2, position: 5, fieldSize: 11, beyer: 72 },
+        { day: 3, position: 6, fieldSize: 12, beyer: 68 },
+        { day: 4, position: 4, fieldSize: 6, beyer: 90 },
+        { day: 5, position: 5, fieldSize: 5, beyer: 92 },
+        { day: 6, position: 6, fieldSize: 7, beyer: 88 },
+      ],
+    } as unknown as import("@/domains/horse/simulation/types").Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.label).toBe("Clear Air Needed");
+  });
+
   it("detects Money Pit when earnings per start is < 1.5k with >= 10 starts", () => {
     const horse = {
       careerStarts: 10,

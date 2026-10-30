@@ -28,6 +28,14 @@ import type { Race, Horse } from "@/platform/game/types";
 /**
  * Mutates `ownerCash.amount` down to the owner's share and returns the
  * player's impacts. Returns [] when the horse isn't staked or earned nothing.
+ * @param horse
+ * @param position
+ * @param race
+ * @param ownerCash
+ * @param stake
+ * @param newDay
+ * @param rng
+ * @param getId
  */
 export function generateRivalStakeImpacts(
   horse: Horse,

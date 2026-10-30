@@ -48,13 +48,7 @@ function PriceTrend({ values }: { values: number[] }) {
       : "text-destructive";
   return (
     <svg viewBox="0 0 100 20" className="h-4 w-16" preserveAspectRatio="none" aria-hidden>
-      <polyline
-        points={pts}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        className={tone}
-      />
+      <polyline points={pts} fill="none" stroke="currentColor" strokeWidth="2" className={tone} />
     </svg>
   );
 }

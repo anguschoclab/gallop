@@ -601,6 +601,52 @@ export const detectEarningsMilestone: InsightDetector = (horse) => {
   return null;
 };
 
+// 4.1 Check for Field Size Preference
+export const detectFieldSizeAffinity: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  let largeStarts = 0;
+  let largeBeyerTotal = 0;
+  let smallStarts = 0;
+  let smallBeyerTotal = 0;
+
+  for (const race of history) {
+    if (typeof race.beyer !== "number" || typeof race.fieldSize !== "number") continue;
+
+    if (race.fieldSize >= 10) {
+      largeStarts++;
+      largeBeyerTotal += race.beyer;
+    } else if (race.fieldSize <= 7) {
+      smallStarts++;
+      smallBeyerTotal += race.beyer;
+    }
+  }
+
+  if (largeStarts >= 3 && smallStarts >= 3) {
+    const largeAvg = largeBeyerTotal / largeStarts;
+    const smallAvg = smallBeyerTotal / smallStarts;
+
+    if (largeAvg >= smallAvg + 8) {
+      return {
+        label: "Traffic Navigator",
+        value: "Large Field Preference",
+        context: `Averages a ${Math.round(largeAvg)} Beyer in fields of 10+ vs ${Math.round(smallAvg)} in smaller fields`,
+        type: "positive",
+      };
+    }
+
+    if (smallAvg >= largeAvg + 8) {
+      return {
+        label: "Clear Air Needed",
+        value: "Small Field Preference",
+        context: `Averages a ${Math.round(smallAvg)} Beyer in fields of 7 or less vs ${Math.round(largeAvg)} in crowded fields`,
+        type: "negative",
+      };
+    }
+  }
+
+  return null;
+};
+
 // 5.1 Check for Earnings Per Start (tiered yield: elite → high → low)
 export const detectEarningsPerStart: InsightDetector = (horse) => {
   const starts = horse.careerStarts ?? horse.raceHistory?.length ?? 0;
@@ -764,6 +810,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceVersatility,
   detectDistanceChange,
   detectGateAffinity,
+  detectFieldSizeAffinity,
   detectEarningsMilestone,
   detectEarningsPerStart,
   detectSireValue,
