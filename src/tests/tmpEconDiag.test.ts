@@ -20,6 +20,7 @@ it("diag", async () => {
   const auc = d5.impacts.filter((i: any) => /auction/i.test(i.type) || /auction/i.test(String(i.reason ?? "")));
   console.log("D5", d5.day, JSON.stringify(auc.slice(0, 6).map((i: any) => ({ ...i, sale: undefined, lots: undefined })), null, 0).slice(0, 3000));
   console.log("BIG", JSON.stringify(d5.impacts.filter((i: any) => /auction_proceeds_player/.test(String(i.reason)) || (i.type === "auction_resolution" && !i.passed)).slice(0, 5)).slice(0, 2500));
+  for (const d of perDay) { const ps = d.impacts.filter((i: any) => i.reason === "auction_proceeds_player"); if (ps.length) { console.log("PP", d.day, ps.length, ps.slice(0,3).map((i: any) => i.amount)); const sold = d.impacts.filter((i: any) => i.type === "auction_resolution" && !i.passed); const lotsById = new Map(); for (const sa of (d.state.auctions ?? [])) for (const l of sa.lots) lotsById.set(l.id, { ...l, sale: sa.name, kind: sa.kind }); console.log("SOLD", sold.slice(0, 40).map((i: any) => { const l = lotsById.get(i.lotId); const h = d.state.horses[l?.horseId]; return [l?.sale, l?.consignorStableId, i.hammerPrice, h?.name, h?.stud?.atStud, h?.stud?.standingFee, h?.lifetimeEarnings]; }).filter((x: any) => !x[1] || x[2] > 100000)); } }
   console.log("LOGS", d5.logs.map((l: any) => l.text).filter((t: string) => /sold|hammer|\$[0-9,]{7,}/i.test(t)).slice(0, 10));
   console.log("cash", fin.cash);
   const tx = (fin.transactions ?? fin.ledger ?? []) as any[];
