@@ -62,6 +62,7 @@ Dependency rules (enforced by `src/tests/architecture/layeringRules.test.ts`, ze
 - `bun run build` validates auto-generated `routeTree.gen.ts` — run it after adding/removing routes.
 - **`bun run build` may fail with `ENOTEMPTY` on `node_modules/.nitro/`** — this is a stale cache issue, not a code error. Fix: `rm -rf node_modules/.nitro` then rebuild.
 - For render-loop bugs (Zustand selector returning fresh references), see the `verify-gallop` skill.
+- **Rival-stable valuations start from `horseMarketValue`** via `npcBaseValuation` (`src/domains/auction/simulation/auctionValuation.ts`); auction reserves, the standard bid path and the AI bid path (`marketValue` arg to `shouldBidOnHorse`/`calculateMaxBid`) all use it. Never reintroduce a separate rating-only NPC formula — rival bids must track the auction-house price (stud fees, prize earnings, pedigree, form).
 - **`calculateNpcBid` requires a 10th `house` parameter** (`AuctionHouse | undefined`) for prestige multiplier calculations. Omitting it causes type errors and incorrect bid ceilings. See `src/domains/auction/simulation/engine.ts`.
 - **`calculateNetCashFlow` subtracts expenses** (not adds). The function was previously adding expenses, which inflated cash flow. See `src/domains/transactions/model/transactionTypes.ts`.
 - **`RivalIntelTab` uses `playerDominance` and `type`** (not `playerStrength` and `action`). The wrong property names rendered as 0% and undefined. See `src/domains/stable/ui/RivalIntelTab.tsx`.
