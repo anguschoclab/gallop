@@ -12,6 +12,12 @@
 // Evaluates races 1-3 days ahead and enters eligible, competitive horses
 // Refactored to use modular scoring, geometry, and AI systems
 
+import {
+  addNpcBooking,
+  buildNpcBookings,
+  canBookNpcStart,
+  removeNpcBooking,
+} from "@/domains/agents/simulation/npc/raceBooking";
 import type { Horse, Race, Stable, Jockey } from "@/platform/game/types";
 import type { Rng } from "@/shared/common/rng";
 import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
@@ -135,6 +141,9 @@ export function runNpcRaceEntry(
   // Cache free agents
   let freeAgents = jockeys.filter((j) => !j.stableId && j.lastRaceDay !== currentDay);
 
+  // One start per horse per rest window, counting entries already made.
+  const bookings = buildNpcBookings(updatedRaces);
+
   for (const race of workingUpcoming) {
     // Skip invitation-only races during initialization (invites haven't gone out yet)
     if (race.graded?.requiresInvitation) continue;
@@ -153,10 +162,15 @@ export function runNpcRaceEntry(
       const isRival = playerEntry && stableAI && isHatedRival(stableAI.friction);
 
       // Select horses to enter
-      const horsesToEnter = selectHorsesForRaceEntry(stable, horseMap, race, pregnantIds);
+      const horsesToEnter = selectHorsesForRaceEntry(stable, horseMap, race, pregnantIds).filter(
+        (h) => canBookNpcStart(bookings, h, race.day),
+      );
 
       // Add entries
       for (const horse of horsesToEnter) {
+        // Never enter a race the stable can't pay for.
+        const expectedFee = race.entryFee + (stableJockeyMap.get(stable.id)?.ridingFee ?? 100);
+        if (stable.cash < expectedFee) break;
         // If race is full, attempt to bump the lowest-rated NPC entry whose
         // horse is meaningfully weaker than this challenger. Player entries
         // are never bumped to preserve the player's planned campaign.
@@ -174,6 +188,7 @@ export function runNpcRaceEntry(
             }
           }
           race.entries.splice(weakestIdx, 1);
+          removeNpcBooking(bookings, bumped.horseId, race.day);
         }
 
         // Find a jockey for the NPC entry
@@ -231,6 +246,8 @@ export function runNpcRaceEntry(
           weight: assignedWeight,
           jockeyInstructions,
         });
+
+        addNpcBooking(bookings, horse.id, race.day);
 
         // Deduct entry fee AND riding fee from stable
         stable.cash = Math.max(0, stable.cash - race.entryFee - ridingFee);

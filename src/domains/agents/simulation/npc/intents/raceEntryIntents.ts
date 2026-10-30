@@ -14,6 +14,7 @@ import { applyAffinityBoost } from "@/domains/agents/simulation/jockeyStrategyAd
 import type { StableAIState, DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
 import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import { MEDIUM_PURSE_THRESHOLD } from "@/domains/prestige/model/fameConstants";
+import { addNpcBooking, canBookNpcStart } from "@/domains/agents/simulation/npc/raceBooking";
 
 export function generateNpcRaceEntryIntents(
   state: GameState,
@@ -34,12 +35,26 @@ export function generateNpcRaceEntryIntents(
   const raceEntryAI = stableAI?.raceEntryAI ?? createRaceEntryAIState(stable);
   const jockeyStrategyAI = stableAI?.jockeyStrategyAI ?? createJockeyStrategyAIState(stable);
 
+  // Days each of this stable's horses is already entered to run, so a horse
+  // gets one start per rest window instead of every suitable race.
+  const owned = new Set(ownedHorses.map((h) => h.id));
+  const bookings = new Map<string, number[]>();
+  for (const race of upcomingRaces) {
+    for (const horseId of raceEntrySets.get(race.id) ?? []) {
+      if (owned.has(horseId)) addNpcBooking(bookings, horseId, race.day);
+    }
+  }
+  // Entry fees committed by this batch; stop before the stable can't pay.
+  let committedFees = 0;
+
   for (const race of upcomingRaces) {
     if (distressLevel === "critical" && race.purse < MEDIUM_PURSE_THRESHOLD) continue;
 
     const entrySet = raceEntrySets.get(race.id);
     for (const horse of ownedHorses) {
       if (entrySet && entrySet.has(horse.id)) continue;
+      if (!canBookNpcStart(bookings, horse, race.day)) continue;
+      if (stable.cash - committedFees < race.entryFee) continue;
 
       if (race.graded?.requiresInvitation) {
         const invitedIds = race.invitedHorseIds ?? race.graded.invitedHorseIds ?? [];
@@ -109,6 +124,8 @@ export function generateNpcRaceEntryIntents(
           horseId: horse.id,
           jockeyInstructions,
         });
+        addNpcBooking(bookings, horse.id, race.day);
+        committedFees += race.entryFee;
       }
     }
   }
