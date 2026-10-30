@@ -13,5 +13,6 @@ it("diag", () => {
   const res = done.filter((r) => r.resolved), can = done.filter((r) => r.cancelled);
   const avg = res.reduce((s, r) => s + r.entries.length, 0) / Math.max(1, res.length);
   const npcActive = Object.values(perDay.at(-1).state.horses).filter((h: any) => h.ownership?.type === "npc" && h.lifecycleStatus === "active" && !h.stud?.atStud).length;
+  { const pr = done.filter((r: any) => r.entries.some((e: any) => e.ownership?.type === "player")); console.log("PLAYERR", pr.length, pr.filter((r: any) => r.resolved).length, pr.filter((r: any) => r.cancelled).length); }
   console.log("FIELDS races", done.length, "resolved", res.length, "cancelled", can.length, "avgField", avg.toFixed(1), "npcActiveHorses", npcActive);
 }, 200000);
