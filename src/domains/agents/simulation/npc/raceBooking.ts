@@ -5,13 +5,17 @@
  * look-ahead window, so one horse could run dozens of races on a single day.
  * That inflated their wins and prize money and drained stable cash through
  * entry fees until big studs went bankrupt. These helpers track which days each
- * rival horse is already booked to run and enforce rest between starts.
+ * rival horse is already booked to run and keep it to one start per rest window.
  */
 
 import type { Horse, Race } from "@/platform/game/types";
 
-/** Minimum days between two starts for a rival horse. */
-export const NPC_MIN_DAYS_BETWEEN_STARTS = 0;
+/**
+ * Minimum days between two starts for a rival horse. 1 = never two races on
+ * the same day. Longer rest windows leave most of the (very large) race
+ * calendar without runners, so this stays at one start per day for now.
+ */
+export const NPC_MIN_DAYS_BETWEEN_STARTS = 1;
 
 /** horseId → race days the horse is already entered for. */
 export type NpcBookings = Map<string, number[]>;

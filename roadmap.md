@@ -30,7 +30,8 @@
 - [x] Fixed: rival stallions stood at a $0 stud fee from game start (hidden stats priced as zero)
 - [x] Fixed: rival-stable sale entries had no seller, so the player received their sale money; horses were entered in every open sale at once
 - [x] Fixed: big rival studs went bankrupt in the first days (entry fees for dozens of races per horse; spending the same cash on many auction lots)
-- [x] Fixed: rival horses booked into many races on the same day — now one start per 7 days, and only races the stable can pay for
+- [x] Fixed: rival horses booked into many races on the same day — now one race per day, only races the stable can pay for, and the player's races are filled first
+- [ ] Found: the race calendar has far more races than horses (~235 a day in a small world), so most races are cancelled for thin fields — including some of the player's. Needs a decision on fewer races or more rest days
 - [x] Fixed: insurance payouts for rival horses that died, and jockey fees for unowned runners, were charged/paid to the player
 - [ ] In-game: set up a real stable with horses, syndicate stakes and a syndication price, then trade the shares on the Auction Houses tab
 - [ ] In-game: confirm Daily Auto-Entry enters goal races first when a day advances (not just the Race Advisor list)
