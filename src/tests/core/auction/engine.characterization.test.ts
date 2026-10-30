@@ -56,10 +56,11 @@ describe("calculateLotValuation", () => {
   it("should apply filly premium for female horses", () => {
     const colt = createTestHorse({ id: "colt", age: 1, gender: "colt" });
     const filly = createTestHorse({ id: "filly", age: 1, gender: "filly" });
-    const stable = createTestStable({ id: "npc-1", cash: 500000 });
+    const stable = createTestStable({ id: "npc-1", cash: 500000, personality: "breeder" });
     const coltValue = calculateLotValuation(colt, stable, "yearling");
     const fillyValue = calculateLotValuation(filly, stable, "yearling");
-    // Filly premium should make filly worth more (or at least not less)
+    // Breeders pay a filly premium; other stables follow the auction price,
+    // where colts carry more stud upside.
     expect(fillyValue).toBeGreaterThanOrEqual(coltValue);
   });
 

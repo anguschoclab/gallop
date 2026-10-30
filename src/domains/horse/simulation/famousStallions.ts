@@ -18,6 +18,7 @@ import { activeStallions2020s } from "@/shared/data/pedigreeData";
 import { mapStallionToStable } from "@/domains/stable/simulation/stableQueries";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";
+import { calculateRecommendedStudFee } from "@/domains/breeding/simulation/stallions";
 
 /**
  * Generate famous active stallions from real-world pedigree data.
@@ -66,7 +67,12 @@ export function generateFamousStallions(stables: Stable[], rng: Rng): Horse[] {
     );
     horse.stud = {
       atStud: true,
-      standingFee: data.studFee ?? 50000,
+      // Some records carry no fee (0); price those from the horse itself
+      // instead of standing a famous stallion for free.
+      standingFee:
+        data.studFee && data.studFee > 0
+          ? data.studFee
+          : calculateRecommendedStudFee(horse, stable?.tier ?? tier),
       bookSize: data.bookSize ?? 150,
       seasonBookings: 0,
       lifetimeFoals: 0,

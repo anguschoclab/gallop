@@ -6,7 +6,11 @@ import type {
 } from "@/platform/resolver/intents";
 import type { GameState, Horse, Stable, AuctionSale } from "@/platform/game/types";
 import { generateUUID } from "@/shared/uuid/uuid";
-import { calculateOverallRating } from "@/domains/horse/simulation/stats";
+import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
+import { npcBaseValuation } from "@/domains/auction/simulation/auctionValuation";
+
+/** Rival stables set their reserve a little under the auction-house value. */
+const NPC_RESERVE_SHARE = 0.8;
 import { createAuctionAIState, shouldConsignHorse } from "@/domains/agents/simulation/auctionAI";
 import {
   FACILITY_UPGRADE_COSTS,
@@ -22,7 +26,6 @@ import type { OutpostRegion } from "@/domains/facilities/model/outpostTypes";
 import type { StableAIState, DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
 import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import {
-  HORSE_RATING_TO_VALUE_MULTIPLIER,
   CONSIGNMENT_INTENT_PRIORITY,
   DEFAULT_SUBSYSTEM_WEIGHT,
 } from "@/domains/agents/model/aiConstants";
@@ -54,11 +57,14 @@ export function generateNpcAuctionIntents(
   const auctionBudget = stableAI?.budgetAllocation?.auctions;
   let cumulativeAuctionSpend = 0;
 
-  const activeSales = auctions.filter((s) => !s.resolved);
+  // Liquidation sales belong to the bankrupt stable; others don't consign into them.
+  const activeSales = auctions.filter((s) => !s.resolved && s.kind !== "liquidation");
   if (activeSales.length === 0) return intents;
+  const consigned = new Set<string>();
 
   for (const sale of activeSales) {
     for (const horse of ownedHorses) {
+      if (consigned.has(horse.id) || horse.consignedSaleId) continue;
       const result = shouldConsignHorse(
         auctionAI,
         horse,
@@ -70,8 +76,9 @@ export function generateNpcAuctionIntents(
         distressLevel,
       );
       if (result.shouldConsign) {
+        // Reserve from the same auction-house value rival bidders use.
         const reservePrice = Math.floor(
-          calculateOverallRating(horse) * HORSE_RATING_TO_VALUE_MULTIPLIER,
+          npcBaseValuation(ensurePhenotypeResolved(horse), stable) * NPC_RESERVE_SHARE,
         );
 
         if (auctionBudget !== undefined && auctionBudget <= 0 && cumulativeAuctionSpend > 0) {
@@ -91,6 +98,7 @@ export function generateNpcAuctionIntents(
           saleId: sale.id,
           reservePrice,
         });
+        consigned.add(horse.id);
       }
     }
   }

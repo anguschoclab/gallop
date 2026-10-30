@@ -149,10 +149,54 @@ function getHorseRecord(allHorses: Horse[]): Record<string, Horse> {
   return cachedHorseRecord;
 }
 
-export function horsePriceWithPedigree(h: Horse, allHorses: Horse[]): number {
+/** Pedigree lookup that prefers a prebuilt id map (no O(N) record build). */
+function pedigreeFor(h: Horse, allHorses: readonly Horse[], horseMap?: Map<string, Horse>): number {
+  return horseMap
+    ? pedigreeMultiplier(h, EMPTY_HORSES, horseMap)
+    : pedigreeMultiplier(h, { horses: getHorseRecord(allHorses as Horse[]) });
+}
+const EMPTY_HORSES: { horses: Record<string, Horse> } = { horses: {} };
+
+export function horsePriceWithPedigree(
+  h: Horse,
+  allHorses: readonly Horse[],
+  horseMap?: Map<string, Horse>,
+): number {
   const base = horsePrice(h);
+  return Math.round((base * pedigreeFor(h, allHorses, horseMap)) / 50) * 50;
+}
+
+// -----------------------------------------------------------------------------
+// Prize earnings
+// -----------------------------------------------------------------------------
+
+/**
+ * Lifetime prize money used for valuation: the recorded total or the sum of
+ * per-start purses, whichever is larger (older saves may lack one or the other).
+ */
+export function careerPrizeEarnings(h: Pick<Horse, "lifetimeEarnings" | "raceHistory">): number {
+  let fromHistory = 0;
+  for (const r of h.raceHistory ?? []) fromHistory += r.purseEarned ?? 0;
+  return Math.max(h.lifetimeEarnings ?? 0, fromHistory);
+}
+
+/** Most the prize-earnings premium can add to racing value (+50%). */
+export const EARNINGS_PREMIUM_CAP = 0.5;
+/** Premium added per tenfold of earnings ($10k → +4.5%, $100k → +15.6%, $1M → +30%). */
+const EARNINGS_PREMIUM_PER_DECADE = 0.15;
+const EARNINGS_PREMIUM_SCALE = 10_000;
+
+/**
+ * Racing-value multiplier from lifetime prize money. Unlike raceFormPremium
+ * (recent placings, fades over a year) this is the horse's lasting record:
+ * a big earner stays valuable, and it is what stud buyers pay for.
+ */
+export function earningsPremium(h: Pick<Horse, "lifetimeEarnings" | "raceHistory">): number {
+  const e = careerPrizeEarnings(h);
+  if (e <= 0) return 1;
   return (
-    Math.round((base * pedigreeMultiplier(h, { horses: getHorseRecord(allHorses) })) / 50) * 50
+    1 +
+    Math.min(EARNINGS_PREMIUM_CAP, Math.log10(1 + e / EARNINGS_PREMIUM_SCALE) * EARNINGS_PREMIUM_PER_DECADE)
   );
 }
 
@@ -189,14 +233,16 @@ function mareAgeCurve(age: number): number {
  * @param h
  * @param allHorses
  */
-export function estimateBreedingValue(h: Horse, allHorses: Horse[] = []): number {
+export function estimateBreedingValue(
+  h: Horse,
+  allHorses: readonly Horse[] = [],
+  horseMap?: Map<string, Horse>,
+): number {
   if (h.gender === "gelding" || h.gelded) return 0;
 
   const overall = calculateOverallRating(h);
   const potMod = 0.5 + (h.potential ?? 50) / 100;
-  const pedMul = pedigreeMultiplier(h, {
-    horses: getHorseRecord(allHorses),
-  });
+  const pedMul = pedigreeFor(h, allHorses, horseMap);
   const winRate = h.careerStarts > 0 ? h.careerWins / h.careerStarts : 0;
   const fameBoost = 1 + (h.fame ?? 0) / 150;
   const fanBoost = 1 + (h.fanCount ?? 0) / FAN_BREEDING_VALUATION_DIVISOR;
@@ -221,6 +267,8 @@ export function estimateBreedingValue(h: Horse, allHorses: Horse[] = []): number
       // Projected stud value for racing / unproven males.
       base = overall * overall * 6 * potMod * pedMul * fameBoost * fanBoost;
       base *= 1 + winRate * 0.6;
+      // Stud buyers pay for a proven earner, not just a win rate.
+      base *= earningsPremium(h);
     }
     const val = base * stallionAgeCurve(h.age);
     return Math.max(0, Math.round(val / 100) * 100);
@@ -255,12 +303,16 @@ export interface MarketValueBlend {
   racingWeight: number;
   breedingWeight: number;
   /** Why the weights are what they are (career phase). */
-  phase: "gelding" | "retired" | "pre-career" | "racing prime" | "late career";
+  phase: "gelding" | "at stud" | "retired" | "pre-career" | "racing prime" | "late career";
 }
 
 /** How racing and breeding value are weighted for this horse's career phase. */
 export function marketValueBlend(h: Horse): MarketValueBlend {
   if (h.gender === "gelding" || h.gelded) return { racingWeight: 1, breedingWeight: 0, phase: "gelding" };
+  // Standing at stud: the horse earns its keep from stud fees now.
+  if (h.stud?.atStud && h.stud.standingFee > 0) {
+    return { racingWeight: 0.15, breedingWeight: 0.9, phase: "at stud" };
+  }
   const retired = h.lifecycleStatus === "retired" || h.racingViable === false;
   // Post-career: value is almost entirely reproductive.
   if (retired) return { racingWeight: 0.15, breedingWeight: 0.9, phase: "retired" };
@@ -272,12 +324,42 @@ export function marketValueBlend(h: Horse): MarketValueBlend {
   return { racingWeight: 0.4, breedingWeight: 0.8, phase: "late career" };
 }
 
-export function horseMarketValue(h: Horse, allHorses: Horse[] = []): number {
-  const racing = Math.round(horsePriceWithPedigree(h, allHorses) * raceFormPremium(h));
-  const breeding = estimateBreedingValue(h, allHorses);
+export interface MarketValueParts {
+  /** Racing value: price × pedigree × recent form × prize earnings. */
+  racing: number;
+  /** Breeding value (capitalised stud fees for stallions at stud). */
+  breeding: number;
+  blend: MarketValueBlend;
+  /** Blended auction-house value. */
+  value: number;
+}
+
+/**
+ * The parts behind horseMarketValue(). Rival-stable bids start from `value`
+ * too, so what they pay tracks the auction-house price.
+ */
+export function horseMarketValueParts(
+  h: Horse,
+  allHorses: readonly Horse[] = [],
+  horseMap?: Map<string, Horse>,
+): MarketValueParts {
+  const racing = Math.round(
+    horsePriceWithPedigree(h, allHorses, horseMap) * raceFormPremium(h) * earningsPremium(h),
+  );
   const blend = marketValueBlend(h);
-  if (blend.phase === "gelding") return racing;
-  return Math.round((racing * blend.racingWeight + breeding * blend.breedingWeight) / 50) * 50;
+  if (blend.phase === "gelding") return { racing, breeding: 0, blend, value: racing };
+  const breeding = estimateBreedingValue(h, allHorses, horseMap);
+  const value =
+    Math.round((racing * blend.racingWeight + breeding * blend.breedingWeight) / 50) * 50;
+  return { racing, breeding, blend, value };
+}
+
+export function horseMarketValue(
+  h: Horse,
+  allHorses: readonly Horse[] = [],
+  horseMap?: Map<string, Horse>,
+): number {
+  return horseMarketValueParts(h, allHorses, horseMap).value;
 }
 
 export interface HorseCareerValuation {

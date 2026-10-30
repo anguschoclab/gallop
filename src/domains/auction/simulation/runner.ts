@@ -90,6 +90,14 @@ export function createAuctionRunner(
   // runner (stable cash/roster only change when impacts commit after the
   // sale) — memoize them across the per-tick bidder scans.
   const valuationCache = new Map<string, number>();
+  // Cash each stable has already committed to lots it won in this sale —
+  // stable cash only updates after the sale, so without this a stable could
+  // win lot after lot with the same money.
+  const committed = new Map<string, number>();
+  const withCommitted = (s: Stable): Stable => {
+    const c = committed.get(s.id);
+    return c ? { ...s, cash: Math.max(0, s.cash - c) } : s;
+  };
   const log: string[] = [];
   let lotIndex = 0;
   let tick = 0;
@@ -124,7 +132,7 @@ export function createAuctionRunner(
     for (const stable of eligible) {
       const rng = rngFor(state.lot, tick * 31 + bidderStables.indexOf(stable));
       const bid = calculateNpcBid(
-        stable,
+        withCommitted(stable),
         horse,
         state.currentBid,
         sale.kind,
@@ -184,6 +192,12 @@ export function createAuctionRunner(
     }
 
     state.chant = "sold";
+    if (state.leadingBidder) {
+      committed.set(
+        state.leadingBidder,
+        (committed.get(state.leadingBidder) ?? 0) + state.currentBid,
+      );
+    }
     state.lot.hammerPrice = state.currentBid;
     state.lot.soldToStableId = state.leadingBidder;
     state.lot.passed = false;

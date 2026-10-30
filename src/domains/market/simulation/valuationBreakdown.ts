@@ -10,6 +10,8 @@
 import type { AuctionSaleKind, Horse, Stable } from "@/platform/game/types";
 import type { AuctionHouse } from "@/domains/prestige/simulation";
 import {
+  careerPrizeEarnings,
+  earningsPremium,
   estimateBreedingValue,
   horseMarketValue,
   horsePedigreeMultiplier,
@@ -22,7 +24,7 @@ import { npcWalkAwayPrice, type NpcWalkAwayPrice } from "@/domains/auction/simul
 import type { RankingsSnapshot } from "@/domains/market/simulation/rankingsHistory";
 
 export interface ValueFactor {
-  key: "stats" | "age" | "potential" | "build" | "fans" | "pedigree" | "form";
+  key: "stats" | "age" | "potential" | "build" | "fans" | "pedigree" | "form" | "earnings";
   label: string;
   /** Plain-language reading of the input, e.g. "Rating 78" or "3 recent wins". */
   detail: string;
@@ -95,6 +97,13 @@ export function explainHorseValue(horse: Horse, allHorses: Horse[]): HorseValueB
       : `${winsIn(horse)} wins${graded ? ` (${graded} graded)` : ""} from ${history.length} starts, recent ones count most`,
     form,
   );
+  const earned = careerPrizeEarnings(horse);
+  push(
+    "earnings",
+    "Prize earnings",
+    earned > 0 ? `$${Math.round(earned).toLocaleString()} won in career` : "No prize money yet",
+    earningsPremium(horse),
+  );
 
   return {
     factors,
@@ -155,7 +164,13 @@ export function explainPriceMovement(
   const priceNow = horseMarketValue(horse, allHorses);
   const history = horse.raceHistory ?? [];
   const inWindow = history.filter((r) => r.day > since);
-  const withoutRecent = { ...horse, raceHistory: history.filter((r) => r.day <= since) } as Horse;
+  // Without the window's results: drop those starts and the prize money they paid.
+  const recentPurses = inWindow.reduce((sum, r) => sum + (r.purseEarned ?? 0), 0);
+  const withoutRecent = {
+    ...horse,
+    raceHistory: history.filter((r) => r.day <= since),
+    lifetimeEarnings: Math.max(0, (horse.lifetimeEarnings ?? 0) - recentPurses),
+  } as Horse;
   const fromResults = priceNow - horseMarketValue(withoutRecent, allHorses);
 
   const fameNow = horse.fame ?? 0;
@@ -189,7 +204,11 @@ export function saleKindForHorse(horse: Horse): AuctionSaleKind {
   if (horse.age === 1) return "yearling";
   if (horse.age === 2) return "2yo_training";
   const female = horse.gender === "mare" || horse.gender === "filly";
-  if (female && (horse.lifecycleStatus === "retired" || horse.racingViable === false)) return "broodmare";
+  const retired = horse.lifecycleStatus === "retired" || horse.racingViable === false;
+  if (female && retired) return "broodmare";
+  // Stallions standing at stud (or retired) sell as breeding stock, not racehorses,
+  // so racing-age premiums don't apply.
+  if (!female && (retired || horse.stud?.atStud)) return "mixed";
   return "racing_age";
 }
 

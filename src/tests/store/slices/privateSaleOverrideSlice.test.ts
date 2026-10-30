@@ -66,7 +66,7 @@ describe("privateSaleSlice requestOverride", () => {
     const horse = mkHorse();
     const stable = mkStable();
     seedStore({
-      cash: 500000,
+      cash: 5_000_000, // a $500k earner now prices in its prize money
       horses: h2r([horse]),
       npcStables: [stable],
       privateSaleOffers: [mkPendingOffer()],
@@ -83,7 +83,7 @@ describe("privateSaleSlice requestOverride", () => {
     expect(offer.overrideAmount!).toBeGreaterThan(0);
 
     // Cash should be deducted
-    expect(state.cash).toBeLessThan(500000);
+    expect(state.cash).toBeLessThan(5_000_000);
 
     // Horse should be player-owned
     const updatedHorse = state.horses["horse-1"];

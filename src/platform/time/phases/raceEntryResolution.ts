@@ -333,7 +333,7 @@ export const raceEntryResolutionPhase: PipelinePhase = {
           phase: "raceEntryResolution",
           logLevel: "conditional",
           type: "cash_change",
-          entityId: "",
+          entityId: "player",
           amount: -transportCost,
           reason: `Transport to ${race.name}`,
         } as CashImpact);

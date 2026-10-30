@@ -384,7 +384,7 @@ describe("generateJockeyFeeImpacts", () => {
       calibratedPars: {},
     });
     const fee = impacts.find(
-      (i) => i.type === "cash_change" && (i as any).amount < 0 && (i as any).entityId === "",
+      (i) => i.type === "cash_change" && (i as any).amount < 0 && (i as any).entityId === "player",
     );
     expect(fee).toBeDefined();
     const tx = impacts.find((i) => i.type === "transaction" && (i as any).amount < 0);

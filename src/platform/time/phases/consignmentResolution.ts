@@ -12,6 +12,7 @@ import { PHASE_ORDER_CONSIGNMENT_RESOLUTION } from "@/platform/time/pipelineCons
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import { generateUUID } from "@/shared/uuid/uuid";
+import { asStableId } from "@/shared/types/branded";
 import type { ConsignmentIntent, ConsignmentWithdrawalIntent } from "@/platform/resolver/intents";
 
 /**
@@ -36,6 +37,10 @@ export const consignmentResolutionPhase: PipelinePhase = {
     const { horseMap } = context;
     const auctionMap = new Map((state.auctions ?? []).map((a) => [a.id, a]));
 
+    // A horse can be catalogued in one sale at a time — including sales it
+    // was entered into earlier in this same phase.
+    const consignedThisPhase = new Set<string>();
+
     for (const intent of consignmentIntents) {
       const horse = horseMap.get(intent.horseId);
       const auction = auctionMap.get(intent.saleId);
@@ -43,6 +48,19 @@ export const consignmentResolutionPhase: PipelinePhase = {
       if (!horse || !auction) continue;
       if (auction.resolved) continue;
       if (horse.consignedSaleId) continue;
+      if (consignedThisPhase.has(intent.horseId)) continue;
+
+      // Rival-stable consignments must name their stable as consignor; a lot
+      // with no consignor is the player's, so its sale money would go to the player.
+      const npcConsignor =
+        intent.source === "npc" && intent.sourceId ? asStableId(intent.sourceId) : undefined;
+      if (
+        npcConsignor &&
+        (horse.ownership?.type !== "npc" || String(horse.ownership.stableId) !== intent.sourceId)
+      ) {
+        continue;
+      }
+      consignedThisPhase.add(intent.horseId);
 
       impacts.push({
         id: generateUUID(),
@@ -54,7 +72,8 @@ export const consignmentResolutionPhase: PipelinePhase = {
         horseId: intent.horseId,
         saleId: intent.saleId,
         reservePrice: intent.reservePrice,
-        reason: "Player consignment",
+        consignorStableId: npcConsignor,
+        reason: npcConsignor ? "npc_consignment" : "Player consignment",
       });
     }
 

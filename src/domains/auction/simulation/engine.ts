@@ -18,10 +18,8 @@ import type {
   AuctionSaleKind,
 } from "@/platform/game/types";
 import { generateNpcHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
-import { calculateNpcHorseValue } from "@/domains/horse/simulation/pricing";
 import { createRng, type Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
-import { pedigreeMultiplier } from "@/domains/breeding/simulation/pedigreePricing";
 import { calculateMaxBid, shouldBidOnHorse } from "@/domains/agents/simulation/auctionBidding";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/domains/agents/model/aiConstants";
@@ -83,7 +81,10 @@ export function commissionAmount(hammerPrice: number, house?: AuctionHouse): num
  */
 // Valuation logic extracted to auctionValuation.ts
 export { calculateLotValuation } from "@/domains/auction/simulation/auctionValuation";
-import { calculateLotValuation } from "@/domains/auction/simulation/auctionValuation";
+import {
+  calculateLotValuation,
+  npcBaseValuation,
+} from "@/domains/auction/simulation/auctionValuation";
 
 // ---------------------------------------------------------------------------
 // NPC bidding
@@ -174,6 +175,18 @@ export function calculateNpcBid(
   house?: AuctionHouse,
   valuationCache?: Map<string, number>,
 ): number | null {
+  // The stable's valuation of this horse (auction-house value × tier ×
+  // personality, before house prestige). Invariant while a sale is in
+  // flight, so callers that re-evaluate bids every tick pass a shared cache.
+  const lotValuation = (): number => {
+    const cacheKey = valuationCache ? `${stable.id}:${horse.id}` : undefined;
+    const cached = cacheKey ? valuationCache!.get(cacheKey) : undefined;
+    if (cached !== undefined) return cached;
+    const v = calculateLotValuation(horse, stable, saleKind, allHorses, horseMap);
+    if (cacheKey) valuationCache!.set(cacheKey, v);
+    return v;
+  };
+
   // Use AI-driven bidding if AI manager is available
   if (npcAIManager && currentDay !== undefined) {
     const aiState = npcAIManager.stableStates[stable.id];
@@ -194,6 +207,9 @@ export function calculateNpcBid(
 
       // Check if stable should bid using AI
       const auctionWeight = aiState.subsystemWeights?.auction ?? DEFAULT_SUBSYSTEM_WEIGHT;
+      // Bid against the same valuation as the standard path, so stud fees and
+      // prize earnings count and AI bids track the auction-house price.
+      const valuation = lotValuation();
       const shouldBid = shouldBidOnHorse(
         aiState.auctionAI,
         horse,
@@ -201,14 +217,19 @@ export function calculateNpcBid(
         stable,
         currentDay,
         auctionWeight,
+        valuation,
       );
       if (!shouldBid) return null;
 
       // Calculate max bid using AI with friction consideration
       const friction = aiState.friction ?? 0;
-      const maxBid =
-        calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay, friction) *
-        housePrestigeMultiplier(house);
+      // The AI's own budget is a planning figure; never bid past what the
+      // stable can actually spend on one lot.
+      const maxBid = Math.min(
+        calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay, friction, valuation) *
+          housePrestigeMultiplier(house),
+        stable.cash * BUDGET_CAPS[stable.personality],
+      );
 
       const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
       if (nextBid > maxBid) return null;
@@ -217,25 +238,13 @@ export function calculateNpcBid(
     }
   }
 
-  // Fall back to original logic if AI not available. The valuation ceiling is
-  // invariant for a (stable, horse) pair while a sale is in flight — callers
-  // that re-evaluate bids every tick pass a shared cache.
-  let ceiling: number;
-  const cacheKey = valuationCache ? `${stable.id}:${horse.id}` : undefined;
-  const cached = cacheKey ? valuationCache!.get(cacheKey) : undefined;
-  if (cached !== undefined) {
-    ceiling = cached;
-  } else {
-    ceiling =
-      calculateLotValuation(horse, stable, saleKind, allHorses, horseMap) *
-      housePrestigeMultiplier(house);
-    if (cacheKey) valuationCache!.set(cacheKey, ceiling);
-  }
+  // Fall back to original logic if AI not available.
+  const ceiling = lotValuation() * housePrestigeMultiplier(house);
 
   if (ceiling <= 0) return null;
 
   const budgetCap = stable.cash * BUDGET_CAPS[stable.personality];
-  const maxBid = Math.min(ceiling, budgetCap);
+  const maxBid = Math.floor(Math.min(ceiling, budgetCap) / 100) * 100;
 
   const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
   if (nextBid > maxBid) return null;
@@ -398,17 +407,16 @@ export function generateAuctionLots(
   // Every major stable gets a chance to consign — per-personality policy
   // decides what (if anything) they actually list.
   const consignors = stables.filter((s) => s.isMajor);
-  const horsesDict = Object.fromEntries(allHorsesCopy.map((h) => [h.id, h]));
+  const horseIndex = new Map(allHorsesCopy.map((h) => [h.id, h]));
 
   for (const stable of consignors) {
     const policy = personalityConsignmentPolicy(stable, kind, allHorses, rng);
 
     for (let horse of policy.consign) {
       horse = ensurePhenotypeResolved(horse);
-      const pedigreeMul = pedigreeMultiplier(horse, {
-        horses: horsesDict,
-      });
-      const baseValue = calculateNpcHorseValue(horse, stable.tier) * pedigreeMul;
+      // Reserves start from the same value rival bidders use (auction-house
+      // price incl. stud fees and prize earnings), so reserves and bids agree.
+      const baseValue = npcBaseValuation(horse, stable, allHorsesCopy, horseIndex);
       const breezeSeconds = kind === "2yo_training" ? generateBreezeSeconds(horse, rng) : undefined;
       lots.push({
         id: generateUUID(rng),
@@ -433,11 +441,8 @@ export function generateAuctionLots(
       if (!isLotEligible(freshHorse, kind)) continue;
       const resolvedFresh = ensurePhenotypeResolved(freshHorse);
       allHorsesCopy.push(resolvedFresh);
-      horsesDict[resolvedFresh.id] = resolvedFresh;
-      const pedigreeMul = pedigreeMultiplier(resolvedFresh, {
-        horses: horsesDict,
-      });
-      const baseValue = calculateNpcHorseValue(resolvedFresh, stable.tier) * pedigreeMul;
+      horseIndex.set(resolvedFresh.id, resolvedFresh);
+      const baseValue = npcBaseValuation(resolvedFresh, stable, allHorsesCopy, horseIndex);
       const breezeSeconds =
         kind === "2yo_training" ? generateBreezeSeconds(resolvedFresh, rng) : undefined;
       lots.push({

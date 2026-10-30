@@ -5,17 +5,17 @@ exports[`createAuctionRunner golden outcomes > produces identical final lots (ha
   {
     "bids": [
       {
-        "amount": 22700,
+        "amount": 17900,
         "stableId": "stable_aggressive",
         "tick": 2,
       },
       {
-        "amount": 33200,
+        "amount": 26100,
         "stableId": "stable_prestige",
         "tick": 3,
       },
     ],
-    "hammerPrice": 33200,
+    "hammerPrice": 26100,
     "id": "lot1",
     "passed": false,
     "soldTo": "stable_prestige",
@@ -23,27 +23,27 @@ exports[`createAuctionRunner golden outcomes > produces identical final lots (ha
   {
     "bids": [
       {
-        "amount": 24200,
+        "amount": 47100,
         "stableId": "stable_aggressive",
         "tick": 8,
       },
       {
-        "amount": 25700,
+        "amount": 49700,
         "stableId": "stable_breeder",
         "tick": 9,
       },
       {
-        "amount": 34500,
+        "amount": 67100,
         "stableId": "stable_prestige",
         "tick": 10,
       },
       {
-        "amount": 36500,
+        "amount": 70700,
         "stableId": "stable_breeder",
         "tick": 11,
       },
     ],
-    "hammerPrice": 36500,
+    "hammerPrice": 70700,
     "id": "lot2",
     "passed": false,
     "soldTo": "stable_breeder",
@@ -51,12 +51,12 @@ exports[`createAuctionRunner golden outcomes > produces identical final lots (ha
   {
     "bids": [
       {
-        "amount": 14400,
+        "amount": 8400,
         "stableId": "stable_aggressive",
         "tick": 16,
       },
       {
-        "amount": 19800,
+        "amount": 11600,
         "stableId": "stable_prestige",
         "tick": 17,
       },
@@ -69,22 +69,22 @@ exports[`createAuctionRunner golden outcomes > produces identical final lots (ha
   {
     "bids": [
       {
-        "amount": 42200,
+        "amount": 45300,
         "stableId": "stable_aggressive",
         "tick": 22,
       },
       {
-        "amount": 44600,
+        "amount": 47800,
         "stableId": "stable_breeder",
         "tick": 23,
       },
       {
-        "amount": 75600,
+        "amount": 81100,
         "stableId": "stable_prestige",
         "tick": 24,
       },
     ],
-    "hammerPrice": 75600,
+    "hammerPrice": 81100,
     "id": "lot4",
     "passed": false,
     "soldTo": "stable_prestige",

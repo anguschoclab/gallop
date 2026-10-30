@@ -15,6 +15,9 @@ import type { Horse, Jockey } from "@/platform/game/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { getJockeyName } from "@/domains/jockey/model/jockeyPerson";
 
+/** Payer key for horses with no owner; matches no stable, so nobody is charged. */
+const UNOWNED_PAYER = "unowned";
+
 export function generateJockeyFeeImpacts(
   horse: Horse,
   jockey: Jockey,
@@ -34,11 +37,12 @@ export function generateJockeyFeeImpacts(
     phase: "raceResolution",
     logLevel: "conditional",
     type: "cash_change",
+    // An empty entityId means "the player" — unowned horses must not bill the player.
     entityId: (playerOwned
       ? "player"
       : horse.ownership?.type === "npc"
         ? horse.ownership.stableId
-        : "") as string,
+        : UNOWNED_PAYER) as string,
     amount: -ridingFee,
     reason: `Jockey fee: ${getJockeyName(jockey)}`,
   };
@@ -83,7 +87,7 @@ export function generatePercentageJockeyFeeImpacts(
     phase: "raceResolution",
     logLevel: "conditional",
     type: "cash_change",
-    entityId: owned ? "" : stableId || "",
+    entityId: owned ? "player" : stableId || UNOWNED_PAYER,
     amount: -jockeyFee,
     reason: `Jockey fee for ${getJockeyName(jockey)}`,
   } as CashImpact;

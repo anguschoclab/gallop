@@ -1,0 +1,92 @@
+/**
+ * raceBooking.ts — keep rival horses to a realistic racing schedule.
+ *
+ * Rival stables used to enter the same horse in every suitable race in the
+ * look-ahead window, so one horse could run dozens of races on a single day.
+ * That inflated their wins and prize money and drained stable cash through
+ * entry fees until big studs went bankrupt. These helpers track which days each
+ * rival horse is already booked to run and keep it to one start per rest window.
+ */
+
+import type { Horse, Race } from "@/platform/game/types";
+
+/**
+ * Minimum days between two starts for a rival horse. 1 = never two races on
+ * the same day. Longer rest windows leave most of the (very large) race
+ * calendar without runners, so this stays at one start per day for now.
+ */
+export const NPC_MIN_DAYS_BETWEEN_STARTS = 1;
+
+/** Cash a rival stable keeps back for upkeep instead of spending it on entry fees. */
+export const NPC_ENTRY_CASH_RESERVE = 25_000;
+
+/** horseId → race days the horse is already entered for. */
+export type NpcBookings = Map<string, number[]>;
+
+/**
+ * Collect the race days each horse is already entered for.
+ * @param races - Races to scan (resolved and cancelled races are ignored).
+ * @param onlyHorseIds - Optional filter to the horses you care about.
+ */
+export function buildNpcBookings(
+  races: readonly Race[],
+  onlyHorseIds?: ReadonlySet<string>,
+): NpcBookings {
+  const bookings: NpcBookings = new Map();
+  for (const race of races) {
+    if (race.resolved || race.cancelled) continue;
+    for (const entry of race.entries) {
+      if (onlyHorseIds && !onlyHorseIds.has(entry.horseId)) continue;
+      addNpcBooking(bookings, entry.horseId, race.day);
+    }
+  }
+  return bookings;
+}
+
+export function addNpcBooking(bookings: NpcBookings, horseId: string, day: number): void {
+  const days = bookings.get(horseId);
+  if (days) days.push(day);
+  else bookings.set(horseId, [day]);
+}
+
+export function removeNpcBooking(bookings: NpcBookings, horseId: string, day: number): void {
+  const days = bookings.get(horseId);
+  if (!days) return;
+  const i = days.indexOf(day);
+  if (i !== -1) days.splice(i, 1);
+}
+
+/**
+ * True when the horse can be entered for a race on `day`: no other start
+ * booked within the rest window either side, and enough rest since its last run.
+ */
+export function canBookNpcStart(
+  bookings: NpcBookings,
+  horse: Pick<Horse, "id" | "lastRaceDay">,
+  day: number,
+  minGap = NPC_MIN_DAYS_BETWEEN_STARTS,
+): boolean {
+  if (horse.lastRaceDay !== undefined && day - horse.lastRaceDay < minGap) return false;
+  const days = bookings.get(horse.id);
+  if (!days) return true;
+  for (const d of days) if (Math.abs(d - day) < minGap) return false;
+  return true;
+}
+
+/**
+ * Order races so rival stables fill the ones that matter first: races the
+ * player has entered (so they aren't cancelled for a thin field), then races
+ * short of runners, then the rest in their original order.
+ */
+export function prioritiseRacesForNpcEntry<T extends Pick<Race, "entries">>(
+  races: readonly T[],
+  minEntries: number,
+): T[] {
+  const rank = (r: T) =>
+    r.entries.some((e) => e.ownership?.type === "player") ? 0 : r.entries.length < minEntries ? 1 : 2;
+  return races
+    .map((r, i) => ({ r, i, k: rank(r) }))
+    .sort((a, b) => a.k - b.k || a.i - b.i)
+    .map((x) => x.r);
+}
+

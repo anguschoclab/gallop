@@ -20,6 +20,12 @@ export function resolveAuctionSale(
   const bidderStables = stables.filter((s) => s.isMajor);
   const horseMap = new Map(allHorses.map((h) => [h.id, h]));
   const house = resolveSaleHouse(sale);
+  // Cash already committed to lots each stable won earlier in this sale.
+  const committed = new Map<string, number>();
+  const withCommitted = (s: Stable): Stable => {
+    const c = committed.get(s.id);
+    return c ? { ...s, cash: Math.max(0, s.cash - c) } : s;
+  };
 
   for (const lot of sale.lots) {
     if (lot.withdrawn) {
@@ -52,7 +58,7 @@ export function resolveAuctionSale(
         if (stable.id === currentWinner) continue;
         const rng = createRng(hashStr(lot.id + stable.id + String(currentBid)));
         const bid = calculateNpcBid(
-          stable,
+          withCommitted(stable),
           horse,
           currentBid,
           sale.kind,
@@ -83,6 +89,9 @@ export function resolveAuctionSale(
         soldToStableId: currentWinner,
         passed: false,
       });
+      if (currentWinner) {
+        committed.set(currentWinner, (committed.get(currentWinner) ?? 0) + currentBid);
+      }
       const winner = stables.find((s) => s.id === currentWinner);
       log.push(
         `${horse.name} — sold to ${winner?.name ?? "Unknown"} for $${currentBid.toLocaleString()}`,

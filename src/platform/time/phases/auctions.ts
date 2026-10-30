@@ -127,6 +127,9 @@ export const auctionsPhase = {
     // Resolve sales the player didn't attend. The day-of pipeline runs after
     // the player has had a chance to enter the Theater; sales reached this
     // phase still unresolved on or after their day are processed offline.
+    // Several sales can run on one day; carry each stable's spending forward so
+    // money spent in one sale isn't available again in the next.
+    const spentToday = new Map<string, number>();
     auctions = auctions.map((sale) => {
       if (sale.resolved || sale.day > newDay) return sale;
       // Build a horses snapshot that includes any freshly created consignment
@@ -137,9 +140,20 @@ export const auctionsPhase = {
           .filter((i) => i.type === "horse_creation")
           .map((i) => (i as HorseCreationImpact).horse),
       ];
-      const runner = createAuctionRunner(sale, state.npcStables, horsesIncludingFresh);
+      const biddingStables = spentToday.size
+        ? state.npcStables.map((st) => {
+            const spent = spentToday.get(st.id);
+            return spent ? { ...st, cash: Math.max(0, st.cash - spent) } : st;
+          })
+        : state.npcStables;
+      const runner = createAuctionRunner(sale, biddingStables, horsesIncludingFresh);
       runner.runToCompletion();
       const finalLots = runner.finalLots();
+      for (const lot of finalLots) {
+        if (!lot.passed && lot.soldToStableId && lot.hammerPrice) {
+          spentToday.set(lot.soldToStableId, (spentToday.get(lot.soldToStableId) ?? 0) + lot.hammerPrice);
+        }
+      }
       const lotImpacts = runner.finalImpacts({ day: newDay, phase: "auctions" });
       for (const impact of lotImpacts) {
         impacts.push(impact);
