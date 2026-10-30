@@ -26,7 +26,6 @@ import type { OutpostRegion } from "@/domains/facilities/model/outpostTypes";
 import type { StableAIState, DifficultyState } from "@/domains/agents/simulation/npcCycleAI";
 import type { DistressLevel } from "@/domains/agents/simulation/financialDistressAI";
 import {
-  HORSE_RATING_TO_VALUE_MULTIPLIER,
   CONSIGNMENT_INTENT_PRIORITY,
   DEFAULT_SUBSYSTEM_WEIGHT,
 } from "@/domains/agents/model/aiConstants";
