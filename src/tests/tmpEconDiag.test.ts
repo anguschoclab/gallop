@@ -19,6 +19,7 @@ it("diag", async () => {
   const d5 = perDay.find((d: any) => d.day === 5 || d.cashAfter - d.cashBefore > 1e6);
   const auc = d5.impacts.filter((i: any) => /auction/i.test(i.type) || /auction/i.test(String(i.reason ?? "")));
   console.log("D5", d5.day, JSON.stringify(auc.slice(0, 6).map((i: any) => ({ ...i, sale: undefined, lots: undefined })), null, 0).slice(0, 3000));
+  console.log("BIG", JSON.stringify(d5.impacts.filter((i: any) => (i.amount ?? 0) > 100000 || (i.hammerPrice ?? 0) > 100000).slice(0, 5)).slice(0, 2500));
   console.log("LOGS", d5.logs.map((l: any) => l.text).filter((t: string) => /sold|hammer|\$[0-9,]{7,}/i.test(t)).slice(0, 10));
   console.log("cash", fin.cash);
   const tx = (fin.transactions ?? fin.ledger ?? []) as any[];
