@@ -8,14 +8,9 @@
  * Related files: ../resolver.ts (uses handler), ../impacts/miscImpacts.ts (provides impact types)
  */
 
-import type { WritableDraft } from "immer";
-import type { GameState } from "@/platform/game/types";
-import type { AnyImpact } from "@/platform/resolver/impacts";
-import type {
-  ImpactHandler,
-  LookupMaps,
-  ImpactHandlerFunction,
-} from "@/platform/resolver/handlers/types";
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
+
+import type { ImpactHandlerFunction } from "@/platform/resolver/handlers/types";
 import type {
   ScoutReportImpact,
   ConsignmentImpact,
@@ -102,15 +97,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 };
 
-export class MarketHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return Object.hasOwn(IMPACT_HANDLERS, type);
-  }
-
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
-    const handler = IMPACT_HANDLERS[impact.type];
-    if (handler) {
-      handler(draft, impact, lookupMaps);
-    }
+export class MarketHandler extends BaseHandler {
+  protected get handlers(): Record<string, ImpactHandlerFunction> {
+    return IMPACT_HANDLERS;
   }
 }

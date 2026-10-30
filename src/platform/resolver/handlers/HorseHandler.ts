@@ -9,11 +9,13 @@
  * Related files: ../resolver.ts (uses handler), ../impacts/horseImpacts.ts (provides impact types)
  */
 
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
+
 import type { WritableDraft } from "immer";
 import type { GameState, Horse } from "@/platform/game/types";
 import type { AnyImpact } from "@/platform/resolver/impacts";
 import { isMaleHorse, geldHorse } from "@/domains/horse/simulation/gender";
-import type { ImpactHandler, LookupMaps } from "@/platform/resolver/handlers/types";
+import type { LookupMaps } from "@/platform/resolver/handlers/types";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { formatRecoveryDays } from "@/domains/health/model/injuryDisplay";
@@ -266,9 +268,9 @@ const IMPACT_HANDLERS: Record<string, HorseImpactHandlerFunction> = {
   },
 };
 
-export class HorseHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return Object.hasOwn(IMPACT_HANDLERS, type);
+export class HorseHandler extends BaseHandler<HorseImpactHandlerFunction> {
+  protected get handlers(): Record<string, HorseImpactHandlerFunction> {
+    return IMPACT_HANDLERS;
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
