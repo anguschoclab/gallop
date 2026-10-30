@@ -18,6 +18,7 @@ it("diag", () => {
       console.log("TYPES", JSON.stringify(pl.map((i: any) => JSON.stringify({ ...i, horse: undefined, report: undefined }).slice(0, 300)).slice(0, 25)));
       console.log("PC", JSON.stringify(pc.map((i: any) => [i.amount, i.reason])));
       console.log("INS", JSON.stringify(ins));
+      console.log("TX", JSON.stringify((d.state.transactions ?? []).filter((t: any) => t.day === d.day).map((t: any) => [t.type ?? t.category, t.subcategory ?? t.category, t.amount, String(t.description).slice(0, 60)])));
       const st = perDay[perDay.indexOf(d) - 1]?.state ?? state; console.log("RE", JSON.stringify(d.impacts.filter((i: any) => ["race_entry","race_withdrawal","syndicate_share_transfer","stud_fee_distribution","salary"].includes(i.type) || /share|stud_fee|salary/i.test(i.type)).filter((i: any) => { const h = st.horses[i.horseId]; return !h || h.ownership?.type === "player" || /player/.test(JSON.stringify(i)); }).map((i: any) => JSON.stringify(i).slice(0, 400)).slice(0, 10)));
       console.log("ALLINS", JSON.stringify(d.impacts.filter((i: any) => /insurance/i.test(i.type)).slice(0, 5)));
       console.log("logs", d.logs.map((l: any) => l.text).filter((t: string) => /\$|fee|cost/i.test(t)).slice(0, 15));
