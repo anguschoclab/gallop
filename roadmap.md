@@ -27,4 +27,5 @@
 - [ ] Found bug: rival horses get booked into many races on the same day (no rest-day check), inflating their wins, prize money and stake payouts
 
 - [x] Fixed: rival horses' daily price was recorded as $0 in rankings history (hidden stats not revealed before pricing)
-- [ ] Found: rival stables bid far below the auction-house value of stallions standing at stud (their valuation ignores stud-fee income)
+- [ ] Rival stables value stallions by stud fees and prize earnings (not just wins) so their bids match auction-house prices
+- [ ] In-game: set up a real stable with horses, syndicate stakes and a syndication price, then trade the shares on the Auction Houses tab
