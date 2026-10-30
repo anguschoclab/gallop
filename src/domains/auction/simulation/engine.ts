@@ -83,7 +83,10 @@ export function commissionAmount(hammerPrice: number, house?: AuctionHouse): num
  */
 // Valuation logic extracted to auctionValuation.ts
 export { calculateLotValuation } from "@/domains/auction/simulation/auctionValuation";
-import { calculateLotValuation } from "@/domains/auction/simulation/auctionValuation";
+import {
+  calculateLotValuation,
+  npcBaseValuation,
+} from "@/domains/auction/simulation/auctionValuation";
 
 // ---------------------------------------------------------------------------
 // NPC bidding
@@ -402,17 +405,16 @@ export function generateAuctionLots(
   // Every major stable gets a chance to consign — per-personality policy
   // decides what (if anything) they actually list.
   const consignors = stables.filter((s) => s.isMajor);
-  const horsesDict = Object.fromEntries(allHorsesCopy.map((h) => [h.id, h]));
+  const horseIndex = new Map(allHorsesCopy.map((h) => [h.id, h]));
 
   for (const stable of consignors) {
     const policy = personalityConsignmentPolicy(stable, kind, allHorses, rng);
 
     for (let horse of policy.consign) {
       horse = ensurePhenotypeResolved(horse);
-      const pedigreeMul = pedigreeMultiplier(horse, {
-        horses: horsesDict,
-      });
-      const baseValue = calculateNpcHorseValue(horse, stable.tier) * pedigreeMul;
+      // Reserves start from the same value rival bidders use (auction-house
+      // price incl. stud fees and prize earnings), so reserves and bids agree.
+      const baseValue = npcBaseValuation(horse, stable, allHorsesCopy, horseIndex);
       const breezeSeconds = kind === "2yo_training" ? generateBreezeSeconds(horse, rng) : undefined;
       lots.push({
         id: generateUUID(rng),
@@ -437,11 +439,8 @@ export function generateAuctionLots(
       if (!isLotEligible(freshHorse, kind)) continue;
       const resolvedFresh = ensurePhenotypeResolved(freshHorse);
       allHorsesCopy.push(resolvedFresh);
-      horsesDict[resolvedFresh.id] = resolvedFresh;
-      const pedigreeMul = pedigreeMultiplier(resolvedFresh, {
-        horses: horsesDict,
-      });
-      const baseValue = calculateNpcHorseValue(resolvedFresh, stable.tier) * pedigreeMul;
+      horseIndex.set(resolvedFresh.id, resolvedFresh);
+      const baseValue = npcBaseValuation(resolvedFresh, stable, allHorsesCopy, horseIndex);
       const breezeSeconds =
         kind === "2yo_training" ? generateBreezeSeconds(resolvedFresh, rng) : undefined;
       lots.push({
