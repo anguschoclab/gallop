@@ -16,11 +16,12 @@ export function calculateBiddingValue(
   lot: AuctionLot,
   stable: Stable,
   currentDay: number,
+  marketValue?: number,
 ): number {
   let score = 0;
 
   const horseRating = calculateOverallRating(horse);
-  const estimatedValue = horseRating * HORSE_RATING_TO_VALUE_MULTIPLIER;
+  const estimatedValue = estimateValue(horseRating, marketValue);
   const currentBid = lot.hammerPrice || lot.reservePrice;
   const valueRatio = estimatedValue / (currentBid || 1);
 
@@ -72,6 +73,17 @@ function evaluateStrategicBiddingValue(
   return strategicValue;
 }
 
+/**
+ * Value the AI bids against. Callers that know the horse's auction-house
+ * valuation (stud fees, prize earnings, pedigree) pass it; the rating-only
+ * estimate is a fallback for callers without world context.
+ */
+function estimateValue(horseRating: number, marketValue?: number): number {
+  return marketValue !== undefined && marketValue > 0
+    ? marketValue
+    : horseRating * HORSE_RATING_TO_VALUE_MULTIPLIER;
+}
+
 export function calculateMaxBid(
   aiState: AuctionAIState,
   horse: Horse,
@@ -79,9 +91,10 @@ export function calculateMaxBid(
   stable: Stable,
   currentDay: number,
   friction?: number,
+  marketValue?: number,
 ): number {
   const horseRating = calculateOverallRating(horse);
-  const estimatedValue = horseRating * HORSE_RATING_TO_VALUE_MULTIPLIER;
+  const estimatedValue = estimateValue(horseRating, marketValue);
 
   let maxBid = estimatedValue;
 
@@ -112,6 +125,7 @@ export function shouldBidOnHorse(
   stable: Stable,
   currentDay: number,
   weight = DEFAULT_SUBSYSTEM_WEIGHT,
+  marketValue?: number,
 ): boolean {
   if (weight <= 0) return false;
 
@@ -119,8 +133,8 @@ export function shouldBidOnHorse(
   const currentBid = lot.hammerPrice || lot.reservePrice;
   if (currentBid > stable.cash) return false;
 
-  const valueScore = calculateBiddingValue(aiState, horse, lot, stable, currentDay);
-  const maxBid = calculateMaxBid(aiState, horse, lot, stable, currentDay);
+  const valueScore = calculateBiddingValue(aiState, horse, lot, stable, currentDay, marketValue);
+  const maxBid = calculateMaxBid(aiState, horse, lot, stable, currentDay, undefined, marketValue);
 
   const contextKey = `${horse.age}`;
   const baseThreshold = BID_BASE_THRESHOLD;

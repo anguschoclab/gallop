@@ -174,6 +174,18 @@ export function calculateNpcBid(
   house?: AuctionHouse,
   valuationCache?: Map<string, number>,
 ): number | null {
+  // The stable's valuation of this horse (auction-house value × tier ×
+  // personality, before house prestige). Invariant while a sale is in
+  // flight, so callers that re-evaluate bids every tick pass a shared cache.
+  const lotValuation = (): number => {
+    const cacheKey = valuationCache ? `${stable.id}:${horse.id}` : undefined;
+    const cached = cacheKey ? valuationCache!.get(cacheKey) : undefined;
+    if (cached !== undefined) return cached;
+    const v = calculateLotValuation(horse, stable, saleKind, allHorses, horseMap);
+    if (cacheKey) valuationCache!.set(cacheKey, v);
+    return v;
+  };
+
   // Use AI-driven bidding if AI manager is available
   if (npcAIManager && currentDay !== undefined) {
     const aiState = npcAIManager.stableStates[stable.id];
@@ -194,6 +206,9 @@ export function calculateNpcBid(
 
       // Check if stable should bid using AI
       const auctionWeight = aiState.subsystemWeights?.auction ?? DEFAULT_SUBSYSTEM_WEIGHT;
+      // Bid against the same valuation as the standard path, so stud fees and
+      // prize earnings count and AI bids track the auction-house price.
+      const valuation = lotValuation();
       const shouldBid = shouldBidOnHorse(
         aiState.auctionAI,
         horse,
@@ -201,13 +216,14 @@ export function calculateNpcBid(
         stable,
         currentDay,
         auctionWeight,
+        valuation,
       );
       if (!shouldBid) return null;
 
       // Calculate max bid using AI with friction consideration
       const friction = aiState.friction ?? 0;
       const maxBid =
-        calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay, friction) *
+        calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay, friction, valuation) *
         housePrestigeMultiplier(house);
 
       const nextBid = Math.ceil((currentBid * 1.05 + 200) / 100) * 100;
@@ -217,20 +233,8 @@ export function calculateNpcBid(
     }
   }
 
-  // Fall back to original logic if AI not available. The valuation ceiling is
-  // invariant for a (stable, horse) pair while a sale is in flight — callers
-  // that re-evaluate bids every tick pass a shared cache.
-  let ceiling: number;
-  const cacheKey = valuationCache ? `${stable.id}:${horse.id}` : undefined;
-  const cached = cacheKey ? valuationCache!.get(cacheKey) : undefined;
-  if (cached !== undefined) {
-    ceiling = cached;
-  } else {
-    ceiling =
-      calculateLotValuation(horse, stable, saleKind, allHorses, horseMap) *
-      housePrestigeMultiplier(house);
-    if (cacheKey) valuationCache!.set(cacheKey, ceiling);
-  }
+  // Fall back to original logic if AI not available.
+  const ceiling = lotValuation() * housePrestigeMultiplier(house);
 
   if (ceiling <= 0) return null;
 
