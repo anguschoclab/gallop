@@ -18,10 +18,8 @@ import type {
   AuctionSaleKind,
 } from "@/platform/game/types";
 import { generateNpcHorse, ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
-import { calculateNpcHorseValue } from "@/domains/horse/simulation/pricing";
 import { createRng, type Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
-import { pedigreeMultiplier } from "@/domains/breeding/simulation/pedigreePricing";
 import { calculateMaxBid, shouldBidOnHorse } from "@/domains/agents/simulation/auctionBidding";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 import { DEFAULT_SUBSYSTEM_WEIGHT } from "@/domains/agents/model/aiConstants";
