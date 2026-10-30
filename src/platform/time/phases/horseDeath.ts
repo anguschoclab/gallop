@@ -32,6 +32,13 @@ import { calculateBaseHorseValue } from "@/domains/horse/simulation/pricing";
  * - Catastrophic injury: 0.1% chance per race, higher with injuryProneness
  * - Illness complications: 0.5% chance/day while ill
  */
+
+/** Who receives a mortality payout: the player, the owning rival stable, or nobody. */
+function insuranceBeneficiary(horse: Horse): string | undefined {
+  if (horse.ownership?.type === "player") return "player";
+  if (horse.ownership?.type === "npc") return String(horse.ownership.stableId);
+  return undefined;
+}
 export const horseDeathPhase: PipelinePhase = {
   name: "horseDeath",
   order: PHASE_ORDER_HORSE_DEATH, // After pasture retirement (150)
@@ -90,7 +97,7 @@ export const horseDeathPhase: PipelinePhase = {
             INSURANCE_CONFIG.COVERAGE[policy.type as keyof typeof INSURANCE_CONFIG.COVERAGE];
           const horseValue = calculateBaseHorseValue(horse, "mid");
           const payout = Math.round(horseValue * coveragePercent);
-          if (payout > 0) {
+          if (payout > 0 && insuranceBeneficiary(horse)) {
             impacts.push({
               id: generateUUID(),
               intentId: "",
@@ -99,6 +106,8 @@ export const horseDeathPhase: PipelinePhase = {
               logLevel: "always",
               type: "insurance_payout",
               horseId: horse.id,
+              // Pay the horse's owner — a payout with no owner goes to the player.
+              entityId: insuranceBeneficiary(horse),
               amount: payout,
               reason: `Insurance payout for ${horse.name} (${policy.type})`,
             } as InsurancePayoutImpact);
@@ -164,7 +173,7 @@ export const horseDeathPhase: PipelinePhase = {
               ];
             const horseValue = calculateBaseHorseValue(horse, "mid");
             const payout = Math.round(horseValue * coveragePercent);
-            if (payout > 0) {
+            if (payout > 0 && insuranceBeneficiary(horse)) {
               impacts.push({
                 id: generateUUID(),
                 intentId: "",
