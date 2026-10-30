@@ -16,7 +16,10 @@ it("diag", async () => {
   const { state: fin, perDay } = runPipelineForDays(state, 90) as any;
   const impacts = perDay.flatMap((d: any) => d.impacts);
   const jumps = perDay.filter((d: any) => d.cashAfter - d.cashBefore > 200000).map((d: any) => [d.day, d.cashAfter - d.cashBefore, d.logs.map((l: any) => l.text).filter((t: string) => /sold|sale|offer|auction|\$/i.test(t)).slice(0, 4)]);
-  console.log(JSON.stringify(jumps.slice(0, 8), null, 1));
+  const d5 = perDay.find((d: any) => d.day === 5 || d.cashAfter - d.cashBefore > 1e6);
+  const auc = d5.impacts.filter((i: any) => /auction/i.test(i.type) || /auction/i.test(String(i.reason ?? "")));
+  console.log("D5", d5.day, JSON.stringify(auc.slice(0, 6).map((i: any) => ({ ...i, sale: undefined, lots: undefined })), null, 0).slice(0, 3000));
+  console.log("LOGS", d5.logs.map((l: any) => l.text).filter((t: string) => /sold|hammer|\$[0-9,]{7,}/i.test(t)).slice(0, 10));
   console.log("cash", fin.cash);
   const tx = (fin.transactions ?? fin.ledger ?? []) as any[];
   const by: Record<string, number> = {};
