@@ -139,6 +139,14 @@ export function generateFollowUpRaceNews(
     `${horse.name} Exits ${race.name} in Top Form, What's Next?`,
     `The Racing World Awaits ${horse.name}'s Next Move`,
     `Plotting the Course for ${horse.name} Post-${race.name}`,
+    `Looking Ahead: ${horse.name} Gathers Momentum After ${race.name}`,
+    `Next Steps for ${horse.name} Following ${race.name} Display`,
+    `The Route Forward for ${horse.name} Post-${race.name}`,
+    `${horse.name} Shows Class in ${race.name}, Connections Consider Options`,
+    `Where Will ${horse.name} Line Up Next Following ${race.name}?`,
+    `Mapping the Season for ${horse.name} After Strong ${race.name} Showing`,
+    `Anticipation Builds for ${horse.name}'s Next Start Post-${race.name}`,
+    `${horse.name}'s Connections Face Pleasant Dilemma After ${race.name}`,
   ];
 
   const bodies = [
@@ -156,6 +164,14 @@ export function generateFollowUpRaceNews(
     `A stellar performance to secure a ${positionLabel} in the ${race.name} has ${horse.name} perfectly positioned for a late-season push. The trainer's next move will be analyzed by racing pundits everywhere.`,
     `Having proven their class with a ${positionLabel} in the ${race.name} (${grade}), ${horse.name} now faces the enviable problem of having multiple prestigious races to choose from.`,
     `The immediate aftermath of the ${race.name} has left connections of ${horse.name} thrilled with their ${positionLabelShort}. Now, the strategic challenge begins as they map out the optimal path forward.`,
+    `Building on a promising ${positionLabel} in the ${race.name}, the camp around ${horse.name} has reason for quiet optimism as they search the stakes calendar for their next appearance.`,
+    `The ${positionLabelShort} achieved by ${horse.name} in the ${race.name} (${grade}) proved they belong among the elite. Handlers must now carefully select the right spot to capitalize on this glowing form.`,
+    `Supporters of ${horse.name} were delighted with the ${positionLabel} produced in the ${race.name}. With form peaking, the stable's brains trust is deep in discussion regarding upcoming race targets.`,
+    `It was a statement display from ${horse.name} to earn a ${positionLabel} in the highly competitive ${race.name}. Fans are clamoring to know when this talented runner will next grace the track.`,
+    `A resilient showing in the ${race.name} yielded a well-deserved ${positionLabel} for ${horse.name}. Connections are evaluating all avenues as they aim to build upon this momentum in the coming weeks.`,
+    `Securing a ${positionLabel} in a race as demanding as the ${grade} ${race.name} is no small feat. The narrative around ${horse.name} is rapidly building, with everyone keen to see their next entry.`,
+    `The post-race assessment of ${horse.name}'s ${positionLabel} in the ${race.name} has been overwhelmingly positive. The strategic direction for the remainder of their campaign is now the primary focus.`,
+    `Riding high after a commendable ${positionLabel} in the ${race.name}, ${horse.name} presents a thrilling prospect for the rest of the year. The trainer's entry placement will be eagerly anticipated.`,
   ];
 
   return createNewsItem(
