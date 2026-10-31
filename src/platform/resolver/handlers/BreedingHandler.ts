@@ -25,6 +25,7 @@ import type {
   UpdateStudFeeImpact,
 } from "@/platform/resolver/impacts/breedingImpacts";
 import type { BlueHenImpact } from "@/platform/resolver/impacts/horseImpacts";
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   update_stud_fee: (draft, impact, lookupMaps) => {
@@ -78,15 +79,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 };
 
-export class BreedingHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return Object.hasOwn(IMPACT_HANDLERS, type);
-  }
-
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
-    const handler = IMPACT_HANDLERS[impact.type];
-    if (handler) {
-      handler(draft, impact, lookupMaps);
-    }
+export class BreedingHandler extends BaseHandler {
+  protected get handlers() {
+    return IMPACT_HANDLERS;
   }
 }

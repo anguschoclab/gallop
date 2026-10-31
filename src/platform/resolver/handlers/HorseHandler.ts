@@ -16,6 +16,7 @@ import { isMaleHorse, geldHorse } from "@/domains/horse/simulation/gender";
 import type { ImpactHandler, LookupMaps } from "@/platform/resolver/handlers/types";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
 import { formatRecoveryDays } from "@/domains/health/model/injuryDisplay";
 import type {
   HorseCreationImpact,
@@ -266,9 +267,9 @@ const IMPACT_HANDLERS: Record<string, HorseImpactHandlerFunction> = {
   },
 };
 
-export class HorseHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return Object.hasOwn(IMPACT_HANDLERS, type);
+export class HorseHandler extends BaseHandler {
+  protected get handlers() {
+    return IMPACT_HANDLERS as any;
   }
 
   handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {

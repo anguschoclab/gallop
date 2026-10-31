@@ -31,6 +31,7 @@ import type {
   RivalStakePayoutImpact,
 } from "@/platform/resolver/impacts/breedingImpacts";
 import { MAX_STAKE_PAYOUTS } from "@/domains/syndicates/model/rivalStakes";
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   syndicate_creation: (draft, impact, lookupMaps) => {
@@ -312,15 +313,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 };
 
-export class SyndicationHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return Object.hasOwn(IMPACT_HANDLERS, type);
-  }
-
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
-    const handler = IMPACT_HANDLERS[impact.type];
-    if (handler) {
-      handler(draft, impact, lookupMaps);
-    }
+export class SyndicationHandler extends BaseHandler {
+  protected get handlers() {
+    return IMPACT_HANDLERS;
   }
 }

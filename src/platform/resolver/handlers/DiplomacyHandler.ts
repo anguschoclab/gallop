@@ -17,6 +17,7 @@ import type {
 } from "@/platform/resolver/handlers/types";
 import type { DiplomaticImpact, CartelImpact } from "@/platform/resolver/impacts/miscImpacts";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
 
 const getAiManager = (draft: WritableDraft<GameState>): NpcAIManager | undefined =>
   (draft as unknown as { npcAIManager?: NpcAIManager }).npcAIManager;

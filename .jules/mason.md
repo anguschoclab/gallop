@@ -1,0 +1,3 @@
+## 2024-03-24 - BaseHandler Extraction for ImpactHandlers
+**Learning:** Found duplication in the `canHandle` and `handle` methods across multiple handler classes (`SystemHandler`, `HorseHandler`, `FinanceHandler`, etc.). These handlers implement `ImpactHandler` directly and duplicate the exact same logic to look up handlers from their `IMPACT_HANDLERS` dictionaries.
+**Action:** Extract a `BaseHandler` abstract class in `src/platform/resolver/handlers/BaseHandler.ts` that implements this generic logic, and have existing handlers extend it and provide their specific handlers dictionary via an abstract property or method.
