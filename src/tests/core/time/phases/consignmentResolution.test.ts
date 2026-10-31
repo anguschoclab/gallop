@@ -164,7 +164,13 @@ describe("consignmentResolutionPhase", () => {
   describe("rival-stable consignments", () => {
     const npcHorse = () =>
       createTestHorse({ id: "npc-h", ownership: makeNpcOwned(asNpcStableId("rival-1")) });
-    const sale = (id: string) => ({ id, day: 10, resolved: false, lots: [], kind: "mixed" as const });
+    const sale = (id: string) => ({
+      id,
+      day: 10,
+      resolved: false,
+      lots: [],
+      kind: "mixed" as const,
+    });
     const npcIntent = (saleId: string, sourceId = "rival-1") => ({
       id: `i-${saleId}-${sourceId}`,
       entityId: "npc-h",
@@ -181,7 +187,10 @@ describe("consignmentResolutionPhase", () => {
       consignmentResolutionPhase
         .execute(
           makePipelineContext({
-            state: makeGameState({ horses: h2r([npcHorse()]), auctions: sales as any }) as GameState,
+            state: makeGameState({
+              horses: h2r([npcHorse()]),
+              auctions: sales as any,
+            }) as GameState,
             newDay: 1,
             intents: intents as any,
           }) as PipelineContext,
