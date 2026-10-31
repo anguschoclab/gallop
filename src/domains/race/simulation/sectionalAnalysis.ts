@@ -115,16 +115,77 @@ export function calculateSectionalSplits(
 
   const markers = splitMarkers ?? [0.25, 0.5, 0.75, 1.0].map((f) => f * raceDistanceMeters);
 
-  const splits: SectionalSplit[] = [];
-
-  // Pre-compute cumulative times per horse per marker
-  const snapshotMaps = buildSnapshotHorseMaps(snapshots);
-  const cumulativeTimes: (number | null)[][] = markers.map((marker) =>
-    horseIds.map((id) => interpolateTimeAtDistance(snapshots, id, marker, snapshotMaps)),
+  const cumulativeTimes: (number | null)[][] = markers.map(() =>
+    new Array(horseIds.length).fill(null),
   );
 
-  // Compute per-segment average seek/spurt contributions
-  const segmentAverages = computeSegmentAverages(snapshots, raceDistanceMeters, horseIds, markers);
+  const idToIndex = new Map<string, number>();
+  for (let i = 0; i < horseIds.length; i++) {
+    idToIndex.set(horseIds[i], i);
+  }
+
+  // Pre-allocate flat Float64Array for segment accumulation
+  // Layout for each horse: [seg0_seek, seg0_spurt, seg0_count, seg1_seek, ...]
+  const segmentData = new Float64Array(horseIds.length * markers.length * 3);
+
+  const lastPositions = new Float64Array(horseIds.length).fill(-1);
+  const lastTimes = new Float64Array(horseIds.length).fill(-1);
+
+  // Single pass over snapshots
+  for (let i = 0; i < snapshots.length; i++) {
+    const snap = snapshots[i];
+    const t = snap.t;
+
+    for (let j = 0; j < snap.horses.length; j++) {
+      const h = snap.horses[j];
+      const hIdx = idToIndex.get(h.horseId);
+      if (hIdx === undefined) continue;
+
+      const currentPos = h.position;
+
+      if (currentPos > 0 && currentPos <= raceDistanceMeters) {
+        let segIdx = -1;
+        for (let m = 0; m < markers.length; m++) {
+          if (currentPos < markers[m]) {
+            segIdx = m;
+            break;
+          }
+        }
+        if (segIdx === -1) segIdx = markers.length - 1;
+
+        const offset = (hIdx * markers.length + segIdx) * 3;
+        segmentData[offset] += h.seekContribution ?? 0;
+        segmentData[offset + 1] += h.spurtContribution ?? 0;
+        segmentData[offset + 2] += 1;
+      }
+
+      const lastPos = lastPositions[hIdx];
+      const lastT = lastTimes[hIdx];
+
+      if (lastPos !== -1) {
+        for (let mi = 0; mi < markers.length; mi++) {
+          const marker = markers[mi];
+          if (
+            cumulativeTimes[mi][hIdx] === null &&
+            currentPos >= marker &&
+            lastPos < marker
+          ) {
+            if (currentPos === lastPos) {
+              cumulativeTimes[mi][hIdx] = t;
+            } else {
+              cumulativeTimes[mi][hIdx] =
+                lastT + ((marker - lastPos) * (t - lastT)) / (currentPos - lastPos);
+            }
+          }
+        }
+      }
+
+      lastPositions[hIdx] = currentPos;
+      lastTimes[hIdx] = t;
+    }
+  }
+
+  const splits: SectionalSplit[] = [];
 
   for (let mi = 0; mi < markers.length; mi++) {
     const distanceMeters = markers[mi];
@@ -135,6 +196,7 @@ export function calculateSectionalSplits(
       cumulativeTime: number;
       splitTime: number;
       velocityMs: number;
+      hIdx: number;
     }[] = [];
 
     for (let hi = 0; hi < horseIds.length; hi++) {
@@ -149,18 +211,22 @@ export function calculateSectionalSplits(
       const splitTime = cumTime - prevCumTime;
       const velocityMs = splitTime > 0 ? segmentDistance / splitTime : 0;
 
-      entriesRaw.push({ horseId: horseIds[hi], cumulativeTime: cumTime, splitTime, velocityMs });
+      entriesRaw.push({
+        horseId: horseIds[hi],
+        cumulativeTime: cumTime,
+        splitTime,
+        velocityMs,
+        hIdx: hi,
+      });
     }
 
-    // Sort by cumulativeTime ascending to assign rank
     entriesRaw.sort((a, b) => a.cumulativeTime - b.cumulativeTime);
 
-    const accs = segmentAverages;
     const entries: SectionalEntry[] = entriesRaw.map((e, idx) => {
-      const horseAcc = accs.get(e.horseId);
-      const seg = horseAcc?.[mi];
-      const avgSeek = seg && seg.count > 0 ? seg.seekSum / seg.count : undefined;
-      const avgSpurt = seg && seg.count > 0 ? seg.spurtSum / seg.count : undefined;
+      const offset = (e.hIdx * markers.length + mi) * 3;
+      const count = segmentData[offset + 2];
+      const avgSeek = count > 0 ? segmentData[offset] / count : undefined;
+      const avgSpurt = count > 0 ? segmentData[offset + 1] / count : undefined;
       return {
         horseId: e.horseId,
         splitTime: e.splitTime,
