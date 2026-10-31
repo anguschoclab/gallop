@@ -48,6 +48,7 @@ import { distanceBucket } from "@/domains/race/simulation/beyer";
 import { getReputationTier, createReputationEvent } from "@/domains/reputation/simulation";
 import { addReservedName } from "@/domains/horse/simulation/naming/reservedNames";
 import { trackRecordKey } from "@/domains/history/model/historyTypes";
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   log: (draft, impact) => {
@@ -318,15 +319,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 };
 
-export class SystemHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return Object.hasOwn(IMPACT_HANDLERS, type);
-  }
-
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
-    const handler = IMPACT_HANDLERS[impact.type];
-    if (handler) {
-      handler(draft, impact, lookupMaps);
-    }
+export class SystemHandler extends BaseHandler {
+  protected get handlers() {
+    return IMPACT_HANDLERS;
   }
 }

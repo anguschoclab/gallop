@@ -26,6 +26,7 @@ import type {
 } from "@/platform/resolver/impacts/miscImpacts";
 import { createFacilityAIState } from "@/domains/agents/simulation/facilityAITypes";
 import { recordFacilityInvestment } from "@/domains/agents/simulation/facilityAIRoi";
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   facility_upgrade: (draft, impact, lookupMaps) => {
@@ -133,15 +134,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 };
 
-export class InfrastructureHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return Object.hasOwn(IMPACT_HANDLERS, type);
-  }
-
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
-    const handler = IMPACT_HANDLERS[impact.type];
-    if (handler) {
-      handler(draft, impact, lookupMaps);
-    }
+export class InfrastructureHandler extends BaseHandler {
+  protected get handlers() {
+    return IMPACT_HANDLERS;
   }
 }

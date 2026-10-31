@@ -44,6 +44,7 @@ import type { JockeyTrait } from "@/domains/jockey/model/types";
 import { isPlayerOwned, makePlayerOwned, makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";
 import { createTransaction } from "@/domains/transactions/model/transactionTypes";
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
 
 const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   race_entry: (draft, impact, lookupMaps) => {
@@ -355,15 +356,8 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 };
 
-export class RacingHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return Object.hasOwn(IMPACT_HANDLERS, type);
-  }
-
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
-    const handler = IMPACT_HANDLERS[impact.type];
-    if (handler) {
-      handler(draft, impact, lookupMaps);
-    }
+export class RacingHandler extends BaseHandler {
+  protected get handlers() {
+    return IMPACT_HANDLERS;
   }
 }
