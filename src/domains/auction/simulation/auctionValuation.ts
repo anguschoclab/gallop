@@ -119,6 +119,10 @@ export const NPC_TIER_PREMIUM: Record<Stable["tier"], number> = {
  * What any rival stable starts from before its personality: the auction-house
  * market value (stats, pedigree, recent form, prize earnings and — for
  * stallions at stud — capitalised stud fees), scaled by the stable's tier.
+ * @param horse
+ * @param stable
+ * @param allHorses
+ * @param horseMap
  */
 export function npcBaseValuation(
   horse: Horse,

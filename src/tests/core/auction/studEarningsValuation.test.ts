@@ -12,7 +12,14 @@ import {
 import { calculateMaxBid } from "@/domains/agents/simulation/auctionBidding";
 import type { Horse } from "@/platform/game/types";
 
-const STATS = { speed: 75, stamina: 75, acceleration: 75, consistency: 75, temperament: 60, conformation: 60 };
+const STATS = {
+  speed: 75,
+  stamina: 75,
+  acceleration: 75,
+  consistency: 75,
+  temperament: 60,
+  conformation: 60,
+};
 
 function stallion(over: Partial<Horse> = {}): Horse {
   return createTestHorse({
@@ -84,7 +91,8 @@ describe("rival stables value racing earnings", () => {
 
   it("a $500,000 earner is valued higher by rivals than an identical horse with no earnings", () => {
     const stable = createTestStable({ personality: "win-now", tier: "mid", cash: 10_000_000 });
-    const gelding = (e: number) => stallion({ gender: "gelding", gelded: true, age: 5, lifetimeEarnings: e });
+    const gelding = (e: number) =>
+      stallion({ gender: "gelding", gelded: true, age: 5, lifetimeEarnings: e });
     expect(calculateLotValuation(gelding(500_000), stable, "racing_age", [])).toBeGreaterThan(
       calculateLotValuation(gelding(0), stable, "racing_age", []),
     );
@@ -112,7 +120,15 @@ describe("rival bids start from the auction-house price", () => {
       portfolio: { budgetRemaining: 100_000_000 },
       learningState: { outcomes: [], successRates: {} },
     } as never;
-    const lot = { id: "l", horseId: h.id, saleId: "s", reservePrice: 0, passed: false, withdrawn: false, bidHistory: [] } as never;
+    const lot = {
+      id: "l",
+      horseId: h.id,
+      saleId: "s",
+      reservePrice: 0,
+      passed: false,
+      withdrawn: false,
+      bidHistory: [],
+    } as never;
     // riskTolerance 1.2 for low conservatism.
     expect(calculateMaxBid(ai, h, lot, stable, 1, 0, 500_000)).toBe(600_000);
   });
