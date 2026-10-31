@@ -34,7 +34,9 @@ function signed(n: number): string {
 
 export function RivalStakesPage({ stableId }: { stableId?: string } = {}) {
   const [query, setQuery] = useState("");
-  const [dialog, setDialog] = useState<{ target: RivalStakeTarget; mode: "buy" | "sell" } | null>(null);
+  const [dialog, setDialog] = useState<{ target: RivalStakeTarget; mode: "buy" | "sell" } | null>(
+    null,
+  );
   const { holdings, candidates, summary, recentPayouts, cash } = useRivalStakes(query, stableId);
   const embedded = Boolean(stableId);
   const shownHoldings = embedded ? holdings.filter((h) => h.stake.stableId === stableId) : holdings;
@@ -50,10 +52,22 @@ export function RivalStakesPage({ stableId }: { stableId?: string } = {}) {
 
       {!embedded && (
         <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
-          <StatCard label="Stakes held" value={String(summary.count)} sub={`Cash ${formatCurrency(cash)}`} />
+          <StatCard
+            label="Stakes held"
+            value={String(summary.count)}
+            sub={`Cash ${formatCurrency(cash)}`}
+          />
           <StatCard label="Invested" value={formatCurrency(summary.invested)} sub="What you paid" />
-          <StatCard label="Stake value now" value={formatCurrency(summary.value)} sub="Your share of their price" />
-          <StatCard label="Prize share earned" value={formatCurrency(summary.prize)} sub="Paid into your cash" />
+          <StatCard
+            label="Stake value now"
+            value={formatCurrency(summary.value)}
+            sub="Your share of their price"
+          />
+          <StatCard
+            label="Prize share earned"
+            value={formatCurrency(summary.prize)}
+            sub="Paid into your cash"
+          />
           <StatCard
             label="Prestige earned"
             value={`+${summary.prestige}`}
@@ -89,70 +103,61 @@ export function RivalStakesPage({ stableId }: { stableId?: string } = {}) {
                 </TableHeader>
                 <TableBody>
                   {shownHoldings.map((h) => (
-                      <TableRow key={h.stake.horseId}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            {h.horse ? (
-                              <Link
-                                to="/stable/$horseId"
-                                params={{ horseId: h.stake.horseId }}
-                                className="font-medium text-foreground hover:text-primary"
-                              >
-                                {h.stake.horseName}
-                              </Link>
-                            ) : (
-                              <span className="font-medium">{h.stake.horseName}</span>
-                            )}
-                            {h.status !== "racing" && (
-                              <Badge variant="outline" className="text-xs">
-                                {STATUS_LABEL[h.status]}
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="text-xs text-muted-foreground">{h.ownerName}</div>
-                        </TableCell>
-                        <TableCell className="text-right tabular-nums">{h.stake.percent}%</TableCell>
-                        <TableCell className="text-right tabular-nums">{formatCurrency(h.stake.costBasis)}</TableCell>
-                        <TableCell className="text-right tabular-nums">{formatCurrency(h.horseValue)}</TableCell>
-                        <TableCell className="text-right tabular-nums">{formatCurrency(h.stakeValue)}</TableCell>
-                        <TableCell className="text-right tabular-nums">{formatCurrency(h.stake.prizeEarned)}</TableCell>
-                        <TableCell className="text-right tabular-nums">+{h.stake.reputationEarned}</TableCell>
-                        <TableCell
-                          className={cn(
-                            "text-right tabular-nums",
-                            h.totalReturn >= 0 ? "text-primary" : "text-destructive",
+                    <TableRow key={h.stake.horseId}>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          {h.horse ? (
+                            <Link
+                              to="/stable/$horseId"
+                              params={{ horseId: h.stake.horseId }}
+                              className="font-medium text-foreground hover:text-primary"
+                            >
+                              {h.stake.horseName}
+                            </Link>
+                          ) : (
+                            <span className="font-medium">{h.stake.horseName}</span>
                           )}
-                        >
-                          {signed(h.totalReturn)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex justify-end gap-1">
-                            {h.status === "racing" && h.stake.percent < MAX_RIVAL_STAKE_PERCENT && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() =>
-                                  setDialog({
-                                    mode: "buy",
-                                    target: {
-                                      horseId: h.stake.horseId,
-                                      horseName: h.stake.horseName,
-                                      ownerName: h.ownerName,
-                                      horseValue: h.horseValue,
-                                      heldPercent: h.stake.percent,
-                                    },
-                                  })
-                                }
-                              >
-                                Buy more
-                              </Button>
-                            )}
+                          {h.status !== "racing" && (
+                            <Badge variant="outline" className="text-xs">
+                              {STATUS_LABEL[h.status]}
+                            </Badge>
+                          )}
+                        </div>
+                        <div className="text-xs text-muted-foreground">{h.ownerName}</div>
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">{h.stake.percent}%</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatCurrency(h.stake.costBasis)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatCurrency(h.horseValue)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatCurrency(h.stakeValue)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatCurrency(h.stake.prizeEarned)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        +{h.stake.reputationEarned}
+                      </TableCell>
+                      <TableCell
+                        className={cn(
+                          "text-right tabular-nums",
+                          h.totalReturn >= 0 ? "text-primary" : "text-destructive",
+                        )}
+                      >
+                        {signed(h.totalReturn)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex justify-end gap-1">
+                          {h.status === "racing" && h.stake.percent < MAX_RIVAL_STAKE_PERCENT && (
                             <Button
                               size="sm"
-                              variant="ghost"
+                              variant="outline"
                               onClick={() =>
                                 setDialog({
-                                  mode: "sell",
+                                  mode: "buy",
                                   target: {
                                     horseId: h.stake.horseId,
                                     horseName: h.stake.horseName,
@@ -163,12 +168,33 @@ export function RivalStakesPage({ stableId }: { stableId?: string } = {}) {
                                 })
                               }
                             >
-                              {h.status === "deceased" || h.status === "missing" ? "Write off" : "Sell"}
+                              Buy more
                             </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
+                          )}
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() =>
+                              setDialog({
+                                mode: "sell",
+                                target: {
+                                  horseId: h.stake.horseId,
+                                  horseName: h.stake.horseName,
+                                  ownerName: h.ownerName,
+                                  horseValue: h.horseValue,
+                                  heldPercent: h.stake.percent,
+                                },
+                              })
+                            }
+                          >
+                            {h.status === "deceased" || h.status === "missing"
+                              ? "Write off"
+                              : "Sell"}
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
                 </TableBody>
               </Table>
             </div>
@@ -196,8 +222,11 @@ export function RivalStakesPage({ stableId }: { stableId?: string } = {}) {
                   </span>
                 </span>
                 <span className="tabular-nums">
-                  {formatCurrency(p.share)} <span className="text-muted-foreground">of {formatCurrency(p.prize)}</span>
-                  {p.reputation > 0 && <span className="ml-2 text-primary">+{p.reputation} prestige</span>}
+                  {formatCurrency(p.share)}{" "}
+                  <span className="text-muted-foreground">of {formatCurrency(p.prize)}</span>
+                  {p.reputation > 0 && (
+                    <span className="ml-2 text-primary">+{p.reputation} prestige</span>
+                  )}
                 </span>
               </div>
             ))}
@@ -207,7 +236,9 @@ export function RivalStakesPage({ stableId }: { stableId?: string } = {}) {
 
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-3 space-y-0">
-          <CardTitle className="text-base">{embedded ? "Buy a stake in this stable's horses" : "Rival horses for sale"}</CardTitle>
+          <CardTitle className="text-base">
+            {embedded ? "Buy a stake in this stable's horses" : "Rival horses for sale"}
+          </CardTitle>
           <div className="relative w-full max-w-xs">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
@@ -253,16 +284,26 @@ export function RivalStakesPage({ stableId }: { stableId?: string } = {}) {
                             You own {c.heldPercent}%
                           </Badge>
                         )}
-                        {!embedded && <div className="text-xs text-muted-foreground">{c.ownerName}</div>}
+                        {!embedded && (
+                          <div className="text-xs text-muted-foreground">{c.ownerName}</div>
+                        )}
                       </TableCell>
                       <TableCell className="text-right tabular-nums">{c.horse.age}</TableCell>
-                      <TableCell className="text-right tabular-nums">{Math.round(c.rating)}</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {Math.round(c.rating)}
+                      </TableCell>
                       <TableCell className="text-right tabular-nums">
                         {c.wins} / {c.starts}
                       </TableCell>
-                      <TableCell className="text-right tabular-nums">{formatCurrency(c.earnings)}</TableCell>
-                      <TableCell className="text-right tabular-nums">{formatCurrency(c.value)}</TableCell>
-                      <TableCell className="text-right tabular-nums">{formatCurrency(c.pricePerPercent)}</TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatCurrency(c.earnings)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatCurrency(c.value)}
+                      </TableCell>
+                      <TableCell className="text-right tabular-nums">
+                        {formatCurrency(c.pricePerPercent)}
+                      </TableCell>
                       <TableCell className="text-right">
                         <Button
                           size="sm"
@@ -292,7 +333,11 @@ export function RivalStakesPage({ stableId }: { stableId?: string } = {}) {
         </CardContent>
       </Card>
 
-      <RivalStakeDialog target={dialog?.target ?? null} mode={dialog?.mode ?? "buy"} onClose={() => setDialog(null)} />
+      <RivalStakeDialog
+        target={dialog?.target ?? null}
+        mode={dialog?.mode ?? "buy"}
+        onClose={() => setDialog(null)}
+      />
     </div>
   );
 }

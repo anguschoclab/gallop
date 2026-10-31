@@ -59,6 +59,10 @@ export function removeNpcBooking(bookings: NpcBookings, horseId: string, day: nu
 /**
  * True when the horse can be entered for a race on `day`: no other start
  * booked within the rest window either side, and enough rest since its last run.
+ * @param bookings
+ * @param horse
+ * @param day
+ * @param minGap
  */
 export function canBookNpcStart(
   bookings: NpcBookings,
@@ -77,16 +81,21 @@ export function canBookNpcStart(
  * Order races so rival stables fill the ones that matter first: races the
  * player has entered (so they aren't cancelled for a thin field), then races
  * short of runners, then the rest in their original order.
+ * @param races
+ * @param minEntries
  */
 export function prioritiseRacesForNpcEntry<T extends Pick<Race, "entries">>(
   races: readonly T[],
   minEntries: number,
 ): T[] {
   const rank = (r: T) =>
-    r.entries.some((e) => e.ownership?.type === "player") ? 0 : r.entries.length < minEntries ? 1 : 2;
+    r.entries.some((e) => e.ownership?.type === "player")
+      ? 0
+      : r.entries.length < minEntries
+        ? 1
+        : 2;
   return races
     .map((r, i) => ({ r, i, k: rank(r) }))
     .sort((a, b) => a.k - b.k || a.i - b.i)
     .map((x) => x.r);
 }
-

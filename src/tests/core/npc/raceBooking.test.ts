@@ -8,7 +8,13 @@ import {
 import type { Race } from "@/platform/game/types";
 
 const race = (id: string, day: number, horseIds: string[], extra: Partial<Race> = {}) =>
-  ({ id, day, entries: horseIds.map((horseId) => ({ horseId })), resolved: false, ...extra }) as unknown as Race;
+  ({
+    id,
+    day,
+    entries: horseIds.map((horseId) => ({ horseId })),
+    resolved: false,
+    ...extra,
+  }) as unknown as Race;
 
 describe("rival horse race schedule", () => {
   it("a rival horse runs at most one race per day", () => {
@@ -42,10 +48,18 @@ describe("rival horse race schedule", () => {
   });
 
   it("player-entered races are filled first, then thin fields", async () => {
-    const { prioritiseRacesForNpcEntry } = await import("@/domains/agents/simulation/npc/raceBooking");
+    const { prioritiseRacesForNpcEntry } =
+      await import("@/domains/agents/simulation/npc/raceBooking");
     const full = race("full", 5, ["a", "b", "c", "d", "e"]);
     const thin = race("thin", 5, ["a"]);
-    const mine = { ...race("mine", 6, []), entries: [{ horseId: "p", ownership: { type: "player" } }] } as unknown as Race;
-    expect(prioritiseRacesForNpcEntry([full, thin, mine], 4).map((r) => r.id)).toEqual(["mine", "thin", "full"]);
+    const mine = {
+      ...race("mine", 6, []),
+      entries: [{ horseId: "p", ownership: { type: "player" } }],
+    } as unknown as Race;
+    expect(prioritiseRacesForNpcEntry([full, thin, mine], 4).map((r) => r.id)).toEqual([
+      "mine",
+      "thin",
+      "full",
+    ]);
   });
 });

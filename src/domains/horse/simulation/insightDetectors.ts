@@ -136,6 +136,37 @@ export const detectConsistency: InsightDetector = (horse) => {
   return null;
 };
 
+// 1.3 Check for Boom or Bust (either wins or finishes out of the money)
+export const detectBoomOrBust: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  const starts = history.length;
+  if (starts < 6) return null;
+
+  let wins = 0;
+  let outOfTheMoney = 0;
+
+  for (const race of history) {
+    if (race.position === 1) {
+      wins++;
+    } else if (race.position > 3) {
+      outOfTheMoney++;
+    }
+  }
+
+  const combined = wins + outOfTheMoney;
+  if (wins >= 2 && outOfTheMoney >= 3 && combined / starts >= 0.8) {
+    const minor = starts - combined;
+    return {
+      label: "Boom or Bust",
+      value: "All or Nothing",
+      context: `Either wins or finishes off the board (${wins} wins, ${outOfTheMoney} unplaced, ${minor} minor placing${minor === 1 ? "" : "s"})`,
+      type: "neutral",
+    };
+  }
+
+  return null;
+};
+
 // 1.55 Check for Bounce Candidate (last race beyer >= 8 points higher than best previous)
 export const detectBounceCandidate: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -749,6 +780,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectBridesmaid,
   detectJockeyChemistry,
   detectConsistency,
+  detectBoomOrBust,
   detectBounceCandidate,
   detectImprovingForm,
   detectStakesPerformance,

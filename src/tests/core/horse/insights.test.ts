@@ -30,6 +30,41 @@ describe("getHorseInsight", () => {
     expect(insight?.value).not.toBe("Undefeated");
   });
 
+  it("detects Boom or Bust when horse only wins or finishes unplaced", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1 },
+        { position: 4, day: 2 }, // > 3 is unplaced
+        { position: 1, day: 3 },
+        { position: 5, day: 4 },
+        { position: 6, day: 5 },
+        { position: 7, day: 6 },
+      ],
+    } as Horse;
+    const insight = getHorseInsight(horse);
+    expect(insight?.value).toBe("All or Nothing");
+    expect(insight?.label).toBe("Boom or Bust");
+    expect(insight?.type).toBe("neutral");
+    expect(insight?.context).toBe(
+      "Either wins or finishes off the board (2 wins, 4 unplaced, 0 minor placings)",
+    );
+  });
+
+  it("does not detect Boom or Bust if too many minor placings", () => {
+    const horse = {
+      raceHistory: [
+        { position: 1, day: 1 },
+        { position: 2, day: 2 },
+        { position: 1, day: 3 },
+        { position: 3, day: 4 },
+        { position: 4, day: 5 },
+        { position: 5, day: 6 },
+      ],
+    } as Horse; // 2 wins, 2 unplaced, 2 minor. 4/6 = 0.66 < 0.8
+    const insight = getHorseInsight(horse);
+    expect(insight?.value).not.toBe("All or Nothing");
+  });
+
   it("detects Bounce Candidate when last beyer is massive jump", () => {
     const horse = {
       raceHistory: [
@@ -773,9 +808,9 @@ describe("Tipster: Gate Affinity insights", () => {
         { position: 2, day: 2, gate: 2, fieldSize: 10, beyer: 88 },
         { position: 1, day: 3, gate: 3, fieldSize: 10, beyer: 92 }, // avg inside = 90
         // Outside starts (gates >= 8)
-        { position: 5, day: 4, gate: 9, fieldSize: 10, beyer: 80 },
-        { position: 4, day: 5, gate: 10, fieldSize: 10, beyer: 78 },
-        { position: 5, day: 6, gate: 8, fieldSize: 10, beyer: 82 }, // avg outside = 80
+        { position: 4, day: 4, gate: 9, fieldSize: 10, beyer: 80 },
+        { position: 5, day: 5, gate: 10, fieldSize: 10, beyer: 78 },
+        { position: 2, day: 6, gate: 8, fieldSize: 10, beyer: 82 }, // avg outside = 80
       ],
     };
     const insight = getHorseInsight(
@@ -790,9 +825,9 @@ describe("Tipster: Gate Affinity insights", () => {
     const horse = {
       raceHistory: [
         // Inside starts (gates 1-3)
-        { position: 5, day: 1, gate: 1, fieldSize: 10, beyer: 80 },
-        { position: 4, day: 2, gate: 2, fieldSize: 10, beyer: 78 },
-        { position: 5, day: 3, gate: 3, fieldSize: 10, beyer: 82 }, // avg inside = 80
+        { position: 4, day: 1, gate: 1, fieldSize: 10, beyer: 80 },
+        { position: 5, day: 2, gate: 2, fieldSize: 10, beyer: 78 },
+        { position: 2, day: 3, gate: 3, fieldSize: 10, beyer: 82 }, // avg inside = 80
         // Outside starts (gates >= 8)
         { position: 1, day: 4, gate: 9, fieldSize: 10, beyer: 90 },
         { position: 2, day: 5, gate: 10, fieldSize: 10, beyer: 88 },
