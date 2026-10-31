@@ -151,7 +151,10 @@ export const auctionsPhase = {
       const finalLots = runner.finalLots();
       for (const lot of finalLots) {
         if (!lot.passed && lot.soldToStableId && lot.hammerPrice) {
-          spentToday.set(lot.soldToStableId, (spentToday.get(lot.soldToStableId) ?? 0) + lot.hammerPrice);
+          spentToday.set(
+            lot.soldToStableId,
+            (spentToday.get(lot.soldToStableId) ?? 0) + lot.hammerPrice,
+          );
         }
       }
       const lotImpacts = runner.finalImpacts({ day: newDay, phase: "auctions" });

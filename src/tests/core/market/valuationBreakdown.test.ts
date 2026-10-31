@@ -10,7 +10,14 @@ import {
 import type { Horse, Stable } from "@/platform/game/types";
 
 function horse(over: Partial<Horse> = {}): Horse {
-  return createTestHorse({ age: 4, gender: "colt", raceHistory: [], fame: 10, fanCount: 0, ...over });
+  return createTestHorse({
+    age: 4,
+    gender: "colt",
+    raceHistory: [],
+    fame: 10,
+    fanCount: 0,
+    ...over,
+  });
 }
 
 const win = (day: number) =>
@@ -61,14 +68,26 @@ describe("explainPriceMovement", () => {
 
   it("measures from the first record when history starts inside the window", () => {
     const h = horse({ raceHistory: [win(80), win(95)] });
-    const m = explainPriceMovement(h, [h], [{ day: 90, rank: 3, points: 0, reputation: 10, price: 5000 }], 100, 30);
+    const m = explainPriceMovement(
+      h,
+      [h],
+      [{ day: 90, rank: 3, points: 0, reputation: 10, price: 5000 }],
+      100,
+      30,
+    );
     expect(m.windowDays).toBe(10);
     expect(m.winsInWindow).toBe(1); // the day-80 win was already in the day-90 price
   });
 
   it("ignores snapshots recorded before the horse had a price", () => {
     const h = horse();
-    const m = explainPriceMovement(h, [h], [{ day: 60, rank: 5, points: 0, reputation: 10, price: 0 }], 100, 30);
+    const m = explainPriceMovement(
+      h,
+      [h],
+      [{ day: 60, rank: 5, points: 0, reputation: 10, price: 0 }],
+      100,
+      30,
+    );
     expect(m.priceThen).toBeNull();
     expect(m.change).toBeNull();
   });
@@ -76,7 +95,14 @@ describe("explainPriceMovement", () => {
 
 describe("npcWalkAwayPrice", () => {
   const stable = (over: Partial<Stable>) =>
-    ({ id: "s1", name: "Rival", personality: "aggressive", tier: 2, cash: 10_000_000, ...over }) as Stable;
+    ({
+      id: "s1",
+      name: "Rival",
+      personality: "aggressive",
+      tier: 2,
+      cash: 10_000_000,
+      ...over,
+    }) as Stable;
 
   it("conservative stables stop at 80% of their valuation", () => {
     const h = horse();
@@ -87,7 +113,12 @@ describe("npcWalkAwayPrice", () => {
 
   it("a cash-poor stable is capped by its budget", () => {
     const h = horse();
-    const w = npcWalkAwayPrice(stable({ personality: "conservative", cash: 1000 }), h, "racing_age", [h]);
+    const w = npcWalkAwayPrice(
+      stable({ personality: "conservative", cash: 1000 }),
+      h,
+      "racing_age",
+      [h],
+    );
     expect(w.limitedBy).toBe("cash");
     expect(w.walkAway).toBe(100); // 15% of $1,000 = $150, rounded down to $100
   });
