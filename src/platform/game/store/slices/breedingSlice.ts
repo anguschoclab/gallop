@@ -32,10 +32,7 @@ import { BREEDING_FEE, LIVE_FOAL_GUARANTEE_FEE } from "@/domains/breeding/model/
 import { asPlayerOwnerId, asHorseId } from "@/shared/types/branded";
 import { getStableId } from "@/domains/horse/simulation/ownership";
 import { requireOwned, requireHorse } from "@/platform/game/store/guards";
-import {
-  buyRivalStake,
-  sellRivalStake,
-} from "@/domains/syndicates/simulation/rivalStakeTrades";
+import { buyRivalStake, sellRivalStake } from "@/domains/syndicates/simulation/rivalStakeTrades";
 import type { StoreSet, StoreGet } from "@/platform/game/store/types";
 import {
   createSyndicateActions,
