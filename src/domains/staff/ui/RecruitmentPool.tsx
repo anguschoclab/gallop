@@ -64,10 +64,10 @@ export function RecruitmentPool({
                       variant="secondary"
                       className="text-[8px] h-4 font-black uppercase tracking-tighter bg-primary/10 text-primary border-primary/20 rounded-none px-2"
                     >
-                      {(STAFF_TIER_LABELS as Record<string, string>)[staff.tier].toUpperCase()}
+                      {STAFF_TIER_LABELS[staff.tier].toUpperCase()}
                     </Badge>
                     <span className="text-[9px] font-mono text-foreground/40 font-bold uppercase tracking-wide">
-                      {(STAFF_ROLE_LABELS as Record<string, string>)[staff.role].toUpperCase()}
+                      {STAFF_ROLE_LABELS[staff.role].toUpperCase()}
                     </span>
                   </div>
                 </div>

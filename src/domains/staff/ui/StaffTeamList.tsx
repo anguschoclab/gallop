@@ -113,10 +113,10 @@ export function StaffTeamList({
                           variant="outline"
                           className="text-[8px] h-4 font-black uppercase tracking-tighter border-white/10 text-foreground/40 rounded-none"
                         >
-                          {(STAFF_TIER_LABELS as Record<string, string>)[member.tier].toUpperCase()}
+                          {STAFF_TIER_LABELS[member.tier].toUpperCase()}
                         </Badge>
                         <span className="text-[9px] font-mono text-primary/30 font-bold uppercase tracking-wide">
-                          {(STAFF_ROLE_LABELS as Record<string, string>)[member.role].toUpperCase()}
+                          {STAFF_ROLE_LABELS[member.role].toUpperCase()}
                         </span>
                       </div>
                     </div>
