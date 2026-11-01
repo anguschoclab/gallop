@@ -54,27 +54,44 @@ export interface RivalStake {
   payouts: RivalStakePayout[];
 }
 
-/** Price the owner asks for each 1% of the horse. */
+/**
+ * Price the owner asks for each 1% of the horse.
+ * @param marketValue
+ */
 export function stakeBuyPricePerPercent(marketValue: number): number {
   return Math.max(100, Math.round((Math.max(0, marketValue) * STAKE_BUY_PREMIUM) / 100));
 }
 
-/** Price the owner pays to buy back each 1% of the horse. */
+/**
+ * Price the owner pays to buy back each 1% of the horse.
+ * @param marketValue
+ */
 export function stakeSellPricePerPercent(marketValue: number): number {
   return Math.max(0, Math.round((Math.max(0, marketValue) * STAKE_SELL_DISCOUNT) / 100));
 }
 
-/** The player's share of the horse's current market value. */
+/**
+ * The player's share of the horse's current market value.
+ * @param percent
+ * @param marketValue
+ */
 export function stakeMarketValue(percent: number, marketValue: number): number {
   return Math.round((Math.max(0, marketValue) * percent) / 100);
 }
 
-/** How much more of the horse the player may buy. */
+/**
+ * How much more of the horse the player may buy.
+ * @param currentPercent
+ */
 export function remainingStakeCapacity(currentPercent: number): number {
   return Math.max(0, MAX_RIVAL_STAKE_PERCENT - currentPercent);
 }
 
-/** Split a prize between the player (by stake) and the owning stable. */
+/**
+ * Split a prize between the player (by stake) and the owning stable.
+ * @param prize
+ * @param percent
+ */
 export function splitStakePrize(
   prize: number,
   percent: number,
@@ -88,6 +105,10 @@ export function splitStakePrize(
  * Reputation the player earns from a staked horse's result.
  * Wins earn the stake's fraction of the full win reputation (at least 1);
  * graded 2nd/3rd places earn a smaller fraction; other results earn nothing.
+ * @param winReputation
+ * @param percent
+ * @param position
+ * @param graded
  */
 export function stakeResultReputation(
   winReputation: number,
@@ -117,7 +138,10 @@ export interface StakeEligibilityHorse {
 /** Oldest age a rival will still sell a racing stake in. */
 export const MAX_STAKE_HORSE_AGE = 12;
 
-/** Whether a rival will sell part of this horse. */
+/**
+ * Whether a rival will sell part of this horse.
+ * @param horse
+ */
 export function rivalStakeEligibility(horse: StakeEligibilityHorse): StakeEligibility {
   if (horse.ownership?.type !== "npc") return { ok: false, reason: "Only rival stables' horses" };
   if (horse.lifecycleStatus === "deceased") return { ok: false, reason: "Horse has died" };

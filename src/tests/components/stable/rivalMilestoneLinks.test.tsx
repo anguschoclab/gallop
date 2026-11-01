@@ -30,7 +30,14 @@ describe("RivalCareerMilestoneTimeline links", () => {
             raceName: "Debut Stakes",
             stage: "juvenile",
           },
-          { key: "retirement", kind: "retirement", title: "Retired", day: 900, announced: true, stage: "retired" },
+          {
+            key: "retirement",
+            kind: "retirement",
+            title: "Retired",
+            day: 900,
+            announced: true,
+            stage: "retired",
+          },
         ]}
       />,
     );
