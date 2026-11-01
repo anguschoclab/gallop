@@ -65,7 +65,9 @@ describe("rival stake rules", () => {
 
   it("only sells stakes in active rival racehorses", () => {
     expect(rivalStakeEligibility(npcHorse()).ok).toBe(true);
-    expect(rivalStakeEligibility(npcHorse({ ownership: { type: "player" } } as never)).ok).toBe(false);
+    expect(rivalStakeEligibility(npcHorse({ ownership: { type: "player" } } as never)).ok).toBe(
+      false,
+    );
     expect(rivalStakeEligibility(npcHorse({ lifecycleStatus: "retired" })).ok).toBe(false);
   });
 });
@@ -109,10 +111,19 @@ describe("buying and selling a rival stake", () => {
 });
 
 describe("race payouts to a rival stake", () => {
-  const race = { id: "r1", name: "Big Cup", purse: 100_000, graded: { grade: "G1" } } as unknown as Race;
+  const race = {
+    id: "r1",
+    name: "Big Cup",
+    purse: 100_000,
+    graded: { grade: "G1" },
+  } as unknown as Race;
 
   it("reduces the owner's prize to their share and pays the player the rest plus prestige", () => {
-    const ownerCash = { type: "cash_change", entityId: "s1", amount: 60_000 } as unknown as CashImpact;
+    const ownerCash = {
+      type: "cash_change",
+      entityId: "s1",
+      amount: 60_000,
+    } as unknown as CashImpact;
     const impacts = generateRivalStakeImpacts(npcHorse(), 1, race, ownerCash, stake(25), 12);
     expect(ownerCash.amount).toBe(45_000);
     const playerCash = impacts.find((i) => i.type === "cash_change") as CashImpact;
@@ -122,7 +133,11 @@ describe("race payouts to a rival stake", () => {
   });
 
   it("records the payout once on the stake even if replayed", () => {
-    const ownerCash = { type: "cash_change", entityId: "s1", amount: 60_000 } as unknown as CashImpact;
+    const ownerCash = {
+      type: "cash_change",
+      entityId: "s1",
+      amount: 60_000,
+    } as unknown as CashImpact;
     const payout = generateRivalStakeImpacts(npcHorse(), 1, race, ownerCash, stake(25), 12).find(
       (i) => i.type === "rival_stake_payout",
     )!;
@@ -135,7 +150,11 @@ describe("race payouts to a rival stake", () => {
   });
 
   it("does nothing for horses without a stake", () => {
-    const ownerCash = { type: "cash_change", entityId: "s1", amount: 60_000 } as unknown as CashImpact;
+    const ownerCash = {
+      type: "cash_change",
+      entityId: "s1",
+      amount: 60_000,
+    } as unknown as CashImpact;
     expect(generateRivalStakeImpacts(npcHorse(), 1, race, ownerCash, undefined, 12)).toEqual([]);
     expect(ownerCash.amount).toBe(60_000);
   });

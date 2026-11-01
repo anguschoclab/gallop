@@ -20,8 +20,7 @@ import {
 } from "@/domains/syndicates/model/rivalStakes";
 
 export type StakeTradeResult =
-  | { ok: true; patch: Partial<GameState>; amount: number }
-  | { ok: false; reason: string };
+  { ok: true; patch: Partial<GameState>; amount: number } | { ok: false; reason: string };
 
 type TradeState = Pick<
   GameState,
@@ -32,6 +31,8 @@ type TradeState = Pick<
  * Current market value used for every stake price. Rival horses can hold
  * unrevealed stats until first inspected; they resolve deterministically, so
  * the page and the trade always agree on the price.
+ * @param horse
+ * @param allHorses
  */
 export function rivalStakeHorseValue(horse: Horse, allHorses: Horse[]): number {
   return horseMarketValue(ensurePhenotypeResolved(horse), allHorses);
@@ -98,9 +99,17 @@ export function buyRivalStake(
       rivalStakes: { ...(state.rivalStakes ?? {}), [horseId]: stake },
       transactions: [
         ...(state.transactions ?? []),
-        createTransaction("expense", "stake_purchase", -cost, description, state.day, state.cash - cost, {
-          horseId,
-        }),
+        createTransaction(
+          "expense",
+          "stake_purchase",
+          -cost,
+          description,
+          state.day,
+          state.cash - cost,
+          {
+            horseId,
+          },
+        ),
       ],
       log: [{ day: state.day, text: description }, ...state.log].slice(0, 50),
     },
@@ -152,9 +161,17 @@ export function sellRivalStake(
       rivalStakes: nextStakes,
       transactions: [
         ...(state.transactions ?? []),
-        createTransaction("income", "stake_sale", proceeds, description, state.day, state.cash + proceeds, {
-          horseId,
-        }),
+        createTransaction(
+          "income",
+          "stake_sale",
+          proceeds,
+          description,
+          state.day,
+          state.cash + proceeds,
+          {
+            horseId,
+          },
+        ),
       ],
       log: [{ day: state.day, text: description }, ...state.log].slice(0, 50),
     },

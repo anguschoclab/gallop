@@ -381,7 +381,9 @@ export function PriceAlertsPanel() {
                             {alert.enabled ? "Pause" : "Resume"}
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>{alert.enabled ? "Pause alert" : "Resume alert"}</TooltipContent>
+                        <TooltipContent>
+                          {alert.enabled ? "Pause alert" : "Resume alert"}
+                        </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                     <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>

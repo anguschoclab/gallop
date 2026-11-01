@@ -5,7 +5,14 @@ import {
 } from "@/domains/agents/simulation/npc/rivalCareerCompare";
 
 const m = (key: string, kind: RivalMilestoneRecord["kind"], stage: RivalMilestoneRecord["stage"]) =>
-  ({ key, kind, title: key, day: stage ? 10 : null, announced: false, stage }) as RivalMilestoneRecord;
+  ({
+    key,
+    kind,
+    title: key,
+    day: stage ? 10 : null,
+    announced: false,
+    stage,
+  }) as RivalMilestoneRecord;
 
 const list = [
   m("a", "debut", "juvenile"),
@@ -20,14 +27,20 @@ describe("rival milestone timeline filters", () => {
     expect(filterRivalMilestones(list, { kinds: [], stages: [] })).toHaveLength(5);
   });
   it("keeps only chosen milestone types", () => {
-    expect(filterRivalMilestones(list, { kinds: ["earnings"], stages: [] }).map((x) => x.key)).toEqual(["c", "e"]);
+    expect(
+      filterRivalMilestones(list, { kinds: ["earnings"], stages: [] }).map((x) => x.key),
+    ).toEqual(["c", "e"]);
   });
   it("keeps only milestones from chosen career stages, dropping undated ones", () => {
-    expect(filterRivalMilestones(list, { kinds: [], stages: ["prime"] }).map((x) => x.key)).toEqual(["b", "c"]);
+    expect(filterRivalMilestones(list, { kinds: [], stages: ["prime"] }).map((x) => x.key)).toEqual(
+      ["b", "c"],
+    );
   });
   it("combines type and stage", () => {
     expect(
-      filterRivalMilestones(list, { kinds: ["breakthrough_win"], stages: ["prime"] }).map((x) => x.key),
+      filterRivalMilestones(list, { kinds: ["breakthrough_win"], stages: ["prime"] }).map(
+        (x) => x.key,
+      ),
     ).toEqual(["b"]);
   });
 });
