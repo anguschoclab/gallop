@@ -24,7 +24,9 @@ const snap = (
 });
 
 const progress = {
-  a: Array.from({ length: 10 }, (_, i) => snap(i + 1, 50 + i, 60 - i, 90 - i * 2, 10_000 + i * 500)),
+  a: Array.from({ length: 10 }, (_, i) =>
+    snap(i + 1, 50 + i, 60 - i, 90 - i * 2, 10_000 + i * 500),
+  ),
   b: [snap(9, 70, 50, 80, 20_000), snap(10, 69, 52, 70, 19_000)],
   c: [snap(10, 40, 40, 100, 5_000)],
 };
