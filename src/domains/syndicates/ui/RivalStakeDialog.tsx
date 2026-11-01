@@ -5,7 +5,14 @@
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { useGame } from "@/platform/game/store";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/shared/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/shared/ui/dialog";
 import { Button } from "@/shared/ui/button";
 import { Slider } from "@/shared/ui/slider";
 import { formatCurrency } from "@/shared/common/formatting";
@@ -41,7 +48,9 @@ export function RivalStakeDialog({ target, mode, onClose }: Props) {
   const sellRivalStake = useGame((s) => s.sellRivalStake);
 
   const max =
-    mode === "buy" ? Math.max(0, MAX_RIVAL_STAKE_PERCENT - (target?.heldPercent ?? 0)) : (target?.heldPercent ?? 0);
+    mode === "buy"
+      ? Math.max(0, MAX_RIVAL_STAKE_PERCENT - (target?.heldPercent ?? 0))
+      : (target?.heldPercent ?? 0);
   const [percent, setPercent] = useState(1);
   useEffect(() => {
     setPercent(mode === "buy" ? Math.min(10, Math.max(1, max)) : Math.max(1, max));
@@ -50,7 +59,9 @@ export function RivalStakeDialog({ target, mode, onClose }: Props) {
   if (!target) return null;
 
   const unit =
-    mode === "buy" ? stakeBuyPricePerPercent(target.horseValue) : stakeSellPricePerPercent(target.horseValue);
+    mode === "buy"
+      ? stakeBuyPricePerPercent(target.horseValue)
+      : stakeSellPricePerPercent(target.horseValue);
   const total = unit * percent;
   const after = mode === "buy" ? target.heldPercent + percent : target.heldPercent - percent;
   const winShare = splitStakePrize(EXAMPLE_PURSE * 0.6, after).playerShare;
@@ -58,7 +69,10 @@ export function RivalStakeDialog({ target, mode, onClose }: Props) {
   const tooExpensive = mode === "buy" && total > cash;
 
   const submit = () => {
-    const result = mode === "buy" ? buyRivalStake(target.horseId, percent) : sellRivalStake(target.horseId, percent);
+    const result =
+      mode === "buy"
+        ? buyRivalStake(target.horseId, percent)
+        : sellRivalStake(target.horseId, percent);
     if (!result.ok) {
       toast.error(result.reason);
       return;
@@ -86,7 +100,8 @@ export function RivalStakeDialog({ target, mode, onClose }: Props) {
 
         {max <= 0 ? (
           <p className="text-sm text-muted-foreground">
-            The owner keeps control — you already hold the most they will sell ({MAX_RIVAL_STAKE_PERCENT}%).
+            The owner keeps control — you already hold the most they will sell (
+            {MAX_RIVAL_STAKE_PERCENT}%).
           </p>
         ) : (
           <div className="space-y-5 py-2">
@@ -110,7 +125,10 @@ export function RivalStakeDialog({ target, mode, onClose }: Props) {
             </div>
 
             <dl className="space-y-1.5 rounded-md border border-border bg-muted/40 p-3 text-sm">
-              <Row label={mode === "buy" ? "Price per 1% (owner premium)" : "Buy-back per 1%"} value={formatCurrency(unit)} />
+              <Row
+                label={mode === "buy" ? "Price per 1% (owner premium)" : "Buy-back per 1%"}
+                value={formatCurrency(unit)}
+              />
               <Row
                 label={mode === "buy" ? "Total cost" : "You receive"}
                 value={formatCurrency(total)}
@@ -118,11 +136,16 @@ export function RivalStakeDialog({ target, mode, onClose }: Props) {
                 tone={tooExpensive ? "danger" : undefined}
               />
               <Row label="Your stake afterwards" value={`${after}%`} />
-              <Row label="Your share of a $60,000 winner's prize" value={formatCurrency(winShare)} />
+              <Row
+                label="Your share of a $60,000 winner's prize"
+                value={formatCurrency(winShare)}
+              />
               <Row label="Prestige from a G1 win" value={`+${g1Rep}`} />
             </dl>
             {tooExpensive && (
-              <p className="text-xs text-destructive">You have {formatCurrency(cash)} — not enough for this stake.</p>
+              <p className="text-xs text-destructive">
+                You have {formatCurrency(cash)} — not enough for this stake.
+              </p>
             )}
           </div>
         )}
@@ -140,7 +163,17 @@ export function RivalStakeDialog({ target, mode, onClose }: Props) {
   );
 }
 
-function Row({ label, value, strong, tone }: { label: string; value: string; strong?: boolean; tone?: "danger" }) {
+function Row({
+  label,
+  value,
+  strong,
+  tone,
+}: {
+  label: string;
+  value: string;
+  strong?: boolean;
+  tone?: "danger";
+}) {
   return (
     <div className="flex justify-between gap-3">
       <dt className="text-muted-foreground">{label}</dt>

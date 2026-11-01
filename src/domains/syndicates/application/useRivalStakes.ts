@@ -81,14 +81,16 @@ export function useRivalStakes(query: string, stableFilter?: string) {
       .map((stake) => {
         const horse = horses[stake.horseId as keyof typeof horses] as Horse | undefined;
         const status = statusOf(horse);
-        const horseValue = horse && status !== "deceased" ? rivalStakeHorseValue(horse, allHorses) : 0;
+        const horseValue =
+          horse && status !== "deceased" ? rivalStakeHorseValue(horse, allHorses) : 0;
         const stakeValue = stakeMarketValue(stake.percent, horseValue);
         const ownerId =
           horse?.ownership?.type === "npc" ? String(horse.ownership.stableId) : stake.stableId;
         return {
           stake,
           horse,
-          ownerName: status === "yours" ? "Your stable" : (stableNames.get(ownerId) ?? "Rival stable"),
+          ownerName:
+            status === "yours" ? "Your stable" : (stableNames.get(ownerId) ?? "Rival stable"),
           status,
           horseValue,
           stakeValue,
@@ -103,7 +105,11 @@ export function useRivalStakes(query: string, stableFilter?: string) {
     const q = query.trim().toLowerCase();
     const pre = allHorses
       .filter((h) => rivalStakeEligibility(h).ok)
-      .filter((h) => !stableFilter || String(h.ownership?.type === "npc" && h.ownership.stableId) === stableFilter)
+      .filter(
+        (h) =>
+          !stableFilter ||
+          String(h.ownership?.type === "npc" && h.ownership.stableId) === stableFilter,
+      )
       .map((h) => {
         const ownerId = h.ownership?.type === "npc" ? String(h.ownership.stableId) : "";
         return { h, ownerId, ownerName: stableNames.get(ownerId) ?? "Rival stable" };
@@ -112,7 +118,11 @@ export function useRivalStakes(query: string, stableFilter?: string) {
         ({ h, ownerName }) =>
           !q || h.name.toLowerCase().includes(q) || ownerName.toLowerCase().includes(q),
       )
-      .map((row) => ({ ...row, earnings: horseEarnings(row.h), rating: calculateOverallRating(ensurePhenotypeResolved(row.h)) }))
+      .map((row) => ({
+        ...row,
+        earnings: horseEarnings(row.h),
+        rating: calculateOverallRating(ensurePhenotypeResolved(row.h)),
+      }))
       .sort((a, b) => b.earnings - a.earnings || b.rating - a.rating)
       .slice(0, CANDIDATE_LIMIT);
 
@@ -141,13 +151,26 @@ export function useRivalStakes(query: string, stableFilter?: string) {
     const value = holdings.reduce((s, h) => s + h.stakeValue, 0);
     const prize = holdings.reduce((s, h) => s + h.stake.prizeEarned, 0);
     const prestige = holdings.reduce((s, h) => s + h.stake.reputationEarned, 0);
-    return { count: holdings.length, invested, value, prize, prestige, totalReturn: value + prize - invested };
+    return {
+      count: holdings.length,
+      invested,
+      value,
+      prize,
+      prestige,
+      totalReturn: value + prize - invested,
+    };
   }, [holdings]);
 
   const recentPayouts = useMemo(
     () =>
       holdings
-        .flatMap((h) => h.stake.payouts.map((p) => ({ ...p, horseName: h.stake.horseName, horseId: h.stake.horseId })))
+        .flatMap((h) =>
+          h.stake.payouts.map((p) => ({
+            ...p,
+            horseName: h.stake.horseName,
+            horseId: h.stake.horseId,
+          })),
+        )
         .sort((a, b) => b.day - a.day)
         .slice(0, 15),
     [holdings],
