@@ -354,22 +354,36 @@ export function PriceAlertsPanel() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      aria-label={`Edit alert for ${scopeLabel(alert.scope, trackName)}`}
-                      onClick={() => {
-                        setEditingId(alert.id);
-                        setEditDirection(alert.direction);
-                        setEditThreshold(String(alert.thresholdPct));
-                        setEditWindowDays(String(alert.windowDays));
-                      }}
-                    >
-                      <Pencil className="h-3.5 w-3.5" />
-                    </Button>
-                    <Button variant="outline" size="sm" onClick={() => toggleAlert(alert.id)}>
-                      {alert.enabled ? "Pause" : "Resume"}
-                    </Button>
+                    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={`Edit alert for ${scopeLabel(alert.scope, trackName)}`}
+                            onClick={() => {
+                              setEditingId(alert.id);
+                              setEditDirection(alert.direction);
+                              setEditThreshold(String(alert.thresholdPct));
+                              setEditWindowDays(String(alert.windowDays));
+                            }}
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Edit alert</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                    <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button variant="outline" size="sm" onClick={() => toggleAlert(alert.id)}>
+                            {alert.enabled ? "Pause" : "Resume"}
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>{alert.enabled ? "Pause alert" : "Resume alert"}</TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                     <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
                       <Tooltip>
                         <TooltipTrigger asChild>
