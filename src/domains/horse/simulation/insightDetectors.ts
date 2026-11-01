@@ -70,6 +70,30 @@ export const detectBridesmaid: InsightDetector = (horse) => {
   return null;
 };
 
+// 1.15 Check for Career Maiden
+export const detectCareerMaiden: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  const starts = history.length;
+  if (starts >= 10) {
+    const isMaiden = history.every((race) => race.position !== 1);
+    if (isMaiden) {
+      let placings = 0;
+      for (const race of history) {
+        if (race.position >= 2 && race.position <= 3) placings++;
+      }
+      return {
+        label: "Career Maiden",
+        value: "Still Seeking a Win",
+        context:
+          `Has failed to find the winner's circle in ${starts} career starts` +
+          (placings > 0 ? ` despite hitting the board ${placings} times` : ""),
+        type: "negative",
+      };
+    }
+  }
+  return null;
+};
+
 // 1.2 Check for Jockey Chemistry
 export const detectJockeyChemistry: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -747,6 +771,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectUndefeated,
   detectWinStreak,
   detectBridesmaid,
+  detectCareerMaiden,
   detectJockeyChemistry,
   detectConsistency,
   detectBounceCandidate,
