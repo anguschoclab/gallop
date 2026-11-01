@@ -46,11 +46,7 @@ export interface RivalMilestoneFilter {
   stages: NpcCareerStage[];
 }
 
-/**
- * Narrow a rival's milestone timeline to the chosen kinds and career stages.
- * @param milestones
- * @param filter
- */
+/** Narrow a rival's milestone timeline to the chosen kinds and career stages. */
 export function filterRivalMilestones(
   milestones: RivalMilestoneRecord[],
   filter: RivalMilestoneFilter,

@@ -34,11 +34,7 @@ import { calculateBaseHorseValue } from "@/domains/horse/simulation/pricing";
  * - Illness complications: 0.5% chance/day while ill
  */
 
-/**
- * Who receives a mortality payout: the player, the owning rival stable, or nobody.
- *
- * @param horse - The horse to check for insurance beneficiary
- */
+/** Who receives a mortality payout: the player, the owning rival stable, or nobody. */
 function insuranceBeneficiary(horse: Horse): string | undefined {
   if (horse.ownership?.type === "player") return "player";
   if (horse.ownership?.type === "npc") return String(horse.ownership.stableId);

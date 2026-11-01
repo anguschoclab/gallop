@@ -77,8 +77,6 @@ function evaluateStrategicBiddingValue(
  * Value the AI bids against. Callers that know the horse's auction-house
  * valuation (stud fees, prize earnings, pedigree) pass it; the rating-only
  * estimate is a fallback for callers without world context.
- * @param horseRating
- * @param marketValue
  */
 function estimateValue(horseRating: number, marketValue?: number): number {
   return marketValue !== undefined && marketValue > 0

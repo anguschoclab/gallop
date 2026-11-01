@@ -136,12 +136,6 @@ export interface NpcWalkAwayPrice {
 /**
  * Highest price a rival stable will bid for a horse, using the same ceiling,
  * budget cap and personality cut-offs as calculateNpcBid's standard path.
- * @param stable
- * @param horse
- * @param saleKind
- * @param allHorses
- * @param horseMap
- * @param house
  */
 export function npcWalkAwayPrice(
   stable: Stable,
@@ -152,8 +146,7 @@ export function npcWalkAwayPrice(
   house?: AuctionHouse,
 ): NpcWalkAwayPrice {
   const valuation = Math.round(
-    calculateLotValuation(horse, stable, saleKind, allHorses, horseMap) *
-      housePrestigeMultiplier(house),
+    calculateLotValuation(horse, stable, saleKind, allHorses, horseMap) * housePrestigeMultiplier(house),
   );
   if (valuation <= 0) return { valuation: 0, walkAway: 0, limitedBy: "not_interested" };
   const budgetCap = stable.cash * BUDGET_CAPS[stable.personality];
@@ -233,15 +226,8 @@ export function calculateNpcBid(
       // The AI's own budget is a planning figure; never bid past what the
       // stable can actually spend on one lot.
       const maxBid = Math.min(
-        calculateMaxBid(
-          aiState.auctionAI,
-          horse,
-          tempLot,
-          stable,
-          currentDay,
-          friction,
-          valuation,
-        ) * housePrestigeMultiplier(house),
+        calculateMaxBid(aiState.auctionAI, horse, tempLot, stable, currentDay, friction, valuation) *
+          housePrestigeMultiplier(house),
         stable.cash * BUDGET_CAPS[stable.personality],
       );
 

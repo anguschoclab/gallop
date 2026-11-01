@@ -165,10 +165,7 @@ export function NpcStablesRivalCareers() {
   }, [selected, rivals, day]);
   const timelineProfiles = useMemo(
     () =>
-      profiles.map((p) => ({
-        ...p,
-        milestones: filterRivalMilestones(p.milestones, milestoneFilter),
-      })),
+      profiles.map((p) => ({ ...p, milestones: filterRivalMilestones(p.milestones, milestoneFilter) })),
     [profiles, milestoneFilter],
   );
 
