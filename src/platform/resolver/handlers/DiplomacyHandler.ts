@@ -7,14 +7,11 @@
  * Dependencies: ./types (ImpactHandler), @/domains/agents/simulation/npcCycleAI (NpcAIManager)
  */
 
+import { BaseHandler } from "@/platform/resolver/handlers/BaseHandler";
+
 import type { WritableDraft } from "immer";
 import type { GameState } from "@/platform/game/types";
-import type { AnyImpact } from "@/platform/resolver/impacts";
-import type {
-  ImpactHandler,
-  LookupMaps,
-  ImpactHandlerFunction,
-} from "@/platform/resolver/handlers/types";
+import type { ImpactHandlerFunction } from "@/platform/resolver/handlers/types";
 import type { DiplomaticImpact, CartelImpact } from "@/platform/resolver/impacts/miscImpacts";
 import type { NpcAIManager } from "@/domains/agents/simulation/npcCycleAI";
 
@@ -34,16 +31,9 @@ const IMPACT_HANDLERS: Record<string, ImpactHandlerFunction> = {
   },
 };
 
-export class DiplomacyHandler implements ImpactHandler {
-  canHandle(type: string): boolean {
-    return Object.hasOwn(IMPACT_HANDLERS, type);
-  }
-
-  handle(draft: WritableDraft<GameState>, impact: AnyImpact, lookupMaps?: LookupMaps): void {
-    const handler = IMPACT_HANDLERS[impact.type];
-    if (handler) {
-      handler(draft, impact, lookupMaps);
-    }
+export class DiplomacyHandler extends BaseHandler {
+  protected get handlers(): Record<string, ImpactHandlerFunction> {
+    return IMPACT_HANDLERS;
   }
 
   static handleDiplomatic(aiManager: NpcAIManager, impact: DiplomaticImpact): void {
