@@ -10,8 +10,8 @@ import { describe, it, expect } from "vitest";
 import { INSIGHT_DETECTORS } from "@/domains/horse/simulation/insightDetectors";
 
 describe("INSIGHT_DETECTORS registry order", () => {
-  it("has exactly 23 detectors", () => {
-    expect(INSIGHT_DETECTORS).toHaveLength(23);
+  it("has exactly 27 detectors", () => {
+    expect(INSIGHT_DETECTORS).toHaveLength(27);
   });
 
   it("preserves the original priority order", () => {
@@ -28,8 +28,10 @@ describe("INSIGHT_DETECTORS registry order", () => {
       "detectUndefeated", // 0. Perfection
       "detectWinStreak", // 1. Red Hot
       "detectBridesmaid", // 1.1 Bridesmaid
+      "detectCareerMaiden", // 1.15 Career Maiden
       "detectJockeyChemistry", // 1.2 Jockey Chemistry
       "detectConsistency", // 1.25 Model of Consistency
+      "detectBoomOrBust", // 1.3 Boom or Bust
       "detectBounceCandidate", // 1.55 Regression Risk
       "detectImprovingForm", // 1.5 Trending Up
       "detectStakesPerformance", // 1.6 Big Stage Performer / Stage Fright
@@ -40,11 +42,13 @@ describe("INSIGHT_DETECTORS registry order", () => {
       "detectFromTheClouds", // 1.92 From the Clouds
       "detectLateCharge", // 1.925 Late Charge
       "detectSurfaceVersatility", // 1.93 Surface Versatility
+      "detectBigFieldSpecialist", // 1.96 Crowd Surfer
       "detectDistanceSpecialist", // 2. Distance Specialist
       "detectSurfaceAffinity", // 3. Surface Affinity
       "detectDistanceVersatility", // 1.94 Distance Versatility
       "detectDistanceChange", // 1.95 Distance Change Specialist
       "detectGateAffinity", // 4. Gate Affinity
+      "detectFieldSizeAffinity", // 4.1 Field Size Affinity
       "detectEarningsMilestone", // 5. Earnings Milestone
       "detectEarningsPerStart", // 5.1 Earnings Per Start (merged yield tiers)
       "detectSireValue", // 6. Sire Value
