@@ -9,9 +9,10 @@ import { UserPlus, Zap, Activity, Info } from "lucide-react";
 import { formatStaffTrait } from "@/domains/genetics/application/traitLabels";
 import { Hint } from "@/shared/ui/Hint";
 import { getStaffName } from "@/domains/staff/model/staffPerson";
+import type { StaffMember } from "@/domains/staff/model/staffTypes";
 
 interface RecruitmentPoolProps {
-  staffPool: import("@/domains/staff/model/staffTypes").StaffMember[];
+  staffPool: StaffMember[];
   day: number;
   onNegotiate: (staffId: string) => void;
   search?: string;
@@ -64,10 +65,10 @@ export function RecruitmentPool({
                       variant="secondary"
                       className="text-[8px] h-4 font-black uppercase tracking-tighter bg-primary/10 text-primary border-primary/20 rounded-none px-2"
                     >
-                      {(STAFF_TIER_LABELS as Record<string, string>)[staff.tier].toUpperCase()}
+                      {STAFF_TIER_LABELS[staff.tier].toUpperCase()}
                     </Badge>
                     <span className="text-[9px] font-mono text-foreground/40 font-bold uppercase tracking-wide">
-                      {(STAFF_ROLE_LABELS as Record<string, string>)[staff.role].toUpperCase()}
+                      {STAFF_ROLE_LABELS[staff.role].toUpperCase()}
                     </span>
                   </div>
                 </div>
@@ -112,20 +113,12 @@ export function RecruitmentPool({
                 </div>
               )}
 
-              {isOffended(
-                staff as unknown as import("@/domains/staff/model/staffTypes").StaffMember,
-                day,
-              ) ? (
+              {isOffended(staff, day) ? (
                 <Hint
-                  content={`Offended — willing to talk again in ${offendedDaysRemaining(staff as unknown as import("@/domains/staff/model/staffTypes").StaffMember, day)} day(s)`}
+                  content={`Offended — willing to talk again in ${offendedDaysRemaining(staff, day)} day(s)`}
                 >
                   <div className="w-full h-10 flex items-center justify-center gap-2 border border-destructive/20 bg-destructive/5 text-destructive/60 text-[9px] font-mono uppercase tracking-wide">
-                    Not interested ·{" "}
-                    {offendedDaysRemaining(
-                      staff as unknown as import("@/domains/staff/model/staffTypes").StaffMember,
-                      day,
-                    )}
-                    d
+                    Not interested · {offendedDaysRemaining(staff, day)}d
                   </div>
                 </Hint>
               ) : (
