@@ -114,23 +114,25 @@ export class FactorLedgerCollector {
   }
 
   recordTick(progress: number, factors: Record<FactorKey, number>): void {
-    for (const key of ALL_FACTOR_KEYS) {
+    const phase = classifyPhase(progress);
+
+    for (let i = 0; i < ALL_FACTOR_KEYS.length; i++) {
+      const key = ALL_FACTOR_KEYS[i];
       const value = factors[key];
       if (value === undefined) continue;
 
       const acc = this.accumulators[key];
-      const phase = classifyPhase(progress);
       const phaseAcc = acc.phases[phase];
 
       phaseAcc.sum += value;
-      phaseAcc.min = Math.min(phaseAcc.min, value);
-      phaseAcc.max = Math.max(phaseAcc.max, value);
+      if (value < phaseAcc.min) phaseAcc.min = value;
+      if (value > phaseAcc.max) phaseAcc.max = value;
       phaseAcc.count += 1;
 
       acc.totalSum += value;
       acc.totalCount += 1;
 
-      const deviation = Math.abs(value - 1);
+      const deviation = value > 1 ? value - 1 : 1 - value;
       if (deviation > acc.peakDeviation) {
         acc.peakDeviation = deviation;
         acc.peakValue = value;
