@@ -8,7 +8,7 @@ Executed on `consolidation/2026-11` (base `main@37ebe582`). Scope: all **57 open
 | --- | --- | --- |
 | TypeScript | 0 errors (after routeTree regen — a cold checkout shows a phantom `rivalStakes.tsx` TS2345 until `bun run build`) | 0 errors |
 | ESLint | **RED — 259 errors** (prettier + jsdoc/require-param on the rival-stakes/auction feature set) | clean (0 errors, 1 pre-existing react-refresh warning) |
-| `bun run test` | 1000 files / 10,615 tests green | green incl. +9 new spec/test files |
+| `bun run test` | 1000 files / 10,615 tests green | **1015 files / 10,714 tests green** (+15 files, +99 tests; 1 skipped) |
 | `bun run build` | green | green |
 | `stateFingerprint` (30d, small) | `a694f5e7` (prior cycle HEAD) | `0fe9f205` — **intentional divergence**: news template pool growth + new insight detectors alter generated content only; RNG draw sequence unchanged (`rng.pick` arity: one draw per call, identical call counts) |
 
@@ -68,7 +68,7 @@ Full table: `docs/megaplan/pr-verdicts-2026-11.md`. Summary:
 
 - `bun run typecheck:errors` → 0
 - `bunx eslint .` → 0 errors, 1 pre-existing warning
-- `bun run test` → full suite (result recorded below post-run)
+- `bun run test` → **1015 files / 10,714 tests passed, 1 skipped** (~22.5min)
 - `bun run build` → green
 - `stateFingerprint 30 small` → `0fe9f205` (documented intentional divergence)
 - Hygiene: `git ls-files` contains zero `.jules`/`.Jules`/`*.patch`/`test-results`/stray-script artifacts; `protectedArtifacts` suite green.
