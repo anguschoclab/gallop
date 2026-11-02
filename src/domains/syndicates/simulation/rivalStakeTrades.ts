@@ -31,6 +31,8 @@ type TradeState = Pick<
  * Current market value used for every stake price. Rival horses can hold
  * unrevealed stats until first inspected; they resolve deterministically, so
  * the page and the trade always agree on the price.
+ * @param horse
+ * @param allHorses
  */
 export function rivalStakeHorseValue(horse: Horse, allHorses: Horse[]): number {
   return horseMarketValue(ensurePhenotypeResolved(horse), allHorses);

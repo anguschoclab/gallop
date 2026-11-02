@@ -136,6 +136,12 @@ export interface NpcWalkAwayPrice {
 /**
  * Highest price a rival stable will bid for a horse, using the same ceiling,
  * budget cap and personality cut-offs as calculateNpcBid's standard path.
+ * @param stable
+ * @param horse
+ * @param saleKind
+ * @param allHorses
+ * @param horseMap
+ * @param house
  */
 export function npcWalkAwayPrice(
   stable: Stable,

@@ -144,6 +144,11 @@ export interface PriceMovement {
  * Explain how a horse's price moved over the last `windowDays`.
  * Contributions are counterfactual: the value today minus the value today
  * without the window's results (or without the fame it gained).
+ * @param horse
+ * @param allHorses
+ * @param snapshots
+ * @param day
+ * @param windowDays
  */
 export function explainPriceMovement(
   horse: Horse,
@@ -198,7 +203,10 @@ export function explainPriceMovement(
   };
 }
 
-/** Which sale ring a horse would be offered in. */
+/**
+ * Which sale ring a horse would be offered in.
+ * @param horse
+ */
 export function saleKindForHorse(horse: Horse): AuctionSaleKind {
   if (horse.age <= 0) return "weanling";
   if (horse.age === 1) return "yearling";
@@ -218,7 +226,14 @@ export interface RivalBidder extends NpcWalkAwayPrice {
   personality: Stable["personality"];
 }
 
-/** Rival stables ranked by the most they would bid for this horse. */
+/**
+ * Rival stables ranked by the most they would bid for this horse.
+ * @param horse
+ * @param stables
+ * @param allHorses
+ * @param house
+ * @param limit
+ */
 export function rivalBidders(
   horse: Horse,
   stables: Stable[],
