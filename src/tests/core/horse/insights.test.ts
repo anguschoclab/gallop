@@ -814,7 +814,7 @@ describe("Tipster: Gate Affinity insights", () => {
         { position: 2, day: 2, gate: 2, fieldSize: 10, beyer: 88 },
         { position: 1, day: 3, gate: 3, fieldSize: 10, beyer: 92 }, // avg inside = 90
         // Outside starts (gates >= 8)
-        { position: 5, day: 4, gate: 9, fieldSize: 10, beyer: 80 },
+        { position: 3, day: 4, gate: 9, fieldSize: 10, beyer: 80 },
         { position: 4, day: 5, gate: 10, fieldSize: 10, beyer: 78 },
         { position: 5, day: 6, gate: 8, fieldSize: 10, beyer: 82 }, // avg outside = 80
       ],
@@ -833,7 +833,7 @@ describe("Tipster: Gate Affinity insights", () => {
         // Inside starts (gates 1-3)
         { position: 5, day: 1, gate: 1, fieldSize: 10, beyer: 80 },
         { position: 4, day: 2, gate: 2, fieldSize: 10, beyer: 78 },
-        { position: 5, day: 3, gate: 3, fieldSize: 10, beyer: 82 }, // avg inside = 80
+        { position: 3, day: 3, gate: 3, fieldSize: 10, beyer: 82 }, // avg inside = 80
         // Outside starts (gates >= 8)
         { position: 1, day: 4, gate: 9, fieldSize: 10, beyer: 90 },
         { position: 2, day: 5, gate: 10, fieldSize: 10, beyer: 88 },
@@ -1047,7 +1047,13 @@ describe("Tipster: Earnings Per Start insight (merged Rainmaker/Lucrative/PrizeF
     const horse = {
       careerStarts: 10,
       lifetimeEarnings: 300000,
-      raceHistory: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
+      raceHistory: [
+        { position: 2 },
+        { position: 3 },
+        { position: 4 },
+        { position: 5 },
+        { position: 6 },
+      ],
     };
     const insight = getHorseInsight(
       horse as unknown as import("@/domains/horse/simulation/types").Horse,

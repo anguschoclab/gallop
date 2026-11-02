@@ -70,6 +70,30 @@ export const detectBridesmaid: InsightDetector = (horse) => {
   return null;
 };
 
+// 1.15 Check for Career Maiden
+export const detectCareerMaiden: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  const starts = history.length;
+  if (starts >= 10) {
+    const isMaiden = history.every((race) => race.position !== 1);
+    if (isMaiden) {
+      let placings = 0;
+      for (const race of history) {
+        if (race.position >= 2 && race.position <= 3) placings++;
+      }
+      return {
+        label: "Career Maiden",
+        value: "Still Seeking a Win",
+        context:
+          `Has failed to find the winner's circle in ${starts} career starts` +
+          (placings > 0 ? ` despite hitting the board ${placings} times` : ""),
+        type: "negative",
+      };
+    }
+  }
+  return null;
+};
+
 // 1.2 Check for Jockey Chemistry
 export const detectJockeyChemistry: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -133,6 +157,37 @@ export const detectConsistency: InsightDetector = (horse) => {
       type: "positive",
     };
   }
+  return null;
+};
+
+// 1.3 Check for Boom or Bust (either wins or finishes out of the money)
+export const detectBoomOrBust: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  const starts = history.length;
+  if (starts < 6) return null;
+
+  let wins = 0;
+  let outOfTheMoney = 0;
+
+  for (const race of history) {
+    if (race.position === 1) {
+      wins++;
+    } else if (race.position > 3) {
+      outOfTheMoney++;
+    }
+  }
+
+  const combined = wins + outOfTheMoney;
+  if (wins >= 2 && outOfTheMoney >= 3 && combined / starts >= 0.8) {
+    const minor = starts - combined;
+    return {
+      label: "Boom or Bust",
+      value: "All or Nothing",
+      context: `Either wins or finishes off the board (${wins} wins, ${outOfTheMoney} unplaced, ${minor} minor placing${minor === 1 ? "" : "s"})`,
+      type: "neutral",
+    };
+  }
+
   return null;
 };
 
@@ -428,6 +483,45 @@ export const detectSurfaceVersatility: InsightDetector = (horse) => {
   };
 };
 
+// 1.96 Check for Field Size Preference (Big Field Specialist)
+export const detectBigFieldSpecialist: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  let bigFieldStarts = 0;
+  let bigFieldWins = 0;
+  let bigFieldBeyerTotal = 0;
+
+  let smallFieldStarts = 0;
+  let smallFieldBeyerTotal = 0;
+
+  for (const race of history) {
+    if (typeof race.fieldSize === "number" && typeof race.beyer === "number") {
+      if (race.fieldSize >= 12) {
+        bigFieldStarts++;
+        if (race.position === 1) bigFieldWins++;
+        bigFieldBeyerTotal += race.beyer;
+      } else if (race.fieldSize <= 8) {
+        smallFieldStarts++;
+        smallFieldBeyerTotal += race.beyer;
+      }
+    }
+  }
+
+  if (bigFieldStarts >= 3 && smallFieldStarts >= 3) {
+    const bigFieldAvg = bigFieldBeyerTotal / bigFieldStarts;
+    const smallFieldAvg = smallFieldBeyerTotal / smallFieldStarts;
+
+    if (bigFieldAvg >= smallFieldAvg + 5 && bigFieldWins >= 1) {
+      return {
+        label: "Crowd Surfer",
+        value: "Big Field Specialist",
+        context: `Thrives in traffic, averaging a ${Math.round(bigFieldAvg)} Beyer in fields of 12+ vs ${Math.round(smallFieldAvg)} in smaller fields`,
+        type: "positive",
+      };
+    }
+  }
+  return null;
+};
+
 // 2. Check for distance sweet spot (best average beyer by distance, min 3 races)
 export const detectDistanceSpecialist: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -568,6 +662,51 @@ export const detectDistanceChange: InsightDetector = (horse) => {
     };
   }
 
+  return null;
+};
+
+// 4.1 Check for Field Size Affinity
+export const detectFieldSizeAffinity: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  let largeStarts = 0;
+  let largeBeyerTotal = 0;
+  let smallStarts = 0;
+  let smallBeyerTotal = 0;
+
+  for (const race of history) {
+    if (typeof race.beyer !== "number" || typeof race.fieldSize !== "number") continue;
+
+    if (race.fieldSize >= 10) {
+      largeStarts++;
+      largeBeyerTotal += race.beyer;
+    } else if (race.fieldSize <= 7) {
+      smallStarts++;
+      smallBeyerTotal += race.beyer;
+    }
+  }
+
+  if (largeStarts >= 3 && smallStarts >= 3) {
+    const largeAvg = largeBeyerTotal / largeStarts;
+    const smallAvg = smallBeyerTotal / smallStarts;
+
+    if (largeAvg >= smallAvg + 8) {
+      return {
+        label: "Traffic Weaver",
+        value: "Large Field Preference",
+        context: `Averages a ${Math.round(largeAvg)} Beyer in fields of 10+ vs ${Math.round(smallAvg)} in smaller fields`,
+        type: "positive",
+      };
+    }
+
+    if (smallAvg >= largeAvg + 8) {
+      return {
+        label: "Needs Room",
+        value: "Small Field Preference",
+        context: `Averages a ${Math.round(smallAvg)} Beyer in fields of 7 or fewer vs ${Math.round(largeAvg)} in large fields`,
+        type: "negative",
+      };
+    }
+  }
   return null;
 };
 
@@ -747,8 +886,10 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectUndefeated,
   detectWinStreak,
   detectBridesmaid,
+  detectCareerMaiden,
   detectJockeyChemistry,
   detectConsistency,
+  detectBoomOrBust,
   detectBounceCandidate,
   detectImprovingForm,
   detectStakesPerformance,
@@ -759,11 +900,13 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectFromTheClouds,
   detectLateCharge,
   detectSurfaceVersatility,
+  detectBigFieldSpecialist,
   detectDistanceSpecialist,
   detectSurfaceAffinity,
   detectDistanceVersatility,
   detectDistanceChange,
   detectGateAffinity,
+  detectFieldSizeAffinity,
   detectEarningsMilestone,
   detectEarningsPerStart,
   detectSireValue,
