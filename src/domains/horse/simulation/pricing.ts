@@ -92,7 +92,10 @@ export interface HorsePriceFactors {
   fanMod: number;
 }
 
-/** The multiplicative factors behind horsePrice(); exported for value breakdowns. */
+/**
+ * The multiplicative factors behind horsePrice(); exported for value breakdowns.
+ * @param h
+ */
 export function horsePriceFactors(h: Horse): HorsePriceFactors {
   const overall = calculateOverallRating(h);
   const ageMod = h.age <= AGE_YOUNG_THRESHOLD ? 1.2 : h.age >= AGE_RETIREMENT_THRESHOLD ? 0.7 : 1;
@@ -119,7 +122,11 @@ export function horsePrice(h: Horse): number {
   return Math.round((overall * 80 * ageMod * potMod * bioMod * fanMod) / 50) * 50;
 }
 
-/** Pedigree multiplier applied by horsePriceWithPedigree(). */
+/**
+ * Pedigree multiplier applied by horsePriceWithPedigree().
+ * @param h
+ * @param allHorses
+ */
 export function horsePedigreeMultiplier(h: Horse, allHorses: Horse[]): number {
   return pedigreeMultiplier(h, { horses: getHorseRecord(allHorses) });
 }
@@ -149,7 +156,12 @@ function getHorseRecord(allHorses: Horse[]): Record<string, Horse> {
   return cachedHorseRecord;
 }
 
-/** Pedigree lookup that prefers a prebuilt id map (no O(N) record build). */
+/**
+ * Pedigree lookup that prefers a prebuilt id map (no O(N) record build).
+ * @param h
+ * @param allHorses
+ * @param horseMap
+ */
 function pedigreeFor(h: Horse, allHorses: readonly Horse[], horseMap?: Map<string, Horse>): number {
   return horseMap
     ? pedigreeMultiplier(h, EMPTY_HORSES, horseMap)
@@ -173,6 +185,7 @@ export function horsePriceWithPedigree(
 /**
  * Lifetime prize money used for valuation: the recorded total or the sum of
  * per-start purses, whichever is larger (older saves may lack one or the other).
+ * @param h
  */
 export function careerPrizeEarnings(h: Pick<Horse, "lifetimeEarnings" | "raceHistory">): number {
   let fromHistory = 0;
@@ -190,13 +203,17 @@ const EARNINGS_PREMIUM_SCALE = 10_000;
  * Racing-value multiplier from lifetime prize money. Unlike raceFormPremium
  * (recent placings, fades over a year) this is the horse's lasting record:
  * a big earner stays valuable, and it is what stud buyers pay for.
+ * @param h
  */
 export function earningsPremium(h: Pick<Horse, "lifetimeEarnings" | "raceHistory">): number {
   const e = careerPrizeEarnings(h);
   if (e <= 0) return 1;
   return (
     1 +
-    Math.min(EARNINGS_PREMIUM_CAP, Math.log10(1 + e / EARNINGS_PREMIUM_SCALE) * EARNINGS_PREMIUM_PER_DECADE)
+    Math.min(
+      EARNINGS_PREMIUM_CAP,
+      Math.log10(1 + e / EARNINGS_PREMIUM_SCALE) * EARNINGS_PREMIUM_PER_DECADE,
+    )
   );
 }
 
@@ -232,6 +249,7 @@ function mareAgeCurve(age: number): number {
  * fertility, and pedigree.
  * @param h
  * @param allHorses
+ * @param horseMap
  */
 export function estimateBreedingValue(
   h: Horse,
@@ -306,9 +324,13 @@ export interface MarketValueBlend {
   phase: "gelding" | "at stud" | "retired" | "pre-career" | "racing prime" | "late career";
 }
 
-/** How racing and breeding value are weighted for this horse's career phase. */
+/**
+ * How racing and breeding value are weighted for this horse's career phase.
+ * @param h
+ */
 export function marketValueBlend(h: Horse): MarketValueBlend {
-  if (h.gender === "gelding" || h.gelded) return { racingWeight: 1, breedingWeight: 0, phase: "gelding" };
+  if (h.gender === "gelding" || h.gelded)
+    return { racingWeight: 1, breedingWeight: 0, phase: "gelding" };
   // Standing at stud: the horse earns its keep from stud fees now.
   if (h.stud?.atStud && h.stud.standingFee > 0) {
     return { racingWeight: 0.15, breedingWeight: 0.9, phase: "at stud" };
@@ -337,6 +359,9 @@ export interface MarketValueParts {
 /**
  * The parts behind horseMarketValue(). Rival-stable bids start from `value`
  * too, so what they pay tracks the auction-house price.
+ * @param h
+ * @param allHorses
+ * @param horseMap
  */
 export function horseMarketValueParts(
   h: Horse,

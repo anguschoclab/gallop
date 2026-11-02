@@ -1,6 +1,6 @@
 import type { CourseSpecification } from "@/shared/data/accessors/tracksAccessor";
 import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
-import { getTrackSection } from "@/domains/race/simulation/engine/trackGeometry";
+import type { TrackSection } from "@/shared/data/accessors/tracksAccessor";
 import {
   AGILITY_MITIGATION_FACTOR,
   POSITIONING_SKILL_FACTOR,
@@ -11,8 +11,7 @@ import {
 
 export function calculateTrackGeometryModifiers(
   r: Runner,
-  position: number,
-  distance: number,
+  section: TrackSection | null,
   course?: CourseSpecification,
 ): {
   turnSpeedMul: number;
@@ -22,7 +21,6 @@ export function calculateTrackGeometryModifiers(
   radius: number;
   traitSurfaceMul: number;
 } {
-  const section = getTrackSection(position, distance, course);
   const radius = section?.type === "turn" ? (section.radius ?? Infinity) : Infinity;
   const gradient = section?.gradient ?? 0;
   const arcFactor = radius === Infinity ? 1 : 1 + r.lane / radius;

@@ -70,6 +70,8 @@ export type Runner = {
   finalizedLedger?: RunnerFactorLedger;
   /** Set when a blocker is detected ahead within MIN_BLOCK_GAP in a nearby lane. */
   blockedAhead?: boolean;
+  /** The velocity of the horse blocking this runner (cached during detectBlocking). */
+  blockingHorseVelocity?: number;
   /** Set when blocked ahead AND both adjacent lanes are blocked or rail (no escape). */
   boxedIn?: boolean;
   /** Lateral escape distance sought (in lane-widths) when blocked but not boxed in.

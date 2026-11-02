@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
+import { Flag } from "lucide-react";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Progress } from "@/shared/ui/progress";
@@ -411,10 +413,11 @@ function CampaignHistoryCard({
       </CardHeader>
       <CardContent className="space-y-3">
         {rows.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No races run since the campaign started. Each start will appear here with its prize
-            money, horse value, prestige and class wins.
-          </p>
+          <EmptyState
+            icon={Flag}
+            title="No campaign history"
+            description="No races run since the campaign started. Each start will appear here with its prize money, horse value, prestige and class wins."
+          />
         ) : (
           <>
             <div className="flex flex-wrap gap-4 text-sm">

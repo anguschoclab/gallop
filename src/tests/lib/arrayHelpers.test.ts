@@ -165,3 +165,26 @@ describe("arrayHelpers", () => {
     });
   });
 });
+
+describe("edge cases — semantics pinned pre-optimization", () => {
+  it("sum handles negatives and empty", () => {
+    expect(sum([])).toBe(0);
+    expect(sum([-5, -2, 9])).toBe(2);
+  });
+
+  it("max/min preserve -Infinity/Infinity on empty", () => {
+    expect(max([])).toBe(-Infinity);
+    expect(min([])).toBe(Infinity);
+  });
+
+  it("maxBy returns first-best on ties and undefined on empty", () => {
+    const a = { v: 5, n: "first" };
+    const b = { v: 5, n: "second" };
+    expect(maxBy([a, b], "v")?.n).toBe("first");
+    expect(maxBy([], "v")).toBeUndefined();
+  });
+
+  it("groupBy/countBy preserve insertion order of keys", () => {
+    expect(Object.keys(groupBy(["b", "a", "b"], (x) => x))).toEqual(["b", "a"]);
+  });
+});

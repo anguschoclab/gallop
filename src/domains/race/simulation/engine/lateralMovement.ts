@@ -104,9 +104,12 @@ export function calculateTargetLane(
 export function updateLanePosition(r: Runner, targetLane: number, dt: number): void {
   const targetPos = targetLane * LANE_WIDTH;
   const lateralDiff = targetPos - r.lane;
-  if (Math.abs(lateralDiff) > LATERAL_DIFF_THRESHOLD) {
-    const step = Math.sign(lateralDiff) * Math.min(Math.abs(lateralDiff), MAX_LATERAL_SPEED * dt);
-    r.lane += step;
+  // Performance optimization: Inline Math.abs/min/sign to avoid function call overhead in hot loop
+  const absDiff = lateralDiff < 0 ? -lateralDiff : lateralDiff;
+  if (absDiff > LATERAL_DIFF_THRESHOLD) {
+    const rateLimit = MAX_LATERAL_SPEED * dt;
+    const stepMag = absDiff < rateLimit ? absDiff : rateLimit;
+    r.lane += lateralDiff < 0 ? -stepMag : stepMag;
   }
   r.targetLane = targetLane;
 }

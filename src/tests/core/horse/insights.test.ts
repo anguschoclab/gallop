@@ -89,6 +89,47 @@ describe("getHorseInsight", () => {
     expect(insight?.label).not.toBe("Milestone Watch");
   });
 
+  describe("Tipster: Earnings Milestone insight (boundary checks)", () => {
+    const testCases = [
+      { earnings: 90000, expected: "100k", target: 100000 },
+      { earnings: 99000, expected: "100k", target: 100000 },
+      { earnings: 475000, expected: "500k", target: 500000 },
+      { earnings: 1950000, expected: "2M", target: 2000000 },
+      { earnings: 4950000, expected: "5M", target: 5000000 },
+      { earnings: 9950000, expected: "10M", target: 10000000 },
+    ];
+
+    testCases.forEach(({ earnings, expected, target }) => {
+      it(`detects Milestone Watch for approaching $${expected} with earnings $${earnings}`, () => {
+        const horse = { raceHistory: [{}, {}, {}], lifetimeEarnings: earnings } as Horse;
+        const insight = getHorseInsight(horse);
+
+        expect(insight).not.toBeNull();
+        expect(insight?.label).toBe("Milestone Watch");
+        expect(insight?.value).toBe(`Approaching $${expected}`);
+        expect(insight?.context).toBe(
+          `Just $${(target - earnings).toLocaleString()} away from reaching $${target.toLocaleString()} in career earnings`,
+        );
+        expect(insight?.type).toBe("neutral");
+      });
+    });
+
+    const negativeCases = [
+      { earnings: 89000, desc: "below threshold for 100k" },
+      { earnings: 100000, desc: "exactly on 100k target" },
+      { earnings: 450000, desc: "below threshold for 500k" },
+      { earnings: 2000000, desc: "exactly on 2M target" },
+    ];
+
+    negativeCases.forEach(({ earnings, desc }) => {
+      it(`does not detect Milestone Watch when ${desc} ($${earnings})`, () => {
+        const horse = { raceHistory: [{}, {}, {}], lifetimeEarnings: earnings } as Horse;
+        const insight = getHorseInsight(horse);
+        expect(insight?.label).not.toBe("Milestone Watch");
+      });
+    });
+  });
+
   it("detects win streaks", () => {
     const horse = {
       raceHistory: [
@@ -773,7 +814,7 @@ describe("Tipster: Gate Affinity insights", () => {
         { position: 2, day: 2, gate: 2, fieldSize: 10, beyer: 88 },
         { position: 1, day: 3, gate: 3, fieldSize: 10, beyer: 92 }, // avg inside = 90
         // Outside starts (gates >= 8)
-        { position: 5, day: 4, gate: 9, fieldSize: 10, beyer: 80 },
+        { position: 3, day: 4, gate: 9, fieldSize: 10, beyer: 80 },
         { position: 4, day: 5, gate: 10, fieldSize: 10, beyer: 78 },
         { position: 5, day: 6, gate: 8, fieldSize: 10, beyer: 82 }, // avg outside = 80
       ],
@@ -792,7 +833,7 @@ describe("Tipster: Gate Affinity insights", () => {
         // Inside starts (gates 1-3)
         { position: 5, day: 1, gate: 1, fieldSize: 10, beyer: 80 },
         { position: 4, day: 2, gate: 2, fieldSize: 10, beyer: 78 },
-        { position: 5, day: 3, gate: 3, fieldSize: 10, beyer: 82 }, // avg inside = 80
+        { position: 3, day: 3, gate: 3, fieldSize: 10, beyer: 82 }, // avg inside = 80
         // Outside starts (gates >= 8)
         { position: 1, day: 4, gate: 9, fieldSize: 10, beyer: 90 },
         { position: 2, day: 5, gate: 10, fieldSize: 10, beyer: 88 },
@@ -1006,7 +1047,13 @@ describe("Tipster: Earnings Per Start insight (merged Rainmaker/Lucrative/PrizeF
     const horse = {
       careerStarts: 10,
       lifetimeEarnings: 300000,
-      raceHistory: [{}, {}, {}, {}, {}, {}, {}, {}, {}, {}],
+      raceHistory: [
+        { position: 2 },
+        { position: 3 },
+        { position: 4 },
+        { position: 5 },
+        { position: 6 },
+      ],
     };
     const insight = getHorseInsight(
       horse as unknown as import("@/domains/horse/simulation/types").Horse,

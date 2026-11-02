@@ -12,6 +12,8 @@ import type { Horse } from "@/platform/game/types";
 import { addJournalEntry } from "@/domains/tactics/simulation/strategyJournal";
 import { goalProgress, goalRaceBonus } from "@/domains/stable/simulation/stableGoals";
 import { Link } from "@tanstack/react-router";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
+import { Search } from "lucide-react";
 
 export const Route = createFileRoute("/race-advisor")({
   head: () => ({
@@ -170,7 +172,11 @@ function RaceAdvisorPage() {
       )}
 
       {myHorses.length === 0 && (
-        <p className="text-muted-foreground">You have no active racehorses yet.</p>
+        <EmptyState
+          icon={Search}
+          title="No active racehorses"
+          description="You have no active racehorses yet."
+        />
       )}
 
       {advice && horse && race && (

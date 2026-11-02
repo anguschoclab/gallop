@@ -29,7 +29,8 @@ function money(n: number): string {
 }
 
 function Trend({ value }: { value: number | null }) {
-  if (value === null || value === 0) return <Minus className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />;
+  if (value === null || value === 0)
+    return <Minus className="h-3.5 w-3.5 text-muted-foreground" aria-hidden />;
   return value > 0 ? (
     <ArrowUpRight className="h-3.5 w-3.5 text-primary" aria-hidden />
   ) : (
@@ -107,7 +108,9 @@ export function HorseValueBreakdownPanel({
                     >
                       {f.multiplier === null ? "base" : pct(f.multiplier)}
                     </span>
-                    <span className="text-right tabular-nums text-foreground">{formatCurrency(f.valueAfter)}</span>
+                    <span className="text-right tabular-nums text-foreground">
+                      {formatCurrency(f.valueAfter)}
+                    </span>
                   </li>
                 ))}
               </ol>
@@ -132,8 +135,8 @@ export function HorseValueBreakdownPanel({
               </div>
               <p className="mt-2 text-xs text-muted-foreground">
                 Best speed figure:{" "}
-                <span className="text-foreground">{breakdown.bestSpeedFigure ?? "none yet"}</span> — fast
-                times only raise the price through the wins and places they produce.
+                <span className="text-foreground">{breakdown.bestSpeedFigure ?? "none yet"}</span> —
+                fast times only raise the price through the wins and places they produce.
               </p>
             </div>
 
@@ -178,7 +181,11 @@ export function HorseValueBreakdownPanel({
                   hideValue
                 />
                 {movement.fromOther !== null && (
-                  <MoveRow label="Fans, stats & age" detail="Everything else, including new fans" value={movement.fromOther} />
+                  <MoveRow
+                    label="Fans, stats & age"
+                    detail="Everything else, including new fans"
+                    value={movement.fromOther}
+                  />
                 )}
               </div>
             </div>
@@ -188,25 +195,39 @@ export function HorseValueBreakdownPanel({
                 Most each rival stable would bid
               </div>
               {bidders.length === 0 ? (
-                <p className="text-xs text-muted-foreground">No rival stable would bid on this horse.</p>
+                <p className="text-xs text-muted-foreground">
+                  No rival stable would bid on this horse.
+                </p>
               ) : (
                 <div className="grid gap-1 text-xs">
                   {bidders.map((b) => (
-                    <div key={b.stableId} className="grid grid-cols-[1fr_5.5rem_5.5rem_6rem] items-baseline gap-2">
+                    <div
+                      key={b.stableId}
+                      className="grid grid-cols-[1fr_5.5rem_5.5rem_6rem] items-baseline gap-2"
+                    >
                       <span className="min-w-0">
-                        <span className="block truncate" title={b.stableName}>{b.stableName}</span>
+                        <span className="block truncate" title={b.stableName}>
+                          {b.stableName}
+                        </span>
                         <span className="block text-muted-foreground">{b.personality} buyer</span>
                       </span>
-                      <span className="text-right tabular-nums text-muted-foreground" title="What it thinks the horse is worth">
+                      <span
+                        className="text-right tabular-nums text-muted-foreground"
+                        title="What it thinks the horse is worth"
+                      >
                         {formatCurrency(b.valuation)}
                       </span>
-                      <span className="text-right font-semibold tabular-nums">{formatCurrency(b.walkAway)}</span>
-                      <span className="text-right text-muted-foreground">{LIMIT_LABEL[b.limitedBy]}</span>
+                      <span className="text-right font-semibold tabular-nums">
+                        {formatCurrency(b.walkAway)}
+                      </span>
+                      <span className="text-right text-muted-foreground">
+                        {LIMIT_LABEL[b.limitedBy]}
+                      </span>
                     </div>
                   ))}
                   <p className="mt-1 text-muted-foreground">
-                    Columns: their valuation, top bid, and what stops them going higher. Rivals value
-                    stats, fame and pedigree by their own buying style.
+                    Columns: their valuation, top bid, and what stops them going higher. Rivals
+                    value stats, fame and pedigree by their own buying style.
                   </p>
                 </div>
               )}
@@ -239,7 +260,13 @@ function MoveRow({
       <span
         className={cn(
           "text-right tabular-nums",
-          value === null ? "text-muted-foreground" : value > 0 ? "text-primary" : value < 0 ? "text-destructive" : "",
+          value === null
+            ? "text-muted-foreground"
+            : value > 0
+              ? "text-primary"
+              : value < 0
+                ? "text-destructive"
+                : "",
         )}
       >
         {hideValue ? "" : value === null ? "—" : money(value)}
