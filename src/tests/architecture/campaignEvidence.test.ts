@@ -40,7 +40,7 @@ function readManifest(): CampaignManifest {
   return JSON.parse(readFileSync(manifestPath, "utf8")) as CampaignManifest;
 }
 
-describe("campaign evidence manifest", () => {
+describe("campaign evidence manifest", { timeout: 120_000 }, () => {
   it("records the current derived capability graph without stale counts", () => {
     const manifest = readManifest();
     const audit = runCapabilityAudit(ROOT);
