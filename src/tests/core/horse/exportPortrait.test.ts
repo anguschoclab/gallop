@@ -663,7 +663,7 @@ describe("exportPortrait", () => {
 
       mockImageOnload = () => {};
       mockImageSrc = "blob:0";
-      mockCanvas.toDataURL.mockImplementation(() => {
+      mockCanvas.toDataURL.mockImplementationOnce(() => {
         throw new Error("toDataURL failed");
       });
 

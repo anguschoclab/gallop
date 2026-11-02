@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { createTestStable } from "@/tests/helpers";
 import type { CashPressureHistory } from "@/domains/stable/simulation/cashPressureHistory";
@@ -13,9 +13,14 @@ const mockHistory: CashPressureHistory = {
   })),
 };
 
+const storeState = vi.hoisted(() => ({
+  history: {} as CashPressureHistory,
+}));
+
 vi.mock("@/platform/game/store", () => ({
-  useGame: (selector: (s: any) => any) => selector({ cashPressureHistory: mockHistory }),
-  useGameWithShallow: (selector: (s: any) => any) => selector({ cashPressureHistory: mockHistory }),
+  useGame: (selector: (s: any) => any) => selector({ cashPressureHistory: storeState.history }),
+  useGameWithShallow: (selector: (s: any) => any) =>
+    selector({ cashPressureHistory: storeState.history }),
 }));
 
 vi.mock("@/domains/awards/ui", () => ({
@@ -74,6 +79,10 @@ function mkPageData(overrides: any = {}) {
 }
 
 describe("NpcStableOverviewTab", () => {
+  beforeEach(() => {
+    storeState.history = mockHistory;
+  });
+
   it("renders the cash pressure trend section", () => {
     render(<NpcStableOverviewTab stableId="s1" pageData={mkPageData()} />);
     expect(screen.getByTestId("cash-pressure-trend")).toBeInTheDocument();
@@ -92,11 +101,7 @@ describe("NpcStableOverviewTab", () => {
   });
 
   it("renders fallback when no history exists", () => {
-    vi.doUnmock("@/platform/game/store");
-    vi.mock("@/platform/game/store", () => ({
-      useGame: (selector: (s: any) => any) => selector({ cashPressureHistory: {} }),
-      useGameWithShallow: (selector: (s: any) => any) => selector({ cashPressureHistory: {} }),
-    }));
+    storeState.history = {};
     // Just verify no crash — the component should render the personality card
     const { container } = render(
       <NpcStableOverviewTab stableId="s_empty" pageData={mkPageData()} />,

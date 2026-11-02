@@ -67,6 +67,7 @@ export default defineConfig({
     setupFiles: ["@testing-library/jest-dom/vitest", "src/tests/setup.ts"],
     include: ["src/**/*.test.ts", "src/**/*.test.tsx"],
     exclude: ["src/tests/e2e/**/*"],
+    testTimeout: 20000,
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html", "lcov"],

@@ -9,10 +9,10 @@ vi.mock("@/platform/game/store", () => ({
 
 describe("useNextActionBanner", () => {
   let mockState: Partial<StoreType>;
-  let updateDisplaySettings: ReturnType<typeof vi.fn>;
+  let updateDisplaySettings: (settings: any) => void;
 
   beforeEach(() => {
-    updateDisplaySettings = vi.fn();
+    updateDisplaySettings = vi.fn<(settings: any) => void>();
     mockState = {
       userSettings: {
         display: {

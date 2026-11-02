@@ -41,14 +41,14 @@ describe("StableRosterView compare persistence + reordering", () => {
   const baseProps = (
     horses: Horse[],
     compareIds: string[],
-    onCompareIdsChange: ReturnType<typeof vi.fn>,
+    onCompareIdsChange: (ids: string[]) => void,
   ) => ({
     horses,
     status: "active" as const,
     view: "ledger" as const,
     counts: { active: horses.length, retired: 0, auctioned: 0, all: horses.length },
     playerAwards: [],
-    navigate: vi.fn(),
+    navigate: vi.fn<(opts: any) => void>(),
     compareIds,
     onCompareIdsChange,
   });
@@ -56,7 +56,7 @@ describe("StableRosterView compare persistence + reordering", () => {
   it("renders with compareIds from props and shows selected checkboxes", () => {
     const h1 = mkHorse({ id: "h1", name: "Alpha" });
     const h2 = mkHorse({ id: "h2", name: "Beta" });
-    const onCompareIdsChange = vi.fn();
+    const onCompareIdsChange = vi.fn<(ids: string[]) => void>();
     const { container } = render(
       <StableRosterView {...baseProps([h1, h2], ["h1", "h2"], onCompareIdsChange)} />,
     );
@@ -73,7 +73,7 @@ describe("StableRosterView compare persistence + reordering", () => {
     const h1 = mkHorse({ id: "h1" });
     const h2 = mkHorse({ id: "h2" });
     const h3 = mkHorse({ id: "h3" });
-    const onCompareIdsChange = vi.fn();
+    const onCompareIdsChange = vi.fn<(ids: string[]) => void>();
     const { container } = render(
       <StableRosterView {...baseProps([h1, h2, h3], ["h1", "h2"], onCompareIdsChange)} />,
     );
@@ -90,7 +90,7 @@ describe("StableRosterView compare persistence + reordering", () => {
   it("toggling off a checkbox calls onCompareIdsChange without that id", () => {
     const h1 = mkHorse({ id: "h1" });
     const h2 = mkHorse({ id: "h2" });
-    const onCompareIdsChange = vi.fn();
+    const onCompareIdsChange = vi.fn<(ids: string[]) => void>();
     const { container } = render(
       <StableRosterView {...baseProps([h1, h2], ["h1", "h2"], onCompareIdsChange)} />,
     );
@@ -111,7 +111,7 @@ describe("StableRosterView compare persistence + reordering", () => {
       mkHorse({ id: "h3" }),
       mkHorse({ id: "h4" }),
     ];
-    const onCompareIdsChange = vi.fn();
+    const onCompareIdsChange = vi.fn<(ids: string[]) => void>();
     const { container } = render(
       <StableRosterView {...baseProps(horses, ["h1", "h2", "h3"], onCompareIdsChange)} />,
     );
@@ -129,7 +129,7 @@ describe("StableRosterView compare persistence + reordering", () => {
     const h1 = mkHorse({ id: "h1", name: "Alpha" });
     const h2 = mkHorse({ id: "h2", name: "Beta" });
     const h3 = mkHorse({ id: "h3", name: "Gamma" });
-    const onCompareIdsChange = vi.fn();
+    const onCompareIdsChange = vi.fn<(ids: string[]) => void>();
     const { container } = render(
       <StableRosterView {...baseProps([h1, h2, h3], ["h2", "h1", "h3"], onCompareIdsChange)} />,
     );
@@ -141,7 +141,7 @@ describe("StableRosterView compare persistence + reordering", () => {
   it("left arrow button on a chip calls onCompareIdsChange with reordered array", () => {
     const h1 = mkHorse({ id: "h1", name: "Alpha" });
     const h2 = mkHorse({ id: "h2", name: "Beta" });
-    const onCompareIdsChange = vi.fn();
+    const onCompareIdsChange = vi.fn<(ids: string[]) => void>();
     const { container } = render(
       <StableRosterView {...baseProps([h1, h2], ["h2", "h1"], onCompareIdsChange)} />,
     );
@@ -157,7 +157,7 @@ describe("StableRosterView compare persistence + reordering", () => {
   it("right arrow button on a chip calls onCompareIdsChange with reordered array", () => {
     const h1 = mkHorse({ id: "h1", name: "Alpha" });
     const h2 = mkHorse({ id: "h2", name: "Beta" });
-    const onCompareIdsChange = vi.fn();
+    const onCompareIdsChange = vi.fn<(ids: string[]) => void>();
     const { container } = render(
       <StableRosterView {...baseProps([h1, h2], ["h1", "h2"], onCompareIdsChange)} />,
     );
