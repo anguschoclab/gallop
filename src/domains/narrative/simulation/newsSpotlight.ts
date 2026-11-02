@@ -139,10 +139,18 @@ export function generateFollowUpRaceNews(
     `${horse.name} Exits ${race.name} in Top Form, What's Next?`,
     `The Racing World Awaits ${horse.name}'s Next Move`,
     `Plotting the Course for ${horse.name} Post-${race.name}`,
+    `Speculation Mounts Over ${horse.name}'s Next Outing`,
+    `${horse.name} Leaves Lasting Impression in ${race.name}`,
+    `Next Steps Carefully Weighed for ${horse.name}`,
+    `${race.name} Form Points to Big Future for ${horse.name}`,
   ];
 
   const bodies = [
     `Following a ${positionLabel} in the ${race.name} (${grade}), ${horse.name} has the racing world speculating about the next target. Connections are reportedly weighing several options for the horse's next start.`,
+    `The impressive showing by ${horse.name} in the ${race.name} guarantees they will be a horse to follow wherever they appear next. The ${positionLabel} proved their class in ${grade} company.`,
+    `Talk on the backstretch has firmly centered on ${horse.name} since their bold ${positionLabelShort} in the ${race.name}. Planners are undoubtedly scouring the condition book for the perfect follow-up.`,
+    `A taxing ${positionLabel} in the ${race.name} means ${horse.name} might need time to freshen up, though their connections will be ecstatic with the ${grade} performance.`,
+    `After confirming their talent with a ${positionLabel} in the ${race.name}, ${horse.name} has options aplenty. Stepping up to the plate again in ${grade} grade seems a certainty.`,
     `${horse.name}'s ${positionLabelShort} in the ${grade} ${race.name} has cemented their reputation as a top-class performer. The question now is whether to step up in distance, drop back, or tackle another grade-one contest.`,
     `The dust has barely settled on the ${race.name}, but ${horse.name}'s camp is already mapping out the next chapter. A ${positionLabel} in a ${grade} race opens plenty of doors for the rest of the season.`,
     `After a ${positionLabel} in the ${race.name}, ${horse.name} is firmly in the spotlight. Trainers are keeping their cards close to their chest, but the racing public is eager to see what comes next.`,
