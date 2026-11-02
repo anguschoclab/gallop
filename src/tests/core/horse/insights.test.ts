@@ -107,7 +107,9 @@ describe("getHorseInsight", () => {
         expect(insight).not.toBeNull();
         expect(insight?.label).toBe("Milestone Watch");
         expect(insight?.value).toBe(`Approaching $${expected}`);
-        expect(insight?.context).toBe(`Just $${(target - earnings).toLocaleString()} away from reaching $${target.toLocaleString()} in career earnings`);
+        expect(insight?.context).toBe(
+          `Just $${(target - earnings).toLocaleString()} away from reaching $${target.toLocaleString()} in career earnings`,
+        );
         expect(insight?.type).toBe("neutral");
       });
     });

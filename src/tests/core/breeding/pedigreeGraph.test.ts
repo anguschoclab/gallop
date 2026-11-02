@@ -40,7 +40,7 @@ describe("pedigreeGraph", () => {
 
       // Should have root + 1 sire + 1 dam
       expect(result.nodes).toHaveLength(3);
-      const phantoms = result.nodes.filter(n => !n.data.isReal);
+      const phantoms = result.nodes.filter((n) => !n.data.isReal);
       expect(phantoms).toHaveLength(2);
       expect(result.edges).toHaveLength(2); // edges from parents to root
     });
@@ -53,8 +53,8 @@ describe("pedigreeGraph", () => {
       const map = new Map<string, Horse>([["h1", h]]);
       const result = buildPedigreeGraph("h1", map, 1);
 
-      const sireNode = result.nodes.find(n => n.data.name === "Named Sire");
-      const damNode = result.nodes.find(n => n.data.name === "Named Dam");
+      const sireNode = result.nodes.find((n) => n.data.name === "Named Sire");
+      const damNode = result.nodes.find((n) => n.data.name === "Named Dam");
 
       expect(sireNode).toBeDefined();
       expect(sireNode?.data.isReal).toBe(false); // They are still phantoms because they aren't in horseMap
@@ -66,15 +66,21 @@ describe("pedigreeGraph", () => {
       const dam = createTestHorse({ id: "d1", name: "Dam" });
       const h = createTestHorse({ id: "h1", name: "H1", sireId: "s1", damId: "d1" });
 
-      const map = new Map<string, Horse>([["s1", sire], ["d1", dam], ["h1", h]]);
+      const map = new Map<string, Horse>([
+        ["s1", sire],
+        ["d1", dam],
+        ["h1", h],
+      ]);
       const result = buildPedigreeGraph("h1", map, 1);
 
       expect(result.nodes).toHaveLength(3);
-      expect(result.nodes.every(n => n.data.isReal)).toBe(true);
+      expect(result.nodes.every((n) => n.data.isReal)).toBe(true);
       expect(result.edges).toHaveLength(2);
 
       // Sire to child edge
-      expect(result.edges.some(e => e.source.startsWith("s1:") && e.target.startsWith("h1:"))).toBe(true);
+      expect(
+        result.edges.some((e) => e.source.startsWith("s1:") && e.target.startsWith("h1:")),
+      ).toBe(true);
     });
 
     it("calculates inbreeding styling when a horse appears multiple times", () => {
@@ -86,13 +92,16 @@ describe("pedigreeGraph", () => {
       const root = createTestHorse({ id: "root", sireId: "s1", damId: "d1" });
 
       const map = new Map<string, Horse>([
-        ["gs1", grandsire], ["s1", sire], ["d1", dam], ["root", root]
+        ["gs1", grandsire],
+        ["s1", sire],
+        ["d1", dam],
+        ["root", root],
       ]);
 
       const result = buildPedigreeGraph("root", map, 2);
 
       // Verify the grandsire nodes have inbreedCount > 1 and a ringColor
-      const gsNodes = result.nodes.filter(n => n.id.startsWith("gs1:"));
+      const gsNodes = result.nodes.filter((n) => n.id.startsWith("gs1:"));
       expect(gsNodes.length).toBeGreaterThanOrEqual(2);
       for (const node of gsNodes) {
         expect(node.data.inbreedCount).toBeGreaterThanOrEqual(2);
@@ -109,7 +118,10 @@ describe("pedigreeGraph", () => {
       const root = createTestHorse({ id: "root", sireId: "s1", damId: "d1" });
 
       const map = new Map<string, Horse>([
-        ["gs1", grandsire], ["s1", sire], ["d1", dam], ["root", root]
+        ["gs1", grandsire],
+        ["s1", sire],
+        ["d1", dam],
+        ["root", root],
       ]);
 
       const ancestors = getAncestorIds("root", map, 2);

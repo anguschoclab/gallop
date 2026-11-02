@@ -7,7 +7,13 @@ describe("generateFamousStallions", () => {
   it("generates active famous stallions from real-world data", () => {
     const rng = createRng("test-seed");
     const mockStables: Stable[] = [
-      { id: "s1", name: "Stable 1", tier: "elite", cash: 1000000, type: "npc" } as unknown as Stable,
+      {
+        id: "s1",
+        name: "Stable 1",
+        tier: "elite",
+        cash: 1000000,
+        type: "npc",
+      } as unknown as Stable,
     ];
 
     const stallions = generateFamousStallions(mockStables, rng);
@@ -25,13 +31,19 @@ describe("generateFamousStallions", () => {
   it("assigns appropriate stud fees based on pedigree data", () => {
     const rng = createRng("test-seed");
     const mockStables: Stable[] = [
-      { id: "s1", name: "Stable 1", tier: "elite", cash: 1000000, type: "npc" } as unknown as Stable,
+      {
+        id: "s1",
+        name: "Stable 1",
+        tier: "elite",
+        cash: 1000000,
+        type: "npc",
+      } as unknown as Stable,
     ];
 
     const stallions = generateFamousStallions(mockStables, rng);
 
     // Find a stallion that we know has a high stud fee from data (or check that all have fees)
-    stallions.forEach(s => {
+    stallions.forEach((s) => {
       expect(s.stud?.standingFee).toBeDefined();
       expect(s.stud?.standingFee).toBeGreaterThanOrEqual(0);
     });
