@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Card, CardContent } from "@/shared/ui/card";
 import { Activity, AlertCircle } from "lucide-react";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 import { useVetReport, type VetSortBy } from "@/domains/health/application/hooks/useVetReport";
 import { formatRecoveryDays } from "@/domains/health/model/injuryDisplay";
 import { cn } from "@/shared/lib/cn";
@@ -69,11 +70,12 @@ export function VetReport() {
 
       {/* Horse health table */}
       {rows.length === 0 ? (
-        <Card className="bg-slate-900/40 border-white/5">
-          <CardContent className="p-8 text-center text-muted-foreground">
-            No horses in the stable.
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Activity}
+          title="No horses in the stable"
+          description="Acquire horses at the auction or market to view their vet reports."
+          className="bg-slate-900/40"
+        />
       ) : (
         <Card className="bg-slate-900/40 border-white/5">
           <CardContent className="p-0">
