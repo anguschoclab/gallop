@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/shared/ui/card";
 import { Badge } from "@/shared/ui/badge";
 import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
+import { DisabledTooltipWrapper } from "@/shared/ui/DisabledTooltipWrapper";
 import { useGame, useGameWithShallow } from "@/platform/game/store";
 import type { GameState, Horse } from "@/platform/game/types";
 import {
@@ -382,22 +383,25 @@ export function ExchangePanel() {
                       <Button size="sm" variant="ghost" onClick={() => setSelected(a.horseId)}>
                         Book
                       </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        disabled={myBidHorseIds.has(a.horseId)}
-                        title={
+                      <DisabledTooltipWrapper
+                        reason={
                           myBidHorseIds.has(a.horseId)
                             ? "You already have a bid on this horse"
                             : "Place a standing bid — fills during daily settlement if the seller's floor accepts it"
                         }
-                        onClick={() => {
-                          setBidHorseId(a.horseId);
-                          setBidPrice(String(a.fairValue || a.price));
-                        }}
                       >
-                        Bid
-                      </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          disabled={myBidHorseIds.has(a.horseId)}
+                          onClick={() => {
+                            setBidHorseId(a.horseId);
+                            setBidPrice(String(a.fairValue || a.price));
+                          }}
+                        >
+                          Bid
+                        </Button>
+                      </DisabledTooltipWrapper>
                       <Button
                         size="sm"
                         disabled={cash < a.price}

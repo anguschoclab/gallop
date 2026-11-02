@@ -5,6 +5,7 @@ import { Activity, AlertCircle } from "lucide-react";
 import { useVetReport, type VetSortBy } from "@/domains/health/application/hooks/useVetReport";
 import { formatRecoveryDays } from "@/domains/health/model/injuryDisplay";
 import { cn } from "@/shared/lib/cn";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 
 const STATUS_COLORS: Record<string, string> = {
   green: "text-green-400 bg-green-400/10",
@@ -69,11 +70,12 @@ export function VetReport() {
 
       {/* Horse health table */}
       {rows.length === 0 ? (
-        <Card className="bg-slate-900/40 border-white/5">
-          <CardContent className="p-8 text-center text-muted-foreground">
-            No horses in the stable.
-          </CardContent>
-        </Card>
+        <EmptyState
+          icon={Activity}
+          title="No horses"
+          description="No horses in the stable."
+          className="bg-slate-900/40 border-white/5"
+        />
       ) : (
         <Card className="bg-slate-900/40 border-white/5">
           <CardContent className="p-0">
