@@ -17,6 +17,12 @@ export const JOCKEY_MOVE_TEMPLATES: string[] = [
   "{jockey} asks {horse} to quicken — and the response is immediate!",
   "A textbook ride from {jockey} — {horse} is perfectly positioned.",
   "{jockey} is squeezing every ounce of talent from {horse} today.",
+  "A sharp piece of steering from {jockey} puts {horse} right in the mix.",
+  "{jockey} shakes the reins and {horse} begins to stretch out.",
+  "No panic from {jockey} as they ask {horse} to lengthen stride.",
+  "{jockey} finds another gear on {horse}, unleashing a serious challenge.",
+  "A perfectly timed maneuver by {jockey} sets {horse} alight.",
+  "{jockey} gets busy in the saddle and {horse} answers the call!",
 ];
 
 export const JOCKEY_TACTIC_TEMPLATES: string[] = [
@@ -36,6 +42,11 @@ export const JOCKEY_TACTIC_TEMPLATES: string[] = [
   "{jockey} is riding {horse} to their strengths — that's smart horsemanship.",
   "A front-running masterclass from {jockey} on {horse}.",
   "{jockey} is threading the needle on {horse} — finding gaps nobody else can.",
+  "{jockey} is riding a beautifully calculated {jockeyArchetype} race on {horse}.",
+  "Every move {jockey} makes on {horse} is right out of the {jockeyArchetype} playbook.",
+  "{jockey} is dictating the race on their own terms aboard {horse}.",
+  "A highly disciplined ride from {jockey}, keeping {horse} strictly to the game plan.",
+  "{jockey} is letting the race unfold before asking {horse} for the ultimate effort.",
 ];
 
 export const JOCKEY_MASTERY_TEMPLATES: string[] = [
@@ -51,6 +62,11 @@ export const JOCKEY_MASTERY_TEMPLATES: string[] = [
   "{jockey} has {horse} travelling like a winner — pure class in the saddle.",
   "Big-race temperament from {jockey} — they never panic on {horse}.",
   "A ride of pure genius from {jockey} on {horse} — that's elite talent.",
+  "The finesse of {jockey} is on full display here with {horse}.",
+  "{jockey} is painting a masterpiece in the saddle on {horse}.",
+  "A dazzling display of race-riding from the brilliant {jockey}.",
+  "There are few better in the saddle than {jockey} when {horse} is travelling like this.",
+  "Absolute perfection from {jockey}, maximizing every ounce of {horse}'s ability.",
 ];
 
 export const JOCKEY_APPRENTICE_TEMPLATES: string[] = [
@@ -66,6 +82,11 @@ export const JOCKEY_APPRENTICE_TEMPLATES: string[] = [
   "That claim is worth its weight in gold — {jockey} has {horse} in contention.",
   "Apprentice {jockey} is showing no nerves on the big stage with {horse}.",
   "A polished ride from the young claimer {jockey} on {horse}.",
+  "{jockey} may be an apprentice, but they're riding {horse} like a seasoned pro.",
+  "The young claimer {jockey} is giving {horse} every conceivable chance.",
+  "A fearless ride from the up-and-coming {jockey} aboard {horse}.",
+  "Apprentice {jockey} looks right at home dictating the race on {horse}.",
+  "Great composure from {jockey} — this apprentice has a very bright future.",
 ];
 
 export const JOCKEY_TRAIT_TEMPLATES: Record<JockeyTrait, string[]> = {
