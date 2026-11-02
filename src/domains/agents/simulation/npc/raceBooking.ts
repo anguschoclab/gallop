@@ -83,10 +83,13 @@ export function prioritiseRacesForNpcEntry<T extends Pick<Race, "entries">>(
   minEntries: number,
 ): T[] {
   const rank = (r: T) =>
-    r.entries.some((e) => e.ownership?.type === "player") ? 0 : r.entries.length < minEntries ? 1 : 2;
+    r.entries.some((e) => e.ownership?.type === "player")
+      ? 0
+      : r.entries.length < minEntries
+        ? 1
+        : 2;
   return races
     .map((r, i) => ({ r, i, k: rank(r) }))
     .sort((a, b) => a.k - b.k || a.i - b.i)
     .map((x) => x.r);
 }
-

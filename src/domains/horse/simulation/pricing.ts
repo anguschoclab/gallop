@@ -196,7 +196,10 @@ export function earningsPremium(h: Pick<Horse, "lifetimeEarnings" | "raceHistory
   if (e <= 0) return 1;
   return (
     1 +
-    Math.min(EARNINGS_PREMIUM_CAP, Math.log10(1 + e / EARNINGS_PREMIUM_SCALE) * EARNINGS_PREMIUM_PER_DECADE)
+    Math.min(
+      EARNINGS_PREMIUM_CAP,
+      Math.log10(1 + e / EARNINGS_PREMIUM_SCALE) * EARNINGS_PREMIUM_PER_DECADE,
+    )
   );
 }
 
@@ -308,7 +311,8 @@ export interface MarketValueBlend {
 
 /** How racing and breeding value are weighted for this horse's career phase. */
 export function marketValueBlend(h: Horse): MarketValueBlend {
-  if (h.gender === "gelding" || h.gelded) return { racingWeight: 1, breedingWeight: 0, phase: "gelding" };
+  if (h.gender === "gelding" || h.gelded)
+    return { racingWeight: 1, breedingWeight: 0, phase: "gelding" };
   // Standing at stud: the horse earns its keep from stud fees now.
   if (h.stud?.atStud && h.stud.standingFee > 0) {
     return { racingWeight: 0.15, breedingWeight: 0.9, phase: "at stud" };
