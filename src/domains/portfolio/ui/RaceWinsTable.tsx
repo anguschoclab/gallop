@@ -13,6 +13,7 @@ import { Badge } from "@/shared/ui/badge";
 import { Input } from "@/shared/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/ui/table";
 import { StatCard } from "@/shared/ui/common/StatCard";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 import { PillToggleGroup } from "@/shared/ui/common/PillToggleGroup";
 import { formatCurrency } from "@/shared/common/formatting";
 import { gradeColor } from "@/shared/common/uiTokens";
@@ -84,11 +85,11 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
 
   if (wins.length === 0) {
     return (
-      <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-muted-foreground">
-        <Trophy className="mx-auto mb-2 h-8 w-8 text-muted-foreground/40" />
-        You haven&apos;t won any races yet. Enter your horses in races to earn prize money and track
-        your victories here.
-      </div>
+      <EmptyState
+        icon={Trophy}
+        title="No wins yet"
+        description="You haven't won any races yet. Enter your horses in races to earn prize money and track your victories here."
+      />
     );
   }
 
@@ -137,9 +138,11 @@ export function RaceWinsTable({ wins }: { wins: PlayerRaceWinRecord[] }) {
       </div>
 
       {sorted.length === 0 ? (
-        <div className="rounded-md border border-white/5 bg-slate-900/40 p-8 text-center text-sm text-muted-foreground">
-          No race wins match your filter criteria.
-        </div>
+        <EmptyState
+          icon={Search}
+          title="No matches found"
+          description="No race wins match your filter criteria."
+        />
       ) : (
         <div className="rounded-md border border-white/5 bg-slate-900/40 overflow-x-auto">
           <Table>
