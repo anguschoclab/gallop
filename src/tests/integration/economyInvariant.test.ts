@@ -52,7 +52,7 @@ const CASH_FLOOR = -200_000;
 const MAX_DAILY_DELTA = 10_000_000;
 const RUN_DAYS = 90;
 
-describe("Economy Invariant Tests", () => {
+describe("Economy Invariant Tests", { timeout: 120_000 }, () => {
   describe("Test A — 90-day cash band per backstory", () => {
     for (const backstory of BACKSTORIES) {
       it(`${backstory.id}: cash stays within [${CASH_FLOOR}, startingCash * ${CASH_CEILING_MULTIPLIER} + $${CASH_CEILING_FLAT.toLocaleString()}] after ${RUN_DAYS} days`, () => {

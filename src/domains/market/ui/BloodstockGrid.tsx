@@ -102,7 +102,10 @@ export function BloodstockGrid({ market, cash, buyHorse }: BloodstockGridProps) 
                 )}
               </button>
               {expandedId === h.id && (
-                <div id={`valuation-content-${h.id}`} className="bg-black/40 p-3 rounded border border-white/5 space-y-2">
+                <div
+                  id={`valuation-content-${h.id}`}
+                  className="bg-black/40 p-3 rounded border border-white/5 space-y-2"
+                >
                   <CareerValuationBreakdown
                     valuation={horseCareerValuation(h, Object.values(allHorses))}
                   />

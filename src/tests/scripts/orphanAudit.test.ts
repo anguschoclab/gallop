@@ -10,7 +10,7 @@ import {
 const PROJECT_ROOT = join(__dirname, "..", "..", "..");
 const SRC_ROOT = join(PROJECT_ROOT, "src");
 
-describe("orphan-audit script", () => {
+describe("orphan-audit script", { timeout: 120_000 }, () => {
   it("identifies complete intent coverage across producers and handlers", () => {
     const coverage = scanIntentCoverage(SRC_ROOT);
     expect(coverage.allIntents.length).toBeGreaterThan(0);

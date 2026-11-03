@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
 import { createJockeySlice } from "@/platform/game/store/slices/jockeySlice";
 import { createCampaignSlice } from "@/platform/game/store/slices/campaignSlice";
 import { createHorseAdminSlice } from "@/platform/game/store/slices/horseAdminSlice";
@@ -10,9 +10,9 @@ import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 function createMockStore(partial: Partial<StoreType> = {}): {
   set: StoreSet;
   get: StoreGet;
-  enqueueIntent: ReturnType<typeof vi.fn>;
+  enqueueIntent: Mock<(intent: any) => void>;
 } {
-  const enqueueIntent = vi.fn();
+  const enqueueIntent = vi.fn<(intent: any) => void>();
   const state = { day: 10, cash: 100000, enqueueIntent, ...partial } as unknown as StoreType;
   const set = vi.fn((update: any) => {
     if (typeof update === "function") {

@@ -14,7 +14,7 @@ import type { Runner } from "@/domains/race/simulation/engine/runnerBuilder";
 
 const mockNarrativeGenerator = vi.fn();
 vi.mock("@/domains/narrative/application/narrativeService", () => ({
-  NarrativeGenerator: vi.fn((...args: unknown[]) => {
+  NarrativeGenerator: vi.fn(function (...args: unknown[]) {
     mockNarrativeGenerator(...args);
     return { update: () => [], getHistory: () => [] };
   }),
