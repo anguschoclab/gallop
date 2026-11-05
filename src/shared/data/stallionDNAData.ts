@@ -11186,6 +11186,8 @@ export function researchFromRealRecord(name: string): StallionResearchData | und
   const key = name.toLowerCase();
   if (realResearchCache.has(key)) return realResearchCache.get(key);
   const real = findRealHorse(name);
+  // Timeform above 150 is a jumps rating on a different scale — not used here.
+  const flatTimeform = real?.timeform && real.timeform <= 150 ? real.timeform : undefined;
   const winRate = real?.starts ? (real.wins ?? 0) / real.starts : 0;
   const bigWins = real?.majorWins?.length ?? 0;
   const figure = flatTimeform ? flatTimeform - 30 : 80 + winRate * 25 + Math.min(15, bigWins * 1.5);
