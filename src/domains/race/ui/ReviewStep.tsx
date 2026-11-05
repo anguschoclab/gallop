@@ -124,7 +124,7 @@ export function ReviewStep({
         <div className="h-px bg-border my-2" />
         <div className="flex justify-between text-lg font-black uppercase">
           <span>Total Due</span>
-          <span className="text-primary tabular-nums">${formatCurrency(totalDue)}</span>
+          <span className="text-primary tabular-nums">{formatCurrency(totalDue)}</span>
         </div>
       </div>
 
