@@ -331,19 +331,48 @@ async function main() {
     const k = r.name.toLowerCase();
     if (!nameIndex.has(k) || r.wiki) nameIndex.set(k, r.id);
   }
+  const byIdAll = new Map(rows.map((r) => [r.id, r]));
   let corrected = 0;
   for (const r of rows) {
     const box = wiki[r.id] ? infobox(wiki[r.id]) : undefined;
     for (const [field, key] of [["sire", "sire"], ["dam", "dam"]] as const) {
       const named = box?.[field] ? plain(box[field]).split("\n")[0].replace(/\s*\(.*\)$/, "").trim() : "";
       const id = named ? nameIndex.get(named.toLowerCase()) : undefined;
-      if (id && id !== r.id && id !== r[key]) {
+      const cand = id ? byIdAll.get(id) : undefined;
+      const older = cand?.foaled && r.foaled ? cand.foaled <= r.foaled - 3 : false;
+      if (id && id !== r.id && id !== r[key] && older) {
         r[key] = id;
         corrected++;
       }
     }
   }
   console.log(`infobox corrected ${corrected} parent links`);
+
+  // Drop impossible links: a parent foaled after (or the same year as) its
+  // foal, or a link that makes a horse its own ancestor.
+  for (const r of rows) {
+    for (const key of ["sire", "dam"] as const) {
+      const p = r[key] ? byIdAll.get(r[key]!) : undefined;
+      if (p?.foaled && r.foaled && p.foaled >= r.foaled) delete r[key];
+    }
+  }
+  const isAncestor = (start: string | undefined, target: string): boolean => {
+    const st = [start];
+    const vis = new Set<string>();
+    while (st.length) {
+      const x = st.pop();
+      if (!x || vis.has(x)) continue;
+      if (x === target) return true;
+      vis.add(x);
+      const n = byIdAll.get(x);
+      if (n) st.push(n.sire, n.dam);
+    }
+    return false;
+  };
+  for (const r of rows) {
+    if (r.sire && isAncestor(r.sire, r.id)) delete r.sire;
+    if (r.dam && isAncestor(r.dam, r.id)) delete r.dam;
+  }
 
   // Racing thoroughbreds only: drop other breeds (trotters, show jumpers,
   // Arabians, ponies…), then keep racers plus the ancestors behind them.
