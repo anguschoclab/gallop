@@ -30,7 +30,7 @@ type FameRace = Pick<Race, "purse" | "trackId"> & {
 };
 
 /**
- * Fame earned for finishing `position` in `race` (0 outside the top 5).
+ * Fame earned for finishing `position` in `race` (0 outside the top 5 unless the purse is rich).
  * @param race - Race with grade, purse and venue
  * @param position - Finishing position (1-based)
  */
@@ -58,10 +58,10 @@ export function raceFameGain(race: FameRace, position: number): number {
   } else if (position <= 5) {
     gain = FAME_GAIN_TOP5;
   }
-  if (gain <= 0) return 0;
-
+  // Simply running in a rich race carries some fame, whatever the finish.
   if (race.purse > LARGE_PURSE_THRESHOLD) gain += FAME_BONUS_LARGE_PURSE;
   else if (race.purse > MEDIUM_PURSE_THRESHOLD) gain += FAME_BONUS_MEDIUM_PURSE;
+  if (gain <= 0) return 0;
 
   const venue = racecoursePrestigeMultiplier(
     race.trackId ?? race.graded?.trackId,
