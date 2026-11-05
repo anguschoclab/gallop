@@ -9,3 +9,4 @@ export * from "@/domains/history/simulation/almanacNewsFeed";
 export * from "@/domains/history/simulation/historyService";
 export * from "@/domains/history/simulation/lineageCrawler";
 export * from "@/domains/history/simulation/trackLedger";
+export * from "@/domains/history/simulation/realHorseInsights";
