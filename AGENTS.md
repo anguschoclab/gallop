@@ -88,3 +88,4 @@ Dependency rules (enforced by `src/tests/architecture/layeringRules.test.ts`, ze
 - Mount TooltipProvider in the root shell so full-screen race views and ordinary pages share tooltip context.
 
 <!-- LOVABLE:END -->
+- **Exchange balance knobs live in `src/domains/market/simulation/exchangeAI.ts`** (`EXCHANGE_*` constants: bid noise, accept floor, cash slice, NPC cash reserve, per-day buy/trade caps) plus `EXCHANGE_BASE_COMMISSION` in `exchange.ts`; NPC asks prefer horses some rival can afford. `src/tests/core/market/exchangeBalance.test.ts` guards that trades keep settling and commission can't drain rivals. Why: unaffordable listings froze the book and commission was a runaway cash sink.
