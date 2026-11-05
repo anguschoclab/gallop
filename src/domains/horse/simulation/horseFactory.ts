@@ -329,7 +329,7 @@ export function generateHorse(
 ): Horse {
   const tier = opts.tier ?? "budget";
   const genotype = generateGenotype(rng, tier);
-  const age = opts.age ?? (rng.next() < 0.2 ? rng.range(2, 3) : rng.range(2, 6));
+  const age = opts.age ?? Math.floor(rng.next() < 0.2 ? rng.range(2, 3) : rng.range(2, 6));
   const gender = opts.gender ?? rollGender(rng);
   const hemisphere: Hemisphere = opts.hemisphere ?? (rng.next() < 0.5 ? "Northern" : "Southern");
 
@@ -394,7 +394,7 @@ export function generateNpcHorse(
     : PERSONALITY_CONFIG.conservative;
   const region = getRegionalSystem(stable.country ?? "USA");
 
-  const age = opts.forcedAge ?? (rng.next() < 0.3 ? 2 : rng.range(3, 6));
+  const age = opts.forcedAge ?? (rng.next() < 0.3 ? 2 : Math.floor(rng.range(3, 6)));
   const gender = opts.forcedGender ?? rollGender(rng);
 
   const genotype = generateGenotype(rng, genTier);
