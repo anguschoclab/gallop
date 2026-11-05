@@ -13,6 +13,13 @@
 // Sources: Wikipedia (Leading Sire in North America), TBHeritage.com (Foundation Sires)
 
 import { nondeterministicRng, type Rng } from "@/shared/common/rng";
+import {
+  findRealHorse,
+  realDamName,
+  realHorses,
+  realSireName,
+  type RealHorse,
+} from "@/shared/data/realHorses";
 
 export type AptitudinalGroup = "Brilliant" | "Intermediate" | "Classic" | "Solid" | "Professional";
 
@@ -14475,6 +14482,66 @@ export const pedigreeDataset: PedigreeHorse[] = [
   ...famousDams,
   ...activeStallions2020s,
 ];
+
+/**
+ * Era bucket for a real foaling year.
+ *
+ * @param year - Foaling year
+ */
+export function eraForYear(year?: number): PedigreeHorse["era"] {
+  if (year === undefined) return undefined;
+  if (year < 1760) return "foundation";
+  if (year < 1900) return "19th-century";
+  if (year < 1940) return "early-20th";
+  if (year < 1985) return "mid-20th";
+  return "modern";
+}
+
+/**
+ * Convert a real horse into a legacy family-tree entry.
+ *
+ * @param h - Real horse from the public-data snapshot
+ */
+export function realHorseToPedigree(h: RealHorse): PedigreeHorse {
+  return {
+    name: h.name,
+    sire: realSireName(h),
+    dam: realDamName(h),
+    era: eraForYear(h.foaled),
+    birthYear: h.foaled,
+    breed: "Thoroughbred",
+    currentStatus: h.died ? "deceased" : undefined,
+    achievements: h.majorWins?.slice(0, 8),
+    notes:
+      h.starts !== undefined
+        ? `Real record ${h.starts}: ${h.wins ?? 0}-${h.seconds ?? 0}-${h.thirds ?? 0}`
+        : undefined,
+  };
+}
+
+// Real horses fill gaps in the curated entries (sire, dam, foaling year,
+// big-race wins) and every other real thoroughbred joins the dataset, so
+// family trees trace back through real ancestors instead of invented ones.
+{
+  const curatedNames = new Set<string>();
+  for (const horse of pedigreeDataset) {
+    curatedNames.add(horse.name.toLowerCase());
+    const real = findRealHorse(horse.name);
+    if (!real) continue;
+    horse.sire ??= realSireName(real);
+    horse.dam ??= realDamName(real);
+    horse.birthYear ??= real.foaled;
+    horse.era ??= eraForYear(real.foaled);
+    if (!horse.achievements?.length && real.majorWins?.length)
+      horse.achievements = real.majorWins.slice(0, 8);
+  }
+  for (const real of realHorses) {
+    const key = real.name.toLowerCase();
+    if (curatedNames.has(key) || findRealHorse(real.name) !== real) continue;
+    curatedNames.add(key);
+    pedigreeDataset.push(realHorseToPedigree(real));
+  }
+}
 
 // Create a map for quick lookup by name
 export const pedigreeMap = new Map<string, PedigreeHorse>(
