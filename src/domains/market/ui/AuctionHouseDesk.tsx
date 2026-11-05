@@ -37,6 +37,7 @@ import {
 } from "@/domains/market/application/auctionHouseService";
 import { MarketPriceChart } from "@/domains/market/ui/MarketPriceChart";
 import { WorldRankingsPanel } from "@/domains/market/ui/WorldRankingsPanel";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 
 export function AuctionHouseDesk() {
   const day = useGame((s: GameState) => s.day);
@@ -161,9 +162,11 @@ export function AuctionHouseDesk() {
           On offer at {house.shortName}
         </h3>
         {catalogue.length === 0 ? (
-          <p className="text-[11px] font-mono uppercase tracking-wide text-foreground/30">
-            No lots on the board today.
-          </p>
+          <EmptyState
+            icon={ShoppingCart}
+            title="No lots"
+            description="No lots on the board today."
+          />
         ) : (
           <div className="divide-y divide-white/5 border border-white/5 bg-slate-900/40">
             {catalogue.map(({ horse, ...quote }) => (
@@ -220,9 +223,11 @@ export function AuctionHouseDesk() {
           Sell through {house.shortName}
         </h3>
         {myHorses.length === 0 ? (
-          <p className="text-[11px] font-mono uppercase tracking-wide text-foreground/30">
-            You have no horses available to sell.
-          </p>
+          <EmptyState
+            icon={Tag}
+            title="No stock"
+            description="You have no horses available to sell."
+          />
         ) : (
           <div className="divide-y divide-white/5 border border-white/5 bg-slate-900/40">
             {myHorses.map(({ horse, quote }) => (
@@ -277,9 +282,7 @@ export function AuctionHouseDesk() {
           Trade history
         </h3>
         {trades.length === 0 ? (
-          <p className="text-[11px] font-mono uppercase tracking-wide text-foreground/30">
-            No trades settled yet.
-          </p>
+          <EmptyState icon={History} title="No trades" description="No trades settled yet." />
         ) : (
           <div className="divide-y divide-white/5 border border-white/5 bg-slate-900/40">
             {trades.map((t) => (
