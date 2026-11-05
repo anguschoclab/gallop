@@ -16,6 +16,10 @@ it("diag", () => {
     const r = runExchangeSettlementDay({ day: d, exchange: ex, horses, npcStables: st, playerReputation: 100 });
     const newT = r.exchange.trades.filter((t:any)=>t.day===d);
     trades+=newT.length; for (const t of newT){comm+=t.commission; volume+=t.price;}
+    if (d===150||d===20){ const asks=r.exchange.asks.filter((a:any)=>a.sellerId!=="player"); let noBid=0, below=0, ratios:number[]=[], floors:number[]=[];
+      for(const a of asks){const bs=r.exchange.bids.filter((b:any)=>b.horseId===a.horseId); if(!bs.length){noBid++;continue;} const top=Math.max(...bs.map((b:any)=>b.price)); ratios.push(+(top/a.fairValue).toFixed(2)); floors.push(+((a.acceptFloor??0)/a.fairValue).toFixed(2)); if(top<(a.acceptFloor??0)) below++;}
+      const fv=asks.map((a:any)=>a.fairValue).sort((x:number,y:number)=>x-y);
+      console.log("BOOK",d,"asks",asks.length,"noBid",noBid,"below",below,"ratios",JSON.stringify(ratios.slice(0,40)),"floors",JSON.stringify(floors.slice(0,40)),"fvMedian",fv[fv.length>>1]); }
     ex = r.exchange; horses = r.horses; st = r.npcStables;
     if (d % 30 === 0) { const c = cnt(); console.log(d, "trades", trades, "vol", volume, "comm", comm, "total", Math.round(total()), JSON.stringify(st.map((x:any)=>[x.personality,Math.round(x.cash),c[x.id]??0,x.reputation]))); }
   }
