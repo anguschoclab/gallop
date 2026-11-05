@@ -31,6 +31,7 @@ import {
   createDefaultExchangeState,
   formatCurrency,
   getHouseCatalogue,
+  getHouseCommissionRate,
   getHouseQuote,
   getSellerStandingBidFactor,
   isPlayerOwned,
@@ -141,7 +142,7 @@ export function AuctionHouseDesk() {
             <span>
               Commission{" "}
               <span className="text-foreground">
-                {((0.04 + house.commissionSurcharge) * 100).toFixed(1)}%
+                {(getHouseCommissionRate(house) * 100).toFixed(1)}%
               </span>
             </span>
             <span>
