@@ -306,6 +306,26 @@ async function main() {
     }
     rows.push(row);
   }
+  // Racing thoroughbreds only: drop other breeds (trotters, show jumpers,
+  // Arabians, ponies…), then keep racers plus the ancestors behind them.
+  const NON_TB = /standardbred|trott|arab|warmblood|pony|quarter horse|draft|draught|hanoverian|holsteiner|selle|lipizzan|andalusian|appaloosa|morgan|percheron|clydesdale|shire|connemara|haflinger|fjord|icelandic|akhal|kladruber|trakehner|oldenburg|friesian|paint|mustang|tennessee|saddlebred|hackney|cob/i;
+  const byId = new Map(rows.map((r) => [r.id, r]));
+  const racer = (r: RealHorseRow) =>
+    !(r.breed && NON_TB.test(r.breed)) &&
+    (Boolean(r.starts) || Boolean(r.majorWins?.length) || /thoroughbred/i.test(r.breed ?? ""));
+  const tb = new Set<string>();
+  const tbStack = rows.filter(racer).map((r) => r.id);
+  while (tbStack.length) {
+    const id = tbStack.pop()!;
+    if (tb.has(id)) continue;
+    const r = byId.get(id);
+    if (!r || (r.breed && NON_TB.test(r.breed))) continue;
+    tb.add(id);
+    if (r.sire) tbStack.push(r.sire);
+    if (r.dam) tbStack.push(r.dam);
+  }
+  for (let i = rows.length - 1; i >= 0; i--) if (!tb.has(rows[i].id)) rows.splice(i, 1);
+
   // resolve sire/dam ids to kept rows only
   const ids = new Set(rows.map((r) => r.id));
   for (const r of rows) {
