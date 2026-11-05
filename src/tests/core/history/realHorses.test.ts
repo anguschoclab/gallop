@@ -105,3 +105,17 @@ describe("real family-tree integrity", () => {
     expect(bad).toEqual([]);
   });
 });
+
+describe("family-tree screen follows real ancestors", () => {
+  it("continues past a world horse into its real sire line", async () => {
+    const { buildPedigreeGraph } = await import("@/domains/breeding/simulation/pedigreeGraph");
+    const { createTestHorse } = await import("@/tests/helpers");
+    const foal = createTestHorse({ id: "foal", name: "Test Foal", sireName: "Frankel", damName: "Unknown Mare X" } as any);
+    const g = buildPedigreeGraph("foal", new Map([["foal", foal]]), 4);
+    const names = g.nodes.map((n) => n.data.name);
+    expect(names).toContain("Frankel");
+    expect(names).toContain("Galileo");
+    expect(names).toContain("Sadler's Wells");
+    expect(g.nodes.find((n) => n.data.name === "Galileo")?.data.isLegacy).toBe(true);
+  });
+});

@@ -30,7 +30,8 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({
           "rounded-sm border px-2 py-1.5 text-left transition-colors select-none relative",
           "bg-slate-900/80 border-white/10 shadow-lg",
           data.isReal && "cursor-pointer hover:border-primary/50 hover:bg-slate-800/80",
-          !data.isReal && "opacity-40",
+          !data.isReal && !data.isLegacy && "opacity-40",
+          data.isLegacy && "border-primary/20",
           data.inbreedCount >= 2 && "ring-2 ring-offset-1 ring-offset-slate-950",
           data.inbreedCount >= 2 && data.ringColor,
           data.generation === 0 && "border-primary/40 bg-black/40",
@@ -47,7 +48,7 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({
             <span
               className={cn(
                 "text-[10px] font-black truncate text-foreground leading-tight uppercase tracking-tight",
-                !data.isReal && "italic font-normal opacity-60",
+                !data.isReal && !data.isLegacy && "italic font-normal opacity-60",
               )}
             >
               {data.name}
@@ -70,6 +71,7 @@ export const PedigreeNodeCard = memo(function PedigreeNodeCard({
             )}
             <span className="opacity-60">{data.isSire ? "S" : "D"}</span>
             {data.birthYear && <span className="text-foreground/20">b.{data.birthYear}</span>}
+            {data.isLegacy && <span className="text-primary/60">real</span>}
           </div>
 
           {data.bestBeyer !== undefined && (
