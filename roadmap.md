@@ -34,7 +34,7 @@
 - [ ] Found: the race calendar has far more races than horses (~235 a day in a small world), so most races are cancelled for thin fields — including some of the player's. Needs a decision on fewer races or more rest days
 - [x] Fixed: insurance payouts for rival horses that died, and jockey fees for unowned runners, were charged/paid to the player
 - [ ] In-game: set up a real stable with horses, syndicate stakes and a syndication price, then trade the shares on the Auction Houses tab
-- [ ] In-game: confirm Daily Auto-Entry enters goal races first when a day advances (not just the Race Advisor list)
+- [x] In-game: Daily Auto-Entry enters goal races first on day advance (verified: qualified horse entered Happy Valley Stakes, logged as next Stakes goal race; starter horses are below stakes minimum rating)
 - [ ] In-game: advance a few days with races run, then confirm the rankings comparison fills in rank, points and price trends
 - [ ] In-game: run several races, then confirm Compare Periods has real data and Campaign history filter shows the races behind each period's wins and earnings
 - [ ] Found: scouting several rival horses on the same day keeps only the last report (earlier scout orders are lost before the day advances)
