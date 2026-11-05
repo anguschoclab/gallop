@@ -14470,8 +14470,8 @@ export const activeStallions2020s: PedigreeHorse[] = [
   },
 ];
 
-// Combine all horses into a single dataset
-export const pedigreeDataset: PedigreeHorse[] = [
+// Combine all curated horses
+const curatedDataset: PedigreeHorse[] = [
   ...foundationSires,
   ...minorFoundationSires,
   ...foundationMares,
@@ -14519,29 +14519,36 @@ export function realHorseToPedigree(h: RealHorse): PedigreeHorse {
   };
 }
 
-// Real horses fill gaps in the curated entries (sire, dam, foaling year,
-// big-race wins) and every other real thoroughbred joins the dataset, so
-// family trees trace back through real ancestors instead of invented ones.
-{
-  const curatedNames = new Set<string>();
-  for (const horse of pedigreeDataset) {
-    curatedNames.add(horse.name.toLowerCase());
+/**
+ * Curated entries with gaps (sire, dam, foaling year, big-race wins) filled
+ * from real data, followed by every other real thoroughbred — so family trees
+ * trace back through real ancestors instead of invented ones.
+ *
+ * @param curated - Hand-curated entries (take precedence)
+ */
+function mergeRealHorses(curated: PedigreeHorse[]): PedigreeHorse[] {
+  const names = new Set(curated.map((h) => h.name.toLowerCase()));
+  const enriched = curated.map((horse) => {
     const real = findRealHorse(horse.name);
-    if (!real) continue;
-    horse.sire ??= realSireName(real);
-    horse.dam ??= realDamName(real);
-    horse.birthYear ??= real.foaled;
-    horse.era ??= eraForYear(real.foaled);
-    if (!horse.achievements?.length && real.majorWins?.length)
-      horse.achievements = real.majorWins.slice(0, 8);
-  }
-  for (const real of realHorses) {
-    const key = real.name.toLowerCase();
-    if (curatedNames.has(key) || findRealHorse(real.name) !== real) continue;
-    curatedNames.add(key);
-    pedigreeDataset.push(realHorseToPedigree(real));
-  }
+    if (!real) return horse;
+    return {
+      ...horse,
+      sire: horse.sire ?? realSireName(real),
+      dam: horse.dam ?? realDamName(real),
+      birthYear: horse.birthYear ?? real.foaled,
+      era: horse.era ?? eraForYear(real.foaled),
+      achievements: horse.achievements?.length
+        ? horse.achievements
+        : real.majorWins?.slice(0, 8),
+    };
+  });
+  const extra = realHorses
+    .filter((real) => !names.has(real.name.toLowerCase()) && findRealHorse(real.name) === real)
+    .map(realHorseToPedigree);
+  return [...enriched, ...extra];
 }
+
+export const pedigreeDataset: PedigreeHorse[] = mergeRealHorses(curatedDataset);
 
 // Create a map for quick lookup by name
 export const pedigreeMap = new Map<string, PedigreeHorse>(

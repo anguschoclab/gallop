@@ -11186,24 +11186,18 @@ export function researchFromRealRecord(name: string): StallionResearchData | und
   const key = name.toLowerCase();
   if (realResearchCache.has(key)) return realResearchCache.get(key);
   const real = findRealHorse(name);
-  let out: StallionResearchData | undefined;
-  // Timeform above 150 is a jumps rating on a different scale — not used here.
-  const flatTimeform = real?.timeform && real.timeform <= 150 ? real.timeform : undefined;
-  if (real && (real.starts || flatTimeform)) {
-    const winRate = real.starts ? (real.wins ?? 0) / real.starts : 0;
-    const bigWins = real.majorWins?.length ?? 0;
-    const figure = flatTimeform
-      ? flatTimeform - 30
-      : 80 + winRate * 25 + Math.min(15, bigWins * 1.5);
-    out = {
-      name: real.name,
-      racingPerformance: {
-        speedFigure: Math.round(Math.max(80, Math.min(120, figure))),
-      },
-      researchSource: real.wiki ? `https://en.wikipedia.org/wiki/${real.wiki}` : "Wikidata",
-      researchConfidence: flatTimeform ? "high" : "medium",
-    };
-  }
+  const winRate = real?.starts ? (real.wins ?? 0) / real.starts : 0;
+  const bigWins = real?.majorWins?.length ?? 0;
+  const figure = flatTimeform ? flatTimeform - 30 : 80 + winRate * 25 + Math.min(15, bigWins * 1.5);
+  const out: StallionResearchData | undefined =
+    real && (real.starts || flatTimeform)
+      ? {
+          name: real.name,
+          racingPerformance: { speedFigure: Math.round(Math.max(80, Math.min(120, figure))) },
+          researchSource: real.wiki ? `https://en.wikipedia.org/wiki/${real.wiki}` : "Wikidata",
+          researchConfidence: flatTimeform ? "high" : "medium",
+        }
+      : undefined;
   realResearchCache.set(key, out);
   return out;
 }

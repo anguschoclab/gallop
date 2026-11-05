@@ -21,7 +21,7 @@ import {
   type RealLeaderboardKind,
 } from "@/domains/history/application/historyFacade";
 import { useGameWithShallow } from "@/platform/game/store";
-import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
+import { isPlayerOwned } from "@/domains/horse/application/horseFacade";
 import type { GameState, Horse } from "@/platform/game/types";
 import { cn } from "@/shared/lib/cn";
 
