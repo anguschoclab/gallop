@@ -10,7 +10,7 @@ const g1 = (track: string) => ({ purse: 0, trackId: undefined, graded: { grade: 
 describe("race fame scales with racecourse prestige", () => {
   it("a G1 win at a top course earns more than at an unknown course", () => {
     const top = rankedRacecourses()[0];
-    const topRace = { purse: 0, trackId: top.trackId, graded: { grade: "G1" } };
+    const topRace = { purse: 0, trackId: top.id, graded: { grade: "G1" } };
     expect(raceFameGain(topRace, 1)).toBeGreaterThan(raceFameGain(g1("Nowhere Park"), 1));
   });
 
