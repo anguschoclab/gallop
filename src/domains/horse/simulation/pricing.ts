@@ -368,6 +368,9 @@ export function horseMarketValueParts(
   allHorses: readonly Horse[] = [],
   horseMap?: Map<string, Horse>,
 ): MarketValueParts {
+  // Horses with deferred phenotypes carry zeroed stats; value their real
+  // (deterministically resolved) phenotype or they price at $0.
+  h = ensurePhenotypeResolved(h);
   const racing = Math.round(
     horsePriceWithPedigree(h, allHorses, horseMap) * raceFormPremium(h) * earningsPremium(h),
   );
