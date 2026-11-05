@@ -9,6 +9,8 @@
  * Related files: genetics/mapper.ts (uses research data for genotype mapping), genetics/generation.ts (uses for deterministic generation)
  */
 
+import { findRealHorse } from "@/shared/data/realHorses";
+
 /**
  * Research data for stallions gathered from real-world sources
  * Used to generate historically accurate DNA instead of procedural generation
@@ -11164,7 +11166,44 @@ export function hasCompleteData(data: StallionResearchData): boolean {
  * @returns Stallion research data or undefined if not found
  */
 export function getStallionResearchData(name: string): StallionResearchData | undefined {
-  return stallionResearchData.get(name);
+  return stallionResearchData.get(name) ?? researchFromRealRecord(name);
+}
+
+const realResearchCache = new Map<string, StallionResearchData | undefined>();
+
+/**
+ * Research data derived from a real horse's documented career (Wikipedia race
+ * record, Timeform rating, big-race wins) — used for real horses without a
+ * hand-researched entry so their genetics come from what they actually did,
+ * not from a name hash.
+ *
+ * Speed figure: Timeform rating when known (Timeform − 30 ≈ Beyer-style scale),
+ * otherwise 80 + win-rate and big-race bonuses, clamped to 80-120.
+ *
+ * @param name - Horse name
+ */
+export function researchFromRealRecord(name: string): StallionResearchData | undefined {
+  const key = name.toLowerCase();
+  if (realResearchCache.has(key)) return realResearchCache.get(key);
+  const real = findRealHorse(name);
+  let out: StallionResearchData | undefined;
+  if (real && (real.starts || real.timeform)) {
+    const winRate = real.starts ? (real.wins ?? 0) / real.starts : 0;
+    const bigWins = real.majorWins?.length ?? 0;
+    const figure = real.timeform
+      ? real.timeform - 30
+      : 80 + winRate * 25 + Math.min(15, bigWins * 1.5);
+    out = {
+      name: real.name,
+      racingPerformance: {
+        speedFigure: Math.round(Math.max(80, Math.min(120, figure))),
+      },
+      researchSource: real.wiki ? `https://en.wikipedia.org/wiki/${real.wiki}` : "Wikidata",
+      researchConfidence: real.timeform ? "high" : "medium",
+    };
+  }
+  realResearchCache.set(key, out);
+  return out;
 }
 
 /**
