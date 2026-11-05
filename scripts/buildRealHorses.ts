@@ -186,18 +186,24 @@ const CURRENCY: [RegExp, string][] = [
 /** Convert an earnings string to approximate USD. */
 function earningsUsd(s?: string): number | undefined {
   if (!s) return undefined;
-  // First figure only (later ones are often conversions or per-season splits).
-  // Currency templates like {{GBP|2,998,302}} or {{AUD|1.2 million}} -> "GBP 2998302".
+  // Currency templates like {{GBP|2,998,302}} -> "GBP 2998302".
   const raw = s.replace(/\{\{\s*([A-Za-z]{3})\s*\|\s*([^|}]+)[^}]*\}\}/g, "$1 $2");
-  const t = plain(raw).split("\n")[0].replace(/(\d),(\d)/g, "$1$2");
-  const num = t.match(/(\d+(?:\.\d+)?)\s*(million|m\b|billion)?/i);
-  if (!num) return undefined;
-  let v = Number(num[1]);
-  if (/million|^m$/i.test(num[2] ?? "")) v *= 1_000_000;
-  if (/billion/i.test(num[2] ?? "")) v *= 1_000_000_000;
-  const cur = CURRENCY.find(([re]) => re.test(t))?.[1];
-  if (!cur || !Number.isFinite(v) || v <= 0) return undefined;
-  return Math.round(v * FX[cur]);
+  // First line only; "A + B" sums earnings won in several currencies;
+  // anything in brackets is a conversion and is ignored.
+  const line = plain(raw).replace(/\{\{[^}]*\}\}/g, "").split("\n")[0].replace(/(\d),(\d)/g, "$1$2");
+  let total = 0;
+  for (const part of line.split("+")) {
+    const seg = part.split("(")[0];
+    if (/Cr\$|cruzeiro|R\$|real/i.test(seg)) continue; // obsolete / unknown rate
+    const num = seg.match(/(\d+(?:\.\d+)?)\s*(million|m\b|billion)?/i);
+    const cur = CURRENCY.find(([re]) => re.test(seg))?.[1];
+    if (!num || !cur) continue;
+    let v = Number(num[1]);
+    if (/million|^m$/i.test(num[2] ?? "")) v *= 1_000_000;
+    if (/billion/i.test(num[2] ?? "")) v *= 1_000_000_000;
+    if (Number.isFinite(v) && v > 0) total += v * FX[cur];
+  }
+  return total > 0 ? Math.round(total) : undefined;
 }
 
 function record(s?: string) {
