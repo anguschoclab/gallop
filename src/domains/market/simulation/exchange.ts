@@ -206,12 +206,15 @@ export function generateNpcBook(args: {
       0,
     );
     const budgetCeiling = richestBuyer * EXCHANGE_BID_CASH_SLICE;
-    const sorted = [...owned]
-      .filter((h) => {
-        const v = horseMarketValue(h, horseList);
-        return v > 0 && (v <= budgetCeiling || playerBidHorses.has(h.id));
-      })
-      .sort((a, b) => a.id.localeCompare(b.id));
+    // Falls back to the whole string when nothing fits, so the player still
+    // sees a book to buy from.
+    const affordable = owned.filter((h) => {
+      const v = horseMarketValue(h, horseList);
+      return v > 0 && (v <= budgetCeiling || playerBidHorses.has(h.id));
+    });
+    const sorted = [...(affordable.length > 0 ? affordable : owned)].sort((a, b) =>
+      a.id.localeCompare(b.id),
+    );
     const listCount = Math.min(sorted.length, stance.listCount, MAX_ASKS_PER_SELLER);
     for (let i = 0; i < listCount; i++) {
       const horse = sorted[Math.floor(rng.next() * sorted.length)];
