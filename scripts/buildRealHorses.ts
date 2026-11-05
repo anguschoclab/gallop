@@ -323,6 +323,28 @@ async function main() {
     }
     rows.push(row);
   }
+  // Wikipedia's infobox wins when it names a different sire/dam than Wikidata
+  // (Wikidata links are occasionally wrong, e.g. Kind's sire). Match by name,
+  // preferring horses with their own article.
+  const nameIndex = new Map<string, string>();
+  for (const r of rows) {
+    const k = r.name.toLowerCase();
+    if (!nameIndex.has(k) || r.wiki) nameIndex.set(k, r.id);
+  }
+  let corrected = 0;
+  for (const r of rows) {
+    const box = wiki[r.id] ? infobox(wiki[r.id]) : undefined;
+    for (const [field, key] of [["sire", "sire"], ["dam", "dam"]] as const) {
+      const named = box?.[field] ? plain(box[field]).split("\n")[0].replace(/\s*\(.*\)$/, "").trim() : "";
+      const id = named ? nameIndex.get(named.toLowerCase()) : undefined;
+      if (id && id !== r.id && id !== r[key]) {
+        r[key] = id;
+        corrected++;
+      }
+    }
+  }
+  console.log(`infobox corrected ${corrected} parent links`);
+
   // Racing thoroughbreds only: drop other breeds (trotters, show jumpers,
   // Arabians, ponies…), then keep racers plus the ancestors behind them.
   const NON_TB = /standardbred|trott|arab|warmblood|pony|quarter horse|draft|draught|hanoverian|holsteiner|selle|lipizzan|andalusian|appaloosa|morgan|percheron|clydesdale|shire|connemara|haflinger|fjord|icelandic|akhal|kladruber|trakehner|oldenburg|friesian|paint|mustang|tennessee|saddlebred|hackney|cob/i;
