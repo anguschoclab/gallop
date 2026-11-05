@@ -43,7 +43,15 @@ export function generatePerformanceCareerImpacts(
   impacts.push(generateFormImpact(horse, r.position, newDay, hiredStaff, rng, getId));
 
   // Fame change
-  const fameImpact = generateFameImpact(horse, r.position, newDay, rng, getId, race.graded?.grade);
+  const fameImpact = generateFameImpact(
+    horse,
+    r.position,
+    newDay,
+    rng,
+    getId,
+    race.graded?.grade,
+    race,
+  );
   if (fameImpact) {
     impacts.push(fameImpact);
   }
