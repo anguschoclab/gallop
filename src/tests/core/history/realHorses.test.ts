@@ -78,3 +78,25 @@ describe("almanac insights", () => {
     expect(closestRealCareers({ starts: 0, wins: 0, earnings: 0 })).toEqual([]);
   });
 });
+
+describe("real family-tree integrity", () => {
+  it("no real horse is its own ancestor, and every parent is older", async () => {
+    const { realHorses, realHorseById } = await import("@/shared/data/realHorses");
+    for (const h of realHorses) {
+      for (const pid of [h.sire, h.dam]) {
+        const p = pid ? realHorseById.get(pid) : undefined;
+        if (p?.foaled && h.foaled) expect(p.foaled).toBeLessThan(h.foaled);
+      }
+      const stack = [h.sire, h.dam];
+      const seen = new Set<string>();
+      while (stack.length) {
+        const id = stack.pop();
+        if (!id || seen.has(id)) continue;
+        expect(id).not.toBe(h.id);
+        seen.add(id);
+        const n = realHorseById.get(id);
+        if (n) stack.push(n.sire, n.dam);
+      }
+    }
+  });
+});
