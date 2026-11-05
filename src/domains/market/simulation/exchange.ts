@@ -184,6 +184,12 @@ export function generateNpcBook(args: {
 
   const playerAsks = existing.asks.filter((a) => a.sellerId === "player" && a.expiresDay >= day);
 
+  // Horses the player has a live standing bid on stay listable — the
+  // player's escrowed bid is a funded buyer even when no rival can pay.
+  const playerBidHorses = new Set(
+    existing.bids.filter((b) => b.bidderId === "player" && b.expiresDay >= day).map((b) => b.horseId),
+  );
+
   // --- NPC asks: each stable lists a slice of its string sized by its stance.
   const npcAsks: ExchangeAsk[] = [];
   for (const stable of npcStables) {
@@ -203,7 +209,7 @@ export function generateNpcBook(args: {
     const sorted = [...owned]
       .filter((h) => {
         const v = horseMarketValue(h, horseList);
-        return v > 0 && v <= budgetCeiling;
+        return v > 0 && (v <= budgetCeiling || playerBidHorses.has(h.id));
       })
       .sort((a, b) => a.id.localeCompare(b.id));
     const listCount = Math.min(sorted.length, stance.listCount, MAX_ASKS_PER_SELLER);
