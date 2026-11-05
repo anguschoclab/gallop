@@ -13,6 +13,7 @@
 
 import type { Horse, StableTier, Stable } from "@/platform/game/types";
 import { calculateOverallRating } from "@/domains/horse/simulation/stats";
+import { ensurePhenotypeResolved } from "@/domains/horse/simulation/horseFactory";
 import { raceFormPremium } from "@/domains/market/simulation/raceForm";
 import { pedigreeMultiplier } from "@/domains/breeding/simulation/pedigreePricing";
 import { SIRE_GENDERS, DAM_GENDERS } from "@/domains/horse/simulation/gender";
