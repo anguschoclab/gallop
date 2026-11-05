@@ -171,22 +171,31 @@ function listItems(s?: string): string[] {
     .slice(0, 25);
 }
 
-const FX: Record<string, number> = { "£": 1.27, "€": 1.08, "¥": 0.0067, A$: 0.66, NZ$: 0.6, HK$: 0.128, $: 1 };
+/** Approximate USD rates (snapshot-time), keyed by normalised currency. */
+const FX: Record<string, number> = {
+  GBP: 1.27, EUR: 1.08, JPY: 0.0067, AUD: 0.66, NZD: 0.6, HKD: 0.128, USD: 1, CAD: 0.73,
+  SGD: 0.74, ZAR: 0.055, AED: 0.27, FRF: 0.165, IEP: 1.37, DEM: 0.55, ITL: 0.00056, ARS: 0.001,
+};
+const CURRENCY: [RegExp, string][] = [
+  [/HK\s?\$|HKD/i, "HKD"], [/A\s?\$|AUD/i, "AUD"], [/NZ\s?\$|NZD/i, "NZD"], [/C\s?\$|CAD/i, "CAD"],
+  [/S\s?\$|SGD/i, "SGD"], [/£|GBP|guineas/i, "GBP"], [/€|EUR/i, "EUR"], [/¥|JPY|yen/i, "JPY"],
+  [/ZAR|\bR\s?\d/, "ZAR"], [/AED|Dhs/i, "AED"], [/FRF|francs?/i, "FRF"], [/IR£|IEP/i, "IEP"],
+  [/DEM|\bDM\b/i, "DEM"], [/ITL|lire/i, "ITL"], [/US\s?\$|USD|\$/i, "USD"],
+];
 
 /** Convert an earnings string to approximate USD. */
 function earningsUsd(s?: string): number | undefined {
   if (!s) return undefined;
-  const t = plain(s).replace(/,/g, "");
-  const m = t.match(/(A\$|NZ\$|HK\$|US\$|C\$|£|€|¥|\$)\s*([\d.]+)\s*(million|m\b)?/i);
-  if (m) {
-    const sym = m[1] === "US$" || m[1] === "C$" ? "$" : m[1];
-    let v = Number(m[2]);
-    if (m[3]) v *= 1_000_000;
-    return Number.isFinite(v) ? Math.round(v * (FX[sym] ?? 1)) : undefined;
-  }
-  const yen = t.match(/([\d.]+)\s*(?:JPY|yen)/i);
-  if (yen) return Math.round(Number(yen[1]) * FX["¥"]);
-  return undefined;
+  // First figure only (later ones are often conversions or per-season splits).
+  const t = plain(s).replace(/\{\{[^}]*\}\}/g, "").split("\n")[0].replace(/(\d),(\d)/g, "$1$2");
+  const num = t.match(/(\d+(?:\.\d+)?)\s*(million|m\b|billion)?/i);
+  if (!num) return undefined;
+  let v = Number(num[1]);
+  if (/million|^m$/i.test(num[2] ?? "")) v *= 1_000_000;
+  if (/billion/i.test(num[2] ?? "")) v *= 1_000_000_000;
+  const cur = CURRENCY.find(([re]) => re.test(t))?.[1];
+  if (!cur || !Number.isFinite(v) || v <= 0) return undefined;
+  return Math.round(v * FX[cur]);
 }
 
 function record(s?: string) {
