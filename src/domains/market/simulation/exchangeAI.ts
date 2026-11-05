@@ -86,6 +86,8 @@ export const EXCHANGE_BID_CASH_SLICE = 0.5;
 export const EXCHANGE_NPC_CASH_RESERVE = 25_000;
 /** Most horses one NPC stable buys on the exchange in a day. */
 export const EXCHANGE_MAX_NPC_BUYS_PER_DAY = 1;
+/** Most NPC-side crossings the exchange settles in a day. */
+export const EXCHANGE_MAX_NPC_TRADES_PER_DAY = 3;
 
 /**
  * Cash a stable can put toward exchange bids after keeping its reserve.
@@ -376,7 +378,7 @@ export function resolveNpcExchangeTrades(args: {
   playerName?: string;
 }): NpcSettlement {
   const { day, state, horses, npcStables, commission } = args;
-  const maxTrades = args.maxTrades ?? 5;
+  const maxTrades = args.maxTrades ?? EXCHANGE_MAX_NPC_TRADES_PER_DAY;
   const makeId = args.makeId ?? ((askId, bidId) => `trade-${day}-${askId}-${bidId}`);
 
   const byHorse = new Map(horses.map((h) => [h.id, h]));
