@@ -62,7 +62,6 @@ export const npcCyclePhase = {
       newsItems,
       reputationEvents,
       cashChanges,
-      fameChanges,
       fanChanges,
       diagnostics,
     } = runNpcCycle(
