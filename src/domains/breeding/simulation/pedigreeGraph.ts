@@ -1,5 +1,6 @@
 import { generateProceduralHorseName } from "@/domains/horse/simulation/naming/nameGenerator";
 import { createRng, hashStr } from "@/shared/common/rng";
+import { findHorseByName } from "@/shared/data/accessors/pedigreeAccessor";
 import {
   computeCoiFromSnapshot,
   classifyCoi,
@@ -19,6 +20,8 @@ export type PedigreeFlowNodeData = {
   isSire: boolean;
   horseId?: string;
   birthYear?: number;
+  /** A real historical horse from the legacy (real-world) family-tree data. */
+  isLegacy?: boolean;
   inbreedCount: number;
   ringColor?: string;
 };
@@ -28,6 +31,18 @@ export type PedigreeEdge = Edge;
 
 const NODE_WIDTH = 150;
 const NODE_HEIGHT = 72;
+
+/**
+ * Graph id for an ancestor known only by name. Real legacy horses share one id
+ * per name so repeated real ancestors register as inbreeding; unknown names
+ * stay unique per position.
+ *
+ * @param name - Ancestor name
+ * @param seed - Position seed for unknown names
+ */
+function ancestorId(name: string, seed: string): string {
+  return findHorseByName(name) ? `legacy:${name.toLowerCase()}` : `phantom:${hashStr(seed)}`;
+}
 
 function phantomName(seed: string): string {
   const rng = createRng(hashStr(seed));
@@ -66,6 +81,7 @@ function walk(
 ) {
   const horse = horseMap.get(nodeId);
   const isReal = !!horse;
+  const legacy = horse ? undefined : findHorseByName(name);
 
   const data: PedigreeFlowNodeData = {
     name,
@@ -77,7 +93,8 @@ function walk(
     generation,
     isSire,
     horseId: isReal ? nodeId : undefined,
-    birthYear: horse ? getBirthYear(horse.birthDay) : undefined,
+    birthYear: horse ? getBirthYear(horse.birthDay) : legacy?.birthYear,
+    isLegacy: legacy ? true : undefined,
     inbreedCount: 0,
   };
 
@@ -116,7 +133,7 @@ function walk(
         instanceId,
       );
     } else if (sireName) {
-      const phantomId = `phantom:${hashStr(`${nodeId}|S`)}`;
+      const phantomId = ancestorId(sireName, `${nodeId}|S`);
       walk(
         phantomId,
         sireName,
@@ -166,7 +183,7 @@ function walk(
         instanceId,
       );
     } else if (damName) {
-      const phantomId = `phantom:${hashStr(`${nodeId}|D`)}`;
+      const phantomId = ancestorId(damName, `${nodeId}|D`);
       walk(
         phantomId,
         damName,
@@ -197,11 +214,14 @@ function walk(
       );
     }
   } else {
-    // If not a real horse, still generate phantom ancestors up to maxGen
-    const sirePhantomId = `phantom:${hashStr(`${path}|S`)}`;
+    // Not in the game world: follow the real legacy family tree by name, and
+    // only invent a name where the real record runs out.
+    const sirePhantomId = legacy?.sire
+      ? ancestorId(legacy.sire, `${path}|S`)
+      : `phantom:${hashStr(`${path}|S`)}`;
     walk(
       sirePhantomId,
-      phantomName(`${path}|S`),
+      legacy?.sire ?? phantomName(`${path}|S`),
       horseMap,
       generation + 1,
       true,
@@ -212,10 +232,12 @@ function walk(
       rawEdges,
       instanceId,
     );
-    const damPhantomId = `phantom:${hashStr(`${path}|D`)}`;
+    const damPhantomId = legacy?.dam
+      ? ancestorId(legacy.dam, `${path}|D`)
+      : `phantom:${hashStr(`${path}|D`)}`;
     walk(
       damPhantomId,
-      phantomName(`${path}|D`),
+      legacy?.dam ?? phantomName(`${path}|D`),
       horseMap,
       generation + 1,
       false,

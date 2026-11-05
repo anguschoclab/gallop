@@ -10,6 +10,7 @@ import {
   Newspaper,
   ScrollText,
   Timer,
+  Trophy,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/shared/ui/tabs";
 import { Card, CardContent } from "@/shared/ui/card";
@@ -21,6 +22,7 @@ import { AlmanacMilestones } from "@/domains/history/ui/AlmanacMilestones";
 import { DecadeLeaders } from "@/domains/history/ui/DecadeLeaders";
 import { TrackHistoryTimeline } from "@/domains/history/ui/TrackHistoryTimeline";
 import { RealWorldBenchmarks } from "@/domains/history/ui/RealWorldBenchmarks";
+import { RealHorsesPanel } from "@/domains/history/ui/RealHorsesPanel";
 import { RaceTimeDisplay } from "@/domains/race/ui/RaceTimeDisplay";
 import type { SeasonRecord, TrackRecord } from "@/domains/history/application/historyFacade";
 
@@ -31,6 +33,7 @@ const ALMANAC_TABS = [
   "decades",
   "timeline",
   "real-world",
+  "real-horses",
   "roll-of-honour",
 ] as const;
 const EMPTY_OBJECT = {} as Record<string, never>;
@@ -114,6 +117,10 @@ function AlmanacPage() {
             <Globe2 className="h-4 w-4" />
             Real-World
           </TabsTrigger>
+          <TabsTrigger value="real-horses" className="gap-2">
+            <Trophy className="h-4 w-4" />
+            Real Horses
+          </TabsTrigger>
           <TabsTrigger value="roll-of-honour" className="gap-2">
             <ScrollText className="h-4 w-4" />
             Roll of Honour
@@ -142,6 +149,10 @@ function AlmanacPage() {
 
         <TabsContent value="real-world">
           <RealWorldBenchmarks records={records} />
+        </TabsContent>
+
+        <TabsContent value="real-horses">
+          <RealHorsesPanel />
         </TabsContent>
 
         <TabsContent value="roll-of-honour" className="space-y-2">

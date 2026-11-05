@@ -40,3 +40,4 @@
 - [ ] Found: scouting several rival horses on the same day keeps only the last report (earlier scout orders are lost before the day advances)
 - [x] Exchange tuning: commission, NPC bid/ask spreads, cash reserve — trades keep settling, Exchange can't drain or inflate rival cash
 - [ ] Found: outside the Exchange, rival cash still swings wildly in a 180-day game (one stud hit $30M; several sit under $1,000) — source is elsewhere (stud fees / auctions / racing); needs its own pass
+- [x] Real horse data (free public): 6,278 real thoroughbreds in Almanac "Real Horses" tab, family trees and legacy stallion ability

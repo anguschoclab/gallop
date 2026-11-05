@@ -13,6 +13,13 @@
 // Sources: Wikipedia (Leading Sire in North America), TBHeritage.com (Foundation Sires)
 
 import { nondeterministicRng, type Rng } from "@/shared/common/rng";
+import {
+  findRealHorse,
+  realDamName,
+  realHorses,
+  realSireName,
+  type RealHorse,
+} from "@/shared/data/realHorses";
 
 export type AptitudinalGroup = "Brilliant" | "Intermediate" | "Classic" | "Solid" | "Professional";
 
@@ -14463,8 +14470,8 @@ export const activeStallions2020s: PedigreeHorse[] = [
   },
 ];
 
-// Combine all horses into a single dataset
-export const pedigreeDataset: PedigreeHorse[] = [
+// Combine all curated horses
+const curatedDataset: PedigreeHorse[] = [
   ...foundationSires,
   ...minorFoundationSires,
   ...foundationMares,
@@ -14475,6 +14482,73 @@ export const pedigreeDataset: PedigreeHorse[] = [
   ...famousDams,
   ...activeStallions2020s,
 ];
+
+/**
+ * Era bucket for a real foaling year.
+ *
+ * @param year - Foaling year
+ */
+export function eraForYear(year?: number): PedigreeHorse["era"] {
+  if (year === undefined) return undefined;
+  if (year < 1760) return "foundation";
+  if (year < 1900) return "19th-century";
+  if (year < 1940) return "early-20th";
+  if (year < 1985) return "mid-20th";
+  return "modern";
+}
+
+/**
+ * Convert a real horse into a legacy family-tree entry.
+ *
+ * @param h - Real horse from the public-data snapshot
+ */
+export function realHorseToPedigree(h: RealHorse): PedigreeHorse {
+  return {
+    name: h.name,
+    sire: realSireName(h),
+    dam: realDamName(h),
+    era: eraForYear(h.foaled),
+    birthYear: h.foaled,
+    breed: "Thoroughbred",
+    currentStatus: h.died ? "deceased" : undefined,
+    achievements: h.majorWins?.slice(0, 8),
+    notes:
+      h.starts !== undefined
+        ? `Real record ${h.starts}: ${h.wins ?? 0}-${h.seconds ?? 0}-${h.thirds ?? 0}`
+        : undefined,
+  };
+}
+
+/**
+ * Curated entries with gaps (sire, dam, foaling year, big-race wins) filled
+ * from real data, followed by every other real thoroughbred — so family trees
+ * trace back through real ancestors instead of invented ones.
+ *
+ * @param curated - Hand-curated entries (take precedence)
+ */
+function mergeRealHorses(curated: PedigreeHorse[]): PedigreeHorse[] {
+  const names = new Set(curated.map((h) => h.name.toLowerCase()));
+  const enriched = curated.map((horse) => {
+    const real = findRealHorse(horse.name);
+    if (!real) return horse;
+    return {
+      ...horse,
+      sire: horse.sire ?? realSireName(real),
+      dam: horse.dam ?? realDamName(real),
+      birthYear: horse.birthYear ?? real.foaled,
+      era: horse.era ?? eraForYear(real.foaled),
+      achievements: horse.achievements?.length
+        ? horse.achievements
+        : real.majorWins?.slice(0, 8),
+    };
+  });
+  const extra = realHorses
+    .filter((real) => !names.has(real.name.toLowerCase()) && findRealHorse(real.name) === real)
+    .map(realHorseToPedigree);
+  return [...enriched, ...extra];
+}
+
+export const pedigreeDataset: PedigreeHorse[] = mergeRealHorses(curatedDataset);
 
 // Create a map for quick lookup by name
 export const pedigreeMap = new Map<string, PedigreeHorse>(
