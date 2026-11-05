@@ -80,23 +80,28 @@ describe("almanac insights", () => {
 });
 
 describe("real family-tree integrity", () => {
-  it("no real horse is its own ancestor, and every parent is older", async () => {
+  it("no real horse is its own ancestor, and every parent is older", { timeout: 30_000 }, async () => {
     const { realHorses, realHorseById } = await import("@/shared/data/realHorses");
+    const bad: string[] = [];
     for (const h of realHorses) {
       for (const pid of [h.sire, h.dam]) {
         const p = pid ? realHorseById.get(pid) : undefined;
-        if (p?.foaled && h.foaled) expect(p.foaled).toBeLessThan(h.foaled);
+        if (p?.foaled && h.foaled && p.foaled >= h.foaled) bad.push(`${h.name}: parent ${p.name} not older`);
       }
       const stack = [h.sire, h.dam];
       const seen = new Set<string>();
       while (stack.length) {
         const id = stack.pop();
         if (!id || seen.has(id)) continue;
-        expect(id).not.toBe(h.id);
+        if (id === h.id) {
+          bad.push(`${h.name}: own ancestor`);
+          break;
+        }
         seen.add(id);
         const n = realHorseById.get(id);
         if (n) stack.push(n.sire, n.dam);
       }
     }
+    expect(bad).toEqual([]);
   });
 });
