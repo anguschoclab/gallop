@@ -54,7 +54,7 @@ describe("real-record stallion research", () => {
   });
 
   it("is used when no hand-researched entry exists", () => {
-    expect(getStallionResearchData("Winx")?.racingPerformance?.speedFigure).toBe(104);
+    expect(getStallionResearchData("Black Caviar")?.racingPerformance?.speedFigure).toBe(106);
   });
 });
 
