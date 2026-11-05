@@ -177,7 +177,7 @@ const FX: Record<string, number> = {
   SGD: 0.74, ZAR: 0.055, AED: 0.27, FRF: 0.165, IEP: 1.37, DEM: 0.55, ITL: 0.00056, ARS: 0.001,
 };
 const CURRENCY: [RegExp, string][] = [
-  [/HK\s?\$|HKD/i, "HKD"], [/A\s?\$|AUD/i, "AUD"], [/NZ\s?\$|NZD/i, "NZD"], [/C\s?\$|CAD/i, "CAD"],
+  [/US\s?\$|USD/i, "USD"], [/IR£|IEP/i, "IEP"], [/HK\s?\$|HKD/i, "HKD"], [/A\s?\$|AUD/i, "AUD"], [/NZ\s?\$|NZD/i, "NZD"], [/C\s?\$|CAD/i, "CAD"],
   [/S\s?\$|SGD/i, "SGD"], [/£|GBP|guineas/i, "GBP"], [/€|EUR/i, "EUR"], [/¥|JPY|yen/i, "JPY"],
   [/ZAR|\bR\s?\d/, "ZAR"], [/AED|Dhs/i, "AED"], [/FRF|francs?/i, "FRF"], [/IR£|IEP/i, "IEP"],
   [/DEM|\bDM\b/i, "DEM"], [/ITL|lire/i, "ITL"], [/US\s?\$|USD|\$/i, "USD"],
@@ -187,7 +187,9 @@ const CURRENCY: [RegExp, string][] = [
 function earningsUsd(s?: string): number | undefined {
   if (!s) return undefined;
   // First figure only (later ones are often conversions or per-season splits).
-  const t = plain(s).replace(/\{\{[^}]*\}\}/g, "").split("\n")[0].replace(/(\d),(\d)/g, "$1$2");
+  // Currency templates like {{GBP|2,998,302}} or {{AUD|1.2 million}} -> "GBP 2998302".
+  const raw = s.replace(/\{\{\s*([A-Za-z]{3})\s*\|\s*([^|}]+)[^}]*\}\}/g, "$1 $2");
+  const t = plain(raw).split("\n")[0].replace(/(\d),(\d)/g, "$1$2");
   const num = t.match(/(\d+(?:\.\d+)?)\s*(million|m\b|billion)?/i);
   if (!num) return undefined;
   let v = Number(num[1]);
