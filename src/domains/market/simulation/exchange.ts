@@ -23,14 +23,16 @@ import { prestigeMultiplier } from "@/domains/prestige/model/prestigeTypes";
 import {
   npcAskPrice,
   npcBidQuote,
+  npcSpendableCash,
   sellerStance,
+  EXCHANGE_BID_CASH_SLICE,
   type ExchangeIntent,
 } from "@/domains/market/simulation/exchangeAI";
 import { stableStandingAskReaction } from "@/domains/stable/simulation/stableReputationTier";
 import { dailyTradeSeries } from "@/domains/market/simulation/tradeSeries";
 
 /** Base commission rate charged by the exchange on the sale proceeds. */
-export const EXCHANGE_BASE_COMMISSION = 0.04;
+export const EXCHANGE_BASE_COMMISSION = 0.025;
 /** Prestige score of the exchange itself (drives commission and bid strength). */
 export const EXCHANGE_PRESTIGE = 68;
 /** How many days a listing or bid stays live. */
@@ -191,8 +193,20 @@ export function generateNpcBook(args: {
     if (owned.length === 0) continue;
     const stance = sellerStance(stable, owned.length);
     const rng = createRng(`exchAsk:${stable.id}:${day}`);
-    const listCount = Math.min(owned.length, stance.listCount, MAX_ASKS_PER_SELLER);
-    const sorted = [...owned].sort((a, b) => a.id.localeCompare(b.id));
+    // Only list horses some other stable could actually pay for — a $4M
+    // stallion offered to yards holding $100k never trades and clogs the book.
+    const richestBuyer = npcStables.reduce(
+      (m, s) => (s.id === stable.id ? m : Math.max(m, npcSpendableCash(s.cash))),
+      0,
+    );
+    const budgetCeiling = richestBuyer * EXCHANGE_BID_CASH_SLICE;
+    const sorted = [...owned]
+      .filter((h) => {
+        const v = horseMarketValue(h, horseList);
+        return v > 0 && v <= budgetCeiling;
+      })
+      .sort((a, b) => a.id.localeCompare(b.id));
+    const listCount = Math.min(sorted.length, stance.listCount, MAX_ASKS_PER_SELLER);
     for (let i = 0; i < listCount; i++) {
       const horse = sorted[Math.floor(rng.next() * sorted.length)];
       if (!horse || horse.consignedSaleId) continue;
@@ -229,7 +243,11 @@ export function generateNpcBook(args: {
     const fairValue = ask.fairValue || horseMarketValue(horse, horseList);
     const rng = createRng(`exchBidPool:${ask.horseId}:${day}`);
     const pool = npcStables
-      .filter((s) => s.id !== ask.sellerId && s.cash > fairValue * 0.3)
+      .filter(
+        (s) =>
+          s.id !== ask.sellerId &&
+          npcSpendableCash(s.cash) * EXCHANGE_BID_CASH_SLICE >= fairValue * 0.6,
+      )
       .sort((a, b) => a.id.localeCompare(b.id));
     if (pool.length === 0) continue;
     const count = Math.min(MAX_BIDS_PER_HORSE, 1 + Math.floor(rng.next() * MAX_BIDS_PER_HORSE));
