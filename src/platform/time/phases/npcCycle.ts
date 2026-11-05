@@ -62,7 +62,6 @@ export const npcCyclePhase = {
       newsItems,
       reputationEvents,
       cashChanges,
-      fameChanges,
       fanChanges,
       diagnostics,
     } = runNpcCycle(
@@ -129,21 +128,7 @@ export const npcCyclePhase = {
       }
     }
 
-    if (fameChanges) {
-      for (const change of fameChanges) {
-        impacts.push({
-          id: generateUUID(context.dailyRng),
-          intentId: "",
-          day: newDay,
-          phase: "npcCycle",
-          logLevel: "conditional",
-          type: "fame_change",
-          horseId: change.horseId,
-          delta: change.delta,
-          reason: "Race performance fame gain",
-        } as FameImpact);
-      }
-    }
+    // Race fame is credited once, per runner, in race resolution (raceFameGain).
 
     if (fanChanges) {
       for (const change of fanChanges) {

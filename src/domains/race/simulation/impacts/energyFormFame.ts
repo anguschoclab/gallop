@@ -8,6 +8,7 @@ import type { EnergyImpact, FormImpact, FameImpact } from "@/platform/resolver/i
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
 import type { Rng } from "@/shared/common/rng";
 import { generateUUID } from "@/shared/uuid/uuid";
+import { raceFameGain } from "@/domains/prestige/simulation/raceFame";
 import { RACE_ENERGY_IMPACT } from "@/domains/race/model/raceSimulationConstants";
 import type { Horse } from "@/platform/game/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
@@ -72,7 +73,24 @@ export function generateFameImpact(
   rng?: Rng,
   getId?: () => string,
   grade?: string,
+  race?: Parameters<typeof raceFameGain>[0],
 ): FameImpact | null {
+  // With the race known, use the shared rule (grade, purse, venue prestige).
+  if (race) {
+    const gain = raceFameGain(race, position);
+    if (gain <= 0) return null;
+    return {
+      id: getId ? getId() : generateUUID(rng),
+      intentId: "",
+      day: newDay,
+      phase: "raceResolution",
+      logLevel: "conditional",
+      type: "fame_change",
+      horseId: horse.id,
+      delta: gain,
+      reason: `Race position: ${position}`,
+    } as FameImpact;
+  }
   // Graded results carry far more reputation than ordinary wins.
   const gradeMult =
     grade === "G1"

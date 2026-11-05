@@ -20,7 +20,11 @@ export function useRaceEntry(race: Race) {
   const [selectedPreset, setSelectedPreset] = useState<PresetId>("default");
 
   const allHorses = useGameWithShallow((s) => s.horses);
-  const horses = useMemo(() => Object.values(allHorses) as Horse[], [allHorses]);
+  // Only the player's own horses can be entered from this dialog.
+  const horses = useMemo(
+    () => (Object.values(allHorses) as Horse[]).filter((h) => isPlayerOwned(h)),
+    [allHorses],
+  );
   const jockeys = useGameWithShallow((s) => s.jockeys ?? []);
   const enterRace = useGame((s) => s.enterRace);
   const enterClaimingRace = useGame((s) => s.enterClaimingRace);

@@ -7,24 +7,8 @@
  */
 
 import type { Horse, Race } from "@/platform/game/types";
-import { racecoursePrestigeMultiplier } from "@/domains/prestige/simulation/racecoursePrestige";
-import { MIN_FAME_GAIN } from "@/domains/prestige/model/prestigeTypes";
-import {
-  FAME_GAIN_G1_WIN,
-  FAME_GAIN_G2_WIN,
-  FAME_GAIN_G3_WIN,
-  FAME_GAIN_OTHER_WIN,
-  FAME_GAIN_G1_TOP3,
-  FAME_GAIN_G2_TOP3,
-  FAME_GAIN_G3_TOP3,
-  FAME_GAIN_OTHER_TOP3,
-  FAME_GAIN_TOP5,
-  FAME_BONUS_LARGE_PURSE,
-  FAME_BONUS_MEDIUM_PURSE,
-  LARGE_PURSE_THRESHOLD,
-  MEDIUM_PURSE_THRESHOLD,
-  MAX_FAME,
-} from "@/domains/prestige/model/fameConstants";
+import { raceFameGain } from "@/domains/prestige/simulation/raceFame";
+import { MAX_FAME } from "@/domains/prestige/model/fameConstants";
 
 /**
  * Calculate fame gains for horses based on race results.
@@ -39,44 +23,7 @@ export function calculateFameGainsForRaces(races: Race[]): Map<string, number> {
     for (const race of races) {
       if (!race.result) continue;
       for (const result of race.result) {
-        let fameGain = 0;
-
-        if (result.position === 1) {
-          fameGain =
-            race.graded?.grade === "G1"
-              ? FAME_GAIN_G1_WIN
-              : race.graded?.grade === "G2"
-                ? FAME_GAIN_G2_WIN
-                : race.graded?.grade === "G3"
-                  ? FAME_GAIN_G3_WIN
-                  : FAME_GAIN_OTHER_WIN;
-        } else if (result.position <= 3) {
-          fameGain =
-            race.graded?.grade === "G1"
-              ? FAME_GAIN_G1_TOP3
-              : race.graded?.grade === "G2"
-                ? FAME_GAIN_G2_TOP3
-                : race.graded?.grade === "G3"
-                  ? FAME_GAIN_G3_TOP3
-                  : FAME_GAIN_OTHER_TOP3;
-        } else if (result.position <= 5) {
-          fameGain = FAME_GAIN_TOP5;
-        }
-
-        if (race.purse > LARGE_PURSE_THRESHOLD) {
-          fameGain += FAME_BONUS_LARGE_PURSE;
-        } else if (race.purse > MEDIUM_PURSE_THRESHOLD) {
-          fameGain += FAME_BONUS_MEDIUM_PURSE;
-        }
-
-        // Winning at a prestigious racecourse is worth more to a horse's profile.
-        if (fameGain > 0) {
-          const venuePrestige = racecoursePrestigeMultiplier(
-            race.trackId ?? race.graded?.trackId,
-            race.graded?.track,
-          );
-          fameGain = Math.max(MIN_FAME_GAIN, Math.round(fameGain * venuePrestige));
-        }
+        const fameGain = raceFameGain(race, result.position);
 
         if (fameGain > 0) {
           const current = fameGains.get(result.horseId) || 0;

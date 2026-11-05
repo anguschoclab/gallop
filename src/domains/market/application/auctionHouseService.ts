@@ -13,8 +13,15 @@
 
 import { formatCurrency } from "@/shared/common/formatting";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
-import { createDefaultExchangeState } from "@/domains/market/simulation/exchange";
-import { AUCTION_HOUSES, type AuctionHouse } from "@/domains/prestige/simulation/auctionHouses";
+import {
+  createDefaultExchangeState,
+  EXCHANGE_BASE_COMMISSION,
+} from "@/domains/market/simulation/exchange";
+import {
+  AUCTION_HOUSES,
+  houseCommissionRate,
+  type AuctionHouse,
+} from "@/domains/prestige/simulation/auctionHouses";
 import { buildHouseCatalogue, houseQuote } from "@/domains/market/simulation/houseQuotes";
 import { sellerStandingBidFactor } from "@/domains/market/simulation/exchangeAI";
 import { worldRankings } from "@/domains/market/simulation/raceForm";
@@ -34,6 +41,15 @@ export { AUCTION_HOUSES, createDefaultExchangeState, formatCurrency, isPlayerOwn
  */
 export function getHouseCatalogue(args: { day: number; house: AuctionHouse; horses: Horse[] }) {
   return buildHouseCatalogue(args);
+}
+
+/**
+ * Commission rate the house actually charges (Exchange base + house surcharge).
+ * @param house - The auction house.
+ * @returns Commission as a fraction of the hammer price.
+ */
+export function getHouseCommissionRate(house: AuctionHouse): number {
+  return houseCommissionRate(EXCHANGE_BASE_COMMISSION, house);
 }
 
 /**

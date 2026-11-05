@@ -101,14 +101,14 @@ export function generatePrizeMoneyImpacts(
       };
     } else if (position > 1) {
       const fieldSize = race.entries?.length ?? race.fieldSize ?? position;
-      const consecutiveLosses = horse.raceHistory
-        ? horse.raceHistory
-            .slice()
-            .reverse()
-            .filter((h) => h.raceId !== race.id)
-            .findIndex((h) => h.position === 1)
-        : 0;
-      const effectiveConsecutiveLosses = consecutiveLosses === -1 ? 99 : consecutiveLosses;
+      const priorRaces = (horse.raceHistory ?? [])
+        .slice()
+        .reverse()
+        .filter((h) => h.raceId !== race.id);
+      const consecutiveLosses = priorRaces.findIndex((h) => h.position === 1);
+      // Never won: the streak is every prior start (a debut is not a slump).
+      const effectiveConsecutiveLosses =
+        consecutiveLosses === -1 ? priorRaces.length : consecutiveLosses;
 
       const repLoss = calculateRaceLossReputation(
         race.graded?.grade,
