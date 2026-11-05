@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { raceFameGain } from "@/domains/prestige/simulation/raceFame";
+import { rankedRacecourses } from "@/domains/prestige/simulation/racecoursePrestige";
 import { generateFameImpact } from "@/domains/race/simulation/impacts/energyFormFame";
 import { calculateRaceLossReputation } from "@/domains/reputation/model/reputationTypes";
 import { createTestHorse } from "@/tests/helpers/createTestHorse";
@@ -8,7 +9,9 @@ const g1 = (track: string) => ({ purse: 0, trackId: undefined, graded: { grade: 
 
 describe("race fame scales with racecourse prestige", () => {
   it("a G1 win at a top course earns more than at an unknown course", () => {
-    expect(raceFameGain(g1("Epsom Downs"), 1)).toBeGreaterThan(raceFameGain(g1("Nowhere Park"), 1));
+    const top = rankedRacecourses()[0];
+    const topRace = { purse: 0, trackId: top.trackId, graded: { grade: "G1" } };
+    expect(raceFameGain(topRace, 1)).toBeGreaterThan(raceFameGain(g1("Nowhere Park"), 1));
   });
 
   it("G1 win at an unknown course = 17 (20 x floor multiplier)", () => {
