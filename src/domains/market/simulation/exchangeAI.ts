@@ -69,6 +69,35 @@ export type BidQuote = {
   conviction: number;
 };
 
+/**
+ * Tuning for a self-balancing exchange. Bids land in a narrow band around fair
+ * value and sellers accept a little under it, so a meaningful share of quotes
+ * cross. Buyers only spend cash above a working reserve, so trading alone can
+ * never push a stable to zero.
+ */
+export const EXCHANGE_BID_NOISE: readonly [number, number] = [0.9, 1.08];
+/** Fraction of fair value an unpressured, average-reputation seller accepts. */
+export const EXCHANGE_BASE_ACCEPT_FLOOR = 0.94;
+/** Hard floor on the accept fraction, even for a desperate seller. */
+export const EXCHANGE_MIN_ACCEPT_FLOOR = 0.6;
+/** Share of spendable cash a stable will commit to one bid. */
+export const EXCHANGE_BID_CASH_SLICE = 0.5;
+/** Cash an NPC stable keeps back from exchange buying (upkeep, entries). */
+export const EXCHANGE_NPC_CASH_RESERVE = 25_000;
+/** Most horses one NPC stable buys on the exchange in a day. */
+export const EXCHANGE_MAX_NPC_BUYS_PER_DAY = 1;
+/** Most NPC-side crossings the exchange settles in a day. */
+export const EXCHANGE_MAX_NPC_TRADES_PER_DAY = 3;
+
+/**
+ * Cash a stable can put toward exchange bids after keeping its reserve.
+ *
+ * @param cash - Stable cash
+ */
+export function npcSpendableCash(cash: number): number {
+  return Math.max(0, cash - EXCHANGE_NPC_CASH_RESERVE);
+}
+
 /** Personality appetite multipliers applied to NPC bid prices. */
 export const PERSONALITY_BID_BIAS: Record<StablePersonality, number> = {
   aggressive: 1.12,
@@ -83,14 +112,14 @@ export const PERSONALITY_BID_BIAS: Record<StablePersonality, number> = {
 
 /** How much markup each personality demands when selling. */
 const PERSONALITY_ASK_MARKUP: Record<StablePersonality, number> = {
-  trader: 1.12,
-  aggressive: 1.2,
-  "win-now": 1.22,
-  prestige: 1.35,
-  breeder: 1.3,
-  developer: 1.28,
-  specialist: 1.26,
-  conservative: 1.18,
+  trader: 1.08,
+  aggressive: 1.14,
+  "win-now": 1.15,
+  prestige: 1.25,
+  breeder: 1.2,
+  developer: 1.18,
+  specialist: 1.17,
+  conservative: 1.12,
 };
 
 /** Base number of simultaneous listings by personality. */
@@ -172,8 +201,8 @@ export function sellerStance(stable: Stable, horseCount?: number): SellerStance 
 
   // Prestige houses hold out; desperate ones take what's on the screen.
   const acceptFloor = Math.max(
-    0.55,
-    0.98 * prestigePull(stable.reputation, 1.5) - pressure.pressure * 0.3,
+    EXCHANGE_MIN_ACCEPT_FLOOR,
+    EXCHANGE_BASE_ACCEPT_FLOOR * prestigePull(stable.reputation, 1.5) - pressure.pressure * 0.3,
   );
 
   const intent: ExchangeIntent =
@@ -244,7 +273,7 @@ export function npcBidQuote(
   const rng = createRng(`exch:${horse.id}:${stable.id}:${day}`);
   const pressure = evaluateCashPressure(stable);
   const bias = PERSONALITY_BID_BIAS[stable.personality] ?? 1;
-  const noise = rng.range(0.82, 1.06);
+  const noise = rng.range(EXCHANGE_BID_NOISE[0], EXCHANGE_BID_NOISE[1]);
 
   // Squeezed buyers pull their horns in hard.
   const pressureDamp = 1 - pressure.pressure * 0.55;
@@ -259,8 +288,8 @@ export function npcBidQuote(
   if (standing) raw *= standing.factor;
 
   // Cash discipline tightens as the runway shortens.
-  const cashSlice = 0.35 * (1 - pressure.pressure * 0.7);
-  const capped = Math.min(raw, stable.cash * cashSlice);
+  const cashSlice = EXCHANGE_BID_CASH_SLICE * (1 - pressure.pressure * 0.7);
+  const capped = Math.min(raw, npcSpendableCash(stable.cash) * cashSlice);
   const price = Math.max(0, Math.round(capped / 50) * 50);
 
   let rationale =
@@ -349,7 +378,7 @@ export function resolveNpcExchangeTrades(args: {
   playerName?: string;
 }): NpcSettlement {
   const { day, state, horses, npcStables, commission } = args;
-  const maxTrades = args.maxTrades ?? 5;
+  const maxTrades = args.maxTrades ?? EXCHANGE_MAX_NPC_TRADES_PER_DAY;
   const makeId = args.makeId ?? ((askId, bidId) => `trade-${day}-${askId}-${bidId}`);
 
   const byHorse = new Map(horses.map((h) => [h.id, h]));
@@ -363,6 +392,7 @@ export function resolveNpcExchangeTrades(args: {
   const filledAskIds: string[] = [];
   const filledBidIds: string[] = [];
   const tradedHorses = new Set<string>();
+  const buysToday: Record<string, number> = {};
 
   const npcAsks = state.asks
     .filter((a) => a.sellerId !== "player" && a.expiresDay >= day && byStable.has(a.sellerId))
@@ -399,7 +429,10 @@ export function resolveNpcExchangeTrades(args: {
 
     const bid = candidates.find(
       (b) =>
-        b.price >= floorPrice && (b.bidderId === args.playerId || cashOf(b.bidderId) >= b.price),
+        b.price >= floorPrice &&
+        (b.bidderId === args.playerId ||
+          (npcSpendableCash(cashOf(b.bidderId)) >= b.price &&
+            (buysToday[b.bidderId] ?? 0) < EXCHANGE_MAX_NPC_BUYS_PER_DAY)),
     );
     if (!bid) continue;
     const isPlayerBid = args.playerId !== undefined && bid.bidderId === args.playerId;
@@ -422,7 +455,10 @@ export function resolveNpcExchangeTrades(args: {
     });
     ownershipChanges.push({ horseId: horse.id, buyerStableId: bid.bidderId });
     // Player bids are escrowed at placement — no cash debit at fill.
-    if (!isPlayerBid) cashDeltas[buyer!.id] = (cashDeltas[buyer!.id] ?? 0) - bid.price;
+    if (!isPlayerBid) {
+      cashDeltas[buyer!.id] = (cashDeltas[buyer!.id] ?? 0) - bid.price;
+      buysToday[buyer!.id] = (buysToday[buyer!.id] ?? 0) + 1;
+    }
     cashDeltas[seller.id] = (cashDeltas[seller.id] ?? 0) + (bid.price - fee);
     filledAskIds.push(ask.id);
     filledBidIds.push(bid.id);
