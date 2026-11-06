@@ -14537,9 +14537,7 @@ function mergeRealHorses(curated: PedigreeHorse[]): PedigreeHorse[] {
       dam: horse.dam ?? realDamName(real),
       birthYear: horse.birthYear ?? real.foaled,
       era: horse.era ?? eraForYear(real.foaled),
-      achievements: horse.achievements?.length
-        ? horse.achievements
-        : real.majorWins?.slice(0, 8),
+      achievements: horse.achievements?.length ? horse.achievements : real.majorWins?.slice(0, 8),
     };
   });
   const extra = realHorses
