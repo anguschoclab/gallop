@@ -91,7 +91,13 @@ function RealHorseDetail({ h, onSelect }: { h: RealHorse; onSelect: (h: RealHors
             <h3 className="text-lg font-bold text-foreground">{h.name}</h3>
             <p className="text-xs text-muted-foreground">
               {[
-                h.sex === "F" ? "Mare" : h.gelding ? "Gelding" : h.sex === "M" ? "Horse" : undefined,
+                h.sex === "F"
+                  ? "Mare"
+                  : h.gelding
+                    ? "Gelding"
+                    : h.sex === "M"
+                      ? "Horse"
+                      : undefined,
                 h.colour,
                 h.foaled && `foaled ${h.foaled}`,
                 h.died && `died ${h.died}`,
@@ -105,7 +111,7 @@ function RealHorseDetail({ h, onSelect }: { h: RealHorse; onSelect: (h: RealHors
             <a
               href={url}
               target="_blank"
-              rel="noreferrer"
+              rel="noopener noreferrer"
               className="text-xs text-primary inline-flex items-center gap-1 shrink-0"
             >
               Wikipedia <ExternalLink className="h-3 w-3" />
@@ -130,7 +136,10 @@ function RealHorseDetail({ h, onSelect }: { h: RealHorse; onSelect: (h: RealHors
         </div>
         <div className="space-y-1">
           <div>Sire: {link(anc.sire)}</div>
-          <div>Dam: {link(anc.dam)}{anc.damsire && <> (by {link(anc.damsire)})</>}</div>
+          <div>
+            Dam: {link(anc.dam)}
+            {anc.damsire && <> (by {link(anc.damsire)})</>}
+          </div>
           {anc.sireline.length > 1 && (
             <div className="text-xs text-muted-foreground">
               Male line: {anc.sireline.map((x) => x.name).join(" ← ")}
@@ -198,10 +207,10 @@ export function RealHorsesPanel() {
         <CardContent className="p-4 text-xs text-muted-foreground flex items-start gap-2">
           <Trophy className="h-4 w-4 shrink-0 text-primary mt-0.5" />
           <span>
-            {realHorses.length.toLocaleString()} real thoroughbreds ({withRecords.toLocaleString()} with
-            documented race records) from Wikidata and Wikipedia, snapshot {REAL_HORSE_BUILT_AT}. The
-            same horses stand behind the family trees in your game. Earnings are converted to US
-            dollars at today's rates.
+            {realHorses.length.toLocaleString()} real thoroughbreds ({withRecords.toLocaleString()}{" "}
+            with documented race records) from Wikidata and Wikipedia, snapshot{" "}
+            {REAL_HORSE_BUILT_AT}. The same horses stand behind the family trees in your game.
+            Earnings are converted to US dollars at today's rates.
           </span>
         </CardContent>
       </Card>
