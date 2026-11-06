@@ -456,6 +456,41 @@ export const detectLateCharge: InsightDetector = (horse) => {
   return null;
 };
 
+// 1.926 Check for Early Fade
+export const detectEarlyFade: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  if (history.length < 3) return null;
+
+  let earlySpeedRaces = 0;
+  let fadedRaces = 0;
+
+  for (const race of history) {
+    if (race.pacePositions && race.pacePositions.length > 0) {
+      const firstCall = race.pacePositions[0];
+      if (firstCall <= 2) {
+        earlySpeedRaces++;
+        if (race.position > 3) {
+          fadedRaces++;
+        }
+      }
+    }
+  }
+
+  if (earlySpeedRaces >= 3) {
+    const fadeRate = fadedRaces / earlySpeedRaces;
+    if (fadeRate >= 0.75) {
+      return {
+        label: "Early Fade",
+        value: "Struggles to Finish",
+        context: `Faded out of the money in ${fadedRaces} of ${earlySpeedRaces} races where they contested the early lead`,
+        type: "negative",
+      };
+    }
+  }
+
+  return null;
+};
+
 // 1.93 Check for Surface Versatility (wins on 2+ surfaces)
 export const detectSurfaceVersatility: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -899,6 +934,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectLateBloomer,
   detectFromTheClouds,
   detectLateCharge,
+  detectEarlyFade,
   detectSurfaceVersatility,
   detectBigFieldSpecialist,
   detectDistanceSpecialist,
