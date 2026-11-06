@@ -59,14 +59,19 @@ export function getEnhancedDraftingHorseId(r: Runner, sortedField: Runner[]): st
 
   // Closers (S) and stalkers (P) prefer drafting behind front-runners (E) and early-pressers (EP)
   const runnerPrefersFrontRunners = r.runningStyle === "S" || r.runningStyle === "P";
+  const rPos = r.position;
+  const rLane = r.lane;
+  const rId = r.horseId;
+  const len = sortedField.length;
 
-  for (const other of sortedField) {
-    if (other.horseId === r.horseId) continue;
-    const gap = other.position - r.position;
+  for (let i = 0; i < len; i++) {
+    const other = sortedField[i];
+    const gap = other.position - rPos;
     if (gap <= 0) break; // Optimization: stop early (sorted field)
-    if (gap > DRAFT_DISTANCE) continue;
+    if (gap > DRAFT_DISTANCE || other.horseId === rId) continue;
 
-    const laneGap = Math.abs(other.lane - r.lane);
+    const lGap = other.lane - rLane;
+    const laneGap = lGap < 0 ? -lGap : lGap;
     if (laneGap < 0.8) {
       const isPreferredStyle =
         runnerPrefersFrontRunners && (other.runningStyle === "E" || other.runningStyle === "EP");
@@ -122,16 +127,20 @@ export function calculateRailSavingLane(r: Runner, progress: number): number {
  */
 export function calculateCoverModifier(r: Runner, sortedField: Runner[]): number {
   let coverCount = 0;
+  const rPos = r.position;
+  const rLane = r.lane;
+  const rId = r.horseId;
+  const len = sortedField.length;
 
-  for (const other of sortedField) {
-    if (other.horseId === r.horseId) continue;
-    if (other.finishTime !== null) continue;
-
-    const gap = other.position - r.position;
+  for (let i = 0; i < len; i++) {
+    const other = sortedField[i];
+    const gap = other.position - rPos;
     if (gap <= 0) break; // Optimization: stop early (sorted field)
-    if (gap > 5) continue;
 
-    const laneGap = Math.abs(other.lane - r.lane);
+    if (gap > 5 || other.horseId === rId || other.finishTime !== null) continue;
+
+    const lGap = other.lane - rLane;
+    const laneGap = lGap < 0 ? -lGap : lGap;
     if (laneGap < 0.5) {
       coverCount++;
     }
