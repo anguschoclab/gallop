@@ -155,7 +155,9 @@ export class RaceSimulationSession {
     for (let i = 0; i < numRunners; i++) this.sortedField[i] = runners[i];
     this.sortedField.sort((a, b) => b.position - a.position);
     let aliveRank = 0;
-    for (const o of this.sortedField) {
+    // Performance optimization: Avoid for..of iterator overhead in hot loops
+    for (let i = 0; i < this.sortedField.length; i++) {
+      const o = this.sortedField[i];
       if (o.finishTime === null) {
         const idx = this.idToIndex.get(o.horseId);
         if (idx !== undefined) this.ranks[idx] = aliveRank;
