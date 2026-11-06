@@ -161,6 +161,14 @@ export function generateFollowUpRaceNews(
     `Speculation Mounts Over ${horse.name}'s Next Outing`,
     `${horse.name} Leaves Lasting Impression in ${race.name}`,
     `${race.name} Form Points to Big Future for ${horse.name}`,
+    `A Strong Showing in ${race.name} Sets ${horse.name} Up for Success`,
+    `${horse.name} Proves Mettle in ${race.name} with Resolute Display`,
+    `Handicappers Take Note of ${horse.name} Following ${race.name}`,
+    `What's Next for ${horse.name} After Commendable ${race.name} Run?`,
+    `A Turning Point? ${horse.name} Shows Grit in ${race.name}`,
+    `${horse.name} Commands Respect Post-${race.name}`,
+    `Stable Confidence High for ${horse.name} After ${race.name} Result`,
+    `Next Phase of Campaign Begins for ${horse.name} After ${race.name}`,
   ];
 
   const bodies = [
@@ -204,6 +212,14 @@ export function generateFollowUpRaceNews(
     `Talk on the backstretch has firmly centered on ${horse.name} since their bold ${positionLabelShort} in the ${race.name}. Planners are undoubtedly scouring the condition book for the perfect follow-up.`,
     `A taxing ${positionLabel} in the ${race.name} means ${horse.name} might need time to freshen up, though their connections will be ecstatic with the ${grade} performance.`,
     `After confirming their talent with a ${positionLabel} in the ${race.name}, ${horse.name} has options aplenty. Stepping up to the plate again in ${grade} grade seems a certainty.`,
+    `The form from the ${race.name} looks rock solid, and ${horse.name}'s ${positionLabel} underscores their ability. Trainers will now be pinpointing the ideal ${grade} engagement to follow up.`,
+    `Delivering on expectations with a ${positionLabel} in the ${race.name}, ${horse.name} showed commendable heart. The stable is assessing the horse's condition before committing to their next run.`,
+    `A battling ${positionLabel} in the ${grade} ${race.name} ensures ${horse.name} will have no shortage of admirers next time out. Connections are biding their time to select the perfect target.`,
+    `The industry took notice of ${horse.name}'s ${positionLabelShort} in the ${race.name}. With confidence undoubtedly boosted, the next entry will be carefully plotted by the team.`,
+    `Showcasing serious talent in the ${race.name} for a ${positionLabel}, ${horse.name} leaves no doubt they belong at this level. The remainder of the season offers tantalizing possibilities.`,
+    `It was a display full of character from ${horse.name} to earn a ${positionLabel} in the ${race.name}. Handlers are expected to circle a major stakes target on the calendar very soon.`,
+    `Following a determined ${positionLabel} in the ${race.name} (${grade}), ${horse.name}'s camp has plenty to smile about. The strategy moving forward will be closely watched by the press.`,
+    `A ${positionLabel} in a gruelling contest like the ${race.name} is a testament to ${horse.name}'s resilience. The stable has several high-profile avenues to explore in the weeks ahead.`,
   ];
 
   return createNewsItem(
