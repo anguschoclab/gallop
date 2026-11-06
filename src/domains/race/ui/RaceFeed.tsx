@@ -9,6 +9,7 @@ import { formatCurrency } from "@/domains/financial/application/financialFacade"
 import { cn } from "@/shared/lib/cn";
 import type { Race, Claim, Horse, GameState } from "@/platform/game/types";
 import { List, LayoutGrid, Target, MapPin, Globe } from "lucide-react";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 
 interface RaceFeedProps {
   races: Race[];
@@ -35,15 +36,7 @@ export function RaceFeed({
 }: RaceFeedProps) {
   if (races.length === 0) {
     return (
-      <div className="p-32 text-center border-2 border-dashed border-white/5 bg-black/10">
-        <Globe className="h-16 w-16 mx-auto mb-6 text-foreground/5" />
-        <p className="font-bold text-foreground/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
-          No Races Found
-        </p>
-        <p className="text-[10px] font-mono text-foreground/10 uppercase mt-2">
-          Try adjusting your filters.
-        </p>
-      </div>
+      <EmptyState icon={Globe} title="No Races Found" description="Try adjusting your filters." />
     );
   }
 
