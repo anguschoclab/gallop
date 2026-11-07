@@ -127,15 +127,24 @@ export function stepRunner(
   // runner toward the field slot that matches their running style instead of
   // letting front-runners dash far ahead when the rest of the field starts slow.
   let seekMul = 1;
-  const profile = getDynamicProfile(
-    r.runningStyle,
-    pace?.paceRating ?? 1.0,
-    sortedField ? sortedField.length : 1,
-    progress,
-    r.horse,
-    r.jockey,
-  );
-  if (progress < POSITION_SEEK_PROGRESS && sortedField && sortedField.length > 1) {
+  const distanceRemaining = distance - r.position;
+  const needsProfile =
+    progress < POSITION_SEEK_PROGRESS ||
+    (distanceRemaining <= SPURT_BUILDUP_START_M && distanceRemaining > 0);
+
+  let profile;
+  if (needsProfile) {
+    profile = getDynamicProfile(
+      r.runningStyle,
+      pace?.paceRating ?? 1.0,
+      sortedField ? sortedField.length : 1,
+      progress,
+      r.horse,
+      r.jockey,
+    );
+  }
+
+  if (progress < POSITION_SEEK_PROGRESS && sortedField && sortedField.length > 1 && profile) {
     // Use pre-computed rank if provided (avoids O(n) filter+findIndex per runner)
     let rank = rankFromFront ?? -1;
     let runnerAliveCount = aliveCount ?? sortedField.filter((o) => o.finishTime === null).length;
@@ -166,8 +175,7 @@ export function stepRunner(
   // so the closing kick isn't a hard switch at one progress threshold. Closers
   // and stalkers get a slightly stronger ramp.
   let spurtMul = 1;
-  const distanceRemaining = distance - r.position;
-  if (distanceRemaining <= SPURT_BUILDUP_START_M && distanceRemaining > 0) {
+  if (distanceRemaining <= SPURT_BUILDUP_START_M && distanceRemaining > 0 && profile) {
     const ramp = clamp(
       (SPURT_BUILDUP_START_M - distanceRemaining) / (SPURT_BUILDUP_START_M - SPURT_BUILDUP_END_M),
       0,
