@@ -11,7 +11,7 @@ import { INSIGHT_DETECTORS } from "@/domains/horse/simulation/insightDetectors";
 
 describe("INSIGHT_DETECTORS registry order", () => {
   it("has exactly 27 detectors", () => {
-    expect(INSIGHT_DETECTORS).toHaveLength(27);
+    expect(INSIGHT_DETECTORS).toHaveLength(28);
   });
 
   it("preserves the original priority order", () => {
@@ -49,6 +49,7 @@ describe("INSIGHT_DETECTORS registry order", () => {
       "detectDistanceChange", // 1.95 Distance Change Specialist
       "detectGateAffinity", // 4. Gate Affinity
       "detectFieldSizeAffinity", // 4.1 Field Size Affinity
+      "detectIronHorse", // 4.2 Iron Horse
       "detectEarningsMilestone", // 5. Earnings Milestone
       "detectEarningsPerStart", // 5.1 Earnings Per Start (merged yield tiers)
       "detectSireValue", // 6. Sire Value

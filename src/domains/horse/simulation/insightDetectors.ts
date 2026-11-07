@@ -710,6 +710,20 @@ export const detectFieldSizeAffinity: InsightDetector = (horse) => {
   return null;
 };
 
+// 4.2 Check for Iron Horse
+export const detectIronHorse: InsightDetector = (horse) => {
+  const starts = horse.careerStarts ?? horse.raceHistory?.length ?? 0;
+  if (starts >= 20) {
+    return {
+      label: "Iron Horse",
+      value: "Veteran Warrior",
+      context: `Has made ${starts} career trips to the starting gate`,
+      type: "positive",
+    };
+  }
+  return null;
+};
+
 // 3.95 Check for Earnings Milestones
 export const detectEarningsMilestone: InsightDetector = (horse) => {
   const earnings = horse.lifetimeEarnings ?? 0;
@@ -907,6 +921,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceChange,
   detectGateAffinity,
   detectFieldSizeAffinity,
+  detectIronHorse,
   detectEarningsMilestone,
   detectEarningsPerStart,
   detectSireValue,
