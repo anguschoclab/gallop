@@ -182,7 +182,7 @@ describe("generatePerformanceCareerImpacts", () => {
     expect(impacts.find((i) => i.type === "fame_change")).toBeDefined();
   });
 
-  it("does not emit fame_change for 4th place", () => {
+  it("emits fame_change for 4th place", () => {
     const horse = createTestColt({ id: "h1" });
     const race = makeOpenRace();
     const { impacts } = generatePerformanceCareerImpacts(
@@ -197,7 +197,9 @@ describe("generatePerformanceCareerImpacts", () => {
       100,
       [],
     );
-    expect(impacts.find((i) => i.type === "fame_change")).toBeUndefined();
+    const fame = impacts.find((i) => i.type === "fame_change") as any;
+    expect(fame).toBeDefined();
+    expect(fame.delta).toBe(1);
   });
 
   it("race_history entry has fieldSize set to resultLength", () => {

@@ -141,27 +141,37 @@ describe("generateFormImpact", () => {
 // ---------------------------------------------------------------------------
 
 describe("generateFameImpact", () => {
-  it("1st place → fame delta 2", () => {
+  it("1st place → fame delta 4", () => {
     const horse = createTestColt({ id: "h1" });
     const impacts = runSingle(horse, 1, makeOpenRace());
     const fame = impacts.find((i) => i.type === "fame_change" && (i as any).horseId === "h1");
     expect(fame).toBeDefined();
-    expect((fame as any).delta).toBe(2);
+    expect((fame as any).delta).toBe(4);
   });
 
-  it("2nd/3rd place → fame delta 0.5", () => {
+  it("2nd/3rd place → fame delta 2", () => {
     for (const pos of [2, 3]) {
       const horse = createTestColt({ id: `h-${pos}` });
       const impacts = runSingle(horse, pos, makeOpenRace());
       const fame = impacts.find((i) => i.type === "fame_change");
       expect(fame).toBeDefined();
-      expect((fame as any).delta).toBe(0.5);
+      expect((fame as any).delta).toBe(2);
     }
   });
 
-  it("4th+ place → no fame_change impact", () => {
+  it("4th/5th place → fame delta 1", () => {
+    for (const pos of [4, 5]) {
+      const horse = createTestColt({ id: `h-${pos}` });
+      const impacts = runSingle(horse, pos, makeOpenRace());
+      const fame = impacts.find((i) => i.type === "fame_change");
+      expect(fame).toBeDefined();
+      expect((fame as any).delta).toBe(1);
+    }
+  });
+
+  it("6th+ place → no fame_change impact", () => {
     const horse = createTestColt({ id: "h1" });
-    const impacts = runSingle(horse, 4, makeOpenRace());
+    const impacts = runSingle(horse, 6, makeOpenRace());
     const fame = impacts.find((i) => i.type === "fame_change");
     expect(fame).toBeUndefined();
   });
@@ -824,8 +834,8 @@ describe("generateRaceImpacts — integration regression", () => {
     expect(types.has("jockey_stats")).toBe(false);
     expect(types.has("jockey_affinity_gain")).toBe(false);
     expect(types.has("transaction")).toBe(false);
-    // No fame for 5th
-    expect(types.has("fame_change")).toBe(false);
+    // Fame for 5th is now 1
+    expect(types.has("fame_change")).toBe(true);
     // No log for NPC-only
     expect(types.has("log")).toBe(false);
   });
