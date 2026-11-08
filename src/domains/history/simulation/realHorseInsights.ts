@@ -81,7 +81,12 @@ export function searchRealHorses(query: string, limit = 30): RealHorse[] {
     .slice(0, limit);
 }
 
-export type RealAncestry = { sire?: RealHorse; dam?: RealHorse; damsire?: RealHorse; sireline: RealHorse[] };
+export type RealAncestry = {
+  sire?: RealHorse;
+  dam?: RealHorse;
+  damsire?: RealHorse;
+  sireline: RealHorse[];
+};
 
 /**
  * Parents, damsire, and the male line back as far as the data goes.

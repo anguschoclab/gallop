@@ -59,33 +59,27 @@ export function StableRosterWidget() {
             <span>OVR</span>
           </div>
           <div className="space-y-2">
-            {topHorses.length === 0 ? (
-              <div className="text-[11px] text-foreground/40 font-mono py-2">
-                No horses in your stable
-              </div>
-            ) : (
-              topHorses.map((h) => (
-                <Link
-                  key={h.id}
-                  to="/stable/$horseId"
-                  params={{ horseId: h.id }}
-                  className="block group/item"
-                >
-                  <div className="flex items-center justify-between p-2 rounded bg-white/[0.03] border border-white/5 hover:border-blue-400/30 hover:bg-blue-400/5 transition-all">
-                    <HorseBit horse={h} />
-                    <div className="flex items-center gap-3">
-                      <NumericValue
-                        value={overall(h)}
-                        className="text-xs font-bold text-muted-foreground group-hover/item:text-blue-400 transition-colors"
-                      />
-                      <Badge className="bg-black/40 text-foreground text-[9px] h-4 px-1.5 font-mono border border-white/5">
-                        E{Math.round(h.energy)}
-                      </Badge>
-                    </div>
+            {topHorses.map((h) => (
+              <Link
+                key={h.id}
+                to="/stable/$horseId"
+                params={{ horseId: h.id }}
+                className="block group/item"
+              >
+                <div className="flex items-center justify-between p-2 rounded bg-white/[0.03] border border-white/5 hover:border-blue-400/30 hover:bg-blue-400/5 transition-all">
+                  <HorseBit horse={h} />
+                  <div className="flex items-center gap-3">
+                    <NumericValue
+                      value={overall(h)}
+                      className="text-xs font-bold text-muted-foreground group-hover/item:text-blue-400 transition-colors"
+                    />
+                    <Badge className="bg-black/40 text-foreground text-[9px] h-4 px-1.5 font-mono border border-white/5">
+                      E{Math.round(h.energy)}
+                    </Badge>
                   </div>
-                </Link>
-              ))
-            )}
+                </div>
+              </Link>
+            ))}
           </div>
 
           <div className="pt-2 space-y-2">

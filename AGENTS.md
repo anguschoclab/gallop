@@ -88,5 +88,6 @@ Dependency rules (enforced by `src/tests/architecture/layeringRules.test.ts`, ze
 - Mount TooltipProvider in the root shell so full-screen race views and ordinary pages share tooltip context.
 
 <!-- LOVABLE:END -->
+
 - **Exchange balance knobs live in `src/domains/market/simulation/exchangeAI.ts`** (`EXCHANGE_*` constants: bid noise, accept floor, cash slice, NPC cash reserve, per-day buy/trade caps) plus `EXCHANGE_BASE_COMMISSION` in `exchange.ts`; NPC asks prefer horses some rival can afford. `src/tests/core/market/exchangeBalance.test.ts` guards that trades keep settling and commission can't drain rivals. Why: unaffordable listings froze the book and commission was a runaway cash sink.
 - **Real horses come from a bundled snapshot** `src/shared/data/realHorses.json`, rebuilt only by `bun run scripts/buildRealHorses.ts` (Wikidata + Wikipedia infoboxes; `--cache <dir>` reuses downloads). Never fetch horse data at runtime — worlds must stay deterministic and offline. `pedigreeData.ts` merges it under the curated entries (curated wins), `getStallionResearchData` falls back to `researchFromRealRecord`, and `pedigreeGraph` follows legacy ancestors by name before inventing phantoms. The build drops non-thoroughbreds, parents not older than the foal, and ancestry loops; `src/tests/core/history/realHorses.test.ts` guards this.

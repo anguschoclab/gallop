@@ -6,14 +6,14 @@ fixes, and branch/PR cleanup.
 
 ## Baseline vs final metrics
 
-| Metric | Baseline | Final |
-| --- | --- | --- |
-| TypeScript | 0 errors, 0 warnings | 0 errors, 0 warnings |
-| ESLint | clean (0 problems) | clean (0 problems) |
-| `crossPhaseDataFlow` | green (post-relocation repair) | green |
-| `bun run build` | — | green |
-| stateFingerprint (30d, small) | `a694f5e7` @ f78bd94b | `a694f5e7` @ HEAD — identical, determinism preserved |
-| Focused test files run | — | horse suite 528 tests green; component/resolver/time subsets green |
+| Metric                        | Baseline                       | Final                                                              |
+| ----------------------------- | ------------------------------ | ------------------------------------------------------------------ |
+| TypeScript                    | 0 errors, 0 warnings           | 0 errors, 0 warnings                                               |
+| ESLint                        | clean (0 problems)             | clean (0 problems)                                                 |
+| `crossPhaseDataFlow`          | green (post-relocation repair) | green                                                              |
+| `bun run build`               | —                              | green                                                              |
+| stateFingerprint (30d, small) | `a694f5e7` @ f78bd94b          | `a694f5e7` @ HEAD — identical, determinism preserved               |
+| Focused test files run        | —                              | horse suite 528 tests green; component/resolver/time subsets green |
 
 Note: an earlier baseline reading (`2180ff13`) used different script arguments and
 is not comparable; the worktree re-run at the pre-work commit under identical
@@ -23,12 +23,12 @@ outside this window, by design.
 
 ## Bugs fixed (approve/disprove verdicts)
 
-| ID | Finding | Verdict | Fix |
-| --- | --- | --- | --- |
-| BUG-1 | `generateUUIDWithValidation` — dead code, CJS `require()` in ESM/browser path | **CONFIRMED** | Function deleted; `uuidRegistry` infra + tests retained |
-| BUG-2 | `npcCompression` drops energy/fitness/fatigue/form/peakingIndex/recoveryPoints on save→load | **CONFIRMED** | `NpcHorseSummary` extended; fields persisted and restored on regeneration |
-| BUG-3 | `hallOfFame` `inductionYear` off-by-one on year boundaries (`floor(d/365)+1` vs canonical `floor((d-1)/365)+1`) | **CONFIRMED** | Canonical formula applied |
-| — | `jockeyPhase` renewal hardcodes `+90` while hires use `JOCKEY_CONTRACT_DAYS` | **CONFIRMED (latent)** | Constant substituted (values equal today; prevents drift) |
+| ID    | Finding                                                                                                         | Verdict                | Fix                                                                       |
+| ----- | --------------------------------------------------------------------------------------------------------------- | ---------------------- | ------------------------------------------------------------------------- |
+| BUG-1 | `generateUUIDWithValidation` — dead code, CJS `require()` in ESM/browser path                                   | **CONFIRMED**          | Function deleted; `uuidRegistry` infra + tests retained                   |
+| BUG-2 | `npcCompression` drops energy/fitness/fatigue/form/peakingIndex/recoveryPoints on save→load                     | **CONFIRMED**          | `NpcHorseSummary` extended; fields persisted and restored on regeneration |
+| BUG-3 | `hallOfFame` `inductionYear` off-by-one on year boundaries (`floor(d/365)+1` vs canonical `floor((d-1)/365)+1`) | **CONFIRMED**          | Canonical formula applied                                                 |
+| —     | `jockeyPhase` renewal hardcodes `+90` while hires use `JOCKEY_CONTRACT_DAYS`                                    | **CONFIRMED (latent)** | Constant substituted (values equal today; prevents drift)                 |
 
 ## Documented smells (not fixed — bounded or intentional)
 
@@ -48,29 +48,29 @@ outside this window, by design.
 
 ## Open-PR verdicts (#551–#572 excl. #562)
 
-| PR | Title | Verdict | Outcome |
-| --- | --- | --- | --- |
-| #551 | Distance Change Specialist | **APPROVED** | Ported — `detectDistanceChange`, Stretch-Out/Cutback |
-| #552 | Foal milestone tests | **APPROVED (coverage)** | Ported to `tests/core/race/foalMilestoneActions.test.ts` |
-| #553 | Enriched race context commentary | **APPROVED** | Template expansion ported |
-| #554 | Deduplicate handler logic | **SUPERSEDED** | By #568 (same change, current-layer form) |
-| #555 | `getG1WinsForJockey` tests | **APPROVED (coverage)** | Appended to `connectionTrophies.test.ts` |
-| #556 | Auction sale confirmation | **APPROVED** | AlertDialog ported; RED→GREEN test |
-| #557 | `getDynamicProfile` spread removal | **APPROVED** | Hot-path optimization ported |
-| #558 | `regions.ts` tests | **APPROVED (coverage)** | Ported |
-| #559 | PrivateTrial DisabledTooltipWrapper | **APPROVED** | Ported |
-| #560 | LEAD_CHANGE/SURGE commentary | **APPROVED** | Template expansion ported |
-| #561 | Standardize Diplomacy/Inbox handlers | **SUPERSEDED** | By #568 |
-| #563 | Drop branded-ID casts | **APPROVED** | Ported |
-| #564 | `houseQuotes` tests | **APPROVED (coverage)** | Ported |
-| #565 | Atmosphere commentary templates | **APPROVED** | Template expansion ported |
-| #566 | Earnings-per-Start insight + CI | **MERGED + APPROVED** | Detector merged into tiered `detectEarningsPerStart` with #569; CI fixture step + linux snapshots ported |
-| #567 | ARIA label — Exchange return | **APPROVED** | Ported |
-| #568 | Standardized handler routing | **APPROVED** | The canonical version; ported |
-| #569 | Earnings Yield insight | **MERGED** | Tiered thresholds merged with #566 into one detector (verbatim ports were mutually exclusive — first-match-wins + overlapping ranges) |
-| #570 | O(N) `topLot` | **APPROVED** | Ported |
-| #571 | Attachment evaluation tests | **APPROVED (coverage)** | Ported to `tests/core/horse/attachment.test.ts` |
-| #572 | aria-labels on raw inputs | **APPROVED** | Ported (DebtBanner, TransactionLedger) |
+| PR   | Title                                | Verdict                 | Outcome                                                                                                                               |
+| ---- | ------------------------------------ | ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| #551 | Distance Change Specialist           | **APPROVED**            | Ported — `detectDistanceChange`, Stretch-Out/Cutback                                                                                  |
+| #552 | Foal milestone tests                 | **APPROVED (coverage)** | Ported to `tests/core/race/foalMilestoneActions.test.ts`                                                                              |
+| #553 | Enriched race context commentary     | **APPROVED**            | Template expansion ported                                                                                                             |
+| #554 | Deduplicate handler logic            | **SUPERSEDED**          | By #568 (same change, current-layer form)                                                                                             |
+| #555 | `getG1WinsForJockey` tests           | **APPROVED (coverage)** | Appended to `connectionTrophies.test.ts`                                                                                              |
+| #556 | Auction sale confirmation            | **APPROVED**            | AlertDialog ported; RED→GREEN test                                                                                                    |
+| #557 | `getDynamicProfile` spread removal   | **APPROVED**            | Hot-path optimization ported                                                                                                          |
+| #558 | `regions.ts` tests                   | **APPROVED (coverage)** | Ported                                                                                                                                |
+| #559 | PrivateTrial DisabledTooltipWrapper  | **APPROVED**            | Ported                                                                                                                                |
+| #560 | LEAD_CHANGE/SURGE commentary         | **APPROVED**            | Template expansion ported                                                                                                             |
+| #561 | Standardize Diplomacy/Inbox handlers | **SUPERSEDED**          | By #568                                                                                                                               |
+| #563 | Drop branded-ID casts                | **APPROVED**            | Ported                                                                                                                                |
+| #564 | `houseQuotes` tests                  | **APPROVED (coverage)** | Ported                                                                                                                                |
+| #565 | Atmosphere commentary templates      | **APPROVED**            | Template expansion ported                                                                                                             |
+| #566 | Earnings-per-Start insight + CI      | **MERGED + APPROVED**   | Detector merged into tiered `detectEarningsPerStart` with #569; CI fixture step + linux snapshots ported                              |
+| #567 | ARIA label — Exchange return         | **APPROVED**            | Ported                                                                                                                                |
+| #568 | Standardized handler routing         | **APPROVED**            | The canonical version; ported                                                                                                         |
+| #569 | Earnings Yield insight               | **MERGED**              | Tiered thresholds merged with #566 into one detector (verbatim ports were mutually exclusive — first-match-wins + overlapping ranges) |
+| #570 | O(N) `topLot`                        | **APPROVED**            | Ported                                                                                                                                |
+| #571 | Attachment evaluation tests          | **APPROVED (coverage)** | Ported to `tests/core/horse/attachment.test.ts`                                                                                       |
+| #572 | aria-labels on raw inputs            | **APPROVED**            | Ported (DebtBanner, TransactionLedger)                                                                                                |
 
 ## #566 vs #569 merge rationale
 
@@ -97,16 +97,16 @@ Clustered by bot-role/intent. Verdicts:
 
 ## RED/COVERAGE ledger
 
-| Item | Status |
-| --- | --- |
-| AuctionHouseDesk confirmation | RED→GREEN (dialog missing pre-impl) |
-| hallOfFame off-by-one | RED→GREEN |
-| npcCompression condition round-trip | RED→GREEN |
-| insightDistanceChange | RED→GREEN |
-| detectEarningsPerStart (merged) | RED→GREEN |
-| attachment, houseQuotes, connectionTrophies, foalMilestoneActions, regions | COVERAGE (green on first run) |
-| Diplomacy/Inbox refactor | characterization tests green before+after |
-| getDynamicProfile / topLot / cast removal | behavior-preserving; suite green |
+| Item                                                                       | Status                                    |
+| -------------------------------------------------------------------------- | ----------------------------------------- |
+| AuctionHouseDesk confirmation                                              | RED→GREEN (dialog missing pre-impl)       |
+| hallOfFame off-by-one                                                      | RED→GREEN                                 |
+| npcCompression condition round-trip                                        | RED→GREEN                                 |
+| insightDistanceChange                                                      | RED→GREEN                                 |
+| detectEarningsPerStart (merged)                                            | RED→GREEN                                 |
+| attachment, houseQuotes, connectionTrophies, foalMilestoneActions, regions | COVERAGE (green on first run)             |
+| Diplomacy/Inbox refactor                                                   | characterization tests green before+after |
+| getDynamicProfile / topLot / cast removal                                  | behavior-preserving; suite green          |
 
 ## Residual risks
 
