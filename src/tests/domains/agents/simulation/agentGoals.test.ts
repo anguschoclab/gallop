@@ -15,14 +15,12 @@ import {
 } from "@/domains/agents/simulation/agentGoals";
 import { NPC_ACTION_REGISTRY } from "@/domains/agents/simulation/npcActionRegistry";
 import { buildNpcObservation } from "@/domains/agents/simulation/agentObservation";
-import { createInitialState } from "@/platform/game/store/initialization";
+import { makeMockGameState } from "@/tests/store/helpers/mockState";
 import { createTestStable } from "@/tests/helpers/createTestStable";
 import type { GameState } from "@/platform/game/types";
 
 function makeState(overrides: Partial<GameState> = {}): GameState {
-  const base = createInitialState();
-  Object.assign(base, overrides);
-  return base;
+  return makeMockGameState(overrides) as GameState;
 }
 
 function makeContext(overrides: Partial<GoalContext> = {}): GoalContext {
