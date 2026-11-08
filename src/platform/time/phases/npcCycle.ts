@@ -17,7 +17,6 @@ import type {
   NewsImpact,
   ReputationImpact,
   CashImpact,
-  FameImpact,
   FanCountImpact,
 } from "@/platform/resolver/impacts";
 import { generateUUID } from "@/shared/uuid/uuid";
