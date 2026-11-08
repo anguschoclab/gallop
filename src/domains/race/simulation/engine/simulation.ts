@@ -127,36 +127,52 @@ export function stepRunner(
   // runner toward the field slot that matches their running style instead of
   // letting front-runners dash far ahead when the rest of the field starts slow.
   let seekMul = 1;
-  const profile = getDynamicProfile(
-    r.runningStyle,
-    pace?.paceRating ?? 1.0,
-    sortedField ? sortedField.length : 1,
-    progress,
-    r.horse,
-    r.jockey,
-  );
-  if (progress < POSITION_SEEK_PROGRESS && sortedField && sortedField.length > 1) {
+
+  // Conditionally get profile only if needed by seek or spurt windows to avoid
+  // allocating a new object on every tick for every runner.
+  let profile = undefined;
+  const distanceRemaining = distance - r.position;
+  const inSeekWindow = progress < POSITION_SEEK_PROGRESS && sortedField && sortedField.length > 1;
+  const inSpurtWindow = distanceRemaining <= SPURT_BUILDUP_START_M && distanceRemaining > 0;
+
+  if (inSeekWindow || inSpurtWindow) {
+    profile = getDynamicProfile(
+      r.runningStyle,
+      pace?.paceRating ?? 1.0,
+      sortedField ? sortedField.length : 1,
+      progress,
+      r.horse,
+      r.jockey,
+    );
+  }
+
+  if (inSeekWindow) {
     // Use pre-computed rank if provided (avoids O(n) filter+findIndex per runner)
     let rank = rankFromFront ?? -1;
-    let runnerAliveCount = aliveCount ?? sortedField.filter((o) => o.finishTime === null).length;
+    let runnerAliveCount = aliveCount ?? sortedField!.filter((o) => o.finishTime === null).length;
     if (rank < 0) {
-      const aliveField = sortedField.filter((o) => o.finishTime === null);
+      const aliveField = sortedField!.filter((o) => o.finishTime === null);
       runnerAliveCount = aliveField.length;
       rank = aliveField.findIndex((o) => o.horseId === r.horseId);
     }
     if (rank >= 0 && runnerAliveCount > 1) {
       const fieldFraction = rank / (runnerAliveCount - 1);
-      const preferred = profile.preferredFieldFraction;
+      const preferred = profile!.preferredFieldFraction;
       // Positive delta = horse is further forward than its preferred slot.
       const delta = preferred - fieldFraction;
       // Fade the effect linearly as we leave the opening.
       const phase = 1 - progress / POSITION_SEEK_PROGRESS;
       if (delta < 0) {
         // ahead of preferred slot -> ease off
-        seekMul = 1 - Math.min(profile.seekMaxDampen, -delta * profile.seekDampenSlope) * phase;
+        const dampenAmt = -delta * profile!.seekDampenSlope;
+        const boundedDampen =
+          dampenAmt < profile!.seekMaxDampen ? dampenAmt : profile!.seekMaxDampen;
+        seekMul = 1 - boundedDampen * phase;
       } else if (delta > 0) {
         // behind preferred slot -> small push to claim position
-        seekMul = 1 + Math.min(profile.seekMaxBoost, delta * profile.seekBoostSlope) * phase;
+        const boostAmt = delta * profile!.seekBoostSlope;
+        const boundedBoost = boostAmt < profile!.seekMaxBoost ? boostAmt : profile!.seekMaxBoost;
+        seekMul = 1 + boundedBoost * phase;
       }
     }
   }
@@ -166,14 +182,13 @@ export function stepRunner(
   // so the closing kick isn't a hard switch at one progress threshold. Closers
   // and stalkers get a slightly stronger ramp.
   let spurtMul = 1;
-  const distanceRemaining = distance - r.position;
-  if (distanceRemaining <= SPURT_BUILDUP_START_M && distanceRemaining > 0) {
+  if (inSpurtWindow) {
     const ramp = clamp(
       (SPURT_BUILDUP_START_M - distanceRemaining) / (SPURT_BUILDUP_START_M - SPURT_BUILDUP_END_M),
       0,
       1,
     );
-    spurtMul = 1 + (SPURT_BUILDUP_PEAK + profile.spurtBuildupExtra) * ramp;
+    spurtMul = 1 + (SPURT_BUILDUP_PEAK + profile!.spurtBuildupExtra) * ramp;
   }
   r.lastSpurtContribution = spurtMul - 1;
 
@@ -192,7 +207,9 @@ export function stepRunner(
   // Noise amplitude grows with fatigue (1 - staminaMul), and is biased
   // toward negative outcomes so tired horses fade rather than surge.
   // Exactly one rng.next() call per runner per tick (determinism preserved).
-  const fatigueAmp = 1 + Math.max(0, 1 - staminaMul) * NOISE_FATIGUE_SCALE;
+  const staminaDeficit = 1 - staminaMul;
+  const boundedDeficit = staminaDeficit > 0 ? staminaDeficit : 0;
+  const fatigueAmp = 1 + boundedDeficit * NOISE_FATIGUE_SCALE;
   const noiseValue = (rng.next() - NOISE_BIAS) * NOISE_BASE_AMPLITUDE * r.noise * fatigueAmp;
   const noiseMul = 1 + noiseValue;
   const targetSpeed =
