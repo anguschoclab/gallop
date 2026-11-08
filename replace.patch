@@ -1,0 +1,17 @@
+<<<<<<< SEARCH
+  it("1st place → fame delta 5", () => {
+    const horse = createTestColt({ id: "h1" });
+    const impacts = runSingle(horse, 1, makeOpenRace());
+    const fame = impacts.find((i) => i.type === "fame_change" && (i as any).horseId === "h1");
+    expect(fame).toBeDefined();
+    expect((fame as any).delta).toBe(5); // FAME_GAIN_OTHER_WIN = 5
+  });
+=======
+  it("1st place → fame delta 4", () => {
+    const horse = createTestColt({ id: "h1" });
+    const impacts = runSingle(horse, 1, makeOpenRace());
+    const fame = impacts.find((i) => i.type === "fame_change" && (i as any).horseId === "h1");
+    expect(fame).toBeDefined();
+    expect((fame as any).delta).toBe(4);
+  });
+>>>>>>> REPLACE
