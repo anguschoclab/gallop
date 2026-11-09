@@ -12,19 +12,19 @@ Per-file review ledger. Verdicts: `clean` / `fixed:<id>` / `noted:<smell>` / `ge
 
 Tests written in Phase 3 that MUST fail until their implementation batch lands. Premature-green = intent already covered → re-triage.
 
-| Test file / case | Encodes | Batch |
-| --- | --- | --- |
-| `core/horse/insightRegistry.test.ts` | 27 detectors, new order (CareerMaiden @1.15, BoomOrBust @1.3, BigFieldSpecialist @1.96, FieldSizeAffinity @4.1) | C Tipster |
-| `core/horse/insightFieldSizeAffinity.test.ts` | large≥10/small≤7, ≥3 each, margin +8; "Traffic Weaver"/positive, "Needs Room"/negative | C |
-| `core/horse/insightBigField.test.ts` | PR 595 contract verbatim (Crowd Surfer; ≥12 vs ≤8; needs ≥1 big win) | C |
-| `core/horse/insightCareerMaiden.test.ts` | PR 625 contract (≥10 winless; negative; placing count in context) | C |
-| `core/horse/insightBoomOrBust.test.ts` | PR 613 contract (≥6 starts; wins≥2; unplaced≥3; ≥0.8 ratio; neutral) | C |
-| `core/narrative/followUpRaceNews.test.ts` | ≥30 headlines incl. 4 named enriched templates; enriched bodies; guards intact | A Herald |
-| `core/race/engine/blockingVelocity.test.ts` | PR 585: `blockingHorseVelocity` cached on Runner; boxed-in cap uses it; cleared each detect | F Bolt |
-| `core/resolver/handlers/baseHandler.test.ts` | all 10 handlers `instanceof BaseHandler`; dispatch map contract | E Mason |
-| `core/race/engine/trackGeometryModifiers.test.ts` | signature `(r, section, course)` — compile-red until Batch F | F |
-| `components/VetReport.test.tsx` (tweak) | getAllByText — EmptyState render | B UI |
-| `lib/arrayHelpers.test.ts` (edge cases) | pins existing semantics pre-optimization — GREEN already | F |
+| Test file / case                                  | Encodes                                                                                                         | Batch     |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | --------- |
+| `core/horse/insightRegistry.test.ts`              | 27 detectors, new order (CareerMaiden @1.15, BoomOrBust @1.3, BigFieldSpecialist @1.96, FieldSizeAffinity @4.1) | C Tipster |
+| `core/horse/insightFieldSizeAffinity.test.ts`     | large≥10/small≤7, ≥3 each, margin +8; "Traffic Weaver"/positive, "Needs Room"/negative                          | C         |
+| `core/horse/insightBigField.test.ts`              | PR 595 contract verbatim (Crowd Surfer; ≥12 vs ≤8; needs ≥1 big win)                                            | C         |
+| `core/horse/insightCareerMaiden.test.ts`          | PR 625 contract (≥10 winless; negative; placing count in context)                                               | C         |
+| `core/horse/insightBoomOrBust.test.ts`            | PR 613 contract (≥6 starts; wins≥2; unplaced≥3; ≥0.8 ratio; neutral)                                            | C         |
+| `core/narrative/followUpRaceNews.test.ts`         | ≥30 headlines incl. 4 named enriched templates; enriched bodies; guards intact                                  | A Herald  |
+| `core/race/engine/blockingVelocity.test.ts`       | PR 585: `blockingHorseVelocity` cached on Runner; boxed-in cap uses it; cleared each detect                     | F Bolt    |
+| `core/resolver/handlers/baseHandler.test.ts`      | all 10 handlers `instanceof BaseHandler`; dispatch map contract                                                 | E Mason   |
+| `core/race/engine/trackGeometryModifiers.test.ts` | signature `(r, section, course)` — compile-red until Batch F                                                    | F         |
+| `components/VetReport.test.tsx` (tweak)           | getAllByText — EmptyState render                                                                                | B UI      |
+| `lib/arrayHelpers.test.ts` (edge cases)           | pins existing semantics pre-optimization — GREEN already                                                        | F         |
 
 Already-green characterization (no new spec needed): `factorLedger.test.ts` (recordTick pinning), `handlerRegistry`/`handlerCanHandle`, `StableCompareTable` empty case, `SyndicateMarket` empty case, `sectionalAnalysis.test.ts` (ported 627 — will re-verify after Batch F rewrite).
 
