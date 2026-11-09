@@ -127,54 +127,57 @@ export function stepRunner(
   // runner toward the field slot that matches their running style instead of
   // letting front-runners dash far ahead when the rest of the field starts slow.
   let seekMul = 1;
-  const profile = getDynamicProfile(
-    r.runningStyle,
-    pace?.paceRating ?? 1.0,
-    sortedField ? sortedField.length : 1,
-    progress,
-    r.horse,
-    r.jockey,
-  );
-  if (progress < POSITION_SEEK_PROGRESS && sortedField && sortedField.length > 1) {
-    // Use pre-computed rank if provided (avoids O(n) filter+findIndex per runner)
-    let rank = rankFromFront ?? -1;
-    let runnerAliveCount = aliveCount ?? sortedField.filter((o) => o.finishTime === null).length;
-    if (rank < 0) {
-      const aliveField = sortedField.filter((o) => o.finishTime === null);
-      runnerAliveCount = aliveField.length;
-      rank = aliveField.findIndex((o) => o.horseId === r.horseId);
-    }
-    if (rank >= 0 && runnerAliveCount > 1) {
-      const fieldFraction = rank / (runnerAliveCount - 1);
-      const preferred = profile.preferredFieldFraction;
-      // Positive delta = horse is further forward than its preferred slot.
-      const delta = preferred - fieldFraction;
-      // Fade the effect linearly as we leave the opening.
-      const phase = 1 - progress / POSITION_SEEK_PROGRESS;
-      if (delta < 0) {
-        // ahead of preferred slot -> ease off
-        seekMul = 1 - Math.min(profile.seekMaxDampen, -delta * profile.seekDampenSlope) * phase;
-      } else if (delta > 0) {
-        // behind preferred slot -> small push to claim position
-        seekMul = 1 + Math.min(profile.seekMaxBoost, delta * profile.seekBoostSlope) * phase;
-      }
-    }
-  }
-  r.lastSeekContribution = seekMul - 1;
-
-  // Final-spurt buildup: gradually ramp velocity between 600m and 400m to go,
-  // so the closing kick isn't a hard switch at one progress threshold. Closers
-  // and stalkers get a slightly stronger ramp.
   let spurtMul = 1;
   const distanceRemaining = distance - r.position;
-  if (distanceRemaining <= SPURT_BUILDUP_START_M && distanceRemaining > 0) {
-    const ramp = clamp(
-      (SPURT_BUILDUP_START_M - distanceRemaining) / (SPURT_BUILDUP_START_M - SPURT_BUILDUP_END_M),
-      0,
-      1,
+
+  // Avoid creating profile if not in seek or spurt windows
+  const isSeekPhase = progress < POSITION_SEEK_PROGRESS && sortedField && sortedField.length > 1;
+  const isSpurtPhase = distanceRemaining <= SPURT_BUILDUP_START_M && distanceRemaining > 0;
+
+  if (isSeekPhase || isSpurtPhase) {
+    const profile = getDynamicProfile(
+      r.runningStyle,
+      pace?.paceRating ?? 1.0,
+      sortedField ? sortedField.length : 1,
+      progress,
+      r.horse,
+      r.jockey,
     );
-    spurtMul = 1 + (SPURT_BUILDUP_PEAK + profile.spurtBuildupExtra) * ramp;
+
+    // Early-race position seeking
+    if (isSeekPhase) {
+      let rank = rankFromFront ?? -1;
+      let runnerAliveCount = aliveCount ?? sortedField!.filter((o) => o.finishTime === null).length;
+      if (rank < 0) {
+        const aliveField = sortedField!.filter((o) => o.finishTime === null);
+        runnerAliveCount = aliveField.length;
+        rank = aliveField.findIndex((o) => o.horseId === r.horseId);
+      }
+      if (rank >= 0 && runnerAliveCount > 1) {
+        const fieldFraction = rank / (runnerAliveCount - 1);
+        const preferred = profile.preferredFieldFraction;
+        const delta = preferred - fieldFraction;
+        const phase = 1 - progress / POSITION_SEEK_PROGRESS;
+        if (delta < 0) {
+          seekMul = 1 - Math.min(profile.seekMaxDampen, -delta * profile.seekDampenSlope) * phase;
+        } else if (delta > 0) {
+          seekMul = 1 + Math.min(profile.seekMaxBoost, delta * profile.seekBoostSlope) * phase;
+        }
+      }
+    }
+
+    // Final-spurt buildup
+    if (isSpurtPhase) {
+      const ramp = clamp(
+        (SPURT_BUILDUP_START_M - distanceRemaining) / (SPURT_BUILDUP_START_M - SPURT_BUILDUP_END_M),
+        0,
+        1,
+      );
+      spurtMul = 1 + (SPURT_BUILDUP_PEAK + profile.spurtBuildupExtra) * ramp;
+    }
   }
+
+  r.lastSeekContribution = seekMul - 1;
   r.lastSpurtContribution = spurtMul - 1;
 
   const { speedMod: windSpeedMod, staminaMod: windStaminaMod } = calculateWindEffect(
