@@ -10,8 +10,8 @@ import { describe, it, expect } from "vitest";
 import { INSIGHT_DETECTORS } from "@/domains/horse/simulation/insightDetectors";
 
 describe("INSIGHT_DETECTORS registry order", () => {
-  it("has exactly 27 detectors", () => {
-    expect(INSIGHT_DETECTORS).toHaveLength(27);
+  it("has exactly 28 detectors", () => {
+    expect(INSIGHT_DETECTORS).toHaveLength(28);
   });
 
   it("preserves the original priority order", () => {
@@ -36,6 +36,7 @@ describe("INSIGHT_DETECTORS registry order", () => {
       "detectImprovingForm", // 1.5 Trending Up
       "detectStakesPerformance", // 1.6 Big Stage Performer / Stage Fright
       "detectFreshness", // 1.7 Fires Fresh / Needs Racing
+      "detectEarlySpeed", // 1.75 Early Speed / Pacesetter
       "detectPlayStyle", // 1.8 Tactical Versatility / Catch Me If You Can
       "detectClosingKick", // 1.9 Closing Kick
       "detectLateBloomer", // 1.91 Late Bloomer
