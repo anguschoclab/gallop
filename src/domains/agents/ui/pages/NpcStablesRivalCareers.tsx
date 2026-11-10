@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ComponentProps } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
@@ -19,6 +19,7 @@ import {
   rivalRankingsForDay,
   type NpcCareerStage,
   type RankingsBaseline,
+  type RivalCareerProfile,
 } from "@/domains/agents/application/npcFacade";
 import { RivalCareerCompareTable } from "@/domains/stable/ui/RivalCareerCompareTable";
 import { RivalMilestoneFilters } from "@/domains/stable/ui/RivalMilestoneFilters";
@@ -29,7 +30,7 @@ import {
 import { PillToggleGroup } from "@/shared/ui/common/PillToggleGroup";
 import { FilterSelect } from "@/domains/jockey/ui/FilterSelect";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
-import { useGameWithShallow } from "@/platform/game/store";
+import { useGame, useGameWithShallow } from "@/platform/game/store";
 import {
   useRivalCareerFilters,
   type RivalCareerCandidate,
@@ -105,30 +106,11 @@ const FAME_OPTIONS = [
   { value: "75", label: "75+" },
 ];
 
-export function NpcStablesRivalCareers() {
-  const horses = useHorses();
-  const day = useDay();
-  const npcStables = useNpcStables();
-  const [selected, setSelected] = useState<string[]>([]);
-  const { rankingsHistory, stableRankingsHistory, playerProfile } = useGameWithShallow((s) => ({
-    rankingsHistory: s.rankingsHistory,
-    stableRankingsHistory: s.stableRankingsHistory,
-    playerProfile: s.playerProfile,
-  }));
-  const [baselineMode, setBaselineMode] = useState<"stable" | "horse">("stable");
-  const [baselineHorseId, setBaselineHorseId] = useState<string | null>(null);
-  const [rankingsDay, setRankingsDay] = useState<number | null>(null);
-  const [milestoneFilter, setMilestoneFilter] = useState<RivalMilestoneFilter>({
-    kinds: [],
-    stages: [],
-  });
+type RankingsHistory = ReturnType<typeof useGame.getState>["rankingsHistory"];
+type CareerFilterState = ReturnType<typeof useRivalCareerFilters>;
+type RankingsColumns = ComponentProps<typeof RivalCareerCompareTable>["rankings"];
 
-  const stableNames = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const s of npcStables ?? []) map[s.id] = s.name;
-    return map;
-  }, [npcStables]);
-
+function useRivalCandidates(horses: ReturnType<typeof useHorses>) {
   const rivals = useMemo(() => {
     const list = Object.values(horses)
       .filter((h: Horse) => !isPlayerOwned(h) && !!getStableId(h))
@@ -155,8 +137,37 @@ export function NpcStablesRivalCareers() {
     });
   }, [rivals]);
 
-  const { filters, patch, filtered, reset, hasActiveFilters } = useRivalCareerFilters(candidates);
-  const shown = filtered.slice(0, 40);
+  const careerFilters = useRivalCareerFilters(candidates);
+  const shown = careerFilters.filtered.slice(0, 40);
+
+  return { rivals, candidates, careerFilters, shown };
+}
+
+function useRivalCareerData() {
+  const horses = useHorses();
+  const day = useDay();
+  const npcStables = useNpcStables();
+  const [selected, setSelected] = useState<string[]>([]);
+  const { rankingsHistory, stableRankingsHistory, playerProfile } = useGameWithShallow((s) => ({
+    rankingsHistory: s.rankingsHistory,
+    stableRankingsHistory: s.stableRankingsHistory,
+    playerProfile: s.playerProfile,
+  }));
+  const [baselineMode, setBaselineMode] = useState<"stable" | "horse">("stable");
+  const [baselineHorseId, setBaselineHorseId] = useState<string | null>(null);
+  const [rankingsDay, setRankingsDay] = useState<number | null>(null);
+  const [milestoneFilter, setMilestoneFilter] = useState<RivalMilestoneFilter>({
+    kinds: [],
+    stages: [],
+  });
+
+  const stableNames = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const s of npcStables ?? []) map[s.id] = s.name;
+    return map;
+  }, [npcStables]);
+
+  const { rivals, candidates, careerFilters, shown } = useRivalCandidates(horses);
 
   const profiles = useMemo(() => {
     const byId = new Map(rivals.map((h) => [h.id, h]));
@@ -235,6 +246,34 @@ export function NpcStablesRivalCareers() {
           : [...prev, id],
     );
 
+  return {
+    selected,
+    setSelected,
+    careerFilters,
+    shown,
+    candidates,
+    stableNames,
+    profiles,
+    timelineProfiles,
+    baselineMode,
+    setBaselineMode,
+    baseline,
+    setBaselineHorseId,
+    playerHorses,
+    rankingsHistory,
+    comparisonDays,
+    activeRankingsDay,
+    setRankingsDay,
+    milestoneFilter,
+    setMilestoneFilter,
+    rankingsColumns,
+    toggle,
+  };
+}
+
+export function NpcStablesRivalCareers() {
+  const d = useRivalCareerData();
+
   return (
     <div className="space-y-6">
       <div>
@@ -247,177 +286,284 @@ export function NpcStablesRivalCareers() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader className="flex-row items-center justify-between gap-3">
-          <CardTitle className="text-lg">Select Rivals</CardTitle>
-          <div className="flex items-center gap-2">
-            {selected.length > 0 && (
-              <Button variant="ghost" size="sm" onClick={() => setSelected([])}>
-                Clear
-              </Button>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap items-end gap-3 mb-3">
-            <Input
-              placeholder="Filter by name..."
-              value={filters.search}
-              onChange={(e) => patch({ search: e.target.value })}
-              className="max-w-xs"
-            />
-            <PillToggleGroup
-              label="Sort by"
-              options={SORT_OPTIONS}
-              value={filters.sort}
-              onChange={(sort) => patch({ sort })}
-              ariaLabel="Sort rival list"
-            />
-            {hasActiveFilters && (
-              <Button variant="ghost" size="sm" onClick={reset}>
-                Reset filters
-              </Button>
-            )}
-          </div>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6 mb-3">
-            <FilterSelect
-              label="Stage"
-              value={filters.stage}
-              options={STAGE_OPTIONS}
-              onChange={(stage) => patch({ stage })}
-            />
-            <FilterSelect
-              label="Age"
-              value={filters.age}
-              options={AGE_OPTIONS}
-              onChange={(age) => patch({ age })}
-            />
-            <FilterSelect
-              label="Min wins"
-              value={filters.minWins}
-              options={WINS_OPTIONS}
-              onChange={(minWins) => patch({ minWins })}
-            />
-            <FilterSelect
-              label="Min starts"
-              value={filters.minStarts}
-              options={STARTS_OPTIONS}
-              onChange={(minStarts) => patch({ minStarts })}
-            />
-            <FilterSelect
-              label="Min earnings"
-              value={filters.minEarnings}
-              options={EARNINGS_OPTIONS}
-              onChange={(minEarnings) => patch({ minEarnings })}
-            />
-            <FilterSelect
-              label="Min fame"
-              value={filters.minFame}
-              options={FAME_OPTIONS}
-              onChange={(minFame) => patch({ minFame })}
-            />
-          </div>
-          <p className="text-xs text-muted-foreground mb-2">
-            Showing {shown.length} of {candidates.length} notable rivals.
-          </p>
-          <div className="space-y-2">
-            {shown.map((c) => {
-              const checked = selected.includes(c.id);
-              const disabled = !checked && selected.length >= MAX_RIVAL_COMPARE;
-              return (
-                <label
-                  key={c.id}
-                  className="flex items-center gap-3 rounded-md border border-border/50 p-2 hover:bg-card/50 cursor-pointer"
-                >
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    disabled={disabled}
-                    onChange={() => toggle(c.id)}
-                    aria-label={c.name}
-                    className="h-4 w-4 rounded border-border"
-                  />
-                  <span className="text-sm text-foreground">{c.name}</span>
-                  <span className="text-xs text-muted-foreground">
-                    {c.age}Y · {(c.stableId && stableNames[c.stableId]) || "Unattached"} ·{" "}
-                    {careerStageLabel(c.stage as NpcCareerStage)} · {c.wins}W/{c.starts}S ·{" "}
-                    {formatCurrency(c.earnings)} · Fame {c.fame}
-                  </span>
-                </label>
-              );
-            })}
-            {shown.length === 0 && (
-              <p className="text-sm text-muted-foreground py-4 text-center">
-                No notable rivals match the current filters.
-              </p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
+      <SelectRivalsCard
+        careerFilters={d.careerFilters}
+        shown={d.shown}
+        candidateCount={d.candidates.length}
+        selected={d.selected}
+        stableNames={d.stableNames}
+        onToggle={d.toggle}
+        onClear={() => d.setSelected([])}
+      />
 
-      <Card>
-        <CardHeader className="flex-row items-center justify-between gap-3 flex-wrap">
-          <CardTitle className="text-lg">Career Comparison ({profiles.length})</CardTitle>
-          <div className="flex flex-wrap items-center gap-3">
-            <PillToggleGroup
-              label="Baseline"
-              options={[
-                { value: "stable", label: "My stable" },
-                { value: "horse", label: "My horse" },
-              ]}
-              value={baselineMode}
-              onChange={setBaselineMode}
-              ariaLabel="Rankings comparison baseline"
-            />
-            {baselineMode === "horse" && (
-              <Select
-                value={baseline.type === "horse" ? baseline.horseId : ""}
-                onValueChange={(v) => setBaselineHorseId(v)}
-              >
-                <SelectTrigger aria-label="Baseline horse" className="h-8 w-44 text-xs">
-                  <SelectValue placeholder="Pick a horse" />
-                </SelectTrigger>
-                <SelectContent>
-                  {playerHorses.map((h) => {
-                    const rank = rankingsHistory?.[h.id]?.at(-1)?.rank;
-                    return (
-                      <SelectItem key={h.id} value={h.id}>
-                        {h.name}
-                        {rank ? ` · #${rank}` : ""}
-                      </SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-            )}
-            {comparisonDays.length > 0 && (
-              <Select
-                value={String(activeRankingsDay)}
-                onValueChange={(v) => setRankingsDay(Number(v))}
-              >
-                <SelectTrigger aria-label="Comparison day" className="h-8 w-32 text-xs">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {comparisonDays.map((d) => (
-                    <SelectItem key={d} value={String(d)}>
-                      Day {d}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <RivalMilestoneFilters value={milestoneFilter} onChange={setMilestoneFilter} />
-          <RivalCareerCompareTable
-            profiles={timelineProfiles}
-            stableNames={stableNames}
-            rankings={rankingsColumns}
-          />
-        </CardContent>
-      </Card>
+      <CareerComparisonCard
+        profileCount={d.profiles.length}
+        baselineMode={d.baselineMode}
+        onBaselineModeChange={d.setBaselineMode}
+        baseline={d.baseline}
+        onBaselineHorseChange={d.setBaselineHorseId}
+        playerHorses={d.playerHorses}
+        rankingsHistory={d.rankingsHistory}
+        comparisonDays={d.comparisonDays}
+        activeRankingsDay={d.activeRankingsDay}
+        onRankingsDayChange={d.setRankingsDay}
+        milestoneFilter={d.milestoneFilter}
+        onMilestoneFilterChange={d.setMilestoneFilter}
+        profiles={d.timelineProfiles}
+        stableNames={d.stableNames}
+        rankings={d.rankingsColumns}
+      />
     </div>
+  );
+}
+
+interface SelectRivalsCardProps {
+  careerFilters: CareerFilterState;
+  shown: RivalCareerCandidate[];
+  candidateCount: number;
+  selected: string[];
+  stableNames: Record<string, string>;
+  onToggle: (id: string) => void;
+  onClear: () => void;
+}
+
+function SelectRivalsCard({
+  careerFilters,
+  shown,
+  candidateCount,
+  selected,
+  stableNames,
+  onToggle,
+  onClear,
+}: SelectRivalsCardProps) {
+  const { filters, patch, reset, hasActiveFilters } = careerFilters;
+  return (
+    <Card>
+      <CardHeader className="flex-row items-center justify-between gap-3">
+        <CardTitle className="text-lg">Select Rivals</CardTitle>
+        <div className="flex items-center gap-2">
+          {selected.length > 0 && (
+            <Button variant="ghost" size="sm" onClick={onClear}>
+              Clear
+            </Button>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="flex flex-wrap items-end gap-3 mb-3">
+          <Input
+            placeholder="Filter by name..."
+            value={filters.search}
+            onChange={(e) => patch({ search: e.target.value })}
+            className="max-w-xs"
+          />
+          <PillToggleGroup
+            label="Sort by"
+            options={SORT_OPTIONS}
+            value={filters.sort}
+            onChange={(sort) => patch({ sort })}
+            ariaLabel="Sort rival list"
+          />
+          {hasActiveFilters && (
+            <Button variant="ghost" size="sm" onClick={reset}>
+              Reset filters
+            </Button>
+          )}
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6 mb-3">
+          <FilterSelect
+            label="Stage"
+            value={filters.stage}
+            options={STAGE_OPTIONS}
+            onChange={(stage) => patch({ stage })}
+          />
+          <FilterSelect
+            label="Age"
+            value={filters.age}
+            options={AGE_OPTIONS}
+            onChange={(age) => patch({ age })}
+          />
+          <FilterSelect
+            label="Min wins"
+            value={filters.minWins}
+            options={WINS_OPTIONS}
+            onChange={(minWins) => patch({ minWins })}
+          />
+          <FilterSelect
+            label="Min starts"
+            value={filters.minStarts}
+            options={STARTS_OPTIONS}
+            onChange={(minStarts) => patch({ minStarts })}
+          />
+          <FilterSelect
+            label="Min earnings"
+            value={filters.minEarnings}
+            options={EARNINGS_OPTIONS}
+            onChange={(minEarnings) => patch({ minEarnings })}
+          />
+          <FilterSelect
+            label="Min fame"
+            value={filters.minFame}
+            options={FAME_OPTIONS}
+            onChange={(minFame) => patch({ minFame })}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground mb-2">
+          Showing {shown.length} of {candidateCount} notable rivals.
+        </p>
+        <div className="space-y-2">
+          {shown.map((c) => (
+            <RivalCandidateRow
+              key={c.id}
+              candidate={c}
+              checked={selected.includes(c.id)}
+              disabled={!selected.includes(c.id) && selected.length >= MAX_RIVAL_COMPARE}
+              stableName={(c.stableId && stableNames[c.stableId]) || undefined}
+              onToggle={onToggle}
+            />
+          ))}
+          {shown.length === 0 && (
+            <p className="text-sm text-muted-foreground py-4 text-center">
+              No notable rivals match the current filters.
+            </p>
+          )}
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function RivalCandidateRow({
+  candidate,
+  checked,
+  disabled,
+  stableName,
+  onToggle,
+}: {
+  candidate: RivalCareerCandidate;
+  checked: boolean;
+  disabled: boolean;
+  stableName: string | undefined;
+  onToggle: (id: string) => void;
+}) {
+  const c = candidate;
+  return (
+    <label className="flex items-center gap-3 rounded-md border border-border/50 p-2 hover:bg-card/50 cursor-pointer">
+      <input
+        type="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={() => onToggle(c.id)}
+        aria-label={c.name}
+        className="h-4 w-4 rounded border-border"
+      />
+      <span className="text-sm text-foreground">{c.name}</span>
+      <span className="text-xs text-muted-foreground">
+        {c.age}Y · {stableName ?? "Unattached"} · {careerStageLabel(c.stage as NpcCareerStage)} ·{" "}
+        {c.wins}W/{c.starts}S · {formatCurrency(c.earnings)} · Fame {c.fame}
+      </span>
+    </label>
+  );
+}
+
+interface CareerComparisonCardProps {
+  profileCount: number;
+  baselineMode: "stable" | "horse";
+  onBaselineModeChange: (mode: "stable" | "horse") => void;
+  baseline: RankingsBaseline;
+  onBaselineHorseChange: (horseId: string) => void;
+  playerHorses: Horse[];
+  rankingsHistory: RankingsHistory;
+  comparisonDays: number[];
+  activeRankingsDay: number | undefined;
+  onRankingsDayChange: (day: number) => void;
+  milestoneFilter: RivalMilestoneFilter;
+  onMilestoneFilterChange: (filter: RivalMilestoneFilter) => void;
+  profiles: RivalCareerProfile[];
+  stableNames: Record<string, string>;
+  rankings: RankingsColumns;
+}
+
+function CareerComparisonCard({
+  profileCount,
+  baselineMode,
+  onBaselineModeChange,
+  baseline,
+  onBaselineHorseChange,
+  playerHorses,
+  rankingsHistory,
+  comparisonDays,
+  activeRankingsDay,
+  onRankingsDayChange,
+  milestoneFilter,
+  onMilestoneFilterChange,
+  profiles,
+  stableNames,
+  rankings,
+}: CareerComparisonCardProps) {
+  return (
+    <Card>
+      <CardHeader className="flex-row items-center justify-between gap-3 flex-wrap">
+        <CardTitle className="text-lg">Career Comparison ({profileCount})</CardTitle>
+        <div className="flex flex-wrap items-center gap-3">
+          <PillToggleGroup
+            label="Baseline"
+            options={[
+              { value: "stable", label: "My stable" },
+              { value: "horse", label: "My horse" },
+            ]}
+            value={baselineMode}
+            onChange={onBaselineModeChange}
+            ariaLabel="Rankings comparison baseline"
+          />
+          {baselineMode === "horse" && (
+            <Select
+              value={baseline.type === "horse" ? baseline.horseId : ""}
+              onValueChange={(v) => onBaselineHorseChange(v)}
+            >
+              <SelectTrigger aria-label="Baseline horse" className="h-8 w-44 text-xs">
+                <SelectValue placeholder="Pick a horse" />
+              </SelectTrigger>
+              <SelectContent>
+                {playerHorses.map((h) => {
+                  const rank = rankingsHistory?.[h.id]?.at(-1)?.rank;
+                  return (
+                    <SelectItem key={h.id} value={h.id}>
+                      {h.name}
+                      {rank ? ` · #${rank}` : ""}
+                    </SelectItem>
+                  );
+                })}
+              </SelectContent>
+            </Select>
+          )}
+          {comparisonDays.length > 0 && (
+            <Select
+              value={String(activeRankingsDay)}
+              onValueChange={(v) => onRankingsDayChange(Number(v))}
+            >
+              <SelectTrigger aria-label="Comparison day" className="h-8 w-32 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {comparisonDays.map((d) => (
+                  <SelectItem key={d} value={String(d)}>
+                    Day {d}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <RivalMilestoneFilters value={milestoneFilter} onChange={onMilestoneFilterChange} />
+        <RivalCareerCompareTable
+          profiles={profiles}
+          stableNames={stableNames}
+          rankings={rankings}
+        />
+      </CardContent>
+    </Card>
   );
 }
