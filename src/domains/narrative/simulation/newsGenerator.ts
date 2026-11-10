@@ -54,6 +54,8 @@ function addConditionalRaceFlavor(
       `A sloppy track and steady downpour played right into the hooves of ${winner.name} today.`,
       `Braving the nasty weather, ${winner.name} proved to be a magnificent mudder in the ${race.name}.`,
       `The umbrellas were out in force, and so was ${winner.name}, swimming past rivals for a hard-fought win.`,
+      `Even a torrential downpour couldn't dampen ${winner.name}'s spirits on the way to a dominant ${race.name} victory.`,
+      `The track was a sea of mud, but ${winner.name} navigated it like a seasoned pro to win today.`,
     );
   } else if (race.weather === "sunny") {
     bodies.push(
@@ -62,6 +64,9 @@ function addConditionalRaceFlavor(
       `A beautiful sunny afternoon was the perfect backdrop for ${winner.name}'s flawless performance.`,
       `Fans soaked up the sun and cheered wildly as ${winner.name} dominated the ${race.name}.`,
       `Not a cloud in the sky, and not a doubt on the track: ${winner.name} was simply unbeatable today.`,
+      `Basking in the warm sunshine, ${winner.name} made light work of the field in a dazzling display.`,
+      `It was a glorious day for racing, matched only by ${winner.name}'s glorious performance in the ${race.name}.`,
+      `The glorious sunny conditions perfectly matched the brilliant run from ${winner.name} today.`,
     );
   } else if (race.weather === "cloudy") {
     bodies.push(
@@ -69,6 +74,9 @@ function addConditionalRaceFlavor(
       `The gloomy weather did nothing to dampen the spirits of ${winner.name}'s connections after a thrilling win.`,
       `Despite the threat of rain hanging in the grey clouds, the ${race.name} went off without a hitch, won by ${winner.name}.`,
       `On a cool, cloudy afternoon, ${winner.name} turned up the heat with a sensational stretch run.`,
+      `The dreary skies couldn't overshadow the absolute masterclass put on by ${winner.name} today.`,
+      `A heavy blanket of clouds set a dramatic scene for ${winner.name}'s hard-fought victory.`,
+      `While the weather was uninspiring, ${winner.name} delivered a truly inspiring performance in the ${race.name}.`,
     );
   } else if (race.weather === "sunset") {
     bodies.push(
@@ -76,6 +84,9 @@ function addConditionalRaceFlavor(
       `Bathed in the golden hour light, ${winner.name} looked magnificent striding to victory.`,
       `The twilight shadows stretched across the track as ${winner.name} secured a beautiful sunset victory.`,
       `A stunning sunset provided a majestic backdrop for ${winner.name}'s commanding win in the ${race.name}.`,
+      `Racing into the fading light, ${winner.name} produced a dazzling finish to claim the ${race.name}.`,
+      `The evening sky turned brilliant orange just as ${winner.name} swept past the leaders.`,
+      `A picture-perfect sunset victory for ${winner.name}, capping off a memorable day of racing.`,
     );
   } else if (race.weather === "night") {
     bodies.push(
@@ -83,6 +94,9 @@ function addConditionalRaceFlavor(
       `Racing under the stars, ${winner.name} illuminated the track with a breathtaking burst of speed.`,
       `The night air was electric as ${winner.name} powered home to secure a floodlit victory.`,
       `Friday night under the lights belongs to ${winner.name} after a spectacular performance in the ${race.name}.`,
+      `The grandstand lights reflected off ${winner.name} as they charged to a brilliant nighttime win.`,
+      `A chill in the night air couldn't cool off ${winner.name}, who ran red-hot in the ${race.name}.`,
+      `Racing in the dark proved no obstacle for ${winner.name}, finding the wire perfectly under the lights.`,
     );
   }
 
@@ -95,6 +109,8 @@ function addConditionalRaceFlavor(
       `Clockers were left shaking their heads after ${winner.name} scorched the fast dirt in the ${race.name}.`,
       `${winner.name} loved the firm going, skipping over the ground to record a remarkably swift time.`,
       `It was a track built for speed today, and ${winner.name} proved to be the fastest of them all.`,
+      `The track was playing extremely fast, and ${winner.name} thrived on it to post a dominant victory.`,
+      `A rock-hard surface yielded a spectacularly fast time for ${winner.name} in today's feature event.`,
     );
   } else if (race.trackCondition === "heavy" || race.trackCondition === "soft") {
     bodies.push(
@@ -104,6 +120,8 @@ function addConditionalRaceFlavor(
       `Winning on a ${race.trackCondition} track requires serious heart, something ${winner.name} displayed in spades today.`,
       `The holding ${race.trackCondition} ground made it a test of survival, and ${winner.name} was the last horse standing.`,
       `Stamina was the name of the game on this ${race.trackCondition} track, and ${winner.name} had plenty in reserve.`,
+      `Every stride was a battle on the ${race.trackCondition} turf, but ${winner.name} refused to yield.`,
+      `It took a gritty, determined effort for ${winner.name} to pull through the deep ${race.trackCondition} going.`,
     );
   }
 
@@ -116,6 +134,8 @@ function addConditionalRaceFlavor(
       `Pacing was everything in this ${race.distance}m marathon, and ${winner.name} received an absolutely brilliant ride.`,
       `As the early leaders faded over the ${race.distance}m trip, ${winner.name} just kept rolling relentlessly to the wire.`,
       `${winner.name}'s bottomless lungs were on full display, galloping relentlessly through the ${race.distance}m marathon.`,
+      `The ultimate test of endurance saw ${winner.name} outlast a weary field over the daunting ${race.distance}m distance.`,
+      `Stamina reserves were tested to the limit, but ${winner.name} proved a relentless galloper in the ${race.name}.`,
     );
   } else if (race.distance <= NEWS_SPRINT_DISTANCE_THRESHOLD) {
     bodies.push(
@@ -125,6 +145,8 @@ function addConditionalRaceFlavor(
       `Blink and you missed it: ${winner.name} blitzed the competition in a fiercely run ${race.distance}m sprint.`,
       `Raw, unadulterated speed was the key to ${winner.name}'s dominant performance over ${race.distance}m today.`,
       `${winner.name} proved to be a pure speedball, zipping through the ${race.distance}m distance in a flash.`,
+      `A frantic dash to the wire saw ${winner.name} emerge victorious in a white-knuckle ${race.distance}m sprint.`,
+      `The early speed of ${winner.name} was simply too much for the rest to handle over ${race.distance}m.`,
     );
   }
 
