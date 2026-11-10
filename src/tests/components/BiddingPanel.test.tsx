@@ -36,7 +36,9 @@ const defaultProps = () => ({
 
 describe("BiddingPanel", () => {
   it("renders nothing for a passed lot", () => {
-    const { container } = render(<BiddingPanel {...defaultProps()} currentLot={mkLot({ passed: true })} />);
+    const { container } = render(
+      <BiddingPanel {...defaultProps()} currentLot={mkLot({ passed: true })} />,
+    );
     expect(container).toBeEmptyDOMElement();
   });
 
@@ -76,7 +78,11 @@ describe("BiddingPanel", () => {
 
   it("shows buy-now control only when a price is set and not player-consigned", () => {
     const { rerender } = render(
-      <BiddingPanel {...defaultProps()} currentLot={mkLot({ buyNowPrice: 9000 })} buyNowPrice={9000} />,
+      <BiddingPanel
+        {...defaultProps()}
+        currentLot={mkLot({ buyNowPrice: 9000 })}
+        buyNowPrice={9000}
+      />,
     );
     expect(screen.getByRole("button", { name: /Buy Now/i })).toBeInTheDocument();
 

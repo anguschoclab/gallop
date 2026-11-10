@@ -7,10 +7,7 @@
  */
 
 import { describe, it, expect } from "vitest";
-import {
-  filterBookmarks,
-  sortBookmarks,
-} from "@/domains/bookmarks/model/bookmarkFilter";
+import { filterBookmarks, sortBookmarks } from "@/domains/bookmarks/model/bookmarkFilter";
 import type { Bookmark } from "@/platform/game/hooks/useBookmarks";
 
 function mkBookmark(overrides: Partial<Bookmark> = {}): Bookmark {

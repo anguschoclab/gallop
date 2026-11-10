@@ -16,8 +16,7 @@ vi.mock("@/domains/auction/application/hooks/useAuctionTheater", () => ({
 }));
 
 vi.mock("@/domains/agents/application/npcFacade", async (importOriginal) => {
-  const mod =
-    await importOriginal<typeof import("@/domains/agents/application/npcFacade")>();
+  const mod = await importOriginal<typeof import("@/domains/agents/application/npcFacade")>();
   return { ...mod, getDisplayableStats: () => null };
 });
 

@@ -103,7 +103,10 @@ describe("useSeasonPlanner", () => {
   it("setSireForMare / setLFGForMare / clearMare / clearAll manage assignments", () => {
     const { result } = renderHook(() => useSeasonPlanner());
     act(() => result.current.setSireForMare("m1", "st1"));
-    expect(result.current.assignments["m1"]).toMatchObject({ sireId: "st1", liveFoalGuarantee: false });
+    expect(result.current.assignments["m1"]).toMatchObject({
+      sireId: "st1",
+      liveFoalGuarantee: false,
+    });
     expect(result.current.assignedCount).toBe(1);
 
     act(() => result.current.setLFGForMare("m1", true));
