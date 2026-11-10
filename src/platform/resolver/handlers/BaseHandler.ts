@@ -16,7 +16,7 @@ import type {
 } from "@/platform/resolver/handlers/types";
 
 export abstract class BaseHandler<
-  T extends (...args: any[]) => any = ImpactHandlerFunction,
+  T extends (...args: any[]) => void = ImpactHandlerFunction,
 > implements ImpactHandler {
   protected abstract get handlers(): Record<string, T>;
 

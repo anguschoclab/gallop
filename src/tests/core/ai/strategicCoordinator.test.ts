@@ -72,7 +72,7 @@ function createMockGameState(overrides: Partial<GameState> = {}): GameState {
     breedingPrograms: [],
     awards: [],
     ...overrides,
-  } as unknown as GameState;
+  } as GameState;
 }
 
 describe("assessWorldState", () => {
