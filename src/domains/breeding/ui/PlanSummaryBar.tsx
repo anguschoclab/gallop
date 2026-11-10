@@ -38,24 +38,17 @@ export function PlanSummaryBar({
   onLoadPlan,
   onDeletePlan,
 }: PlanSummaryBarProps) {
-  const [planName, setPlanName] = useState("");
-  const [showSaveInput, setShowSaveInput] = useState(false);
-  const [loadPlanId, setLoadPlanId] = useState("");
-
   const cashRemaining = cash - totalCost;
   const canConfirm = assignedCount > 0 && seasonOpen && canAffordAll;
 
   return (
     <div className="sticky bottom-0 z-20 border-t border-border bg-background/95 backdrop-blur-sm px-4 py-3">
       <div className="flex items-center gap-4 flex-wrap">
-        <div className="flex items-center gap-2">
-          <Badge className="bg-muted text-foreground font-[family-name:var(--font-mono)] tabular-nums">
-            {assignedCount} mares
-          </Badge>
-          <span className="text-xs text-muted-foreground font-[family-name:var(--font-mono)] tabular-nums">
-            Cost: {formatCurrency(totalCost)} · After: {formatCurrency(cashRemaining)}
-          </span>
-        </div>
+        <PlanMetrics
+          assignedCount={assignedCount}
+          totalCost={totalCost}
+          cashRemaining={cashRemaining}
+        />
 
         <div className="flex-1" />
 
@@ -71,96 +64,13 @@ export function PlanSummaryBar({
             Auto-Assign
           </Button>
 
-          {showSaveInput ? (
-            <div className="flex items-center gap-1">
-              <input
-                type="text"
-                value={planName}
-                onChange={(e) => setPlanName(e.target.value)}
-                placeholder="Plan name…"
-                aria-label="Plan name"
-                className="h-8 w-32 rounded border border-muted bg-surface px-2 text-xs text-foreground"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && planName.trim()) {
-                    onSavePlan(planName.trim());
-                    setPlanName("");
-                    setShowSaveInput(false);
-                  }
-                }}
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-8 gap-1.5"
-                onClick={() => {
-                  if (planName.trim()) {
-                    onSavePlan(planName.trim());
-                    setPlanName("");
-                    setShowSaveInput(false);
-                  }
-                }}
-                disabled={!planName.trim() || assignedCount === 0}
-              >
-                <Save className="h-3.5 w-3.5" />
-                Save
-              </Button>
-            </div>
-          ) : (
-            <Button
-              variant="outline"
-              size="sm"
-              className="h-8 gap-1.5"
-              onClick={() => setShowSaveInput(true)}
-              disabled={assignedCount === 0}
-            >
-              <Save className="h-3.5 w-3.5" />
-              Save Plan
-            </Button>
-          )}
+          <SavePlanControls assignedCount={assignedCount} onSavePlan={onSavePlan} />
 
-          {savedMatingPlans.length > 0 && (
-            <Select
-              value={loadPlanId}
-              onValueChange={(v) => {
-                if (v === "__delete__") return;
-                onLoadPlan(v);
-                setLoadPlanId(v);
-              }}
-            >
-              <SelectTrigger className="h-8 w-[160px] text-xs">
-                <SelectValue placeholder="Load plan…" />
-              </SelectTrigger>
-              <SelectContent>
-                {savedMatingPlans.map((plan) => (
-                  <SelectItem key={plan.id} value={plan.id}>
-                    {plan.name} ({plan.entries.length})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
-
-          {loadPlanId && (
-            <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7"
-                    onClick={() => {
-                      onDeletePlan(loadPlanId);
-                      setLoadPlanId("");
-                    }}
-                    aria-label="Delete plan"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>Delete plan</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          )}
+          <PlanSelectControls
+            savedMatingPlans={savedMatingPlans}
+            onLoadPlan={onLoadPlan}
+            onDeletePlan={onDeletePlan}
+          />
 
           <Button
             variant="ghost"
@@ -173,24 +83,13 @@ export function PlanSummaryBar({
             Clear
           </Button>
 
-          <DisabledTooltipWrapper
-            reason={
-              !canConfirm
-                ? !seasonOpen
-                  ? "Breeding season is closed"
-                  : assignedCount === 0
-                    ? "No mares assigned"
-                    : !canAffordAll
-                      ? "Insufficient funds"
-                      : "Cannot confirm"
-                : undefined
-            }
-          >
-            <Button size="sm" className="h-8 gap-1.5" onClick={onConfirmAll} disabled={!canConfirm}>
-              <Check className="h-3.5 w-3.5" />
-              Confirm All ({assignedCount})
-            </Button>
-          </DisabledTooltipWrapper>
+          <ConfirmButton
+            canConfirm={canConfirm}
+            seasonOpen={seasonOpen}
+            assignedCount={assignedCount}
+            canAffordAll={canAffordAll}
+            onConfirmAll={onConfirmAll}
+          />
         </div>
       </div>
       {!seasonOpen && (
@@ -205,5 +104,181 @@ export function PlanSummaryBar({
         </div>
       )}
     </div>
+  );
+}
+
+function PlanMetrics({
+  assignedCount,
+  totalCost,
+  cashRemaining,
+}: {
+  assignedCount: number;
+  totalCost: number;
+  cashRemaining: number;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <Badge className="bg-muted text-foreground font-[family-name:var(--font-mono)] tabular-nums">
+        {assignedCount} mares
+      </Badge>
+      <span className="text-xs text-muted-foreground font-[family-name:var(--font-mono)] tabular-nums">
+        Cost: {formatCurrency(totalCost)} · After: {formatCurrency(cashRemaining)}
+      </span>
+    </div>
+  );
+}
+
+function SavePlanControls({
+  assignedCount,
+  onSavePlan,
+}: {
+  assignedCount: number;
+  onSavePlan: (name: string) => void;
+}) {
+  const [planName, setPlanName] = useState("");
+  const [showSaveInput, setShowSaveInput] = useState(false);
+
+  const submit = () => {
+    if (planName.trim()) {
+      onSavePlan(planName.trim());
+      setPlanName("");
+      setShowSaveInput(false);
+    }
+  };
+
+  if (!showSaveInput) {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        className="h-8 gap-1.5"
+        onClick={() => setShowSaveInput(true)}
+        disabled={assignedCount === 0}
+      >
+        <Save className="h-3.5 w-3.5" />
+        Save Plan
+      </Button>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-1">
+      <input
+        type="text"
+        value={planName}
+        onChange={(e) => setPlanName(e.target.value)}
+        placeholder="Plan name…"
+        aria-label="Plan name"
+        className="h-8 w-32 rounded border border-muted bg-surface px-2 text-xs text-foreground"
+        onKeyDown={(e) => {
+          if (e.key === "Enter") submit();
+        }}
+      />
+      <Button
+        variant="outline"
+        size="sm"
+        className="h-8 gap-1.5"
+        onClick={submit}
+        disabled={!planName.trim() || assignedCount === 0}
+      >
+        <Save className="h-3.5 w-3.5" />
+        Save
+      </Button>
+    </div>
+  );
+}
+
+function PlanSelectControls({
+  savedMatingPlans,
+  onLoadPlan,
+  onDeletePlan,
+}: {
+  savedMatingPlans: SavedMatingPlan[];
+  onLoadPlan: (planId: string) => void;
+  onDeletePlan: (planId: string) => void;
+}) {
+  const [loadPlanId, setLoadPlanId] = useState("");
+
+  return (
+    <>
+      {savedMatingPlans.length > 0 && (
+        <Select
+          value={loadPlanId}
+          onValueChange={(v) => {
+            if (v === "__delete__") return;
+            onLoadPlan(v);
+            setLoadPlanId(v);
+          }}
+        >
+          <SelectTrigger className="h-8 w-[160px] text-xs">
+            <SelectValue placeholder="Load plan…" />
+          </SelectTrigger>
+          <SelectContent>
+            {savedMatingPlans.map((plan) => (
+              <SelectItem key={plan.id} value={plan.id}>
+                {plan.name} ({plan.entries.length})
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+
+      {loadPlanId && (
+        <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-7 w-7"
+                onClick={() => {
+                  onDeletePlan(loadPlanId);
+                  setLoadPlanId("");
+                }}
+                aria-label="Delete plan"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Delete plan</TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      )}
+    </>
+  );
+}
+
+function ConfirmButton({
+  canConfirm,
+  seasonOpen,
+  assignedCount,
+  canAffordAll,
+  onConfirmAll,
+}: {
+  canConfirm: boolean;
+  seasonOpen: boolean;
+  assignedCount: number;
+  canAffordAll: boolean;
+  onConfirmAll: () => void;
+}) {
+  return (
+    <DisabledTooltipWrapper
+      reason={
+        !canConfirm
+          ? !seasonOpen
+            ? "Breeding season is closed"
+            : assignedCount === 0
+              ? "No mares assigned"
+              : !canAffordAll
+                ? "Insufficient funds"
+                : "Cannot confirm"
+          : undefined
+      }
+    >
+      <Button size="sm" className="h-8 gap-1.5" onClick={onConfirmAll} disabled={!canConfirm}>
+        <Check className="h-3.5 w-3.5" />
+        Confirm All ({assignedCount})
+      </Button>
+    </DisabledTooltipWrapper>
   );
 }

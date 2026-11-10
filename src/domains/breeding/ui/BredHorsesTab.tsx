@@ -22,6 +22,28 @@ type Row = {
   ownerTone: "player" | "npc" | "retired";
 };
 
+function buildRows(horses: Record<string, Horse>, stableMap: Map<string, Stable>): Row[] {
+  return Object.values(horses)
+    .filter((h) => h.bredByPlayer)
+    .map((h) => {
+      let ownerLabel = "Sold / Unknown";
+      let ownerTone: Row["ownerTone"] = "retired";
+      if (isPlayerOwned(h)) {
+        ownerLabel = "Your Stable";
+        ownerTone = "player";
+      } else {
+        const hStableId = getStableId(h);
+        if (hStableId) {
+          const s = stableMap.get(hStableId);
+          ownerLabel = s?.name ?? "Rival Stable";
+          ownerTone = "npc";
+        }
+      }
+      return { horse: h, ownerLabel, ownerTone };
+    })
+    .sort((a, b) => (b.horse.createdAtDay ?? 0) - (a.horse.createdAtDay ?? 0));
+}
+
 export function BredHorsesTab() {
   const horses = useGameWithShallow((s: GameState) => s.horses || []);
   const npcStables = useGameWithShallow((s: GameState) => s.npcStables || []);
@@ -32,27 +54,7 @@ export function BredHorsesTab() {
     [npcStables],
   );
 
-  const rows: Row[] = useMemo(() => {
-    return Object.values(horses)
-      .filter((h) => h.bredByPlayer)
-      .map((h) => {
-        let ownerLabel = "Sold / Unknown";
-        let ownerTone: Row["ownerTone"] = "retired";
-        if (isPlayerOwned(h)) {
-          ownerLabel = "Your Stable";
-          ownerTone = "player";
-        } else {
-          const hStableId = getStableId(h);
-          if (hStableId) {
-            const s = stableMap.get(hStableId);
-            ownerLabel = s?.name ?? "Rival Stable";
-            ownerTone = "npc";
-          }
-        }
-        return { horse: h, ownerLabel, ownerTone };
-      })
-      .sort((a, b) => (b.horse.createdAtDay ?? 0) - (a.horse.createdAtDay ?? 0));
-  }, [horses, stableMap]);
+  const rows: Row[] = useMemo(() => buildRows(horses, stableMap), [horses, stableMap]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -135,43 +137,8 @@ export function BredHorsesTab() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filtered.map(({ horse, ownerLabel, ownerTone }) => (
-                    <tr
-                      key={horse.id}
-                      className="border-b border-border/40 last:border-0 hover:bg-primary/5 transition-colors"
-                    >
-                      <td className="py-2 pr-3">
-                        <HorseNameLink
-                          horseId={horse.id}
-                          name={horse.name}
-                          className="text-foreground font-medium"
-                        />
-                      </td>
-                      <td className="py-2 pr-3 text-muted-foreground">
-                        {horse.pedigree?.sireName ?? "—"} × {horse.pedigree?.damName ?? "—"}
-                      </td>
-                      <td className="py-2 pr-3 tabular-nums font-[family-name:var(--font-mono)]">
-                        {Math.floor(horse.age)}
-                      </td>
-                      <td className="py-2 pr-3 capitalize text-muted-foreground">{horse.gender}</td>
-                      <td className="py-2 pr-3 tabular-nums font-[family-name:var(--font-mono)] text-muted-foreground">
-                        D{horse.createdAtDay ?? "—"}
-                      </td>
-                      <td className="py-2 pr-3">
-                        <Badge
-                          variant="outline"
-                          className={cn(
-                            "text-[10px] font-[family-name:var(--font-mono)]",
-                            ownerTone === "player" && "border-primary/60 text-primary bg-primary/5",
-                            ownerTone === "npc" &&
-                              "border-muted-foreground/40 text-muted-foreground",
-                            ownerTone === "retired" && "border-muted text-muted-foreground/70",
-                          )}
-                        >
-                          {ownerLabel}
-                        </Badge>
-                      </td>
-                    </tr>
+                  {filtered.map((row) => (
+                    <BredHorseRow key={row.horse.id} row={row} />
                   ))}
                   {filtered.length === 0 && (
                     <tr>
@@ -187,5 +154,43 @@ export function BredHorsesTab() {
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function BredHorseRow({ row }: { row: Row }) {
+  const { horse, ownerLabel, ownerTone } = row;
+  return (
+    <tr className="border-b border-border/40 last:border-0 hover:bg-primary/5 transition-colors">
+      <td className="py-2 pr-3">
+        <HorseNameLink
+          horseId={horse.id}
+          name={horse.name}
+          className="text-foreground font-medium"
+        />
+      </td>
+      <td className="py-2 pr-3 text-muted-foreground">
+        {horse.pedigree?.sireName ?? "—"} × {horse.pedigree?.damName ?? "—"}
+      </td>
+      <td className="py-2 pr-3 tabular-nums font-[family-name:var(--font-mono)]">
+        {Math.floor(horse.age)}
+      </td>
+      <td className="py-2 pr-3 capitalize text-muted-foreground">{horse.gender}</td>
+      <td className="py-2 pr-3 tabular-nums font-[family-name:var(--font-mono)] text-muted-foreground">
+        D{horse.createdAtDay ?? "—"}
+      </td>
+      <td className="py-2 pr-3">
+        <Badge
+          variant="outline"
+          className={cn(
+            "text-[10px] font-[family-name:var(--font-mono)]",
+            ownerTone === "player" && "border-primary/60 text-primary bg-primary/5",
+            ownerTone === "npc" && "border-muted-foreground/40 text-muted-foreground",
+            ownerTone === "retired" && "border-muted text-muted-foreground/70",
+          )}
+        >
+          {ownerLabel}
+        </Badge>
+      </td>
+    </tr>
   );
 }
