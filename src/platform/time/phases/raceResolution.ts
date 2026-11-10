@@ -116,7 +116,7 @@ export const raceResolutionPhase: PipelinePhase = {
           newDay,
           hiredStaff: state.hiredStaff ?? [],
           rng,
-          snapshots: [],
+          snapshots: liveIntent.snapshots ?? [],
           calibratedPars: state.calibratedPars || {},
           raceWeatherState: undefined,
           syndicates: state.syndicates,

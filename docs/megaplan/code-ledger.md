@@ -39,3 +39,12 @@ Verdict summary: `Brand<T,_B>=T` structural (documented; Anvil PRs are style-onl
 | tests/ architecture + layering | clean, zero violations |
 | scripts/ (fingerprint, bench, typecheck) | clean |
 | .github/workflows/ci.yml | `fixed` e2e fixture generation step added; linux baselines committed (PR #566-CI) |
+
+## 2026-11-09 marker-scan batch
+
+| Area | Status |
+| --- | --- |
+| platform/time/phases/raceResolution.ts + domains/race/simulation/liveResolution.ts | `fixed` live-race snapshots survive impact application (`snapshots: []` → intent/payload snapshots); live race_history entries gain pacePositions via sectionalSplits |
+| tests/core/race/replayPersistence.test.ts | `fixed` gap-documenting tautology replaced by phase+applyImpacts round-trip regression tests |
+| tests marker comments (inheritance, RivalIntelTab, scoring.tiebreaker, horseCareerValuation) | clean — BUG/FIX phrasing reworded to regression wording; repo scans 0 markers |
+| generate_todos.py / search_todos.py | recreated repo-root marker-scan + query tools (originals never committed — unrecoverable) |

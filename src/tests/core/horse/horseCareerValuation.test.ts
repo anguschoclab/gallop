@@ -60,7 +60,7 @@ describe("horseCareerValuation", () => {
   });
 
   // ---------------------------------------------------------------------------
-  // 6: postCareer === round(racing * 0.1 / 100) * 100 for gelding (after BUG-2 fix)
+  // 6: postCareer === round(racing * 0.1 / 100) * 100 for gelding (post-persistence repair)
   // ---------------------------------------------------------------------------
   it("gelding postCareer is 10% of racing value rounded to 100 (salvage)", () => {
     const gelding = createTestGelding({ age: 5 });

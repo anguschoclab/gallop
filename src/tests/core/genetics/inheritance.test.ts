@@ -7,7 +7,7 @@ import {
   LINKAGE_MAP,
 } from "@/domains/genetics/simulation/linkageMap";
 
-// ─── Bug 1: inheritTrait order-dependency ────────────────────────────────────
+// ─── Regression: inheritTrait order-dependency ───────────────────────────────
 
 describe("inheritTrait — order independence", () => {
   it("dam-excellent × sire-good produces same distribution as sire-excellent × dam-good", () => {
@@ -68,7 +68,7 @@ describe("inheritTrait — order independence", () => {
   });
 });
 
-// ─── Bug 2: Simulator RNG diversity ──────────────────────────────────────────
+// ─── Regression: Simulator RNG diversity ─────────────────────────────────────
 
 describe("breedingSimulator — RNG diversity", () => {
   it("produces statistically diverse foal stats across 250 simulations", async () => {
@@ -104,7 +104,7 @@ describe("breedingSimulator — RNG diversity", () => {
   });
 });
 
-// ─── Bug 3: style locus links to PERFORMANCE chromosome ──────────────────────
+// ─── Regression: style locus links to PERFORMANCE chromosome ─────────────────
 
 describe("inheritDNA — style locus chromosome linkage", () => {
   it("style co-inherits with acceleration more than 50% when sire has coupled traits", () => {

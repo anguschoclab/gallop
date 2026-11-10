@@ -96,7 +96,7 @@ export function applyLiveRaceResolution(
       newDay: state.day,
       hiredStaff: state.hiredStaff ?? [],
       rng: rngForRace(race),
-      snapshots: [],
+      snapshots: payload.snapshots ?? [],
       calibratedPars: state.calibratedPars || {},
       raceWeatherState: undefined,
       syndicates: state.syndicates,

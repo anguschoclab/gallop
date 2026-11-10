@@ -79,7 +79,7 @@ function hotyWinner(horses: Horse[], raceMap: Map<string, Race>) {
 describe("determineRegionalWinners - deterministic tiebreakers", () => {
   // Chain: points desc -> graded wins desc -> earnings desc -> horseId asc.
   // Every case asserts identical results for both input orderings, since
-  // determinism relative to game state (not array insertion order) is the fix.
+  // determinism relative to game state (not array insertion order) is the behavior under test.
 
   it("breaks tied points on earnings regardless of insertion order", () => {
     const race1 = mkRace("r1", "Churchill Downs", "Dirt", 2000, 100, "G1");
