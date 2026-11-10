@@ -1,3 +1,4 @@
+import { raceFameGain } from "@/domains/prestige/simulation/raceFame";
 import { describe, it, expect } from "vitest";
 import { generateRaceImpacts } from "@/domains/race/simulation/raceImpactGenerator";
 import {
@@ -141,27 +142,27 @@ describe("generateFormImpact", () => {
 // ---------------------------------------------------------------------------
 
 describe("generateFameImpact", () => {
-  it("1st place → fame delta 2", () => {
+  it("1st place → venue-scaled win fame", () => {
     const horse = createTestColt({ id: "h1" });
     const impacts = runSingle(horse, 1, makeOpenRace());
     const fame = impacts.find((i) => i.type === "fame_change" && (i as any).horseId === "h1");
     expect(fame).toBeDefined();
-    expect((fame as any).delta).toBe(2);
+    expect((fame as any).delta).toBe(raceFameGain(makeOpenRace(), 1));
   });
 
-  it("2nd/3rd place → fame delta 0.5", () => {
+  it("2nd/3rd place → venue-scaled placing fame", () => {
     for (const pos of [2, 3]) {
       const horse = createTestColt({ id: `h-${pos}` });
       const impacts = runSingle(horse, pos, makeOpenRace());
       const fame = impacts.find((i) => i.type === "fame_change");
       expect(fame).toBeDefined();
-      expect((fame as any).delta).toBe(0.5);
+      expect((fame as any).delta).toBe(raceFameGain(makeOpenRace(), pos));
     }
   });
 
-  it("4th+ place → no fame_change impact", () => {
+  it("6th+ place → no fame_change impact", () => {
     const horse = createTestColt({ id: "h1" });
-    const impacts = runSingle(horse, 4, makeOpenRace());
+    const impacts = runSingle(horse, 6, makeOpenRace());
     const fame = impacts.find((i) => i.type === "fame_change");
     expect(fame).toBeUndefined();
   });
@@ -824,8 +825,8 @@ describe("generateRaceImpacts — integration regression", () => {
     expect(types.has("jockey_stats")).toBe(false);
     expect(types.has("jockey_affinity_gain")).toBe(false);
     expect(types.has("transaction")).toBe(false);
-    // No fame for 5th
-    expect(types.has("fame_change")).toBe(false);
+    // 5th still earns the small top-5 fame
+    expect(types.has("fame_change")).toBe(true);
     // No log for NPC-only
     expect(types.has("log")).toBe(false);
   });
