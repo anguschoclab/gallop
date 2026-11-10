@@ -11,10 +11,15 @@ import {
 import { RacingValidator } from "@/platform/resolver/validators/RacingValidator";
 import { makeGradedRace } from "@/domains/race/simulation/generation/raceGen";
 import type { Horse, Race, GameState } from "@/platform/game/types";
+import type {
+  RaceEntryIntent,
+  RaceWithdrawalIntent,
+  WithdrawFromClaimingIntent,
+} from "@/platform/resolver/intents";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import type { GradedRace } from "@/shared/data/gradedRaces";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
-import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
+import { makePlayerOwned, makeNpcOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
 
 function makeHorse(overrides: Partial<Horse> = {}): Horse {
   return {
@@ -262,6 +267,508 @@ describe("RacingValidator — invitation gating", () => {
       state,
     );
     expect(result.valid).toBe(true);
+  });
+});
+
+describe("RacingValidator.canValidate", () => {
+  const validator = new RacingValidator();
+
+  it.each(["race_entry", "race_withdrawal", "withdraw_from_claiming"] as const)(
+    "claims %s",
+    (type) => {
+      expect(validator.canValidate(type)).toBe(true);
+    },
+  );
+
+  it.each(["training", "purchase"] as const)("does not claim %s", (type) => {
+    expect(validator.canValidate(type)).toBe(false);
+  });
+});
+
+describe("RacingValidator — race_entry", () => {
+  const validator = new RacingValidator();
+
+  const entryIntent = (overrides: Partial<RaceEntryIntent> = {}): RaceEntryIntent => ({
+    type: "race_entry",
+    raceId: "race-1",
+    horseId: "h1",
+    id: "i1",
+    entityId: "h1",
+    source: "player",
+    day: 1,
+    priority: 100,
+    ...overrides,
+  });
+
+  const stateWith = (horse: Horse | null, race: Race | null, day = 200): GameState =>
+    ({
+      day,
+      horses: horse ? h2r([horse]) : {},
+      races: race ? r2r([race]) : {},
+    }) as unknown as GameState;
+
+  it("accepts a valid race entry", () => {
+    const horse = makeHorse({ id: "h1", energy: 100, ownership: makePlayerOwned() });
+    const race = makeRace({ id: "race-1" });
+    expect(validator.validate(entryIntent(), stateWith(horse, race))).toEqual({
+      valid: true,
+    });
+  });
+
+  it("rejects when the horse does not exist", () => {
+    const race = makeRace({ id: "race-1" });
+    expect(validator.validate(entryIntent(), stateWith(null, race))).toEqual({
+      valid: false,
+      reason: "Horse not found",
+    });
+  });
+
+  it("rejects a player intent for an NPC-owned horse", () => {
+    const horse = makeHorse({
+      id: "h1",
+      energy: 100,
+      ownership: makeNpcOwned("stable-x"),
+    });
+    const race = makeRace({ id: "race-1" });
+    expect(validator.validate(entryIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Intent source does not own horse",
+    });
+  });
+
+  it("accepts an NPC intent when sourceId matches the owner stable", () => {
+    const horse = makeHorse({
+      id: "h1",
+      energy: 100,
+      ownership: makeNpcOwned("stable-x"),
+    });
+    const race = makeRace({ id: "race-1" });
+    expect(
+      validator.validate(
+        entryIntent({ source: "npc", sourceId: "stable-x" }),
+        stateWith(horse, race),
+      ),
+    ).toEqual({ valid: true });
+  });
+
+  it("rejects an NPC intent when sourceId does not match the owner stable", () => {
+    const horse = makeHorse({
+      id: "h1",
+      energy: 100,
+      ownership: makeNpcOwned("stable-x"),
+    });
+    const race = makeRace({ id: "race-1" });
+    expect(
+      validator.validate(
+        entryIntent({ source: "npc", sourceId: "stable-y" }),
+        stateWith(horse, race),
+      ),
+    ).toEqual({ valid: false, reason: "Intent source does not own horse" });
+  });
+
+  it("accepts a system intent for a player-owned horse", () => {
+    const horse = makeHorse({ id: "h1", energy: 100, ownership: makePlayerOwned() });
+    const race = makeRace({ id: "race-1" });
+    expect(validator.validate(entryIntent({ source: "system" }), stateWith(horse, race))).toEqual({
+      valid: true,
+    });
+  });
+
+  it("rejects a system intent for an NPC-owned horse", () => {
+    const horse = makeHorse({
+      id: "h1",
+      energy: 100,
+      ownership: makeNpcOwned("stable-x"),
+    });
+    const race = makeRace({ id: "race-1" });
+    expect(validator.validate(entryIntent({ source: "system" }), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Intent source does not own horse",
+    });
+  });
+
+  it("rejects a horse consigned to an auction", () => {
+    const horse = makeHorse({
+      id: "h1",
+      energy: 100,
+      ownership: makePlayerOwned(),
+      consignedSaleId: "sale-1",
+    });
+    const race = makeRace({ id: "race-1" });
+    expect(validator.validate(entryIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Horse is consigned to an auction",
+    });
+  });
+
+  it("rejects when the race does not exist", () => {
+    const horse = makeHorse({ id: "h1", energy: 100, ownership: makePlayerOwned() });
+    expect(validator.validate(entryIntent(), stateWith(horse, null))).toEqual({
+      valid: false,
+      reason: "Race not found",
+    });
+  });
+
+  it("rejects an already resolved race", () => {
+    const horse = makeHorse({ id: "h1", energy: 100, ownership: makePlayerOwned() });
+    const race = makeRace({ id: "race-1", resolved: true });
+    expect(validator.validate(entryIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Race already resolved",
+    });
+  });
+
+  it.each([
+    [39, false],
+    [40, true],
+  ])("applies the energy threshold at 40 (energy %d → valid %s)", (energy, valid) => {
+    const horse = makeHorse({ id: "h1", energy, ownership: makePlayerOwned() });
+    const race = makeRace({ id: "race-1" });
+    const result = validator.validate(entryIntent(), stateWith(horse, race));
+    if (valid) {
+      expect(result).toEqual({ valid: true });
+    } else {
+      expect(result).toEqual({ valid: false, reason: "Insufficient energy" });
+    }
+  });
+
+  it("accepts an invited horse via top-level invitedHorseIds (takes precedence)", () => {
+    const horse = makeHorse({ id: "h1", energy: 100, ownership: makePlayerOwned() });
+    const race = makeRace({
+      id: "race-1",
+      invitedHorseIds: ["h1"],
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+        invitedHorseIds: ["other-horse"],
+      },
+    });
+    expect(validator.validate(entryIntent(), stateWith(horse, race))).toEqual({
+      valid: true,
+    });
+  });
+
+  it("accepts a win-and-you-in qualifier for the current year", () => {
+    const horse = makeHorse({
+      id: "h1",
+      energy: 100,
+      ownership: makePlayerOwned(),
+      winAndYouInQualified: [{ year: 1, raceId: "r0", raceKey: "bc-classic" }],
+    });
+    const race = makeRace({
+      id: "race-1",
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
+    });
+    // state.day = 200 → currentYear = floor(199/365)+1 = 1
+    expect(validator.validate(entryIntent(), stateWith(horse, race))).toEqual({
+      valid: true,
+    });
+  });
+
+  it("rejects a win-and-you-in qualifier from a different year", () => {
+    const horse = makeHorse({
+      id: "h1",
+      energy: 100,
+      ownership: makePlayerOwned(),
+      winAndYouInQualified: [{ year: 2, raceId: "r0", raceKey: "bc-classic" }],
+    });
+    const race = makeRace({
+      id: "race-1",
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
+    });
+    expect(validator.validate(entryIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Invitation required for this race",
+    });
+  });
+
+  it("rejects a win-and-you-in qualifier for a different race key", () => {
+    const horse = makeHorse({
+      id: "h1",
+      energy: 100,
+      ownership: makePlayerOwned(),
+      winAndYouInQualified: [{ year: 1, raceId: "r0", raceKey: "bc-turf" }],
+    });
+    const race = makeRace({
+      id: "race-1",
+      graded: {
+        key: "bc-classic",
+        grade: "G1",
+        track: "Keeneland",
+        trackId: "t1",
+        surface: "Dirt",
+        requiresInvitation: true,
+      },
+    });
+    expect(validator.validate(entryIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Invitation required for this race",
+    });
+  });
+});
+
+describe("RacingValidator — race_withdrawal", () => {
+  const validator = new RacingValidator();
+
+  const withdrawalIntent = (
+    overrides: Partial<RaceWithdrawalIntent> = {},
+  ): RaceWithdrawalIntent => ({
+    type: "race_withdrawal",
+    raceId: "race-1",
+    horseId: "h1",
+    id: "i1",
+    entityId: "h1",
+    source: "player",
+    day: 1,
+    priority: 100,
+    ...overrides,
+  });
+
+  const stateWith = (horse: Horse | null, race: Race | null): GameState =>
+    ({
+      day: 200,
+      horses: horse ? h2r([horse]) : {},
+      races: race ? r2r([race]) : {},
+    }) as unknown as GameState;
+
+  it("accepts a withdrawal for an entered horse", () => {
+    const horse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+    const race = makeRace({
+      id: "race-1",
+      entries: [{ horseId: "h1", ownership: horse.ownership }],
+    });
+    expect(validator.validate(withdrawalIntent(), stateWith(horse, race))).toEqual({
+      valid: true,
+    });
+  });
+
+  it("rejects when the horse does not exist", () => {
+    const race = makeRace({ id: "race-1" });
+    expect(validator.validate(withdrawalIntent(), stateWith(null, race))).toEqual({
+      valid: false,
+      reason: "Horse not found",
+    });
+  });
+
+  it("rejects a player intent for an NPC-owned horse", () => {
+    const horse = makeHorse({ id: "h1", ownership: makeNpcOwned("stable-x") });
+    const race = makeRace({
+      id: "race-1",
+      entries: [{ horseId: "h1", ownership: horse.ownership }],
+    });
+    expect(validator.validate(withdrawalIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Intent source does not own horse",
+    });
+  });
+
+  it("rejects when the race does not exist", () => {
+    const horse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+    expect(validator.validate(withdrawalIntent(), stateWith(horse, null))).toEqual({
+      valid: false,
+      reason: "Race not found",
+    });
+  });
+
+  it("rejects an already resolved race", () => {
+    const horse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+    const race = makeRace({
+      id: "race-1",
+      resolved: true,
+      entries: [{ horseId: "h1", ownership: horse.ownership }],
+    });
+    expect(validator.validate(withdrawalIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Race already resolved",
+    });
+  });
+
+  it("rejects a horse that is not entered in the race", () => {
+    const horse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+    const race = makeRace({ id: "race-1", entries: [] });
+    expect(validator.validate(withdrawalIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Horse not entered in this race",
+    });
+  });
+});
+
+describe("RacingValidator — withdraw_from_claiming", () => {
+  const validator = new RacingValidator();
+
+  const withdrawIntent = (
+    overrides: Partial<WithdrawFromClaimingIntent> = {},
+  ): WithdrawFromClaimingIntent => ({
+    type: "withdraw_from_claiming",
+    raceId: "race-1",
+    horseId: "h1",
+    id: "i1",
+    entityId: "h1",
+    source: "player",
+    day: 1,
+    priority: 100,
+    ...overrides,
+  });
+
+  const stateWith = (horse: Horse | null, race: Race | null): GameState =>
+    ({
+      day: 200,
+      horses: horse ? h2r([horse]) : {},
+      races: race ? r2r([race]) : {},
+    }) as unknown as GameState;
+
+  const enteredOptionalClaiming = (horse: Horse, overrides: Partial<Race> = {}): Race =>
+    makeRace({
+      id: "race-1",
+      raceClass: "OptionalClaiming",
+      claimingPrice: 25000,
+      entries: [{ horseId: "h1", ownership: horse.ownership }],
+      ...overrides,
+    });
+
+  it.each(["OptionalClaiming", "MaidenOptionalClaiming"] as const)(
+    "accepts withdrawal in %s races",
+    (raceClass) => {
+      const horse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+      const race = enteredOptionalClaiming(horse, { raceClass });
+      expect(validator.validate(withdrawIntent(), stateWith(horse, race))).toEqual({
+        valid: true,
+      });
+    },
+  );
+
+  it("rejects when the race does not exist", () => {
+    const horse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+    expect(validator.validate(withdrawIntent(), stateWith(horse, null))).toEqual({
+      valid: false,
+      reason: "Race not found",
+    });
+  });
+
+  it("rejects when the horse does not exist", () => {
+    const race = makeRace({ id: "race-1" });
+    expect(validator.validate(withdrawIntent(), stateWith(null, race))).toEqual({
+      valid: false,
+      reason: "Horse not found",
+    });
+  });
+
+  it("rejects a player intent for an NPC-owned horse", () => {
+    const horse = makeHorse({ id: "h1", ownership: makeNpcOwned("stable-x") });
+    const race = enteredOptionalClaiming(horse);
+    expect(validator.validate(withdrawIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Intent source does not own horse",
+    });
+  });
+
+  it("rejects an already resolved race", () => {
+    const horse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+    const race = enteredOptionalClaiming(horse, { resolved: true });
+    expect(validator.validate(withdrawIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Race already resolved",
+    });
+  });
+
+  it("rejects a race without a claiming price", () => {
+    const horse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+    const race = makeRace({
+      id: "race-1",
+      raceClass: "OptionalClaiming",
+      entries: [{ horseId: "h1", ownership: horse.ownership }],
+    });
+    expect(validator.validate(withdrawIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Race is not a claiming race",
+    });
+  });
+
+  it("rejects a non-optional claiming race", () => {
+    const horse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+    const race = makeRace({
+      id: "race-1",
+      raceClass: "Claiming",
+      claimingPrice: 25000,
+      entries: [{ horseId: "h1", ownership: horse.ownership }],
+    });
+    expect(validator.validate(withdrawIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Withdrawal only allowed in optional claiming races",
+    });
+  });
+
+  it("rejects a horse that is not entered in the race", () => {
+    const horse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+    const race = enteredOptionalClaiming(horse, { entries: [] });
+    expect(validator.validate(withdrawIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Horse not entered in this race",
+    });
+  });
+
+  it("rejects a horse already withdrawn from claiming", () => {
+    const horse = makeHorse({ id: "h1", ownership: makePlayerOwned() });
+    const race = enteredOptionalClaiming(horse, {
+      entries: [{ horseId: "h1", ownership: horse.ownership, withdrawnFromClaiming: true }],
+    });
+    expect(validator.validate(withdrawIntent(), stateWith(horse, race))).toEqual({
+      valid: false,
+      reason: "Horse already withdrawn from claiming",
+    });
+  });
+});
+
+describe("RacingValidator — validation cache", () => {
+  const validator = new RacingValidator();
+
+  it("resolves horses and races from the cache maps", () => {
+    const horse = makeHorse({ id: "h1", energy: 100, ownership: makePlayerOwned() });
+    const race = makeRace({ id: "race-1" });
+    const state = {
+      day: 200,
+      horses: {},
+      races: {},
+    } as unknown as GameState;
+    const cache = {
+      horseMap: new Map([["h1", horse]]),
+      raceMap: new Map([["race-1", race]]),
+    };
+
+    expect(
+      validator.validate(
+        {
+          type: "race_entry",
+          raceId: "race-1",
+          horseId: "h1",
+          id: "i1",
+          entityId: "h1",
+          source: "player",
+          day: 1,
+          priority: 100,
+        },
+        state,
+        cache,
+      ),
+    ).toEqual({ valid: true });
   });
 });
 

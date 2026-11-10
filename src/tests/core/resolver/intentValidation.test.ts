@@ -13,6 +13,9 @@ import type {
   BreedingIntent,
   PurchaseIntent,
 } from "@/platform/resolver/intents";
+import { INTENT_TYPE_CONTRACTS } from "@/platform/resolver/intentTypeRegistry";
+import { StructuralIntentValidator } from "@/platform/resolver/validators/structuralIntentValidator";
+import { TrainingValidator } from "@/platform/resolver/validators/TrainingValidator";
 import { createTestHorse, createTestNpcHorse } from "@/tests/helpers/createTestHorse";
 import { makeGameState } from "@/tests/helpers/sampleGameState";
 import { h2r, r2r } from "@/tests/helpers/sampleGameState";
@@ -732,5 +735,168 @@ describe("validateIntent", () => {
 
     const result = validateIntent(intent, state);
     expect(result.valid).toBe(true);
+  });
+});
+
+describe("StructuralIntentValidator", () => {
+  const validator = new StructuralIntentValidator();
+  const state = makeGameState({ day: 1 }) as GameState;
+
+  const baseIntent = (): TrainingIntent => ({
+    id: "intent-1",
+    day: 1,
+    type: "training",
+    entityId: "horse-1",
+    priority: 100,
+    source: "player",
+    horseId: "horse-1",
+    trainingType: "speed",
+  });
+
+  describe("canValidate", () => {
+    it("claims every registered intent type", () => {
+      for (const type of INTENT_TYPE_CONTRACTS) {
+        expect(validator.canValidate(type)).toBe(true);
+      }
+    });
+
+    it("does not claim unregistered intent types", () => {
+      expect(validator.canValidate("bogus_type" as AnyIntent["type"])).toBe(false);
+    });
+  });
+
+  describe("validate", () => {
+    it("accepts a fully populated intent", () => {
+      expect(validator.validate(baseIntent(), state)).toEqual({ valid: true });
+    });
+
+    it("rejects unregistered intent types", () => {
+      const intent = { ...baseIntent(), type: "bogus_type" } as unknown as AnyIntent;
+      expect(validator.validate(intent, state)).toEqual({
+        valid: false,
+        reason: "Unknown intent type",
+      });
+    });
+
+    it("rejects a missing intent id", () => {
+      expect(validator.validate({ ...baseIntent(), id: "" }, state)).toEqual({
+        valid: false,
+        reason: "Intent id missing",
+      });
+    });
+
+    it("rejects a missing entity id", () => {
+      expect(validator.validate({ ...baseIntent(), entityId: "" }, state)).toEqual({
+        valid: false,
+        reason: "Intent entity missing",
+      });
+    });
+
+    it("rejects unknown intent sources", () => {
+      const intent = { ...baseIntent(), source: "alien" } as unknown as AnyIntent;
+      expect(validator.validate(intent, state)).toEqual({
+        valid: false,
+        reason: "Unknown intent source",
+      });
+    });
+
+    it.each([0, -1, Number.NaN])("rejects invalid day %s", (day) => {
+      expect(validator.validate({ ...baseIntent(), day }, state)).toEqual({
+        valid: false,
+        reason: "Invalid intent day",
+      });
+    });
+
+    it.each([Number.NaN, Number.POSITIVE_INFINITY])(
+      "rejects non-finite priority %s",
+      (priority) => {
+        expect(validator.validate({ ...baseIntent(), priority }, state)).toEqual({
+          valid: false,
+          reason: "Invalid intent priority",
+        });
+      },
+    );
+  });
+});
+
+describe("TrainingValidator", () => {
+  const validator = new TrainingValidator();
+
+  const createState = (horses: Record<string, ReturnType<typeof createTestHorse>> = {}) =>
+    makeGameState({ day: 50, horses }) as GameState;
+
+  const intent = (overrides: Partial<TrainingIntent> = {}): TrainingIntent => ({
+    id: "intent-1",
+    day: 1,
+    type: "training",
+    entityId: "horse-1",
+    priority: 100,
+    source: "player",
+    horseId: "horse-1",
+    trainingType: "speed",
+    ...overrides,
+  });
+
+  describe("canValidate", () => {
+    it("claims only training intents", () => {
+      expect(validator.canValidate("training")).toBe(true);
+      expect(validator.canValidate("race_entry")).toBe(false);
+      expect(validator.canValidate("purchase")).toBe(false);
+    });
+  });
+
+  describe("validate", () => {
+    it("accepts a valid training intent", () => {
+      const horse = createTestHorse({ id: "horse-1", energy: 80 });
+      expect(validator.validate(intent(), createState(h2r([horse])))).toEqual({
+        valid: true,
+      });
+    });
+
+    it("rejects when the horse does not exist", () => {
+      expect(validator.validate(intent(), createState())).toEqual({
+        valid: false,
+        reason: "Horse not found",
+      });
+    });
+
+    it("rejects a horse consigned to an auction", () => {
+      const horse = createTestHorse({ id: "horse-1", consignedSaleId: "sale-1" });
+      expect(validator.validate(intent(), createState(h2r([horse])))).toEqual({
+        valid: false,
+        reason: "Horse is consigned to an auction",
+      });
+    });
+
+    it("rejects a horse with energy below 20", () => {
+      const horse = createTestHorse({ id: "horse-1", energy: 19 });
+      expect(validator.validate(intent(), createState(h2r([horse])))).toEqual({
+        valid: false,
+        reason: "Insufficient energy",
+      });
+    });
+
+    it("accepts a horse at the energy boundary of 20", () => {
+      const horse = createTestHorse({ id: "horse-1", energy: 20 });
+      expect(validator.validate(intent(), createState(h2r([horse])))).toEqual({
+        valid: true,
+      });
+    });
+
+    it("prefers the cached horse over state when both exist", () => {
+      const cached = createTestHorse({ id: "horse-1", energy: 10 });
+      const stale = createTestHorse({ id: "horse-1", energy: 80 });
+      const cache = { horseMap: new Map([[cached.id, cached]]) };
+      expect(validator.validate(intent(), createState(h2r([stale])), cache)).toEqual({
+        valid: false,
+        reason: "Insufficient energy",
+      });
+    });
+
+    it("finds horses present only in the cache", () => {
+      const horse = createTestHorse({ id: "horse-1", energy: 80 });
+      const cache = { horseMap: new Map([[horse.id, horse]]) };
+      expect(validator.validate(intent(), createState(), cache)).toEqual({ valid: true });
+    });
   });
 });

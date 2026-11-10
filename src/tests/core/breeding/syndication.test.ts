@@ -10,12 +10,14 @@ import type {
   SyndicateCreationIntent,
   SharePurchaseIntent,
   ShareSaleIntent,
+  TrainingIntent,
 } from "@/platform/resolver/intents";
 import { SyndicationValidator } from "@/platform/resolver/validators/SyndicationValidator";
 import { resolveSyndicationIntent } from "@/platform/resolver/resolvers/syndicateResolver";
 import { SyndicationHandler } from "@/platform/resolver/handlers/SyndicationHandler";
 import { generateUUID } from "@/shared/uuid/uuid";
 import { h2r } from "@/tests/helpers/sampleGameState";
+import { createTestStable } from "@/tests/helpers/createTestStable";
 import type { Horse } from "@/platform/game/types";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 
@@ -69,6 +71,16 @@ describe("SyndicationValidator", () => {
       cash: 1000000,
       syndicates: {},
     } as any;
+  });
+
+  describe("canValidate", () => {
+    it("claims syndication intent types only", () => {
+      expect(validator.canValidate("syndicate_creation")).toBe(true);
+      expect(validator.canValidate("share_purchase")).toBe(true);
+      expect(validator.canValidate("share_sale")).toBe(true);
+      expect(validator.canValidate("training")).toBe(false);
+      expect(validator.canValidate("race_entry")).toBe(false);
+    });
   });
 
   describe("syndicate_creation", () => {
@@ -172,6 +184,145 @@ describe("SyndicationValidator", () => {
       expect(result.valid).toBe(false);
       expect(result.reason).toBe("Share price must be at least $1,000");
     });
+
+    it("should reject if total shares exceeds the maximum", () => {
+      const intent: SyndicateCreationIntent = {
+        id: generateUUID(),
+        entityId: "stallion1",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "syndicate_creation",
+        stallionId: "stallion1",
+        totalShares: 101,
+        sharePrice: 10000,
+        initialShareholders: { player: 20 },
+      };
+
+      const result = validator.validate(intent, mockState);
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("Total shares must be between 10 and 100");
+    });
+
+    it("should accept the share count and price boundaries", () => {
+      const base: SyndicateCreationIntent = {
+        id: generateUUID(),
+        entityId: "stallion1",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "syndicate_creation",
+        stallionId: "stallion1",
+        totalShares: 10,
+        sharePrice: 1000,
+        initialShareholders: { player: 10 },
+      };
+
+      expect(validator.validate(base, mockState).valid).toBe(true);
+      expect(
+        validator.validate(
+          { ...base, totalShares: 100, initialShareholders: { player: 100 } },
+          mockState,
+        ).valid,
+      ).toBe(true);
+    });
+
+    it("should reject when initial shares exceed total shares", () => {
+      const intent: SyndicateCreationIntent = {
+        id: generateUUID(),
+        entityId: "stallion1",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "syndicate_creation",
+        stallionId: "stallion1",
+        totalShares: 40,
+        sharePrice: 10000,
+        initialShareholders: { player: 30, "npc-1": 20 },
+      };
+
+      const result = validator.validate(intent, mockState);
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("Initial shares exceed total shares");
+    });
+
+    it("should reject a stallion that placed but did not win a G1", () => {
+      mockState.horses["stallion1"].raceHistory = [
+        {
+          raceId: "race1",
+          raceName: "Kentucky Derby",
+          position: 2,
+          day: 100,
+          grade: "G1",
+        },
+      ];
+
+      const intent: SyndicateCreationIntent = {
+        id: generateUUID(),
+        entityId: "stallion1",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "syndicate_creation",
+        stallionId: "stallion1",
+        totalShares: 40,
+        sharePrice: 10000,
+        initialShareholders: { player: 20 },
+      };
+
+      const result = validator.validate(intent, mockState);
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("Stallion must be a G1 winner");
+    });
+
+    it("should reject a stallion whose only win is below G1", () => {
+      mockState.horses["stallion1"].raceHistory = [
+        {
+          raceId: "race1",
+          raceName: "Some Stakes",
+          position: 1,
+          day: 100,
+          grade: "G3",
+        },
+      ];
+
+      const intent: SyndicateCreationIntent = {
+        id: generateUUID(),
+        entityId: "stallion1",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "syndicate_creation",
+        stallionId: "stallion1",
+        totalShares: 40,
+        sharePrice: 10000,
+        initialShareholders: { player: 20 },
+      };
+
+      const result = validator.validate(intent, mockState);
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("Stallion must be a G1 winner");
+    });
+
+    it("should find the stallion via the validation cache", () => {
+      const cached = { ...mockState.horses["stallion1"], id: "stallion2" };
+      const cache = { horseMap: new Map([["stallion2", cached]]) };
+
+      const intent: SyndicateCreationIntent = {
+        id: generateUUID(),
+        entityId: "stallion2",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "syndicate_creation",
+        stallionId: "stallion2",
+        totalShares: 40,
+        sharePrice: 10000,
+        initialShareholders: { player: 20 },
+      };
+
+      expect(validator.validate(intent, mockState, cache).valid).toBe(true);
+    });
   });
 
   describe("share_purchase", () => {
@@ -245,6 +396,86 @@ describe("SyndicationValidator", () => {
       expect(result.valid).toBe(false);
       expect(result.reason).toBe("Insufficient funds to purchase shares");
     });
+
+    it("should reject when insufficient shares are available", () => {
+      // { player: 20 } held of 40 total → buying 25 exceeds the remaining 20.
+      const intent: SharePurchaseIntent = {
+        id: generateUUID(),
+        entityId: "syndicate_stallion1",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "share_purchase",
+        syndicateId: "syndicate_stallion1",
+        shares: 25,
+        pricePerShare: 10000,
+      };
+
+      const result = validator.validate(intent, mockState);
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("Insufficient shares available");
+    });
+
+    it("should validate an NPC buyer with sufficient funds", () => {
+      mockState.npcStables = [createTestStable({ id: "npc-1", cash: 60000 })];
+
+      const intent: SharePurchaseIntent = {
+        id: generateUUID(),
+        entityId: "syndicate_stallion1",
+        source: "npc",
+        day: 1,
+        priority: 100,
+        type: "share_purchase",
+        syndicateId: "syndicate_stallion1",
+        buyerStableId: "npc-1",
+        shares: 5,
+        pricePerShare: 10000,
+      };
+
+      expect(validator.validate(intent, mockState).valid).toBe(true);
+    });
+
+    it("should reject an NPC buyer with insufficient funds", () => {
+      mockState.npcStables = [createTestStable({ id: "npc-1", cash: 40000 })];
+
+      const intent: SharePurchaseIntent = {
+        id: generateUUID(),
+        entityId: "syndicate_stallion1",
+        source: "npc",
+        day: 1,
+        priority: 100,
+        type: "share_purchase",
+        syndicateId: "syndicate_stallion1",
+        buyerStableId: "npc-1",
+        shares: 5,
+        pricePerShare: 10000,
+      };
+
+      const result = validator.validate(intent, mockState);
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("Insufficient funds to purchase shares");
+    });
+
+    it("should reject a buyer stable missing from npcStables", () => {
+      mockState.npcStables = [];
+
+      const intent: SharePurchaseIntent = {
+        id: generateUUID(),
+        entityId: "syndicate_stallion1",
+        source: "npc",
+        day: 1,
+        priority: 100,
+        type: "share_purchase",
+        syndicateId: "syndicate_stallion1",
+        buyerStableId: "ghost-stable",
+        shares: 1,
+        pricePerShare: 10000,
+      };
+
+      const result = validator.validate(intent, mockState);
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("Insufficient funds to purchase shares");
+    });
   });
 
   describe("share_sale", () => {
@@ -297,6 +528,84 @@ describe("SyndicationValidator", () => {
       const result = validator.validate(intent, mockState);
       expect(result.valid).toBe(false);
       expect(result.reason).toBe("Insufficient shares to sell");
+    });
+
+    it("should reject if syndicate not found", () => {
+      const intent: ShareSaleIntent = {
+        id: generateUUID(),
+        entityId: "nonexistent",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "share_sale",
+        syndicateId: "nonexistent",
+        shares: 5,
+        pricePerShare: 10000,
+      };
+
+      const result = validator.validate(intent, mockState);
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("Syndicate not found");
+    });
+
+    it("should validate an NPC seller with enough shares", () => {
+      mockState.syndicates["syndicate_stallion1"].shareHolders = { "npc-1": 30 };
+
+      const intent: ShareSaleIntent = {
+        id: generateUUID(),
+        entityId: "syndicate_stallion1",
+        source: "npc",
+        day: 1,
+        priority: 100,
+        type: "share_sale",
+        syndicateId: "syndicate_stallion1",
+        sellerStableId: "npc-1",
+        shares: 10,
+        pricePerShare: 10000,
+      };
+
+      expect(validator.validate(intent, mockState).valid).toBe(true);
+    });
+
+    it("should reject an NPC seller with too few shares", () => {
+      mockState.syndicates["syndicate_stallion1"].shareHolders = { "npc-1": 30 };
+
+      const intent: ShareSaleIntent = {
+        id: generateUUID(),
+        entityId: "syndicate_stallion1",
+        source: "npc",
+        day: 1,
+        priority: 100,
+        type: "share_sale",
+        syndicateId: "syndicate_stallion1",
+        sellerStableId: "npc-1",
+        shares: 31,
+        pricePerShare: 10000,
+      };
+
+      const result = validator.validate(intent, mockState);
+      expect(result.valid).toBe(false);
+      expect(result.reason).toBe("Insufficient shares to sell");
+    });
+  });
+
+  describe("unknown intent type", () => {
+    it("rejects non-syndication intents", () => {
+      const intent: TrainingIntent = {
+        id: generateUUID(),
+        entityId: "horse-1",
+        source: "player",
+        day: 1,
+        priority: 100,
+        type: "training",
+        horseId: "horse-1",
+        trainingType: "speed",
+      };
+
+      expect(validator.validate(intent, mockState)).toEqual({
+        valid: false,
+        reason: "Unknown syndication intent type",
+      });
     });
   });
 });
