@@ -138,8 +138,9 @@ export const marketPhase = {
 
     // Track market purchase prices for economic signals (Phase 5b)
     const marketPurchases = impacts
-      .filter((imp): imp is Extract<AnyImpact, { type: "horse_transfer" }> & { price: number } =>
-        imp.type === "horse_transfer" && imp.price !== undefined
+      .filter(
+        (imp): imp is Extract<AnyImpact, { type: "horse_transfer" }> & { price: number } =>
+          imp.type === "horse_transfer" && imp.price !== undefined,
       )
       .map((imp) => {
         const horse = context.horseMap.get(imp.horseId);
