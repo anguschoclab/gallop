@@ -163,7 +163,9 @@ function plain(s: string): string {
 
 function listItems(s?: string): string[] {
   if (!s) return [];
-  const text = plain(s.replace(/\{\{(?:plainlist|ubl|unbulleted list|flatlist)\s*\|/gi, "").replace(/\}\}\s*$/, ""));
+  const text = plain(
+    s.replace(/\{\{(?:plainlist|ubl|unbulleted list|flatlist)\s*\|/gi, "").replace(/\}\}\s*$/, ""),
+  );
   return text
     .split(/\n|\*|•|\|/)
     .map((x) => x.replace(/\s+/g, " ").trim())
@@ -173,14 +175,41 @@ function listItems(s?: string): string[] {
 
 /** Approximate USD rates (snapshot-time), keyed by normalised currency. */
 const FX: Record<string, number> = {
-  GBP: 1.27, EUR: 1.08, JPY: 0.0067, AUD: 0.66, NZD: 0.6, HKD: 0.128, USD: 1, CAD: 0.73,
-  SGD: 0.74, ZAR: 0.055, AED: 0.27, FRF: 0.165, IEP: 1.37, DEM: 0.55, ITL: 0.00056, ARS: 0.001,
+  GBP: 1.27,
+  EUR: 1.08,
+  JPY: 0.0067,
+  AUD: 0.66,
+  NZD: 0.6,
+  HKD: 0.128,
+  USD: 1,
+  CAD: 0.73,
+  SGD: 0.74,
+  ZAR: 0.055,
+  AED: 0.27,
+  FRF: 0.165,
+  IEP: 1.37,
+  DEM: 0.55,
+  ITL: 0.00056,
+  ARS: 0.001,
 };
 const CURRENCY: [RegExp, string][] = [
-  [/US\s?\$|USD/i, "USD"], [/IR£|IEP/i, "IEP"], [/HK\s?\$|HKD/i, "HKD"], [/A\s?\$|AUD/i, "AUD"], [/NZ\s?\$|NZD/i, "NZD"], [/C\s?\$|CAD/i, "CAD"],
-  [/S\s?\$|SGD/i, "SGD"], [/£|GBP|guineas/i, "GBP"], [/€|EUR/i, "EUR"], [/¥|JPY|yen/i, "JPY"],
-  [/ZAR|\bR\s?\d/, "ZAR"], [/AED|Dhs/i, "AED"], [/FRF|francs?/i, "FRF"], [/IR£|IEP/i, "IEP"],
-  [/DEM|\bDM\b/i, "DEM"], [/ITL|lire/i, "ITL"], [/US\s?\$|USD|\$/i, "USD"],
+  [/US\s?\$|USD/i, "USD"],
+  [/IR£|IEP/i, "IEP"],
+  [/HK\s?\$|HKD/i, "HKD"],
+  [/A\s?\$|AUD/i, "AUD"],
+  [/NZ\s?\$|NZD/i, "NZD"],
+  [/C\s?\$|CAD/i, "CAD"],
+  [/S\s?\$|SGD/i, "SGD"],
+  [/£|GBP|guineas/i, "GBP"],
+  [/€|EUR/i, "EUR"],
+  [/¥|JPY|yen/i, "JPY"],
+  [/ZAR|\bR\s?\d/, "ZAR"],
+  [/AED|Dhs/i, "AED"],
+  [/FRF|francs?/i, "FRF"],
+  [/IR£|IEP/i, "IEP"],
+  [/DEM|\bDM\b/i, "DEM"],
+  [/ITL|lire/i, "ITL"],
+  [/US\s?\$|USD|\$/i, "USD"],
 ];
 
 /** Convert an earnings string to approximate USD. */
@@ -190,7 +219,10 @@ function earningsUsd(s?: string): number | undefined {
   const raw = s.replace(/\{\{\s*([A-Za-z]{3})\s*\|\s*([^|}]+)[^}]*\}\}/g, "$1 $2");
   // First line only; "A + B" sums earnings won in several currencies;
   // anything in brackets is a conversion and is ignored.
-  const line = plain(raw).replace(/\{\{[^}]*\}\}/g, "").split("\n")[0].replace(/(\d),(\d)/g, "$1$2");
+  const line = plain(raw)
+    .replace(/\{\{[^}]*\}\}/g, "")
+    .split("\n")[0]
+    .replace(/(\d),(\d)/g, "$1$2");
   let total = 0;
   for (const part of line.split("+")) {
     const seg = part.split("(")[0];
@@ -294,7 +326,9 @@ async function main() {
     if (/^Q\d+$/.test(r.name)) continue; // no English name
     const box = wiki[id] ? infobox(wiki[id]) : undefined;
     const rec = record(box?.record);
-    const tf = box?.awards?.match(/Timeform rating\]*\s*:?\s*(\d{2,3})/i) ?? wiki[id]?.match(/Timeform rating[^\d]{0,30}(\d{3})/i);
+    const tf =
+      box?.awards?.match(/Timeform rating\]*\s*:?\s*(\d{2,3})/i) ??
+      wiki[id]?.match(/Timeform rating[^\d]{0,30}(\d{3})/i);
     const sexBox = box?.sex ?? box?.gender;
     const row: RealHorseRow = {
       id,
@@ -335,8 +369,16 @@ async function main() {
   let corrected = 0;
   for (const r of rows) {
     const box = wiki[r.id] ? infobox(wiki[r.id]) : undefined;
-    for (const [field, key] of [["sire", "sire"], ["dam", "dam"]] as const) {
-      const named = box?.[field] ? plain(box[field]).split("\n")[0].replace(/\s*\(.*\)$/, "").trim() : "";
+    for (const [field, key] of [
+      ["sire", "sire"],
+      ["dam", "dam"],
+    ] as const) {
+      const named = box?.[field]
+        ? plain(box[field])
+            .split("\n")[0]
+            .replace(/\s*\(.*\)$/, "")
+            .trim()
+        : "";
       const id = named ? nameIndex.get(named.toLowerCase()) : undefined;
       const cand = id ? byIdAll.get(id) : undefined;
       const older = cand?.foaled && r.foaled ? cand.foaled <= r.foaled - 3 : false;
@@ -376,7 +418,8 @@ async function main() {
 
   // Racing thoroughbreds only: drop other breeds (trotters, show jumpers,
   // Arabians, ponies…), then keep racers plus the ancestors behind them.
-  const NON_TB = /standardbred|trott|arab|warmblood|pony|quarter horse|draft|draught|hanoverian|holsteiner|selle|lipizzan|andalusian|appaloosa|morgan|percheron|clydesdale|shire|connemara|haflinger|fjord|icelandic|akhal|kladruber|trakehner|oldenburg|friesian|paint|mustang|tennessee|saddlebred|hackney|cob/i;
+  const NON_TB =
+    /standardbred|trott|arab|warmblood|pony|quarter horse|draft|draught|hanoverian|holsteiner|selle|lipizzan|andalusian|appaloosa|morgan|percheron|clydesdale|shire|connemara|haflinger|fjord|icelandic|akhal|kladruber|trakehner|oldenburg|friesian|paint|mustang|tennessee|saddlebred|hackney|cob/i;
   const byId = new Map(rows.map((r) => [r.id, r]));
   const racer = (r: RealHorseRow) =>
     !(r.breed && NON_TB.test(r.breed)) &&
