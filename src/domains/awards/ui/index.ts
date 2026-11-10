@@ -2,7 +2,7 @@
 export { AwardIcon, AwardIconWithYear, AwardFallback } from "@/domains/awards/ui/AwardIcon";
 export { AwardBadge, AwardBadgeWithRunnerUp, AwardListItem } from "@/domains/awards/ui/AwardBadge";
 export { TrophyCase, TrophyStats } from "@/domains/awards/ui/TrophyCase";
-export { AwardCeremony, useAwardCeremony } from "@/domains/awards/ui/AwardCeremony";
+export { AwardCeremony } from "@/domains/awards/ui/AwardCeremony";
 export { HorseAwardsPanel } from "@/domains/awards/ui/HorseAwardsPanel";
 export { G1TrophyList } from "@/domains/awards/ui/G1TrophyList";
 export { G1WinnerHistory } from "@/domains/awards/ui/G1WinnerHistory";

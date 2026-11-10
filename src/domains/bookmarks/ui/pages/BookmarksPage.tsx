@@ -10,8 +10,12 @@ import {
   useBookmarks,
   type Bookmark,
   type BookmarkEntityType,
-  BOOKMARK_TYPE_ORDER,
 } from "@/platform/game/hooks/useBookmarks";
+import {
+  filterBookmarks,
+  sortBookmarks,
+  type BookmarkSortKey,
+} from "@/domains/bookmarks/model/bookmarkFilter";
 
 const TYPE_LABELS: Record<BookmarkEntityType, string> = {
   horse: "Horse",
@@ -30,9 +34,7 @@ const TYPE_FILTERS: ReadonlyArray<{ value: BookmarkEntityType | "all"; label: st
   { value: "race", label: "Races" },
 ];
 
-type SortKey = "recent" | "oldest" | "name" | "type";
-
-const SORTS: ReadonlyArray<{ value: SortKey; label: string }> = [
+const SORTS: ReadonlyArray<{ value: BookmarkSortKey; label: string }> = [
   { value: "recent", label: "Recently saved" },
   { value: "oldest", label: "Oldest first" },
   { value: "name", label: "Name A–Z" },
@@ -66,7 +68,7 @@ function BookmarksPage() {
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<BookmarkEntityType | "all">("all");
   const [activeTags, setActiveTags] = useState<string[]>([]);
-  const [sort, setSort] = useState<SortKey>("recent");
+  const [sort, setSort] = useState<BookmarkSortKey>("recent");
 
   const toggleTagFilter = (tag: string) => {
     const key = tag.toLowerCase();
@@ -77,45 +79,10 @@ function BookmarksPage() {
     );
   };
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    const activeKeys = activeTags.map((t) => t.toLowerCase());
-    const activeKeySet = new Set(activeKeys);
-    let list = bookmarks.filter((b) => {
-      if (typeFilter !== "all" && b.type !== typeFilter) return false;
-      if (q) {
-        const inLabel = b.label.toLowerCase().includes(q);
-        const inId = b.id.toLowerCase().includes(q);
-        const inType = b.type.toLowerCase().includes(q);
-        const inSub = (b.subtitle ?? "").toLowerCase().includes(q);
-        const inTag = (b.tags ?? []).some((t) => t.toLowerCase().includes(q));
-        if (!inLabel && !inId && !inType && !inSub && !inTag) return false;
-      }
-      if (activeKeySet.size > 0) {
-        const bTagSet = new Set((b.tags ?? []).map((t) => t.toLowerCase()));
-        const allMatch = activeKeys.every((k) => bTagSet.has(k));
-        if (!allMatch) return false;
-      }
-      return true;
-    });
-    list = [...list].sort((a, b) => {
-      switch (sort) {
-        case "oldest":
-          return a.addedAt - b.addedAt;
-        case "name":
-          return a.label.localeCompare(b.label);
-        case "type":
-          return (
-            (BOOKMARK_TYPE_ORDER[a.type] ?? 0) - (BOOKMARK_TYPE_ORDER[b.type] ?? 0) ||
-            b.addedAt - a.addedAt
-          );
-        case "recent":
-        default:
-          return b.addedAt - a.addedAt;
-      }
-    });
-    return list;
-  }, [bookmarks, query, typeFilter, activeTags, sort]);
+  const filtered = useMemo(
+    () => sortBookmarks(filterBookmarks(bookmarks, { query, typeFilter, activeTags }), sort),
+    [bookmarks, query, typeFilter, activeTags, sort],
+  );
 
   const resultsLabel = `${filtered.length} of ${bookmarks.length}`;
 
@@ -150,80 +117,24 @@ function BookmarksPage() {
         />
       ) : (
         <>
-          {/* Controls */}
-          <div className="grid gap-3 md:grid-cols-[1fr_auto_auto]">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground/30" />
-              <Input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by name, ID, type, or tag…"
-                className="pl-9 h-9 bg-slate-950/40 border-white/10 text-sm font-mono"
-              />
-            </div>
-            <select
-              value={typeFilter}
-              onChange={(e) => setTypeFilter(e.target.value as BookmarkEntityType | "all")}
-              className="h-9 bg-slate-950/40 border border-white/10 text-foreground text-xs font-mono uppercase tracking-wide px-3"
-              aria-label="Filter by type"
-            >
-              {TYPE_FILTERS.map((t) => (
-                <option key={t.value} value={t.value}>
-                  {t.label}
-                </option>
-              ))}
-            </select>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value as SortKey)}
-              className="h-9 bg-slate-950/40 border border-white/10 text-foreground text-xs font-mono uppercase tracking-wide px-3"
-              aria-label="Sort by"
-            >
-              {SORTS.map((s) => (
-                <option key={s.value} value={s.value}>
-                  Sort: {s.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <BookmarkControls
+            query={query}
+            onQueryChange={setQuery}
+            typeFilter={typeFilter}
+            onTypeFilterChange={setTypeFilter}
+            sort={sort}
+            onSortChange={setSort}
+          />
 
-          {/* Tag filter row */}
           {allTags.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-[10px] uppercase font-black tracking-wide text-foreground/30 flex items-center gap-1">
-                <TagIcon className="h-3 w-3" /> Tags
-              </span>
-              {allTags.map((tag) => {
-                const active = activeTags.some((t) => t.toLowerCase() === tag.toLowerCase());
-                return (
-                  <button
-                    key={tag}
-                    type="button"
-                    onClick={() => toggleTagFilter(tag)}
-                    className={cn(
-                      "h-6 px-2 text-[10px] font-mono uppercase tracking-wide border transition-colors",
-                      active
-                        ? "border-primary/60 bg-primary/10 text-primary"
-                        : "border-white/10 text-foreground/50 hover:border-primary/30 hover:text-foreground",
-                    )}
-                  >
-                    {tag}
-                  </button>
-                );
-              })}
-              {activeTags.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setActiveTags([])}
-                  className="text-[10px] uppercase font-black tracking-wide text-foreground/40 hover:text-destructive flex items-center gap-1"
-                >
-                  <X className="h-3 w-3" /> Clear
-                </button>
-              )}
-            </div>
+            <TagFilterRow
+              allTags={allTags}
+              activeTags={activeTags}
+              onToggleTag={toggleTagFilter}
+              onClear={() => setActiveTags([])}
+            />
           )}
 
-          {/* List */}
           {filtered.length === 0 ? (
             <EmptyState
               icon={Search}
@@ -245,6 +156,106 @@ function BookmarksPage() {
             </ul>
           )}
         </>
+      )}
+    </div>
+  );
+}
+
+interface BookmarkControlsProps {
+  query: string;
+  onQueryChange: (q: string) => void;
+  typeFilter: BookmarkEntityType | "all";
+  onTypeFilterChange: (t: BookmarkEntityType | "all") => void;
+  sort: BookmarkSortKey;
+  onSortChange: (s: BookmarkSortKey) => void;
+}
+
+function BookmarkControls({
+  query,
+  onQueryChange,
+  typeFilter,
+  onTypeFilterChange,
+  sort,
+  onSortChange,
+}: BookmarkControlsProps) {
+  return (
+    <div className="grid gap-3 md:grid-cols-[1fr_auto_auto]">
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground/30" />
+        <Input
+          value={query}
+          onChange={(e) => onQueryChange(e.target.value)}
+          placeholder="Search by name, ID, type, or tag…"
+          className="pl-9 h-9 bg-slate-950/40 border-white/10 text-sm font-mono"
+        />
+      </div>
+      <select
+        value={typeFilter}
+        onChange={(e) => onTypeFilterChange(e.target.value as BookmarkEntityType | "all")}
+        className="h-9 bg-slate-950/40 border border-white/10 text-foreground text-xs font-mono uppercase tracking-wide px-3"
+        aria-label="Filter by type"
+      >
+        {TYPE_FILTERS.map((t) => (
+          <option key={t.value} value={t.value}>
+            {t.label}
+          </option>
+        ))}
+      </select>
+      <select
+        value={sort}
+        onChange={(e) => onSortChange(e.target.value as BookmarkSortKey)}
+        className="h-9 bg-slate-950/40 border border-white/10 text-foreground text-xs font-mono uppercase tracking-wide px-3"
+        aria-label="Sort by"
+      >
+        {SORTS.map((s) => (
+          <option key={s.value} value={s.value}>
+            Sort: {s.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+interface TagFilterRowProps {
+  allTags: string[];
+  activeTags: string[];
+  onToggleTag: (tag: string) => void;
+  onClear: () => void;
+}
+
+function TagFilterRow({ allTags, activeTags, onToggleTag, onClear }: TagFilterRowProps) {
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-[10px] uppercase font-black tracking-wide text-foreground/30 flex items-center gap-1">
+        <TagIcon className="h-3 w-3" /> Tags
+      </span>
+      {allTags.map((tag) => {
+        const active = activeTags.some((t) => t.toLowerCase() === tag.toLowerCase());
+        return (
+          <button
+            key={tag}
+            type="button"
+            onClick={() => onToggleTag(tag)}
+            className={cn(
+              "h-6 px-2 text-[10px] font-mono uppercase tracking-wide border transition-colors",
+              active
+                ? "border-primary/60 bg-primary/10 text-primary"
+                : "border-white/10 text-foreground/50 hover:border-primary/30 hover:text-foreground",
+            )}
+          >
+            {tag}
+          </button>
+        );
+      })}
+      {activeTags.length > 0 && (
+        <button
+          type="button"
+          onClick={onClear}
+          className="text-[10px] uppercase font-black tracking-wide text-foreground/40 hover:text-destructive flex items-center gap-1"
+        >
+          <X className="h-3 w-3" /> Clear
+        </button>
       )}
     </div>
   );

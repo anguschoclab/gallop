@@ -30,21 +30,23 @@ import {
   G1_HISTORY_SUBTITLE_SUFFIX,
 } from "@/domains/awards/model/awardsConstants";
 
+function groupRecordsByRace(seasonRecords: SeasonRecord[]): [string, SeasonRecord[]][] {
+  const groups = new Map<string, SeasonRecord[]>();
+  for (const record of seasonRecords) {
+    const list = groups.get(record.raceName) ?? [];
+    list.push(record);
+    groups.set(record.raceName, list);
+  }
+  for (const [, list] of groups) {
+    list.sort((a, b) => b.day - a.day);
+  }
+  return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b));
+}
+
 export function G1WinnerHistory() {
   const seasonRecords = useGame((s) => s.seasonRecords);
 
-  const byRace = useMemo(() => {
-    const groups = new Map<string, SeasonRecord[]>();
-    for (const record of seasonRecords) {
-      const list = groups.get(record.raceName) ?? [];
-      list.push(record);
-      groups.set(record.raceName, list);
-    }
-    for (const [, list] of groups) {
-      list.sort((a, b) => b.day - a.day);
-    }
-    return Array.from(groups.entries()).sort(([a], [b]) => a.localeCompare(b));
-  }, [seasonRecords]);
+  const byRace = useMemo(() => groupRecordsByRace(seasonRecords), [seasonRecords]);
 
   const chronological = useMemo(
     () => [...seasonRecords].sort((a, b) => b.day - a.day),
@@ -52,19 +54,7 @@ export function G1WinnerHistory() {
   );
 
   if (seasonRecords.length === 0) {
-    return (
-      <Card className="border-border">
-        <CardHeader>
-          <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)] flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-primary" />
-            {G1_HISTORY_TITLE}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground italic">{G1_HISTORY_EMPTY_MESSAGE}</p>
-        </CardContent>
-      </Card>
-    );
+    return <EmptyState />;
   }
 
   return (
@@ -88,159 +78,159 @@ export function G1WinnerHistory() {
           </TabsList>
 
           <TabsContent value={G1_HISTORY_TAB_BY_RACE}>
-            <Accordion type="multiple">
-              {byRace.map(([raceName, winners]) => (
-                <AccordionItem key={raceName} value={raceName}>
-                  <AccordionTrigger>
-                    <div className="flex items-center justify-between w-full pr-2">
-                      <span className="font-medium text-foreground">{raceName}</span>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="secondary" className="font-mono tabular-nums">
-                          {winners.length}{" "}
-                          {winners.length === 1 ? WINNER_LABEL_SINGULAR : WINNER_LABEL_PLURAL}
-                        </Badge>
-                        <span className="text-xs text-muted-foreground">
-                          {LATEST_WINNER_PREFIX} {winners[0].winnerName} ({YEAR_LABEL_PREFIX}
-                          {winners[0].year})
-                        </span>
-                      </div>
-                    </div>
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left border-collapse">
-                        <thead>
-                          <tr className="border-b border-white/10 text-muted-foreground text-xs uppercase tracking-wider">
-                            <th scope="col" className="py-2 px-3">
-                              Year
-                            </th>
-                            <th scope="col" className="py-2 px-3">
-                              Winner
-                            </th>
-                            <th scope="col" className="py-2 px-3">
-                              Jockey
-                            </th>
-                            <th scope="col" className="py-2 px-3">
-                              Gate
-                            </th>
-                            <th scope="col" className="py-2 px-3">
-                              Time
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="text-sm">
-                          {winners.map((record) => (
-                            <tr
-                              key={record.id}
-                              className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                            >
-                              <td className="py-2 px-3 font-bold text-primary">
-                                {YEAR_LABEL_PREFIX}
-                                {record.year}
-                              </td>
-                              <td className="py-2 px-3">
-                                <div className="flex items-center gap-2">
-                                  <SilkDot color={record.winnerSilk} size="sm" />
-                                  <Link
-                                    to={HORSE_PAGE_ROUTE}
-                                    params={{ horseId: record.winnerId }}
-                                    className={cn(
-                                      "hover:text-primary transition-colors",
-                                      record.isPlayerOwned
-                                        ? "text-primary font-bold"
-                                        : "text-foreground",
-                                    )}
-                                  >
-                                    {record.winnerName}
-                                  </Link>
-                                </div>
-                              </td>
-                              <td className="py-2 px-3 text-muted-foreground">
-                                {record.jockeyName}
-                              </td>
-                              <td className="py-2 px-3 font-mono text-foreground/50">
-                                {typeof record.gate === "number" ? `G${record.gate}` : "—"}
-                              </td>
-                              <td className="py-2 px-3 font-mono">
-                                {record.time.toFixed(TIME_DECIMAL_PLACES)}s
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            <ByRaceAccordion byRace={byRace} />
           </TabsContent>
 
           <TabsContent value={G1_HISTORY_TAB_CHRONOLOGICAL}>
+            <ChronologicalTable records={chronological} />
+          </TabsContent>
+        </Tabs>
+      </CardContent>
+    </Card>
+  );
+}
+
+function EmptyState() {
+  return (
+    <Card className="border-border">
+      <CardHeader>
+        <CardTitle className="text-base text-foreground font-[family-name:var(--font-display)] flex items-center gap-2">
+          <Trophy className="w-4 h-4 text-primary" />
+          {G1_HISTORY_TITLE}
+        </CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground italic">{G1_HISTORY_EMPTY_MESSAGE}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+const TABLE_HEAD_CLASS =
+  "border-b border-white/10 text-muted-foreground text-xs uppercase tracking-wider";
+const TABLE_CELL_HEAD = "py-2 px-3";
+const ROW_CLASS = "border-b border-white/5 hover:bg-white/5 transition-colors";
+
+function ByRaceAccordion({ byRace }: { byRace: [string, SeasonRecord[]][] }) {
+  return (
+    <Accordion type="multiple">
+      {byRace.map(([raceName, winners]) => (
+        <AccordionItem key={raceName} value={raceName}>
+          <AccordionTrigger>
+            <div className="flex items-center justify-between w-full pr-2">
+              <span className="font-medium text-foreground">{raceName}</span>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="font-mono tabular-nums">
+                  {winners.length}{" "}
+                  {winners.length === 1 ? WINNER_LABEL_SINGULAR : WINNER_LABEL_PLURAL}
+                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  {LATEST_WINNER_PREFIX} {winners[0].winnerName} ({YEAR_LABEL_PREFIX}
+                  {winners[0].year})
+                </span>
+              </div>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-white/10 text-muted-foreground text-xs uppercase tracking-wider">
-                    <th scope="col" className="py-2 px-3">
+                  <tr className={TABLE_HEAD_CLASS}>
+                    <th scope="col" className={TABLE_CELL_HEAD}>
                       Year
                     </th>
-                    <th scope="col" className="py-2 px-3">
-                      Race
-                    </th>
-                    <th scope="col" className="py-2 px-3">
+                    <th scope="col" className={TABLE_CELL_HEAD}>
                       Winner
                     </th>
-                    <th scope="col" className="py-2 px-3">
+                    <th scope="col" className={TABLE_CELL_HEAD}>
                       Jockey
                     </th>
-                    <th scope="col" className="py-2 px-3">
+                    <th scope="col" className={TABLE_CELL_HEAD}>
                       Gate
                     </th>
-                    <th scope="col" className="py-2 px-3">
+                    <th scope="col" className={TABLE_CELL_HEAD}>
                       Time
                     </th>
                   </tr>
                 </thead>
                 <tbody className="text-sm">
-                  {chronological.map((record) => (
-                    <tr
-                      key={record.id}
-                      className="border-b border-white/5 hover:bg-white/5 transition-colors"
-                    >
-                      <td className="py-2 px-3 font-bold text-primary">
-                        {YEAR_LABEL_PREFIX}
-                        {record.year}
-                      </td>
-                      <td className="py-2 px-3 font-medium text-foreground">{record.raceName}</td>
-                      <td className="py-2 px-3">
-                        <div className="flex items-center gap-2">
-                          <SilkDot color={record.winnerSilk} size="sm" />
-                          <Link
-                            to={HORSE_PAGE_ROUTE}
-                            params={{ horseId: record.winnerId }}
-                            className={cn(
-                              "hover:text-primary transition-colors",
-                              record.isPlayerOwned ? "text-primary font-bold" : "text-foreground",
-                            )}
-                          >
-                            {record.winnerName}
-                          </Link>
-                        </div>
-                      </td>
-                      <td className="py-2 px-3 text-muted-foreground">{record.jockeyName}</td>
-                      <td className="py-2 px-3 font-mono text-foreground/50">
-                        {typeof record.gate === "number" ? `G${record.gate}` : "—"}
-                      </td>
-                      <td className="py-2 px-3 font-mono">
-                        {record.time.toFixed(TIME_DECIMAL_PLACES)}s
-                      </td>
-                    </tr>
+                  {winners.map((record) => (
+                    <WinnerRow key={record.id} record={record} />
                   ))}
                 </tbody>
               </table>
             </div>
-          </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+          </AccordionContent>
+        </AccordionItem>
+      ))}
+    </Accordion>
+  );
+}
+
+function ChronologicalTable({ records }: { records: SeasonRecord[] }) {
+  return (
+    <div className="overflow-x-auto">
+      <table className="w-full text-left border-collapse">
+        <thead>
+          <tr className={TABLE_HEAD_CLASS}>
+            <th scope="col" className={TABLE_CELL_HEAD}>
+              Year
+            </th>
+            <th scope="col" className={TABLE_CELL_HEAD}>
+              Race
+            </th>
+            <th scope="col" className={TABLE_CELL_HEAD}>
+              Winner
+            </th>
+            <th scope="col" className={TABLE_CELL_HEAD}>
+              Jockey
+            </th>
+            <th scope="col" className={TABLE_CELL_HEAD}>
+              Gate
+            </th>
+            <th scope="col" className={TABLE_CELL_HEAD}>
+              Time
+            </th>
+          </tr>
+        </thead>
+        <tbody className="text-sm">
+          {records.map((record) => (
+            <WinnerRow key={record.id} record={record} showRace />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function WinnerRow({ record, showRace }: { record: SeasonRecord; showRace?: boolean }) {
+  return (
+    <tr className={ROW_CLASS}>
+      <td className="py-2 px-3 font-bold text-primary">
+        {YEAR_LABEL_PREFIX}
+        {record.year}
+      </td>
+      {showRace && <td className="py-2 px-3 font-medium text-foreground">{record.raceName}</td>}
+      <td className="py-2 px-3">
+        <div className="flex items-center gap-2">
+          <SilkDot color={record.winnerSilk} size="sm" />
+          <Link
+            to={HORSE_PAGE_ROUTE}
+            params={{ horseId: record.winnerId }}
+            className={cn(
+              "hover:text-primary transition-colors",
+              record.isPlayerOwned ? "text-primary font-bold" : "text-foreground",
+            )}
+          >
+            {record.winnerName}
+          </Link>
+        </div>
+      </td>
+      <td className="py-2 px-3 text-muted-foreground">{record.jockeyName}</td>
+      <td className="py-2 px-3 font-mono text-foreground/50">
+        {typeof record.gate === "number" ? `G${record.gate}` : "—"}
+      </td>
+      <td className="py-2 px-3 font-mono">{record.time.toFixed(TIME_DECIMAL_PLACES)}s</td>
+    </tr>
   );
 }
