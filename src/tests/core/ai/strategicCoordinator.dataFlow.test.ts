@@ -83,7 +83,7 @@ function createMockGameState(overrides: Partial<GameState> = {}): GameState {
     breedingPrograms: [],
     awards: [],
     ...overrides,
-  } as unknown as GameState;
+  } as GameState;
 }
 
 describe("assessWorldState: economic trends data flow", () => {
@@ -208,7 +208,7 @@ describe("budgetAllocation: checked before generating spending intents", () => {
       entries: [{ horseId: "claim-target", stableId: "npc-2" }] as never[],
       resolved: false,
       claimingPrice: 25000,
-    } as unknown as GameState["races"][string];
+    } as GameState["races"][string];
 
     const manager = createMockManager();
     const state = createMockGameState({
