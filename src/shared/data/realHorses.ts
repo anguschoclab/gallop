@@ -53,9 +53,14 @@ export const realHorses: readonly RealHorse[] = data.horses;
 
 export const realHorseById = new Map<string, RealHorse>(realHorses.map((h) => [h.id, h]));
 
-/** How much of a real career we know — used to pick between same-named horses. */
+/**
+ * How much of a real career we know — used to pick between same-named horses.
+ * @param h
+ */
 function richness(h: RealHorse): number {
-  return (h.starts ? 4 : 0) + (h.wiki ? 2 : 0) + (h.majorWins?.length ? 1 : 0) + (h.foaled ? 0.5 : 0);
+  return (
+    (h.starts ? 4 : 0) + (h.wiki ? 2 : 0) + (h.majorWins?.length ? 1 : 0) + (h.foaled ? 0.5 : 0)
+  );
 }
 
 const byName = new Map<string, RealHorse>();
@@ -83,7 +88,10 @@ export function realDamName(h: RealHorse): string | undefined {
   return h.dam ? realHorseById.get(h.dam)?.name : undefined;
 }
 
-/** Win strike rate 0-1, or undefined without a known record. */
+/**
+ * Win strike rate 0-1, or undefined without a known record.
+ * @param h
+ */
 export function realWinRate(h: RealHorse): number | undefined {
   return h.starts && h.starts > 0 ? (h.wins ?? 0) / h.starts : undefined;
 }
