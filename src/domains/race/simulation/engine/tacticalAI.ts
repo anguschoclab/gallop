@@ -93,31 +93,40 @@ export function calculateTacticalAdjustment(
   let horsesInFrontCount = 0;
   let clusteredAheadCount = 0;
 
-  for (let i = 0; i < runners.length; i++) {
+  const len = runners.length;
+  const rPos = runner.position;
+  const rLane = runner.lane;
+  const rId = runner.horseId;
+
+  for (let i = 0; i < len; i++) {
     const r = runners[i];
-    // Early break: remaining runners are >6m behind — no rival or traffic match possible
-    if (r.position < runner.position - 6) break;
 
-    if (r.horseId === runner.horseId || r.finishTime !== null) continue;
+    // Early break: remaining runners are >6m behind
+    const posDiff = r.position - rPos;
+    if (posDiff < -6) break;
 
-    const posDiff = r.position - runner.position;
+    if (r.horseId === rId || r.finishTime !== null) continue;
 
     // Check rival presence (within 6m in either direction)
     if (
       !nearbyRivalFound &&
       hasRivals &&
-      Math.abs(posDiff) < 6 &&
+      posDiff < 6 && // we already know posDiff >= -6
       rivalHorseIds.includes(r.horseId)
     ) {
       nearbyRivalFound = true;
     }
 
     // Check traffic ahead (within 6m, same lane roughly)
-    if (posDiff > 0 && posDiff < 6 && Math.abs(r.lane - runner.lane) < 0.5) {
-      if (posDiff < 3) {
-        horsesInFrontCount++;
-      } else {
-        clusteredAheadCount++;
+    if (posDiff > 0 && posDiff < 6) {
+      const laneDiff = r.lane - rLane;
+      const absLaneDiff = laneDiff < 0 ? -laneDiff : laneDiff;
+      if (absLaneDiff < 0.5) {
+        if (posDiff < 3) {
+          horsesInFrontCount++;
+        } else {
+          clusteredAheadCount++;
+        }
       }
     }
   }
