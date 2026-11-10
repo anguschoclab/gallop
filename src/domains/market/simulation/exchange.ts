@@ -187,7 +187,9 @@ export function generateNpcBook(args: {
   // Horses the player has a live standing bid on stay listable — the
   // player's escrowed bid is a funded buyer even when no rival can pay.
   const playerBidHorses = new Set(
-    existing.bids.filter((b) => b.bidderId === "player" && b.expiresDay >= day).map((b) => b.horseId),
+    existing.bids
+      .filter((b) => b.bidderId === "player" && b.expiresDay >= day)
+      .map((b) => b.horseId),
   );
 
   // --- NPC asks: each stable lists a slice of its string sized by its stance.

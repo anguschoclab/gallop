@@ -322,6 +322,31 @@ export const detectFreshness: InsightDetector = (horse) => {
   return null;
 };
 
+// 1.75 Check for Early Speed (Pacesetter)
+export const detectEarlySpeed: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  const racesWithPace = history.filter((r) => r.pacePositions && r.pacePositions.length > 0);
+  if (racesWithPace.length < 5) return null;
+
+  let earlyLeadCount = 0;
+  for (const race of racesWithPace) {
+    if (race.pacePositions && race.pacePositions[0] <= 2) {
+      earlyLeadCount++;
+    }
+  }
+
+  const rate = earlyLeadCount / racesWithPace.length;
+  if (rate >= 0.8) {
+    return {
+      label: "Early Speed",
+      value: "Pacesetter",
+      context: `Has contested the early lead (1st or 2nd at the first call) in ${Math.round(rate * 100)}% of career starts`,
+      type: "neutral",
+    };
+  }
+  return null;
+};
+
 // 1.8 Check for Play Style Success (Tactical Versatility / Catch Me If You Can)
 export const detectPlayStyle: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -894,6 +919,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectImprovingForm,
   detectStakesPerformance,
   detectFreshness,
+  detectEarlySpeed,
   detectPlayStyle,
   detectClosingKick,
   detectLateBloomer,
