@@ -48,3 +48,32 @@ Verdict summary: `Brand<T,_B>=T` structural (documented; Anvil PRs are style-onl
 | tests/core/race/replayPersistence.test.ts | `fixed` gap-documenting tautology replaced by phase+applyImpacts round-trip regression tests |
 | tests marker comments (inheritance, RivalIntelTab, scoring.tiebreaker, horseCareerValuation) | clean — BUG/FIX phrasing reworded to regression wording; repo scans 0 markers |
 | generate_todos.py / search_todos.py | recreated repo-root marker-scan + query tools (originals never committed — unrecoverable) |
+
+## 2026-11-10 perf-scan batch (bot findings triage)
+
+20 findings in two patterns (`includes()` in filter/find → O(N*M); `Object.values(horses).filter()` → extra full-record scans). Audit: 10 fixed, 9 false-positive/negligible, 1 kept-optimized. All scans iterate `Object.values(state.horses)` — **never `context.horseMap`** (day-start snapshot; `state.horses` is replaced mid-pipeline by energy/raceResolution/npcCycle/archiving/exchangeSettlement). Determinism gate: `stateFingerprint.ts 90 large` checksum `ffae9318` identical before/after.
+
+| Finding | Verdict |
+| --- | --- |
+| platform/time/scheduler.ts:190 `result.includes(d)` | `fixed` Set lookup (cold cycle-error path; identity-safe — same descriptor refs) |
+| domains/agents/ui/AiActivityFeed.tsx:15 | `fixed` `NPC_CATEGORIES` → `ReadonlySet` + `.has()` |
+| domains/dashboard/ui/AIActivityStrip.tsx:15 | `fixed` (unflagged identical twin — same change) |
+| platform/time/phases/pastureRetirement.ts:109,165 | `fixed` two full-record scans merged into one pass (npcHorses + horsesToDelete, order preserved) |
+| platform/time/phases/upkeep.ts:54 | `fixed` playerHorses filter + NPC-count loop merged into one pass |
+| platform/time/phases/schedulerPhase.ts:82 | `fixed` for-of push (auto-entry path; fingerprint-invisible — unit test is sole guard) |
+| platform/time/phases/stallionRetirement.ts:32 | `fixed` intermediate array dropped — direct for-of + guard |
+| platform/time/phases/solvency.ts:262 | `fixed` filter+reduce → single-pass counters (insolvency-only path) |
+| routes/strategyJournal.tsx:74 | `fixed` for-of inside existing useMemo |
+| routes/race-advisor.tsx:59 | `fixed` for-of inside existing useMemo |
+| routes/sire-watch.$stallionId.tsx:23 | `kept-optimized` `allStallions` is dead code — retained per owner decision, now memoized off shared `allHorses` (reused by `getSireAnalytics`); future-removal candidate |
+| platform/time/advanceDayHelpers.ts:54 | `kept-optimized` `calculatePlayerUpkeep` has zero callers — retained per owner decision, body now single-pass count; future-removal candidate |
+| routes/rankings-history.tsx:106→111 | `false-positive:string-includes` `name.includes(q)` is substring search, not array membership |
+| domains/history/ui/AlmanacMilestones.tsx:22 | `false-positive:string-includes` |
+| domains/agents/ui/pages/NpcStablesCompare.tsx:17 | `false-positive:string-includes` |
+| routes/stable-rankings.tsx:123 | `false-positive:string-includes` |
+| domains/dashboard/ui/RegionDrilldownDrawer.tsx:159 (+:253) | `negligible:tiny-N` `surfaceFilter` ⊆ `ALL_SURFACES` (3 elems); Set costs more than scan |
+| domains/agents/ui/DiplomacyPanel.tsx:103 | `negligible:tiny-N` cartels×members ~ tens; per-cartel Set pointless |
+| domains/agents/ui/RelationshipGraph.tsx:40 | `negligible:tiny-N` same pattern |
+| domains/agents/simulation/trainingAI.ts:150 | `negligible:tiny-N` fixed 3-key record × ≤3 availableTypes; Set-per-call strictly worse |
+
+Test-first protocol used: 4 new characterization tests written and green on unmodified code before any refactor (schedulerPhase `runDailyAutoEntry` filter, upkeep lifecycle exclusion, pastureRetirement scan ordering, new `advanceDayHelpers.test.ts`). Verification: typecheck 0 errors; 547 targeted tests pass; lint clean; fingerprint identical. Expected impact is modest hygiene — ~1–2 fewer 2–3k-element scans/day across 4 daily phases — not algorithmic wins.

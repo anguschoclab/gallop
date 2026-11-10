@@ -9,10 +9,10 @@ interface AIActivityStripProps {
   news: NewsItem[];
 }
 
-const NPC_CATEGORIES: NewsCategory[] = ["stable", "market", "racing"];
+const NPC_CATEGORIES: ReadonlySet<NewsCategory> = new Set(["stable", "market", "racing"]);
 
 export function AIActivityStrip({ news }: AIActivityStripProps) {
-  const filtered = news.filter((n) => NPC_CATEGORIES.includes(n.category));
+  const filtered = news.filter((n) => NPC_CATEGORIES.has(n.category));
   const display = filtered.slice(0, 5);
 
   return (

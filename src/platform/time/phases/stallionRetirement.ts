@@ -28,11 +28,11 @@ export const stallionRetirementPhase: PipelinePhase = {
     const { state, newDay } = context;
     const impacts = [...context.impacts];
 
-    // Only run for NPC horses
-    const npcHorses = Object.values(state.horses).filter((h) => h.ownership?.type === "npc");
     const { stableMap } = context;
 
-    for (const horse of npcHorses) {
+    for (const horse of Object.values(state.horses)) {
+      // Only run for NPC horses
+      if (horse.ownership?.type !== "npc") continue;
       // 1. Basic eligibility
       if (!SIRE_GENDERS.includes(horse.gender)) continue;
       if (horse.stud?.atStud) continue;

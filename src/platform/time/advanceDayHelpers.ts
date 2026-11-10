@@ -52,6 +52,9 @@ export function filterHorsesForNewYear(
  * @param horses
  */
 export function calculatePlayerUpkeep(horses: Record<string, Horse>): number {
-  const playerHorseCount = Object.values(horses).filter((h: Horse) => isPlayerOwned(h)).length;
+  let playerHorseCount = 0;
+  for (const h of Object.values(horses)) {
+    if (isPlayerOwned(h)) playerHorseCount++;
+  }
   return playerHorseCount * UPKEEP_PER_HORSE;
 }

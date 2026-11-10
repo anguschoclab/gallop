@@ -9,10 +9,10 @@ interface AiActivityFeedProps {
   filterActive?: boolean;
 }
 
-const NPC_CATEGORIES: NewsCategory[] = ["stable", "market", "racing"];
+const NPC_CATEGORIES: ReadonlySet<NewsCategory> = new Set(["stable", "market", "racing"]);
 
 export function AiActivityFeed({ news, filterActive }: AiActivityFeedProps) {
-  const filtered = filterActive ? news.filter((n) => NPC_CATEGORIES.includes(n.category)) : news;
+  const filtered = filterActive ? news.filter((n) => NPC_CATEGORIES.has(n.category)) : news;
 
   return (
     <Card className="bg-slate-900/40 border-white/5 rounded-none shadow-xl border-l-4 border-l-emerald-400">

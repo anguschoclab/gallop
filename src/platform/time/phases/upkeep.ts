@@ -9,6 +9,7 @@
  */
 
 import type { PipelineContext } from "@/platform/time/pipeline";
+import type { Horse } from "@/platform/game/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { createExpense } from "@/domains/expenses/model/expenseTypes";
 import { calculateTotalMaintenance } from "@/domains/facilities/simulation";
@@ -51,9 +52,20 @@ export const upkeepPhase = {
     const generateFlavor = resolveNarrativePort(context.ports, "generateFlavor");
     const generateWeeklyFlavor = resolveNarrativePort(context.ports, "generateWeeklyFlavor");
 
-    const playerHorses = Object.values(state.horses).filter(
-      (h) => isPlayerOwned(h) && (!h.lifecycleStatus || h.lifecycleStatus === "active"),
-    );
+    // Single pass over the horses record: collect active player horses and
+    // per-stable active NPC counts (used below for NPC upkeep charges).
+    const playerHorses: Horse[] = [];
+    const horseCountsByStable = new Map<string, number>();
+    for (const h of Object.values(state.horses)) {
+      const isActive = !h.lifecycleStatus || h.lifecycleStatus === "active";
+      if (!isActive) continue;
+      if (isPlayerOwned(h)) {
+        playerHorses.push(h);
+      } else if (h.ownership?.type === "npc") {
+        const sid = h.ownership.stableId;
+        horseCountsByStable.set(sid, (horseCountsByStable.get(sid) ?? 0) + 1);
+      }
+    }
     const playerHorseCount = playerHorses.length;
     const playerUpkeep = playerHorseCount * UPKEEP_PER_HORSE;
 
@@ -127,16 +139,7 @@ export const upkeepPhase = {
       } as TransactionImpact);
     }
 
-    // Pre-calculate counts and staff
-    const horseCountsByStable = new Map<string, number>();
-    for (const h of Object.values(state.horses)) {
-      const isActive = !h.lifecycleStatus || h.lifecycleStatus === "active";
-      if (h.ownership?.type === "npc" && isActive) {
-        const sid = h.ownership.stableId;
-        horseCountsByStable.set(sid, (horseCountsByStable.get(sid) ?? 0) + 1);
-      }
-    }
-
+    // Pre-calculate staff
     const staffByStable = new Map<string, StaffMember[]>();
     if (state.hiredStaff) {
       for (const staff of state.hiredStaff) {

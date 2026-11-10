@@ -247,6 +247,70 @@ describe("upkeepPhase", () => {
     expect(cashImpact!.amount).toBe(-50);
   });
 
+  it("excludes non-active horses from both player and NPC upkeep counts", () => {
+    const state: GameState = makeGameState({
+      day: 1,
+      cash: 10000,
+      horses: h2r([
+        createTestHorse({
+          id: "h-active-player",
+          ownership: makePlayerOwned(),
+          lifecycleStatus: "active",
+        }),
+        createTestHorse({
+          id: "h-dead-player",
+          ownership: makePlayerOwned(),
+          lifecycleStatus: "deceased",
+        }),
+        createTestHorse({
+          id: "h-active-npc",
+          ownership: makeNpcOwned(asNpcStableId("npc-stable-1")),
+          lifecycleStatus: "active",
+        }),
+        createTestHorse({
+          id: "h-retired-npc",
+          ownership: makeNpcOwned(asNpcStableId("npc-stable-1")),
+          lifecycleStatus: "retired",
+        }),
+      ]),
+      npcStables: [
+        createTestStable({
+          id: "npc-stable-1",
+          name: "NPC Stable 1",
+          cash: 5000,
+          personality: "breeder",
+          reputation: 70,
+          tier: "elite",
+          owner: generatePersonIdentity({
+            id: "owner-1",
+            displayName: "Owner 1",
+            role: "owner",
+            ageBand: "adult",
+          }),
+          founded: 1,
+        }),
+      ],
+    }) as GameState;
+
+    const context: PipelineContext = makePipelineContext({
+      previousDay: 0,
+      newDay: 1,
+      state,
+    }) as PipelineContext;
+
+    const result = upkeepPhase.execute(context);
+    const playerImpact = result.impacts.find(
+      (i): i is CashImpact => i.type === "cash_change" && i.entityId === "player",
+    );
+    const npcImpact = result.impacts.find(
+      (i): i is CashImpact => i.type === "cash_change" && i.entityId === "npc-stable-1",
+    );
+
+    // One active horse per side → -50 each; deceased/retired must not be counted.
+    expect(playerImpact?.amount).toBe(-50);
+    expect(npcImpact?.amount).toBe(-50);
+  });
+
   it("should preserve other context properties", () => {
     const state: GameState = makeGameState({
       day: 1,

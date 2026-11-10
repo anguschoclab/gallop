@@ -328,6 +328,46 @@ describe("Pasture Retirement — Section 3: Horse Deletion", () => {
 // ---------------------------------------------------------------------------
 // Integration
 // ---------------------------------------------------------------------------
+describe("Pasture Retirement — Scan Ordering", () => {
+  it("emits retirements and deletions in horses-record scan order", () => {
+    const deceased1 = createTestHorse({
+      id: "dead-1",
+      lifecycleStatus: "deceased",
+      careerWins: 0,
+    });
+    const npc1 = createTestNpcHorse({
+      id: "npc-1",
+      age: 9,
+      lifecycleStatus: "active" as const,
+      raceHistory: [],
+    });
+    const deceased2 = createTestHorse({
+      id: "dead-2",
+      lifecycleStatus: "deceased",
+      careerWins: 0,
+    });
+    const npc2 = createTestNpcHorse({
+      id: "npc-2",
+      age: 10,
+      lifecycleStatus: "active" as const,
+      raceHistory: [],
+    });
+    // Interleaved insertion order: dead-1, npc-1, dead-2, npc-2.
+    const ctx = makeContext({ horses: h2r([deceased1, npc1, deceased2, npc2]) }, [], 200);
+    const out = pastureRetirementPhase.execute(ctx);
+
+    const retirements = findImpacts(out.impacts, "pasture_retirement").map((i: any) => i.horseId);
+    expect(retirements).toEqual(["npc-1", "npc-2"]);
+
+    const deletions = findImpacts(out.impacts, "horse_deletion").map((i: any) => i.horseId);
+    expect(deletions).toEqual(["dead-1", "dead-2"]);
+
+    // Section 2 (retirement) impacts all precede section 3 (deletion) impacts.
+    const types = out.impacts.map((i) => i.type);
+    expect(types.lastIndexOf("pasture_retirement")).toBeLessThan(types.indexOf("horse_deletion"));
+  });
+});
+
 describe("Pasture Retirement — Integration", () => {
   it("empty horses + empty intents → no impacts, context preserved", () => {
     const ctx = makeContext({ horses: {} }, []);

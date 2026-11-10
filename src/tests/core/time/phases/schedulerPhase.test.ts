@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { schedulerPhase } from "@/platform/time/phases/schedulerPhase";
 import { makeGameState, makePipelineContext, h2r } from "@/tests/helpers/sampleGameState";
-import { createTestHorse } from "@/tests/helpers";
+import { createTestHorse, createTestJockey } from "@/tests/helpers";
 import type { GameState } from "@/platform/game/types";
 import type { PipelineContext } from "@/platform/time/pipeline";
 import { makePlayerOwned, makeUnowned } from "@/domains/horse/simulation/ownership";
@@ -146,5 +146,92 @@ describe("schedulerPhase", () => {
       (i) => i.type === "race_entry" && (i as any).horseId === "horse-dup",
     );
     expect(raceEntryImpacts).toHaveLength(0);
+  });
+});
+
+describe("runDailyAutoEntry", () => {
+  const autoRace = (id: string, day: number) =>
+    ({
+      id,
+      name: "Auto Race",
+      day,
+      distance: 1600,
+      raceClass: "Allowance",
+      entryFee: 300,
+      purse: 6000,
+      fieldSize: 8,
+      entries: [],
+      resolved: false,
+    }) as any;
+
+  it("excludes campaign-managed and pending-entry horses from auto-entry", () => {
+    const eligible = { age: 4, gender: "horse" as const, ownership: makePlayerOwned() };
+    const campaignHorse = createTestHorse({ id: "h-campaign", ...eligible });
+    const pendingHorse = createTestHorse({ id: "h-pending", ...eligible });
+    const eligibleHorse = createTestHorse({ id: "h-eligible", ...eligible });
+    const campaign = {
+      id: "camp-auto",
+      horseId: "h-campaign",
+      autoManaged: true,
+      slots: [],
+      lastReviewedDay: 0,
+      confirmedAptitudes: {},
+      flags: {},
+    };
+    const pendingEntry = {
+      id: "imp-pending",
+      intentId: "",
+      day: 5,
+      phase: "intentCollection",
+      logLevel: "never",
+      type: "race_entry",
+      raceId: "race-other",
+      horseId: "h-pending",
+      entryFee: 0,
+    } as any;
+    const state = makeGameState({
+      day: 5,
+      cash: 100000,
+      horses: h2r([campaignHorse, pendingHorse, eligibleHorse]),
+      races: { "race-auto": autoRace("race-auto", 8) },
+      jockeys: [createTestJockey({ id: "j1" })],
+      campaigns: [campaign as any],
+      userSettings: { gameplay: { autoEnterRaces: true } } as any,
+    }) as GameState;
+    const context = makePipelineContext({
+      state,
+      newDay: 5,
+      impacts: [pendingEntry],
+    }) as PipelineContext;
+
+    const result = schedulerPhase.execute(context);
+
+    const emittedHorseIds = result.impacts
+      .filter((i) => i.type === "race_entry" && (i as any).phase === "scheduler")
+      .map((i: any) => i.horseId);
+    expect(emittedHorseIds).toContain("h-eligible");
+    expect(emittedHorseIds).not.toContain("h-campaign");
+    expect(emittedHorseIds).not.toContain("h-pending");
+  });
+
+  it("emits no race_entry impacts when autoEnterRaces is disabled", () => {
+    const horse = createTestHorse({
+      id: "h1",
+      age: 4,
+      gender: "horse",
+      ownership: makePlayerOwned(),
+    });
+    const state = makeGameState({
+      day: 5,
+      cash: 100000,
+      horses: h2r([horse]),
+      races: { "race-auto": autoRace("race-auto", 8) },
+      jockeys: [createTestJockey({ id: "j1" })],
+      campaigns: [],
+    }) as GameState;
+    const context = makePipelineContext({ state, newDay: 5 }) as PipelineContext;
+
+    const result = schedulerPhase.execute(context);
+    expect(result.impacts.filter((i) => i.type === "race_entry")).toHaveLength(0);
   });
 });

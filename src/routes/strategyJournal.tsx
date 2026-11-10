@@ -7,6 +7,7 @@ import { Button } from "@/shared/ui/button";
 import { Input } from "@/shared/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/shared/ui/select";
 import { useGame } from "@/platform/game/store";
+import type { Horse } from "@/platform/game/types";
 import { PlanEffectivenessCard } from "@/domains/journal/ui/PlanEffectivenessCard";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import {
@@ -70,10 +71,13 @@ function StrategyJournalPage() {
   const [newRace, setNewRace] = useState("none");
   const [newPlan, setNewPlan] = useState("");
 
-  const myHorses = useMemo(
-    () => Object.values(horses).filter((h) => isPlayerOwned(h) && h.lifecycleStatus === "active"),
-    [horses],
-  );
+  const myHorses = useMemo(() => {
+    const list: Horse[] = [];
+    for (const h of Object.values(horses)) {
+      if (isPlayerOwned(h) && h.lifecycleStatus === "active") list.push(h);
+    }
+    return list;
+  }, [horses]);
   const raceOptions = useMemo(
     () =>
       Object.values(races)

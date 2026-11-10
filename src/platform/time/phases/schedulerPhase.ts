@@ -15,7 +15,7 @@
 import { PHASE_ORDER_SCHEDULER } from "@/platform/time/pipelineConstants";
 import { makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import type { PipelineContext } from "@/platform/time/pipeline";
-import type { HorseCampaign } from "@/platform/game/types";
+import type { Horse, HorseCampaign } from "@/platform/game/types";
 import {
   buildCampaignSlots,
   generateCampaignFlags,
@@ -79,9 +79,12 @@ function runDailyAutoEntry(context: PipelineContext): PipelineContext {
       .filter((imp) => imp.type === "race_entry")
       .map((imp) => (imp as RaceEntryImpact).horseId),
   );
-  const horses = Object.values(state.horses).filter(
-    (h) => !campaignHorseIds.has(h.id) && !pendingHorseIds.has(h.id),
-  );
+  const horses: Horse[] = [];
+  for (const h of Object.values(state.horses)) {
+    if (!campaignHorseIds.has(h.id) && !pendingHorseIds.has(h.id)) {
+      horses.push(h);
+    }
+  }
   const result = calculateAutoRegisterEntries(
     horses,
     Object.values(state.races),

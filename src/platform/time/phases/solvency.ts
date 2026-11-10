@@ -259,18 +259,22 @@ export const solvencyPhase = {
     } as typeof state;
 
     if (solvency.tier === "insolvent") {
-      const playerHorses = Object.values(state.horses).filter((h) => isPlayerOwned(h));
-      const lifetimeEarnings = playerHorses.reduce(
-        (sum, h) => sum + (h.raceHistory ?? []).reduce((s, r) => s + (r.purseEarned ?? 0), 0),
-        0,
-      );
+      let playerHorseCount = 0;
+      let lifetimeEarnings = 0;
+      for (const h of Object.values(state.horses)) {
+        if (!isPlayerOwned(h)) continue;
+        playerHorseCount++;
+        for (const r of h.raceHistory ?? []) {
+          lifetimeEarnings += r.purseEarned ?? 0;
+        }
+      }
       nextState = {
         ...nextState,
         runEnded: true,
         runEndSnapshot: {
           day: newDay,
           cash: projectedCash,
-          horsesOwned: playerHorses.length,
+          horsesOwned: playerHorseCount,
           lifetimeEarnings,
           reputationTier: state.reputation?.tier ?? "unknown",
           causeOfDeath: `Cash fell to $${projectedCash.toLocaleString()}, past the insolvency floor.`,

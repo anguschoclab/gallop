@@ -56,13 +56,15 @@ function RaceAdvisorPage() {
   const day = useGame((s) => s.day);
   const setRaceTactics = useGame((s) => s.setRaceTactics);
 
-  const myHorses = useMemo(
-    () =>
-      Object.values(horses).filter(
-        (h) => isPlayerOwned(h) && h.lifecycleStatus === "active" && h.racingViable,
-      ),
-    [horses],
-  );
+  const myHorses = useMemo(() => {
+    const list: Horse[] = [];
+    for (const h of Object.values(horses)) {
+      if (isPlayerOwned(h) && h.lifecycleStatus === "active" && h.racingViable) {
+        list.push(h);
+      }
+    }
+    return list;
+  }, [horses]);
   const [horseId, setHorseId] = useState<string>("");
   const [raceId, setRaceId] = useState<string>("");
   const horse = horseId ? horses[horseId] : undefined;

@@ -187,7 +187,8 @@ export function compileSchedule(descriptors: PhaseDescriptor[]): CompiledSchedul
   }
 
   if (result.length !== descriptors.length) {
-    const remaining = descriptors.filter((d) => !result.includes(d)).map((d) => d.id);
+    const completed = new Set(result);
+    const remaining = descriptors.filter((d) => !completed.has(d)).map((d) => d.id);
     throw new ScheduleError(`Dependency cycle detected among: ${remaining.join(", ")}`);
   }
 

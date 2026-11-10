@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useMemo } from "react";
 import { useGame } from "@/platform/game/store";
 import { Card, CardContent, CardHeader, CardTitle } from "@/shared/ui/card";
 import { Button } from "@/shared/ui/button";
@@ -20,7 +21,8 @@ function SireProfilePage() {
   const horses = useGame((s) => s.horses);
 
   const stallion = horses[stallionId];
-  const allStallions = Object.values(horses).filter((h) => h.stud?.atStud);
+  const allHorses = useMemo(() => Object.values(horses), [horses]);
+  const allStallions = useMemo(() => allHorses.filter((h) => h.stud?.atStud), [allHorses]);
   const industryMeanEarnings = useGame((s) => s.industryMeanEarnings ?? 0);
 
   if (!stallion || !stallion.stud?.atStud) {
@@ -43,7 +45,7 @@ function SireProfilePage() {
     );
   }
 
-  const analytics = getSireAnalytics(stallion, Object.values(horses), industryMeanEarnings, horses);
+  const analytics = getSireAnalytics(stallion, allHorses, industryMeanEarnings, horses);
 
   const getClassificationColor = (classification: SireClassification) => {
     switch (classification) {

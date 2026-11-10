@@ -10,6 +10,7 @@
  */
 
 import type { PipelineContext, PipelinePhase } from "@/platform/time/pipeline";
+import type { Horse } from "@/platform/game/types";
 import { getCareerStats } from "@/domains/horse/simulation/stats";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 
@@ -105,10 +106,21 @@ export const pastureRetirementPhase: PipelinePhase = {
       }
     }
 
-    // 2. Automatic NPC retirement
-    const npcHorses = Object.values(state.horses).filter(
-      (h) => h.ownership?.type === "npc" && h.lifecycleStatus === "active",
-    );
+    // 2-3. Single pass over the horses record: collect active NPC horses for
+    // automatic retirement and dead/retired winners-less horses for deletion.
+    const npcHorses: Horse[] = [];
+    const horsesToDelete: Horse[] = [];
+    for (const h of Object.values(state.horses)) {
+      if (h.ownership?.type === "npc" && h.lifecycleStatus === "active") {
+        npcHorses.push(h);
+      }
+      if (
+        (h.lifecycleStatus === "deceased" || h.lifecycleStatus === "retired") &&
+        h.careerWins === 0
+      ) {
+        horsesToDelete.push(h);
+      }
+    }
 
     for (const horse of npcHorses) {
       // Skip if already at stud (stud retirement handles that)
@@ -162,11 +174,6 @@ export const pastureRetirementPhase: PipelinePhase = {
     }
 
     // 3. Delete dead/retired horses with no wins to prevent array accumulation
-    const horsesToDelete = Object.values(state.horses).filter(
-      (h) =>
-        (h.lifecycleStatus === "deceased" || h.lifecycleStatus === "retired") && h.careerWins === 0,
-    );
-
     for (const horse of horsesToDelete) {
       impacts.push({
         id: generateUUID(),
