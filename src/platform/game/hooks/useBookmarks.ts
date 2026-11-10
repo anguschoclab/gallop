@@ -4,13 +4,7 @@ import { safeParseJson, bookmarkArraySchema } from "@/platform/persistence/stora
 export type BookmarkEntityType = "horse" | "jockey" | "stable" | "race" | "sire";
 
 // Bookmark type rank order for sorting (matches TYPE_FILTERS display order, not alphabetical)
-export const BOOKMARK_TYPE_ORDER: Record<BookmarkEntityType, number> = {
-  horse: 0,
-  sire: 1,
-  jockey: 2,
-  stable: 3,
-  race: 4,
-};
+export { BOOKMARK_TYPE_ORDER } from "@/domains/bookmarks/model/bookmarkFilter";
 
 export interface Bookmark {
   type: BookmarkEntityType;
