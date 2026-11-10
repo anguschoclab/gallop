@@ -130,9 +130,8 @@ describe("replay persistence (Option B: read from race.snapshots)", () => {
 
     // The emitted race_result impact must carry the same snapshots it writes
     // back at impact application, or it erases what the phase just stored.
-    const raceResultImpact = phaseResult.impacts.find(
-      (i) => i.type === "race_result",
-    ) as RaceResultImpact | undefined;
+    const raceResultImpact = phaseResult.impacts.find((i) => i.type === "race_result") as
+      RaceResultImpact | undefined;
     expect(raceResultImpact?.snapshots).toEqual(snapshots);
 
     const applied = applyPhaseImpacts(phaseResult);
