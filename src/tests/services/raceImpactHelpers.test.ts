@@ -182,12 +182,12 @@ describe("generatePerformanceCareerImpacts", () => {
     expect(impacts.find((i) => i.type === "fame_change")).toBeDefined();
   });
 
-  it("does not emit fame_change for 4th place", () => {
+  it("does not emit fame_change for 6th place", () => {
     const horse = createTestColt({ id: "h1" });
     const race = makeOpenRace();
     const { impacts } = generatePerformanceCareerImpacts(
       horse,
-      { horseId: "h1", position: 4, time: 120 },
+      { horseId: "h1", position: 6, time: 120 },
       race,
       undefined,
       0,
