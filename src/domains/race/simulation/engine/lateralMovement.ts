@@ -68,7 +68,9 @@ export function calculateTargetLane(
       r.escapeLaneDelta = Math.abs(targetLane - laneIdx);
     } else {
       // Fall back to existing per-horse blocking detection for non-flagged scenarios
-      for (const other of sortedField) {
+      // Performance optimization: Avoid for..of iterator overhead in hot loops
+      for (let i = 0; i < sortedField.length; i++) {
+        const other = sortedField[i];
         if (other.horseId === r.horseId) continue;
         const gap = other.position - r.position;
         if (gap <= 0) break;

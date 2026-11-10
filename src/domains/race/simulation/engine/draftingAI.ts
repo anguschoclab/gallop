@@ -60,7 +60,9 @@ export function getEnhancedDraftingHorseId(r: Runner, sortedField: Runner[]): st
   // Closers (S) and stalkers (P) prefer drafting behind front-runners (E) and early-pressers (EP)
   const runnerPrefersFrontRunners = r.runningStyle === "S" || r.runningStyle === "P";
 
-  for (const other of sortedField) {
+  // Performance optimization: Avoid for..of iterator overhead in hot loops
+  for (let i = 0; i < sortedField.length; i++) {
+    const other = sortedField[i];
     if (other.horseId === r.horseId) continue;
     const gap = other.position - r.position;
     if (gap <= 0) break; // Optimization: stop early (sorted field)
@@ -123,7 +125,9 @@ export function calculateRailSavingLane(r: Runner, progress: number): number {
 export function calculateCoverModifier(r: Runner, sortedField: Runner[]): number {
   let coverCount = 0;
 
-  for (const other of sortedField) {
+  // Performance optimization: Avoid for..of iterator overhead in hot loops
+  for (let i = 0; i < sortedField.length; i++) {
+    const other = sortedField[i];
     if (other.horseId === r.horseId) continue;
     if (other.finishTime !== null) continue;
 
