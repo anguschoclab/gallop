@@ -41,3 +41,6 @@
 - [x] Exchange tuning: commission, NPC bid/ask spreads, cash reserve — trades keep settling, Exchange can't drain or inflate rival cash
 - [ ] Found: outside the Exchange, rival cash still swings wildly in a 180-day game (one stud hit $30M; several sit under $1,000) — source is elsewhere (stud fees / auctions / racing); needs its own pass
 - [x] Real horse data (free public): 6,278 real thoroughbreds in Almanac "Real Horses" tab, family trees and legacy stallion ability
+- [x] Live race + cross-house trade check: house reserves scale with prestige, race fame scales with racecourse (single fame rule), $0 prices for unscouted horses fixed, race-entry picker shows only your horses, debut no longer counts as a losing streak
+- [ ] Found: buying at a low-prestige house and selling the same day at a high-prestige one is a guaranteed profit (Drover → Crownhill made $1,088 on a $10k horse) — needs a design decision
+- [ ] Found: after a live race the replay snaps back to 0m with every runner "In Trouble"; race list shows raw track IDs for some tracks
