@@ -46,9 +46,7 @@ describe("Bruce Lowe family display — no raw codes", () => {
           displayOverallEstimate={undefined}
           isResolved={false}
           isPlayerLeading={false}
-          isPlayerConsigned={false}
           lotIndex={0}
-          totalLots={1}
         />,
       );
       expect(screen.getByText(/Family 5/)).toBeDefined();

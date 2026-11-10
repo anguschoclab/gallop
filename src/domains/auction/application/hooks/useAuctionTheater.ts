@@ -5,17 +5,16 @@
  * Refactored to use composable sub-hooks for better separation of concerns.
  */
 
-import { useEffect, useReducer, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGame } from "@/platform/game/store";
-import { createAuctionRunner, type AuctionRunner } from "@/domains/auction/simulation/runner";
-import { type AuctioneerLine } from "@/domains/auction/application/auctioneerService";
+import { type AuctionRunner } from "@/domains/auction/simulation/runner";
 import { useAuctionTimers } from "@/domains/auction/application/hooks/useAuctionTimers";
 import { useAuctionEventProcessor } from "@/domains/auction/application/hooks/useAuctionEventProcessor";
 import { usePlayerBidding } from "@/domains/auction/application/hooks/usePlayerBidding";
 import { useDismissedAuctionErrors } from "@/domains/auction/application/hooks/useDismissedAuctionErrors";
+import { useTheaterUiState } from "@/domains/auction/application/hooks/useTheaterUiState";
+import { useAuctionRunnerLifecycle } from "@/domains/auction/application/hooks/useAuctionRunnerLifecycle";
 import type { AuctionBidRecord, AuctionLot } from "@/platform/game/types";
-
-const TICK_MS = 1500;
 
 /**
  * Hook for managing the live auction theater loop
@@ -34,7 +33,6 @@ export function useAuctionTheater(saleId: string) {
 
   // Composable hooks
   const timers = useAuctionTimers();
-  const [, forceTick] = useReducer((x: number) => x + 1, 0);
 
   // Theater-local state
   const [theaterState, setTheaterState] = useState({
@@ -44,17 +42,10 @@ export function useAuctionTheater(saleId: string) {
     committed: false,
   });
 
-  const [uiState, setUiState] = useState({
-    chantLines: [] as AuctioneerLine[],
-    activePaddle: null as string | null,
-    hammerFlash: false,
-    bannerFlash: false,
-    historyOpen: false,
-    winOverlay: null as { horseName: string; hammerPrice: number } | null,
-    bidHistoryError: null as string | null,
-  });
+  const ui = useTheaterUiState(timers);
 
-  // Refs
+  // Refs — runnerRef is populated by the lifecycle hook's init effect below;
+  // prevLeadingRef backs the lead-change banner flash.
   const runnerRef = useRef<AuctionRunner | null>(null);
   const prevLeadingRef = useRef<boolean | undefined>(undefined);
 
@@ -69,25 +60,11 @@ export function useAuctionTheater(saleId: string) {
     scoutReports,
     day,
     runnerRef,
-    setChantLines: (linesOrFn) => {
-      if (typeof linesOrFn === "function") {
-        setUiState((prev) => ({ ...prev, chantLines: linesOrFn(prev.chantLines) }));
-      } else {
-        setUiState((prev) => ({ ...prev, chantLines: linesOrFn }));
-      }
-    },
-    setActivePaddle: (id) => {
-      setUiState((prev) => ({ ...prev, activePaddle: id }));
-      timers.setActivePaddleFlash(id, (newId) =>
-        setUiState((prev) => ({ ...prev, activePaddle: newId })),
-      );
-    },
-    setHammerFlash: (flash) => {
-      setUiState((prev) => ({ ...prev, hammerFlash: flash }));
-      if (flash) timers.setHammerFlash((f) => setUiState((prev) => ({ ...prev, hammerFlash: f })));
-    },
-    setWinOverlay: (overlay) => setUiState((prev) => ({ ...prev, winOverlay: overlay })),
-    setHistoryOpen: (open) => setUiState((prev) => ({ ...prev, historyOpen: open })),
+    setChantLines: ui.setChantLines,
+    setActivePaddle: ui.setActivePaddle,
+    setHammerFlash: ui.setHammerFlash,
+    setWinOverlay: ui.setWinOverlay,
+    setHistoryOpen: ui.setHistoryOpen,
     theaterState,
     setPlayerMaxBid: (bid) => bidding.setPlayerMaxBidState(bid),
   });
@@ -100,59 +77,24 @@ export function useAuctionTheater(saleId: string) {
     eventProcessor.stepAndRender,
   );
 
-  // Destructure stable members so the init effect below depends on stable
-  // identities — the composable hooks return fresh container objects each
-  // render, and depending on them reset the runner on every commit.
-  const { setPlayerMaxBidState, setBidError: setBiddingError } = bidding;
-  const { setBidError: scheduleBidError, clearAll: clearAllTimers } = timers;
-  const { prevLotIndexRef } = eventProcessor;
-
-  // Initialize runner once per sale
-  useEffect(() => {
-    if (!sale) return;
-    runnerRef.current = createAuctionRunner(sale, stables, Object.values(horses), undefined, {
-      liveMode: true,
-      onAutoRaise: (amount) => {
-        const result = debitForLiveBid(amount);
-        if (!result.ok) {
-          setPlayerMaxBidState(undefined);
-          setBiddingError(`Auto-bid cancelled: ${result.reason ?? "insufficient funds"}`);
-          scheduleBidError(`Auto-bid cancelled: ${result.reason ?? "insufficient funds"}`, (err) =>
-            setBiddingError(err),
-          );
-          return false;
-        }
-        return true;
-      },
-    });
-    setUiState((prev) => ({ ...prev, chantLines: [] }));
-    setTheaterState((prev) => ({ ...prev, done: false, committed: false }));
-    setPlayerMaxBidState(undefined);
-    setUiState((prev) => ({ ...prev, historyOpen: false, winOverlay: null }));
-    prevLotIndexRef.current = 0;
-    prevLeadingRef.current = undefined;
-    forceTick();
-
-    return () => {
-      clearAllTimers();
-    };
-  }, [
-    sale?.id,
+  // Runner lifecycle: init, max-bid sync, auto-watch interval, skip/commit
+  const lifecycle = useAuctionRunnerLifecycle({
+    saleId,
     sale,
     stables,
     horses,
+    day,
     debitForLiveBid,
-    setPlayerMaxBidState,
-    setBiddingError,
-    scheduleBidError,
-    clearAllTimers,
-    prevLotIndexRef,
-  ]);
-
-  // Sync player max bid to runner
-  useEffect(() => {
-    runnerRef.current?.setPlayerMaxBid(bidding.playerMaxBidState);
-  }, [bidding.playerMaxBidState]);
+    commitAuctionResult,
+    timers,
+    theaterState,
+    setTheaterState,
+    eventProcessor,
+    bidding,
+    ui,
+    runnerRef,
+    prevLeadingRef,
+  });
 
   // Derived state from runner
   const lotState = runnerRef.current?.currentLot();
@@ -174,61 +116,17 @@ export function useAuctionTheater(saleId: string) {
   const bidHistoryError =
     !lotState && sale && !theaterState.done && activeLotCount > 0
       ? "Failed to load bid history for this lot."
-      : uiState.bidHistoryError;
+      : ui.uiState.bidHistoryError;
 
   // Banner flash effect when player takes the lead
+  const { setBannerFlashValue } = ui;
   useEffect(() => {
     if (prevLeadingRef.current === false && playerIsLeading) {
-      setUiState((prev) => ({ ...prev, bannerFlash: true }));
-      timers.setBannerFlash((f) => setUiState((prev) => ({ ...prev, bannerFlash: f })));
+      setBannerFlashValue(true);
+      timers.setBannerFlash((f) => setBannerFlashValue(f));
     }
     prevLeadingRef.current = playerIsLeading;
-  }, [playerIsLeading, timers]);
-
-  // Auto-watch interval
-  useEffect(() => {
-    if (theaterState.done || theaterState.paused || !theaterState.autoWatch) {
-      timers.stopInterval();
-      return;
-    }
-
-    const interval = timers.startInterval(() => {
-      eventProcessor.stepAndRender();
-    }, TICK_MS);
-
-    return () => {
-      if (interval) timers.stopInterval();
-    };
-  }, [
-    theaterState.done,
-    theaterState.paused,
-    theaterState.autoWatch,
-    eventProcessor.stepAndRender,
-    eventProcessor,
-    timers,
-  ]);
-
-  // Handle skip and commit
-  const handleSkip = useCallback(() => {
-    const runner = runnerRef.current;
-    if (!runner || theaterState.done) return;
-    runner.finishSale();
-    setTheaterState((prev) => ({ ...prev, done: true }));
-    forceTick();
-  }, [theaterState.done]);
-
-  const handleCommit = useCallback(() => {
-    if (!runnerRef.current || theaterState.committed) return;
-    const finalLots = runnerRef.current.finalLots();
-    const impacts = runnerRef.current.finalImpacts({ day, phase: "auction_theater" });
-    commitAuctionResult(saleId, finalLots, impacts);
-    setTheaterState((prev) => ({ ...prev, committed: true }));
-  }, [commitAuctionResult, theaterState.committed, saleId, day]);
-
-  const retryBidHistory = useCallback(() => {
-    setUiState((prev) => ({ ...prev, bidHistoryError: null }));
-    forceTick();
-  }, []);
+  }, [playerIsLeading, timers, setBannerFlashValue]);
 
   return {
     sale,
@@ -241,9 +139,9 @@ export function useAuctionTheater(saleId: string) {
     lotIndex,
     playerIsLeading,
     bidHistory,
-    chantLines: uiState.chantLines,
-    activePaddle: uiState.activePaddle,
-    hammerFlash: uiState.hammerFlash,
+    chantLines: ui.uiState.chantLines,
+    activePaddle: ui.uiState.activePaddle,
+    hammerFlash: ui.uiState.hammerFlash,
     done: theaterState.done,
     committed: theaterState.committed,
     paused: theaterState.paused,
@@ -252,20 +150,20 @@ export function useAuctionTheater(saleId: string) {
     setAutoWatch: (value: boolean) => setTheaterState((prev) => ({ ...prev, autoWatch: value })),
     playerMaxBidState: bidding.playerMaxBidState,
     setPlayerMaxBidState: bidding.setPlayerMaxBidState,
-    historyOpen: uiState.historyOpen,
-    setHistoryOpen: (value: boolean) => setUiState((prev) => ({ ...prev, historyOpen: value })),
-    bannerFlash: uiState.bannerFlash,
-    winOverlay: uiState.winOverlay,
+    historyOpen: ui.uiState.historyOpen,
+    setHistoryOpen: ui.setHistoryOpen,
+    bannerFlash: ui.uiState.bannerFlash,
+    winOverlay: ui.uiState.winOverlay,
     bidError: bidding.bidError,
     dismissBidError: bidding.dismissBidError,
     retryBid: bidding.retryBid,
     canRetryBid: bidding.canRetry,
     dismissedErrors,
     bidHistoryError,
-    retryBidHistory,
+    retryBidHistory: lifecycle.retryBidHistory,
     handleBid: bidding.handleBid,
     handlePass: bidding.handlePass,
-    handleSkip,
-    handleCommit,
+    handleSkip: lifecycle.handleSkip,
+    handleCommit: lifecycle.handleCommit,
   };
 }

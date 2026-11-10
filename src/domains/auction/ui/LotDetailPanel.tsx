@@ -21,9 +21,7 @@ interface LotDetailPanelProps {
   displayOverallEstimate: number | undefined;
   isResolved: boolean;
   isPlayerLeading: boolean;
-  isPlayerConsigned: boolean;
   lotIndex: number;
-  totalLots: number;
 }
 
 export function LotDetailPanel({
@@ -34,227 +32,282 @@ export function LotDetailPanel({
   displayOverallEstimate,
   isResolved,
   isPlayerLeading,
-  isPlayerConsigned,
   lotIndex,
-  totalLots,
 }: LotDetailPanelProps) {
   return (
     <div className="bg-slate-900/60 border border-white/5 shadow-2xl relative overflow-hidden group">
       <div className="absolute top-0 left-0 w-1 h-full bg-primary/40" />
 
-      <div className="bg-black/40 px-8 py-4 border-b border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <div className="text-center bg-primary/10 border border-primary/20 p-2 min-w-[60px]">
-            <div className="text-[8px] font-black uppercase text-primary/40 tracking-tighter leading-none mb-1">
-              Lot_ID
-            </div>
-            <div className="text-xl font-black font-mono text-primary leading-none tabular-nums">
-              #{String(lotIndex + 1).padStart(3, "0")}
-            </div>
-          </div>
-          <div className="space-y-0.5">
-            <h2 className="text-4xl font-black text-foreground font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-primary transition-colors">
-              {horse.name}
-            </h2>
-            <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
-              <span>
-                {genderSymbol(horse.gender)} {horse.gender}
-              </span>
-              <span className="w-1 h-1 rounded-full bg-white/20" />
-              <span>Age {Math.floor(horse.age)}</span>
-              {horse.hemisphere === "Southern" && (
-                <>
-                  <span className="w-1 h-1 rounded-full bg-white/20" />
-                  <span className="text-blue-400/60">S. Hemi.</span>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <BookmarkButton
-            type="horse"
-            id={horse.id}
-            label={horse.name}
-            subtitle={`Age ${Math.floor(horse.age)} · ${horse.gender}`}
-            variant="full"
-          />
-          {lot.passed && (
-            <Badge
-              variant="secondary"
-              className="rounded-none font-black text-[10px] tracking-wide h-8 px-4 bg-destructive/10 text-destructive border-destructive/20 uppercase"
-            >
-              Reserve not met
-            </Badge>
-          )}
-          {!lot.passed && !isResolved && isPlayerLeading && (
-            <Badge className="bg-success text-slate-950 rounded-none font-black text-[10px] tracking-wide h-8 px-4 animate-pulse shadow-[0_0_15px_color-mix(in oklab, var(--success) 30%, transparent)]">
-              Leading Bidder
-            </Badge>
-          )}
-          {!lot.passed && lot.soldToStableId && isResolved && (
-            <div className="text-right">
-              <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide mb-1">
-                Acquired_By
-              </div>
-              <Badge
-                variant="outline"
-                className="border-primary/30 text-primary font-black text-[9px] uppercase tracking-wide h-6 rounded-none px-3 bg-primary/5"
-              >
-                {consignor?.name?.toUpperCase() ?? "Unknown"}
-              </Badge>
-            </div>
-          )}
-        </div>
-      </div>
+      <LotHeader
+        lot={lot}
+        horse={horse}
+        consignor={consignor}
+        isResolved={isResolved}
+        isPlayerLeading={isPlayerLeading}
+        lotIndex={lotIndex}
+      />
 
       <div className="p-8">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-start">
           {/* Portrait & Pedigree */}
           <div className="md:col-span-5 space-y-6">
-            <div className="aspect-square bg-slate-950 border border-white/5 p-4 flex items-center justify-center relative shadow-inner">
-              <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]]" />
-              <HorsePortrait
-                id={horse.id}
-                coatColor={horse.coatColor}
-                markings={horse.markings}
-                gender={horse.gender}
-                appearance={horse.appearance}
-                size="lg"
-              />
-              <div className="absolute bottom-4 left-4 bg-black/80 border border-white/10 px-2 py-1 flex items-center gap-2 shadow-xl">
-                <ShieldCheck className="h-3 w-3 text-primary/40" />
-                <span className="text-[8px] font-mono text-primary/20 uppercase tracking-wide">
-                  Confirmed
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-1 px-1">
-                <TrendingUp className="h-3.5 w-3.5 text-pink-500/60" />
-                <h3 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
-                  Pedigree Analysis
-                </h3>
-              </div>
-              <Card className="bg-black/20 border-white/5 rounded-none border-l border-l-pink-500/30">
-                <CardContent className="p-4 space-y-3">
-                  <div className="flex items-start gap-4">
-                    <div className="space-y-0.5 flex-1">
-                      <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-wide">
-                        Sire Line
-                      </div>
-                      <div className="text-xs font-bold text-foreground uppercase">
-                        {horse.sireName || "UNKNOWN"}
-                      </div>
-                    </div>
-                    <div className="space-y-0.5 flex-1 border-l border-white/5 pl-4">
-                      <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-wide">
-                        Dam Line
-                      </div>
-                      <div className="text-xs font-bold text-foreground uppercase">
-                        {horse.damName || "UNKNOWN"}
-                      </div>
-                    </div>
-                  </div>
-                  {horse.bruceLoweFamily && (
-                    <div className="pt-2 border-t border-white/5">
-                      <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide">
-                        Bruce Lowe Family
-                      </div>
-                      <div className="text-xs font-mono font-bold text-pink-400">
-                        Family {horse.bruceLoweFamily}
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
+            <LotPortrait horse={horse} />
+            <LotPedigree horse={horse} />
           </div>
 
           {/* Technical Specs */}
-          <div className="md:col-span-7 space-y-8">
-            <section className="space-y-4">
-              <div className="flex items-center gap-2 mb-1 px-1">
-                <FileText className="h-3.5 w-3.5 text-primary/60" />
-                <h3 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
-                  Technical Specifications
-                </h3>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                {(["conformation", "temperament", "coatColor", "runningStyle"] as const).map(
-                  (spec) => (
-                    <div key={spec} className="bg-black/20 p-3 border border-white/5">
-                      <div className="text-[8px] font-black uppercase text-foreground/20 tracking-tighter mb-1 leading-none">
-                        {spec.replace(/([A-Z])/g, "_$1").toUpperCase()}
-                      </div>
-                      <div className="text-xs font-mono font-bold text-foreground/80 uppercase">
-                        {horse[spec]?.toString().replace("-", " ") || "—"}
-                      </div>
-                    </div>
-                  ),
-                )}
-                <div className="bg-black/20 p-3 border border-white/5">
-                  <div className="text-[8px] font-black uppercase text-foreground/20 tracking-tighter mb-1 leading-none">
-                    PREF_DISTANCE
-                  </div>
-                  <div className="text-xs font-mono font-bold text-foreground/80 uppercase">
-                    {Math.round(horse.distanceAptitude)}m
-                  </div>
-                </div>
-                <div className="bg-black/20 p-3 border border-white/5">
-                  <div className="text-[8px] font-black uppercase text-foreground/20 tracking-tighter mb-1 leading-none">
-                    BEST_SURFACE
-                  </div>
-                  <div className="text-xs font-mono font-bold text-foreground/80 uppercase">
-                    {(() => {
-                      const best = Object.entries(
-                        horse.surfaceAptitude || ({} as Record<string, number>),
-                      ).sort((a, b) => b[1] - a[1])[0];
-                      return best ? `${best[0]} (${Math.round(best[1])})` : "—";
-                    })()}
-                  </div>
-                </div>
-              </div>
+          <LotTechnicalSpecs
+            horse={horse}
+            displayStats={displayStats}
+            displayOverallEstimate={displayOverallEstimate}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
-              {/* Scouting Report */}
-              {displayStats && (
-                <div className="pt-4 border-t border-white/5 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="text-[8px] font-black uppercase text-primary/40 tracking-wide">
-                      Scouting Report
-                    </div>
-                    {displayOverallEstimate && (
-                      <Badge
-                        variant="outline"
-                        className="border-primary/20 text-primary font-mono text-[9px] h-5 rounded-none px-2 uppercase"
-                      >
-                        Est_OVR: {displayOverallEstimate}
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="grid grid-cols-2 gap-x-6 gap-y-2">
-                    {Object.entries(displayStats).map(([key, val]) => (
-                      <div
-                        key={key}
-                        className="flex items-center justify-between border-b border-white/5 pb-1"
-                      >
-                        <span className="text-[9px] font-mono text-foreground/20 uppercase tracking-tighter">
-                          {key}
-                        </span>
-                        <span className="text-xs font-mono font-black text-foreground/60 tabular-nums">
-                          {String(val)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </section>
+interface LotHeaderProps {
+  lot: AuctionLot;
+  horse: Horse;
+  consignor: Stable | undefined;
+  isResolved: boolean;
+  isPlayerLeading: boolean;
+  lotIndex: number;
+}
+
+function LotHeader({
+  lot,
+  horse,
+  consignor,
+  isResolved,
+  isPlayerLeading,
+  lotIndex,
+}: LotHeaderProps) {
+  return (
+    <div className="bg-black/40 px-8 py-4 border-b border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div className="flex items-center gap-4">
+        <div className="text-center bg-primary/10 border border-primary/20 p-2 min-w-[60px]">
+          <div className="text-[8px] font-black uppercase text-primary/40 tracking-tighter leading-none mb-1">
+            Lot_ID
+          </div>
+          <div className="text-xl font-black font-mono text-primary leading-none tabular-nums">
+            #{String(lotIndex + 1).padStart(3, "0")}
+          </div>
+        </div>
+        <div className="space-y-0.5">
+          <h2 className="text-4xl font-black text-foreground font-[family-name:var(--font-display)] uppercase tracking-tight group-hover:text-primary transition-colors">
+            {horse.name}
+          </h2>
+          <div className="flex items-center gap-3 font-mono text-[10px] uppercase tracking-wide text-foreground/40">
+            <span>
+              {genderSymbol(horse.gender)} {horse.gender}
+            </span>
+            <span className="w-1 h-1 rounded-full bg-white/20" />
+            <span>Age {Math.floor(horse.age)}</span>
+            {horse.hemisphere === "Southern" && (
+              <>
+                <span className="w-1 h-1 rounded-full bg-white/20" />
+                <span className="text-blue-400/60">S. Hemi.</span>
+              </>
+            )}
           </div>
         </div>
       </div>
+
+      <div className="flex items-center gap-2">
+        <BookmarkButton
+          type="horse"
+          id={horse.id}
+          label={horse.name}
+          subtitle={`Age ${Math.floor(horse.age)} · ${horse.gender}`}
+          variant="full"
+        />
+        {lot.passed && (
+          <Badge
+            variant="secondary"
+            className="rounded-none font-black text-[10px] tracking-wide h-8 px-4 bg-destructive/10 text-destructive border-destructive/20 uppercase"
+          >
+            Reserve not met
+          </Badge>
+        )}
+        {!lot.passed && !isResolved && isPlayerLeading && (
+          <Badge className="bg-success text-slate-950 rounded-none font-black text-[10px] tracking-wide h-8 px-4 animate-pulse shadow-[0_0_15px_color-mix(in oklab, var(--success) 30%, transparent)]">
+            Leading Bidder
+          </Badge>
+        )}
+        {!lot.passed && lot.soldToStableId && isResolved && (
+          <div className="text-right">
+            <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide mb-1">
+              Acquired_By
+            </div>
+            <Badge
+              variant="outline"
+              className="border-primary/30 text-primary font-black text-[9px] uppercase tracking-wide h-6 rounded-none px-3 bg-primary/5"
+            >
+              {consignor?.name?.toUpperCase() ?? "Unknown"}
+            </Badge>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function LotPortrait({ horse }: { horse: Horse }) {
+  return (
+    <div className="aspect-square bg-slate-950 border border-white/5 p-4 flex items-center justify-center relative shadow-inner">
+      <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')]]" />
+      <HorsePortrait
+        id={horse.id}
+        coatColor={horse.coatColor}
+        markings={horse.markings}
+        gender={horse.gender}
+        appearance={horse.appearance}
+        size="lg"
+      />
+      <div className="absolute bottom-4 left-4 bg-black/80 border border-white/10 px-2 py-1 flex items-center gap-2 shadow-xl">
+        <ShieldCheck className="h-3 w-3 text-primary/40" />
+        <span className="text-[8px] font-mono text-primary/20 uppercase tracking-wide">
+          Confirmed
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function LotPedigree({ horse }: { horse: Horse }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center gap-2 mb-1 px-1">
+        <TrendingUp className="h-3.5 w-3.5 text-pink-500/60" />
+        <h3 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
+          Pedigree Analysis
+        </h3>
+      </div>
+      <Card className="bg-black/20 border-white/5 rounded-none border-l border-l-pink-500/30">
+        <CardContent className="p-4 space-y-3">
+          <div className="flex items-start gap-4">
+            <div className="space-y-0.5 flex-1">
+              <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-wide">
+                Sire Line
+              </div>
+              <div className="text-xs font-bold text-foreground uppercase">
+                {horse.sireName || "UNKNOWN"}
+              </div>
+            </div>
+            <div className="space-y-0.5 flex-1 border-l border-white/5 pl-4">
+              <div className="text-[8px] font-black uppercase text-pink-500/40 tracking-wide">
+                Dam Line
+              </div>
+              <div className="text-xs font-bold text-foreground uppercase">
+                {horse.damName || "UNKNOWN"}
+              </div>
+            </div>
+          </div>
+          {horse.bruceLoweFamily && (
+            <div className="pt-2 border-t border-white/5">
+              <div className="text-[8px] font-black uppercase text-foreground/20 tracking-wide">
+                Bruce Lowe Family
+              </div>
+              <div className="text-xs font-mono font-bold text-pink-400">
+                Family {horse.bruceLoweFamily}
+              </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+interface LotTechnicalSpecsProps {
+  horse: Horse;
+  displayStats: Record<string, number> | null;
+  displayOverallEstimate: number | undefined;
+}
+
+function LotTechnicalSpecs({
+  horse,
+  displayStats,
+  displayOverallEstimate,
+}: LotTechnicalSpecsProps) {
+  const bestSurface = Object.entries(horse.surfaceAptitude || ({} as Record<string, number>)).sort(
+    (a, b) => b[1] - a[1],
+  )[0];
+
+  return (
+    <div className="md:col-span-7 space-y-8">
+      <section className="space-y-4">
+        <div className="flex items-center gap-2 mb-1 px-1">
+          <FileText className="h-3.5 w-3.5 text-primary/60" />
+          <h3 className="text-[10px] font-black uppercase tracking-wide text-foreground/40">
+            Technical Specifications
+          </h3>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          {(["conformation", "temperament", "coatColor", "runningStyle"] as const).map((spec) => (
+            <div key={spec} className="bg-black/20 p-3 border border-white/5">
+              <div className="text-[8px] font-black uppercase text-foreground/20 tracking-tighter mb-1 leading-none">
+                {spec.replace(/([A-Z])/g, "_$1").toUpperCase()}
+              </div>
+              <div className="text-xs font-mono font-bold text-foreground/80 uppercase">
+                {horse[spec]?.toString().replace("-", " ") || "—"}
+              </div>
+            </div>
+          ))}
+          <div className="bg-black/20 p-3 border border-white/5">
+            <div className="text-[8px] font-black uppercase text-foreground/20 tracking-tighter mb-1 leading-none">
+              PREF_DISTANCE
+            </div>
+            <div className="text-xs font-mono font-bold text-foreground/80 uppercase">
+              {Math.round(horse.distanceAptitude)}m
+            </div>
+          </div>
+          <div className="bg-black/20 p-3 border border-white/5">
+            <div className="text-[8px] font-black uppercase text-foreground/20 tracking-tighter mb-1 leading-none">
+              BEST_SURFACE
+            </div>
+            <div className="text-xs font-mono font-bold text-foreground/80 uppercase">
+              {bestSurface ? `${bestSurface[0]} (${Math.round(bestSurface[1])})` : "—"}
+            </div>
+          </div>
+        </div>
+
+        {/* Scouting Report */}
+        {displayStats && (
+          <div className="pt-4 border-t border-white/5 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="text-[8px] font-black uppercase text-primary/40 tracking-wide">
+                Scouting Report
+              </div>
+              {displayOverallEstimate && (
+                <Badge
+                  variant="outline"
+                  className="border-primary/20 text-primary font-mono text-[9px] h-5 rounded-none px-2 uppercase"
+                >
+                  Est_OVR: {displayOverallEstimate}
+                </Badge>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+              {Object.entries(displayStats).map(([key, val]) => (
+                <div
+                  key={key}
+                  className="flex items-center justify-between border-b border-white/5 pb-1"
+                >
+                  <span className="text-[9px] font-mono text-foreground/20 uppercase tracking-tighter">
+                    {key}
+                  </span>
+                  <span className="text-xs font-mono font-black text-foreground/60 tabular-nums">
+                    {String(val)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
     </div>
   );
 }

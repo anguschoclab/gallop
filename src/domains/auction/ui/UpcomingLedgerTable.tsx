@@ -61,131 +61,141 @@ export function UpcomingLedgerTable({
             </tr>
           </thead>
           <tbody className="divide-y divide-white/5">
-            {sales.map((sale) => {
-              const daysAway = sale.day - currentDay;
-              const isScheduled = sale.isScheduled;
-              const playerLots = sale.lots
-                ? sale.lots.filter((l) => !l.consignorStableId && !l.withdrawn)
-                : [];
-              const access = saleAccessMap?.get(sale.kind);
-              const isLocked = access && !access.allowed;
-              const house = resolveSaleHouse({
-                houseId: sale.houseId,
-                kind: sale.kind as AuctionSaleKind,
-              });
-
-              return (
-                <tr
-                  key={sale.id}
-                  className={cn(
-                    "group hover:bg-white/[0.02] transition-colors relative",
-                    daysAway === 0 && "bg-success/[0.02]",
-                  )}
-                >
-                  <td className="px-6 py-5">
-                    <div className="space-y-1">
-                      <div className="text-sm font-bold text-foreground uppercase tracking-tight group-hover:text-primary transition-colors">
-                        {sale.name}
-                      </div>
-                      <div className="text-[9px] font-mono text-foreground/20 uppercase tracking-tighter">
-                        D{String(sale.day).padStart(3, "0")} · {gameCalendarDate(sale.day)}
-                        {house && <> · {house.shortName}</>}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-4 py-5">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Badge
-                        variant="outline"
-                        className="text-[8px] h-4 font-black uppercase tracking-tighter border-white/10 text-foreground/40 rounded-none"
-                      >
-                        {KIND_LABELS[sale.kind as keyof typeof KIND_LABELS] ?? sale.kind}
-                      </Badge>
-                      {house && <PrestigeBadge score={house.prestige} showScore={false} />}
-                    </div>
-                  </td>
-                  <td className="px-4 py-5 text-center">
-                    {isLocked ? (
-                      <span className="text-[9px] font-black uppercase text-amber-400/60 tracking-wide">
-                        Locked
-                      </span>
-                    ) : isScheduled ? (
-                      <span className="text-[9px] font-black uppercase text-foreground/20 tracking-wide">
-                        SCHEDULED
-                      </span>
-                    ) : daysAway === 0 ? (
-                      <span className="text-[9px] font-black uppercase text-success tracking-wide animate-pulse">
-                        Live Now
-                      </span>
-                    ) : (
-                      <span className="text-[9px] font-black uppercase text-primary/40 tracking-wide text-center">
-                        Accepting lots
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-5 text-right font-mono text-xs tabular-nums">
-                    {isScheduled ? (
-                      <span className="text-foreground/20 italic uppercase text-[9px]">TBD</span>
-                    ) : (
-                      <div className="flex flex-col items-end">
-                        <span className="text-foreground/60">
-                          {sale.lots.reduce((n, l) => (l.withdrawn ? n : n + 1), 0)} LOTS
-                        </span>
-                        {playerLots.length > 0 && (
-                          <span className="text-[8px] text-success font-black uppercase">
-                            +{playerLots.length} of yours
-                          </span>
-                        )}
-                      </div>
-                    )}
-                  </td>
-                  <td className="px-6 py-5 text-right">
-                    {isLocked ? (
-                      <div className="flex flex-col items-end gap-1">
-                        <Button
-                          disabled
-                          size="sm"
-                          variant="ghost"
-                          className="h-8 px-4 text-[9px] font-black uppercase border border-amber-400/20 text-amber-400/40 rounded-none"
-                        >
-                          RESTRICTED
-                        </Button>
-                        <span className="text-[8px] font-mono text-amber-400/40 uppercase">
-                          Requires {access?.requiredTier}
-                        </span>
-                      </div>
-                    ) : isScheduled ? (
-                      <Button
-                        disabled
-                        size="sm"
-                        variant="ghost"
-                        className="h-8 px-4 text-[9px] font-black uppercase border border-white/5 opacity-20"
-                      >
-                        PENDING
-                      </Button>
-                    ) : (
-                      <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className={cn(
-                            "h-8 px-4 text-[9px] font-black uppercase border border-white/10 hover:border-primary/40 hover:text-primary transition-all rounded-none",
-                            daysAway === 0
-                              ? "border-success text-success bg-success/5"
-                              : "text-foreground/40",
-                          )}
-                        >
-                          {daysAway === 0 ? "Enter Sale" : "View Lots"}
-                        </Button>
-                      </Link>
-                    )}
-                  </td>
-                </tr>
-              );
-            })}
+            {sales.map((sale) => (
+              <LedgerRow
+                key={sale.id}
+                sale={sale}
+                currentDay={currentDay}
+                saleAccessMap={saleAccessMap}
+              />
+            ))}
           </tbody>
         </table>
       </div>
     </section>
+  );
+}
+
+interface LedgerRowProps {
+  sale: UpcomingSale;
+  currentDay: number;
+  saleAccessMap?: Map<string, { allowed: boolean; requiredTier: string }>;
+}
+
+function LedgerRow({ sale, currentDay, saleAccessMap }: LedgerRowProps) {
+  const daysAway = sale.day - currentDay;
+  const isScheduled = sale.isScheduled;
+  const playerLots = sale.lots ? sale.lots.filter((l) => !l.consignorStableId && !l.withdrawn) : [];
+  const access = saleAccessMap?.get(sale.kind);
+  const isLocked = access && !access.allowed;
+  const house = resolveSaleHouse({
+    houseId: sale.houseId,
+    kind: sale.kind as AuctionSaleKind,
+  });
+
+  return (
+    <tr
+      className={cn(
+        "group hover:bg-white/[0.02] transition-colors relative",
+        daysAway === 0 && "bg-success/[0.02]",
+      )}
+    >
+      <td className="px-6 py-5">
+        <div className="space-y-1">
+          <div className="text-sm font-bold text-foreground uppercase tracking-tight group-hover:text-primary transition-colors">
+            {sale.name}
+          </div>
+          <div className="text-[9px] font-mono text-foreground/20 uppercase tracking-tighter">
+            D{String(sale.day).padStart(3, "0")} · {gameCalendarDate(sale.day)}
+            {house && <> · {house.shortName}</>}
+          </div>
+        </div>
+      </td>
+      <td className="px-4 py-5">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge
+            variant="outline"
+            className="text-[8px] h-4 font-black uppercase tracking-tighter border-white/10 text-foreground/40 rounded-none"
+          >
+            {KIND_LABELS[sale.kind as keyof typeof KIND_LABELS] ?? sale.kind}
+          </Badge>
+          {house && <PrestigeBadge score={house.prestige} showScore={false} />}
+        </div>
+      </td>
+      <td className="px-4 py-5 text-center">
+        {isLocked ? (
+          <span className="text-[9px] font-black uppercase text-amber-400/60 tracking-wide">
+            Locked
+          </span>
+        ) : isScheduled ? (
+          <span className="text-[9px] font-black uppercase text-foreground/20 tracking-wide">
+            SCHEDULED
+          </span>
+        ) : daysAway === 0 ? (
+          <span className="text-[9px] font-black uppercase text-success tracking-wide animate-pulse">
+            Live Now
+          </span>
+        ) : (
+          <span className="text-[9px] font-black uppercase text-primary/40 tracking-wide text-center">
+            Accepting lots
+          </span>
+        )}
+      </td>
+      <td className="px-4 py-5 text-right font-mono text-xs tabular-nums">
+        {isScheduled ? (
+          <span className="text-foreground/20 italic uppercase text-[9px]">TBD</span>
+        ) : (
+          <div className="flex flex-col items-end">
+            <span className="text-foreground/60">
+              {sale.lots.reduce((n, l) => (l.withdrawn ? n : n + 1), 0)} LOTS
+            </span>
+            {playerLots.length > 0 && (
+              <span className="text-[8px] text-success font-black uppercase">
+                +{playerLots.length} of yours
+              </span>
+            )}
+          </div>
+        )}
+      </td>
+      <td className="px-6 py-5 text-right">
+        {isLocked ? (
+          <div className="flex flex-col items-end gap-1">
+            <Button
+              disabled
+              size="sm"
+              variant="ghost"
+              className="h-8 px-4 text-[9px] font-black uppercase border border-amber-400/20 text-amber-400/40 rounded-none"
+            >
+              RESTRICTED
+            </Button>
+            <span className="text-[8px] font-mono text-amber-400/40 uppercase">
+              Requires {access?.requiredTier}
+            </span>
+          </div>
+        ) : isScheduled ? (
+          <Button
+            disabled
+            size="sm"
+            variant="ghost"
+            className="h-8 px-4 text-[9px] font-black uppercase border border-white/5 opacity-20"
+          >
+            PENDING
+          </Button>
+        ) : (
+          <Link to="/auction/$saleId" params={{ saleId: sale.id }}>
+            <Button
+              size="sm"
+              variant="ghost"
+              className={cn(
+                "h-8 px-4 text-[9px] font-black uppercase border border-white/10 hover:border-primary/40 hover:text-primary transition-all rounded-none",
+                daysAway === 0 ? "border-success text-success bg-success/5" : "text-foreground/40",
+              )}
+            >
+              {daysAway === 0 ? "Enter Sale" : "View Lots"}
+            </Button>
+          </Link>
+        )}
+      </td>
+    </tr>
   );
 }

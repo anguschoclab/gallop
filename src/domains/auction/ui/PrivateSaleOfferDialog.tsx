@@ -36,6 +36,8 @@ function getOfferErrorMessage(
   return null;
 }
 
+const parseOfferAmount = (raw: string) => Number(raw.replace(/,/g, "").replace(/\$/g, ""));
+
 /**
  * Props for the PrivateSaleOfferDialog component.
  */
@@ -71,7 +73,6 @@ export function PrivateSaleOfferDialog({
   const [offerAmount, setOfferAmount] = useState("");
   const [offerError, setOfferError] = useState("");
   const proposePrivateSale = useGame((s) => s.proposePrivateSale);
-  const requestOverride = useGame((s) => s.requestOverride);
   const npcAIManager = useGame((s) => s.npcAIManager);
   const reputationScore = useGame((s) => s.reputation?.score ?? 0);
 
@@ -86,7 +87,7 @@ export function PrivateSaleOfferDialog({
   const friction = npcAIManager?.stableStates?.[stable.id]?.friction ?? 0;
 
   const handleSubmitOffer = () => {
-    const amount = Number(offerAmount.replace(/,/g, "").replace(/\$/g, ""));
+    const amount = parseOfferAmount(offerAmount);
 
     const preValidation = getOfferErrorMessage(amount, cash, { ok: true });
     if (preValidation) {
@@ -117,73 +118,25 @@ export function PrivateSaleOfferDialog({
           <DialogTitle>Make an offer for {horse.name}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 pt-2">
-          <div className="rounded-md border border-border/60 p-3 space-y-2">
-            <div className="flex items-center justify-between gap-2">
-              <Badge variant={attachment.tier === "available" ? "secondary" : "outline"}>
-                {attachment.label}
-              </Badge>
-              <span className="text-xs text-muted-foreground tabular-nums">
-                asking ×{attachment.askMultiplier.toFixed(2)} of market
-              </span>
-            </div>
-            <CashPressureBadge
-              stable={stable}
-              ask={ask}
-              offerAmount={Number(offerAmount.replace(/,/g, "").replace(/\$/g, "")) || undefined}
-            />
-            <p className="text-xs text-muted-foreground">{attachment.blurb}</p>
-            {premiumOverMarket > 0.08 && (
-              <p className="rounded border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-xs text-amber-300">
-                They want ~{Math.round(premiumOverMarket * 100)}% above market value (+
-                {formatCurrency(Math.max(0, ask - valuation))}) — {attachment.label.toLowerCase()}{" "}
-                horse
-                {knownBuyerPremium > 0 && (
-                  <>
-                    {" "}
-                    plus a +{Math.round(knownBuyerPremium * 100)}% known-buyer premium because
-                    you're a {formatReputationTier(getReputationTier(reputationScore))} name
-                  </>
-                )}
-                .
-              </p>
-            )}
-            <AttachmentBreakdown attachment={attachment} />
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Estimated market value:{" "}
-            <span className="tabular-nums font-medium text-foreground">
-              ~{formatCurrency(fogLow)} – {formatCurrency(fogHigh)}
-            </span>
-            <br />
-            Their likely ask:{" "}
-            <span className="tabular-nums font-medium text-foreground">{formatCurrency(ask)}</span>
-          </p>
-          <div className="space-y-1">
-            <p className="text-xs font-medium text-muted-foreground">Quick offers</p>
-            <div className="flex flex-wrap gap-2">
-              {(
-                [
-                  ["Lowball", tiers.lowball],
-                  ["Fair", tiers.fair],
-                  ["Blow them away", tiers.generous],
-                ] as const
-              ).map(([label, amount]) => (
-                <Button
-                  key={label}
-                  type="button"
-                  size="sm"
-                  variant="outline"
-                  onClick={() => {
-                    setOfferAmount(formatCurrency(amount));
-                    setOfferError("");
-                  }}
-                >
-                  {label} · {formatCurrency(amount)}
-                </Button>
-              ))}
-            </div>
-          </div>
-          <OverrideNegotiationPanel
+          <AttachmentSummary
+            stable={stable}
+            attachment={attachment}
+            ask={ask}
+            valuation={valuation}
+            offerAmount={offerAmount}
+            premiumOverMarket={premiumOverMarket}
+            knownBuyerPremium={knownBuyerPremium}
+            reputationScore={reputationScore}
+          />
+          <ValuationEstimate fogLow={fogLow} fogHigh={fogHigh} ask={ask} />
+          <QuickOffers
+            tiers={tiers}
+            onPick={(amount) => {
+              setOfferAmount(formatCurrency(amount));
+              setOfferError("");
+            }}
+          />
+          <OfferOverride
             horse={horse}
             stable={stable}
             attachment={attachment}
@@ -192,44 +145,20 @@ export function PrivateSaleOfferDialog({
             cash={cash}
             friction={friction}
             reputationScore={reputationScore}
-            onOverride={(type) => {
-              const pendingOffer = useGame
-                .getState()
-                .privateSaleOffers.find((o) => o.horseId === horse.id && o.status === "pending");
-              if (pendingOffer) {
-                const result = requestOverride(pendingOffer.id, type);
-                if (result.ok) {
-                  toast.success(`Override submitted for ${horse.name}.`);
-                  setOfferAmount("");
-                  setOfferError("");
-                  onClose();
-                } else {
-                  setOfferError(result.reason ?? "Override failed.");
-                }
-              }
+            onSuccess={() => {
+              setOfferAmount("");
+              setOfferError("");
+              onClose();
             }}
+            onError={setOfferError}
           />
-          <div className="space-y-1">
-            <label htmlFor={offerId} className="text-sm font-medium">
-              Your offer amount
-            </label>
-            <Input
-              id={offerId}
-              inputMode="numeric"
-              placeholder="e.g. 25000"
-              value={offerAmount}
-              onChange={(e) => {
-                setOfferAmount(e.target.value);
-                setOfferError("");
-              }}
-              className="tabular-nums"
-              onBlur={() => {
-                const n = Number(offerAmount.replace(/,/g, "").replace(/\$/g, ""));
-                if (n > 0) setOfferAmount(formatCurrency(n));
-              }}
-            />
-            {offerError && <p className="text-xs text-destructive">{offerError}</p>}
-          </div>
+          <OfferAmountField
+            offerId={offerId}
+            offerAmount={offerAmount}
+            offerError={offerError}
+            onChange={setOfferAmount}
+            onClearError={() => setOfferError("")}
+          />
         </div>
 
         <DialogFooter>
@@ -240,5 +169,210 @@ export function PrivateSaleOfferDialog({
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+interface AttachmentSummaryProps {
+  stable: Stable;
+  attachment: ReturnType<typeof evaluateHorseAttachment>;
+  ask: number;
+  valuation: number;
+  offerAmount: string;
+  premiumOverMarket: number;
+  knownBuyerPremium: number;
+  reputationScore: number;
+}
+
+function AttachmentSummary({
+  stable,
+  attachment,
+  ask,
+  valuation,
+  offerAmount,
+  premiumOverMarket,
+  knownBuyerPremium,
+  reputationScore,
+}: AttachmentSummaryProps) {
+  return (
+    <div className="rounded-md border border-border/60 p-3 space-y-2">
+      <div className="flex items-center justify-between gap-2">
+        <Badge variant={attachment.tier === "available" ? "secondary" : "outline"}>
+          {attachment.label}
+        </Badge>
+        <span className="text-xs text-muted-foreground tabular-nums">
+          asking ×{attachment.askMultiplier.toFixed(2)} of market
+        </span>
+      </div>
+      <CashPressureBadge
+        stable={stable}
+        ask={ask}
+        offerAmount={parseOfferAmount(offerAmount) || undefined}
+      />
+      <p className="text-xs text-muted-foreground">{attachment.blurb}</p>
+      {premiumOverMarket > 0.08 && (
+        <p className="rounded border border-amber-400/40 bg-amber-400/10 px-2 py-1 text-xs text-amber-300">
+          They want ~{Math.round(premiumOverMarket * 100)}% above market value (+
+          {formatCurrency(Math.max(0, ask - valuation))}) — {attachment.label.toLowerCase()} horse
+          {knownBuyerPremium > 0 && (
+            <>
+              {" "}
+              plus a +{Math.round(knownBuyerPremium * 100)}% known-buyer premium because you're a{" "}
+              {formatReputationTier(getReputationTier(reputationScore))} name
+            </>
+          )}
+          .
+        </p>
+      )}
+      <AttachmentBreakdown attachment={attachment} />
+    </div>
+  );
+}
+
+function ValuationEstimate({
+  fogLow,
+  fogHigh,
+  ask,
+}: {
+  fogLow: number;
+  fogHigh: number;
+  ask: number;
+}) {
+  return (
+    <p className="text-sm text-muted-foreground">
+      Estimated market value:{" "}
+      <span className="tabular-nums font-medium text-foreground">
+        ~{formatCurrency(fogLow)} – {formatCurrency(fogHigh)}
+      </span>
+      <br />
+      Their likely ask:{" "}
+      <span className="tabular-nums font-medium text-foreground">{formatCurrency(ask)}</span>
+    </p>
+  );
+}
+
+function QuickOffers({
+  tiers,
+  onPick,
+}: {
+  tiers: ReturnType<typeof suggestedOfferTiers>;
+  onPick: (amount: number) => void;
+}) {
+  return (
+    <div className="space-y-1">
+      <p className="text-xs font-medium text-muted-foreground">Quick offers</p>
+      <div className="flex flex-wrap gap-2">
+        {(
+          [
+            ["Lowball", tiers.lowball],
+            ["Fair", tiers.fair],
+            ["Blow them away", tiers.generous],
+          ] as const
+        ).map(([label, amount]) => (
+          <Button
+            key={label}
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => onPick(amount)}
+          >
+            {label} · {formatCurrency(amount)}
+          </Button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+interface OfferOverrideProps {
+  horse: Horse;
+  stable: Stable;
+  attachment: ReturnType<typeof evaluateHorseAttachment>;
+  ask: number;
+  valuation: number;
+  cash: number;
+  friction: number;
+  reputationScore: number;
+  onSuccess: () => void;
+  onError: (message: string) => void;
+}
+
+function OfferOverride({
+  horse,
+  stable,
+  attachment,
+  ask,
+  valuation,
+  cash,
+  friction,
+  reputationScore,
+  onSuccess,
+  onError,
+}: OfferOverrideProps) {
+  const requestOverride = useGame((s) => s.requestOverride);
+  return (
+    <OverrideNegotiationPanel
+      horse={horse}
+      stable={stable}
+      attachment={attachment}
+      ask={ask}
+      valuation={valuation}
+      cash={cash}
+      friction={friction}
+      reputationScore={reputationScore}
+      onOverride={(type) => {
+        const pendingOffer = useGame
+          .getState()
+          .privateSaleOffers.find((o) => o.horseId === horse.id && o.status === "pending");
+        if (pendingOffer) {
+          const result = requestOverride(pendingOffer.id, type);
+          if (result.ok) {
+            toast.success(`Override submitted for ${horse.name}.`);
+            onSuccess();
+          } else {
+            onError(result.reason ?? "Override failed.");
+          }
+        }
+      }}
+    />
+  );
+}
+
+interface OfferAmountFieldProps {
+  offerId: string;
+  offerAmount: string;
+  offerError: string;
+  onChange: (value: string) => void;
+  onClearError: () => void;
+}
+
+function OfferAmountField({
+  offerId,
+  offerAmount,
+  offerError,
+  onChange,
+  onClearError,
+}: OfferAmountFieldProps) {
+  return (
+    <div className="space-y-1">
+      <label htmlFor={offerId} className="text-sm font-medium">
+        Your offer amount
+      </label>
+      <Input
+        id={offerId}
+        inputMode="numeric"
+        placeholder="e.g. 25000"
+        value={offerAmount}
+        onChange={(e) => {
+          onChange(e.target.value);
+          onClearError();
+        }}
+        className="tabular-nums"
+        onBlur={() => {
+          const n = parseOfferAmount(offerAmount);
+          if (n > 0) onChange(formatCurrency(n));
+        }}
+      />
+      {offerError && <p className="text-xs text-destructive">{offerError}</p>}
+    </div>
   );
 }
