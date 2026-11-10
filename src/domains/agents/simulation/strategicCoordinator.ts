@@ -130,7 +130,7 @@ export function assessWorldState(state: GameState, manager: NpcAIManager): World
   };
 
   // Breeding market saturation: ratio of pregnant mares to total mares
-  const pregnancies = (state as unknown as { pregnancies?: unknown[] }).pregnancies ?? [];
+  const pregnancies = state.pregnancies ?? [];
   const mares = allHorses.filter((h) => h.gender === "filly" || h.gender === "mare");
   const breedingMarketSaturation =
     mares.length > 0 ? Math.min(1, pregnancies.length / mares.length) : 0;
