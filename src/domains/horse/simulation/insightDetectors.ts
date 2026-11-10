@@ -322,6 +322,31 @@ export const detectFreshness: InsightDetector = (horse) => {
   return null;
 };
 
+// 1.75 Check for Early Speed (Pacesetter)
+export const detectEarlySpeed: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  const racesWithPace = history.filter((r) => r.pacePositions && r.pacePositions.length > 0);
+  if (racesWithPace.length < 5) return null;
+
+  let earlyLeadCount = 0;
+  for (const race of racesWithPace) {
+    if (race.pacePositions && race.pacePositions[0] <= 2) {
+      earlyLeadCount++;
+    }
+  }
+
+  const rate = earlyLeadCount / racesWithPace.length;
+  if (rate >= 0.8) {
+    return {
+      label: "Early Speed",
+      value: "Pacesetter",
+      context: `Has contested the early lead (1st or 2nd at the first call) in ${Math.round(rate * 100)}% of career starts`,
+      type: "neutral",
+    };
+  }
+  return null;
+};
+
 // 1.8 Check for Play Style Success (Tactical Versatility / Catch Me If You Can)
 export const detectPlayStyle: InsightDetector = (horse) => {
   const history = horse.raceHistory ?? [];
@@ -453,6 +478,41 @@ export const detectLateCharge: InsightDetector = (horse) => {
       type: "positive",
     };
   }
+  return null;
+};
+
+// 1.926 Check for Early Fade
+export const detectEarlyFade: InsightDetector = (horse) => {
+  const history = horse.raceHistory ?? [];
+  if (history.length < 3) return null;
+
+  let earlySpeedRaces = 0;
+  let fadedRaces = 0;
+
+  for (const race of history) {
+    if (race.pacePositions && race.pacePositions.length > 0) {
+      const firstCall = race.pacePositions[0];
+      if (firstCall <= 2) {
+        earlySpeedRaces++;
+        if (race.position > 3) {
+          fadedRaces++;
+        }
+      }
+    }
+  }
+
+  if (earlySpeedRaces >= 3) {
+    const fadeRate = fadedRaces / earlySpeedRaces;
+    if (fadeRate >= 0.75) {
+      return {
+        label: "Early Fade",
+        value: "Struggles to Finish",
+        context: `Faded out of the money in ${fadedRaces} of ${earlySpeedRaces} races where they contested the early lead`,
+        type: "negative",
+      };
+    }
+  }
+
   return null;
 };
 
@@ -710,6 +770,20 @@ export const detectFieldSizeAffinity: InsightDetector = (horse) => {
   return null;
 };
 
+// 4.2 Check for Iron Horse
+export const detectIronHorse: InsightDetector = (horse) => {
+  const starts = horse.careerStarts ?? horse.raceHistory?.length ?? 0;
+  if (starts >= 20) {
+    return {
+      label: "Iron Horse",
+      value: "Veteran Warrior",
+      context: `Has made ${starts} career trips to the starting gate`,
+      type: "positive",
+    };
+  }
+  return null;
+};
+
 // 3.95 Check for Earnings Milestones
 export const detectEarningsMilestone: InsightDetector = (horse) => {
   const earnings = horse.lifetimeEarnings ?? 0;
@@ -894,11 +968,13 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectImprovingForm,
   detectStakesPerformance,
   detectFreshness,
+  detectEarlySpeed,
   detectPlayStyle,
   detectClosingKick,
   detectLateBloomer,
   detectFromTheClouds,
   detectLateCharge,
+  detectEarlyFade,
   detectSurfaceVersatility,
   detectBigFieldSpecialist,
   detectDistanceSpecialist,
@@ -907,6 +983,7 @@ export const INSIGHT_DETECTORS: readonly InsightDetector[] = [
   detectDistanceChange,
   detectGateAffinity,
   detectFieldSizeAffinity,
+  detectIronHorse,
   detectEarningsMilestone,
   detectEarningsPerStart,
   detectSireValue,

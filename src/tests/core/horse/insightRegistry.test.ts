@@ -10,8 +10,8 @@ import { describe, it, expect } from "vitest";
 import { INSIGHT_DETECTORS } from "@/domains/horse/simulation/insightDetectors";
 
 describe("INSIGHT_DETECTORS registry order", () => {
-  it("has exactly 27 detectors", () => {
-    expect(INSIGHT_DETECTORS).toHaveLength(27);
+  it("has exactly 30 detectors", () => {
+    expect(INSIGHT_DETECTORS).toHaveLength(30);
   });
 
   it("preserves the original priority order", () => {
@@ -36,11 +36,13 @@ describe("INSIGHT_DETECTORS registry order", () => {
       "detectImprovingForm", // 1.5 Trending Up
       "detectStakesPerformance", // 1.6 Big Stage Performer / Stage Fright
       "detectFreshness", // 1.7 Fires Fresh / Needs Racing
+      "detectEarlySpeed", // 1.75 Early Speed / Pacesetter
       "detectPlayStyle", // 1.8 Tactical Versatility / Catch Me If You Can
       "detectClosingKick", // 1.9 Closing Kick
       "detectLateBloomer", // 1.91 Late Bloomer
       "detectFromTheClouds", // 1.92 From the Clouds
       "detectLateCharge", // 1.925 Late Charge
+      "detectEarlyFade", // 1.926 Early Fade
       "detectSurfaceVersatility", // 1.93 Surface Versatility
       "detectBigFieldSpecialist", // 1.96 Crowd Surfer
       "detectDistanceSpecialist", // 2. Distance Specialist
@@ -49,6 +51,7 @@ describe("INSIGHT_DETECTORS registry order", () => {
       "detectDistanceChange", // 1.95 Distance Change Specialist
       "detectGateAffinity", // 4. Gate Affinity
       "detectFieldSizeAffinity", // 4.1 Field Size Affinity
+      "detectIronHorse", // 4.2 Iron Horse
       "detectEarningsMilestone", // 5. Earnings Milestone
       "detectEarningsPerStart", // 5.1 Earnings Per Start (merged yield tiers)
       "detectSireValue", // 6. Sire Value
