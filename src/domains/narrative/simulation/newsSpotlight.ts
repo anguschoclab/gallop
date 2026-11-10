@@ -56,6 +56,26 @@ export function generateG1SpotlightNews(
     `The ${overallRating} OVR Juggernaut: ${winner.name} Wins ${race.name}`,
     `${race.name} Goes to ${overallRating}-Rated Phenomenon ${winner.name}`,
     `A True ${overallRating} Superstar: ${winner.name} Takes the ${race.name}`,
+    `No Match for ${winner.name}: ${overallRating}-Rated Star Takes ${race.name}`,
+    `Simply the Best: ${overallRating}-Rated ${winner.name} Wins ${race.name}`,
+    `${winner.name} Shines Brightest in ${race.name} with ${overallRating} Rating`,
+    `The Class of the Field: ${winner.name} (${overallRating} OVR) Wins ${race.name}`,
+    `${race.name} Belongs to ${overallRating}-Rated ${winner.name}`,
+    `A Masterclass in ${race.name} from ${overallRating}-Rated ${winner.name}`,
+    `${winner.name} Brings ${overallRating} Rating and Takes Home ${race.name}`,
+    `Excellence on Display: ${overallRating}-Rated ${winner.name} Dominates ${race.name}`,
+    `${race.name} Victory for ${overallRating} OVR Phenomenon ${winner.name}`,
+    `The ${overallRating} Rating is Real: ${winner.name} Triumphs in ${race.name}`,
+    `In a League of Their Own: ${overallRating}-Rated ${winner.name} Wins ${race.name}`,
+    `${winner.name} Proves ${overallRating} Rating in Historic ${race.name} Win`,
+    `Elite Performance: ${overallRating}-Rated ${winner.name} Secures ${race.name}`,
+    `${race.name} Conquered by ${overallRating}-Rated ${winner.name}`,
+    `The Hype is Justified: ${winner.name} (${overallRating} OVR) Wins ${race.name}`,
+    `Another One for the Resume: ${overallRating}-Rated ${winner.name} Takes ${race.name}`,
+    `${winner.name} Puts ${overallRating} Rating to Work in ${race.name} Victory`,
+    `A Flawless Display by ${overallRating}-Rated ${winner.name} in ${race.name}`,
+    `The Crown Jewel: ${winner.name} (${overallRating} OVR) Wins ${race.name}`,
+    `Unrivaled Greatness: ${overallRating}-Rated ${winner.name} Dominates ${race.name}`,
   ];
 
   const bodies = [
@@ -76,6 +96,26 @@ export function generateG1SpotlightNews(
     `Trackside observers were left shaking their heads in disbelief as ${winner.name} (${overallRating} OVR) turned the prestigious ${race.name} into a one-horse exhibition.`,
     `You don't get a ${overallRating} overall rating by accident. ${winner.name} confirmed their elite status with a flawless, devastating victory in the ${race.name}.`,
     `An ${overallRating} overall rating. A Grade 1 victory in the ${race.name}. ${winner.name} is not just living up to expectations — they're redefining them.`,
+    `When a horse carrying a ${overallRating} overall rating enters the ${race.name}, expectations are sky-high. ${winner.name} met them all and then some.`,
+    `The history books will remember ${winner.name} for this ${race.name} victory, a performance that perfectly encapsulated their ${overallRating} overall rating.`,
+    `It was a privilege to watch ${winner.name} in the ${race.name}. A ${overallRating} overall rating doesn't fully capture the magic we saw on the track.`,
+    `Rivals had no answer for ${winner.name} in the ${race.name}. Their ${overallRating} overall rating was evident in every powerful stride.`,
+    `The ${race.name} has crowned many champions, but few as dominant as ${winner.name}, who justified their ${overallRating} overall rating in spectacular fashion.`,
+    `A true champion shines when the lights are brightest. ${winner.name} and their ${overallRating} overall rating stole the show in the ${race.name}.`,
+    `The coronation is complete. ${winner.name} is the undisputed king after a ${race.name} victory that underscored their immense ${overallRating} overall rating.`,
+    `A breathtaking display of speed and stamina. ${winner.name} proved why they are rated at ${overallRating} overall with a sensational win in the ${race.name}.`,
+    `The ${race.name} was expected to be a test, but ${winner.name} (${overallRating} OVR) turned it into a showcase of unparalleled ability.`,
+    `Generational talent was on display in the ${race.name} as ${winner.name} lived up to their incredible ${overallRating} overall rating.`,
+    `The crowd roared as ${winner.name} crossed the wire in the ${race.name}, cementing a legacy built on a staggering ${overallRating} overall rating.`,
+    `Perfection is hard to achieve, but ${winner.name}'s performance in the ${race.name} came close, validating their massive ${overallRating} overall rating.`,
+    `It was never really in doubt. ${winner.name} controlled the ${race.name} from start to finish, a performance worthy of a ${overallRating} overall rating.`,
+    `The sporting world watched in awe as ${winner.name} (${overallRating} OVR) dismantled a stellar field in the ${race.name}.`,
+    `A victory for the ages. ${winner.name} used their ${overallRating} overall rating to full effect, securing a legendary win in the ${race.name}.`,
+    `There are good horses, and then there are greats. ${winner.name} proved they belong in the latter category with a ${overallRating}-rated performance in the ${race.name}.`,
+    `The ${race.name} will go down as the defining moment for ${winner.name}, a race where their ${overallRating} overall rating translated into pure dominance.`,
+    `No excuses, no doubts. ${winner.name} and their ${overallRating} overall rating stood alone at the summit following the ${race.name}.`,
+    `A magnificent performance from start to finish. ${winner.name} proved their ${overallRating} overall rating is well-deserved with a resounding victory in the ${race.name}.`,
+    `The ${race.name} was supposed to be a challenge, but ${winner.name} made it look easy, showcasing the incredible talent behind their ${overallRating} overall rating.`,
   ];
 
   const headline = rng.pick(headlines);
@@ -161,6 +201,14 @@ export function generateFollowUpRaceNews(
     `Speculation Mounts Over ${horse.name}'s Next Outing`,
     `${horse.name} Leaves Lasting Impression in ${race.name}`,
     `${race.name} Form Points to Big Future for ${horse.name}`,
+    `A Strong Showing in ${race.name} Sets ${horse.name} Up for Success`,
+    `${horse.name} Proves Mettle in ${race.name} with Resolute Display`,
+    `Handicappers Take Note of ${horse.name} Following ${race.name}`,
+    `What's Next for ${horse.name} After Commendable ${race.name} Run?`,
+    `A Turning Point? ${horse.name} Shows Grit in ${race.name}`,
+    `${horse.name} Commands Respect Post-${race.name}`,
+    `Stable Confidence High for ${horse.name} After ${race.name} Result`,
+    `Next Phase of Campaign Begins for ${horse.name} After ${race.name}`,
   ];
 
   const bodies = [
@@ -204,6 +252,14 @@ export function generateFollowUpRaceNews(
     `Talk on the backstretch has firmly centered on ${horse.name} since their bold ${positionLabelShort} in the ${race.name}. Planners are undoubtedly scouring the condition book for the perfect follow-up.`,
     `A taxing ${positionLabel} in the ${race.name} means ${horse.name} might need time to freshen up, though their connections will be ecstatic with the ${grade} performance.`,
     `After confirming their talent with a ${positionLabel} in the ${race.name}, ${horse.name} has options aplenty. Stepping up to the plate again in ${grade} grade seems a certainty.`,
+    `The form from the ${race.name} looks rock solid, and ${horse.name}'s ${positionLabel} underscores their ability. Trainers will now be pinpointing the ideal ${grade} engagement to follow up.`,
+    `Delivering on expectations with a ${positionLabel} in the ${race.name}, ${horse.name} showed commendable heart. The stable is assessing the horse's condition before committing to their next run.`,
+    `A battling ${positionLabel} in the ${grade} ${race.name} ensures ${horse.name} will have no shortage of admirers next time out. Connections are biding their time to select the perfect target.`,
+    `The industry took notice of ${horse.name}'s ${positionLabelShort} in the ${race.name}. With confidence undoubtedly boosted, the next entry will be carefully plotted by the team.`,
+    `Showcasing serious talent in the ${race.name} for a ${positionLabel}, ${horse.name} leaves no doubt they belong at this level. The remainder of the season offers tantalizing possibilities.`,
+    `It was a display full of character from ${horse.name} to earn a ${positionLabel} in the ${race.name}. Handlers are expected to circle a major stakes target on the calendar very soon.`,
+    `Following a determined ${positionLabel} in the ${race.name} (${grade}), ${horse.name}'s camp has plenty to smile about. The strategy moving forward will be closely watched by the press.`,
+    `A ${positionLabel} in a gruelling contest like the ${race.name} is a testament to ${horse.name}'s resilience. The stable has several high-profile avenues to explore in the weeks ahead.`,
   ];
 
   return createNewsItem(
