@@ -24,6 +24,7 @@ import {
 } from "@/domains/market/application/exchangePanelService";
 import { HorseOrderBook } from "@/domains/market/ui/HorseOrderBook";
 import { TradeTape } from "@/domains/market/ui/TradeTape";
+import { MarketIndexCard } from "@/domains/market/ui/MarketIndexCard";
 import { StatCard } from "@/shared/ui/common/StatCard";
 import { Hint } from "@/shared/ui/Hint";
 
@@ -128,6 +129,7 @@ export function ExchangePanel() {
 
   return (
     <div className="space-y-6">
+      <MarketIndexCard trades={exchange.trades} day={day} npcStables={npcStables} />
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatCard
           label="Price Index"

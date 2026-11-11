@@ -141,3 +141,57 @@ export function closestRealCareers(
     .sort((a, b) => a.distance - b.distance || a.horse.name.localeCompare(b.horse.name))
     .slice(0, limit);
 }
+
+/** One documented real race finish (from the horse's Wikipedia infobox). */
+export type RealRaceFinish = { race: string; year?: number; position: 1 };
+
+/** A real horse's documented race history, grouped by season. */
+export type RealRaceHistory = {
+  finishes: RealRaceFinish[];
+  seasons: { year: number | undefined; finishes: RealRaceFinish[] }[];
+  starts?: number;
+  wins?: number;
+  seconds?: number;
+  thirds?: number;
+  /** Career prize money (≈USD). Per-race prize is not published in the source. */
+  earningsUsd?: number;
+  earningsPerStart?: number;
+  /** Wins we know of but whose race name isn't documented. */
+  undocumentedWins: number;
+};
+
+/**
+ * Parses "Epsom Derby (1970)" style entries into real finishes, oldest first.
+ * @param h
+ */
+export function realRaceHistory(h: {
+  majorWins?: string[];
+  starts?: number;
+  wins?: number;
+  seconds?: number;
+  thirds?: number;
+  earningsUsd?: number;
+}): RealRaceHistory {
+  const finishes: RealRaceFinish[] = (h.majorWins ?? []).map((raw) => {
+    const m = raw.match(/^(.*?)\s*\((\d{4})[^)]*\)\s*$/);
+    return m ? { race: m[1].trim(), year: Number(m[2]), position: 1 } : { race: raw.trim(), position: 1 };
+  });
+  finishes.sort((a, b) => (a.year ?? 9999) - (b.year ?? 9999));
+  const seasons: RealRaceHistory["seasons"] = [];
+  for (const f of finishes) {
+    const last = seasons[seasons.length - 1];
+    if (last && last.year === f.year) last.finishes.push(f);
+    else seasons.push({ year: f.year, finishes: [f] });
+  }
+  return {
+    finishes,
+    seasons,
+    starts: h.starts,
+    wins: h.wins,
+    seconds: h.seconds,
+    thirds: h.thirds,
+    earningsUsd: h.earningsUsd,
+    earningsPerStart: h.earningsUsd && h.starts ? Math.round(h.earningsUsd / h.starts) : undefined,
+    undocumentedWins: Math.max(0, (h.wins ?? 0) - finishes.length),
+  };
+}

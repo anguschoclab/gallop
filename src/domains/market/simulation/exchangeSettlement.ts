@@ -139,7 +139,13 @@ export function runExchangeSettlementDay(args: {
       (a) => !filledAsks.has(a.id) && !(a.sellerId !== playerId && tradedHorses.has(a.horseId)),
     ),
     bids: refreshed.bids.filter((b) => !filledBids.has(b.id) && !tradedHorses.has(b.horseId)),
-    trades: [...refreshed.trades, ...settlement.trades],
+    // Stamp fair value on new trades (and player fills since last settle) so
+    // the market index measures price vs value.
+    trades: [...refreshed.trades, ...settlement.trades].map((t) => {
+      if (t.fairValue !== undefined || t.day < day - 1) return t;
+      const h = args.horses[t.horseId];
+      return h ? { ...t, fairValue: Math.round(horseMarketValue(h, horseArr)) } : t;
+    }),
   };
 
   const nextStables = npcStables.map((st) =>
