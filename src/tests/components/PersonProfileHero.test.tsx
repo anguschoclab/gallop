@@ -2,8 +2,12 @@
  * PersonProfileHero.test.tsx - Person detail hero contracts
  */
 
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { renderToStaticMarkup } from "react-dom/server";
+
+vi.mock("@/shared/ui/DisabledTooltipWrapper", () => ({
+  DisabledTooltipWrapper: ({ children, reason }: any) => <div data-reason={reason}>{children}</div>,
+}));
 import { createElement } from "react";
 import { PersonProfileHero } from "@/domains/person/ui/PersonProfileHero";
 import { PortraitRandomizeButton } from "@/domains/person/ui/PortraitRandomizeButton";
@@ -73,6 +77,6 @@ describe("PortraitRandomizeButton", () => {
       }),
     );
     expect(html).toMatch(/\sdisabled(=|\s|>)/);
-    expect(html).toContain("Not your jockey");
+    expect(html).toContain('data-reason="Not your jockey"');
   });
 });
