@@ -20,6 +20,12 @@ import {
   suggestAskPrice,
   tradeSeries,
 } from "@/domains/market/simulation/exchange";
+import {
+  computeMarketIndex,
+  flowPressure,
+  marketIndexSeries,
+  stableMoneyFlows,
+} from "@/domains/market/simulation/marketIndex";
 import { buildStableRosters, rosterSummary } from "@/domains/stable/simulation/stableRoster";
 import { formatYard, resolveStableYard } from "@/domains/stable/simulation/stableYard";
 
@@ -32,6 +38,10 @@ export {
   exchangeCommissionRate,
   suggestAskPrice,
   tradeSeries,
+  computeMarketIndex,
+  flowPressure,
+  marketIndexSeries,
+  stableMoneyFlows,
   buildStableRosters,
   rosterSummary,
   formatYard,
