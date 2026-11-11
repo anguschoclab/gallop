@@ -14,6 +14,11 @@
  * Related files: src/game/store/slices/exchangeSlice.ts, src/components/market/Exchange*.tsx
  */
 
+import {
+  computeMarketIndex,
+  flowPressure,
+  stableMoneyFlows,
+} from "@/domains/market/simulation/marketIndex";
 import type { Horse } from "@/domains/horse/simulation/types";
 import type { Stable } from "@/domains/stable/simulation/types";
 import { horseMarketValue } from "@/domains/horse/simulation/pricing";
@@ -100,6 +105,8 @@ export type ExchangeTrade = {
   day: number;
   /** Which side initiated the fill. */
   initiatedBy: ExchangeSide;
+  /** Horse's fair value when it traded (feeds the market index). */
+  fairValue?: number;
 };
 
 export type ExchangeState = {
@@ -179,6 +186,9 @@ export function generateNpcBook(args: {
   playerReputation?: number;
 }): { asks: ExchangeAsk[]; bids: ExchangeBid[] } {
   const { day, horses, npcStables, existing, playerReputation } = args;
+  const market = computeMarketIndex(existing.trades, day - 1);
+  const flows = stableMoneyFlows(existing.trades, day - 1);
+  const extra = (s: Stable) => flowPressure(flows.get(s.id), s.cash);
   const horseList = horses.filter((h) => h.lifecycleStatus !== "deceased");
   const byId = new Map(horseList.map((h) => [h.id, h]));
 
@@ -199,7 +209,7 @@ export function generateNpcBook(args: {
       (h) => isNpcOwned(h) && h.ownership.type === "npc" && h.ownership.stableId === stable.id,
     );
     if (owned.length === 0) continue;
-    const stance = sellerStance(stable, owned.length);
+    const stance = sellerStance(stable, owned.length, extra(stable));
     const rng = createRng(`exchAsk:${stable.id}:${day}`);
     // Only list horses some other stable could actually pay for — a $4M
     // stallion offered to yards holding $100k never trades and clogs the book.
@@ -222,7 +232,7 @@ export function generateNpcBook(args: {
       const horse = sorted[Math.floor(rng.next() * sorted.length)];
       if (!horse || horse.consignedSaleId) continue;
       if (npcAsks.some((a) => a.horseId === horse.id)) continue;
-      const fairValue = horseMarketValue(horse, horseList);
+      const fairValue = horseMarketValue(horse, horseList) * market.multiplier;
       if (fairValue <= 0) continue;
       npcAsks.push({
         id: `ask-${stable.id}-${horse.id}-${day}`,
@@ -251,7 +261,10 @@ export function generateNpcBook(args: {
   for (const ask of allAsks) {
     const horse = byId.get(ask.horseId);
     if (!horse) continue;
-    const fairValue = ask.fairValue || horseMarketValue(horse, horseList);
+    const fairValue =
+      ask.sellerId === "player"
+        ? (ask.fairValue || horseMarketValue(horse, horseList)) * market.multiplier
+        : ask.fairValue || horseMarketValue(horse, horseList) * market.multiplier;
     const rng = createRng(`exchBidPool:${ask.horseId}:${day}`);
     const pool = npcStables
       .filter(
@@ -273,6 +286,7 @@ export function generateNpcBook(args: {
         day,
         fairValue,
         ask.sellerId === "player" ? playerReputation : undefined,
+        extra(stable),
       );
       if (quote.price <= 0) continue;
       bids.push({

@@ -89,6 +89,15 @@ export const EXCHANGE_MAX_NPC_BUYS_PER_DAY = 1;
 /** Most NPC-side crossings the exchange settles in a day. */
 export const EXCHANGE_MAX_NPC_TRADES_PER_DAY = 3;
 
+/** Add Exchange money-flow pressure on top of runway pressure. */
+function withExtraPressure(p: CashPressure, extra: number): CashPressure {
+  if (extra <= 0) return p;
+  const pressure = Math.min(1, p.pressure + extra);
+  const label: CashPressure["label"] =
+    pressure >= 0.75 ? "desperate" : pressure >= 0.5 ? "strained" : pressure >= 0.25 ? "tight" : p.label;
+  return { ...p, pressure, meter: Math.round(pressure * 100), label: pressure > p.pressure ? label : p.label };
+}
+
 /**
  * Cash a stable can put toward exchange bids after keeping its reserve.
  *
@@ -188,8 +197,12 @@ export function sellerStandingBidFactor(reputationScore: number): {
  * @param stable - The NPC stable
  * @param horseCount - Number of horses it owns (defaults to roster length)
  */
-export function sellerStance(stable: Stable, horseCount?: number): SellerStance {
-  const pressure = evaluateCashPressure(stable, horseCount);
+export function sellerStance(
+  stable: Stable,
+  horseCount?: number,
+  extraPressure = 0,
+): SellerStance {
+  const pressure = withExtraPressure(evaluateCashPressure(stable, horseCount), extraPressure);
   const base = PERSONALITY_LIST_COUNT[stable.personality] ?? 2;
   // Squeezed stables put more of the string on the market.
   const listCount = Math.min(6, base + Math.round(pressure.pressure * 3));
@@ -269,9 +282,10 @@ export function npcBidQuote(
   day: number,
   fairValue: number,
   sellerReputation?: number,
+  extraPressure = 0,
 ): BidQuote {
   const rng = createRng(`exch:${horse.id}:${stable.id}:${day}`);
-  const pressure = evaluateCashPressure(stable);
+  const pressure = withExtraPressure(evaluateCashPressure(stable), extraPressure);
   const bias = PERSONALITY_BID_BIAS[stable.personality] ?? 1;
   const noise = rng.range(EXCHANGE_BID_NOISE[0], EXCHANGE_BID_NOISE[1]);
 
