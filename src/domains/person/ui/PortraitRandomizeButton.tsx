@@ -9,6 +9,7 @@
 import { Button } from "@/shared/ui/button";
 import { Shuffle } from "lucide-react";
 import { cn } from "@/shared/lib/cn";
+import { DisabledTooltipWrapper } from "@/shared/ui/DisabledTooltipWrapper";
 
 interface PortraitRandomizeButtonProps {
   onClick: () => void;
@@ -28,17 +29,22 @@ export function PortraitRandomizeButton({
   className,
 }: PortraitRandomizeButtonProps) {
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={onClick}
-      disabled={!allowed}
-      title={!allowed ? deniedReason : "Randomize this person's appearance"}
-      aria-label={label}
-      className={cn("gap-2 rounded-none", className)}
+    <DisabledTooltipWrapper
+      reason={!allowed ? deniedReason || "Action not allowed" : false}
+      wrapperClassName={cn(className?.includes("w-full") && "w-full")}
     >
-      <Shuffle className="h-4 w-4" aria-hidden="true" />
-      {label}
-    </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={onClick}
+        disabled={!allowed}
+        title={allowed ? "Randomize this person's appearance" : undefined}
+        aria-label={label}
+        className={cn("gap-2 rounded-none", className)}
+      >
+        <Shuffle className="h-4 w-4" aria-hidden="true" />
+        {label}
+      </Button>
+    </DisabledTooltipWrapper>
   );
 }
