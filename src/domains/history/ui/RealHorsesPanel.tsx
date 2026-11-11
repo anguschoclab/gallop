@@ -17,6 +17,7 @@ import {
   closestRealCareers,
   realAncestry,
   realLeaderboard,
+  realRaceHistory,
   searchRealHorses,
   type RealLeaderboardKind,
 } from "@/domains/history/application/historyFacade";
@@ -153,18 +154,7 @@ function RealHorseDetail({ h, onSelect }: { h: RealHorse; onSelect: (h: RealHors
             </div>
           )}
         </div>
-        {h.majorWins && h.majorWins.length > 0 && (
-          <div>
-            <div className="text-xs font-semibold text-muted-foreground mb-1">Big-race wins</div>
-            <div className="flex flex-wrap gap-1">
-              {h.majorWins.map((w) => (
-                <Badge key={w} variant="outline" className="text-xs">
-                  {w}
-                </Badge>
-              ))}
-            </div>
-          </div>
-        )}
+        <RealRaceHistoryTable h={h} />
         {h.awards && h.awards.length > 0 && (
           <div>
             <div className="text-xs font-semibold text-muted-foreground mb-1">Awards</div>
@@ -177,6 +167,62 @@ function RealHorseDetail({ h, onSelect }: { h: RealHorse; onSelect: (h: RealHors
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function RealRaceHistoryTable({ h }: { h: RealHorse }) {
+  const r = useMemo(() => realRaceHistory(h), [h]);
+  if (!r.starts && r.finishes.length === 0) return null;
+  return (
+    <div className="space-y-2">
+      <div className="text-xs font-semibold text-muted-foreground flex items-center gap-1">
+        <Trophy className="h-3 w-3" /> Race history
+      </div>
+      <div className="grid grid-cols-4 gap-2 text-center text-xs">
+        {[
+          ["1st", r.wins],
+          ["2nd", r.seconds],
+          ["3rd", r.thirds],
+          ["Unplaced", r.starts !== undefined ? r.starts - (r.wins ?? 0) - (r.seconds ?? 0) - (r.thirds ?? 0) : undefined],
+        ].map(([label, v]) => (
+          <div key={label as string} className="rounded bg-muted/40 p-1.5">
+            <div className="text-muted-foreground">{label}</div>
+            <div className="font-semibold tabular-nums">{v ?? "—"}</div>
+          </div>
+        ))}
+      </div>
+      <div className="text-xs text-muted-foreground">
+        Prize money: {r.earningsUsd ? formatCurrency(r.earningsUsd) : "not documented"}
+        {r.earningsPerStart ? ` · ${formatCurrency(r.earningsPerStart)} per start` : ""}
+      </div>
+      {r.seasons.length > 0 && (
+        <table className="w-full text-xs">
+          <thead>
+            <tr className="text-muted-foreground text-left">
+              <th className="font-medium py-1 w-14">Season</th>
+              <th className="font-medium py-1">Race</th>
+              <th className="font-medium py-1 text-right">Finish</th>
+            </tr>
+          </thead>
+          <tbody>
+            {r.seasons.flatMap((s) =>
+              s.finishes.map((f, i) => (
+                <tr key={`${s.year}-${f.race}-${i}`} className="border-t border-border/30">
+                  <td className="py-1 tabular-nums text-muted-foreground">{i === 0 ? (s.year ?? "—") : ""}</td>
+                  <td className="py-1 text-foreground">{f.race}</td>
+                  <td className="py-1 text-right font-semibold text-primary">1st</td>
+                </tr>
+              )),
+            )}
+          </tbody>
+        </table>
+      )}
+      {r.undocumentedWins > 0 && (
+        <div className="text-xs text-muted-foreground">
+          Plus {r.undocumentedWins} more win{r.undocumentedWins === 1 ? "" : "s"} whose races aren't named in the source.
+        </div>
+      )}
+    </div>
   );
 }
 
