@@ -22,7 +22,7 @@ const ALL_FACTORS: FactorKey[] = [
 
 function makeTickValues(
   overrides: Partial<Record<FactorKey, number>> = {},
-): Record<FactorKey, number> {
+): Float64Array {
   const base = {
     stamina: 1,
     style: 1,
@@ -37,7 +37,12 @@ function makeTickValues(
     wind: 1,
     noise: 1,
   } as Record<FactorKey, number>;
-  return { ...base, ...overrides } as Record<FactorKey, number>;
+  const merged = { ...base, ...overrides } as Record<FactorKey, number>;
+  const result = new Float64Array(12);
+  for (let i = 0; i < ALL_FACTORS.length; i++) {
+    result[i] = merged[ALL_FACTORS[i]]!;
+  }
+  return result;
 }
 
 describe("FACTOR_META", () => {
