@@ -45,7 +45,7 @@ export const FACTOR_META: Record<FactorKey, { label: string; description: string
   noise: { label: "Variance", description: "Random performance fluctuation" },
 };
 
-const ALL_FACTOR_KEYS: FactorKey[] = [
+export const ALL_FACTOR_KEYS: FactorKey[] = [
   "stamina",
   "style",
   "draft",
@@ -113,13 +113,13 @@ export class FactorLedgerCollector {
     }
   }
 
-  recordTick(progress: number, factors: Record<FactorKey, number>): void {
+  recordTick(progress: number, factors: Float64Array): void {
     const phase = classifyPhase(progress);
 
     for (let i = 0; i < ALL_FACTOR_KEYS.length; i++) {
       const key = ALL_FACTOR_KEYS[i];
-      const value = factors[key];
-      if (value === undefined) continue;
+      const value = factors[i];
+      if (value === undefined || Number.isNaN(value)) continue;
 
       const acc = this.accumulators[key];
       const phaseAcc = acc.phases[phase];

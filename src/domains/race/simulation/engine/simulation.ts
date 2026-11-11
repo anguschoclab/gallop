@@ -46,11 +46,13 @@ import {
   getDraftingHorseId,
 } from "@/domains/race/simulation/engine/jockeyEffects";
 import { calculateWindEffect } from "@/domains/race/simulation/engine/windEffects";
-import type { FactorKey, RunnerFactorLedger } from "@/domains/race/simulation/factorLedger";
+import type { RunnerFactorLedger } from "@/domains/race/simulation/factorLedger";
 import { RaceSimulationSession } from "@/domains/race/simulation/engine/raceSession";
 
 export { computePaceContext } from "@/domains/race/simulation/engine/paceContext";
 export { calculateWindEffect } from "@/domains/race/simulation/engine/windEffects";
+
+const TEMP_FACTORS = new Float64Array(12);
 
 /**
  * Simulates a single time step for a runner, updating their physical and tactical state.
@@ -219,21 +221,19 @@ export function stepRunner(
 
   // Record factor ledger for this tick
   if (r.factorLedger) {
-    const factors: Record<FactorKey, number> = {
-      stamina: staminaMul,
-      style: styleMul,
-      draft: draftMul,
-      cover: coverMul,
-      turnSpeed: turnSpeedMul,
-      gradientSpeed: gradientSpeedMul,
-      gradientStamina: gradientStaminaMul,
-      traitSurface: traitSurfaceMul,
-      seek: seekMul,
-      spurt: spurtMul,
-      wind: windSpeedMod,
-      noise: noiseMul,
-    };
-    r.factorLedger.recordTick(progress, factors);
+    TEMP_FACTORS[0] = staminaMul;
+    TEMP_FACTORS[1] = styleMul;
+    TEMP_FACTORS[2] = draftMul;
+    TEMP_FACTORS[3] = coverMul;
+    TEMP_FACTORS[4] = turnSpeedMul;
+    TEMP_FACTORS[5] = gradientSpeedMul;
+    TEMP_FACTORS[6] = gradientStaminaMul;
+    TEMP_FACTORS[7] = traitSurfaceMul;
+    TEMP_FACTORS[8] = seekMul;
+    TEMP_FACTORS[9] = spurtMul;
+    TEMP_FACTORS[10] = windSpeedMod;
+    TEMP_FACTORS[11] = noiseMul;
+    r.factorLedger.recordTick(progress, TEMP_FACTORS);
   }
 
   // Update velocity towards target (deceleration is slower than acceleration)
