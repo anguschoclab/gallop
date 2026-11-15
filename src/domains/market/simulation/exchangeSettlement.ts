@@ -22,6 +22,7 @@
  */
 
 import type { Horse } from "@/domains/horse/simulation/types";
+import { horseMarketValue } from "@/domains/horse/simulation/pricing";
 import type { Stable } from "@/domains/stable/simulation/types";
 import { makeNpcOwned, makePlayerOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";

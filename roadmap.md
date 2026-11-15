@@ -45,5 +45,5 @@
 - [ ] Found: buying at a low-prestige house and selling the same day at a high-prestige one is a guaranteed profit (Drover → Crownhill made $1,088 on a $10k horse) — needs a design decision
 - [ ] Found: after a live race the replay snaps back to 0m with every runner "In Trouble"; race list shows raw track IDs for some tracks
 
-- [ ] Live market price index + money flow driving Exchange prices and rival cash pressure
-- [ ] Almanac real horses: race history (real finishes + prize money)
+- [x] Live market price index + money flow driving Exchange prices and rival cash pressure
+- [x] Almanac real horses: race history (real finishes + prize money)

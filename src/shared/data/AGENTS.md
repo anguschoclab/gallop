@@ -1,0 +1,3 @@
+# Shared data
+
+- **Real horses come from a bundled snapshot** `src/shared/data/realHorses.json`, rebuilt only by `bun run scripts/buildRealHorses.ts` (Wikidata + Wikipedia infoboxes; `--cache <dir>` reuses downloads). Never fetch horse data at runtime — worlds must stay deterministic and offline. `pedigreeData.ts` merges it under the curated entries (curated wins), `getStallionResearchData` falls back to `researchFromRealRecord`, and `pedigreeGraph` follows legacy ancestors by name before inventing phantoms. The build drops non-thoroughbreds, parents not older than the foal, and ancestry loops; `src/tests/core/history/realHorses.test.ts` guards this.
