@@ -1,3 +1,4 @@
 # Market domain
 
 - **Exchange market index**: `src/domains/market/simulation/marketIndex.ts` derives a recency-weighted price/fair-value index from trades (stamped with `fairValue` in `runExchangeSettlementDay`); `generateNpcBook` quotes at fair value × a damped, ±15%-capped multiplier and adds per-stable 30-day net-outflow pressure (≤0.3) to rival stances. Why: prices track trading without a runaway feedback loop.
+- **Exchange balance knobs live in `src/domains/market/simulation/exchangeAI.ts`** (`EXCHANGE_*` constants: bid noise, accept floor, cash slice, NPC cash reserve, per-day buy/trade caps) plus `EXCHANGE_BASE_COMMISSION` in `exchange.ts`; NPC asks prefer horses some rival can afford. `src/tests/core/market/exchangeBalance.test.ts` guards that trades keep settling and commission can't drain rivals. Why: unaffordable listings froze the book and commission was a runaway cash sink.
