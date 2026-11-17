@@ -47,3 +47,4 @@
 
 - [x] Live market price index + money flow driving Exchange prices and rival cash pressure
 - [x] Almanac real horses: race history (real finishes + prize money)
+- [x] Auto-syndicate buys/sells shares using bundled real-world market trends (offline)

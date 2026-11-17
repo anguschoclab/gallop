@@ -14,12 +14,15 @@
 import type { Horse } from "@/platform/game/types";
 import { isPlayerOwned } from "@/domains/horse/simulation/ownership";
 import { horseMarketValue } from "@/domains/horse/simulation/pricing";
+import { syndicationTrend } from "@/domains/market/model/syndicationTrend";
 import type { StoreSet, StoreGet, StoreType } from "@/platform/game/store/types";
 
 /** Player keeps at least this share of a syndicate when auto-topping up. */
 export const AUTO_SYNDICATE_MIN_CONTROL = 0.55;
 /** Shares issued per new auto-created syndicate. */
 export const AUTO_SYNDICATE_TOTAL_SHARES = 40;
+/** Player never buys back above this share of a syndicate. */
+export const AUTO_SYNDICATE_MAX_BUYBACK = 0.75;
 /** Maximum syndicates opened automatically per day. */
 export const AUTO_SYNDICATE_PER_DAY = 2;
 
@@ -27,7 +30,13 @@ export type AutoSyndicateSlice = {
   /** Turn daily automatic syndication on or off. */
   setAutoSyndicateEnabled: (enabled: boolean) => void;
   /** Run one pass of automatic syndication. Returns what it did. */
-  runAutoSyndicate: () => { created: number; solicited: number; raised: number };
+  runAutoSyndicate: () => {
+    created: number;
+    solicited: number;
+    boughtBack: number;
+    raised: number;
+    trendPct: number;
+  };
 };
 
 function g1Wins(horse: Horse): number {
@@ -52,6 +61,8 @@ export function createAutoSyndicateSlice(set: StoreSet, get: StoreGet): AutoSynd
       const s = get();
       let created = 0;
       let solicited = 0;
+      let boughtBack = 0;
+      const trend = syndicationTrend(s.day);
       const cashBefore = s.cash;
 
       const horses = Object.values(s.horses) as Horse[];
@@ -64,28 +75,56 @@ export function createAutoSyndicateSlice(set: StoreSet, get: StoreGet): AutoSynd
         if (created >= AUTO_SYNDICATE_PER_DAY) break;
         if (get().syndicates?.[horse.id]) continue;
         const value = horseMarketValue(horse, horses);
-        const sharePrice = Math.max(1000, Math.round(value / AUTO_SYNDICATE_TOTAL_SHARES));
+        const sharePrice = Math.max(
+          1000,
+          Math.round((value / AUTO_SYNDICATE_TOTAL_SHARES) * trend.priceMultiplier),
+        );
         const result = store.createSyndicate?.(horse.id, AUTO_SYNDICATE_TOTAL_SHARES, sharePrice, {
           player: AUTO_SYNDICATE_TOTAL_SHARES,
         });
         if (result?.ok) created += 1;
       }
 
-      // 2. Top up existing syndicates by selling spare shares to new investors,
-      //    never dropping the player below a controlling stake.
+      // 2. Follow the real-world trend: reprice shares, then sell spare shares
+      //    into a rising market (keeping control) or buy back into a falling one.
       for (const syndicate of Object.values(get().syndicates ?? {})) {
         const total = syndicate.totalShares ?? 0;
-        const playerShares = syndicate.shareHolders?.["player"] ?? 0;
-        const floor = Math.ceil(total * AUTO_SYNDICATE_MIN_CONTROL);
-        const spare = playerShares - floor;
-        if (spare <= 0) continue;
-        const offer = Math.min(spare, Math.max(1, Math.round(total * 0.05)));
-        const result = store.solicitInvestor?.(syndicate.id, offer);
-        if (result?.ok) solicited += 1;
+        if (total <= 0) continue;
+        const stallion = get().horses[syndicate.stallionId] as Horse | undefined;
+        if (stallion) {
+          const repriced = Math.max(
+            1000,
+            Math.round((horseMarketValue(stallion, horses) / total) * trend.priceMultiplier),
+          );
+          if (repriced !== syndicate.sharePrice) {
+            set((state) => ({
+              syndicates: {
+                ...state.syndicates,
+                [syndicate.id]: { ...state.syndicates[syndicate.id]!, sharePrice: repriced },
+              },
+            }));
+          }
+        }
+        const current = get().syndicates?.[syndicate.id];
+        if (!current) continue;
+        const playerShares = current.shareHolders?.["player"] ?? 0;
+        const step = Math.max(1, Math.round(total * trend.shareFraction));
+        if (trend.action === "sell") {
+          const spare = playerShares - Math.ceil(total * AUTO_SYNDICATE_MIN_CONTROL);
+          if (spare <= 0) continue;
+          const result = store.solicitInvestor?.(current.id, Math.min(spare, step));
+          if (result?.ok) solicited += 1;
+        } else if (trend.action === "buy") {
+          const room = Math.floor(total * AUTO_SYNDICATE_MAX_BUYBACK) - playerShares;
+          const shares = Math.min(room, step);
+          if (shares <= 0 || get().cash < shares * current.sharePrice) continue;
+          const result = store.purchaseShares?.(current.id, shares, current.sharePrice);
+          if (result?.ok) boughtBack += 1;
+        }
       }
 
       // Fresh stakes should be reflected in the exchange book immediately.
-      if (created > 0 || solicited > 0) {
+      if (created > 0 || solicited > 0 || boughtBack > 0) {
         try {
           store.refreshExchange?.();
         } catch {
@@ -93,7 +132,13 @@ export function createAutoSyndicateSlice(set: StoreSet, get: StoreGet): AutoSynd
         }
       }
 
-      return { created, solicited, raised: Math.max(0, get().cash - cashBefore) };
+      return {
+        created,
+        solicited,
+        boughtBack,
+        raised: Math.max(0, get().cash - cashBefore),
+        trendPct: trend.trendPct,
+      };
     },
   };
 }
