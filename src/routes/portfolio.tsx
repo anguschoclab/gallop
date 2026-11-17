@@ -337,7 +337,7 @@ function PortfolioPage() {
                   </Label>
                   <p className="text-xs text-muted-foreground">
                     Each day, open syndicates on your best Grade 1 winners and sell spare shares
-                    while keeping control.
+                    while keeping control. Share prices follow real-world bloodstock trends: it sells into rising markets and buys back when they fall.
                   </p>
                 </div>
               </div>
@@ -348,9 +348,9 @@ function PortfolioPage() {
                   onClick={() => {
                     const result = runAutoSyndicate?.();
                     toast.success(
-                      result && (result.created || result.solicited)
-                        ? `Opened ${result.created} syndicate(s), sold shares in ${result.solicited}, raising ${formatCurrency(result.raised)}.`
-                        : "Nothing to syndicate right now.",
+                      result && (result.created || result.solicited || result.boughtBack)
+                        ? `Real-world market ${result.trendPct >= 0 ? "+" : ""}${result.trendPct.toFixed(1)}%: opened ${result.created} syndicate(s), sold shares in ${result.solicited}, bought back in ${result.boughtBack}.`
+                        : `Real-world market ${result ? `${result.trendPct >= 0 ? "+" : ""}${result.trendPct.toFixed(1)}%` : "flat"} — holding shares.`,
                     );
                   }}
                 >
