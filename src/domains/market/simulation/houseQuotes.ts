@@ -58,6 +58,25 @@ export const HOUSE_CATALOGUE_SIZE = 6;
  * @param playerReputation - Player reputation score (0-1000); better standing
  *   earns a better net when selling through the house
  */
+/**
+ * A house's net to a seller never exceeds this share of the cheapest price any
+ * house charges a buyer for the same horse, so buying at one house and selling
+ * through another can never turn a profit.
+ */
+export const HOUSE_RESALE_CAP = 0.97;
+
+function rawHouseQuote(fairValue: number, house: AuctionHouse) {
+  const hammerEstimate = Math.max(500, Math.round(fairValue * housePrestigeMultiplier(house)));
+  const commissionRate = houseCommissionRate(EXCHANGE_BASE_COMMISSION, house);
+  const commission = Math.round(hammerEstimate * commissionRate);
+  return { hammerEstimate, commissionRate, commission, buyPrice: hammerEstimate + commission };
+}
+
+/** Cheapest price any auction house would charge a buyer at this valuation. */
+export function cheapestHouseBuyPrice(fairValue: number): number {
+  return Math.min(...AUCTION_HOUSES.map((h) => rawHouseQuote(fairValue, h).buyPrice));
+}
+
 export function houseQuote(
   horse: Horse,
   allHorses: Horse[],
@@ -65,16 +84,16 @@ export function houseQuote(
   playerReputation = 0,
 ): HouseQuote {
   const fairValue = Math.round(horseMarketValue(horse, allHorses));
-  const hammerEstimate = Math.max(500, Math.round(fairValue * housePrestigeMultiplier(house)));
-  const commissionRate = houseCommissionRate(EXCHANGE_BASE_COMMISSION, house);
-  const commission = Math.round(hammerEstimate * commissionRate);
+  const { hammerEstimate, commissionRate, commission, buyPrice } = rawHouseQuote(fairValue, house);
   const standing = sellerStandingBidFactor(playerReputation);
+  const rawSell = Math.round((hammerEstimate - commission) * standing.factor);
+  const resaleCap = Math.floor(cheapestHouseBuyPrice(fairValue) * HOUSE_RESALE_CAP);
   return {
     house,
     fairValue,
     hammerEstimate,
-    buyPrice: hammerEstimate + commission,
-    sellPrice: Math.round((hammerEstimate - commission) * standing.factor),
+    buyPrice,
+    sellPrice: Math.min(rawSell, resaleCap),
     commissionRate,
     commission,
     standingFactor: standing.factor,

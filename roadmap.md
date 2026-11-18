@@ -48,3 +48,6 @@
 - [x] Live market price index + money flow driving Exchange prices and rival cash pressure
 - [x] Almanac real horses: race history (real finishes + prize money)
 - [x] Auto-syndicate buys/sells shares using bundled real-world market trends (offline)
+- [x] In-game check: Daily Auto-Entry + advance day fills Daily Progress panel
+- [ ] In-game check: Race Advisor plan, confidence and Apply to entry on a real entered horse
+- [x] Close house-to-house resale profit (buy cheap at low-prestige house, sell same day at high-prestige house)

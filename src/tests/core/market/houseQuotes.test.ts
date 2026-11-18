@@ -4,7 +4,10 @@ import {
   houseQuotes,
   buildHouseCatalogue,
 } from "@/domains/market/simulation/houseQuotes";
-import { AUCTION_HOUSES } from "@/domains/prestige/simulation/auctionHouses";
+import {
+  AUCTION_HOUSES,
+  housePrestigeMultiplier,
+} from "@/domains/prestige/simulation/auctionHouses";
 import { createTestHorse } from "@/tests/helpers";
 import { makeNpcOwned } from "@/domains/horse/simulation/ownership";
 import { asNpcStableId } from "@/shared/types/branded";
@@ -22,7 +25,11 @@ describe("houseQuote", () => {
   it("calculates quotes and applies reputation modifiers correctly", () => {
     const horse = createTestHorse({ id: "h1", age: 3 });
     const allHorses = [horse];
-    const house = AUCTION_HOUSES[0]; // Assuming at least one house exists
+    // Lowest-prestige house: its quotes sit below the cross-house resale cap,
+    // so the standing bonus is visible.
+    const house = [...AUCTION_HOUSES].sort(
+      (a, b) => housePrestigeMultiplier(a) - housePrestigeMultiplier(b),
+    )[0]!;
 
     const quote1 = houseQuote(horse, allHorses, house, 0);
     const quote2 = houseQuote(horse, allHorses, house, 1000); // Max rep
