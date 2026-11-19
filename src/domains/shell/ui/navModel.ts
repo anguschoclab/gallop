@@ -37,6 +37,7 @@ import {
   Swords,
   Target,
   TrendingUp,
+  ListChecks,
   Trophy,
   User,
   Users,
@@ -65,6 +66,7 @@ export const navSections: { label: string; items: NavItem[] }[] = [
     label: "Racing",
     items: [
       { to: "/racing", label: "Race Center", icon: Flag, exact: false },
+      { to: "/raceResults", label: "Race Results", icon: ListChecks, exact: false },
       { to: "/calendar", label: "Calendar", icon: Calendar, exact: false },
       { to: "/replays", label: "Replays", icon: Film, exact: false },
     ],

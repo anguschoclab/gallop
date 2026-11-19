@@ -51,3 +51,4 @@
 - [x] In-game check: Daily Auto-Entry + advance day fills Daily Progress panel
 - [ ] In-game check: Race Advisor plan, confidence and Apply to entry on a real entered horse
 - [x] Close house-to-house resale profit (buy cheap at low-prestige house, sell same day at high-prestige house)
+- [x] Race Results page: each start's finish, prize, entry fee, cash and prestige change
