@@ -23,7 +23,9 @@ export type RaceResultRow = {
   fieldSize?: number;
   prize: number;
   entryFee: number;
-  /** Prize money minus entry fee. */
+  /** Riding fee plus the jockey's cut of any prize money. */
+  jockeyFee: number;
+  /** Prize money minus entry fee and jockey fees. */
   cashNet: number;
   /** Sum of reputation changes recorded for this start. */
   prestige: number;
@@ -35,6 +37,7 @@ export type RaceResultsSummary = {
   places: number;
   prize: number;
   entryFees: number;
+  jockeyFees: number;
   cashNet: number;
   prestige: number;
 };
@@ -45,10 +48,15 @@ export function buildRaceResults(args: {
   reputationEvents: ReputationEvent[];
 }): RaceResultRow[] {
   const fees = new Map<string, number>();
+  const jockeyFees = new Map<string, number>();
   for (const tx of args.transactions) {
-    if (tx.subcategory !== "entry_fee" || !tx.raceId) continue;
+    if (!tx.raceId) continue;
     const k = `${tx.raceId}|${tx.horseId ?? ""}`;
-    fees.set(k, (fees.get(k) ?? 0) + Math.abs(tx.amount));
+    if (tx.subcategory === "entry_fee") {
+      fees.set(k, (fees.get(k) ?? 0) + Math.abs(tx.amount));
+    } else if (tx.subcategory === "jockey_fee") {
+      jockeyFees.set(k, (jockeyFees.get(k) ?? 0) + Math.abs(tx.amount));
+    }
   }
   const rows: RaceResultRow[] = [];
   for (const horse of args.horses) {
@@ -57,6 +65,7 @@ export function buildRaceResults(args: {
       if (r.offscreen) continue;
       const prize = Math.max(0, r.purseEarned ?? 0);
       const entryFee = fees.get(`${r.raceId}|${horse.id}`) ?? 0;
+      const jockeyFee = jockeyFees.get(`${r.raceId}|${horse.id}`) ?? 0;
       const prestige = args.reputationEvents
         .filter((e) => e.raceId === r.raceId && (!e.horseId || e.horseId === horse.id))
         .reduce((sum, e) => sum + e.amount, 0);
@@ -72,7 +81,8 @@ export function buildRaceResults(args: {
         fieldSize: r.fieldSize,
         prize,
         entryFee,
-        cashNet: prize - entryFee,
+        jockeyFee,
+        cashNet: prize - entryFee - jockeyFee,
         prestige,
       });
     }
@@ -88,9 +98,10 @@ export function summarizeRaceResults(rows: RaceResultRow[]): RaceResultsSummary 
       places: s.places + (r.position <= 3 ? 1 : 0),
       prize: s.prize + r.prize,
       entryFees: s.entryFees + r.entryFee,
+      jockeyFees: s.jockeyFees + r.jockeyFee,
       cashNet: s.cashNet + r.cashNet,
       prestige: s.prestige + r.prestige,
     }),
-    { starts: 0, wins: 0, places: 0, prize: 0, entryFees: 0, cashNet: 0, prestige: 0 },
+    { starts: 0, wins: 0, places: 0, prize: 0, entryFees: 0, jockeyFees: 0, cashNet: 0, prestige: 0 },
   );
 }

@@ -27,7 +27,8 @@ describe("jockey fees are billed to the horse's owner, never by default to the p
   });
   it("win-percentage fee for an unowned runner → not the player", () => {
     const imp = generatePercentageJockeyFeeImpacts(jockey, 100_000, 1, false, undefined)!;
-    expect(imp.entityId).not.toBe("player");
-    expect(imp.entityId).not.toBe("");
+    expect(imp.cashImpact.entityId).not.toBe("player");
+    expect(imp.cashImpact.entityId).not.toBe("");
+    expect(imp.transactionImpact).toBeUndefined();
   });
 });

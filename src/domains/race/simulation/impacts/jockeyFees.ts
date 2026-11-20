@@ -76,11 +76,14 @@ export function generatePercentageJockeyFeeImpacts(
   stableId?: string,
   rng?: Rng,
   getId?: () => string,
-): CashImpact | null {
+  horseId?: string,
+  raceId?: string,
+  horseName?: string,
+): { cashImpact: CashImpact; transactionImpact?: TransactionImpact } | null {
   const jockeyFee = Math.round(winAmount * JOCKEY_FEE_PERCENTAGE);
   if (jockeyFee <= 0) return null;
 
-  return {
+  const cashImpact: CashImpact = {
     id: getId ? getId() : generateUUID(rng),
     intentId: "",
     day: newDay,
@@ -91,4 +94,25 @@ export function generatePercentageJockeyFeeImpacts(
     amount: -jockeyFee,
     reason: `Jockey fee for ${getJockeyName(jockey)}`,
   } as CashImpact;
+
+  // Record the winner's cut in the ledger so Race Results and the transaction
+  // log show the real net after jockey fees (player-owned horses only).
+  const transactionImpact: TransactionImpact | undefined =
+    owned && horseId && raceId
+      ? {
+          id: getId ? getId() : generateUUID(rng),
+          intentId: "",
+          day: newDay,
+          phase: "raceResolution",
+          logLevel: "conditional",
+          type: "transaction",
+          amount: -jockeyFee,
+          category: "jockey_fee",
+          description: `Jockey win cut: ${getJockeyName(jockey)}${horseName ? ` for ${horseName}` : ""}`,
+          horseId,
+          raceId,
+        }
+      : undefined;
+
+  return { cashImpact, transactionImpact };
 }

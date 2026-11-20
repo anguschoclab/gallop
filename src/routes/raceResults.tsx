@@ -14,7 +14,7 @@ import type { Horse } from "@/domains/horse/simulation/types";
 
 const TITLE = "Race Results — Finishes, Prize Money & Prestige";
 const DESC =
-  "Every start by your horses: finishing position, prize money, entry fees and how each race moved your stable's cash and prestige.";
+  "Every start by your horses: finishing position, prize money, entry and jockey fees, and how each race moved your stable's cash and prestige.";
 
 export const Route = createFileRoute("/raceResults")({
   head: () => ({
@@ -80,16 +80,17 @@ function RaceResultsPage() {
           <Trophy className="h-5 w-5 text-primary" /> Race Results
         </h1>
         <p className="text-sm text-muted-foreground">
-          Each start by your horses, with prize money, entry fees and the change to your cash and
-          prestige.
+          Each start by your horses, with prize money, entry and jockey fees, and the change to
+          your cash and prestige.
         </p>
       </header>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-6">
         {[
           ["Starts", `${sum.starts}`],
           ["Wins / places", `${sum.wins} / ${sum.places}`],
           ["Prize money", formatCurrency(sum.prize)],
+          ["Jockey fees", formatCurrency(sum.jockeyFees)],
           ["Cash after fees", `${sum.cashNet < 0 ? "−" : ""}${formatCurrency(Math.abs(sum.cashNet))}`],
           ["Prestige", `${sum.prestige > 0 ? "+" : ""}${sum.prestige.toFixed(0)}`],
         ].map(([label, value]) => (
@@ -135,6 +136,7 @@ function RaceResultsPage() {
                   <th className="text-right">Finish</th>
                   <th className="text-right">Prize</th>
                   <th className="text-right">Entry fee</th>
+                  <th className="text-right">Jockey fee</th>
                   <th className="text-right">Cash</th>
                   <th className="text-right">Prestige</th>
                 </tr>
@@ -167,6 +169,9 @@ function RaceResultsPage() {
                     <td className="text-right">{r.prize ? formatCurrency(r.prize) : "—"}</td>
                     <td className="text-right text-muted-foreground">
                       {r.entryFee ? formatCurrency(r.entryFee) : "—"}
+                    </td>
+                    <td className="text-right text-muted-foreground">
+                      {r.jockeyFee ? formatCurrency(r.jockeyFee) : "—"}
                     </td>
                     <td className="text-right">
                       <Signed value={r.cashNet} money />

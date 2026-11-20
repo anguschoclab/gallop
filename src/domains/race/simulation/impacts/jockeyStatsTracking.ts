@@ -110,9 +110,15 @@ export function generateJockeyStatsTrackingImpacts(
         raceEntry.ownership?.type === "npc" ? raceEntry.ownership.stableId : undefined,
         rng,
         getId,
+        horse.id,
+        race.id,
+        horse.name,
       );
       if (percentageFeeImpact) {
-        impacts.push(percentageFeeImpact);
+        impacts.push(percentageFeeImpact.cashImpact);
+        if (percentageFeeImpact.transactionImpact) {
+          impacts.push(percentageFeeImpact.transactionImpact);
+        }
       }
     }
   }

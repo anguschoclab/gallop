@@ -100,7 +100,7 @@ export function calculateTransportCostForRace(race: Race): number {
  * @param horse
  * @param jockeys
  */
-function selectBestJockey(horse: Horse, jockeys: Jockey[]): Jockey | null {
+export function selectBestJockey(horse: Horse, jockeys: Jockey[]): Jockey | null {
   // Check for retained jockey (player's contracted jockey)
   const retained = jockeys.find((j) => j.stableId === "player");
   if (retained) return retained;

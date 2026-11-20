@@ -25,7 +25,11 @@ import { runAutoEntries, reconcileSlotStatuses } from "@/domains/campaign/simula
 import type { AnyImpact, RaceEntryImpact } from "@/platform/resolver/impacts";
 import type { InboxImpact } from "@/platform/resolver/impacts/inboxImpacts";
 import { generateUUID } from "@/shared/uuid/uuid";
-import { calculateAutoRegisterEntries } from "@/domains/campaign/simulation/autoRegister";
+import {
+  calculateAutoRegisterEntries,
+  selectBestJockey,
+} from "@/domains/campaign/simulation/autoRegister";
+import { asJockeyId } from "@/shared/types/branded";
 import { autoAdjustGoals, goalProgress } from "@/domains/stable/simulation/stableGoals";
 import { autoCreateJournalEntry } from "@/domains/tactics/simulation/strategyJournal";
 
@@ -108,6 +112,9 @@ function runDailyAutoEntry(context: PipelineContext): PipelineContext {
         type: "race_entry",
         raceId: entry.raceId,
         horseId: entry.horseId,
+        // Carry the booked jockey so riding fees and win cuts are charged at
+        // resolution and show up in Race Results.
+        ...(entry.jockeyId ? { jockeyId: asJockeyId(entry.jockeyId) } : {}),
         entryFee: entry.entryFee,
         reason: `Daily auto-entry for ${entry.horseName}`,
       }) as RaceEntryImpact,
@@ -241,9 +248,16 @@ const campaignSchedulerImpl = {
             return { ok: false, reason: "Already entered via intent pipeline" };
           if (race.entries.length >= race.fieldSize) return { ok: false, reason: "Race full" };
 
+          // Book a jockey too, so riding fees and win cuts are charged at
+          // resolution and show up in Race Results.
+          const jockey = selectBestJockey(horse, state.jockeys ?? []);
+          const jockeyId = jockey ? asJockeyId(jockey.id) : undefined;
           currentRaces.set(raceId, {
             ...race,
-            entries: [...race.entries, { horseId, ownership: makePlayerOwned() }],
+            entries: [
+              ...race.entries,
+              { horseId, ownership: makePlayerOwned(), ...(jockeyId ? { jockeyId } : {}) },
+            ],
           });
           cashDelta -= race.entryFee;
           strategyJournal = autoCreateJournalEntry(strategyJournal, {
@@ -264,6 +278,7 @@ const campaignSchedulerImpl = {
             type: "race_entry",
             raceId,
             horseId,
+            ...(jockeyId ? { jockeyId } : {}),
             entryFee: race.entryFee,
             reason: `Auto-campaign entry for ${horse.name}`,
           } as RaceEntryImpact);
