@@ -13,7 +13,7 @@ ones are the real recovery scope.
 | 662 | `auctionValuation.test.ts` (102 lines) | PORT → relocate to `src/tests/core/auction/` | Re-gen of dropped #644; file was placed inside `src/domains` — tests live in `src/tests` |
 | 663 | `market.ts` phase — typed `Extract` filter replaces 3 `as` casts | PORT | Clean typeguard narrowing |
 | 664 | Float64Array `recordTick` + shared `TEMP_FACTORS` buffer in stepRunner | PORT | Eliminates per-tick Record alloc; adds NaN-skip (hardening). No conflict with cycle-1 recordTick rewrite. Sync fill→consume = re-entrancy safe |
-| 665 | EmptyState → `StaffTeamList` | PORT minus artifacts | Strip 4 `*-chromium-linux.png` snapshot files |
+| 665 | EmptyState → `StaffTeamList` + regenerated linux baselines | PORT incl. PNGs | The 4 `*-chromium-linux.png` files were regenerated baselines, not junk — they fix 4/5 e2e CI failures on main (drifted since `1f64e171`) |
 | 666 | DisabledTooltipWrapper → `PortraitRandomizeButton` + PersonProfileHero test | PORT | Replaces title attr with tooltip for denied state |
 
 ## Closed-unmerged #633–#661 — landed/dropped audit
@@ -37,8 +37,8 @@ ones are the real recovery scope.
 | 647 | defer profile allocation sim.ts | LANDED (`let profile` lazy pattern present) |
 | 648 | chromosomes tests | LANDED |
 | 649 | Iron Horse insight + tests | LANDED (`detectIronHorse` + test) |
-| 650 | BaseHandler `T => void` constraint tighten | **DROPPED → PORT (1 line)** |
-| 651 | EmptyState StableRosterWidget | **DROPPED → PORT** (branch also carried `replace.patch` + stale docs — rejected) |
+| 650 | BaseHandler `T => void` constraint tighten | LANDED (verified in `BaseHandler.ts:19` — already `=> void`) |
+| 651 | EmptyState StableRosterWidget | **REJECT** — diff was 100% stale carry (26 files, no widget); intent reimplemented fresh (EmptyState + House icon) |
 | 652 | sim profile defer (dup) | LANDED |
 | 653 | herald flavor news | LANDED (`9fbf304b`) |
 | 654 | expertInsightTemplates expansion | LANDED (`9fbf304b`) |
@@ -50,7 +50,7 @@ ones are the real recovery scope.
 | 660 | weather-flavor newsGenerator | LANDED (34 weather refs) |
 | 661 | horse stats tests | LANDED (`tests/domains/horse/simulation/stats.test.ts`) |
 
-Recovery scope: 4 dropped intents (644→via 662, 650, 651, 656-test) + 5 open PRs = 8 discrete ports.
+Recovery scope: 2 dropped intents (644→via 662, 656-test) + 1 intent-only reimplement (651) + 5 open PRs = 8 discrete changes. #650 verified already-landed during implementation.
 
 ## Orphaned branches (PRs closed, branches alive — delete in Phase 7)
 
