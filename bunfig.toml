@@ -1,2 +1,3 @@
 [install]
 saveTextLockfile = false
+registry = "https://registry.npmjs.org"
