@@ -1,10 +1,31 @@
 import { describe, expect, it } from "vitest";
-import { computeMarketIndex, flowPressure, marketMultiplier, stableMoneyFlows } from "@/domains/market/simulation/marketIndex";
+import {
+  computeMarketIndex,
+  flowPressure,
+  marketMultiplier,
+  stableMoneyFlows,
+} from "@/domains/market/simulation/marketIndex";
 import type { ExchangeTrade } from "@/domains/market/simulation/exchange";
 
-const t = (day: number, price: number, fairValue: number, buyerId = "b", sellerId = "s"): ExchangeTrade => ({
-  id: `${day}-${price}`, horseId: "h", horseName: "H", price, commission: price * 0.025,
-  buyerId, buyerName: buyerId, sellerId, sellerName: sellerId, day, initiatedBy: "ask", fairValue,
+const t = (
+  day: number,
+  price: number,
+  fairValue: number,
+  buyerId = "b",
+  sellerId = "s",
+): ExchangeTrade => ({
+  id: `${day}-${price}`,
+  horseId: "h",
+  horseName: "H",
+  price,
+  commission: price * 0.025,
+  buyerId,
+  buyerName: buyerId,
+  sellerId,
+  sellerName: sellerId,
+  day,
+  initiatedBy: "ask",
+  fairValue,
 });
 
 describe("market index", () => {

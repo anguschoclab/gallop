@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import { ExternalLink, Search, Trophy } from "lucide-react";
 import { Card, CardContent } from "@/shared/ui/card";
-import { Badge } from "@/shared/ui/badge";
 import { Input } from "@/shared/ui/input";
 import { Button } from "@/shared/ui/button";
 import { formatCurrency } from "@/shared/common/formatting";
@@ -183,7 +182,12 @@ function RealRaceHistoryTable({ h }: { h: RealHorse }) {
           ["1st", r.wins],
           ["2nd", r.seconds],
           ["3rd", r.thirds],
-          ["Unplaced", r.starts !== undefined ? r.starts - (r.wins ?? 0) - (r.seconds ?? 0) - (r.thirds ?? 0) : undefined],
+          [
+            "Unplaced",
+            r.starts !== undefined
+              ? r.starts - (r.wins ?? 0) - (r.seconds ?? 0) - (r.thirds ?? 0)
+              : undefined,
+          ],
         ].map(([label, v]) => (
           <div key={label as string} className="rounded bg-muted/40 p-1.5">
             <div className="text-muted-foreground">{label}</div>
@@ -208,7 +212,9 @@ function RealRaceHistoryTable({ h }: { h: RealHorse }) {
             {r.seasons.flatMap((s) =>
               s.finishes.map((f, i) => (
                 <tr key={`${s.year}-${f.race}-${i}`} className="border-t border-border/30">
-                  <td className="py-1 tabular-nums text-muted-foreground">{i === 0 ? (s.year ?? "—") : ""}</td>
+                  <td className="py-1 tabular-nums text-muted-foreground">
+                    {i === 0 ? (s.year ?? "—") : ""}
+                  </td>
                   <td className="py-1 text-foreground">{f.race}</td>
                   <td className="py-1 text-right font-semibold text-primary">1st</td>
                 </tr>
@@ -219,7 +225,8 @@ function RealRaceHistoryTable({ h }: { h: RealHorse }) {
       )}
       {r.undocumentedWins > 0 && (
         <div className="text-xs text-muted-foreground">
-          Plus {r.undocumentedWins} more win{r.undocumentedWins === 1 ? "" : "s"} whose races aren't named in the source.
+          Plus {r.undocumentedWins} more win{r.undocumentedWins === 1 ? "" : "s"} whose races aren't
+          named in the source.
         </div>
       )}
     </div>

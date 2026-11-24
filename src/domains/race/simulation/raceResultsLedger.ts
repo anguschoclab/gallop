@@ -102,6 +102,15 @@ export function summarizeRaceResults(rows: RaceResultRow[]): RaceResultsSummary 
       cashNet: s.cashNet + r.cashNet,
       prestige: s.prestige + r.prestige,
     }),
-    { starts: 0, wins: 0, places: 0, prize: 0, entryFees: 0, jockeyFees: 0, cashNet: 0, prestige: 0 },
+    {
+      starts: 0,
+      wins: 0,
+      places: 0,
+      prize: 0,
+      entryFees: 0,
+      jockeyFees: 0,
+      cashNet: 0,
+      prestige: 0,
+    },
   );
 }

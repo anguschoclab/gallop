@@ -337,7 +337,8 @@ function PortfolioPage() {
                   </Label>
                   <p className="text-xs text-muted-foreground">
                     Each day, open syndicates on your best Grade 1 winners and sell spare shares
-                    while keeping control. Share prices follow real-world bloodstock trends: it sells into rising markets and buys back when they fall.
+                    while keeping control. Share prices follow real-world bloodstock trends: it
+                    sells into rising markets and buys back when they fall.
                   </p>
                 </div>
               </div>

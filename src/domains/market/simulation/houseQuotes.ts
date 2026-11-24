@@ -72,7 +72,10 @@ function rawHouseQuote(fairValue: number, house: AuctionHouse) {
   return { hammerEstimate, commissionRate, commission, buyPrice: hammerEstimate + commission };
 }
 
-/** Cheapest price any auction house would charge a buyer at this valuation. */
+/**
+ * Cheapest price any auction house would charge a buyer at this valuation.
+ * @param fairValue
+ */
 export function cheapestHouseBuyPrice(fairValue: number): number {
   return Math.min(...AUCTION_HOUSES.map((h) => rawHouseQuote(fairValue, h).buyPrice));
 }

@@ -53,7 +53,10 @@ function indexAt(trades: readonly ExchangeTrade[], day: number) {
   return { value: Math.round(ratio * 1000) / 10, count, volume };
 }
 
-/** Rival quoting multiplier for an index value. */
+/**
+ * Rival quoting multiplier for an index value.
+ * @param indexValue
+ */
 export function marketMultiplier(indexValue: number): number {
   const m = 1 + ((indexValue - 100) / 100) * MARKET_INDEX_PASS_THROUGH;
   return Math.min(MARKET_MULTIPLIER_BOUNDS[1], Math.max(MARKET_MULTIPLIER_BOUNDS[0], m));
@@ -70,16 +73,26 @@ export function computeMarketIndex(trades: readonly ExchangeTrade[], day: number
   };
 }
 
-/** Daily index points for a chart. */
+/**
+ * Daily index points for a chart.
+ * @param trades
+ * @param day
+ * @param days
+ */
 export function marketIndexSeries(trades: readonly ExchangeTrade[], day: number, days = 30) {
   const out: { day: number; value: number }[] = [];
-  for (let d = Math.max(1, day - days + 1); d <= day; d++) out.push({ day: d, value: indexAt(trades, d).value });
+  for (let d = Math.max(1, day - days + 1); d <= day; d++)
+    out.push({ day: d, value: indexAt(trades, d).value });
   return out;
 }
 
 export type StableMoneyFlow = { inflow: number; outflow: number; net: number };
 
-/** Net Exchange cash per stable over the window (sales net of commission minus purchases). */
+/**
+ * Net Exchange cash per stable over the window (sales net of commission minus purchases).
+ * @param trades
+ * @param day
+ */
 export function stableMoneyFlows(
   trades: readonly ExchangeTrade[],
   day: number,
@@ -105,9 +118,14 @@ export function stableMoneyFlows(
 /**
  * Extra cash pressure from money flowing out on the Exchange: paying out a
  * sum equal to remaining cash adds the full MAX_FLOW_PRESSURE.
+ * @param flow
+ * @param cash
  */
 export function flowPressure(flow: StableMoneyFlow | undefined, cash: number): number {
   if (!flow || flow.net >= 0) return 0;
   const out = -flow.net;
-  return Math.min(MAX_FLOW_PRESSURE, (out / Math.max(1, Math.max(0, cash) + out)) * MAX_FLOW_PRESSURE * 2);
+  return Math.min(
+    MAX_FLOW_PRESSURE,
+    (out / Math.max(1, Math.max(0, cash) + out)) * MAX_FLOW_PRESSURE * 2,
+  );
 }

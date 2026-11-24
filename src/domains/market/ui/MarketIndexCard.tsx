@@ -36,7 +36,10 @@ export function MarketIndexCard({
   const lo = Math.min(...series.map((p) => p.value), 95);
   const hi = Math.max(...series.map((p) => p.value), 105);
   const pts = series
-    .map((p, i) => `${(i / Math.max(1, series.length - 1)) * 100},${30 - ((p.value - lo) / (hi - lo)) * 30}`)
+    .map(
+      (p, i) =>
+        `${(i / Math.max(1, series.length - 1)) * 100},${30 - ((p.value - lo) / (hi - lo)) * 30}`,
+    )
     .join(" ");
   const pct = Math.round((index.multiplier - 1) * 1000) / 10;
 
@@ -53,13 +56,23 @@ export function MarketIndexCard({
                 change >= 0 ? "text-success" : "text-destructive",
               )}
             >
-              {change >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+              {change >= 0 ? (
+                <TrendingUp className="h-3 w-3" />
+              ) : (
+                <TrendingDown className="h-3 w-3" />
+              )}
               {change >= 0 ? "+" : ""}
               {change.toFixed(1)} (7d)
             </span>
           </div>
           <svg viewBox="0 0 100 30" preserveAspectRatio="none" className="w-full h-10">
-            <polyline points={pts} fill="none" className="stroke-primary" strokeWidth={1.5} vectorEffect="non-scaling-stroke" />
+            <polyline
+              points={pts}
+              fill="none"
+              className="stroke-primary"
+              strokeWidth={1.5}
+              vectorEffect="non-scaling-stroke"
+            />
           </svg>
           <p className="text-xs text-muted-foreground">
             100 = horses trading at their value. Based on {index.tradeCount} trades (
@@ -68,7 +81,9 @@ export function MarketIndexCard({
           </p>
         </div>
         <div>
-          <div className="text-xs font-semibold text-muted-foreground mb-1">Rival money flow (30d)</div>
+          <div className="text-xs font-semibold text-muted-foreground mb-1">
+            Rival money flow (30d)
+          </div>
           {flows.length === 0 ? (
             <p className="text-xs text-muted-foreground">No rival trades yet.</p>
           ) : (
@@ -81,7 +96,12 @@ export function MarketIndexCard({
                       {f!.net >= 0 ? "+" : "−"}
                       {formatCurrency(Math.abs(f!.net))}
                     </span>
-                    {p > 0 && <span className="text-muted-foreground"> · +{Math.round(p * 100)} pressure</span>}
+                    {p > 0 && (
+                      <span className="text-muted-foreground">
+                        {" "}
+                        · +{Math.round(p * 100)} pressure
+                      </span>
+                    )}
                   </span>
                 </li>
               ))}

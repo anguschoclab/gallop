@@ -1,5 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { buildRaceResults, summarizeRaceResults } from "@/domains/race/simulation/raceResultsLedger";
+import {
+  buildRaceResults,
+  summarizeRaceResults,
+} from "@/domains/race/simulation/raceResultsLedger";
 import { createTestHorse, createTestNpcHorse } from "@/tests/helpers";
 import type { Transaction } from "@/domains/transactions/model/transactionTypes";
 import type { ReputationEvent } from "@/domains/reputation/model/reputationTypes";
@@ -20,13 +23,29 @@ describe("race results ledger", () => {
   const rep = [{ raceId: "r1", horseId: "h1", amount: 3 }] as ReputationEvent[];
 
   it("lists only my horses with prize minus entry and jockey fees, and prestige", () => {
-    const rows = buildRaceResults({ horses: [mine, rival], transactions: tx, reputationEvents: rep });
+    const rows = buildRaceResults({
+      horses: [mine, rival],
+      transactions: tx,
+      reputationEvents: rep,
+    });
     expect(rows).toHaveLength(1);
-    expect(rows[0]).toMatchObject({ prize: 1125, entryFee: 400, jockeyFee: 213, cashNet: 512, prestige: 3 });
+    expect(rows[0]).toMatchObject({
+      prize: 1125,
+      entryFee: 400,
+      jockeyFee: 213,
+      cashNet: 512,
+      prestige: 3,
+    });
   });
 
   it("totals starts, places, jockey fees and net cash", () => {
     const rows = buildRaceResults({ horses: [mine], transactions: tx, reputationEvents: rep });
-    expect(summarizeRaceResults(rows)).toMatchObject({ starts: 1, wins: 0, places: 1, jockeyFees: 213, cashNet: 512 });
+    expect(summarizeRaceResults(rows)).toMatchObject({
+      starts: 1,
+      wins: 0,
+      places: 1,
+      jockeyFees: 213,
+      cashNet: 512,
+    });
   });
 });

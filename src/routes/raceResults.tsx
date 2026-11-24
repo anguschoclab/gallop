@@ -80,8 +80,8 @@ function RaceResultsPage() {
           <Trophy className="h-5 w-5 text-primary" /> Race Results
         </h1>
         <p className="text-sm text-muted-foreground">
-          Each start by your horses, with prize money, entry and jockey fees, and the change to
-          your cash and prestige.
+          Each start by your horses, with prize money, entry and jockey fees, and the change to your
+          cash and prestige.
         </p>
       </header>
 
@@ -91,7 +91,10 @@ function RaceResultsPage() {
           ["Wins / places", `${sum.wins} / ${sum.places}`],
           ["Prize money", formatCurrency(sum.prize)],
           ["Jockey fees", formatCurrency(sum.jockeyFees)],
-          ["Cash after fees", `${sum.cashNet < 0 ? "−" : ""}${formatCurrency(Math.abs(sum.cashNet))}`],
+          [
+            "Cash after fees",
+            `${sum.cashNet < 0 ? "−" : ""}${formatCurrency(Math.abs(sum.cashNet))}`,
+          ],
           ["Prestige", `${sum.prestige > 0 ? "+" : ""}${sum.prestige.toFixed(0)}`],
         ].map(([label, value]) => (
           <Card key={label}>
@@ -163,8 +166,14 @@ function RaceResultsPage() {
                       )}
                     </td>
                     <td className="text-right">
-                      {r.position === 1 ? <span className="text-primary">1st</span> : ordinal(r.position)}
-                      {r.fieldSize ? <span className="text-muted-foreground"> / {r.fieldSize}</span> : null}
+                      {r.position === 1 ? (
+                        <span className="text-primary">1st</span>
+                      ) : (
+                        ordinal(r.position)
+                      )}
+                      {r.fieldSize ? (
+                        <span className="text-muted-foreground"> / {r.fieldSize}</span>
+                      ) : null}
                     </td>
                     <td className="text-right">{r.prize ? formatCurrency(r.prize) : "—"}</td>
                     <td className="text-right text-muted-foreground">

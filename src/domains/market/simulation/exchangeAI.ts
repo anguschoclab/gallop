@@ -89,13 +89,28 @@ export const EXCHANGE_MAX_NPC_BUYS_PER_DAY = 1;
 /** Most NPC-side crossings the exchange settles in a day. */
 export const EXCHANGE_MAX_NPC_TRADES_PER_DAY = 3;
 
-/** Add Exchange money-flow pressure on top of runway pressure. */
+/**
+ * Add Exchange money-flow pressure on top of runway pressure.
+ * @param p
+ * @param extra
+ */
 function withExtraPressure(p: CashPressure, extra: number): CashPressure {
   if (extra <= 0) return p;
   const pressure = Math.min(1, p.pressure + extra);
   const label: CashPressure["label"] =
-    pressure >= 0.75 ? "desperate" : pressure >= 0.5 ? "strained" : pressure >= 0.25 ? "tight" : p.label;
-  return { ...p, pressure, meter: Math.round(pressure * 100), label: pressure > p.pressure ? label : p.label };
+    pressure >= 0.75
+      ? "desperate"
+      : pressure >= 0.5
+        ? "strained"
+        : pressure >= 0.25
+          ? "tight"
+          : p.label;
+  return {
+    ...p,
+    pressure,
+    meter: Math.round(pressure * 100),
+    label: pressure > p.pressure ? label : p.label,
+  };
 }
 
 /**
@@ -196,12 +211,9 @@ export function sellerStandingBidFactor(reputationScore: number): {
  *
  * @param stable - The NPC stable
  * @param horseCount - Number of horses it owns (defaults to roster length)
+ * @param extraPressure
  */
-export function sellerStance(
-  stable: Stable,
-  horseCount?: number,
-  extraPressure = 0,
-): SellerStance {
+export function sellerStance(stable: Stable, horseCount?: number, extraPressure = 0): SellerStance {
   const pressure = withExtraPressure(evaluateCashPressure(stable, horseCount), extraPressure);
   const base = PERSONALITY_LIST_COUNT[stable.personality] ?? 2;
   // Squeezed stables put more of the string on the market.
@@ -275,6 +287,7 @@ export function npcAskPrice(
  * @param sellerReputation - When the seller is the player, their reputation
  *   score (0-1000). Low standing attracts lowball bids; high standing commands
  *   a premium.
+ * @param extraPressure
  */
 export function npcBidQuote(
   horse: Horse,

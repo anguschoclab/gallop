@@ -163,6 +163,12 @@ export type RealRaceHistory = {
 /**
  * Parses "Epsom Derby (1970)" style entries into real finishes, oldest first.
  * @param h
+ * @param h.majorWins
+ * @param h.starts
+ * @param h.wins
+ * @param h.seconds
+ * @param h.thirds
+ * @param h.earningsUsd
  */
 export function realRaceHistory(h: {
   majorWins?: string[];
@@ -174,7 +180,9 @@ export function realRaceHistory(h: {
 }): RealRaceHistory {
   const finishes: RealRaceFinish[] = (h.majorWins ?? []).map((raw) => {
     const m = raw.match(/^(.*?)\s*\((\d{4})[^)]*\)\s*$/);
-    return m ? { race: m[1].trim(), year: Number(m[2]), position: 1 } : { race: raw.trim(), position: 1 };
+    return m
+      ? { race: m[1].trim(), year: Number(m[2]), position: 1 }
+      : { race: raw.trim(), position: 1 };
   });
   finishes.sort((a, b) => (a.year ?? 9999) - (b.year ?? 9999));
   const seasons: RealRaceHistory["seasons"] = [];
