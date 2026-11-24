@@ -54,11 +54,18 @@ Actual recovery:
 | --- | --- |
 | `bun run typecheck:errors` | 0 errors |
 | `bun run lint` | 0 errors, 1 pre-existing warning |
-| Full suite (`bun run test`) | TBD — see commit-time update |
-| `bun run build` | TBD |
+| Full suite | Local: 1,043 files / 11,019 passed, 19 `TestTimeoutError` (all re-passed 60/60 serially — resource flake, not regression). CI `verify` on merge head `f9fd5a02`: **green in 19m05s** (typecheck, lint, capability audit, tests, build, e2e) |
+| `bun run build` | green (CI) |
 | Focused tests | factorLedger 25/25, StaffTeamList 9/9, widgets 9/9, earlySpeed/auctionValuation green |
 | Hygiene (`.jules`, `*.patch`, lockfiles) | clean — none tracked |
-| Determinism fingerprint | TBD vs cycle-1 `0fe9f205` |
+| Determinism fingerprint | `4c30ef15` — new baseline vs cycle-1 `0fe9f205`; divergence attributable to the 112 between-cycle main commits (CI's in-suite determinism assertions green), not the ported deltas |
+| CI e2e | **Restored to green** — first fully-green `verify` on `main` since the baselines drifted |
+
+## Merge record
+
+- `59ac2034` — PR #667: regenerated linux baselines (workflow run 45380697530)
+- `f05ad7dc` — PR #668: consolidation/2026-11-b → main (verify green)
+- 5 open PRs (#662–#666) verdict-commented + closed; 10 agent branches deleted; remote = `main` only
 
 ## Per-PR verdicts
 
