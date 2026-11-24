@@ -7,6 +7,7 @@ import { STAFF_ROLE_LABELS, STAFF_TIER_LABELS } from "@/domains/staff/applicatio
 import { cn } from "@/shared/lib/cn";
 import { Briefcase, ShieldCheck, Trophy } from "lucide-react";
 import { formatStaffTrait } from "@/domains/genetics/application/traitLabels";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 import { getStaffName } from "@/domains/staff/model/staffPerson";
 
 import type { StaffMember } from "@/domains/staff/model/staffTypes";
@@ -46,15 +47,11 @@ export function StaffTeamList({
             Our Team
           </h3>
         </div>
-        <div className="p-20 text-center border-2 border-dashed border-white/5 bg-black/10">
-          <Briefcase className="h-16 w-16 mx-auto mb-6 text-foreground/5" />
-          <p className="font-bold text-foreground/40 uppercase tracking-[0.15em] font-[family-name:var(--font-display)]">
-            No Retained Staff
-          </p>
-          <p className="text-[10px] font-mono text-foreground/10 uppercase mt-2">
-            Team roster is currently vacant. Hire staff from the pool.
-          </p>
-        </div>
+        <EmptyState
+          icon={Briefcase}
+          title="No Retained Staff"
+          description="Team roster is currently vacant. Hire staff from the pool."
+        />
       </section>
     );
   }

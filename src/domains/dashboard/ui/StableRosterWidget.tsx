@@ -7,8 +7,9 @@ import { useGame } from "@/platform/game/store";
 import { overall, NumericValue, HorseBit } from "@/domains/horse/ui/HorseBits";
 import { ensurePhenotypeResolved } from "@/domains/horse/application/horseFacade";
 import { isPlayerOwned } from "@/domains/horse/application/horseFacade";
-import { LayoutGrid, Users, Briefcase, ChevronRight } from "lucide-react";
+import { LayoutGrid, Users, Briefcase, ChevronRight, House } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/shared/ui/tooltip";
+import { EmptyState } from "@/shared/ui/common/EmptyState";
 
 export function StableRosterWidget() {
   const horses = useGame((s) => s.horses);
@@ -59,27 +60,35 @@ export function StableRosterWidget() {
             <span>OVR</span>
           </div>
           <div className="space-y-2">
-            {topHorses.map((h) => (
-              <Link
-                key={h.id}
-                to="/stable/$horseId"
-                params={{ horseId: h.id }}
-                className="block group/item"
-              >
-                <div className="flex items-center justify-between p-2 rounded bg-white/[0.03] border border-white/5 hover:border-blue-400/30 hover:bg-blue-400/5 transition-all">
-                  <HorseBit horse={h} />
-                  <div className="flex items-center gap-3">
-                    <NumericValue
-                      value={overall(h)}
-                      className="text-xs font-bold text-muted-foreground group-hover/item:text-blue-400 transition-colors"
-                    />
-                    <Badge className="bg-black/40 text-foreground text-[9px] h-4 px-1.5 font-mono border border-white/5">
-                      E{Math.round(h.energy)}
-                    </Badge>
+            {topHorses.length === 0 ? (
+              <EmptyState
+                icon={House}
+                title="No horses in stable"
+                description="Acquire horses through auctions, the exchange, or claiming races."
+              />
+            ) : (
+              topHorses.map((h) => (
+                <Link
+                  key={h.id}
+                  to="/stable/$horseId"
+                  params={{ horseId: h.id }}
+                  className="block group/item"
+                >
+                  <div className="flex items-center justify-between p-2 rounded bg-white/[0.03] border border-white/5 hover:border-blue-400/30 hover:bg-blue-400/5 transition-all">
+                    <HorseBit horse={h} />
+                    <div className="flex items-center gap-3">
+                      <NumericValue
+                        value={overall(h)}
+                        className="text-xs font-bold text-muted-foreground group-hover/item:text-blue-400 transition-colors"
+                      />
+                      <Badge className="bg-black/40 text-foreground text-[9px] h-4 px-1.5 font-mono border border-white/5">
+                        E{Math.round(h.energy)}
+                      </Badge>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                </Link>
+              ))
+            )}
           </div>
 
           <div className="pt-2 space-y-2">
