@@ -40,12 +40,12 @@ Actual recovery:
 - **BUG-5** (fixed on main `89fb0986`): lint baseline red — 48 prettier errors from un-gated bot commits; `lint --fix` to 1 pre-existing warning.
 - **BUG-6**: linux e2e baselines drifted — 5 visual tests failing on main CI (`dashboard-desktop`, `dashboard-narrow`, `races-desktop`, `stable-narrow`, `analytics-desktop`). 4 fixed via #665's regenerated PNGs; `analytics-desktop` regenerated via new `regen-snapshots` workflow PR.
 - **New workflow** `.github/workflows/regen-snapshots.yml` (`workflow_dispatch`): regenerates linux Playwright baselines on the runner and opens a PR — the only ruleset-compliant way to refresh linux snapshots when contributors run Windows/macOS. `31c0bcd5`
-- **Ruleset 27978589** on `main`: `required_status_checks` = `verify`, `deletion`, `non_fast_forward`; bypass = RepositoryAdmin only.
+- **Ruleset 27978589** on `main`: `required_status_checks` = `verify`, `deletion`, `non_fast_forward`; bypass = RepositoryAdmin (break-glass) + `lovable-dev` Integration (app_id `818760`).
 
 ## Consequences of the ruleset (called out explicitly)
 
-- Direct pushes to `main` by `gpt-engineer-app[bot]` now require a passing `verify` run on the pushed head — **its pushes will be rejected while checks are absent/failing**. If the automation must keep pushing directly, add it as a bypass actor (Settings → Rules → rulesets → Protect main → Bypass list → Integration), or reconfigure it to open PRs.
-- Merging any branch requires CI `verify` green on the head — including this consolidation (it merged via PR for exactly that reason).
+- `lovable-dev[bot]` (the actual pusher — `gpt-engineer-app` was a misattribution; commit authorship is `lovable-dev[bot]`) is a bypass actor so its direct-push pipeline keeps working. **Trade-off:** it can again land red commits (BUG-5 class) — the ruleset does not gate it. Gating the bot would require it to work via PRs, which is a Lovable-side reconfiguration.
+- Merging any branch requires CI `verify` green on the head — including this consolidation (it merged via PR for exactly that reason). Direct pushes by non-bypass humans are blocked.
 - Even RepositoryAdmin can bypass — intentional break-glass; do not add further bypass actors casually.
 
 ## Verification gate
